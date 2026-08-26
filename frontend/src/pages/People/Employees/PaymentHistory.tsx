@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Wallet, IndianRupee } from 'lucide-react';
 import { Card } from "../../../components/core/Display/Card";
 import { LaborPayment } from "../../../types/hr";
@@ -56,8 +56,8 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({
                 <div className="p-3 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
                     <div className="grid grid-cols-2 gap-2 mb-2">
                         <div className="flex bg-slate-100 dark:bg-slate-900 rounded p-0.5">
-                            <button onClick={() => setPaymentType('ADVANCE')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'ADVANCE' ? 'bg-white dark:bg-slate-700 shadow text-amber-600 dark:text-amber-400' : 'text-slate-500'}`}>Advance</button>
-                            <button onClick={() => setPaymentType('SALARY')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'SALARY' ? 'bg-white dark:bg-slate-700 shadow text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}`}>Salary</button>
+                            <button onClick={() => setPaymentType('ADVANCE')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'ADVANCE' ? 'bg-white dark:bg-slate-700 shadow text-amber-600 dark:text-warning' : 'text-slate-500'}`}>Advance</button>
+                            <button onClick={() => setPaymentType('SALARY')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'SALARY' ? 'bg-white dark:bg-slate-700 shadow text-emerald-600 dark:text-success' : 'text-slate-500'}`}>Salary</button>
                         </div>
                         <input
                             type="text"

@@ -1,185 +1,209 @@
-import React from 'react';
-import { ArrowLeft, Save, X, User, Briefcase, DollarSign, Calendar, MapPin } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { ArrowLeft, Save, X, User, Briefcase, IndianRupee, Calendar, MapPin, ShieldCheck, Mail, Phone, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import laborAddData from '../../../mockData/laborAddData.json';
+import { employees, MockEmployee } from '../../../data';
+import Layout from '../../../components/shared/Layout';
 
 const LaborAddMockUI: React.FC = () => {
     const navigate = useNavigate();
 
+    const departments = useMemo(() => {
+        const depts = (employees as MockEmployee[]).map(emp => emp.dept);
+        return Array.from(new Set(depts));
+    }, []);
+
     return (
-        <div className="p-6 space-y-6 h-full flex flex-col text-main animate-fade-in">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div className="flex items-center gap-4">
-                    <button 
-                        onClick={() => navigate('/people/employees/labor')}
-                        className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
-                    >
-                        <ArrowLeft className="w-5 h-5 text-main/70" />
-                    </button>
-                    <div>
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                            Add New Employee
-                        </h1>
-                        <p className="text-sm text-main/60 mt-1">Personnel Onboarding</p>
+        <Layout>
+            <div className="p-8 space-y-8 h-full flex flex-col text-main animate-fade-in relative z-10">
+                {/* Header */}
+                <div className="flex justify-between items-center bg-white dark:bg-neutral-900 p-6 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                    <div className="flex items-center gap-6">
+                        <button 
+                            onClick={() => navigate('/people/employees/labor')}
+                            className="w-12 h-12 flex items-center justify-center bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm hover:bg-primary hover:text-white transition-all group"
+                        >
+                            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        </button>
+                        <div>
+                            <h1 className="text-2xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
+                                Personnel <span className="text-primary">Onboarding</span>
+                            </h1>
+                            <p className="text-[10px] uppercase tracking-[0.2em] font-black text-neutral-500 dark:text-neutral-400 mt-1">
+                                Workforce Expansion // Security Screening
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex gap-4">
+                        <button 
+                            onClick={() => navigate('/people/employees/labor')}
+                            className="h-12 px-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white font-bold text-xs tracking-widest rounded-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-3 uppercase"
+                        >
+                            <X className="w-4 h-4 text-rose-500" /> Abort
+                        </button>
+                        <button className="h-12 px-8 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-sm transition-all shadow-lg shadow-primary/20 flex items-center gap-3 hover:opacity-90">
+                            <Save className="w-4 h-4" /> Finalize Record
+                        </button>
                     </div>
                 </div>
-                <div className="flex gap-3">
-                    <button 
-                        onClick={() => navigate('/people/employees/labor')}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-sm"
-                    >
-                        <X className="w-4 h-4" /> Cancel
-                    </button>
-                    <button className="flex items-center gap-2 px-6 py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-lg hover:bg-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.2)] transition-all text-sm font-bold">
-                        <Save className="w-4 h-4" /> Save Record
-                    </button>
-                </div>
-            </div>
 
-            {/* Form Content */}
-            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Basic Info */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-6">
-                            <div className="flex items-center gap-2 text-purple-400 font-medium pb-2 border-b border-white/5">
-                                <User className="w-4 h-4" /> Personal Information
-                            </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Full Name</label>
-                                    <div className="relative">
-                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main/20" />
+                {/* Form Content */}
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Basic Info */}
+                        <div className="lg:col-span-2 space-y-8">
+                            <div className="bg-white dark:bg-neutral-900 p-8 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-8">
+                                <div className="flex items-center gap-3 text-primary font-black text-xs uppercase tracking-[0.3em] border-b border-neutral-100 dark:border-neutral-800 pb-4">
+                                    <User className="w-4 h-4" /> Personal Intelligence Node
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Legal Full Name</label>
+                                        <div className="relative">
+                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                                            <input 
+                                                type="text" 
+                                                placeholder="ENTER STAFF IDENTITY..." 
+                                                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm pl-12 pr-6 py-4 text-xs font-bold tracking-widest focus:border-primary outline-none transition-all shadow-inner"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">System Identifier</label>
                                         <input 
                                             type="text" 
-                                            placeholder="Enter employee name" 
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all placeholder:text-main/20"
+                                            defaultValue={`EMP-${(employees.length + 100).toString()}`}
+                                            className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm px-6 py-4 text-xs font-black text-neutral-400 uppercase tracking-widest cursor-not-allowed outline-none"
+                                            readOnly
                                         />
                                     </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Employee ID</label>
-                                    <input 
-                                        type="text" 
-                                        defaultValue="EMP-007"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-main/50 cursor-not-allowed outline-none"
-                                        readOnly
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Contact Number</label>
-                                    <input 
-                                        type="tel" 
-                                        placeholder="+1 (555) 000-0000" 
-                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all placeholder:text-main/20"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Email Address</label>
-                                    <input 
-                                        type="email" 
-                                        placeholder="employee@company.com" 
-                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all placeholder:text-main/20"
-                                    />
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Communication Node (Phone)</label>
+                                        <div className="relative">
+                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                                            <input 
+                                                type="tel" 
+                                                placeholder="+91 00000 00000" 
+                                                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm pl-12 pr-6 py-4 text-xs font-bold tracking-widest focus:border-primary outline-none transition-all shadow-inner"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Digital Mail Gateway</label>
+                                        <div className="relative">
+                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                                            <input 
+                                                type="email" 
+                                                placeholder="IDENTITY@VIGNESH.ERP" 
+                                                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm pl-12 pr-6 py-4 text-xs font-bold tracking-widest focus:border-primary outline-none transition-all shadow-inner"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-6">
-                            <div className="flex items-center gap-2 text-purple-400 font-medium pb-2 border-b border-white/5">
-                                <Briefcase className="w-4 h-4" /> Employment Details
-                            </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Department</label>
-                                    <select className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all appearance-none cursor-pointer">
-                                        {laborAddData.departments.map(dept => (
-                                            <option key={dept} className="bg-[#0a0a0a]">{dept}</option>
-                                        ))}
-                                    </select>
+                            <div className="bg-white dark:bg-neutral-900 p-8 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-8">
+                                <div className="flex items-center gap-3 text-primary font-black text-xs uppercase tracking-[0.3em] border-b border-neutral-100 dark:border-neutral-800 pb-4">
+                                    <Briefcase className="w-4 h-4" /> Operational Deployment
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Job Role</label>
-                                    <input 
-                                        type="text" 
-                                        placeholder="e.g. Senior Developer" 
-                                        className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all placeholder:text-main/20"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Joining Date</label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main/20" />
-                                        <input 
-                                            type="date" 
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all"
-                                        />
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Functional Department</label>
+                                        <div className="relative">
+                                            <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                                            <select className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm pl-12 pr-8 py-4 text-xs font-black uppercase tracking-widest focus:border-primary outline-none appearance-none cursor-pointer">
+                                                {departments.map(dept => (
+                                                    <option key={dept}>{dept}</option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Location</label>
-                                    <div className="relative">
-                                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main/20" />
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Organizational Role</label>
                                         <input 
                                             type="text" 
-                                            placeholder="City, Country" 
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all placeholder:text-main/20"
+                                            placeholder="e.g. OPERATIONS ANALYST" 
+                                            className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm px-6 py-4 text-xs font-bold tracking-widest focus:border-primary outline-none transition-all shadow-inner"
                                         />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Deployment Date</label>
+                                        <div className="relative">
+                                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                                            <input 
+                                                type="date" 
+                                                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm pl-12 pr-6 py-4 text-xs font-black tracking-widest focus:border-primary outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Deployment Site</label>
+                                        <div className="relative">
+                                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                                            <input 
+                                                type="text" 
+                                                placeholder="CHENNAI HQ / INDUSTRIAL PARK..." 
+                                                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm pl-12 pr-6 py-4 text-xs font-bold tracking-widest focus:border-primary outline-none transition-all shadow-inner"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Financial Info */}
-                    <div className="space-y-6">
-                        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-6">
-                            <div className="flex items-center gap-2 text-purple-400 font-medium pb-2 border-b border-white/5">
-                                <DollarSign className="w-4 h-4" /> Compensation
-                            </div>
-                            
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Base Salary (Annual)</label>
-                                    <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-main/40 text-sm">$</span>
-                                        <input 
-                                            type="number" 
-                                            placeholder="85,000" 
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl pl-8 pr-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all placeholder:text-main/20"
-                                        />
+                        {/* Financial Info */}
+                        <div className="space-y-8">
+                            <div className="bg-white dark:bg-neutral-900 p-8 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-8">
+                                <div className="flex items-center gap-3 text-primary font-black text-xs uppercase tracking-[0.3em] border-b border-neutral-100 dark:border-neutral-800 pb-4">
+                                    <IndianRupee className="w-4 h-4" /> Compensation Data
+                                </div>
+                                
+                                <div className="space-y-6">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Annual CTC Valuation</label>
+                                        <div className="relative">
+                                            <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                                            <input 
+                                                type="number" 
+                                                placeholder="0.00" 
+                                                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm pl-12 pr-6 py-4 text-xs font-black tabular-nums tracking-widest focus:border-primary outline-none transition-all shadow-inner"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Currency Allocation</label>
+                                        <select className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm px-6 py-4 text-xs font-black uppercase tracking-widest focus:border-primary outline-none appearance-none cursor-pointer">
+                                            <option>INR (₹)</option>
+                                            <option>USD ($)</option>
+                                            <option>EUR (€)</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-main/40 uppercase tracking-wider">Currency</label>
-                                    <select className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-purple-500/50 outline-none transition-all appearance-none cursor-pointer">
-                                        <option className="bg-[#0a0a0a]">USD ($)</option>
-                                        <option className="bg-[#0a0a0a]">EUR (€)</option>
-                                        <option className="bg-[#0a0a0a]">INR (₹)</option>
-                                        <option className="bg-[#0a0a0a]">GBP (£)</option>
-                                    </select>
-                                </div>
                             </div>
-                        </div>
 
-                        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-4">
-                            <div className="text-xs font-bold text-main/40 uppercase tracking-wider">Onboarding Checklist</div>
-                            {laborAddData.checklist.map((item, i) => (
-                                <div key={i} className="flex items-center gap-3">
-                                    <div className="w-5 h-5 rounded border border-white/10 bg-black/20 flex items-center justify-center cursor-pointer hover:border-purple-500/50 transition-all">
-                                        {i === 0 && <div className="w-2.5 h-2.5 bg-purple-500 rounded-sm shadow-[0_0_8px_rgba(168,85,247,0.5)]" />}
+                            <div className="bg-white dark:bg-neutral-900 p-8 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-6">
+                                <div className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] border-b border-neutral-100 dark:border-neutral-800 pb-4">Pre-Deployment Audit</div>
+                                {[
+                                    'Government ID Verification',
+                                    'Academic Credential Scan',
+                                    'Previous Employment Audit',
+                                    'NDA & Contract Compliance',
+                                    'Biometric Initialization'
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-center gap-4 group cursor-pointer">
+                                        <div className="w-6 h-6 rounded-sm border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center transition-all group-hover:border-primary">
+                                            {i < 2 && <ShieldCheck className="w-4 h-4 text-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]" />}
+                                        </div>
+                                        <span className="text-[11px] font-black text-neutral-500 uppercase tracking-widest group-hover:text-primary transition-colors">{item}</span>
                                     </div>
-                                    <span className="text-sm text-main/70">{item}</span>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Layout>
     );
 };
 

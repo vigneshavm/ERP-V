@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Layout from "../../components/shared/Layout/index.js";
 import FormInput from "../../components/core/Form/Input.js";
 import SupplierSelectionModal from "../../components/shared/Modals/SupplierSelectionModal.js";
@@ -174,7 +174,7 @@ const PurchaseReturn: React.FC = () => {
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Debit Note Details Card */}
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-6 shadow-sm">
+                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
                                     <FileText className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
@@ -201,7 +201,7 @@ const PurchaseReturn: React.FC = () => {
                         </div>
 
                         {/* Supplier Card */}
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-6 shadow-sm">
+                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
                                     <User className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
@@ -213,7 +213,7 @@ const PurchaseReturn: React.FC = () => {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-white dark:bg-neutral-800 rounded-xl flex items-center justify-center shadow-sm">
-                                                <span className="text-lg font-bold text-rose-700 dark:text-rose-500">
+                                                <span className="text-lg font-bold text-rose-700 dark:text-danger">
                                                     {formData.supplier.businessName?.charAt(0) || 'S'}
                                                 </span>
                                             </div>
@@ -239,10 +239,10 @@ const PurchaseReturn: React.FC = () => {
                             ) : (
                                 <button
                                     onClick={() => setShowSupplierModal(true)}
-                                    className="w-full px-4 py-8 border-2 border-dashed border-slate-200 dark:border-neutral-700 rounded-2xl text-slate-500 hover:border-rose-400 hover:text-rose-600 hover:bg-rose-50/50 dark:hover:bg-rose-900/10 transition-all flex flex-col items-center justify-center gap-3"
+                                    className="w-full px-4 py-8 border-2 border-dashed border-slate-200 dark:border-neutral-700 rounded-sm text-slate-500 hover:border-rose-400 hover:text-rose-600 hover:bg-rose-50/50 dark:hover:bg-rose-900/10 transition-all flex flex-col items-center justify-center gap-3"
                                 >
                                     <div className="w-12 h-12 bg-slate-50 dark:bg-neutral-800 rounded-full flex items-center justify-center">
-                                        <Plus className="w-6 h-6 text-rose-500" />
+                                        <Plus className="w-6 h-6 text-danger" />
                                     </div>
                                     <span className="font-medium">Click to select supplier</span>
                                 </button>
@@ -250,7 +250,7 @@ const PurchaseReturn: React.FC = () => {
                         </div>
 
                         {/* Items Card */}
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-6 shadow-sm overflow-hidden">
+                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-6 shadow-sm overflow-hidden">
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
@@ -352,7 +352,7 @@ const PurchaseReturn: React.FC = () => {
                         </div>
 
                         {/* Refund Details Card */}
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-6 shadow-sm">
+                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
                                     <CreditCard className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
@@ -370,7 +370,7 @@ const PurchaseReturn: React.FC = () => {
                                                 <button
                                                     key={method.value}
                                                     onClick={() => setFormData({ ...formData, refundMethod: method.value, bankAccount: '' })}
-                                                    className={`group p-4 border-2 rounded-2xl transition-all text-center ${getMethodColorClasses(method.color, isSelected)}`}
+                                                    className={`group p-4 border-2 rounded-sm transition-all text-center ${getMethodColorClasses(method.color, isSelected)}`}
                                                 >
                                                     <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-colors ${isSelected ? `bg-${method.color}-100 dark:bg-${method.color}-900/30` : 'bg-slate-50 dark:bg-neutral-800'}`}>
                                                         <IconComponent className={`w-6 h-6 transition-colors ${isSelected ? `text-${method.color}-600 dark:text-${method.color}-400` : 'text-slate-400'}`} />
@@ -418,7 +418,7 @@ const PurchaseReturn: React.FC = () => {
 
                     {/* Summary Sidebar */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl overflow-hidden shadow-lg sticky top-6">
+                        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm overflow-hidden shadow-lg sticky top-6">
                             <div className="bg-gradient-to-r from-rose-500 to-red-600 p-6">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white">
@@ -464,12 +464,12 @@ const PurchaseReturn: React.FC = () => {
                                     <button
                                         onClick={handleSubmit}
                                         disabled={loading}
-                                        className="w-full py-4 bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold rounded-2xl hover:from-rose-700 hover:to-red-700 transition-all shadow-xl shadow-rose-500/20 flex items-center justify-center gap-3 disabled:opacity-50"
+                                        className="w-full py-4 bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold rounded-sm hover:from-rose-700 hover:to-red-700 transition-all shadow-xl shadow-rose-500/20 flex items-center justify-center gap-3 disabled:opacity-50"
                                     >
                                         <Save className="w-5 h-5" />
                                         {loading ? 'Processing...' : 'Issue Debit Note'}
                                     </button>
-                                    <button className="w-full py-3.5 border border-slate-200 dark:border-neutral-700 text-slate-700 dark:text-neutral-300 font-semibold rounded-2xl hover:bg-slate-50 dark:hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2">
+                                    <button className="w-full py-3.5 border border-slate-200 dark:border-neutral-700 text-slate-700 dark:text-neutral-300 font-semibold rounded-sm hover:bg-slate-50 dark:hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2">
                                         <Printer className="w-4 h-4" />
                                         Print Document
                                     </button>

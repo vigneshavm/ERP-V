@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Save, Printer, FileText, Search, Plus, Trash2,
@@ -827,7 +827,7 @@ const PurchaseEntry: React.FC = () => {
                 {/* Design Set Modal - Updated UI */}
                 {showDesignSetModal && (
                     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in zoom-in-95 duration-200">
-                        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden border border-neutral-100 dark:border-neutral-700" onClick={e => e.stopPropagation()}>
+                        <div className="bg-white dark:bg-neutral-800 rounded-sm shadow-2xl w-full max-w-3xl overflow-hidden border border-neutral-100 dark:border-neutral-700" onClick={e => e.stopPropagation()}>
                             <div className="px-8 py-6 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900">
                                 <div>
                                     <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Add Design Set</h2>
@@ -1073,7 +1073,7 @@ const PurchaseEntry: React.FC = () => {
                                         <User className="w-4 h-4" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400">Supplier Selected</p>
+                                        <p className="text-xs font-bold text-emerald-700 dark:text-success">Supplier Selected</p>
                                         <p className="text-[10px] text-emerald-600/80">{supplierName}</p>
                                     </div>
                                 </div>
@@ -1141,7 +1141,7 @@ const PurchaseEntry: React.FC = () => {
                     {/* Entry Options Card */}
                     <div className="lg:col-span-3 bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 hover:border-primary/50 transition-colors">
                         <h3 className="text-sm font-bold text-neutral-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
-                            <ClipboardList className="w-4 h-4 text-emerald-500" /> Entry Options
+                            <ClipboardList className="w-4 h-4 text-success" /> Entry Options
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div className="space-y-1.5">
@@ -1179,7 +1179,7 @@ const PurchaseEntry: React.FC = () => {
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Ref Document</label>
                                 <div className="relative group/ref">
-                                    <FileCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within/ref:text-emerald-500 transition-colors" />
+                                    <FileCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within/ref:text-success transition-colors" />
                                     <input
                                         type="text"
                                         value={referenceDoc}
@@ -1273,7 +1273,7 @@ const PurchaseEntry: React.FC = () => {
                             <div className="flex items-start gap-6">
                                 {/* Drop Zone */}
                                 <label
-                                    className="flex-shrink-0 w-56 h-36 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-indigo-300 dark:border-indigo-700 rounded-2xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all group"
+                                    className="flex-shrink-0 w-56 h-36 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-indigo-300 dark:border-indigo-700 rounded-sm cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all group"
                                     onDragOver={(e) => e.preventDefault()}
                                     onDrop={(e) => {
                                         e.preventDefault();
@@ -1293,11 +1293,11 @@ const PurchaseEntry: React.FC = () => {
                                         }}
                                     />
                                     {isPdfParsing ? (
-                                        <><Loader2 className="w-8 h-8 text-indigo-500 animate-spin" /><span className="text-xs font-bold text-indigo-500">Parsing PDF...</span></>
+                                        <><Loader2 className="w-8 h-8 text-primary animate-spin" /><span className="text-xs font-bold text-primary">Parsing PDF...</span></>
                                     ) : pdfFileName ? (
-                                        <><CheckCircle2 className="w-8 h-8 text-emerald-500" /><span className="text-xs font-bold text-emerald-600 text-center px-2 truncate max-w-[200px]">{pdfFileName}</span></>
+                                        <><CheckCircle2 className="w-8 h-8 text-success" /><span className="text-xs font-bold text-emerald-600 text-center px-2 truncate max-w-[200px]">{pdfFileName}</span></>
                                     ) : (
-                                        <><Upload className="w-8 h-8 text-indigo-400 group-hover:text-indigo-600 transition-colors" /><span className="text-xs font-bold text-indigo-400 group-hover:text-indigo-600">Drop PDF here</span><span className="text-[10px] text-neutral-400">or click to browse</span></>
+                                        <><Upload className="w-8 h-8 text-primary group-hover:text-primary transition-colors" /><span className="text-xs font-bold text-primary group-hover:text-primary">Drop PDF here</span><span className="text-[10px] text-neutral-400">or click to browse</span></>
                                     )}
                                 </label>
 
@@ -1305,7 +1305,7 @@ const PurchaseEntry: React.FC = () => {
                                 <div className="flex-1">
                                     {!pdfParseResult && !isPdfParsing && (
                                         <div className="h-36 flex flex-col justify-center">
-                                            <h4 className="font-bold text-neutral-700 dark:text-neutral-300 text-sm mb-1 flex items-center gap-2"><FileUp className="w-4 h-4 text-indigo-500" /> PDF Items Import</h4>
+                                            <h4 className="font-bold text-neutral-700 dark:text-neutral-300 text-sm mb-1 flex items-center gap-2"><FileUp className="w-4 h-4 text-primary" /> PDF Items Import</h4>
                                             <p className="text-xs text-neutral-500 leading-relaxed">Upload a supplier <strong>invoice or packing list</strong> PDF. The system will automatically extract item names, quantities, and rates into the items table.</p>
                                             <p className="text-[10px] text-neutral-400 mt-2 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Works best with text-based PDFs. Scanned images are not supported.</p>
                                         </div>
@@ -1314,7 +1314,7 @@ const PurchaseEntry: React.FC = () => {
                                         <div className="h-36 flex flex-col">
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-                                                    Found <span className="text-indigo-600">{pdfParseResult.items.length}</span> items in PDF
+                                                    Found <span className="text-primary">{pdfParseResult.items.length}</span> items in PDF
                                                 </span>
                                                 <button onClick={() => { setPdfParseResult(null); setPdfFileName(''); if (pdfInputRef.current) pdfInputRef.current.value = ''; }} className="text-[10px] text-neutral-400 hover:text-red-500 flex items-center gap-1"><X className="w-3 h-3" /> Clear</button>
                                             </div>
@@ -1386,7 +1386,7 @@ const PurchaseEntry: React.FC = () => {
                                             />
                                             <div className="text-[10px] text-neutral-400 mt-1 flex gap-2">
                                                 {item.category_name && (
-                                                    <span className="bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 px-1.5 py-0.5 rounded border border-violet-200 dark:border-violet-800">
+                                                    <span className="bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-accent px-1.5 py-0.5 rounded border border-violet-200 dark:border-violet-800">
                                                         {item.category_name}
                                                     </span>
                                                 )}
@@ -1397,7 +1397,7 @@ const PurchaseEntry: React.FC = () => {
 
                                             {/* ─── Category Selection Dropdown for New Products ─── */}
                                             {activeSearchRow === idx && (
-                                                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 dark:border-neutral-700 z-50 w-[300px] overflow-hidden"
+                                                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-neutral-900 rounded-sm shadow-2xl border border-neutral-200 dark:border-neutral-700 z-50 w-[300px] overflow-hidden"
                                                     onMouseDown={e => {
                                                         e.preventDefault(); // prevent input blur
                                                         e.stopPropagation(); // prevent window click-outside from firing
@@ -1425,7 +1425,7 @@ const PurchaseEntry: React.FC = () => {
                                                                         handleCategorySelect(idx, cat);
                                                                     }}
                                                                 >
-                                                                    <div className="font-semibold text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-violet-700 dark:group-hover:text-violet-400">{cat.name}</div>
+                                                                    <div className="font-semibold text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-violet-700 dark:group-hover:text-accent">{cat.name}</div>
                                                                     {cat.shortCode && <div className="text-[10px] text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-md">{cat.shortCode}</div>}
                                                                 </div>
                                                             ))

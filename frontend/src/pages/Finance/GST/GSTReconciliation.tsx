@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import { FileText, Upload, CheckCircle, AlertTriangle, XCircle, Search, Calendar, ChevronRight, Info } from 'lucide-react';
@@ -46,32 +46,32 @@ const GSTReconciliation: React.FC = () => {
 
                 {/* Reconciliation Stats Pulse */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 p-8 rounded-[2.5rem] group hover:border-emerald-500/30 transition-all duration-500">
+                    <div className="bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 p-8 rounded-[2.5rem] group hover:border-success/30 transition-all duration-500">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2.5 bg-white dark:bg-neutral-900 rounded-xl shadow-sm text-emerald-500 group-hover:scale-110 transition-transform">
+                            <div className="p-2.5 bg-white dark:bg-neutral-900 rounded-xl shadow-sm text-success group-hover:scale-110 transition-transform">
                                 <CheckCircle className="w-5 h-5" />
                             </div>
-                            <h3 className="text-[10px] font-black text-emerald-900/60 dark:text-emerald-400 uppercase tracking-widest">Matched Nodes</h3>
+                            <h3 className="text-[10px] font-black text-emerald-900/60 dark:text-success uppercase tracking-widest">Matched Nodes</h3>
                         </div>
                         <p className="text-4xl font-black text-emerald-600 dark:text-emerald-300 tracking-tighter tabular-nums">{stats.matched}</p>
                     </div>
 
-                    <div className="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 p-8 rounded-[2.5rem] group hover:border-amber-500/30 transition-all duration-500">
+                    <div className="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 p-8 rounded-[2.5rem] group hover:border-warning/30 transition-all duration-500">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2.5 bg-white dark:bg-neutral-900 rounded-xl shadow-sm text-amber-500 group-hover:scale-110 transition-transform">
+                            <div className="p-2.5 bg-white dark:bg-neutral-900 rounded-xl shadow-sm text-warning group-hover:scale-110 transition-transform">
                                 <AlertTriangle className="w-5 h-5" />
                             </div>
-                            <h3 className="text-[10px] font-black text-amber-900/60 dark:text-amber-400 uppercase tracking-widest">Quantum Mismatch</h3>
+                            <h3 className="text-[10px] font-black text-amber-900/60 dark:text-warning uppercase tracking-widest">Quantum Mismatch</h3>
                         </div>
                         <p className="text-4xl font-black text-amber-600 dark:text-amber-300 tracking-tighter tabular-nums">{stats.mismatch}</p>
                     </div>
 
-                    <div className="bg-rose-50/50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/30 p-8 rounded-[2.5rem] group hover:border-rose-500/30 transition-all duration-500">
+                    <div className="bg-rose-50/50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/30 p-8 rounded-[2.5rem] group hover:border-danger/30 transition-all duration-500">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2.5 bg-white dark:bg-neutral-900 rounded-xl shadow-sm text-rose-500 group-hover:scale-110 transition-transform">
+                            <div className="p-2.5 bg-white dark:bg-neutral-900 rounded-xl shadow-sm text-danger group-hover:scale-110 transition-transform">
                                 <XCircle className="w-5 h-5" />
                             </div>
-                            <h3 className="text-[10px] font-black text-rose-900/60 dark:text-rose-400 uppercase tracking-widest">Missing in GSTR</h3>
+                            <h3 className="text-[10px] font-black text-rose-900/60 dark:text-danger uppercase tracking-widest">Missing in GSTR</h3>
                         </div>
                         <p className="text-4xl font-black text-rose-600 dark:text-rose-300 tracking-tighter tabular-nums">{stats.missingGSTR}</p>
                     </div>
@@ -90,7 +90,7 @@ const GSTReconciliation: React.FC = () => {
                 {/* Audit Terminal Container */}
                 <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[3rem] shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div className="flex items-center gap-3 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 self-start md:self-auto">
+                        <div className="flex items-center gap-3 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-sm border border-neutral-100 dark:border-neutral-800 self-start md:self-auto">
                             {(['MATCHED', 'MISMATCH', 'MISSING'] as const).map((tab) => (
                                 <button
                                     key={tab}
@@ -109,7 +109,7 @@ const GSTReconciliation: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="Filter records by supplier or GSTIN..."
-                                className="w-full pl-12 pr-6 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                                className="w-full pl-12 pr-6 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all"
                             />
                         </div>
                     </div>
@@ -126,7 +126,7 @@ const GSTReconciliation: React.FC = () => {
 
                         <div className="space-y-3">
                             {[1, 2, 3].map((i) => (
-                                <div key={i} className="grid grid-cols-12 gap-6 items-center p-6 bg-neutral-50/50 dark:bg-neutral-900/30 rounded-3xl border border-transparent hover:border-neutral-100 dark:hover:border-neutral-800 transition-all group">
+                                <div key={i} className="grid grid-cols-12 gap-6 items-center p-6 bg-neutral-50/50 dark:bg-neutral-900/30 rounded-sm border border-transparent hover:border-neutral-100 dark:hover:border-neutral-800 transition-all group">
                                     <div className="col-span-4">
                                         <p className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tighter group-hover:text-primary transition-colors">Alpha Tech Solutions PVT LTD</p>
                                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-1">Vendor Node 022</p>
@@ -138,8 +138,8 @@ const GSTReconciliation: React.FC = () => {
                                         <p className="text-xs font-black text-neutral-500 font-mono tracking-widest">33ABCDE1234F1Z5</p>
                                     </div>
                                     <div className="col-span-2 text-right">
-                                        <p className="text-sm font-black text-rose-500 tabular-nums">₹ 1,240.00</p>
-                                        <p className="text-[9px] font-black text-rose-900/40 dark:text-rose-400/40 uppercase tracking-widest mt-1 italic">Quantum Excess</p>
+                                        <p className="text-sm font-black text-danger tabular-nums">₹ 1,240.00</p>
+                                        <p className="text-[9px] font-black text-rose-900/40 dark:text-danger/40 uppercase tracking-widest mt-1 italic">Quantum Excess</p>
                                     </div>
                                     <div className="col-span-1 flex justify-end">
                                         <button className="p-2.5 text-neutral-300 hover:text-primary transition-all group-hover:translate-x-1">
@@ -150,8 +150,8 @@ const GSTReconciliation: React.FC = () => {
                             ))}
                         </div>
 
-                        <div className="mt-10 p-6 bg-neutral-900 dark:bg-neutral-100 rounded-3xl flex items-center gap-6 group">
-                            <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                        <div className="mt-10 p-6 bg-neutral-900 dark:bg-neutral-100 rounded-sm flex items-center gap-6 group">
+                            <div className="w-12 h-12 rounded-sm bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
                                 <Info className="w-6 h-6 text-white" />
                             </div>
                             <div className="flex-1 min-w-0">

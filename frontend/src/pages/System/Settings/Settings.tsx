@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Layout from "../../../components/shared/Layout/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
@@ -258,7 +258,7 @@ const Settings: React.FC = () => {
 
             <div className="flex flex-col gap-6">
                 {/* Horizontal Navigation Bar */}
-                <div className="w-full bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+                <div className="w-full bg-white dark:bg-neutral-900 rounded-sm shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden">
                     <div className="flex overflow-x-auto custom-scrollbar">
                         {tabs.map((t) => {
                             const Icon = t.icon;
@@ -282,10 +282,10 @@ const Settings: React.FC = () => {
                 </div>
 
                 {/* Main Content Area */}
-                <div className="w-full min-h-[calc(100vh-250px)] bg-white dark:bg-neutral-900 rounded-3xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col">
+                <div className="w-full min-h-[calc(100vh-250px)] bg-white dark:bg-neutral-900 rounded-sm shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col">
                     <div className="border-b border-neutral-100 dark:border-neutral-800 px-8 py-6 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-950/50 backdrop-blur-sm">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center">
                                 {(() => {
                                     const Icon = tabs.find(t => t.id === activeTab)?.icon || SettingsIcon;
                                     return <Icon className="w-6 h-6 text-primary" />;

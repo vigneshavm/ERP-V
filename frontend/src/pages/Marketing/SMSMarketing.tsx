@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import {
@@ -39,10 +39,10 @@ const SMSMarketing: React.FC = () => {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="relative flex-1 w-full max-w-md group">
-                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors" />
-                    <input type="text" placeholder="Search Campaign DNA..." className="w-full pl-14 pr-6 py-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-bold text-sm" />
+                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-hover:text-primary transition-colors" />
+                    <input type="text" placeholder="Search Campaign DNA..." className="w-full pl-14 pr-6 py-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-sm outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-bold text-sm" />
                 </div>
-                <button className="flex items-center gap-3 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all group">
+                <button className="flex items-center gap-3 px-8 py-4 bg-indigo-600 text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all group">
                     <Plus className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" /> Construct Blast
                 </button>
             </div>
@@ -53,14 +53,14 @@ const SMSMarketing: React.FC = () => {
                         <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-[2.5rem] blur opacity-0 group-hover:opacity-10 transition duration-500" />
                         <div className="relative bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/50 dark:border-slate-800/50 p-8 rounded-[2.5rem] shadow-sm flex flex-col lg:flex-row items-center justify-between gap-8 transition-all hover:translate-x-2">
                             <div className="flex items-center gap-6 flex-1">
-                                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${camp.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                                <div className={`w-16 h-16 rounded-sm flex items-center justify-center ${camp.status === 'COMPLETED' ? 'bg-success/10 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
                                     <Send className="w-8 h-8" />
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="text-xl font-black italic uppercase tracking-tight">{camp.name}</h4>
                                     <p className="text-sm font-bold text-slate-500 line-clamp-1 max-w-md italic">"{camp.content}"</p>
                                     <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em]">
-                                        <span className={`flex items-center gap-1.5 ${camp.status === 'COMPLETED' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                                        <span className={`flex items-center gap-1.5 ${camp.status === 'COMPLETED' ? 'text-success' : 'text-warning'}`}>
                                             <div className={`w-1.5 h-1.5 rounded-full ${camp.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
                                             {camp.status}
                                         </span>
@@ -75,7 +75,7 @@ const SMSMarketing: React.FC = () => {
                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Recipients</p>
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-black italic text-indigo-600">{camp.deliveredCount}</p>
+                                    <p className="text-2xl font-black italic text-primary">{camp.deliveredCount}</p>
                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Delivered</p>
                                 </div>
                                 <div>
@@ -85,7 +85,7 @@ const SMSMarketing: React.FC = () => {
                             </div>
 
                             <div className="flex items-center gap-3">
-                                <button className="p-3 bg-slate-50 dark:bg-black/50 text-slate-500 rounded-xl hover:text-indigo-600 hover:bg-indigo-50 transition-all"><Edit3 className="w-4 h-4" /></button>
+                                <button className="p-3 bg-slate-50 dark:bg-black/50 text-slate-500 rounded-xl hover:text-primary hover:bg-indigo-50 transition-all"><Edit3 className="w-4 h-4" /></button>
                                 <button className="p-3 bg-slate-50 dark:bg-black/50 text-slate-500 rounded-xl hover:text-rose-600 hover:bg-rose-50 transition-all"><Trash2 className="w-4 h-4" /></button>
                             </div>
                         </div>
@@ -100,19 +100,19 @@ const SMSMarketing: React.FC = () => {
             {/* Neural Insights Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {[
-                    { label: 'Network Reach', val: '124.5K', icon: Zap, color: 'text-indigo-600', trend: '+12%' },
+                    { label: 'Network Reach', val: '124.5K', icon: Zap, color: 'text-primary', trend: '+12%' },
                     { label: 'Deliverability', val: '98.2%', icon: Target, color: 'text-emerald-600', trend: '+0.5%' },
                     { label: 'Conversion Flow', val: '4,280', icon: TrendingUp, color: 'text-violet-600', trend: '+8%' },
                     { label: 'Estimated ROI', val: '14.2x', icon: Sparkles, color: 'text-amber-600', trend: '+2.4x' }
                 ].map((kpi, idx) => (
-                    <div key={idx} className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/50 p-8 rounded-[3rem] shadow-sm group hover:border-indigo-500/30 transition-all text-center">
-                        <div className={`w-14 h-14 ${kpi.color} bg-white dark:bg-black rounded-2xl mx-auto mb-8 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                    <div key={idx} className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/50 p-8 rounded-[3rem] shadow-sm group hover:border-primary/30 transition-all text-center">
+                        <div className={`w-14 h-14 ${kpi.color} bg-white dark:bg-black rounded-sm mx-auto mb-8 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
                             <kpi.icon className="w-6 h-6" />
                         </div>
                         <h3 className="text-5xl font-black tracking-tighter italic tabular-nums mb-1">{kpi.val}</h3>
                         <div className="flex flex-col items-center gap-2">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{kpi.label}</p>
-                            <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full">{kpi.trend} This Month</span>
+                            <span className="text-[9px] font-black text-success bg-success/10 px-3 py-1 rounded-full">{kpi.trend} This Month</span>
                         </div>
                     </div>
                 ))}
@@ -123,12 +123,12 @@ const SMSMarketing: React.FC = () => {
                 <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 rounded-full -mr-48 -mt-48 blur-3xl animate-pulse" />
                 <div className="max-w-xl mx-auto space-y-4 relative z-10">
                     <BarChart3 className="w-20 h-20 text-indigo-200 mx-auto group-hover:scale-110 transition-transform duration-700" />
-                    <h3 className="text-4xl font-black italic uppercase">Direct <span className="text-indigo-600">Connectivity</span> Mapping</h3>
+                    <h3 className="text-4xl font-black italic uppercase">Direct <span className="text-primary">Connectivity</span> Mapping</h3>
                     <p className="text-slate-500 font-bold italic">Analyzing the volumetric flow of direct messaging across your customer segments.</p>
                 </div>
                 <div className="flex items-end justify-center gap-6 h-64 mt-12">
                     {[40, 70, 45, 90, 65, 80, 55, 95, 75, 40].map((h, i) => (
-                        <div key={i} className="flex-1 max-w-[40px] bg-gradient-to-t from-indigo-600 to-violet-500 rounded-2xl group/bar relative" style={{ height: `${h}%` }}>
+                        <div key={i} className="flex-1 max-w-[40px] bg-gradient-to-t from-indigo-600 to-violet-500 rounded-sm group/bar relative" style={{ height: `${h}%` }}>
                             <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-black px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap">{h}% Capacity</div>
                         </div>
                     ))}
@@ -141,8 +141,8 @@ const SMSMarketing: React.FC = () => {
         <div className="min-h-screen bg-slate-50/30 dark:bg-[#020617] relative">
             {/* Mesh Gradient Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-50 dark:opacity-20 z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/20 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-500/20 blur-[120px] rounded-full animate-float delay-1000" />
+                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent/20 blur-[120px] rounded-full animate-float delay-1000" />
             </div>
 
             <div className="relative z-10 max-w-[1600px] mx-auto p-4 lg:p-12 space-y-12">
@@ -152,11 +152,11 @@ const SMSMarketing: React.FC = () => {
 
                     <div className="space-y-6 relative z-10 text-center xl:text-left">
                         <div className="flex items-center justify-center xl:justify-start gap-4">
-                            <div className="px-5 py-2 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-indigo-600/30">
+                            <div className="px-5 py-2 bg-indigo-600 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-indigo-600/30">
                                 SMS Core Active
                             </div>
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                                <Zap className="w-3 h-3 text-amber-500 fill-amber-500" /> Secure Encryption Active
+                                <Zap className="w-3 h-3 text-warning fill-amber-500" /> Secure Encryption Active
                             </span>
                         </div>
                         <h1 className="text-7xl font-black text-slate-900 dark:text-white tracking-tighter leading-none italic uppercase">
@@ -178,7 +178,7 @@ const SMSMarketing: React.FC = () => {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex items-center gap-4 px-8 py-5 rounded-2xl transition-all duration-500 whitespace-nowrap group relative ${activeTab === tab.id ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl scale-105' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                                className={`flex items-center gap-4 px-8 py-5 rounded-sm transition-all duration-500 whitespace-nowrap group relative ${activeTab === tab.id ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl scale-105' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
                             >
                                 <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'animate-bounce' : 'group-hover:scale-125 transition-transform'}`} />
                                 <span className="text-[11px] font-black uppercase tracking-[0.2em]">{tab.label}</span>
@@ -200,10 +200,10 @@ const SMSMarketing: React.FC = () => {
                                 { title: 'Loyalty pulse', desc: 'Points balance and redemption reminders.', usage: '840 used', icon: Star },
                             ].map((template, idx) => (
                                 <div key={idx} className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/50 p-10 rounded-[3rem] shadow-sm relative group cursor-pointer hover:border-indigo-500/50 transition-all">
-                                    <div className="absolute top-8 right-8 w-12 h-12 bg-slate-50 dark:bg-black rounded-2xl flex items-center justify-center text-slate-300 group-hover:text-indigo-500 transition-colors">
+                                    <div className="absolute top-8 right-8 w-12 h-12 bg-slate-50 dark:bg-black rounded-sm flex items-center justify-center text-slate-300 group-hover:text-primary transition-colors">
                                         <Copy className="w-5 h-5" />
                                     </div>
-                                    <template.icon className="w-12 h-12 text-indigo-600 mb-8" />
+                                    <template.icon className="w-12 h-12 text-primary mb-8" />
                                     <h4 className="text-2xl font-black italic uppercase tracking-tight mb-2">{template.title}</h4>
                                     <p className="text-sm font-bold text-slate-500 italic mb-8">{template.desc}</p>
                                     <div className="flex items-center justify-between pt-8 border-t border-slate-50 dark:border-slate-800">
@@ -218,7 +218,7 @@ const SMSMarketing: React.FC = () => {
                         <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
                             <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/50 p-12 rounded-[4rem] shadow-2xl space-y-12">
                                 <div className="text-center space-y-4">
-                                    <h3 className="text-4xl font-black italic uppercase">Gateway <span className="text-indigo-600">Architect</span></h3>
+                                    <h3 className="text-4xl font-black italic uppercase">Gateway <span className="text-primary">Architect</span></h3>
                                     <p className="text-slate-500 font-bold max-w-md mx-auto italic">Configure your direct messaging satellite connections. All credentials are encrypted with military-grade standards.</p>
                                 </div>
 
@@ -239,7 +239,7 @@ const SMSMarketing: React.FC = () => {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">API Authentication Matrix</label>
                                         <div className="relative">
                                             <input type="password" value="****************************************" className="w-full p-5 bg-slate-50 dark:bg-black/50 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-mono" readOnly />
-                                            <Edit3 className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-hover:text-indigo-400 cursor-pointer" />
+                                            <Edit3 className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-hover:text-primary cursor-pointer" />
                                         </div>
                                     </div>
                                 </div>

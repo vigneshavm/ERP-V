@@ -1,4 +1,4 @@
-import Layout from "../../components/shared/Layout/Layout";
+﻿import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import { useNavigate } from 'react-router-dom';
 
@@ -87,10 +87,10 @@ const ReportsDashboard = () => {
                 ))}
             </div>
 
-            <div className="mt-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white">
+            <div className="mt-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-sm p-8 text-white">
                 <h3 className="text-2xl font-bold mb-2">Need Custom Reports?</h3>
                 <p className="text-indigo-100 mb-4">Create custom reports tailored to your business needs</p>
-                <button className="px-6 py-3 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition">
+                <button className="px-6 py-3 bg-white text-primary rounded-lg font-medium hover:bg-indigo-50 transition">
                     Create Custom Report
                 </button>
             </div>

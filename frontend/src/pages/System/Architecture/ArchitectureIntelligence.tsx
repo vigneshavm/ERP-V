@@ -1,4 +1,4 @@
-
+﻿
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "@/redux/store";
@@ -68,17 +68,17 @@ const ArchitectureIntelligence: React.FC = () => {
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-                        <ShieldCheck className="w-8 h-8 text-indigo-500" />
+                        <ShieldCheck className="w-8 h-8 text-primary" />
                         Architecture Intelligence
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1">
                         System health cockpit and structural performance audit agent.
                     </p>
                 </div>
-                <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm">
                     <div className="px-4 border-r border-slate-100 dark:border-slate-800 text-center">
                         <span className="block text-xs font-bold text-slate-400 uppercase">Health Score</span>
-                        <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{metrics.score}/100</span>
+                        <span className="text-2xl font-black text-primary dark:text-primary">{metrics.score}/100</span>
                     </div>
                     <div className="px-4 text-center">
                         <span className="block text-xs font-bold text-slate-400 uppercase">System Load</span>
@@ -97,8 +97,8 @@ const ArchitectureIntelligence: React.FC = () => {
                     { label: 'Sales Throughput', value: metrics.counts.sales, icon: Activity, color: 'emerald' },
                     { label: 'Finance Ledger', value: metrics.counts.finance, icon: PieChart, color: 'violet' },
                 ].map((m, i) => (
-                    <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
-                        <div className={`w-12 h-12 rounded-2xl bg-${m.color}-50 dark:bg-${m.color}-900/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                    <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
+                        <div className={`w-12 h-12 rounded-sm bg-${m.color}-50 dark:bg-${m.color}-900/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                             <m.icon className={`w-6 h-6 text-${m.color}-500`} />
                         </div>
                         <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">{m.label}</span>
@@ -110,10 +110,10 @@ const ArchitectureIntelligence: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Structural Audit Card */}
                 <section className="lg:col-span-2 space-y-6">
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+                    <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
                         <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                                <Zap className="w-5 h-5 text-amber-500" /> Current Infrastructure Integrity
+                                <Zap className="w-5 h-5 text-warning" /> Current Infrastructure Integrity
                             </h2>
                             <RefreshCw className="w-4 h-4 text-slate-400 cursor-pointer hover:rotate-180 transition-all" />
                         </div>
@@ -137,10 +137,10 @@ const ArchitectureIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-indigo-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-500/20">
+                    <div className="bg-indigo-600 rounded-sm p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-500/20">
                         <Layers className="absolute -right-4 -bottom-4 w-40 h-40 text-white/10" />
                         <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                            <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
+                            <div className="w-16 h-16 rounded-sm bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
                                 <Server className="w-8 h-8" />
                             </div>
                             <div>
@@ -149,7 +149,7 @@ const ArchitectureIntelligence: React.FC = () => {
                                     I have analyzed 14,000+ lines of codebase. A shift toward a **Feature-Based Folder structure** is recommended for the next phase of development to prevent logic scattering.
                                 </p>
                             </div>
-                            <button className="md:ml-auto px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold text-sm shadow-lg whitespace-nowrap hover:scale-105 active:scale-95 transition-all">
+                            <button className="md:ml-auto px-6 py-3 bg-white text-primary rounded-xl font-bold text-sm shadow-lg whitespace-nowrap hover:scale-105 active:scale-95 transition-all">
                                 View Full Report
                             </button>
                         </div>
@@ -158,24 +158,24 @@ const ArchitectureIntelligence: React.FC = () => {
 
                 {/* Recommendations Panel */}
                 <aside className="space-y-6">
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                    <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
                         <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                            <AlertTriangle className="w-5 h-5 text-amber-500" /> Core Recommendations
+                            <AlertTriangle className="w-5 h-5 text-warning" /> Core Recommendations
                         </h2>
                         <div className="space-y-4">
                             {recommendations.map((rec) => (
-                                <div key={rec.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all cursor-pointer group">
+                                <div key={rec.id} className="p-4 rounded-sm bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all cursor-pointer group">
                                     <div className="flex justify-between items-start mb-2">
-                                        <span className="text-[10px] font-black uppercase bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-400 px-2 py-0.5 rounded">
+                                        <span className="text-[10px] font-black uppercase bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-primary px-2 py-0.5 rounded">
                                             {rec.category}
                                         </span>
-                                        <span className={`text-[10px] font-bold ${rec.impact === 'High' ? 'text-red-500' : 'text-amber-500'}`}>
+                                        <span className={`text-[10px] font-bold ${rec.impact === 'High' ? 'text-red-500' : 'text-warning'}`}>
                                             {rec.impact} Impact
                                         </span>
                                     </div>
-                                    <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1 group-hover:text-indigo-600 transition-colors">{rec.title}</h4>
+                                    <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1 group-hover:text-primary transition-colors">{rec.title}</h4>
                                     <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{rec.desc}</p>
-                                    <div className="mt-3 flex items-center gap-1 text-[10px] text-indigo-600 dark:text-indigo-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="mt-3 flex items-center gap-1 text-[10px] text-primary dark:text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">
                                         Details <ChevronRight className="w-3 h-3" />
                                     </div>
                                 </div>
@@ -183,9 +183,9 @@ const ArchitectureIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                    <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">
-                            <Info className="w-4 h-4 text-indigo-500" />
+                            <Info className="w-4 h-4 text-primary" />
                             <span className="text-sm font-bold text-slate-800 dark:text-white">Audit Methodology</span>
                         </div>
                         <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">

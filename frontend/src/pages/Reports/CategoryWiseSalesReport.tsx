@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
@@ -45,20 +45,20 @@ const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeR
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Top Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg text-indigo-600 dark:text-indigo-400">
+                        <div className="p-2 bg-indigo-50 dark:bg-primary/10 rounded-lg text-primary dark:text-primary">
                             <Tag className="w-5 h-5" />
                         </div>
                     </div>
                     <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Top Category</p>
                     <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{categoryStats[0]?.name || 'N/A'}</h3>
-                    <p className="text-xs text-emerald-500 font-medium mt-1">₹{categoryStats[0]?.revenue.toLocaleString()} revenue</p>
+                    <p className="text-xs text-success font-medium mt-1">₹{categoryStats[0]?.revenue.toLocaleString()} revenue</p>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400">
+                        <div className="p-2 bg-emerald-50 dark:bg-success/10 rounded-lg text-emerald-600 dark:text-success">
                             <Package className="w-5 h-5" />
                         </div>
                     </div>
@@ -66,9 +66,9 @@ const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeR
                     <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{totalItems.toLocaleString()}</h3>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-lg text-amber-600 dark:text-amber-400">
+                        <div className="p-2 bg-amber-50 dark:bg-warning/10 rounded-lg text-amber-600 dark:text-warning">
                             <TrendingUp className="w-5 h-5" />
                         </div>
                     </div>
@@ -80,7 +80,7 @@ const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeR
             {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Bar Chart */}
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <h4 className="font-bold text-slate-900 dark:text-white mb-6">Revenue by Category</h4>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
@@ -110,7 +110,7 @@ const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeR
                 </div>
 
                 {/* Pie Chart */}
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <h4 className="font-bold text-slate-900 dark:text-white mb-6">Sales Volume Distribution</h4>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
@@ -139,7 +139,7 @@ const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeR
             </div>
 
             {/* Detailed Table */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                 <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/20">
                     <h4 className="font-bold text-slate-900 dark:text-white text-sm">Category Performance Matrix</h4>
                 </div>

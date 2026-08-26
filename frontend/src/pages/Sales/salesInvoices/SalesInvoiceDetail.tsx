@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getSalesInvoiceById, reset, clearSalesInvoice, markSalesInvoiceAsPaid } from "@/redux/slices/salesInvoiceSlice";
@@ -160,12 +160,12 @@ const SalesInvoiceDetail = () => {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Customer Card */}
                         {invoice.customer && (
-                            <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border">
+                            <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:shadow-none print:border">
                                 <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
                                     <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Bill To</h2>
                                 </div>
                                 <div className="p-6 flex items-start gap-4">
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xl font-black shadow-lg">
+                                    <div className="w-14 h-14 rounded-sm bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xl font-black shadow-lg">
                                         {isCustomer(invoice.customer) ? (invoice.customer.name.charAt(0).toUpperCase()) : '?'}
                                     </div>
                                     <div className="flex-1">
@@ -195,7 +195,7 @@ const SalesInvoiceDetail = () => {
                         )}
 
                         {/* Invoice Items */}
-                        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border">
+                        <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:shadow-none print:border">
                             <div className="bg-surface/40 px-6 py-3 border-b border-default/20 flex justify-between items-center">
                                 <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Invoice Items</h2>
                                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${statusConfig.badge}`}>
@@ -229,7 +229,7 @@ const SalesInvoiceDetail = () => {
                         </div>
 
                         {/* Invoice Info */}
-                        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:border">
+                        <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:shadow-none print:border">
                             <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
                                 <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Invoice Details</h2>
                             </div>
@@ -261,7 +261,7 @@ const SalesInvoiceDetail = () => {
                     {/* Sidebar */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Payment Summary */}
-                        <div className="glass-panel border border-indigo-100 rounded-2xl shadow-sm overflow-hidden sticky top-4 print:shadow-none print:border">
+                        <div className="glass-panel border border-indigo-100 rounded-sm shadow-sm overflow-hidden sticky top-4 print:shadow-none print:border">
                             <div className="bg-primary/10/50 px-6 py-3 border-b border-indigo-100">
                                 <h2 className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Payment Summary</h2>
                             </div>
@@ -305,7 +305,7 @@ const SalesInvoiceDetail = () => {
                         </div>
 
                         {/* Quick Actions */}
-                        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:hidden">
+                        <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:hidden">
                             <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
                                 <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Quick Actions</h2>
                             </div>

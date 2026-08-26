@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from "../../../redux/store";
 import { fetchDayEndSummary, saveDayEndReconciliation } from "../../../redux/slices/financeSlice";
@@ -115,15 +115,15 @@ const DayEndReconciliation: React.FC = () => {
                                 </h3>
 
                                 <div className="space-y-4">
-                                    <div className="flex justify-between items-center p-4 bg-neutral-50 dark:bg-neutral-900 rounded-2xl">
+                                    <div className="flex justify-between items-center p-4 bg-neutral-50 dark:bg-neutral-900 rounded-sm">
                                         <span className="text-xs font-bold text-neutral-500 uppercase">Opening Cash</span>
                                         <span className="font-mono font-bold">₹{formatCurrency(dayEndSummary.openingCash)}</span>
                                     </div>
-                                    <div className="flex justify-between items-center p-4 bg-success/5 rounded-2xl border border-success/10">
+                                    <div className="flex justify-between items-center p-4 bg-success/5 rounded-sm border border-success/10">
                                         <span className="text-xs font-bold text-success uppercase flex items-center gap-2"><TrendingUp size={14} /> Cash Sales</span>
                                         <span className="font-mono font-bold text-success">+ ₹{formatCurrency(dayEndSummary.cashSales)}</span>
                                     </div>
-                                    <div className="flex justify-between items-center p-4 bg-error/5 rounded-2xl border border-error/10">
+                                    <div className="flex justify-between items-center p-4 bg-error/5 rounded-sm border border-error/10">
                                         <span className="text-xs font-bold text-error uppercase flex items-center gap-2"><TrendingUp size={14} className="rotate-180" /> Expenses</span>
                                         <span className="font-mono font-bold text-error">- ₹{formatCurrency(dayEndSummary.cashExpenses)}</span>
                                     </div>
@@ -143,7 +143,7 @@ const DayEndReconciliation: React.FC = () => {
                                                 type="number"
                                                 value={physicalCash}
                                                 onChange={(e) => handleCashChange(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xl font-black outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                                className="w-full pl-12 pr-4 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xl font-black outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                                 placeholder="0.00"
                                             />
                                         </div>
@@ -166,7 +166,7 @@ const DayEndReconciliation: React.FC = () => {
                                         <textarea
                                             value={notes}
                                             onChange={(e) => setNotes(e.target.value)}
-                                            className="w-full mt-2 p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-primary/10 resize-none h-24"
+                                            className="w-full mt-2 p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm outline-none focus:ring-4 focus:ring-primary/10 resize-none h-24"
                                             placeholder="Any discrepancies or notes..."
                                         />
                                     </div>
@@ -185,7 +185,7 @@ const DayEndReconciliation: React.FC = () => {
                                 ) : (
                                     <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                         {dayEndSummary.supplierAlerts.map(alert => (
-                                            <div key={alert.supplierId} className="bg-neutral-50 dark:bg-neutral-900 p-4 rounded-2xl flex justify-between items-center">
+                                            <div key={alert.supplierId} className="bg-neutral-50 dark:bg-neutral-900 p-4 rounded-sm flex justify-between items-center">
                                                 <div>
                                                     <p className="font-bold text-sm">{alert.businessName}</p>
                                                     <p className="text-[10px] text-neutral-500 uppercase tracking-widest">
@@ -217,7 +217,7 @@ const DayEndReconciliation: React.FC = () => {
                                                 <div
                                                     key={cheque.id || cheque._id}
                                                     onClick={() => toggleCheque(cheque.id || cheque._id || '')}
-                                                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-4 ${clearedCheques.includes(cheque.id || cheque._id || '')
+                                                    className={`p-4 rounded-sm border-2 transition-all cursor-pointer flex items-center gap-4 ${clearedCheques.includes(cheque.id || cheque._id || '')
                                                             ? 'border-success bg-success/5'
                                                             : 'border-transparent bg-neutral-50 dark:bg-neutral-900 hover:border-neutral-200'
                                                         }`}

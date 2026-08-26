@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
@@ -73,11 +73,11 @@ const RateRevisionList: React.FC = () => {
         const baseClass = "px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5";
         switch (status?.toUpperCase()) {
             case 'APPROVED':
-                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400`}><ShieldCheck className="w-3 h-3" /> Authorized</span>;
+                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success`}><ShieldCheck className="w-3 h-3" /> Authorized</span>;
             case 'PENDING':
-                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400`}><Clock className="w-3 h-3" /> Awaiting</span>;
+                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning`}><Clock className="w-3 h-3" /> Awaiting</span>;
             case 'REJECTED':
-                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400`}><X className="w-3 h-3" /> Aborted</span>;
+                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger`}><X className="w-3 h-3" /> Aborted</span>;
             default:
                 return <span className={`${baseClass} bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400`}>{status}</span>;
         }
@@ -104,13 +104,13 @@ const RateRevisionList: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
                         { label: 'Revision Nodes', val: stats.total, icon: Zap, color: 'text-primary', bg: 'bg-primary/10' },
-                        { label: 'Fiscal Impact', val: `₹${Math.abs(stats.totalImpact).toLocaleString()}`, icon: ArrowUpRight, color: stats.totalImpact > 0 ? 'text-rose-500' : 'text-emerald-500', bg: stats.totalImpact > 0 ? 'bg-rose-50' : 'bg-emerald-50' },
-                        { label: 'Awaiting Auth', val: stats.pending, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50' },
-                        { label: 'Audit Nodes', val: revisions.length, icon: Activity, color: 'text-indigo-500', bg: 'bg-indigo-50' }
+                        { label: 'Fiscal Impact', val: `₹${Math.abs(stats.totalImpact).toLocaleString()}`, icon: ArrowUpRight, color: stats.totalImpact > 0 ? 'text-danger' : 'text-success', bg: stats.totalImpact > 0 ? 'bg-rose-50' : 'bg-emerald-50' },
+                        { label: 'Awaiting Auth', val: stats.pending, icon: Clock, color: 'text-warning', bg: 'bg-amber-50' },
+                        { label: 'Audit Nodes', val: revisions.length, icon: Activity, color: 'text-primary', bg: 'bg-indigo-50' }
                     ].map((card, i) => (
                         <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
-                                <div className={`p-4 ${card.bg} ${card.color} rounded-2xl group-hover:scale-110 transition-all duration-500`}>
+                                <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />
                                 </div>
                                 <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
@@ -135,18 +135,18 @@ const RateRevisionList: React.FC = () => {
                                 placeholder="Search by Item, Batch, or Supplier..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
                     <div className="flex items-end gap-6 w-full md:w-auto">
                         <div className="text-right">
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 leading-none">Net Node Impact</p>
-                            <p className={`text-3xl font-black tabular-nums tracking-tighter ${stats.totalImpact > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                            <p className={`text-3xl font-black tabular-nums tracking-tighter ${stats.totalImpact > 0 ? 'text-danger' : 'text-success'}`}>
                                 {stats.totalImpact > 0 ? '+' : '-'}₹{Math.abs(stats.totalImpact).toLocaleString()}
                             </p>
                         </div>
-                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl text-neutral-400 hover:text-primary transition-all active:scale-95">
+                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-sm text-neutral-400 hover:text-primary transition-all active:scale-95">
                             <Filter className="w-6 h-6" />
                         </button>
                     </div>
@@ -174,7 +174,7 @@ const RateRevisionList: React.FC = () => {
                                     <tr>
                                         <td colSpan={7} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
                                                     <Info className="w-10 h-10" />
                                                 </div>
                                                 <div>
@@ -207,7 +207,7 @@ const RateRevisionList: React.FC = () => {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6 text-right">
-                                                <p className={`text-sm font-black tabular-nums tracking-tighter ${rev.diffAmount > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                                                <p className={`text-sm font-black tabular-nums tracking-tighter ${rev.diffAmount > 0 ? 'text-danger' : 'text-success'}`}>
                                                     {rev.diffAmount > 0 ? '+' : ''}₹{rev.diffAmount?.toLocaleString()}
                                                 </p>
                                                 <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest opacity-60">Impact on {rev.affectedQty} Qty</p>
@@ -223,14 +223,14 @@ const RateRevisionList: React.FC = () => {
                                                         <div className="flex items-center gap-2 pr-4 border-r border-neutral-100 dark:border-neutral-800">
                                                             <button
                                                                 onClick={() => handleApprove(rev._id)}
-                                                                className="p-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 transition-all active:scale-95 border border-emerald-100 dark:border-emerald-800/30"
+                                                                className="p-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-success rounded-xl hover:bg-emerald-100 transition-all active:scale-95 border border-emerald-100 dark:border-emerald-800/30"
                                                                 title="Authorize Revision"
                                                             >
                                                                 <Check size={18} />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleReject(rev._id)}
-                                                                className="p-2.5 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-xl hover:bg-rose-100 transition-all active:scale-95 border border-rose-100 dark:border-rose-800/30"
+                                                                className="p-2.5 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-danger rounded-xl hover:bg-rose-100 transition-all active:scale-95 border border-rose-100 dark:border-rose-800/30"
                                                                 title="Abort Revision"
                                                             >
                                                                 <X size={18} />
@@ -251,7 +251,7 @@ const RateRevisionList: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-4 p-8 bg-primary/5 rounded-[2.5rem] border border-primary/10 animate-in zoom-in-95 duration-1000">
-                    <div className="p-3 bg-primary/10 rounded-2xl">
+                    <div className="p-3 bg-primary/10 rounded-sm">
                         <AlertTriangle className="text-primary w-6 h-6" />
                     </div>
                     <div>

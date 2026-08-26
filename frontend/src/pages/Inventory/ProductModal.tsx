@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { X, Save, Box, Tag, DollarSign, Package, AlertCircle } from 'lucide-react';
 import { Product } from '../../types/product';
 
@@ -64,7 +64,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
 
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
                     <div className="flex items-center gap-3">

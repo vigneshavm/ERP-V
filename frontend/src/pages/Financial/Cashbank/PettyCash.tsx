@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
 import Layout from "../../../components/shared/Layout";
@@ -165,7 +165,7 @@ const PettyCash: React.FC = () => {
 
                 {/* Strategic KPIs */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Receipt className="w-16 h-16" />
                         </div>
@@ -177,13 +177,13 @@ const PettyCash: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Active Funds</p>
                         <h3 className="text-2xl font-black">{metrics.activeFunds} <span className="text-xs text-neutral-400 font-bold uppercase">across branches</span></h3>
                         <p className="text-xs text-neutral-500 mt-2 font-medium italic">All custodians active</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Leakage Rate</p>
                         <h3 className="text-2xl font-black text-error">{metrics.violationRate}%</h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -192,7 +192,7 @@ const PettyCash: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 italic">Agent Strategy</p>
                         <p className="text-[11px] font-bold text-primary italic leading-tight mt-1">
                             "{metrics.savingsAgentAdvice}"
@@ -246,7 +246,7 @@ const PettyCash: React.FC = () => {
                                 </div>
 
                                 {filteredFunds.map(fund => (
-                                    <div key={fund.id} className={`group bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm transition-all hover:scale-[1.005] hover:shadow-md ${fund.status === 'LOW_BALANCE' ? 'border-l-4 border-l-amber-500' :
+                                    <div key={fund.id} className={`group bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm p-5 shadow-sm transition-all hover:scale-[1.005] hover:shadow-md ${fund.status === 'LOW_BALANCE' ? 'border-l-4 border-l-amber-500' :
                                         fund.status === 'AUDIT_REQUIRED' ? 'border-l-4 border-l-error' : 'shadow-sm'
                                         }`}>
                                         <div className="flex flex-col sm:flex-row justify-between gap-4">
@@ -328,7 +328,7 @@ const PettyCash: React.FC = () => {
                         )}
 
                         {viewMode === 'LEDGER' && (
-                            <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                            <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
                                 <table className="w-full text-left text-xs tabular-nums">
                                     <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 text-neutral-400 font-black uppercase tracking-widest">
                                         <tr>
@@ -404,7 +404,7 @@ const PettyCash: React.FC = () => {
 
                                     <div className="space-y-4">
                                         {alerts.map((alert, i) => (
-                                            <div key={i} className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm group/alert hover:bg-white/10 transition-all cursor-pointer">
+                                            <div key={i} className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-sm backdrop-blur-sm group/alert hover:bg-white/10 transition-all cursor-pointer">
                                                 <div className={`p-3 rounded-xl h-fit shadow-inner ${alert.risk_level === 'HIGH' ? 'bg-error/20 text-error' : 'bg-warning/20 text-warning'
                                                     }`}>
                                                     <AlertCircle className="w-5 h-5 shadow-sm" />
@@ -438,7 +438,7 @@ const PettyCash: React.FC = () => {
                     {/* Side Intelligence Panel */}
                     <div className="space-y-4">
                         <h4 className="text-xs font-black text-neutral-400 uppercase tracking-widest pl-1">Compliance Health</h4>
-                        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm shadow-black/5 transition hover:shadow-md">
+                        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm shadow-black/5 transition hover:shadow-md">
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-4">Receipt Compliance</p>
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs font-black italic">Receipts Attached</span>
@@ -468,7 +468,7 @@ const PettyCash: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-primary text-white p-6 rounded-3xl shadow-xl shadow-primary/20 relative overflow-hidden group">
+                        <div className="bg-primary text-white p-6 rounded-sm shadow-xl shadow-primary/20 relative overflow-hidden group">
                             <Zap className="absolute -top-6 -right-6 w-32 h-32 opacity-10 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-700" />
                             <div className="relative z-10">
                                 <h4 className="font-black text-xl mb-2 tracking-tight italic">Automate Cash-to-Petty?</h4>
@@ -482,7 +482,7 @@ const PettyCash: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex items-start gap-3 shadow-inner">
+                        <div className="p-4 rounded-sm border border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex items-start gap-3 shadow-inner">
                             <Info className="w-4 h-4 text-neutral-400 flex-shrink-0 mt-0.5" />
                             <p className="text-[10px] text-neutral-500 font-bold leading-relaxed italic">
                                 Wings-Grade petty cash monitoring ensures every rupee spent operatively is accounted for with cryptographic proof of spend links.

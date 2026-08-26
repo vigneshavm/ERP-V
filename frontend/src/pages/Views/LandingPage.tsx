@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
@@ -24,7 +24,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectAdmin, onSelectTenant
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
             <div className="max-w-4xl w-full text-center mb-12">
-                <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-600/20">
+                <div className="w-16 h-16 bg-indigo-600 rounded-sm flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-600/20">
                     <span className="font-bold text-3xl text-white">E</span>
                 </div>
                 <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Enterprise Manager</h1>
@@ -38,12 +38,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectAdmin, onSelectTenant
                 {/* Super Admin */}
                 <button
                     onClick={onSelectAdmin}
-                    className="group relative bg-slate-900 p-6 rounded-2xl shadow-lg border-2 border-slate-800 hover:border-indigo-500 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 text-left"
+                    className="group relative bg-slate-900 p-6 rounded-sm shadow-lg border-2 border-slate-800 hover:border-indigo-500 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 text-left"
                 >
-                    <div className="absolute top-4 right-4 text-slate-600 group-hover:text-indigo-400 transition-colors">
+                    <div className="absolute top-4 right-4 text-slate-600 group-hover:text-primary transition-colors">
                         <ArrowRight className="w-5 h-5" />
                     </div>
-                    <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-110 group-hover:bg-indigo-500/10 transition-all">
+                    <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-primary mb-4 group-hover:scale-110 group-hover:bg-primary/10 transition-all">
                         <Shield className="w-6 h-6" />
                     </div>
                     <h2 className="text-xl font-bold text-white mb-2">Super Admin</h2>
@@ -53,7 +53,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectAdmin, onSelectTenant
                 {/* Sign Up - NEW */}
                 <button
                     onClick={() => navigate('/signup')}
-                    className="group relative bg-gradient-to-br from-indigo-600 to-purple-600 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-left text-white hover:scale-[1.02]"
+                    className="group relative bg-gradient-to-br from-indigo-600 to-purple-600 p-6 rounded-sm shadow-lg hover:shadow-xl transition-all duration-300 text-left text-white hover:scale-[1.02]"
                 >
                     <div className="absolute top-4 right-4 text-white/50 group-hover:text-white transition-colors">
                         <ArrowRight className="w-5 h-5" />
@@ -72,7 +72,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectAdmin, onSelectTenant
                 <div className="relative group">
                     <button
                         onClick={() => setShowTenantList(!showTenantList)}
-                        className={`w-full group relative bg-white p-6 rounded-2xl shadow-sm border-2 transition-all duration-300 text-left ${showTenantList ? 'border-emerald-600 shadow-xl' : 'border-slate-100 hover:border-emerald-600 hover:shadow-xl'}`}
+                        className={`w-full group relative bg-white p-6 rounded-sm shadow-sm border-2 transition-all duration-300 text-left ${showTenantList ? 'border-emerald-600 shadow-xl' : 'border-slate-100 hover:border-emerald-600 hover:shadow-xl'}`}
                     >
                         <div className="absolute top-4 right-4 text-slate-300 group-hover:text-emerald-600 transition-colors">
                             <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${showTenantList ? 'rotate-180' : ''}`} />
@@ -85,7 +85,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectAdmin, onSelectTenant
                     </button>
 
                     {showTenantList && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 max-h-80 overflow-hidden animate-in slide-in-from-top-2 duration-200">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-sm shadow-2xl border border-slate-100 z-50 max-h-80 overflow-hidden animate-in slide-in-from-top-2 duration-200">
                             {/* Search Header */}
                             <div className="p-3 border-b border-slate-100 bg-slate-50/50">
                                 <div className="relative">

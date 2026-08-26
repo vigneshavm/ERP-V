@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { User, Phone, Mail, MapPin, Search, X, Briefcase } from 'lucide-react';
 import { FormSection, InputWrapper } from './CustomerUI';
 import { Customer } from "../../../../types";
@@ -100,7 +100,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             value={formData.name}
                             onChange={onChange}
                             required
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
+                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
                             placeholder="Full Commercial Name"
                         />
                     </InputWrapper>
@@ -118,7 +118,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             onChange={onChange}
                             required
                             pattern="[0-9]{10}"
-                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'phone' ? 'border-rose-500 focus:border-rose-500' : 'border-slate-100 dark:border-slate-800 focus:border-indigo-500'}`}
+                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'phone' ? 'border-rose-500 focus:border-rose-500' : 'border-slate-100 dark:border-slate-800 focus:border-indigo-500'}`}
                             placeholder="10-Digit Primary Line"
                         />
                     </InputWrapper>
@@ -133,7 +133,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             name="email"
                             value={formData.email}
                             onChange={onChange}
-                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'email' ? 'border-rose-500 focus:border-rose-500' : 'border-slate-100 dark:border-slate-800 focus:border-indigo-500'}`}
+                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'email' ? 'border-rose-500 focus:border-rose-500' : 'border-slate-100 dark:border-slate-800 focus:border-indigo-500'}`}
                             placeholder="Official Digital Correspondence"
                         />
                     </InputWrapper>
@@ -141,10 +141,10 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                     <InputWrapper label="Network Referral" icon={Briefcase}>
                         <div className="relative" ref={dropdownRef}>
                             {selectedReferrer ? (
-                                <div className="w-full px-5 py-3.5 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/30 rounded-2xl flex items-center justify-between group">
+                                <div className="w-full px-5 py-3.5 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/30 rounded-sm flex items-center justify-between group">
                                     <div>
                                         <p className="text-[10px] font-black text-emerald-600 uppercase tracking-tighter leading-none mb-1">Referrer Selected</p>
-                                        <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">{selectedReferrer.name}</p>
+                                        <p className="text-sm font-bold text-emerald-700 dark:text-success">{selectedReferrer.name}</p>
                                     </div>
                                     <button type="button" onClick={handleClearReferrer} className="p-2 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-xl transition-all">
                                         <X className="w-4 h-4 text-emerald-600" />
@@ -160,7 +160,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                                             setReferralSearch(e.target.value);
                                             setShowReferralDropdown(true);
                                         }}
-                                        className="w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
+                                        className="w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
                                         placeholder="Search existing partners..."
                                     />
                                     {showReferralDropdown && referralSearch.length > 0 && (
@@ -200,7 +200,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             value={formData.address}
                             onChange={onChange}
                             rows={3}
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm leading-relaxed text-[rgb(var(--color-text))]"
+                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm leading-relaxed text-[rgb(var(--color-text))]"
                             placeholder="Warehouse Access Point / Billing Logistics Center"
                         />
                     </InputWrapper>
@@ -211,14 +211,14 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="px-8 py-4 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all"
+                    className="px-8 py-4 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all"
                 >
                     Abort
                 </button>
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-10 py-4 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-wait"
+                    className="px-10 py-4 bg-indigo-600 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-wait"
                 >
                     {isLoading ? 'Synchronizing Pipeline...' : submitLabel}
                 </button>

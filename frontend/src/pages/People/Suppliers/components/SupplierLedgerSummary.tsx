@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { TrendingUp, FileText, Clock } from 'lucide-react';
 
 interface LedgerData {
@@ -22,7 +22,7 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Opening Balance */}
-            <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+            <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-slate-200/20 dark:bg-neutral-700/30 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
@@ -34,40 +34,40 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
             </div>
 
             {/* Total Debit (Payments) */}
-            <div className="bg-[#F8FFF9] dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
+            <div className="bg-[#F8FFF9] dark:bg-success/10 border border-emerald-100 dark:border-success/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-success/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
-                        <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                        <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-success/20 flex items-center justify-center text-emerald-600 dark:text-success">
                             <FileText className="w-3 h-3" />
                         </div>
-                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Total Debit</span>
+                        <span className="text-xs font-bold text-emerald-600 dark:text-success uppercase tracking-wide">Total Debit</span>
                     </div>
                     <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(data.totals.debit)}</span>
                 </div>
             </div>
 
             {/* Total Credit (Bills) */}
-            <div className="bg-[#FFF8F8] dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-rose-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
+            <div className="bg-[#FFF8F8] dark:bg-danger/10 border border-rose-100 dark:border-danger/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-danger/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
-                        <div className="w-5 h-5 rounded-full bg-rose-50 dark:bg-rose-500/20 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                        <div className="w-5 h-5 rounded-full bg-rose-50 dark:bg-danger/20 flex items-center justify-center text-rose-600 dark:text-danger">
                             <FileText className="w-3 h-3" />
                         </div>
-                        <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Total Credit</span>
+                        <span className="text-xs font-bold text-rose-600 dark:text-danger uppercase tracking-wide">Total Credit</span>
                     </div>
                     <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(data.totals.credit)}</span>
                 </div>
             </div>
 
             {/* Closing Balance */}
-            <div className="bg-[#E8F2FF]/30 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 p-5 rounded-2xl flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+            <div className="bg-[#E8F2FF]/30 dark:bg-primary/10 border border-indigo-100 dark:border-primary/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-400/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
-                        <Clock className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
-                        <span className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wide">Closing Balance</span>
+                        <Clock className="w-4 h-4 text-primary dark:text-primary" />
+                        <span className="text-xs font-bold text-primary dark:text-primary uppercase tracking-wide">Closing Balance</span>
                     </div>
                     <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(data.closingBalance)}</span>
                 </div>

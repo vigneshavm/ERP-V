@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ChevronDown, Grid3X3, List as ListIcon, Star, Heart, ShoppingCart } from 'lucide-react';
 import { Product } from "../../types/product";
 
@@ -49,13 +49,13 @@ export const StorefrontProductDisplay: React.FC<StorefrontProductDisplayProps> =
                     <div className="flex bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-1 shrink-0">
                         <button
                             onClick={() => setViewMode('grid')}
-                            className={`p-1.5 rounded transition-all ${viewMode === 'grid' ? 'bg-slate-100 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-400'}`}
+                            className={`p-1.5 rounded transition-all ${viewMode === 'grid' ? 'bg-slate-100 dark:bg-slate-700 text-primary dark:text-primary shadow-sm' : 'text-slate-400'}`}
                         >
                             <Grid3X3 className="w-4 h-4" />
                         </button>
                         <button
                             onClick={() => setViewMode('list')}
-                            className={`p-1.5 rounded transition-all ${viewMode === 'list' ? 'bg-slate-100 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-400'}`}
+                            className={`p-1.5 rounded transition-all ${viewMode === 'list' ? 'bg-slate-100 dark:bg-slate-700 text-primary dark:text-primary shadow-sm' : 'text-slate-400'}`}
                         >
                             <ListIcon className="w-4 h-4" />
                         </button>
@@ -66,7 +66,7 @@ export const StorefrontProductDisplay: React.FC<StorefrontProductDisplayProps> =
             {viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredProducts.map(product => (
-                        <div key={product.id} className="group bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+                        <div key={product.id} className="group bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
                             <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-700 relative overflow-hidden">
                                 <img
                                     src={getProductImage(product)}
@@ -85,8 +85,8 @@ export const StorefrontProductDisplay: React.FC<StorefrontProductDisplayProps> =
 
                             <div className="p-5 flex flex-col flex-1">
                                 <div className="flex justify-between items-start mb-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400">{product.category}</span>
-                                    <div className="flex items-center gap-1 text-amber-400 text-xs">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary dark:text-primary">{product.category}</span>
+                                    <div className="flex items-center gap-1 text-warning text-xs">
                                         <Star className="w-3 h-3 fill-current" />
                                         <span className="text-slate-500 dark:text-slate-400 font-medium">4.5</span>
                                     </div>

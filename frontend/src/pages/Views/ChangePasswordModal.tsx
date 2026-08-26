@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, Key, AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../redux/store.js";
@@ -102,12 +102,12 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
 
     return (
         <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-sm shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 overflow-hidden">
 
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
                     <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Key className="w-5 h-5 text-indigo-500" />
+                        <Key className="w-5 h-5 text-primary" />
                         Change Password
                     </h3>
                     {!success && !isLoading && (
@@ -120,13 +120,13 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
                 {success ? (
                     <div className="p-8 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
                         <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-4">
-                            <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+                            <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-success" />
                         </div>
                         <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Password Changed!</h4>
                         <p className="text-slate-500 dark:text-slate-400 mb-6">
                             Your password has been updated successfully. You will be logged out in a moment.
                         </p>
-                        <Loader2 className="w-5 h-5 animate-spin text-indigo-500" />
+                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -207,7 +207,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
                             {validateList.map((rule, idx) => (
                                 <div key={idx} className="flex items-center gap-2 text-xs">
                                     <div className={`w-1.5 h-1.5 rounded-full ${rule.valid ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`} />
-                                    <span className={`${rule.valid ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-500'}`}>
+                                    <span className={`${rule.valid ? 'text-emerald-600 dark:text-success font-medium' : 'text-slate-500'}`}>
                                         {rule.label}
                                     </span>
                                 </div>

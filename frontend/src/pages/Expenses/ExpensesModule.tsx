@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Plus, Search, Filter, FilterX, Receipt, Clock, CheckCircle2, XCircle, MoreVertical, Building2, UserCircle, CreditCard, Landmark, Wallet, Trash2 } from 'lucide-react';
 import { useExpenses, Expense } from "../../hooks/useExpenses";
 import { useExpenseCategories } from "../../hooks/useExpenseCategories";
@@ -67,7 +67,7 @@ const ExpensesModule: React.FC = () => {
                 </div>
                 <button
                     onClick={() => setIsFormOpen(true)}
-                    className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-2xl font-black shadow-lg shadow-primary/20 flex items-center gap-2 transition-all active:scale-95"
+                    className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-sm font-black shadow-lg shadow-primary/20 flex items-center gap-2 transition-all active:scale-95"
                 >
                     <Plus className="w-5 h-5" />
                     <span>Record New Expense</span>
@@ -94,7 +94,7 @@ const ExpensesModule: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="Search by ID, Category or Note..."
-                                    className="w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20"
+                                    className="w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border-none rounded-sm text-sm font-bold focus:ring-2 focus:ring-primary/20"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -148,9 +148,9 @@ const ExpensesModule: React.FC = () => {
                                             </td>
                                             <td className="p-6">
                                                 <div className="flex items-center gap-2">
-                                                    {expense.payment_method === 'CASH' && <Wallet className="w-4 h-4 text-amber-500" />}
+                                                    {expense.payment_method === 'CASH' && <Wallet className="w-4 h-4 text-warning" />}
                                                     {expense.payment_method === 'BANK' && <Landmark className="w-4 h-4 text-primary" />}
-                                                    {expense.payment_method === 'PETTY' && <CreditCard className="w-4 h-4 text-indigo-500" />}
+                                                    {expense.payment_method === 'PETTY' && <CreditCard className="w-4 h-4 text-primary" />}
                                                     <span className="text-[10px] font-black uppercase tracking-widest">{expense.payment_method}</span>
                                                 </div>
                                             </td>

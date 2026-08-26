@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from "../../components/shared/Layout";
@@ -199,12 +199,12 @@ const SupplierPayments: React.FC = () => {
                         value={`${Math.round((stats.clearedCount / (stats.totalCount || 1)) * 100)}%`}
                         icon={<DollarSign className="w-full h-full" />}
                         iconBgColor="bg-indigo-50"
-                        iconColor="text-indigo-600"
+                        iconColor="text-primary"
                     />
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row gap-4 justify-between items-center shadow-sm">
+                <div className="bg-white dark:bg-neutral-900 p-4 rounded-sm border border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row gap-4 justify-between items-center shadow-sm">
                     <div className="relative w-full sm:w-96">
                         <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                         <input
@@ -234,7 +234,7 @@ const SupplierPayments: React.FC = () => {
                 </div>
 
                 {/* Table */}
-                <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden text-neutral-900 dark:text-neutral-100">
+                <div className="bg-white dark:bg-neutral-900 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden text-neutral-900 dark:text-neutral-100">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
                             <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b dark:border-neutral-800">

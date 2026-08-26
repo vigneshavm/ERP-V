@@ -4,333 +4,207 @@ import { setActiveTab } from '../../redux/slices/uiSlice';
 import {
     Banknote, Landmark, ArrowUpRight, ArrowDownRight, Briefcase,
     FileSpreadsheet, Plus, Filter, Search, ShieldCheck, Activity,
-    RefreshCw, X, ChevronDown, SlidersHorizontal
+    RefreshCw, X, ChevronDown, SlidersHorizontal, IndianRupee,
+    CreditCard, Zap, ChevronRight
 } from 'lucide-react';
-import financeData from '../../mockData/financeData.json';
-
-const ALL_TRANSACTIONS = financeData.ALL_TRANSACTIONS;
-
-type FilterType = 'all' | 'debit' | 'credit';
-type FilterReconciled = 'all' | 'reconciled' | 'pending';
+import { useNavigate } from 'react-router-dom';
+import { salesInvoices, purchases, bank_accounts, pdcs, MockSalesInvoice } from '../../data';
+import Layout from '../../components/shared/Layout';
 
 const FinanceMockUI: React.FC = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [searchQuery, setSearchQuery] = useState('');
-    const [filterType, setFilterType] = useState<FilterType>('all');
-    const [filterReconciled, setFilterReconciled] = useState<FilterReconciled>('all');
-    const [showFilters, setShowFilters] = useState(false);
+    const [filterType, setFilterType] = useState('all');
 
-    const activeFilterCount = [
-        filterType !== 'all' ? 1 : 0,
-        filterReconciled !== 'all' ? 1 : 0,
-    ].reduce((a, b) => a + b, 0);
+    const metrics = useMemo(() => {
+        const totalSales = (salesInvoices as MockSalesInvoice[]).reduce((sum, inv) => sum + inv.total, 0);
+        const totalPurchases = purchases.reduce((sum, p) => sum + p.total, 0);
+        const netPosition = totalSales - totalPurchases;
 
-    const filteredTransactions = useMemo(() => {
-        return ALL_TRANSACTIONS.filter(t => {
-            const q = searchQuery.toLowerCase();
-            const matchesSearch =
-                !q ||
-                t.ref.toLowerCase().includes(q) ||
-                t.part.toLowerCase().includes(q) ||
-                t.date.toLowerCase().includes(q);
+        return [
+            { label: 'System Liquidity', val: `₹${(netPosition/100000).toFixed(2)}L`, trend: '+4.2%', icon: Landmark, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+            { label: 'Unreconciled Nodes', val: '12', trend: '-2', icon: Activity, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+            { label: 'Quantum Throughput', val: `₹${(totalSales/100000).toFixed(1)}L`, trend: '+12.5%', icon: Zap, color: 'text-emerald-500', bg: 'bg-emerald-500/10' }
+        ];
+    }, []);
 
-            const matchesType =
-                filterType === 'all' ||
-                (filterType === 'debit' && t.dr !== '-') ||
-                (filterType === 'credit' && t.cr !== '-');
-
-            const matchesRec =
-                filterReconciled === 'all' ||
-                (filterReconciled === 'reconciled' && t.rec) ||
-                (filterReconciled === 'pending' && !t.rec);
-
-            return matchesSearch && matchesType && matchesRec;
-        });
-    }, [searchQuery, filterType, filterReconciled]);
-
-    const clearFilters = () => {
-        setSearchQuery('');
-        setFilterType('all');
-        setFilterReconciled('all');
-    };
-
-    const handleExportLedger = () => {
-        const headers = ['Date', 'Reference', 'Particulars', 'Debit', 'Credit', 'Reconciled'];
-        const csvContent = [
-            headers.join(','),
-            ...filteredTransactions.map(t =>
-                `"${t.date}","${t.ref}","${t.part}","${t.dr}","${t.cr}","${t.rec ? 'Yes' : 'No'}"`
-            )
-        ].join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.setAttribute('href', URL.createObjectURL(blob));
-        link.setAttribute('download', 'ledger_export.csv');
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
 
     return (
-        <div className="min-h-screen bg-app text-main font-sans selection:bg-purple-500/30 overflow-hidden flex flex-col">
-            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[150px]" />
-                <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-emerald-600/10 rounded-full blur-[150px]" />
-            </div>
-
-            <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8">
+        <Layout>
+            <div className="p-8 space-y-8 h-full flex flex-col text-main animate-fade-in relative z-10">
                 {/* Header */}
-                <header className="flex justify-between items-center mb-8">
+                <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight text-main flex items-center gap-3">
-                            Treasury &amp; Ledger
-                            <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-lg text-xs font-bold uppercase tracking-widest flex items-center gap-1">
-                                <ShieldCheck className="w-3 h-3" /> Encrypted Vault
-                            </span>
+                        <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
+                            Treasury <span className="text-purple-500">Node</span>
                         </h1>
-                        <p className="text-sm text-secondary mt-1 font-medium">Reconcile institutional cashflows, banking nodes, and uncleared instruments.</p>
+                        <p className="text-[10px] uppercase tracking-[0.2em] font-black text-neutral-500 dark:text-neutral-400 mt-1">
+                            Institutional Fiscal Core // Protocol V4
+                        </p>
                     </div>
                     <div className="flex gap-4">
-                        <button onClick={handleExportLedger} className="h-11 px-6 bg-card hover:bg-card text-main font-bold text-sm tracking-wide rounded-xl transition-all border border-default flex items-center gap-2">
-                            <FileSpreadsheet className="w-4 h-4" /> Export Ledger
+                        <button className="h-12 px-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white font-bold text-xs tracking-widest rounded-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all shadow-sm flex items-center gap-3 uppercase">
+                            <FileSpreadsheet className="w-4 h-4 text-purple-500" /> Fiscal Export
                         </button>
-                        <button onClick={() => dispatch(setActiveTab('JOURNAL_ENTRY_FORM'))} className="h-11 px-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-main font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:shadow-[0_0_30px_rgba(147,51,234,0.5)] flex items-center gap-2">
+                        <button className="h-12 px-8 bg-purple-600 text-white font-black uppercase tracking-widest text-xs rounded-sm transition-all shadow-lg shadow-purple-500/20 flex items-center gap-3 hover:opacity-90">
                             <Plus className="w-4 h-4" /> New Journal Entry
                         </button>
                     </div>
-                </header>
+                </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                    {/* Bank Accounts */}
-                    <div className="lg:col-span-2 grid grid-cols-2 gap-6">
-                        {financeData.bankAccounts.map((bank, idx) => (
-                            <div key={idx} className="glass-panel backdrop-blur-md border border-default rounded-3xl p-6 group hover:border-purple-500/30 transition-all cursor-pointer relative overflow-hidden">
-                                <div className="absolute right-0 bottom-0 w-24 h-24 bg-purple-500/5 rounded-full blur-xl -mr-10 -mb-10 group-hover:scale-150 transition-transform duration-700" />
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="flex items-center gap-3 relative z-10">
-                                        <div className="p-3 bg-card rounded-xl text-purple-400">
-                                            <Landmark className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-bold text-main">{bank.name}</p>
-                                            <p className="text-[10px] font-black text-secondary uppercase tracking-widest font-mono">{bank.no}</p>
-                                        </div>
+                {/* Metrics Matrix */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {metrics.map((card, i) => (
+                        <div key={i} className="bg-white dark:bg-neutral-900 p-6 rounded-sm border border-neutral-200 dark:border-neutral-800 flex flex-col gap-4 group hover:border-purple-500/50 transition-all cursor-pointer shadow-sm relative overflow-hidden">
+                            <div className="flex justify-between items-start relative z-10">
+                                <div className={`p-3 rounded-sm ${card.bg} ${card.color} border border-current/10`}>
+                                    <card.icon className="w-5 h-5" />
+                                </div>
+                                <span className={`text-[9px] font-black ${card.color} uppercase tracking-[0.2em]`}>{card.trend} V/PREV</span>
+                            </div>
+                            <div className="relative z-10">
+                                <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">{card.label}</p>
+                                <p className="text-2xl font-display font-black tracking-tighter text-neutral-900 dark:text-white tabular-nums">{card.val}</p>
+                            </div>
+                            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                        </div>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Bank Nodes */}
+                    <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {bank_accounts.map((bank, i) => (
+                            <div key={i} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6 group hover:border-purple-500/50 transition-all shadow-sm">
+                                <div className="flex justify-between items-start mb-8">
+                                    <div className="p-3 bg-neutral-50 dark:bg-neutral-950 rounded-sm border border-neutral-200 dark:border-neutral-800">
+                                        <Landmark className="w-5 h-5 text-purple-500" />
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">{bank.no}</p>
+                                        <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tight mt-1">{bank.name}</p>
                                     </div>
                                 </div>
-                                <div className="relative z-10">
-                                    <p className="text-3xl font-black text-main tabular-nums tracking-tighter mb-1">{bank.bal}</p>
-                                    <div className={`flex items-center gap-1 text-[10px] font-black uppercase tracking-widest ${bank.up ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                <div>
+                                    <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">Available Liquidity</p>
+                                    <p className="text-3xl font-display font-black text-neutral-900 dark:text-white tabular-nums tracking-tighter">{bank.bal}</p>
+                                    <div className={`flex items-center gap-1 text-[9px] font-black uppercase tracking-widest mt-2 ${bank.up ? 'text-emerald-500' : 'text-amber-500'}`}>
                                         {bank.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                                        {bank.diff} today
+                                        {bank.diff} Temporal Delta
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    {/* PDC & Alerts */}
-                    <div className="glass-panel backdrop-blur-md border border-amber-900/30 rounded-3xl p-6 flex flex-col relative overflow-hidden">
-                        <div className="absolute right-0 top-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl -mr-10 -mt-10" />
-                        <h3 className="text-sm font-black uppercase tracking-widest text-muted mb-6 flex items-center gap-2 relative z-10">
-                            <Activity className="w-4 h-4 text-amber-500" /> Instrument Vault (PDCs)
+                    {/* Instrument Vault */}
+                    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6 flex flex-col shadow-sm">
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-900 dark:text-white flex items-center gap-2 mb-6">
+                            <CreditCard className="w-4 h-4 text-purple-500" /> Instrument Vault (PDCs)
                         </h3>
-                        <div className="flex-1 space-y-4 relative z-10">
-                            {financeData.pdcs.map((pdc, i) => (
-                                <div key={i} className="flex justify-between items-center p-4 bg-input border border-default rounded-2xl">
+                        <div className="space-y-4 flex-1">
+                            {pdcs.map((pdc, i) => (
+                                <div key={i} className="p-4 bg-neutral-50 dark:bg-neutral-950 border border-neutral-100 dark:border-neutral-800 rounded-sm flex justify-between items-center group cursor-pointer hover:border-purple-500/30 transition-all">
                                     <div>
-                                        <p className="text-xs font-bold text-main">{pdc.entity}</p>
-                                        <p className={`text-[10px] font-black uppercase tracking-widest mt-1 text-${pdc.color}-400`}>{pdc.date}</p>
+                                        <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tight">{pdc.entity}</p>
+                                        <p className={`text-[9px] font-black uppercase tracking-widest mt-1 ${pdc.color}`}>{pdc.date}</p>
                                     </div>
-                                    <p className="font-mono text-sm font-black text-main">{pdc.amount}</p>
+                                    <p className="font-mono text-sm font-black text-neutral-900 dark:text-white">{pdc.amount}</p>
                                 </div>
                             ))}
                         </div>
-                        <button className="w-full mt-4 py-3 rounded-xl border border-default text-[10px] font-black uppercase tracking-widest text-muted hover:text-main hover:bg-card transition-all">
+                        <button className="w-full h-11 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 hover:text-purple-500 border border-neutral-200 dark:border-neutral-700 rounded-sm text-[9px] font-black uppercase tracking-widest mt-6 transition-all">
                             View All Uncleared
                         </button>
                     </div>
                 </div>
 
-                {/* Ledger Table */}
-                <div className="flex-1 glass-panel backdrop-blur-xl border border-default rounded-3xl flex flex-col overflow-hidden">
-                    {/* Table Header */}
-                    <div className="p-6 border-b border-default bg-card">
-                        <div className="flex justify-between items-center gap-4">
-                            <h3 className="text-sm font-black uppercase tracking-widest text-main flex items-center gap-2 shrink-0">
-                                <Briefcase className="w-4 h-4 text-purple-500" /> Recent Transactions
-                                <span className="ml-1 px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-400 text-[10px] font-black">
-                                    {filteredTransactions.length} / {ALL_TRANSACTIONS.length}
-                                </span>
+                {/* Ledger Registry */}
+                <div className="flex-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm flex flex-col overflow-hidden shadow-sm">
+                    <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex flex-col lg:flex-row justify-between items-center gap-4">
+                        <div className="flex items-center gap-4">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-900 dark:text-white flex items-center gap-2">
+                                <Briefcase className="w-4 h-4 text-purple-500" /> Fiscal Ledger
                             </h3>
-
-                            <div className="flex items-center gap-3 flex-1 justify-end">
-                                {/* Search */}
-                                <div className="relative">
-                                    <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
-                                    <input
-                                        type="text"
-                                        value={searchQuery}
-                                        onChange={e => setSearchQuery(e.target.value)}
-                                        placeholder="Search ref, particulars, date..."
-                                        className="w-72 bg-input border border-default rounded-xl py-2 pl-11 pr-9 text-sm focus:outline-none focus:border-purple-500 transition-colors text-main placeholder:text-secondary"
-                                    />
-                                    {searchQuery && (
-                                        <button
-                                            onClick={() => setSearchQuery('')}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-main transition-colors"
-                                        >
-                                            <X className="w-3.5 h-3.5" />
-                                        </button>
-                                    )}
-                                </div>
-
-                                {/* Filter Toggle */}
-                                <button
-                                    onClick={() => setShowFilters(f => !f)}
-                                    className={`px-4 py-2 border rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
-                                        showFilters || activeFilterCount > 0
-                                            ? 'bg-purple-500/10 border-purple-500/40 text-purple-400'
-                                            : 'bg-card border-default text-main hover:border-purple-500/30'
-                                    }`}
-                                >
-                                    <SlidersHorizontal className="w-4 h-4" />
-                                    Filters
-                                    {activeFilterCount > 0 && (
-                                        <span className="ml-1 w-4 h-4 rounded-full bg-purple-500 text-white text-[9px] font-black flex items-center justify-center">
-                                            {activeFilterCount}
-                                        </span>
-                                    )}
-                                    <ChevronDown className={`w-3 h-3 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-                                </button>
-
-                                {/* Clear All */}
-                                {(activeFilterCount > 0 || searchQuery) && (
-                                    <button
-                                        onClick={clearFilters}
-                                        className="px-3 py-2 text-xs font-bold text-rose-400 hover:text-rose-300 border border-rose-500/20 hover:border-rose-500/40 rounded-xl bg-rose-500/5 hover:bg-rose-500/10 transition-all flex items-center gap-1.5"
-                                    >
-                                        <X className="w-3 h-3" /> Clear
-                                    </button>
-                                )}
+                            <div className="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800 hidden lg:block" />
+                            <div className="relative w-64">
+                                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                                <input 
+                                    type="text" 
+                                    placeholder="FILTER BY REF / ENTITY..." 
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-2 pl-10 pr-4 text-[9px] font-black tracking-widest uppercase focus:border-purple-500 outline-none" 
+                                />
                             </div>
                         </div>
-
-                        {/* Filter Panel */}
-                        {showFilters && (
-                            <div className="mt-4 pt-4 border-t border-default flex items-center gap-6 flex-wrap">
-                                {/* Type Filter */}
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-secondary whitespace-nowrap">Type</span>
-                                    <div className="flex gap-1 p-1 bg-input rounded-lg border border-default">
-                                        {(['all', 'debit', 'credit'] as FilterType[]).map(opt => (
-                                            <button
-                                                key={opt}
-                                                onClick={() => setFilterType(opt)}
-                                                className={`px-3 py-1 rounded-md text-[11px] font-black uppercase tracking-wider transition-all ${
-                                                    filterType === opt
-                                                        ? 'bg-purple-500 text-white shadow-sm'
-                                                        : 'text-secondary hover:text-main'
-                                                }`}
-                                            >
-                                                {opt}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Reconciled Filter */}
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-secondary whitespace-nowrap">Status</span>
-                                    <div className="flex gap-1 p-1 bg-input rounded-lg border border-default">
-                                        {([
-                                            { val: 'all', label: 'All' },
-                                            { val: 'reconciled', label: 'Reconciled' },
-                                            { val: 'pending', label: 'Pending' },
-                                        ] as { val: FilterReconciled; label: string }[]).map(opt => (
-                                            <button
-                                                key={opt.val}
-                                                onClick={() => setFilterReconciled(opt.val)}
-                                                className={`px-3 py-1 rounded-md text-[11px] font-black uppercase tracking-wider transition-all ${
-                                                    filterReconciled === opt.val
-                                                        ? opt.val === 'pending'
-                                                            ? 'bg-amber-500 text-white shadow-sm'
-                                                            : opt.val === 'reconciled'
-                                                                ? 'bg-emerald-600 text-white shadow-sm'
-                                                                : 'bg-purple-500 text-white shadow-sm'
-                                                        : 'text-secondary hover:text-main'
-                                                }`}
-                                            >
-                                                {opt.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                        <div className="flex gap-4">
+                            <button className="h-10 px-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm text-[9px] font-black uppercase tracking-widest text-neutral-500 hover:text-purple-500 transition-all flex items-center gap-2">
+                                <Filter className="w-4 h-4" /> Global Filters
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Table */}
-                    <div className="flex-1 overflow-auto">
+                    <div className="flex-1 overflow-auto custom-scrollbar">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-app sticky top-0 z-20 backdrop-blur-md">
-                                <tr>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default">Date</th>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default">Reference</th>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default">Particulars</th>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default text-right">Debit</th>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default text-right">Credit</th>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default text-center">Reconciled</th>
+                            <thead className="bg-neutral-50 dark:bg-neutral-950 sticky top-0 z-20 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800">
+                                <tr className="text-neutral-500 dark:text-neutral-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                                    <th className="px-8 py-5">Node Reference</th>
+                                    <th className="px-8 py-5">Particulars</th>
+                                    <th className="px-8 py-5 text-right">Debit (In)</th>
+                                    <th className="px-8 py-5 text-right">Credit (Out)</th>
+                                    <th className="px-8 py-5 text-center">Protocol state</th>
+                                    <th className="px-8 py-5 w-10"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-default">
-                                {filteredTransactions.length > 0 ? (
-                                    filteredTransactions.map((row, idx) => (
-                                        <tr key={idx} className="hover:bg-card/30 transition-colors cursor-default">
-                                            <td className="px-8 py-5 text-sm font-bold text-main whitespace-nowrap">{row.date}</td>
-                                            <td className="px-8 py-5">
-                                                <span className="font-mono text-xs font-black text-purple-400 hover:underline cursor-pointer">{row.ref}</span>
-                                            </td>
-                                            <td className="px-8 py-5 text-sm font-medium text-main">{row.part}</td>
-                                            <td className="px-8 py-5 text-right font-mono text-sm font-black text-main">
-                                                {row.dr !== '-' ? `₹${row.dr}` : <span className="text-secondary">—</span>}
-                                            </td>
-                                            <td className="px-8 py-5 text-right font-mono text-sm font-black text-emerald-400">
-                                                {row.cr !== '-' ? `₹${row.cr}` : <span className="text-secondary">—</span>}
-                                            </td>
-                                            <td className="px-8 py-5">
-                                                <div className="flex justify-center">
-                                                    {row.rec ? (
-                                                        <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                                                    ) : (
-                                                        <button className="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-amber-500/20 transition-colors flex items-center gap-1">
-                                                            <RefreshCw className="w-3 h-3" /> Reconcile
-                                                        </button>
-                                                    )}
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                { (salesInvoices as MockSalesInvoice[]).slice(0, 10).map((inv, idx) => (
+                                    <tr key={idx} className="hover:bg-purple-500/[0.02] transition-all group">
+                                        <td className="px-8 py-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-sm bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                                                    <Zap className="w-5 h-5" />
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={6} className="px-8 py-16 text-center">
-                                            <div className="flex flex-col items-center gap-3">
-                                                <Filter className="w-8 h-8 text-secondary/40" />
-                                                <p className="text-sm font-bold text-secondary">No transactions match your filters</p>
-                                                <button onClick={clearFilters} className="text-xs font-black text-purple-400 hover:text-purple-300 uppercase tracking-widest underline underline-offset-2">
-                                                    Clear filters
-                                                </button>
+                                                <span className="font-mono text-sm font-black text-neutral-900 dark:text-white uppercase">{inv.id}</span>
                                             </div>
                                         </td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex flex-col">
+                                                <span className="text-xs font-black text-neutral-700 dark:text-neutral-300 uppercase tracking-tight">Sales Transaction</span>
+                                                <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mt-1">{inv.date}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-right">
+                                            <div className="flex items-center justify-end gap-1 font-mono text-sm font-black text-emerald-500 tabular-nums tracking-tighter">
+                                                <IndianRupee className="w-3.5 h-3.5" />
+                                                {inv.total.toLocaleString()}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-right">
+                                            <div className="flex items-center justify-end gap-1 font-mono text-sm font-black text-neutral-400 tabular-nums tracking-tighter">
+                                                —
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-center">
+                                            <div className="flex justify-center">
+                                                <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <button className="p-2 text-neutral-300 hover:text-purple-500 transition-all">
+                                                <ChevronRight className="w-5 h-5" />
+                                            </button>
+                                        </td>
                                     </tr>
-                                )}
+                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
+        </Layout>
     );
 };
 

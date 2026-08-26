@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
@@ -20,7 +20,7 @@ const PayslipView = () => {
             <Layout>
                 <div className="flex flex-col items-center justify-center h-screen">
                     <p className="text-gray-500 mb-4">No Payslip Data Found</p>
-                    <button onClick={() => navigate(-1)} className="text-indigo-600 hover:underline">Go Back</button>
+                    <button onClick={() => navigate(-1)} className="text-primary hover:underline">Go Back</button>
                 </div>
             </Layout>
         );

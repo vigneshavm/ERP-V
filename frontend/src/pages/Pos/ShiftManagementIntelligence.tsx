@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import {
@@ -220,12 +220,12 @@ const ShiftManagementIntelligence: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="Search Shift ID, Cashier or Branch..."
-                                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm font-medium outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm font-medium outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
-                            <div className="flex bg-white dark:bg-neutral-800 p-1.5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                            <div className="flex bg-white dark:bg-neutral-800 p-1.5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
                                 {(['ALL', 'OPEN', 'CLOSED'] as const).map(status => (
                                     <button
                                         key={status}
@@ -249,8 +249,8 @@ const ShiftManagementIntelligence: React.FC = () => {
                                         <div className="flex-1 space-y-6">
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-4">
-                                                    <div className={`p-3 rounded-2xl ${shift.difference < 0 ? 'bg-rose-500/10 text-rose-600' :
-                                                        shift.status === 'OPEN' ? 'bg-blue-500/10 text-blue-600' : 'bg-emerald-500/10 text-emerald-600'
+                                                    <div className={`p-3 rounded-sm ${shift.difference < 0 ? 'bg-danger/10 text-rose-600' :
+                                                        shift.status === 'OPEN' ? 'bg-blue-500/10 text-blue-600' : 'bg-success/10 text-emerald-600'
                                                         }`}>
                                                         <Clock className="w-5 h-5" />
                                                     </div>
@@ -267,7 +267,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                                                         {shift.status}
                                                     </span>
                                                     {shift.difference !== 0 && (
-                                                        <span className={`text-[10px] font-black ${shift.difference < 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                                                        <span className={`text-[10px] font-black ${shift.difference < 0 ? 'text-danger' : 'text-success'}`}>
                                                             {shift.difference < 0 ? 'Shortage' : 'Excess'}: ₹{Math.abs(shift.difference)}
                                                         </span>
                                                     )}
@@ -286,14 +286,14 @@ const ShiftManagementIntelligence: React.FC = () => {
                                                 <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-100 dark:border-neutral-800">
                                                     <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Voids / Disc</p>
                                                     <p className="text-xs font-bold text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
-                                                        <span className={shift.void_count > 10 ? 'text-rose-500' : ''}>{shift.void_count}</span>
+                                                        <span className={shift.void_count > 10 ? 'text-danger' : ''}>{shift.void_count}</span>
                                                         <span className="text-neutral-300">•</span>
                                                         <span>₹{shift.discount_total}</span>
                                                     </p>
                                                 </div>
-                                                <div className={`p-3 rounded-xl border ${shift.difference < 0 ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-500/20' : 'bg-neutral-50 dark:bg-neutral-900/50 border-neutral-100 dark:border-neutral-800'}`}>
-                                                    <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${shift.difference < 0 ? 'text-rose-500' : 'text-neutral-400'}`}>Declared</p>
-                                                    <p className={`text-sm font-black tabular-nums ${shift.difference < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-neutral-900 dark:text-neutral-100'}`}>
+                                                <div className={`p-3 rounded-xl border ${shift.difference < 0 ? 'bg-rose-50 dark:bg-danger/10 border-rose-100 dark:border-danger/20' : 'bg-neutral-50 dark:bg-neutral-900/50 border-neutral-100 dark:border-neutral-800'}`}>
+                                                    <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${shift.difference < 0 ? 'text-danger' : 'text-neutral-400'}`}>Declared</p>
+                                                    <p className={`text-sm font-black tabular-nums ${shift.difference < 0 ? 'text-rose-600 dark:text-danger' : 'text-neutral-900 dark:text-neutral-100'}`}>
                                                         {shift.status === 'OPEN' ? '--' : `₹${shift.declared_cash.toLocaleString()}`}
                                                     </p>
                                                 </div>
@@ -303,12 +303,12 @@ const ShiftManagementIntelligence: React.FC = () => {
                                                 <div className="p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-700/30 rounded-xl flex items-start gap-3 group/advice">
                                                     <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                                                     <div className="flex-1">
-                                                        <p className="text-[10px] font-black text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-1">Audit Flag</p>
+                                                        <p className="text-[10px] font-black text-amber-600 dark:text-warning uppercase tracking-widest mb-1">Audit Flag</p>
                                                         <p className="text-[11px] text-neutral-600 dark:text-neutral-400 font-bold leading-relaxed">
                                                             "{shift.recommended_action}"
                                                         </p>
                                                     </div>
-                                                    <button className="px-3 py-1.5 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-amber-200 dark:hover:bg-amber-500/30 transition-all">
+                                                    <button className="px-3 py-1.5 bg-amber-100 dark:bg-warning/20 text-amber-700 dark:text-warning rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-amber-200 dark:hover:bg-amber-500/30 transition-all">
                                                         Audit
                                                     </button>
                                                 </div>
@@ -341,7 +341,7 @@ const ShiftManagementIntelligence: React.FC = () => {
                                             <span className="text-neutral-500">{stat.label}</span>
                                             <div className="flex items-center gap-1.5 tabular-nums">
                                                 <span>{stat.score}%</span>
-                                                {stat.trend === 'up' ? <TrendingUp className="w-3 h-3 text-emerald-500" /> : <TrendingDown className="w-3 h-3 text-rose-500" />}
+                                                {stat.trend === 'up' ? <TrendingUp className="w-3 h-3 text-success" /> : <TrendingDown className="w-3 h-3 text-danger" />}
                                             </div>
                                         </div>
                                         <div className="w-full h-1.5 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">

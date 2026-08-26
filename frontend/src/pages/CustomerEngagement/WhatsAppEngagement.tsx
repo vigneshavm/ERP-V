@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
     MessageSquare, Send, User, Search, Filter,
     MoreVertical, Paperclip, Smile, ShieldCheck,
@@ -56,7 +56,7 @@ const WhatsAppEngagement: React.FC = () => {
                             onClick={() => setSelectedChat(chat.id)}
                             className={`p-6 rounded-[2rem] flex items-center gap-4 cursor-pointer transition-all ${selectedChat === chat.id ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
                         >
-                            <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                            <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-sm flex items-center justify-center relative overflow-hidden">
                                 {selectedChat === chat.id ? <User className="w-6 h-6 text-white" /> : <User className="w-6 h-6 text-slate-500" />}
                                 {chat.sentiment === 'Angry' && <div className="absolute bottom-0 right-0 w-4 h-4 bg-rose-500 border-2 border-white dark:border-slate-900 rounded-full" />}
                             </div>
@@ -76,8 +76,8 @@ const WhatsAppEngagement: React.FC = () => {
             <div className="flex-1 flex flex-col bg-slate-50/30 dark:bg-black/20">
                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center">
-                            <Smartphone className="w-6 h-6 text-indigo-600" />
+                        <div className="w-12 h-12 bg-primary/10 rounded-sm flex items-center justify-center">
+                            <Smartphone className="w-6 h-6 text-primary" />
                         </div>
                         <div>
                             <h3 className="text-xl font-black italic uppercase">Rahul Sharma</h3>
@@ -124,12 +124,12 @@ const WhatsAppEngagement: React.FC = () => {
                             className="flex-1 bg-transparent outline-none font-bold italic text-sm text-slate-600 dark:text-slate-300"
                         />
                         <button className="p-2 text-slate-400"><Smile className="w-5 h-5" /></button>
-                        <button className="p-4 bg-indigo-600 text-white rounded-2xl shadow-xl shadow-indigo-600/20"><Send className="w-5 h-5" /></button>
+                        <button className="p-4 bg-indigo-600 text-white rounded-sm shadow-xl shadow-indigo-600/20"><Send className="w-5 h-5" /></button>
                     </div>
                     <div className="flex gap-4 mt-6 ml-4">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Suggestions:</span>
-                        <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline">Send Invoice Link</button>
-                        <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline">Apologize for delay</button>
+                        <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Send Invoice Link</button>
+                        <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Apologize for delay</button>
                     </div>
                 </div>
             </div>
@@ -141,24 +141,24 @@ const WhatsAppEngagement: React.FC = () => {
                         <User className="w-12 h-12" />
                     </div>
                     <h4 className="text-2xl font-black italic uppercase">{customer360.name}</h4>
-                    <span className="px-3 py-1 bg-amber-500/10 text-amber-600 text-[10px] font-black rounded-lg uppercase tracking-widest">{customer360.tag} CUSTOMER</span>
+                    <span className="px-3 py-1 bg-warning/10 text-amber-600 text-[10px] font-black rounded-lg uppercase tracking-widest">{customer360.tag} CUSTOMER</span>
                 </div>
 
                 <div className="space-y-6">
-                    <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl">
+                    <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-sm">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Lifetime Spend</p>
                         <p className="text-xl font-black italic">{customer360.spend}</p>
                     </div>
-                    <div className="p-6 bg-rose-500/5 border border-rose-500/10 rounded-3xl">
-                        <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest mb-1">Outstanding</p>
-                        <p className="text-xl font-black italic text-rose-500">{customer360.outstanding}</p>
+                    <div className="p-6 bg-rose-500/5 border border-rose-500/10 rounded-sm">
+                        <p className="text-[10px] font-bold text-danger uppercase tracking-widest mb-1">Outstanding</p>
+                        <p className="text-xl font-black italic text-danger">{customer360.outstanding}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                        <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-sm">
                             <p className="text-[8px] font-bold text-slate-400 uppercase mb-1">Visits</p>
                             <p className="text-sm font-black italic">{customer360.visits}</p>
                         </div>
-                        <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                        <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-sm">
                             <p className="text-[8px] font-bold text-slate-400 uppercase mb-1">Loyalty</p>
                             <p className="text-sm font-black italic">{customer360.loyalty}</p>
                         </div>
@@ -166,10 +166,10 @@ const WhatsAppEngagement: React.FC = () => {
                 </div>
 
                 <div className="mt-auto">
-                    <button className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-3">
+                    <button className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-sm font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-3">
                         <Sparkles className="w-4 h-4" /> AI Insights
                     </button>
-                    <p className="text-[9px] text-slate-400 italic text-center mt-4">Predicted Churn Risk: <span className="text-emerald-500 font-bold">Low (12%)</span></p>
+                    <p className="text-[9px] text-slate-400 italic text-center mt-4">Predicted Churn Risk: <span className="text-success font-bold">Low (12%)</span></p>
                 </div>
             </div>
         </div>
@@ -186,7 +186,7 @@ const WhatsAppEngagement: React.FC = () => {
                     {automations.map(auto => (
                         <div key={auto.id} className="bg-white/10 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/20 hover:bg-white/20 transition-all">
                             <div className="flex justify-between items-start mb-6">
-                                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <div className="w-12 h-12 bg-white/20 rounded-sm flex items-center justify-center">
                                     <Zap className="w-5 h-5" />
                                 </div>
                                 <div className={`w-12 h-6 rounded-full relative cursor-pointer flex items-center px-1 ${auto.status ? 'bg-emerald-500' : 'bg-slate-400'}`}>
@@ -210,18 +210,18 @@ const WhatsAppEngagement: React.FC = () => {
                             'Send Order Status',
                             'Send Refund Confirmation'
                         ].map(btn => (
-                            <div key={btn} className="p-6 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-between">
+                            <div key={btn} className="p-6 bg-slate-50 dark:bg-slate-800 rounded-sm flex items-center justify-between">
                                 <span className="font-bold italic text-slate-600 dark:text-slate-300">{btn}</span>
-                                <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 text-[8px] font-black rounded-lg uppercase tracking-widest">ENABLED</span>
+                                <span className="px-3 py-1 bg-success/10 text-emerald-600 text-[8px] font-black rounded-lg uppercase tracking-widest">ENABLED</span>
                             </div>
                         ))}
                     </div>
                 </div>
                 <div className="bg-slate-900 dark:bg-black p-12 rounded-[4rem] text-white flex flex-col justify-center items-center text-center space-y-6">
-                    <Bot className="w-16 h-16 text-indigo-400" />
+                    <Bot className="w-16 h-16 text-primary" />
                     <h3 className="text-3xl font-black italic uppercase">AI Co-Pilot</h3>
                     <p className="text-slate-400 font-bold italic max-w-sm">Our AI scans incoming messages to suggest high-conversion replies and detect emergency issues.</p>
-                    <button className="px-10 py-5 bg-indigo-600 text-white rounded-3xl font-black uppercase text-[10px] tracking-[0.3em] shadow-2xl">Manage AI Rules</button>
+                    <button className="px-10 py-5 bg-indigo-600 text-white rounded-sm font-black uppercase text-[10px] tracking-[0.3em] shadow-2xl">Manage AI Rules</button>
                 </div>
             </div>
         </div>
@@ -230,8 +230,8 @@ const WhatsAppEngagement: React.FC = () => {
     return (
         <div className="min-h-screen bg-neutral-50/50 dark:bg-[#020617] relative">
             <div className="fixed inset-0 pointer-events-none opacity-40 dark:opacity-20 z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/20 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/10 blur-[120px] rounded-full" />
+                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-success/10 blur-[120px] rounded-full" />
             </div>
 
             <div className="relative z-10 max-w-[1600px] mx-auto p-12 space-y-12">
@@ -244,16 +244,16 @@ const WhatsAppEngagement: React.FC = () => {
                             <div className="flex items-center gap-3 mb-2">
                                 <span className="px-3 py-1 bg-indigo-600 text-white text-[10px] font-black rounded-lg uppercase tracking-widest">PART B</span>
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                    <ShieldCheck className="w-3 h-3 text-emerald-500" /> PREMIUM ENGAGEMENT MODULE
+                                    <ShieldCheck className="w-3 h-3 text-success" /> PREMIUM ENGAGEMENT MODULE
                                 </span>
                             </div>
                             <h1 className="text-5xl font-black italic uppercase tracking-tighter">
-                                Customer <span className="text-indigo-600 font-black">Engagement</span>
+                                Customer <span className="text-primary font-black">Engagement</span>
                             </h1>
                         </div>
                     </div>
 
-                    <nav className="flex bg-white/70 dark:bg-black/40 p-2 rounded-2xl border border-white dark:border-slate-800 shadow-xl">
+                    <nav className="flex bg-white/70 dark:bg-black/40 p-2 rounded-sm border border-white dark:border-slate-800 shadow-xl">
                         {[
                             { id: 'inbox', label: 'Inbox', icon: Layout },
                             { id: 'automations', label: 'Automations', icon: Zap },
@@ -277,10 +277,10 @@ const WhatsAppEngagement: React.FC = () => {
                     {activeTab === 'insights' && (
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 animate-in fade-in duration-700">
                             {[
-                                { label: 'Revenue Recovered', val: '₹4.8L', icon: DollarSign, color: 'text-emerald-500' },
-                                { label: 'Returns Prevented', val: '142', icon: RefreshCw, color: 'text-indigo-500' },
-                                { label: 'Avg Support SLA', val: '4m 20s', icon: Clock, color: 'text-rose-500' },
-                                { label: 'CSAT Score', val: '4.8/5.0', icon: Star, color: 'text-amber-500' }
+                                { label: 'Revenue Recovered', val: '₹4.8L', icon: DollarSign, color: 'text-success' },
+                                { label: 'Returns Prevented', val: '142', icon: RefreshCw, color: 'text-primary' },
+                                { label: 'Avg Support SLA', val: '4m 20s', icon: Clock, color: 'text-danger' },
+                                { label: 'CSAT Score', val: '4.8/5.0', icon: Star, color: 'text-warning' }
                             ].map((stat, i) => (
                                 <div key={i} className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-xl">
                                     <stat.icon className={`w-8 h-8 ${stat.color} mb-6`} />

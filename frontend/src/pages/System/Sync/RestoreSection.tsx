@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
     RotateCcw,
     Upload,
@@ -155,7 +155,7 @@ const RestoreSection: React.FC = () => {
             </div>
 
             {/* Warning Banner */}
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-6 flex items-start gap-4">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-sm p-6 flex items-start gap-4">
                 <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600 flex-shrink-0">
                     <AlertTriangle className="w-6 h-6" />
                 </div>
@@ -177,7 +177,7 @@ const RestoreSection: React.FC = () => {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 text-primary shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         <tab.icon className="w-4 h-4" />
                         {tab.label}
@@ -201,7 +201,7 @@ const RestoreSection: React.FC = () => {
                     </div>
 
                     {/* Backup List Table */}
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-100 dark:border-slate-800 text-left">
@@ -266,7 +266,7 @@ const RestoreSection: React.FC = () => {
                                                     <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 transition-colors" title="View Details">
                                                         <Eye className="w-4 h-4" />
                                                     </button>
-                                                    <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-600 transition-colors" title="Download">
+                                                    <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-primary transition-colors" title="Download">
                                                         <Download className="w-4 h-4" />
                                                     </button>
                                                 </div>
@@ -285,7 +285,7 @@ const RestoreSection: React.FC = () => {
                 <div className="space-y-6">
                     <h2 className="text-xl font-black text-slate-900 dark:text-white">Audit & Restore Logs</h2>
 
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-100 dark:border-slate-800 text-left">
@@ -302,7 +302,7 @@ const RestoreSection: React.FC = () => {
                                     <tr key={log.id} className="border-b border-slate-50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                                         <td className="p-5">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600">
+                                                <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center text-primary">
                                                     <Users className="w-4 h-4" />
                                                 </div>
                                                 <span className="font-bold text-slate-900 dark:text-white">{log.initiatedBy}</span>
@@ -324,8 +324,8 @@ const RestoreSection: React.FC = () => {
             {/* Confirmation Modal */}
             {showConfirmModal && selectedBackup && (
                 <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full p-8 border border-slate-200 dark:border-slate-800">
-                        <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <div className="bg-white dark:bg-slate-900 rounded-sm shadow-2xl max-w-lg w-full p-8 border border-slate-200 dark:border-slate-800">
+                        <div className="w-16 h-16 bg-red-100 rounded-sm flex items-center justify-center mx-auto mb-6">
                             <AlertOctagon className="w-8 h-8 text-red-600" />
                         </div>
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white text-center mb-4">Confirm Restore</h2>
@@ -343,11 +343,11 @@ const RestoreSection: React.FC = () => {
                                 <span className="text-slate-700 dark:text-slate-300">Lock all users during restore</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm">
-                                <Database className="w-5 h-5 text-indigo-500" />
+                                <Database className="w-5 h-5 text-primary" />
                                 <span className="text-slate-700 dark:text-slate-300">Overwrite current data with backup</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm">
-                                <Shield className="w-5 h-5 text-indigo-500" />
+                                <Shield className="w-5 h-5 text-primary" />
                                 <span className="text-slate-700 dark:text-slate-300">Verify data integrity before commit</span>
                             </div>
                         </div>

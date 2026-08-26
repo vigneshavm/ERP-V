@@ -20,6 +20,7 @@ export default {
                 card: 'rgb(var(--color-card) / <alpha-value>)',
                 input: 'rgb(var(--color-input) / <alpha-value>)',
                 sidebar: 'rgb(var(--color-sidebar) / <alpha-value>)',
+                'warning-fg': 'rgb(var(--warning-fg) / <alpha-value>)',
                 default: 'rgb(var(--color-border) / <alpha-value>)',
             },
             fontFamily: {

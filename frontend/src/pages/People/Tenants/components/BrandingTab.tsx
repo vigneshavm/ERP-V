@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Settings, Globe, ShieldCheck } from 'lucide-react';
 
 import { CURRENCIES, DATE_FORMATS, THEMES, LAYOUT_DENSITIES } from '../../../../constants/common';
@@ -118,7 +118,7 @@ export const BrandingTab: React.FC<{
                             <p className="text-[10px] text-slate-400">Recommended: Square PNG with transparency. Preview updates after you click away.</p>
                         </div>
                         {newTenant.loginLogoUrl && (
-                            <div className="w-[200px] h-[200px] border-2 border-dashed border-slate-200 rounded-2xl p-2 bg-slate-50/50 flex items-center justify-center overflow-hidden shrink-0 mx-auto group relative">
+                            <div className="w-[200px] h-[200px] border-2 border-dashed border-slate-200 rounded-sm p-2 bg-slate-50/50 flex items-center justify-center overflow-hidden shrink-0 mx-auto group relative">
                                 <img
                                     src={newTenant.loginLogoUrl}
                                     alt="Logo"

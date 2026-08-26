@@ -1,4 +1,4 @@
-
+﻿
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -118,7 +118,7 @@ const InvoiceDetail = () => {
                     </div>
                     <button
                         onClick={() => navigate('/pos/invoices')}
-                        className="mt-4 text-indigo-600 dark:text-[rgb(var(--color-primary))] hover:text-indigo-700 dark:hover:text-[rgb(var(--color-primary-hover))]"
+                        className="mt-4 text-primary dark:text-[rgb(var(--color-primary))] hover:text-indigo-700 dark:hover:text-[rgb(var(--color-primary-hover))]"
                     >
                         Back to Invoices
                     </button>
@@ -195,7 +195,7 @@ const InvoiceDetail = () => {
                                 {invoice.createdBy?.gstNumber && (
                                     <div className="text-sm text-gray-500 dark:text-[rgb(var(--color-text-muted))] mb-3">GSTIN: {invoice.createdBy.gstNumber}</div>
                                 )}
-                                <h2 className="text-3xl font-bold text-indigo-600 dark:text-[rgb(var(--color-text-secondary))] mb-2">INVOICE</h2>
+                                <h2 className="text-3xl font-bold text-primary dark:text-[rgb(var(--color-text-secondary))] mb-2">INVOICE</h2>
                                 <div className="text-lg font-semibold text-gray-900 dark:text-[rgb(var(--color-text))]">{invoice.invoiceNo}</div>
                             </div>
                             <div className="text-right">
@@ -298,7 +298,7 @@ const InvoiceDetail = () => {
                             )}
                             <div className="flex justify-between py-3 border-b-2 border-gray-300">
                                 <span className="text-lg font-bold text-gray-900 dark:text-[rgb(var(--color-text))]">Total Amount:</span>
-                                <span className="text-lg font-bold text-indigo-600 dark:text-[rgb(var(--color-text-secondary))]">
+                                <span className="text-lg font-bold text-primary dark:text-[rgb(var(--color-text-secondary))]">
                                     ₹{fmt(invoice.totalAmount)}
                                 </span>
                             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { MessageSquare, Calendar, CreditCard, ArrowRight, Ban, CheckCircle2, ChevronDown, ChevronUp, Zap } from 'lucide-react';
 
 const formatDate = (date: string | Date) => {
@@ -32,7 +32,7 @@ const SmsTransactionCard: React.FC<SmsTransactionCardProps> = ({ transaction, on
 
     const getStatusColor = () => {
         switch (status) {
-            case 'pending': return 'text-amber-500 bg-amber-500/10 border-amber-500/20';
+            case 'pending': return 'text-warning bg-warning/10 border-warning/20';
             case 'converted': return 'text-success bg-success/10 border-success/20';
             case 'ignored': return 'text-neutral-500 bg-neutral-500/10 border-neutral-500/20';
             default: return 'text-neutral-400 bg-neutral-400/10 border-neutral-400/20';
@@ -40,7 +40,7 @@ const SmsTransactionCard: React.FC<SmsTransactionCardProps> = ({ transaction, on
     };
 
     return (
-        <div className={`glass-panel rounded-2xl overflow-hidden border transition-all duration-300 ${isExpanded ? 'border-primary/30 ring-1 ring-primary/20' : 'border-white/10 hover:border-white/20'}`}>
+        <div className={`glass-panel rounded-sm overflow-hidden border transition-all duration-300 ${isExpanded ? 'border-primary/30 ring-1 ring-primary/20' : 'border-white/10 hover:border-white/20'}`}>
             <div className="p-4 lg:p-5">
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">

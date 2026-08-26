@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Check, Zap, Globe, Shield } from 'lucide-react';
 
 interface PricingTiersProps {
@@ -67,7 +67,7 @@ const PricingTiers: React.FC<PricingTiersProps> = ({ currentPlan, onUpgrade }) =
             {tiers.map((tier) => (
                 <div
                     key={tier.id}
-                    className={`relative p-8 rounded-3xl border transition-all duration-300 ${tier.popular
+                    className={`relative p-8 rounded-sm border transition-all duration-300 ${tier.popular
                             ? 'bg-white dark:bg-slate-800 border-indigo-500 shadow-xl shadow-indigo-500/10 scale-105 z-10'
                             : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-300'
                         }`}
@@ -78,8 +78,8 @@ const PricingTiers: React.FC<PricingTiersProps> = ({ currentPlan, onUpgrade }) =
                         </div>
                     )}
 
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 ${tier.color === 'indigo' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20' :
-                            tier.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20' :
+                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center mb-6 ${tier.color === 'indigo' ? 'bg-indigo-50 text-primary dark:bg-primary/20' :
+                            tier.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 dark:bg-success/20' :
                                 'bg-slate-50 text-slate-600 dark:bg-slate-700'
                         }`}>
                         <tier.icon className="w-6 h-6" />
@@ -97,7 +97,7 @@ const PricingTiers: React.FC<PricingTiersProps> = ({ currentPlan, onUpgrade }) =
                     <div className="space-y-4 mb-8">
                         {tier.features.map((feature, idx) => (
                             <div key={idx} className="flex items-start gap-3 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                                <Check className="w-4 h-4 text-success shrink-0 mt-0.5" />
                                 {feature}
                             </div>
                         ))}

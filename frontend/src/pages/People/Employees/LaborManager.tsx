@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch } from "../../../redux/store";
@@ -327,7 +327,7 @@ export const LaborManager = () => {
                     <button
                       onClick={() => setActiveTab('STATS')}
                       className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'STATS'
-                        ? 'border-indigo-600 text-indigo-600'
+                        ? 'border-indigo-600 text-primary'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                         }`}
                     >
@@ -337,7 +337,7 @@ export const LaborManager = () => {
                     <button
                       onClick={() => setActiveTab('ATTENDANCE')}
                       className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'ATTENDANCE'
-                        ? 'border-indigo-600 text-indigo-600'
+                        ? 'border-indigo-600 text-primary'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                         }`}
                     >
@@ -347,7 +347,7 @@ export const LaborManager = () => {
                     <button
                       onClick={() => setActiveTab('PAYMENTS')}
                       className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'PAYMENTS'
-                        ? 'border-indigo-600 text-indigo-600'
+                        ? 'border-indigo-600 text-primary'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                         }`}
                     >
@@ -388,7 +388,7 @@ export const LaborManager = () => {
                 <p className="text-sm mt-1 max-w-sm text-center">Select an employee from the sidebar to view their attendance records, manage payments, and track performance.</p>
                 <button
                   onClick={() => setIsAddingLaborer(true)}
-                  className="mt-6 flex items-center gap-2 text-indigo-600 font-medium hover:text-indigo-700"
+                  className="mt-6 flex items-center gap-2 text-primary font-medium hover:text-indigo-700"
                 >
                   <UserPlus size={18} />
                   Add New Staff Member

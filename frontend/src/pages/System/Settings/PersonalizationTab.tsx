@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Palette, Sun, Moon, Shield, Upload, User, Layout as LayoutIcon, Camera } from 'lucide-react';
 import { PersonalizationTabProps } from './types';
 
@@ -20,7 +20,7 @@ const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
             <section>
                 <div className="flex items-center gap-3 mb-8">
                     <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
-                        <User className="w-5 h-5 text-indigo-400" />
+                        <User className="w-5 h-5 text-primary" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Your Workspace Perspective</h3>
@@ -34,12 +34,12 @@ const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
                         <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
                             <LayoutIcon className="w-3 h-3" /> Preferred Display Mode
                         </label>
-                        <div className="flex bg-slate-100 dark:bg-slate-900/50 p-2 rounded-2xl border border-slate-200 dark:border-slate-800 w-full shadow-inner">
+                        <div className="flex bg-slate-100 dark:bg-slate-900/50 p-2 rounded-sm border border-slate-200 dark:border-slate-800 w-full shadow-inner">
                             <button
                                 onClick={() => setUserTheme('light')}
-                                className={`flex-1 flex items-center justify-center gap-3 py-4 text-xs font-black rounded-xl transition-all ${userTheme === 'light' ? 'bg-white text-indigo-600 shadow-xl border border-slate-100' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                className={`flex-1 flex items-center justify-center gap-3 py-4 text-xs font-black rounded-xl transition-all ${userTheme === 'light' ? 'bg-white text-primary shadow-xl border border-slate-100' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
                             >
-                                <div className={`p-1.5 rounded-lg ${userTheme === 'light' ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-200 dark:bg-slate-800'}`}>
+                                <div className={`p-1.5 rounded-lg ${userTheme === 'light' ? 'bg-indigo-50 text-primary' : 'bg-slate-200 dark:bg-slate-800'}`}>
                                     <Sun className="w-4 h-4" />
                                 </div>
                                 SOLAR (LIGHT)
@@ -55,9 +55,9 @@ const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
                             </button>
                             <button
                                 onClick={() => setUserTheme('system')}
-                                className={`flex-1 flex items-center justify-center gap-3 py-4 text-xs font-black rounded-xl transition-all ${userTheme === 'system' ? 'bg-white dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 shadow-xl border border-indigo-100 dark:border-indigo-900/50' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                className={`flex-1 flex items-center justify-center gap-3 py-4 text-xs font-black rounded-xl transition-all ${userTheme === 'system' ? 'bg-white dark:bg-primary/20 text-primary dark:text-primary shadow-xl border border-indigo-100 dark:border-indigo-900/50' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
                             >
-                                <div className={`p-1.5 rounded-lg ${userTheme === 'system' ? 'bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600' : 'bg-slate-200 dark:bg-slate-800'}`}>
+                                <div className={`p-1.5 rounded-lg ${userTheme === 'system' ? 'bg-indigo-50 dark:bg-indigo-900/40 text-primary' : 'bg-slate-200 dark:bg-slate-800'}`}>
                                     <Shield className="w-4 h-4" />
                                 </div>
                                 ADAPTIVE
@@ -70,7 +70,7 @@ const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
                         <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
                             <Palette className="w-3 h-3" /> User Color Hint
                         </label>
-                        <div className="flex flex-wrap gap-2.5 p-4 bg-slate-50/50 dark:bg-slate-900/40 rounded-3xl border border-slate-100 dark:border-slate-800">
+                        <div className="flex flex-wrap gap-2.5 p-4 bg-slate-50/50 dark:bg-slate-900/40 rounded-sm border border-slate-100 dark:border-slate-800">
                             {COLORS.map(c => (
                                 <button
                                     key={c.name}
@@ -89,7 +89,7 @@ const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
             <section>
                 <div className="flex items-center gap-3 mb-8">
                     <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center">
-                        <Camera className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                        <Camera className="w-5 h-5 text-rose-600 dark:text-danger" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Avatar & Profile Image</h3>
@@ -121,10 +121,10 @@ const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
 
                         <div className="flex flex-wrap justify-center md:justify-start gap-3">
                             <input type="file" id="user-logo-upload" accept="image/*" className="hidden" onChange={handleUserLogoUpload} />
-                            <label htmlFor="user-logo-upload" className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl text-xs font-black tracking-widest transition-all shadow-lg active:scale-95">
+                            <label htmlFor="user-logo-upload" className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-indigo-600 text-white rounded-sm text-xs font-black tracking-widest transition-all shadow-lg active:scale-95">
                                 <Upload className="w-4 h-4" /> UPLOAD IMAGE
                             </label>
-                            <button className="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 rounded-2xl text-xs font-black tracking-widest hover:text-red-500 transition-colors">
+                            <button className="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 rounded-sm text-xs font-black tracking-widest hover:text-red-500 transition-colors">
                                 RESET
                             </button>
                         </div>

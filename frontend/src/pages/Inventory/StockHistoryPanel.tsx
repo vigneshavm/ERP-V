@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { X, History, TrendingUp, TrendingDown, RefreshCcw, ShoppingCart, Truck, Database } from 'lucide-react';
 
 interface StockLog {
@@ -23,10 +23,10 @@ interface StockHistoryDrawerProps {
 
 const getLogIcon = (type: string) => {
     switch (type) {
-        case 'ADD': return <TrendingUp className="w-4 h-4 text-emerald-500" />;
-        case 'SUBTRACT': return <TrendingDown className="w-4 h-4 text-rose-500" />;
+        case 'ADD': return <TrendingUp className="w-4 h-4 text-success" />;
+        case 'SUBTRACT': return <TrendingDown className="w-4 h-4 text-danger" />;
         case 'SET': return <RefreshCcw className="w-4 h-4 text-primary" />;
-        case 'SALE': return <ShoppingCart className="w-4 h-4 text-amber-500" />;
+        case 'SALE': return <ShoppingCart className="w-4 h-4 text-warning" />;
         case 'PURCHASE': return <Truck className="w-4 h-4 text-blue-500" />;
         case 'INIT': return <Database className="w-4 h-4 text-neutral-500" />;
         default: return <History className="w-4 h-4 text-neutral-400" />;
@@ -96,7 +96,7 @@ export const StockHistoryDrawer: React.FC<StockHistoryDrawerProps> = ({ isOpen, 
                                             <div className="flex items-center gap-4">
                                                 <div className="flex-1">
                                                     <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-tight">Quantity Change</p>
-                                                    <p className={`text-sm font-black italic ${log.type === 'ADD' || log.type === 'INIT' || log.type === 'PURCHASE' ? 'text-emerald-500' : log.type === 'SUBTRACT' || log.type === 'SALE' ? 'text-rose-500' : 'text-primary'}`}>
+                                                    <p className={`text-sm font-black italic ${log.type === 'ADD' || log.type === 'INIT' || log.type === 'PURCHASE' ? 'text-success' : log.type === 'SUBTRACT' || log.type === 'SALE' ? 'text-danger' : 'text-primary'}`}>
                                                         {log.type === 'ADD' || log.type === 'PURCHASE' || log.type === 'INIT' ? '+' : ''}{log.delta} Units
                                                     </p>
                                                 </div>

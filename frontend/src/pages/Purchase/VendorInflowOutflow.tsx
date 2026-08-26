@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
@@ -299,7 +299,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                             />
                             <button
                                 onClick={handleApplyFilters}
-                                className="p-1.5 hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-colors text-indigo-500"
+                                className="p-1.5 hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-colors text-primary"
                                 title="Apply Filter"
                             >
                                 <Filter size={14} />
@@ -403,54 +403,54 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
             )}
 
             {/* Table */}
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden flex-1 flex flex-col">
+            <div className="bg-white dark:bg-neutral-800 rounded-sm border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden flex-1 flex flex-col">
                 <div className="flex-1 overflow-auto custom-scrollbar">
                     <table className="w-full text-left">
                         <thead className="bg-slate-50/50 dark:bg-neutral-900/50 sticky top-0 z-10 backdrop-blur-sm">
                             <tr className="border-b border-slate-100 dark:border-neutral-700">
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
                                     onClick={() => handleSort('businessName')}>
                                     <div className="flex items-center gap-1">
                                         Supplier <SortIcon column="businessName" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('totalInflow')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Total Inflow <SortIcon column="totalInflow" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('totalOutflow')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Total Outflow <SortIcon column="totalOutflow" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('debitNoteTotal')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Debit Notes <SortIcon column="debitNoteTotal" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-center whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-center whitespace-nowrap"
                                     onClick={() => handleSort('billCount')}>
                                     <div className="flex items-center justify-center gap-1">
                                         Bills <SortIcon column="billCount" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-center whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-center whitespace-nowrap"
                                     onClick={() => handleSort('paymentCount')}>
                                     <div className="flex items-center justify-center gap-1">
                                         Payments <SortIcon column="paymentCount" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('closingBalance')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Closing Balance <SortIcon column="closingBalance" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('openingBalance')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Opening <SortIcon column="openingBalance" />
@@ -462,7 +462,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                             {isLoading ? (
                                 <tr><td colSpan={8} className="px-6 py-16 text-center">
                                     <div className="flex flex-col items-center gap-3">
-                                        <RefreshCw className="w-6 h-6 text-indigo-500 animate-spin" />
+                                        <RefreshCw className="w-6 h-6 text-primary animate-spin" />
                                         <p className="text-xs font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider">Loading data...</p>
                                     </div>
                                 </td></tr>
@@ -478,7 +478,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                                     <tr key={vendor._id} className="group hover:bg-slate-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer" onClick={() => navigate(`/suppliers/${vendor._id}/ledger`)}>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-semibold text-slate-800 dark:text-neutral-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{vendor.businessName || 'N/A'}</span>
+                                                <span className="text-sm font-semibold text-slate-800 dark:text-neutral-100 group-hover:text-primary dark:group-hover:text-primary transition-colors">{vendor.businessName || 'N/A'}</span>
                                                 {vendor.supplierId && (
                                                     <span className="text-[10px] text-slate-400 dark:text-neutral-500 font-mono mt-0.5">{vendor.supplierId}</span>
                                                 )}
@@ -488,7 +488,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                                             <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">{formatCurrency(vendor.totalInflow)}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
-                                            <span className="text-sm font-semibold text-rose-600 dark:text-rose-400">{formatCurrency(vendor.totalOutflow)}</span>
+                                            <span className="text-sm font-semibold text-rose-600 dark:text-danger">{formatCurrency(vendor.totalOutflow)}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
                                             <span className="text-sm text-slate-600 dark:text-neutral-400">{vendor.debitNoteTotal > 0 ? formatCurrency(vendor.debitNoteTotal) : '-'}</span>
@@ -515,7 +515,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                                 <tr>
                                     <td className="px-6 py-4 text-xs font-black text-slate-500 dark:text-neutral-400 uppercase tracking-wider">Total ({displayTotals.vendorCount})</td>
                                     <td className="px-6 py-4 text-right text-sm font-bold text-blue-600 dark:text-blue-400">{formatCurrency(displayTotals.totalInflow)}</td>
-                                    <td className="px-6 py-4 text-right text-sm font-bold text-rose-600 dark:text-rose-400">{formatCurrency(displayTotals.totalOutflow)}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-bold text-rose-600 dark:text-danger">{formatCurrency(displayTotals.totalOutflow)}</td>
                                     <td className="px-6 py-4 text-right text-sm font-medium text-slate-600 dark:text-neutral-400">{formatCurrency(displayTotals.debitNoteTotal)}</td>
                                     <td colSpan={2}></td>
                                     <td className="px-6 py-4 text-right text-sm font-bold text-orange-600 dark:text-orange-400">{formatCurrency(displayTotals.totalClosingBalance)}</td>

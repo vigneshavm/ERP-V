@@ -130,6 +130,7 @@
     --success: rgb(var(--color-success));
     --danger: rgb(var(--color-error));
     --warning: rgb(var(--color-warning));
+    --warning-fg: 28 20 0; /* Near-black for text on warning backgrounds */
     --info: rgb(var(--color-info));
     --accent: rgb(var(--color-accent));
   }
@@ -176,6 +177,7 @@
     --success: rgb(var(--color-success));
     --danger: rgb(var(--color-error));
     --warning: rgb(var(--color-warning));
+    --warning-fg: 28 20 0; /* Near-black for text on warning backgrounds */
     --info: rgb(var(--color-info));
     --accent: rgb(var(--color-accent));
   }

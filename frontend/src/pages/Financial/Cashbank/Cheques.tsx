@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../../redux/store";
 import { fetchCheques, registerCheque, updateChequeStatusBackend, fetchEffectiveBalance } from "../../../redux/slices/financeSlice";
@@ -305,7 +305,7 @@ const Cheques: React.FC = () => {
 
                 {/* PDC Alert Banner */}
                 {pdcAlerts && pdcAlerts.count > 1 && (
-                    <div className="bg-error/10 border border-error/20 p-4 rounded-2xl flex items-center gap-4 animate-pulse">
+                    <div className="bg-error/10 border border-error/20 p-4 rounded-sm flex items-center gap-4 animate-pulse">
                         <AlertTriangle className="text-error w-6 h-6" />
                         <div>
                             <p className="text-xs font-black text-error uppercase tracking-widest">Multiple PDC Alert</p>
@@ -317,7 +317,7 @@ const Cheques: React.FC = () => {
                 )}
 
                 {/* Search & Filters */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-neutral-800 p-2 rounded-2xl border border-neutral-200 dark:border-neutral-700">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-neutral-800 p-2 rounded-sm border border-neutral-200 dark:border-neutral-700">
                     <div className="flex p-1 bg-neutral-100 dark:bg-neutral-900 rounded-xl w-full md:w-auto">
                         {[
                             { id: 'all', label: 'All Node' },
@@ -374,7 +374,7 @@ const Cheques: React.FC = () => {
 
                                 <div className="relative z-10">
                                     <div className="flex items-start justify-between mb-8">
-                                        <div className={`p-4 rounded-2xl ${c.type === 'RECEIVED' ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'}`}>
+                                        <div className={`p-4 rounded-sm ${c.type === 'RECEIVED' ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'}`}>
                                             {c.type === 'RECEIVED' ? <ArrowDownLeft className="w-6 h-6" /> : <ArrowUpRight className="w-6 h-6" />}
                                         </div>
                                         <span className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border ${c.status === 'PENDING' ? 'bg-warning/10 text-warning border-warning/20' :
@@ -447,7 +447,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.number}
                                             onChange={e => setFormData({ ...formData, number: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                             placeholder="CHQ-XXXXXX"
                                         />
                                     </div>
@@ -458,7 +458,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.date}
                                             onChange={e => setFormData({ ...formData, date: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -468,7 +468,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.payee}
                                             onChange={e => setFormData({ ...formData, payee: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
                                             placeholder="Entity Name..."
                                         />
                                     </div>
@@ -479,7 +479,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.amount}
                                             onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                             placeholder="0.00"
                                         />
                                     </div>
@@ -489,7 +489,7 @@ const Cheques: React.FC = () => {
                                             required
                                             value={formData.accountId}
                                             onChange={e => setFormData({ ...formData, accountId: e.target.value })}
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
+                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
                                         >
                                             <option value="">Select Account...</option>
                                             {accounts.map(acc => (
@@ -499,7 +499,7 @@ const Cheques: React.FC = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] pl-1">Pulse Direction</label>
-                                        <div className="flex bg-neutral-50 dark:bg-neutral-900 p-1 rounded-2xl border border-neutral-100 dark:border-neutral-700">
+                                        <div className="flex bg-neutral-50 dark:bg-neutral-900 p-1 rounded-sm border border-neutral-100 dark:border-neutral-700">
                                             <button
                                                 type="button"
                                                 onClick={() => setFormData({ ...formData, type: 'RECEIVED' })}
@@ -518,7 +518,7 @@ const Cheques: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <button type="submit" className="w-full py-5 mt-6 bg-neutral-950 text-white rounded-3xl text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-neutral-900 transition-all flex items-center justify-center gap-4 border border-neutral-700">
+                                <button type="submit" className="w-full py-5 mt-6 bg-neutral-950 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-neutral-900 transition-all flex items-center justify-center gap-4 border border-neutral-700">
                                     <ShieldCheck className="w-5 h-5 text-primary" />
                                     Authorize Instrument Deployment
                                 </button>
@@ -536,7 +536,7 @@ const Cheques: React.FC = () => {
                                 <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">{selectedCheque.number}</h3>
                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] italic">Authority Node Audit</p>
                             </div>
-                            <button onClick={() => setShowDetails(false)} className="p-3 bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-neutral-400 hover:text-error transition shadow-sm">
+                            <button onClick={() => setShowDetails(false)} className="p-3 bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-neutral-400 hover:text-error transition shadow-sm">
                                 <X size={20} />
                             </button>
                         </div>
@@ -590,7 +590,7 @@ const Cheques: React.FC = () => {
                                 <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Bulk Payment Stream</h3>
                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] italic">Dynamic Balance Validation Protocol</p>
                             </div>
-                            <button onClick={() => setShowBulkPaymentModal(false)} className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-neutral-400 hover:text-error transition">
+                            <button onClick={() => setShowBulkPaymentModal(false)} className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-neutral-400 hover:text-error transition">
                                 <X size={20} />
                             </button>
                         </div>
@@ -691,7 +691,7 @@ const Cheques: React.FC = () => {
                                 <button
                                     onClick={handleValidateBulk}
                                     disabled={isValidating || !bulkPayAccountId || selectedInvoices.filter(i => i.selected).length === 0}
-                                    className="px-8 py-4 bg-white dark:bg-neutral-800 border-2 border-primary text-primary rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all disabled:opacity-50 flex items-center gap-2"
+                                    className="px-8 py-4 bg-white dark:bg-neutral-800 border-2 border-primary text-primary rounded-sm text-[9px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all disabled:opacity-50 flex items-center gap-2"
                                 >
                                     {isValidating ? 'Processing Logic...' : 'Run Balance Check'}
                                 </button>

@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 import { Rocket, Globe, Zap, Database, ArrowRight, BarChart, LayoutDashboard } from 'lucide-react';
 import { useDispatch } from 'react-redux';
@@ -53,7 +53,7 @@ const GrowthHub: React.FC = () => {
             description: 'Architecture audit, performance metrics, and integrity checks.',
             icon: Rocket,
             path: 'GROW_ARCHITECTURE',
-            color: 'text-indigo-600',
+            color: 'text-primary',
             bg: 'bg-indigo-100 dark:bg-indigo-900/20'
         }
     ];
@@ -81,12 +81,12 @@ const GrowthHub: React.FC = () => {
                         onClick={() => dispatch(setActiveTab(card.path as any))}
                         className="group bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-xl hover:border-indigo-500 dark:hover:border-indigo-500 transition-all cursor-pointer"
                     >
-                        <div className={`w-14 h-14 ${card.bg} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                        <div className={`w-14 h-14 ${card.bg} rounded-sm flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                             <card.icon className={`w-7 h-7 ${card.color}`} />
                         </div>
                         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">{card.title}</h3>
                         <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4 h-10">{card.description}</p>
-                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 group-hover:gap-3 transition-all">
+                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary dark:text-primary group-hover:gap-3 transition-all">
                             Open Tool <ArrowRight className="w-3 h-3" />
                         </div>
                     </div>

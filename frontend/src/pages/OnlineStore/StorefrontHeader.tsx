@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Search, ImageIcon, Sparkles, SlidersHorizontal } from 'lucide-react';
 
 interface StorefrontHeaderProps {
@@ -51,7 +51,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
             <div className="flex items-center gap-2 ml-auto">
                 <button
                     onClick={() => setShowAi(!showAi)}
-                    className={`hidden md:flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all border ${showAi ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900'}`}
+                    className={`hidden md:flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all border ${showAi ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 text-primary dark:text-primary border-indigo-200 dark:border-indigo-900'}`}
                 >
                     <Sparkles className="w-4 h-4" />
                     <span>AI Assistant</span>

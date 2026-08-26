@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Upload, FileText, TrendingUp, TrendingDown, Activity, RefreshCw, CheckCircle2, Clock3, ChevronUp, ChevronDown, Download, Info } from 'lucide-react';
 import { bankStatementService, BankStatementTransaction } from '../../services/bankStatementService';
 import { toast } from 'react-toastify';
@@ -17,7 +17,7 @@ interface SummaryCardProps {
 
 const SummaryCard: React.FC<SummaryCardProps> = ({ label, value, sub, icon, colorClass, bgClass }) => (
     <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] p-6 shadow-sm flex items-start gap-4 group hover:border-primary/20 transition-all duration-500">
-        <div className={`p-3.5 rounded-2xl ${bgClass} ${colorClass} shrink-0 shadow-sm group-hover:scale-110 transition-transform`}>
+        <div className={`p-3.5 rounded-sm ${bgClass} ${colorClass} shrink-0 shadow-sm group-hover:scale-110 transition-transform`}>
             {icon}
         </div>
         <div>
@@ -165,7 +165,7 @@ const BankStatementView: React.FC = () => {
                             value={fmt(totalCredit)}
                             sub={`${transactions.filter(t => t.type === 'credit').length} inbound nodes`}
                             icon={<TrendingUp className="w-6 h-6" />}
-                            colorClass="text-emerald-500"
+                            colorClass="text-success"
                             bgClass="bg-emerald-50 dark:bg-emerald-900/20"
                         />
                         <SummaryCard
@@ -173,7 +173,7 @@ const BankStatementView: React.FC = () => {
                             value={fmt(totalDebit)}
                             sub={`${transactions.filter(t => t.type === 'debit').length} outbound nodes`}
                             icon={<TrendingDown className="w-6 h-6" />}
-                            colorClass="text-rose-500"
+                            colorClass="text-danger"
                             bgClass="bg-rose-50 dark:bg-rose-900/20"
                         />
                         <SummaryCard
@@ -181,7 +181,7 @@ const BankStatementView: React.FC = () => {
                             value={fmt(Math.abs(netFlow))}
                             sub={netFlow >= 0 ? '▲ Net surplus position' : '▼ Net deficit position'}
                             icon={<Activity className="w-6 h-6" />}
-                            colorClass={netFlow >= 0 ? 'text-emerald-500' : 'text-rose-500'}
+                            colorClass={netFlow >= 0 ? 'text-success' : 'text-danger'}
                             bgClass={netFlow >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-rose-50 dark:bg-rose-900/20'}
                         />
                     </div>
@@ -199,7 +199,7 @@ const BankStatementView: React.FC = () => {
                             : 'border-neutral-200 dark:border-neutral-800 hover:border-primary/40 hover:bg-neutral-50/50 dark:hover:bg-neutral-900/30'
                     } ${loading ? 'pointer-events-none opacity-40' : ''}`}
                 >
-                    <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-700 ${dragging ? 'bg-primary text-white' : 'bg-primary/10 text-primary'} shadow-xl group-hover:scale-110`}>
+                    <div className={`w-20 h-20 rounded-sm flex items-center justify-center transition-all duration-700 ${dragging ? 'bg-primary text-white' : 'bg-primary/10 text-primary'} shadow-xl group-hover:scale-110`}>
                         {loading ? <RefreshCw className="w-10 h-10 animate-spin" /> : <FileText className="w-10 h-10" />}
                     </div>
                     <div>
@@ -228,7 +228,7 @@ const BankStatementView: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-2 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800">
+                        <div className="flex items-center gap-2 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-sm border border-neutral-100 dark:border-neutral-800">
                             {(['all', 'credit', 'debit'] as const).map(type => (
                                 <button
                                     key={type}
@@ -283,7 +283,7 @@ const BankStatementView: React.FC = () => {
                                     <tr>
                                         <td colSpan={6} className="px-8 py-24 text-center">
                                             <div className="flex flex-col items-center gap-6 max-w-sm mx-auto opacity-40">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
                                                     <Info className="w-10 h-10" />
                                                 </div>
                                                 <div>
@@ -308,14 +308,14 @@ const BankStatementView: React.FC = () => {
                                             <td className="px-8 py-6">
                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
                                                     tx.type === 'credit'
-                                                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
-                                                        : 'bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400'
+                                                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success'
+                                                        : 'bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger'
                                                 }`}>
                                                     {tx.type === 'credit' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                                                     {tx.type}
                                                 </span>
                                             </td>
-                                            <td className={`px-8 py-6 text-right whitespace-nowrap text-sm font-black tabular-nums ${tx.type === 'credit' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                            <td className={`px-8 py-6 text-right whitespace-nowrap text-sm font-black tabular-nums ${tx.type === 'credit' ? 'text-success' : 'text-danger'}`}>
                                                 {tx.type === 'credit' ? '+' : '−'}{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                             </td>
                                             <td className="px-8 py-6 text-right whitespace-nowrap text-xs font-black text-neutral-400 font-mono hidden md:table-cell tabular-nums">
@@ -323,12 +323,12 @@ const BankStatementView: React.FC = () => {
                                             </td>
                                             <td className="px-8 py-6 text-center">
                                                 {tx.status === 'reconciled' ? (
-                                                    <span className="inline-flex items-center gap-1.5 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
+                                                    <span className="inline-flex items-center gap-1.5 text-success text-[10px] font-black uppercase tracking-widest">
                                                         <CheckCircle2 className="w-3.5 h-3.5" />
                                                         Locked
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 text-amber-500 text-[10px] font-black uppercase tracking-widest">
+                                                    <span className="inline-flex items-center gap-1.5 text-warning text-[10px] font-black uppercase tracking-widest">
                                                         <Clock3 className="w-3.5 h-3.5" />
                                                         Pending
                                                     </span>
@@ -347,9 +347,9 @@ const BankStatementView: React.FC = () => {
                             <div className="flex items-center gap-4">
                                 <span className="text-neutral-500">{displayed.length} NODES AUDITED</span>
                                 <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-800" />
-                                <span>CREDITS: <span className="text-emerald-500">₹{displayed.filter(t => t.type === 'credit').reduce((s, t) => s + t.amount, 0).toLocaleString('en-IN')}</span></span>
+                                <span>CREDITS: <span className="text-success">₹{displayed.filter(t => t.type === 'credit').reduce((s, t) => s + t.amount, 0).toLocaleString('en-IN')}</span></span>
                                 <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-800" />
-                                <span>DEBITS: <span className="text-rose-500">₹{displayed.filter(t => t.type === 'debit').reduce((s, t) => s + t.amount, 0).toLocaleString('en-IN')}</span></span>
+                                <span>DEBITS: <span className="text-danger">₹{displayed.filter(t => t.type === 'debit').reduce((s, t) => s + t.amount, 0).toLocaleString('en-IN')}</span></span>
                             </div>
                             <button className="flex items-center gap-2 hover:text-primary transition-colors italic">
                                 <Download className="w-3.5 h-3.5" /> Generate Intelligence Report

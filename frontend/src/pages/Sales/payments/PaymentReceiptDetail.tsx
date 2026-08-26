@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../../services/api";
 import { toast } from "react-toastify";
@@ -98,7 +98,7 @@ const PaymentReceiptDetail = () => {
         </div>
 
         {/* Receipt Container - Optimized for Print */}
-        <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden print:shadow-none print:p-0 print:rounded-none print:glass-panel print:border-0">
+        <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:shadow-none print:p-0 print:rounded-none print:glass-panel print:border-0">
           {/* Receipt Header Section */}
           <div className="px-8 py-6 border-b-2 border-default/30 print:px-6 print:py-4 print:border-gray-300">
             <div className="flex justify-between items-start gap-4">
@@ -420,7 +420,7 @@ const PaymentReceiptDetail = () => {
                         <div className="mt-4 p-3 bg-success/10 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 print:border-emerald-600 print:glass-panel rounded-lg">
                           <div className="flex items-start gap-2">
                             <svg
-                              className="w-5 h-5 text-success dark:text-emerald-400 print:text-emerald-700 flex-shrink-0 mt-0.5"
+                              className="w-5 h-5 text-success dark:text-success print:text-emerald-700 flex-shrink-0 mt-0.5"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -433,7 +433,7 @@ const PaymentReceiptDetail = () => {
                               <div className="font-semibold text-emerald-900 dark:text-emerald-300 print:text-emerald-900 text-sm mb-1">
                                 Excess Amount Credited
                               </div>
-                              <p className="text-xs text-emerald-700 dark:text-emerald-400 print:text-emerald-800 leading-relaxed">
+                              <p className="text-xs text-emerald-700 dark:text-success print:text-emerald-800 leading-relaxed">
                                 ₹{excessAmount.toFixed(2)} added to customer
                                 credit
                               </p>
@@ -483,7 +483,7 @@ const PaymentReceiptDetail = () => {
                         <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 print:border-amber-600 print:glass-panel rounded-lg">
                           <div className="flex items-start gap-2">
                             <svg
-                              className="w-5 h-5 text-amber-600 dark:text-amber-400 print:text-amber-700 flex-shrink-0 mt-0.5"
+                              className="w-5 h-5 text-amber-600 dark:text-warning print:text-amber-700 flex-shrink-0 mt-0.5"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -496,7 +496,7 @@ const PaymentReceiptDetail = () => {
                               <div className="font-semibold text-amber-900 dark:text-amber-300 print:text-amber-900 text-sm mb-1">
                                 Partial Payment
                               </div>
-                              <p className="text-xs text-amber-700 dark:text-amber-400 print:text-amber-800 leading-relaxed">
+                              <p className="text-xs text-amber-700 dark:text-warning print:text-amber-800 leading-relaxed">
                                 Remaining balance: ₹{remainingDues.toFixed(2)}
                               </p>
                             </div>
@@ -510,7 +510,7 @@ const PaymentReceiptDetail = () => {
                         <div className="mt-4 p-3 bg-primary/10 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 print:border-primary print:glass-panel rounded-lg">
                           <div className="flex items-start gap-2">
                             <svg
-                              className="w-5 h-5 text-primary dark:text-indigo-400 print:text-primary flex-shrink-0 mt-0.5"
+                              className="w-5 h-5 text-primary dark:text-primary print:text-primary flex-shrink-0 mt-0.5"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -523,7 +523,7 @@ const PaymentReceiptDetail = () => {
                               <div className="font-semibold text-primary dark:text-indigo-300 print:text-primary text-sm mb-1">
                                 Advance Payment
                               </div>
-                              <p className="text-xs text-primary dark:text-indigo-400 print:text-indigo-800 leading-relaxed">
+                              <p className="text-xs text-primary dark:text-primary print:text-indigo-800 leading-relaxed">
                                 ₹
                                 {(
                                   payment.totalAmount + payment.creditApplied

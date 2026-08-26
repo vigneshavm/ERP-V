@@ -52,6 +52,7 @@ interface POSOrder {
     discount: number;
     payment_method: 'CASH' | 'ONLINE' | 'CREDIT';
     status: 'COMPLETED' | 'RETURNED' | 'CANCELLED';
+    cashier: string;
     anomalies: string[];
     risk_level: RiskLevel;
 }
@@ -113,6 +114,7 @@ const POSOrdersIntelligence: React.FC = () => {
                 discount: inv.discount,
                 payment_method: inv.paymentMethod?.toUpperCase() || 'CASH',
                 status: inv.paymentStatus?.toUpperCase() || 'COMPLETED',
+                cashier: inv.createdBy?.name || 'System',
                 anomalies,
                 risk_level
             };
@@ -148,6 +150,7 @@ const POSOrdersIntelligence: React.FC = () => {
     const filteredOrders = orders.filter(o =>
         o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         o.branch.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        o.cashier.toLowerCase().includes(searchTerm.toLowerCase()) ||
         o.anomalies.some(a => a.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
@@ -170,10 +173,10 @@ const POSOrdersIntelligence: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-neutral-50 transition-all active:scale-95">
+                        <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-neutral-50 transition-all active:scale-95">
                             <Download className="w-4 h-4 text-primary" /> Export Audit Log
                         </button>
-                        <button className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">
+                        <button className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">
                             <RefreshCcw className="w-4 h-4" /> Refresh Engine
                         </button>
                     </div>
@@ -252,7 +255,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                     <div key={b.branch} className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2.5rem] p-8 shadow-sm group hover:border-primary/40 transition-all hover:scale-[1.01]">
                                         <div className="flex justify-between items-start mb-8">
                                             <div className="flex items-center gap-4">
-                                                <div className="p-3 bg-neutral-100 dark:bg-neutral-900 rounded-2xl text-neutral-400 group-hover:text-primary transition-colors">
+                                                <div className="p-3 bg-neutral-100 dark:bg-neutral-900 rounded-sm text-neutral-400 group-hover:text-primary transition-colors">
                                                     <MapPin className="w-6 h-6" />
                                                 </div>
                                                 <div>
@@ -268,11 +271,11 @@ const POSOrdersIntelligence: React.FC = () => {
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4 mb-8">
-                                            <div className="p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-3xl">
+                                            <div className="p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-sm">
                                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Cash Flow</p>
                                                 <p className="text-xl font-black italic tabular-nums">₹{(b.cash / 1000).toFixed(0)}K</p>
                                             </div>
-                                            <div className="p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-3xl">
+                                            <div className="p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-sm">
                                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Online Flow</p>
                                                 <p className="text-xl font-black italic tabular-nums">₹{(b.online / 1000).toFixed(0)}K</p>
                                             </div>
@@ -296,7 +299,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <button className="w-full mt-8 py-3 bg-neutral-50 dark:bg-neutral-900 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all rounded-2xl border border-neutral-100 dark:border-neutral-800">
+                                        <button className="w-full mt-8 py-3 bg-neutral-50 dark:bg-neutral-900 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all rounded-sm border border-neutral-100 dark:border-neutral-800">
                                             View Full Branch Journal
                                         </button>
                                     </div>
@@ -311,7 +314,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                     <input
                                         type="text"
                                         placeholder="Search Bill ID, Branch or Risk..."
-                                        className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
+                                        className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
@@ -322,6 +325,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                         <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 text-neutral-400 font-black uppercase tracking-[0.15em]">
                                             <tr>
                                                 <th className="p-5">Bill / Time</th>
+                                                <th className="p-5">Cashier</th>
                                                 <th className="p-5">Value (Incl. Tax)</th>
                                                 <th className="p-5">Audit Status</th>
                                                 <th className="p-5 text-right">Action</th>
@@ -373,6 +377,10 @@ const POSOrdersIntelligence: React.FC = () => {
                                                             </div>
                                                         </td>
                                                         <td className="p-5">
+                                                            <div className="font-bold text-neutral-700 dark:text-neutral-300">{order.cashier}</div>
+                                                            <div className="text-[9px] text-neutral-400 font-black uppercase tracking-widest mt-1">ID: {order.id.slice(-4)}</div>
+                                                        </td>
+                                                        <td className="p-5">
                                                             <div className="font-black text-sm italic">₹{order.total.toLocaleString()}</div>
                                                             <div className="text-[10px] text-neutral-400 mt-0.5 font-bold uppercase">Tax: ₹{order.tax} • Disc: ₹{order.discount}</div>
                                                         </td>
@@ -418,12 +426,12 @@ const POSOrdersIntelligence: React.FC = () => {
                                     </h3>
 
                                     <div className="grid grid-cols-2 gap-6 mb-10">
-                                        <div className="p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md">
+                                        <div className="p-6 bg-white/5 border border-white/10 rounded-sm backdrop-blur-md">
                                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-2">Repeat Rate</p>
                                             <h4 className="text-3xl font-black">42.8%</h4>
-                                            <p className="text-[10px] text-emerald-500 font-black mt-2">+5% this month</p>
+                                            <p className="text-[10px] text-success font-black mt-2">+5% this month</p>
                                         </div>
-                                        <div className="p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md">
+                                        <div className="p-6 bg-white/5 border border-white/10 rounded-sm backdrop-blur-md">
                                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-2">Dormant Reclaimed</p>
                                             <h4 className="text-3xl font-black">128</h4>
                                             <p className="text-[10px] text-primary font-black mt-2">Active campaigns</p>
@@ -431,7 +439,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                     </div>
 
                                     <div className="space-y-4 mb-10">
-                                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10 group-hover:bg-white/10 transition-colors pointer-events-none">
+                                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-sm border border-white/10 group-hover:bg-white/10 transition-colors pointer-events-none">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-black text-primary">RK</div>
                                                 <div>
@@ -440,12 +448,12 @@ const POSOrdersIntelligence: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <span className="text-[9px] font-black bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded uppercase font-black">Verified</span>
+                                                <span className="text-[9px] font-black bg-success/10 text-success px-2 py-0.5 rounded uppercase font-black">Verified</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <button className="w-full py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-[0.1em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                                    <button className="w-full py-4 bg-primary text-white rounded-sm font-black text-sm uppercase tracking-[0.1em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
                                         Generate Retention Strategy <TrendingUp className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -467,7 +475,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                     { name: 'Stock Sync Auditor', status: true },
                                     { name: 'Loyalty Fraud Detect', status: false },
                                 ].map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800">
+                                    <div key={i} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900 rounded-sm border border-neutral-100 dark:border-neutral-800">
                                         <span className="text-[11px] font-black uppercase tracking-tight text-neutral-700 dark:text-neutral-300">{item.name}</span>
                                         <div className={`w-8 h-4 rounded-full relative transition-colors ${item.status ? 'bg-success' : 'bg-neutral-200'}`}>
                                             <div className={`absolute top-1 w-2 h-2 rounded-full bg-white transition-all ${item.status ? 'left-5' : 'left-1'}`} />
@@ -486,12 +494,12 @@ const POSOrdersIntelligence: React.FC = () => {
 
                             <div className="space-y-4">
                                 {liveAlerts.length === 0 ? (
-                                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
+                                    <div className="p-4 bg-white/5 rounded-sm border border-white/10 text-center">
                                         <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">No critical alerts detected</p>
                                     </div>
                                 ) : (
                                     liveAlerts.map((alert, i) => (
-                                        <div key={i} className={`p-4 bg-white dark:bg-neutral-800 rounded-2xl border ${alert.level === 'CRITICAL' ? 'border-error/20 hover:border-error/40' : 'border-amber-200 hover:border-amber-400'} shadow-sm group/alert transition-all`}>
+                                        <div key={i} className={`p-4 bg-white dark:bg-neutral-800 rounded-sm border ${alert.level === 'CRITICAL' ? 'border-error/20 hover:border-error/40' : 'border-amber-200 hover:border-amber-400'} shadow-sm group/alert transition-all`}>
                                             <div className="flex justify-between items-center mb-2">
                                                 <span className={`text-[9px] font-black uppercase tracking-[0.15em] ${alert.level === 'CRITICAL' ? 'text-error' : 'text-amber-600'}`}>
                                                     {alert.type.replace(/_/g, ' ')}

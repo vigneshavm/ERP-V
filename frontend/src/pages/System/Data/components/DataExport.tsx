@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -139,7 +139,7 @@ const DataExport = () => {
                                                 key={fmt}
                                                 onClick={() => setExportFormat(fmt)}
                                                 className={`py-2 px-3 rounded-lg border-2 font-black text-[10px] uppercase transition-all ${exportFormat === fmt
-                                                        ? 'border-indigo-600 bg-indigo-50 text-indigo-600'
+                                                        ? 'border-indigo-600 bg-indigo-50 text-primary'
                                                         : 'border-slate-100 dark:border-slate-800 text-slate-400'
                                                     }`}
                                             >
@@ -178,27 +178,27 @@ const DataExport = () => {
                                             type="checkbox"
                                             checked={includeHeaders}
                                             onChange={(e) => setIncludeHeaders(e.target.checked)}
-                                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                            className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-indigo-500"
                                         />
-                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 transition-colors">Include column headers</span>
+                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Include column headers</span>
                                     </label>
                                     <label className="flex items-center gap-3 cursor-pointer group">
                                         <input
                                             type="checkbox"
                                             checked={compressFile}
                                             onChange={(e) => setCompressFile(e.target.checked)}
-                                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                            className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-indigo-500"
                                         />
-                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 transition-colors">Compress as .zip</span>
+                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Compress as .zip</span>
                                     </label>
                                     <label className="flex items-center gap-3 cursor-pointer group">
                                         <input
                                             type="checkbox"
                                             checked={splitMonthly}
                                             onChange={(e) => setSplitMonthly(e.target.checked)}
-                                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                            className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-indigo-500"
                                         />
-                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 transition-colors">Split data by month</span>
+                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Split data by month</span>
                                     </label>
                                 </div>
                             </div>
@@ -232,14 +232,14 @@ const DataExport = () => {
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
                             <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recent Exports</h3>
-                            <button className="text-[10px] font-black text-indigo-600 uppercase">View All</button>
+                            <button className="text-[10px] font-black text-primary uppercase">View All</button>
                         </div>
                         <div className="divide-y divide-slate-100 dark:divide-slate-800">
                             {recentExports.map((item) => (
                                 <div key={item.id} className="p-4 hover:bg-slate-50 transition-colors group">
                                     <div className="flex justify-between items-start mb-1">
-                                        <p className="text-xs font-black text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 transition-colors uppercase truncate pr-4">{item.name}</p>
-                                        <span className="text-[10px] font-black text-indigo-500">{item.size}</span>
+                                        <p className="text-xs font-black text-slate-800 dark:text-slate-200 group-hover:text-primary transition-colors uppercase truncate pr-4">{item.name}</p>
+                                        <span className="text-[10px] font-black text-primary">{item.size}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <p className="text-[9px] font-bold text-slate-400 uppercase">{item.date}</p>

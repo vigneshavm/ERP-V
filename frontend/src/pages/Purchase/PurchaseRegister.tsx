@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch } from "../../redux/store";
@@ -197,14 +197,14 @@ const PurchaseRegister: React.FC = () => {
         switch (s) {
             case 'APPROVED':
             case 'COMPLETED':
-                return <span className="px-3 py-1 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><CheckCircle className="w-3 h-3" /> {status === 'COMPLETED' ? 'Completed' : 'Approved'}</span>;
+                return <span className="px-3 py-1 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><CheckCircle className="w-3 h-3" /> {status === 'COMPLETED' ? 'Completed' : 'Approved'}</span>;
             case 'PENDING':
             case 'PENDING APPROVAL':
             case 'DRAFT':
-                return <span className="px-3 py-1 bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><Clock className="w-3 h-3" /> {s === 'DRAFT' ? 'Draft' : 'Pending'}</span>;
+                return <span className="px-3 py-1 bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><Clock className="w-3 h-3" /> {s === 'DRAFT' ? 'Draft' : 'Pending'}</span>;
             case 'REJECTED':
             case 'CANCELLED':
-                return <span className="px-3 py-1 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><XCircle className="w-3 h-3" /> {status}</span>;
+                return <span className="px-3 py-1 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><XCircle className="w-3 h-3" /> {status}</span>;
             default:
                 return <span className="px-3 py-1 bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 text-[10px] font-black uppercase tracking-widest rounded-full">{status}</span>;
         }
@@ -263,10 +263,10 @@ const PurchaseRegister: React.FC = () => {
                                 <RefreshCw className={`w-4 h-4 ${(isRefreshing || isProcessing) ? 'animate-spin' : ''}`} />
                             </button>
                             <button onClick={handleExportCSV} className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
-                                <FileSpreadsheet className="w-4 h-4 text-emerald-500" /> Excel
+                                <FileSpreadsheet className="w-4 h-4 text-success" /> Excel
                             </button>
                             <button onClick={handleExportPDF} className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
-                                <FileText className="w-4 h-4 text-rose-500" /> PDF
+                                <FileText className="w-4 h-4 text-danger" /> PDF
                             </button>
                             <button
                                 onClick={() => dispatch(setActiveTab('PURCHASE_ENTRY'))}
@@ -282,39 +282,39 @@ const PurchaseRegister: React.FC = () => {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-primary/10 text-primary rounded-2xl group-hover:scale-110 transition-transform">
+                            <div className="p-3 bg-primary/10 text-primary rounded-sm group-hover:scale-110 transition-transform">
                                 <TrendingUp className="w-6 h-6" />
                             </div>
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Total Value</h3>
                         </div>
                         <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">₹{totalPurchasesValue.toLocaleString()}</p>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-emerald-500/20 transition-all duration-500">
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-success/20 transition-all duration-500">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-emerald-50 text-emerald-500 dark:bg-emerald-900/20 rounded-2xl group-hover:scale-110 transition-transform">
+                            <div className="p-3 bg-emerald-50 text-success dark:bg-emerald-900/20 rounded-sm group-hover:scale-110 transition-transform">
                                 <CheckSquare className="w-6 h-6" />
                             </div>
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Billed Volume</h3>
                         </div>
-                        <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tighter tabular-nums">₹{totalBilledValue.toLocaleString()}</p>
+                        <p className="text-3xl font-black text-emerald-600 dark:text-success tracking-tighter tabular-nums">₹{totalBilledValue.toLocaleString()}</p>
                     </div>
                     <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-neutral-400/20 transition-all duration-500">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 rounded-2xl group-hover:scale-110 transition-transform">
+                            <div className="p-3 bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 rounded-sm group-hover:scale-110 transition-transform">
                                 <FileText className="w-6 h-6" />
                             </div>
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Total Nodes</h3>
                         </div>
                         <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">{filteredOrders.length}</p>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-amber-500/20 transition-all duration-500">
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-warning/20 transition-all duration-500">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-amber-50 text-amber-500 dark:bg-amber-900/20 rounded-2xl group-hover:scale-110 transition-transform">
+                            <div className="p-3 bg-amber-50 text-warning dark:bg-amber-900/20 rounded-sm group-hover:scale-110 transition-transform">
                                 <Clock className="w-6 h-6" />
                             </div>
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Pending Res</h3>
                         </div>
-                        <p className="text-3xl font-black text-amber-600 dark:text-amber-400 tracking-tighter tabular-nums">{pendingCount}</p>
+                        <p className="text-3xl font-black text-amber-600 dark:text-warning tracking-tighter tabular-nums">{pendingCount}</p>
                     </div>
                 </div>
 
@@ -328,19 +328,19 @@ const PurchaseRegister: React.FC = () => {
                                     <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Node Context Search</label>
                                     <div className="relative">
                                         <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
-                                        <input type="text" placeholder="Search PO # or Vendor..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
+                                        <input type="text" placeholder="Search PO # or Vendor..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
                                     </div>
                                 </div>
                                 <div>
                                     <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
-                                    <select value={vendorFilter} onChange={e => setVendorFilter(e.target.value)} className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <select value={vendorFilter} onChange={e => setVendorFilter(e.target.value)} className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                         <option value="ALL">All Entities</option>
                                         {uniqueVendors.map(v => <option key={v} value={v}>{v}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Operational Status</label>
-                                    <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                         <option value="ALL">All Status</option>
                                         <option value="COMPLETED">Completed</option>
                                         <option value="Approved">Approved</option>
@@ -353,15 +353,15 @@ const PurchaseRegister: React.FC = () => {
                                     <div className="flex-1">
                                         <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Fiscal Range</label>
                                         <div className="flex items-center gap-2">
-                                            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
+                                            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
                                             <span className="text-neutral-300 font-bold">→</span>
-                                            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
+                                            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 self-start">
+                            <div className="flex items-center gap-2 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-sm border border-neutral-100 dark:border-neutral-800 self-start">
                                 {(['ALL', 'BILLED', 'UNBILLED', 'DRAFT'] as const).map(mode => (
                                     <button
                                         key={mode}
@@ -413,7 +413,7 @@ const PurchaseRegister: React.FC = () => {
                                     <tr>
                                         <td colSpan={7} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center gap-6 max-w-sm mx-auto opacity-40">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
                                                     <Info className="w-10 h-10" />
                                                 </div>
                                                 <div>

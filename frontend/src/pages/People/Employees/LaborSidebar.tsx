@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Users, Plus, Search, ChevronRight } from 'lucide-react';
 import { Employee } from "../../../types/hr";
 import { formatCurrency } from "../../../utils/helpers";
@@ -34,7 +34,7 @@ const LaborSidebar: React.FC<LaborSidebarProps> = ({
                         onClick={onToggleAddForm}
                         className={`p-2 rounded-lg transition-all ${isAddingLaborer
                             ? 'bg-indigo-600 text-white shadow-md'
-                            : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50'
+                            : 'bg-indigo-50 text-primary hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-primary dark:hover:bg-indigo-900/50'
                             }`}
                     >
                         <Plus size={20} />
@@ -48,7 +48,7 @@ const LaborSidebar: React.FC<LaborSidebarProps> = ({
                             key={type}
                             onClick={() => onStaffTypeChange(type)}
                             className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-all ${staffType === type
-                                ? 'bg-white dark:bg-neutral-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                                ? 'bg-white dark:bg-neutral-800 text-primary dark:text-primary shadow-sm'
                                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                                 }`}
                         >
@@ -96,7 +96,7 @@ const LaborSidebar: React.FC<LaborSidebarProps> = ({
                                 <span>{formatCurrency(l.dailyRate)}/day</span>
                             </p>
                         </div>
-                        {selectedLaborerId === l.id && <ChevronRight className="w-4 h-4 text-indigo-400" />}
+                        {selectedLaborerId === l.id && <ChevronRight className="w-4 h-4 text-primary" />}
                     </button>
                 ))}
             </div>

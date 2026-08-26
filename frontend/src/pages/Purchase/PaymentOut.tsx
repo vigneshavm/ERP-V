@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from "../../components/shared/Layout";
@@ -176,7 +176,7 @@ const PaymentOut: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left: Basic Info */}
                     <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-900 rounded-sm border border-neutral-200 dark:border-neutral-800 p-6 shadow-sm">
                             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                                 <Building className="w-5 h-5 text-neutral-400" />
                                 Payment Header
@@ -235,7 +235,7 @@ const PaymentOut: React.FC = () => {
                         </div>
 
                         {/* Bill Allocation Section */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden text-neutral-900 dark:text-neutral-100">
+                        <div className="bg-white dark:bg-neutral-900 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden text-neutral-900 dark:text-neutral-100">
                             <div className="p-4 border-b dark:border-neutral-800 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50">
                                 <h3 className="font-bold flex items-center gap-2">
                                     <Calculator className="w-4 h-4 text-brand-600" />
@@ -319,7 +319,7 @@ const PaymentOut: React.FC = () => {
 
                     {/* Right: Summary */}
                     <div className="space-y-6">
-                        <div className="bg-brand-600 rounded-2xl p-6 text-white shadow-xl shadow-brand-600/20 sticky top-6">
+                        <div className="bg-brand-600 rounded-sm p-6 text-white shadow-xl shadow-brand-600/20 sticky top-6">
                             <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
                                 <DollarSign className="w-5 h-5" />
                                 Settlement Summary
@@ -360,7 +360,7 @@ const PaymentOut: React.FC = () => {
                         </div>
 
                         {/* Extra Notes */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-900 rounded-sm border border-neutral-200 dark:border-neutral-800 p-6 shadow-sm">
                             <h3 className="font-bold mb-4 flex items-center gap-2">
                                 <FileText className="w-4 h-4 text-neutral-400" />
                                 Private Notes

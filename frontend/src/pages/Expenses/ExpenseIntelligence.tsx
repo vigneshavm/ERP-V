@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+﻿import React, { useState, useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import {
@@ -252,7 +252,7 @@ const ExpenseIntelligence: React.FC = () => {
 
                 {/* Strategic KPI Dashboard */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm group overflow-hidden relative">
+                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm group overflow-hidden relative">
                         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
                             <DollarSign className="w-16 h-16" />
                         </div>
@@ -264,7 +264,7 @@ const ExpenseIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Budget Utilization</p>
                         <h3 className="text-2xl font-black tabular-nums">{Math.round((totalStats.spent / totalStats.budget) * 100)}%</h3>
                         <div className="w-full h-1.5 bg-neutral-100 dark:bg-neutral-900 rounded-full mt-3 overflow-hidden">
@@ -275,7 +275,7 @@ const ExpenseIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden">
+                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden">
                         <div className={`absolute inset-y-0 left-0 w-1 ${totalStats.leaks > 0 ? 'bg-error animate-pulse' : 'bg-success'}`} />
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Leakage Alerts</p>
                         <h3 className={`text-2xl font-black ${totalStats.leaks > 0 ? 'text-error animate-pulse' : 'text-success'}`}>
@@ -287,7 +287,7 @@ const ExpenseIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-neutral-900 text-white p-6 rounded-3xl shadow-xl border border-neutral-800 relative group overflow-hidden">
+                    <div className="bg-neutral-900 text-white p-6 rounded-sm shadow-xl border border-neutral-800 relative group overflow-hidden">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700" />
                         <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 italic text-primary">Intelligence Advice</p>
                         <h3 className="text-xs font-black italic leading-tight text-neutral-300">
@@ -339,7 +339,7 @@ const ExpenseIntelligence: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Search by ID, description, category, submitter..."
-                                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
+                                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                         />
@@ -351,8 +351,8 @@ const ExpenseIntelligence: React.FC = () => {
                                                 onClick={() => setStatusFilter(tab)}
                                                 className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all ${
                                                     statusFilter === tab
-                                                        ? tab === 'Pending'  ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
-                                                        : tab === 'Approved' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
+                                                        ? tab === 'Pending'  ? 'bg-amber-100 text-amber-700 dark:bg-warning/20 dark:text-warning'
+                                                        : tab === 'Approved' ? 'bg-emerald-100 text-emerald-700 dark:bg-success/20 dark:text-success'
                                                         : tab === 'Rejected' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'
                                                         : 'bg-primary text-white'
                                                         : 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
@@ -365,7 +365,7 @@ const ExpenseIntelligence: React.FC = () => {
                                 </div>
 
                                 {/* Transactions Table */}
-                                <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm mb-6">
+                                <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm mb-6">
                                     <div className="px-6 py-4 border-b border-neutral-100 dark:border-neutral-700 flex items-center justify-between">
                                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Recent Transactions</p>
                                         <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">{filteredTransactions.length} records</span>
@@ -398,9 +398,9 @@ const ExpenseIntelligence: React.FC = () => {
                                                         </td>
                                                         <td className="px-5 py-4">
                                                             <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                                                                tx.payment_mode === 'CASH'  ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' :
+                                                                tx.payment_mode === 'CASH'  ? 'bg-amber-50 text-amber-600 dark:bg-warning/10 dark:text-warning' :
                                                                 tx.payment_mode === 'BANK'  ? 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400' :
-                                                                'bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400'
+                                                                'bg-violet-50 text-violet-600 dark:bg-accent/10 dark:text-accent'
                                                             }`}>{tx.payment_mode}</span>
                                                         </td>
                                                         <td className="px-5 py-4">
@@ -415,8 +415,8 @@ const ExpenseIntelligence: React.FC = () => {
                                                         <td className="px-5 py-4">
                                                             <div className="flex justify-center">
                                                                 <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border ${
-                                                                    tx.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20' :
-                                                                    tx.status === 'Pending'  ? 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20' :
+                                                                    tx.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-success/10 dark:text-success dark:border-success/20' :
+                                                                    tx.status === 'Pending'  ? 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-warning/10 dark:text-warning dark:border-warning/20' :
                                                                     'bg-red-50 text-red-600 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20'
                                                                 }`}>{tx.status}</span>
                                                             </div>
@@ -514,7 +514,7 @@ const ExpenseIntelligence: React.FC = () => {
                         )}
 
                         {viewMode === 'BRANCHES' && (
-                            <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                            <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
                                 <table className="w-full text-left">
                                     <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 text-[10px] font-black text-neutral-400 uppercase tracking-widest">
                                         <tr>
@@ -561,7 +561,7 @@ const ExpenseIntelligence: React.FC = () => {
 
                                     <div className="space-y-6">
                                         {analysis.filter(a => a.is_split_detected || a.compliance_score < 70).map((alert, i) => (
-                                            <div key={i} className="flex gap-4 p-5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm group/alert hover:bg-white/10 transition-all cursor-pointer">
+                                            <div key={i} className="flex gap-4 p-5 bg-white/5 border border-white/10 rounded-sm backdrop-blur-sm group/alert hover:bg-white/10 transition-all cursor-pointer">
                                                 <div className="p-3.5 bg-error/20 text-error rounded-xl h-fit">
                                                     <AlertTriangle className="w-5 h-5" />
                                                 </div>
@@ -594,7 +594,7 @@ const ExpenseIntelligence: React.FC = () => {
                     <div className="space-y-4">
                         <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest pl-1">Compliance Hygiene</h4>
 
-                        <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-6">Aggregate Audit Score</p>
                             <div className="flex items-center justify-center py-6">
                                 <div className="relative">
@@ -620,13 +620,13 @@ const ExpenseIntelligence: React.FC = () => {
                                 <p className="text-[11px] opacity-90 leading-relaxed mb-6">
                                     The Intelligence Agent has identified <span className="font-black underline underline-offset-2">₹12,400</span> in unclaimed GST due to missing receipts.
                                 </p>
-                                <button className="w-full py-4 bg-white text-primary font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-neutral-50 transition-all shadow-xl shadow-black/5 active:scale-95">
+                                <button className="w-full py-4 bg-white text-primary font-black text-[10px] uppercase tracking-widest rounded-sm hover:bg-neutral-50 transition-all shadow-xl shadow-black/5 active:scale-95">
                                     Enable Auto-Reclaim
                                 </button>
                             </div>
                         </div>
 
-                        <div className="p-5 rounded-3xl border border-primary/10 bg-primary/5 flex items-start gap-4">
+                        <div className="p-5 rounded-sm border border-primary/10 bg-primary/5 flex items-start gap-4">
                             <div className="p-2 bg-primary/20 rounded-xl text-primary shrink-0">
                                 <Receipt className="w-5 h-5" />
                             </div>
@@ -636,7 +636,7 @@ const ExpenseIntelligence: React.FC = () => {
                         </div>
 
                         {/* Quick Access to Spenders */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-4">Top Claimants</p>
                             <div className="space-y-4">
                                 {[

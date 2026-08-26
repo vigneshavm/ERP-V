@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -220,16 +220,16 @@ const DeliveryChallan = () => {
                 <div className="flex items-center gap-6">
                     <button 
                         onClick={() => navigate('/sales/challans')}
-                        className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-2xl hover:scale-110 transition-transform text-neutral-500 hover:text-amber-500"
+                        className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-sm hover:scale-110 transition-transform text-neutral-500 hover:text-warning"
                     >
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-2xl font-display font-black tracking-tighter text-neutral-900 dark:text-white">
-                                Dispatch <span className="text-amber-500">Protocol</span>
+                                Dispatch <span className="text-warning">Protocol</span>
                             </h1>
-                            <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                            <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-[10px] font-black uppercase tracking-widest">
                                 Logistics v4.0
                             </span>
                         </div>
@@ -242,14 +242,14 @@ const DeliveryChallan = () => {
                 <div className="flex items-center gap-3">
                     <button 
                         onClick={() => navigate('/sales/challans')}
-                        className="hidden md:flex items-center gap-2 px-6 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all shadow-sm"
+                        className="hidden md:flex items-center gap-2 px-6 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all shadow-sm"
                     >
                         Cancel
                     </button>
                     <button 
                         onClick={handleSave}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-8 py-3 bg-amber-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                        className="flex items-center gap-2 px-8 py-3 bg-amber-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50"
                     >
                         {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                         Finalize Protocol
@@ -264,12 +264,12 @@ const DeliveryChallan = () => {
                         {/* Summary Dashboard */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {[
-                                { label: 'Dispatch Nodes', value: `${metrics.totalItems} Units`, icon: Layers, color: 'text-amber-500' },
+                                { label: 'Dispatch Nodes', value: `${metrics.totalItems} Units`, icon: Layers, color: 'text-warning' },
                                 { label: 'Gross Quantity', value: metrics.totalQty, icon: Activity, color: 'text-blue-500' },
-                                { label: 'Risk Protocol', value: 'Nominal', icon: ShieldCheck, color: 'text-emerald-500' }
+                                { label: 'Risk Protocol', value: 'Nominal', icon: ShieldCheck, color: 'text-success' }
                             ].map((stat, i) => (
-                                <div key={i} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 shadow-sm flex items-center gap-4">
-                                    <div className={`p-3 rounded-2xl ${stat.color.replace('text', 'bg')}/10 ${stat.color}`}>
+                                <div key={i} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6 shadow-sm flex items-center gap-4">
+                                    <div className={`p-3 rounded-sm ${stat.color.replace('text', 'bg')}/10 ${stat.color}`}>
                                         <stat.icon className="w-5 h-5" />
                                     </div>
                                     <div>
@@ -286,13 +286,13 @@ const DeliveryChallan = () => {
                                 <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Dispatch Manifest</h3>
                                 <div className="flex items-center gap-3">
                                     {formData.salesOrder && (
-                                        <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
+                                        <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
                                             <Briefcase className="w-3 h-3" /> Linked to SO
                                         </span>
                                     )}
                                     <button 
                                         onClick={() => setShowItemModal(true)}
-                                        className="p-3 bg-amber-500 text-white rounded-2xl hover:scale-110 transition-transform shadow-lg shadow-amber-500/20"
+                                        className="p-3 bg-amber-500 text-white rounded-sm hover:scale-110 transition-transform shadow-lg shadow-amber-500/20"
                                     >
                                         <Plus className="w-5 h-5" />
                                     </button>
@@ -315,7 +315,7 @@ const DeliveryChallan = () => {
                                             <tr>
                                                 <td colSpan={5} className="px-8 py-20 text-center">
                                                     <div className="flex flex-col items-center gap-4 opacity-20 grayscale">
-                                                        <Truck className="w-16 h-16 text-amber-500" />
+                                                        <Truck className="w-16 h-16 text-warning" />
                                                         <p className="text-xs font-black uppercase tracking-widest text-neutral-400">Manifest Empty // Sync Entity or Items</p>
                                                     </div>
                                                 </td>
@@ -335,7 +335,7 @@ const DeliveryChallan = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-6 text-right">
-                                                        <span className={`text-[10px] font-black uppercase tracking-widest ${item.availableStock > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                        <span className={`text-[10px] font-black uppercase tracking-widest ${item.availableStock > 0 ? 'text-success' : 'text-danger'}`}>
                                                             {item.availableStock} Units
                                                         </span>
                                                     </td>
@@ -364,7 +364,7 @@ const DeliveryChallan = () => {
                                                     <td className="px-8 py-6 text-center">
                                                         <button 
                                                             onClick={() => removeItem(index)}
-                                                            className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                                                            className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-danger rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
                                                         </button>
@@ -380,12 +380,12 @@ const DeliveryChallan = () => {
                         {/* Logistics Directives */}
                         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[32px] p-8 shadow-sm">
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                                <Info className="w-4 h-4 text-amber-500" /> Operational Directives
+                                <Info className="w-4 h-4 text-warning" /> Operational Directives
                             </h3>
                             <textarea 
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 text-xs font-bold outline-none focus:border-amber-500/30 transition-all dark:text-white placeholder:text-neutral-500 min-h-[120px] shadow-inner"
+                                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6 text-xs font-bold outline-none focus:border-warning/30 transition-all dark:text-white placeholder:text-neutral-500 min-h-[120px] shadow-inner"
                                 placeholder="Enter specific logistical protocols, handling terms, or delivery notes..."
                             />
                         </div>
@@ -399,10 +399,10 @@ const DeliveryChallan = () => {
                         <div>
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-4">Entity Mapping</h3>
                             {formData.customer ? (
-                                <div className="bg-white dark:bg-neutral-900 border-2 border-amber-500/20 rounded-3xl p-6 shadow-xl shadow-amber-500/5 relative overflow-hidden group transition-all hover:scale-[1.02]">
+                                <div className="bg-white dark:bg-neutral-900 border-2 border-warning/20 rounded-sm p-6 shadow-xl shadow-amber-500/5 relative overflow-hidden group transition-all hover:scale-[1.02]">
                                     <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-bl-[40px]" />
                                     <div className="flex items-start gap-4 mb-4 relative z-10">
-                                        <div className="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
+                                        <div className="w-12 h-12 rounded-sm bg-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
                                             <User className="w-6 h-6" />
                                         </div>
                                         <div className="flex-1 overflow-hidden">
@@ -411,17 +411,17 @@ const DeliveryChallan = () => {
                                         </div>
                                         <button 
                                             onClick={() => setFormData({ ...formData, customer: null, salesOrder: null, items: [] })}
-                                            className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl text-neutral-400 hover:text-rose-500 transition-colors"
+                                            className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl text-neutral-400 hover:text-danger transition-colors"
                                         >
                                             <RefreshCw className="w-4 h-4" />
                                         </button>
                                     </div>
                                     <div className="space-y-2 pt-4 border-t border-neutral-100 dark:border-neutral-800">
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
-                                            <MapPin className="w-3 h-3 text-amber-500" /> SLA: Local Node Dispatch
+                                            <MapPin className="w-3 h-3 text-warning" /> SLA: Local Node Dispatch
                                         </div>
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
-                                            <Tag className="w-3 h-3 text-amber-500" /> Ph: {formData.customer.phone}
+                                            <Tag className="w-3 h-3 text-warning" /> Ph: {formData.customer.phone}
                                         </div>
                                     </div>
                                 </div>
@@ -429,10 +429,10 @@ const DeliveryChallan = () => {
                                 <div className="space-y-3">
                                     <button 
                                         onClick={() => setShowCustomerModal(true)}
-                                        className="w-full bg-white dark:bg-neutral-900 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-3xl p-6 flex flex-col items-center gap-3 hover:border-amber-500/50 transition-all group shadow-sm"
+                                        className="w-full bg-white dark:bg-neutral-900 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-sm p-6 flex flex-col items-center gap-3 hover:border-amber-500/50 transition-all group shadow-sm"
                                     >
-                                        <Search className="w-6 h-6 text-neutral-300 group-hover:text-amber-500 transition-colors" />
-                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] group-hover:text-amber-500 transition-colors">Map Customer Entity</p>
+                                        <Search className="w-6 h-6 text-neutral-300 group-hover:text-warning transition-colors" />
+                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] group-hover:text-warning transition-colors">Map Customer Entity</p>
                                     </button>
                                     <div className="flex items-center gap-2 px-4 py-2 opacity-30">
                                         <div className="h-px flex-1 bg-neutral-300 dark:bg-neutral-700" />
@@ -441,7 +441,7 @@ const DeliveryChallan = () => {
                                     </div>
                                     <button 
                                         onClick={() => setShowSalesOrderModal(true)}
-                                        className="w-full bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-3xl p-6 flex flex-col items-center gap-3 hover:bg-amber-500/20 transition-all group shadow-sm"
+                                        className="w-full bg-warning/10 border border-warning/20 text-warning rounded-sm p-6 flex flex-col items-center gap-3 hover:bg-warning/20 transition-all group shadow-sm"
                                     >
                                         <Briefcase className="w-6 h-6" />
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em]">Select from Sales Order</p>
@@ -467,7 +467,7 @@ const DeliveryChallan = () => {
                                             <button
                                                 key={mode.id}
                                                 onClick={() => setFormData({ ...formData, transportMode: mode.id })}
-                                                className={`p-3 rounded-xl border transition-all flex items-center justify-center ${formData.transportMode === mode.id ? 'bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20' : 'bg-neutral-50 dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 text-neutral-400 hover:border-amber-500/30'}`}
+                                                className={`p-3 rounded-xl border transition-all flex items-center justify-center ${formData.transportMode === mode.id ? 'bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20' : 'bg-neutral-50 dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 text-neutral-400 hover:border-warning/30'}`}
                                                 title={mode.id.toUpperCase()}
                                             >
                                                 <mode.icon className="w-4 h-4" />
@@ -478,25 +478,25 @@ const DeliveryChallan = () => {
                                 <div>
                                     <label className="text-[9px] font-black text-neutral-400 uppercase tracking-widest block mb-2">Vehicle Node ID</label>
                                     <div className="relative">
-                                        <Navigation className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500" />
+                                        <Navigation className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warning" />
                                         <input
                                             type="text"
                                             value={formData.vehicleNo}
                                             onChange={(e) => setFormData({ ...formData, vehicleNo: e.target.value })}
                                             placeholder="MH-01-AB-1234"
-                                            className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-amber-500/30 transition-all dark:text-white"
+                                            className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-warning/30 transition-all dark:text-white"
                                         />
                                     </div>
                                 </div>
                                 <div>
                                     <label className="text-[9px] font-black text-neutral-400 uppercase tracking-widest block mb-2">Dispatch Date</label>
                                     <div className="relative">
-                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500" />
+                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warning" />
                                         <input
                                             type="date"
                                             value={formData.challanDate}
                                             onChange={(e) => setFormData({ ...formData, challanDate: e.target.value })}
-                                            className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-amber-500/30 transition-all dark:text-white"
+                                            className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-warning/30 transition-all dark:text-white"
                                         />
                                     </div>
                                 </div>
@@ -505,7 +505,7 @@ const DeliveryChallan = () => {
 
                         {/* Dispatch Valuation */}
                         <div className="bg-neutral-900 dark:bg-white rounded-[40px] p-8 text-white dark:text-neutral-900 shadow-2xl relative overflow-hidden mt-auto">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-[100px]" />
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-bl-[100px]" />
                             <h3 className="text-[10px] font-black opacity-50 uppercase tracking-[0.3em] mb-8">Dispatch Valuation</h3>
                             <div className="space-y-6 relative z-10">
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
@@ -514,13 +514,13 @@ const DeliveryChallan = () => {
                                 </div>
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
                                     <span>Logistics Protocol</span>
-                                    <span className="font-mono text-emerald-400 dark:text-emerald-600">{formData.transportMode.toUpperCase()}</span>
+                                    <span className="font-mono text-success dark:text-emerald-600">{formData.transportMode.toUpperCase()}</span>
                                 </div>
                                 <div className="pt-6 border-t border-white/10 dark:border-neutral-200">
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Total Fulfillment Qty</span>
                                         <div className="text-4xl font-display font-black tracking-tighter flex items-center gap-3">
-                                            <Activity className="w-8 h-8 text-amber-500" />
+                                            <Activity className="w-8 h-8 text-warning" />
                                             {metrics.totalQty.toLocaleString()}
                                         </div>
                                     </div>

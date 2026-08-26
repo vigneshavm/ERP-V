@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 import {
     Palette,
@@ -99,7 +99,7 @@ const MarketingTemplates: React.FC = () => {
             {/* Premium Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                 <div className="space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 border border-indigo-500/20">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-primary border border-primary/20">
                         <Sparkles className="w-3 h-3" /> Template Intelligence
                     </div>
                     <h1 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tighter italic">
@@ -112,16 +112,16 @@ const MarketingTemplates: React.FC = () => {
 
                 <div className="flex items-center gap-3">
                     <div className="relative group">
-                        <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                        <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
                         <input
                             type="text"
                             placeholder="Search templates..."
-                            className="pl-11 pr-6 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold w-full md:w-80 outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
+                            className="pl-11 pr-6 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-bold w-full md:w-80 outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
                         />
                     </div>
                     <button
                         onClick={() => dispatch(setActiveTab('GROW_DASHBOARD'))}
-                        className="flex items-center gap-2 px-6 py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-2xl transition-all text-sm font-black shadow-sm"
+                        className="flex items-center gap-2 px-6 py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-sm transition-all text-sm font-black shadow-sm"
                     >
                         <LayoutDashboard className="w-4 h-4" />
                         Dashboard
@@ -141,13 +141,13 @@ const MarketingTemplates: React.FC = () => {
                     </div>
                 </div>
                 <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 border border-slate-200 dark:border-slate-700 shadow-sm relative group">
-                    <Users className="w-8 h-8 mb-4 text-emerald-500" />
+                    <Users className="w-8 h-8 mb-4 text-success" />
                     <h4 className="text-sm font-black uppercase tracking-widest mb-1 text-slate-400">Total Utilization</h4>
                     <p className="text-2xl font-black mb-2 text-slate-900 dark:text-white">12,450 Campaigns</p>
-                    <p className="text-xs font-bold text-emerald-500">+12% from last month</p>
+                    <p className="text-xs font-bold text-success">+12% from last month</p>
                 </div>
                 <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 border border-slate-200 dark:border-slate-700 shadow-sm relative group">
-                    <Calendar className="w-8 h-8 mb-4 text-amber-500" />
+                    <Calendar className="w-8 h-8 mb-4 text-warning" />
                     <h4 className="text-sm font-black uppercase tracking-widest mb-1 text-slate-400">Upcoming Festival</h4>
                     <p className="text-2xl font-black mb-2 text-slate-900 dark:text-white">Republic Day 2026</p>
                     <p className="text-xs font-bold text-slate-500">4 templates available</p>
@@ -160,7 +160,7 @@ const MarketingTemplates: React.FC = () => {
                     <button
                         key={cat}
                         onClick={() => setSelectedCategory(cat as any)}
-                        className={`px-8 py-3.5 rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all ${selectedCategory === cat
+                        className={`px-8 py-3.5 rounded-sm text-xs font-black uppercase tracking-[0.2em] transition-all ${selectedCategory === cat
                             ? 'bg-slate-900 dark:bg-white text-white dark:text-black shadow-lg scale-105'
                             : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-indigo-500'
                             }`}
@@ -179,10 +179,10 @@ const MarketingTemplates: React.FC = () => {
                     >
                         {/* Status Tags */}
                         <div className="absolute top-10 right-10 z-10 flex flex-col gap-2 scale-90 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all">
-                            <span className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2 rounded-xl text-slate-500 hover:text-indigo-600 shadow-lg">
+                            <span className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2 rounded-xl text-slate-500 hover:text-primary shadow-lg">
                                 <Heart className="w-4 h-4" />
                             </span>
-                            <span className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2 rounded-xl text-slate-500 hover:text-indigo-600 shadow-lg">
+                            <span className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2 rounded-xl text-slate-500 hover:text-primary shadow-lg">
                                 <Download className="w-4 h-4" />
                             </span>
                         </div>
@@ -190,13 +190,13 @@ const MarketingTemplates: React.FC = () => {
                         {/* Preview Area */}
                         <div className={`aspect-[4/5] rounded-[2.5rem] mb-6 relative overflow-hidden flex flex-col items-center justify-center ${template.preview} shadow-inner`}>
                             <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                <button className="bg-white text-black px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                                <button className="bg-white text-black px-6 py-3 rounded-sm font-black text-[10px] uppercase tracking-widest shadow-xl flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
                                     Quick Preview <Eye className="w-3 h-3" />
                                 </button>
                             </div>
 
                             {/* Decorative Paper Elements */}
-                            <div className="w-[60%] h-[70%] bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 flex flex-col p-4">
+                            <div className="w-[60%] h-[70%] bg-white/20 backdrop-blur-md rounded-sm border border-white/30 flex flex-col p-4">
                                 <div className="w-8 h-8 bg-white/40 rounded-lg mb-4" />
                                 <div className="w-full h-2 bg-white/40 rounded-full mb-2" />
                                 <div className="w-[80%] h-2 bg-white/40 rounded-full mb-6" />
@@ -207,10 +207,10 @@ const MarketingTemplates: React.FC = () => {
                         {/* Info Area */}
                         <div className="px-2">
                             <div className="flex items-center justify-between mb-3">
-                                <span className="text-[10px] font-black tracking-[0.2em] uppercase text-indigo-500">{template.category}</span>
-                                <span className="text-[10px] font-black bg-emerald-100 text-emerald-600 dark:bg-emerald-400/10 px-2 py-1 rounded-lg">ROI: {template.roi}</span>
+                                <span className="text-[10px] font-black tracking-[0.2em] uppercase text-primary">{template.category}</span>
+                                <span className="text-[10px] font-black bg-emerald-100 text-emerald-600 dark:bg-success/10 px-2 py-1 rounded-lg">ROI: {template.roi}</span>
                             </div>
-                            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 leading-tight group-hover:text-indigo-600 transition-colors">{template.name}</h3>
+                            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 leading-tight group-hover:text-primary transition-colors">{template.name}</h3>
                             <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full bg-indigo-500" />
@@ -218,7 +218,7 @@ const MarketingTemplates: React.FC = () => {
                                 </div>
                                 <button
                                     onClick={() => dispatch(setActiveTab('GROW_MARKETING_CAMPAIGNS'))}
-                                    className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white hover:text-indigo-500 transition-colors"
+                                    className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white hover:text-primary transition-colors"
                                 >
                                     Use Template <ArrowRight className="w-4 h-4" />
                                 </button>
@@ -230,13 +230,13 @@ const MarketingTemplates: React.FC = () => {
 
             {/* Custom Request Banner */}
             <div className="bg-slate-900 dark:bg-black rounded-[4rem] p-12 text-white relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -mr-48 -mt-48" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] -mr-48 -mt-48" />
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
                     <div className="max-w-xl text-center md:text-left">
                         <h2 className="text-3xl font-black tracking-tight mb-4 leading-tight">Need a custom brand template?</h2>
                         <p className="text-slate-400 font-medium">Our design intelligence engine can generate brand-locked templates for your specific promotions in seconds.</p>
                     </div>
-                    <button className="px-10 py-5 bg-white text-black rounded-3xl font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all shadow-xl flex items-center gap-3">
+                    <button className="px-10 py-5 bg-white text-black rounded-sm font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all shadow-xl flex items-center gap-3">
                         <Palette className="w-4 h-4" /> Generate Brand Version
                     </button>
                 </div>

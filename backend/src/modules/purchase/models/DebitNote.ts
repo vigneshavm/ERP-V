@@ -87,7 +87,7 @@ const debitNoteSchema = new Schema<IDebitNote>(
     { timestamps: true }
 );
 
-debitNoteSchema.index({ noteId: 1 });
+
 debitNoteSchema.index({ vendorId: 1 });
 
 const DebitNote = mongoose.model<IDebitNote>("DebitNote", debitNoteSchema);

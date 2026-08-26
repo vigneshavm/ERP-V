@@ -1,249 +1,191 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Filter, Search, Plus, Download, ChevronRight, BarChart2, ShieldCheck, FileText, Factory } from 'lucide-react';
-import purchaseRegisterData from '../../mockData/purchaseRegisterData.json';
+import { 
+    Filter, Search, Plus, Download, ChevronRight, 
+    BarChart2, ShieldCheck, FileText, Factory, 
+    Package, TrendingUp, AlertCircle, RefreshCw
+} from 'lucide-react';
+import { purchases, suppliers } from '../../data';
+import Layout from '../../components/shared/Layout';
 
 const PurchaseRegisterMockUI: React.FC = () => {
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('All');
 
-    // State
-    const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+    const processedPurchases = useMemo(() => {
+        return purchases.map(p => {
+            const supplier = suppliers.find(s => s.id === p.supplier_id);
+            return {
+                ...p,
+                supplierName: supplier?.name || 'Unknown Entity'
+            };
+        });
+    }, []);
 
-    // Filtering Logic
-    const filteredRecords = useMemo(() => {
-        return purchaseRegisterData.records.filter(rec => 
-            rec.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            rec.supplier.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            rec.status.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [searchTerm]);
+    const filteredPurchases = useMemo(() => {
+        return processedPurchases.filter(p => {
+            const matchesSearch = 
+                p.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.supplierName.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesStatus = statusFilter === 'All' || p.status === statusFilter;
+            return matchesSearch && matchesStatus;
+        });
+    }, [processedPurchases, searchQuery, statusFilter]);
 
-    // Pagination Logic
-    const totalPages = Math.ceil(filteredRecords.length / itemsPerPage);
-    const paginatedRecords = useMemo(() => {
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        return filteredRecords.slice(startIndex, startIndex + itemsPerPage);
-    }, [filteredRecords, currentPage]);
-
-    // Reset pagination on search
-    const handleSearch = (val: string) => {
-        setSearchTerm(val);
-        setCurrentPage(1);
-    };
-
-    // Export Logic
-    const handleExport = () => {
-        const headers = ["Record ID", "Date", "Supplier", "Status", "Amount"];
-        const rows = filteredRecords.map(rec => [
-            rec.id,
-            rec.date,
-            rec.supplier,
-            rec.status,
-            rec.amount.replace('₹', '').replace(/,/g, '')
-        ]);
-        
-        const csvContent = "data:text/csv;charset=utf-8," 
-            + headers.join(",") + "\n"
-            + rows.map(e => e.join(",")).join("\n");
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Purchase_Register_Protocol_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    // New Acquisition Navigation
-    const handleNewAcquisition = () => {
-        navigate('/purchase/new');
-    };
+    const metrics = useMemo(() => {
+        const totalAmount = purchases.reduce((sum, p) => sum + p.total, 0);
+        const totalTax = purchases.reduce((sum, p) => sum + p.gst, 0);
+        return [
+            { label: 'Total Procurement', val: `₹${(totalAmount/100000).toFixed(2)}L`, sub: 'LIFETIME QUANTUM', icon: Package, bg: 'bg-primary/10', color: 'text-primary' },
+            { label: 'Tax Contribution', val: `₹${(totalTax/10000).toFixed(2)}K`, sub: 'GST COMPLIANCE', icon: ShieldCheck, bg: 'bg-emerald-500/10', color: 'text-emerald-500' },
+            { label: 'Pending Arrival', val: '12', sub: 'LOGISTICS DELAY', icon: AlertCircle, bg: 'bg-amber-500/10', color: 'text-amber-500' },
+            { label: 'Volume Index', val: `${purchases.length}`, sub: 'VOUCHER COUNT', icon: TrendingUp, bg: 'bg-indigo-500/10', color: 'text-indigo-500' }
+        ];
+    }, []);
 
     return (
-        <div className="min-h-screen bg-[#050505] text-[#e0e0e0] font-sans selection:bg-cyan-500/30 overflow-hidden flex flex-col relative">
-            {/* Ambient Background Elements */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-600/5 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/5 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(20,20,20,0)_0%,rgba(5,5,5,1)_100%)]" />
-            </div>
-
-            <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8 space-y-8 animate-in fade-in duration-700">
-                {/* Header Section */}
-                <header className="flex justify-between items-end">
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent uppercase">
-                                Purchase Register
-                            </h1>
-                            <span className="px-2.5 py-0.5 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-md text-[10px] font-black uppercase tracking-[0.2em]">
-                                Archive Node
-                            </span>
-                        </div>
-                        <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest flex items-center gap-2">
-                            <Factory className="w-3.5 h-3.5" /> Institutional Procurement Traceability Ledger
+        <Layout>
+            <div className="p-8 space-y-8 h-full flex flex-col text-main animate-fade-in relative z-10">
+                {/* Header */}
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
+                            Purchase <span className="text-primary">Register</span>
+                        </h1>
+                        <p className="text-[10px] uppercase tracking-[0.2em] font-black text-neutral-500 dark:text-neutral-400 mt-1">
+                            Institutional Procurement Ledger // Archive Node V4
                         </p>
                     </div>
                     <div className="flex gap-4">
-                        <button 
-                            onClick={handleExport}
-                            className="h-11 px-6 bg-white/5 hover:bg-white/10 text-neutral-300 font-bold text-xs uppercase tracking-widest rounded-xl transition-all border border-white/10 flex items-center gap-2 active:scale-95"
-                        >
-                            <Download className="w-4 h-4" /> Export Protocol
+                        <button className="h-12 px-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white font-bold text-xs tracking-widest rounded-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all shadow-sm flex items-center gap-3 uppercase">
+                            <Download className="w-4 h-4 text-primary" /> Export Dataset
                         </button>
-                        <button 
-                            onClick={handleNewAcquisition}
-                            className="h-11 px-6 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-black uppercase tracking-[0.15em] text-[10px] rounded-xl transition-all shadow-[0_0_20px_rgba(8,145,178,0.2)] hover:shadow-[0_0_30px_rgba(8,145,178,0.4)] flex items-center gap-2 active:scale-95"
-                        >
+                        <button className="h-12 px-8 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-sm transition-all shadow-lg shadow-primary/20 flex items-center gap-3 hover:opacity-90">
                             <Plus className="w-4 h-4" /> New Acquisition
                         </button>
                     </div>
-                </header>
+                </div>
 
-                {/* KPI Cards */}
+                {/* KPI Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {purchaseRegisterData.metrics.map((stat, i) => (
-                        <div key={i} className="group relative overflow-hidden bg-white/[0.03] border border-white/5 rounded-3xl p-6 transition-all hover:bg-white/[0.05] hover:border-white/10">
-                            <div className="absolute right-0 top-0 w-24 h-24 bg-gradient-to-br from-cyan-500/10 to-transparent blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] mb-2">{stat.label}</p>
-                            <p className="text-3xl font-black text-neutral-100 tabular-nums tracking-tighter">{stat.value}</p>
-                            <div className="mt-4 h-1 w-12 bg-cyan-500/30 rounded-full group-hover:w-20 transition-all duration-500" />
+                    {metrics.map((card, i) => (
+                        <div key={i} className="bg-white dark:bg-neutral-900 p-6 rounded-sm border border-neutral-200 dark:border-neutral-800 flex flex-col gap-4 group hover:border-primary/50 transition-all cursor-pointer shadow-sm relative overflow-hidden">
+                            <div className="flex justify-between items-start relative z-10">
+                                <div className={`p-3 rounded-sm ${card.bg} ${card.color} border border-current/10`}>
+                                    <card.icon className="w-5 h-5" />
+                                </div>
+                                <span className="text-[9px] font-black text-neutral-400 group-hover:text-primary uppercase tracking-[0.2em] transition-colors">{card.sub}</span>
+                            </div>
+                            <div className="relative z-10">
+                                <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">{card.label}</p>
+                                <p className="text-2xl font-display font-black tracking-tighter text-neutral-900 dark:text-white tabular-nums">{card.val}</p>
+                            </div>
+                            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                         </div>
                     ))}
                 </div>
 
-                {/* Filter & Command Bar */}
-                <div className="flex flex-col md:flex-row gap-4 items-center bg-white/[0.02] border border-white/5 p-4 rounded-[2rem] backdrop-blur-md">
-                    <div className="relative flex-1 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-cyan-400 transition-colors" />
-                        <input 
-                            type="text" 
-                            value={searchTerm}
-                            onChange={(e) => handleSearch(e.target.value)}
-                            placeholder="QUERY SYSTEM NODES (PO # / SUPPLIER / ID)..." 
-                            className="w-full bg-black/40 border border-white/5 rounded-2xl pl-12 pr-4 py-3 text-[10px] font-black uppercase tracking-widest focus:border-cyan-500/50 outline-none transition-all placeholder:text-neutral-700"
-                        />
+                {/* Data Grid Section */}
+                <div className="flex-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm flex flex-col overflow-hidden shadow-sm">
+                    <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex flex-col lg:flex-row justify-between items-center gap-4">
+                        <div className="flex gap-4 w-full lg:w-auto">
+                            <div className="relative flex-1 lg:w-80">
+                                <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-primary" />
+                                <input 
+                                    type="text" 
+                                    placeholder="SEARCH VOUCHER / ENTITY..." 
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-3 pl-12 pr-6 text-[10px] font-black tracking-widest uppercase focus:border-primary outline-none transition-all text-neutral-900 dark:text-white shadow-inner" 
+                                />
+                            </div>
+                            <button className="h-11 px-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm text-[10px] font-black uppercase tracking-widest text-neutral-500 dark:text-neutral-400 flex items-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all">
+                                <Filter className="w-4 h-4" /> Global Protocol
+                            </button>
+                        </div>
+                        <div className="flex gap-1.5 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-800">
+                            {['All', 'RECEIVED', 'PENDING', 'CANCELLED'].map((tab) => (
+                                <button 
+                                    key={tab} 
+                                    onClick={() => setStatusFilter(tab)}
+                                    className={`px-5 py-2 rounded-sm text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === tab ? 'bg-white dark:bg-neutral-900 text-primary shadow-sm' : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'}`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                    <div className="flex gap-3">
-                        <button className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-neutral-200 active:scale-95">
-                            <Filter className="w-4 h-4" /> Parameters
-                        </button>
-                        <button className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-neutral-200 active:scale-95">
-                            <BarChart2 className="w-4 h-4" /> Intelligence
-                        </button>
-                    </div>
-                </div>
 
-                {/* Data Matrix */}
-                <div className="flex-1 bg-white/[0.02] border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col backdrop-blur-sm relative shadow-2xl">
-                    <div className="overflow-x-auto min-h-[400px]">
+                    <div className="flex-1 overflow-auto custom-scrollbar">
                         <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-white/[0.03] border-b border-white/5">
-                                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500">Record Identity</th>
-                                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500">Temporal Node</th>
-                                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500">Institutional Entity</th>
-                                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 text-center">Protocol State</th>
-                                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 text-right">Quantum (INR)</th>
-                                    <th className="px-8 py-5 w-16"></th>
+                            <thead className="bg-neutral-50 dark:bg-neutral-950/80 sticky top-0 z-20 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800">
+                                <tr className="text-neutral-500 dark:text-neutral-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                                    <th className="px-8 py-5">Record identity</th>
+                                    <th className="px-8 py-5">Temporal node</th>
+                                    <th className="px-8 py-5">Institutional entity</th>
+                                    <th className="px-8 py-5 text-center">Protocol state</th>
+                                    <th className="px-8 py-5 text-right">Quantum (INR)</th>
+                                    <th className="px-8 py-5 text-center w-20"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
-                                {paginatedRecords.length > 0 ? (
-                                    paginatedRecords.map((rec, i) => (
-                                        <tr key={i} className="hover:bg-white/[0.03] transition-all cursor-pointer group">
-                                            <td className="px-8 py-6">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-cyan-500/10 transition-colors">
-                                                        <FileText className="w-4 h-4 text-neutral-600 group-hover:text-cyan-400 transition-colors" />
-                                                    </div>
-                                                    <span className="font-mono text-sm font-bold text-cyan-500 group-hover:text-cyan-400 transition-colors tracking-tighter">{rec.id}</span>
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                {filteredPurchases.map((rec) => (
+                                    <tr key={rec.id} className="hover:bg-primary/[0.02] transition-all group cursor-pointer" onClick={() => navigate(`/purchase/detail/${rec.id}`)}>
+                                        <td className="px-8 py-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                                                    <FileText className="w-5 h-5" />
                                                 </div>
-                                            </td>
-                                            <td className="px-8 py-6 text-xs font-bold text-neutral-400 uppercase tracking-widest">{rec.date}</td>
-                                            <td className="px-8 py-6">
-                                                <span className="text-sm font-black text-neutral-100 uppercase tracking-tight">{rec.supplier}</span>
-                                                <div className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.2em] mt-1">Verified Node</div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <div className="flex justify-center">
-                                                    <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-2 border bg-${rec.color}-500/5 text-${rec.color}-400 border-${rec.color}-500/20`}>
-                                                        <span className={`w-1.5 h-1.5 rounded-full bg-${rec.color}-400 animate-pulse`} />
-                                                        {rec.status}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6 text-right font-mono text-lg font-black text-neutral-100 tracking-tighter tabular-nums">
-                                                {rec.amount}
-                                            </td>
-                                            <td className="px-8 py-6 text-center">
-                                                <button className="p-2.5 rounded-xl bg-white/5 opacity-0 group-hover:opacity-100 transition-all hover:bg-cyan-500/20 hover:text-cyan-400 text-neutral-500">
-                                                    <ChevronRight className="w-5 h-5" />
+                                                <span className="font-mono text-sm font-black text-neutral-900 dark:text-white group-hover:translate-x-1 transition-transform">{rec.id}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-xs font-bold text-neutral-400 uppercase tracking-widest">{rec.date}</td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex items-center gap-2.5">
+                                                <Factory className="w-4 h-4 text-primary/50" />
+                                                <span className="text-xs font-black text-neutral-700 dark:text-neutral-300 uppercase tracking-tight">{rec.supplierName}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex justify-center">
+                                                <span className={`px-4 py-1.5 rounded-sm text-[9px] font-black uppercase tracking-widest border ${rec.status === 'RECEIVED' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
+                                                    {rec.status}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-right font-mono text-sm font-black text-neutral-900 dark:text-white tabular-nums tracking-tighter">
+                                            ₹{rec.total.toLocaleString()}
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex justify-center">
+                                                <button className="p-3 text-neutral-400 hover:text-white bg-neutral-50 dark:bg-neutral-800 hover:bg-primary rounded-sm transition-all shadow-sm border border-neutral-200 dark:border-neutral-700">
+                                                    <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
                                                 </button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={6} className="px-8 py-20 text-center text-neutral-600 font-black uppercase tracking-[0.3em] text-[10px]">
-                                            No nodes found in current query context
+                                            </div>
                                         </td>
                                     </tr>
-                                )}
+                                ))}
                             </tbody>
                         </table>
                     </div>
-                    
-                    {/* Pagination Matrix */}
-                    <footer className="mt-auto p-8 border-t border-white/5 bg-white/[0.02] flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.2em]">
-                            Displaying <span className="text-neutral-400">{filteredRecords.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} - {Math.min(currentPage * itemsPerPage, filteredRecords.length)}</span> of <span className="text-neutral-400">{filteredRecords.length}</span> Acquisition Nodes
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <button 
-                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                disabled={currentPage === 1}
-                                className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-neutral-500 hover:text-neutral-200 transition-all active:scale-95 disabled:opacity-20 disabled:pointer-events-none"
-                            >
-                                Previous Node
-                            </button>
-                            <div className="flex gap-2">
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
-                                    <button 
-                                        key={n} 
-                                        onClick={() => setCurrentPage(n)}
-                                        className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all ${n === currentPage ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/20' : 'bg-white/5 text-neutral-500 hover:bg-white/10'}`}
-                                    >
-                                        {n}
-                                    </button>
-                                ))}
-                            </div>
-                            <button 
-                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                disabled={currentPage === totalPages || totalPages === 0}
-                                className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-neutral-500 hover:text-neutral-200 transition-all active:scale-95 disabled:opacity-20 disabled:pointer-events-none"
-                            >
-                                Next Node
-                            </button>
-                        </div>
-                    </footer>
                 </div>
 
-                {/* Ambient Intelligence Alert */}
-                <div className="bg-cyan-500/5 border border-cyan-500/10 p-6 rounded-[2rem] flex items-center gap-6 animate-pulse duration-[4s]">
-                    <div className="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20">
-                        <ShieldCheck className="w-6 h-6 text-cyan-400" />
+                {/* Audit Context */}
+                <div className="bg-primary/5 border border-primary/10 p-6 rounded-sm flex items-center gap-6">
+                    <div className="p-4 bg-primary/10 rounded-sm border border-primary/20">
+                        <ShieldCheck className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                        <h4 className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em]">System Governance Active</h4>
-                        <p className="text-xs text-neutral-500 font-bold mt-1 italic uppercase tracking-widest">All procurement nodes are being synchronized with the institutional audit trail.</p>
+                        <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Institutional Governance Layer Active</h4>
+                        <p className="text-xs text-neutral-500 font-bold mt-1 italic uppercase tracking-widest leading-relaxed">All procurement transactions are cryptographically indexed for the institutional audit trail. System status: NORMAL.</p>
                     </div>
+                    <button className="ml-auto p-3 text-neutral-400 hover:text-primary transition-all">
+                        <RefreshCw className="w-4 h-4" />
+                    </button>
                 </div>
-            </main>
-        </div>
+            </div>
+        </Layout>
     );
 };
 

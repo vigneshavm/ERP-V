@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
 import Layout from "../../../components/shared/Layout";
@@ -146,7 +146,7 @@ const CashBankIntelligence: React.FC = () => {
 
                 {/* Financial Pulse Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                             <DollarSign className="w-16 h-16" />
                         </div>
@@ -158,19 +158,19 @@ const CashBankIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Cash Shortages</p>
                         <h3 className="text-2xl font-black text-error">{metrics.shortages}</h3>
                         <p className="text-xs text-neutral-500 mt-2">Accounts requiring audit</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Audit Discrepancies</p>
                         <h3 className="text-2xl font-black text-warning">{metrics.activeDiscrepancies}</h3>
                         <p className="text-xs text-neutral-500 mt-2">Pending investigation</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Financial Integrity</p>
                         <div className="flex items-center gap-3 mt-1">
                             <h3 className="text-2xl font-black text-success">{metrics.securityScore}%</h3>
@@ -214,13 +214,13 @@ const CashBankIntelligence: React.FC = () => {
                         {filteredAccounts.map((acc) => (
                             <div
                                 key={acc.account_id}
-                                className={`group bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 transition-all hover:bg-neutral-50 dark:hover:bg-neutral-700/30 ${acc.status !== 'OK' ? 'border-l-4 border-l-error shadow-sm' : 'shadow-sm'
+                                className={`group bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm p-5 transition-all hover:bg-neutral-50 dark:hover:bg-neutral-700/30 ${acc.status !== 'OK' ? 'border-l-4 border-l-error shadow-sm' : 'shadow-sm'
                                     }`}
                             >
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                     <div className="flex items-start gap-4">
                                         <div className={`p-3 rounded-xl ${acc.type === 'CASH' ? 'bg-amber-100 text-amber-600' :
-                                            acc.type === 'BANK' ? 'bg-primary/10 text-primary' : 'bg-indigo-100 text-indigo-600'
+                                            acc.type === 'BANK' ? 'bg-primary/10 text-primary' : 'bg-indigo-100 text-primary'
                                             }`}>
                                             {acc.type === 'CASH' ? <Wallet className="w-6 h-6" /> :
                                                 acc.type === 'BANK' ? <Landmark className="w-6 h-6" /> : <Smartphone className="w-6 h-6" />}
@@ -288,7 +288,7 @@ const CashBankIntelligence: React.FC = () => {
                     {/* Audit Hub */}
                     <div className="space-y-4">
                         <h4 className="text-xs font-black text-neutral-400 uppercase tracking-widest pl-1">Financial Intelligence Audit</h4>
-                        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
                             <div className="p-4 bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-700 flex items-center justify-between">
                                 <span className="text-[10px] font-black text-neutral-500 uppercase">Live Anomalies</span>
                                 <span className="px-2 py-0.5 bg-error text-white text-[9px] font-black rounded-full animate-pulse shadow-sm shadow-error/20">LIVE</span>

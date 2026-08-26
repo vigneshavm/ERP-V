@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from "../../../redux/store";
 import { createTransfer } from "../../../redux/slices/cashbankSlice";
@@ -58,7 +58,7 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
                                 required
                                 value={formData.fromAccount}
                                 onChange={e => setFormData({ ...formData, fromAccount: e.target.value })}
-                                className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
+                                className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
                             >
                                 <option value="">Select Source Account...</option>
                                 {accounts.map(acc => (
@@ -81,7 +81,7 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
                                 required
                                 value={formData.toAccount}
                                 onChange={e => setFormData({ ...formData, toAccount: e.target.value })}
-                                className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
+                                className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
                             >
                                 <option value="">Select Designation Account...</option>
                                 {accounts.map(acc => (
@@ -100,7 +100,7 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
                                 min="1"
                                 value={formData.amount}
                                 onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                                className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                 placeholder="0.00"
                             />
                         </div>
@@ -111,7 +111,7 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
                                 type="text"
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                                className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
                                 placeholder="E.g. Daily Cash Deposit"
                             />
                         </div>
@@ -119,7 +119,7 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
                         <button
                             type="submit"
                             disabled={loading || !formData.fromAccount || !formData.toAccount || !formData.amount}
-                            className="w-full py-5 mt-6 bg-neutral-950 text-white rounded-3xl text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-neutral-900 transition-all flex items-center justify-center gap-4 border border-neutral-700 disabled:opacity-50"
+                            className="w-full py-5 mt-6 bg-neutral-950 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-neutral-900 transition-all flex items-center justify-center gap-4 border border-neutral-700 disabled:opacity-50"
                         >
                             <ShieldCheck className="w-5 h-5 text-primary" />
                             {loading ? 'Executing Transfer...' : 'Authorize Transfer'}

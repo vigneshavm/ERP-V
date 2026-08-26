@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
@@ -45,20 +45,20 @@ const BrandWiseSalesReport: React.FC<BrandWiseSalesReportProps> = ({ timeRange }
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Top Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg text-indigo-600 dark:text-indigo-400">
+                        <div className="p-2 bg-indigo-50 dark:bg-primary/10 rounded-lg text-primary dark:text-primary">
                             <Award className="w-5 h-5" />
                         </div>
                     </div>
                     <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Market Leader</p>
                     <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{brandStats[0]?.name || 'N/A'}</h3>
-                    <p className="text-xs text-emerald-500 font-medium mt-1">₹{brandStats[0]?.revenue.toLocaleString()} (Highest Revenue)</p>
+                    <p className="text-xs text-success font-medium mt-1">₹{brandStats[0]?.revenue.toLocaleString()} (Highest Revenue)</p>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400">
+                        <div className="p-2 bg-emerald-50 dark:bg-success/10 rounded-lg text-emerald-600 dark:text-success">
                             <Star className="w-5 h-5" />
                         </div>
                     </div>
@@ -74,9 +74,9 @@ const BrandWiseSalesReport: React.FC<BrandWiseSalesReportProps> = ({ timeRange }
                     })()}
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-rose-50 dark:bg-rose-500/10 rounded-lg text-rose-600 dark:text-rose-400">
+                        <div className="p-2 bg-rose-50 dark:bg-danger/10 rounded-lg text-rose-600 dark:text-danger">
                             <TrendingUp className="w-5 h-5" />
                         </div>
                     </div>
@@ -88,7 +88,7 @@ const BrandWiseSalesReport: React.FC<BrandWiseSalesReportProps> = ({ timeRange }
             {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Bar Chart */}
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <h4 className="font-bold text-slate-900 dark:text-white mb-6">Revenue Contribution by Brand</h4>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
@@ -121,7 +121,7 @@ const BrandWiseSalesReport: React.FC<BrandWiseSalesReportProps> = ({ timeRange }
                 </div>
 
                 {/* Pie Chart */}
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <h4 className="font-bold text-slate-900 dark:text-white mb-6">Market Share (Volume)</h4>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
@@ -149,10 +149,10 @@ const BrandWiseSalesReport: React.FC<BrandWiseSalesReportProps> = ({ timeRange }
             </div>
 
             {/* Detailed Table */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                 <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/20">
                     <h4 className="font-bold text-slate-900 dark:text-white text-sm">Comprehensive Brand Analysis</h4>
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all">
+                    <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-primary bg-indigo-50 dark:bg-primary/10 rounded-lg hover:bg-indigo-100 dark:hover:bg-primary/20 transition-all">
                         <Download className="w-3.5 h-3.5" /> Export Data
                     </button>
                 </div>

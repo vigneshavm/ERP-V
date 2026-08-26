@@ -1,137 +1,158 @@
-import React from 'react';
-import { Truck, ShieldAlert, CheckCircle, Package, ArrowRight, Anchor, FileText, Search, Plus, Filter, Factory, RefreshCcw } from 'lucide-react';
-import purchaseData from '../../mockData/purchaseData.json';
+import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+    Truck, ShieldAlert, CheckCircle, Package, ArrowRight, 
+    Anchor, FileText, Search, Plus, Filter, Factory, 
+    RefreshCcw, ChevronRight, Zap, TrendingUp, DollarSign
+} from 'lucide-react';
+import { purchases, suppliers } from '../../data';
+import Layout from '../../components/shared/Layout';
 
 const PurchaseMockUI: React.FC = () => {
-    return (
-        <div className="min-h-screen bg-app text-main font-sans selection:bg-cyan-500/30 overflow-hidden flex flex-col">
-            {/* Ambient Background */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[20%] left-[-10%] w-[50%] h-[50%] bg-cyan-600/10 rounded-full blur-[150px]" />
-                <div className="absolute top-[10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/10 rounded-full blur-[150px]" />
-            </div>
+    const navigate = useNavigate();
 
-            <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8">
+    const processedPurchases = useMemo(() => {
+        return purchases.map(p => {
+            const supplier = suppliers.find(s => s.id === p.supplier_id);
+            return {
+                ...p,
+                supplierName: supplier?.name || 'Unknown Entity'
+            };
+        }).slice(0, 10);
+    }, []);
+
+    const metrics = useMemo(() => {
+        const totalPurchases = purchases.reduce((sum, p) => sum + p.total, 0);
+        const receivedCount = purchases.filter(p => p.status === 'RECEIVED').length;
+        const pendingCount = purchases.length - receivedCount;
+
+        return [
+            { label: 'Inbound Logistics', val: '12', sub: 'SHIPMENTS ACTIVE', icon: Truck, bg: 'bg-primary/10', color: 'text-primary' },
+            { label: 'Pending Protocols', val: `${pendingCount}`, sub: 'AWAITING ARRIVAL', icon: ShieldAlert, bg: 'bg-amber-500/10', color: 'text-amber-500' },
+            { label: 'Received (MTD)', val: `${receivedCount}`, sub: 'VERIFIED NODES', icon: Package, bg: 'bg-emerald-500/10', color: 'text-emerald-500' },
+            { label: 'Quantum Index', val: `₹${(totalPurchases/100000).toFixed(1)}L`, sub: 'MONTHLY VOLUME', icon: DollarSign, bg: 'bg-indigo-500/10', color: 'text-indigo-500' }
+        ];
+    }, []);
+
+    return (
+        <Layout>
+            <div className="p-8 space-y-8 h-full flex flex-col text-main animate-fade-in relative z-10">
                 {/* Header */}
-                <header className="flex justify-between items-center mb-8">
+                <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight text-main flex items-center gap-3">
-                            Procurement Node
-                            <span className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-lg text-xs font-bold uppercase tracking-widest flex items-center gap-1">
-                                <Factory className="w-3 h-3" /> Supply Chain Active
-                            </span>
+                        <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
+                            Procurement <span className="text-primary">Intelligence</span>
                         </h1>
-                        <p className="text-sm text-secondary mt-1 font-medium">Manage institutional vendors, purchase orders, and inbound logistics.</p>
+                        <p className="text-[10px] uppercase tracking-[0.2em] font-black text-neutral-500 dark:text-neutral-400 mt-1">
+                            Supply Chain Orchestration // Node Management V4
+                        </p>
                     </div>
                     <div className="flex gap-4">
-                        <button className="h-11 px-6 bg-card hover:bg-card text-main font-bold text-sm tracking-wide rounded-xl transition-all border border-default flex items-center gap-2">
-                            <Anchor className="w-4 h-4" /> Vendor Directory
+                        <button 
+                            onClick={() => navigate('/suppliers')}
+                            className="h-12 px-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white font-bold text-xs tracking-widest rounded-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all shadow-sm flex items-center gap-3 uppercase"
+                        >
+                            <Anchor className="w-4 h-4 text-primary" /> Vendor Directory
                         </button>
-                        <button className="h-11 px-6 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-main font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-[0_0_20px_rgba(8,145,178,0.3)] hover:shadow-[0_0_30px_rgba(8,145,178,0.5)] flex items-center gap-2">
-                            <Plus className="w-4 h-4" /> New Protocol (PO)
+                        <button className="h-12 px-8 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-sm transition-all shadow-lg shadow-primary/20 flex items-center gap-3 hover:opacity-90">
+                            <Plus className="w-4 h-4" /> New Acquisition
                         </button>
-                    </div>
-                </header>
-
-                {/* Dashboard Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="glass-panel backdrop-blur-xl border border-cyan-900/50 rounded-3xl p-6 flex items-center justify-between group hover:bg-card/80 transition-all cursor-default relative overflow-hidden">
-                        <div className="absolute right-0 top-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
-                        <div className="relative z-10">
-                            <p className="text-[10px] font-black text-cyan-500 uppercase tracking-widest mb-1">Inbound Goods in Transit</p>
-                            <h2 className="text-4xl font-black text-main tabular-nums tracking-tighter">18 <span className="text-lg text-secondary font-bold tracking-normal">Shipments</span></h2>
-                        </div>
-                        <div className="p-4 bg-cyan-500/10 text-cyan-400 rounded-2xl relative z-10 border border-cyan-500/20">
-                            <Truck className="w-6 h-6" />
-                        </div>
-                    </div>
-
-                    <div className="glass-panel backdrop-blur-xl border border-indigo-900/50 rounded-3xl p-6 flex items-center justify-between group hover:bg-card/80 transition-all cursor-default relative overflow-hidden">
-                        <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
-                        <div className="relative z-10">
-                            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Pending Quality Control</p>
-                            <h2 className="text-4xl font-black text-main tabular-nums tracking-tighter">5 <span className="text-lg text-secondary font-bold tracking-normal">Batches</span></h2>
-                        </div>
-                        <div className="p-4 bg-indigo-500/10 text-indigo-400 rounded-2xl relative z-10 border border-indigo-500/20">
-                            <ShieldAlert className="w-6 h-6" />
-                        </div>
-                    </div>
-
-                    <div className="glass-panel backdrop-blur-xl border border-emerald-900/50 rounded-3xl p-6 flex items-center justify-between group hover:bg-card/80 transition-all cursor-default relative overflow-hidden">
-                        <div className="absolute right-0 top-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
-                        <div className="relative z-10">
-                            <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Received (MTD)</p>
-                            <h2 className="text-4xl font-black text-main tabular-nums tracking-tighter">142 <span className="text-lg text-secondary font-bold tracking-normal">Nodes</span></h2>
-                        </div>
-                        <div className="p-4 bg-emerald-500/10 text-emerald-400 rounded-2xl relative z-10 border border-emerald-500/20">
-                            <Package className="w-6 h-6" />
-                        </div>
                     </div>
                 </div>
 
-                {/* Purchase Orders List */}
-                <div className="flex-1 glass-panel backdrop-blur-xl border border-default rounded-3xl flex flex-col overflow-hidden">
-                    <div className="p-6 border-b border-default flex justify-between items-center bg-card">
-                        <div className="flex items-center gap-4">
-                            <h3 className="text-sm font-black uppercase tracking-widest text-main flex items-center gap-2">
-                                <FileText className="w-4 h-4 text-cyan-500" /> Active Purchase Protocols
-                            </h3>
-                            <button className="p-2 hover:bg-card rounded-lg text-secondary hover:text-cyan-400 transition-colors" title="Sync Status">
-                                <RefreshCcw className="w-4 h-4" />
-                            </button>
+                {/* KPI Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {metrics.map((card, i) => (
+                        <div key={i} className="bg-white dark:bg-neutral-900 p-6 rounded-sm border border-neutral-200 dark:border-neutral-800 flex flex-col gap-4 group hover:border-primary/50 transition-all cursor-pointer shadow-sm relative overflow-hidden">
+                            <div className="flex justify-between items-start relative z-10">
+                                <div className={`p-3 rounded-sm ${card.bg} ${card.color} border border-current/10`}>
+                                    <card.icon className="w-5 h-5" />
+                                </div>
+                                <span className="text-[9px] font-black text-neutral-400 group-hover:text-primary uppercase tracking-[0.2em] transition-colors">{card.sub}</span>
+                            </div>
+                            <div className="relative z-10">
+                                <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">{card.label}</p>
+                                <p className="text-2xl font-display font-black tracking-tighter text-neutral-900 dark:text-white tabular-nums">{card.val}</p>
+                            </div>
+                            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                         </div>
-                        <div className="flex gap-4">
-                            <div className="relative">
-                                <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-secondary" />
+                    ))}
+                </div>
+
+                {/* Purchase Protocols Section */}
+                <div className="flex-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm flex flex-col overflow-hidden shadow-sm">
+                    <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex flex-col lg:flex-row justify-between items-center gap-4">
+                        <div className="flex gap-4 w-full lg:w-auto">
+                            <div className="relative flex-1 lg:w-80">
+                                <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-primary" />
                                 <input 
                                     type="text" 
-                                    placeholder="Search PO # or Vendor..." 
-                                    className="w-80 bg-input border border-default rounded-xl py-2 pl-12 pr-4 text-sm focus:outline-none focus:border-cyan-500 transition-colors text-main placeholder:text-slate-600"
+                                    placeholder="SEARCH PROTOCOLS / VENDORS..." 
+                                    className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-3 pl-12 pr-6 text-[10px] font-black tracking-widest uppercase focus:border-primary outline-none transition-all text-neutral-900 dark:text-white shadow-inner" 
                                 />
                             </div>
-                            <button className="px-4 py-2 bg-card hover:bg-card border border-default rounded-xl text-xs font-bold text-main flex items-center gap-2 transition-colors">
-                                <Filter className="w-4 h-4" /> Filter
+                            <button className="h-11 px-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm text-[10px] font-black uppercase tracking-widest text-neutral-500 dark:text-neutral-400 flex items-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all">
+                                <Filter className="w-4 h-4" /> System Filters
+                            </button>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <button 
+                                onClick={() => navigate('/purchase/register')}
+                                className="text-xs font-black text-primary hover:underline uppercase tracking-widest flex items-center gap-2"
+                            >
+                                <TrendingUp className="w-4 h-4" /> Full Archive View
+                            </button>
+                            <button className="p-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm shadow-sm hover:text-primary transition-all">
+                                <RefreshCcw className="w-4 h-4" />
                             </button>
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-auto">
+                    <div className="flex-1 overflow-auto custom-scrollbar">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-app sticky top-0 z-20 backdrop-blur-md">
-                                <tr>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default">PO Number</th>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default">Supplier Entity</th>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default">Date Issued</th>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default text-right">Value (INR)</th>
-                                    <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-secondary border-b border-default text-center">Fulfillment State</th>
+                            <thead className="bg-neutral-50 dark:bg-neutral-950/80 sticky top-0 z-20 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800">
+                                <tr className="text-neutral-500 dark:text-neutral-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                                    <th className="px-8 py-5">PO Number</th>
+                                    <th className="px-8 py-5">Supplier Entity</th>
+                                    <th className="px-8 py-5">Date Issued</th>
+                                    <th className="px-8 py-5 text-right">Value (INR)</th>
+                                    <th className="px-8 py-5 text-center">Fulfillment state</th>
+                                    <th className="px-8 py-5 text-center w-20"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-default">
-                                {purchaseData.purchaseOrders.map((row, idx) => (
-                                    <tr key={idx} className="hover:bg-card/30 transition-colors group cursor-pointer">
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                {processedPurchases.map((rec) => (
+                                    <tr key={rec.id} className="hover:bg-primary/[0.02] transition-all group cursor-pointer" onClick={() => navigate(`/purchase/detail/${rec.id}`)}>
                                         <td className="px-8 py-6">
-                                            <span className="font-mono text-sm font-bold text-cyan-400 group-hover:underline">{row.po}</span>
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                                                    <Zap className="w-5 h-5" />
+                                                </div>
+                                                <span className="font-mono text-sm font-black text-neutral-900 dark:text-white group-hover:translate-x-1 transition-transform">{rec.id}</span>
+                                            </div>
                                         </td>
                                         <td className="px-8 py-6">
-                                            <div className="text-sm font-bold text-main">{row.supplier}</div>
-                                            <div className="text-[10px] text-secondary font-black uppercase tracking-widest mt-1">Tier 1 Vendor</div>
+                                            <div className="flex items-center gap-2.5">
+                                                <Factory className="w-4 h-4 text-primary/50" />
+                                                <span className="text-xs font-black text-neutral-700 dark:text-neutral-300 uppercase tracking-tight">{rec.supplierName}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-xs font-bold text-neutral-400 uppercase tracking-widest">{rec.date}</td>
+                                        <td className="px-8 py-6 text-right font-mono text-sm font-black text-neutral-900 dark:text-white tabular-nums tracking-tighter">
+                                            ₹{rec.total.toLocaleString()}
                                         </td>
                                         <td className="px-8 py-6">
-                                            <div className="text-sm font-bold text-main">{row.date}</div>
-                                        </td>
-                                        <td className="px-8 py-6 text-right">
-                                            <span className="font-mono text-lg font-black tracking-tighter text-main">₹{row.value}</span>
-                                        </td>
-                                        <td className="px-8 py-6">
-                                            <div className="flex flex-col items-center gap-2">
-                                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border bg-${row.color}-500/10 text-${row.color}-400 border-${row.color}-500/20`}>
-                                                    {row.state}
+                                            <div className="flex justify-center">
+                                                <span className={`px-4 py-1.5 rounded-sm text-[9px] font-black uppercase tracking-widest border ${rec.status === 'RECEIVED' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
+                                                    {rec.status}
                                                 </span>
-                                                {row.state !== 'Completed' && (
-                                                    <div className="w-24 h-1.5 bg-card rounded-full overflow-hidden">
-                                                        <div className={`h-full bg-${row.color}-500 rounded-full transition-all`} style={{ width: `${row.progress || 15}%` }} />
-                                                    </div>
-                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex justify-center">
+                                                <button className="p-3 text-neutral-400 hover:text-white bg-neutral-50 dark:bg-neutral-800 hover:bg-primary rounded-sm transition-all shadow-sm border border-neutral-200 dark:border-neutral-700">
+                                                    <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -140,8 +161,8 @@ const PurchaseMockUI: React.FC = () => {
                         </table>
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
+        </Layout>
     );
 };
 

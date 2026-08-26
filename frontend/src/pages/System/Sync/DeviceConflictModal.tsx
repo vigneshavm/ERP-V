@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { forceLogout, login, resetAuthState } from "../../../redux/slices/authSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
@@ -43,7 +43,7 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-            <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-2xl shadow-2xl max-w-md w-full p-6 border dark:border-[rgb(var(--color-border))]">
+            <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-sm shadow-2xl max-w-md w-full p-6 border dark:border-[rgb(var(--color-border))]">
                 {/* Icon */}
                 <div className="flex justify-center mb-4">
                     <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
     MessageSquare,
     Star,
@@ -46,7 +46,7 @@ const FeedbackEngagement: React.FC = () => {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-600/5 rounded-full -mr-32 -mt-32 blur-3xl" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-600/20">
+                        <div className="w-10 h-10 bg-emerald-600 rounded-sm flex items-center justify-center text-white shadow-lg shadow-emerald-600/20">
                             <MessageSquare className="w-5 h-5" />
                         </div>
                         <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none italic uppercase">
@@ -59,11 +59,11 @@ const FeedbackEngagement: React.FC = () => {
                 <div className="flex items-center gap-3 relative z-10">
                     <button
                         onClick={() => dispatch(setActiveTab('GROW_DASHBOARD'))}
-                        className="p-3.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-2xl transition-all shadow-sm"
+                        className="p-3.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-sm transition-all shadow-sm"
                     >
                         <LayoutDashboard className="w-5 h-5" />
                     </button>
-                    <button className="flex items-center gap-3 px-6 py-4 bg-slate-900 dark:bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all">
+                    <button className="flex items-center gap-3 px-6 py-4 bg-slate-900 dark:bg-emerald-600 text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all">
                         <Zap className="w-4 h-4" /> Export Report
                     </button>
                 </div>
@@ -90,14 +90,14 @@ const FeedbackEngagement: React.FC = () => {
                             { label: 'Overall NPS', value: '72', change: '+5 pts', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
                             { label: 'CSAT Score', value: '4.8', change: 'from 2.4k users', icon: Smile, color: 'text-blue-600', bg: 'bg-blue-50' },
                             { label: 'Detractor Rate', value: '4.2%', change: '-1.2% Risk', icon: AlertTriangle, color: 'text-rose-600', bg: 'bg-rose-50' },
-                            { label: 'Resolution Time', value: '1.4h', change: '92% Sla Hit', icon: Clock, color: 'text-indigo-600', bg: 'bg-indigo-50' }
+                            { label: 'Resolution Time', value: '1.4h', change: '92% Sla Hit', icon: Clock, color: 'text-primary', bg: 'bg-indigo-50' }
                         ].map((kpi, idx) => (
                             <div key={idx} className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm relative group overflow-hidden">
                                 <div className={`absolute top-0 right-0 w-24 h-24 ${kpi.bg} dark:opacity-10 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700`} />
                                 <kpi.icon className={`w-8 h-8 ${kpi.color} mb-4 relative z-10`} />
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 relative z-10">{kpi.label}</p>
                                 <h3 className="text-3xl font-black mb-1 relative z-10">{kpi.value}</h3>
-                                <p className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 relative z-10">{kpi.change}</p>
+                                <p className="text-[10px] font-bold text-success flex items-center gap-1 relative z-10">{kpi.change}</p>
                             </div>
                         ))}
                     </div>
@@ -125,7 +125,7 @@ const FeedbackEngagement: React.FC = () => {
                                     <div key={idx} className="space-y-2">
                                         <div className="flex justify-between items-end">
                                             <p className="text-sm font-black uppercase tracking-tight italic">{row.label}</p>
-                                            <p className={`text-xs font-black ${row.score > 70 ? 'text-emerald-500' : 'text-rose-500'}`}>{row.score}% CSAT</p>
+                                            <p className={`text-xs font-black ${row.score > 70 ? 'text-success' : 'text-danger'}`}>{row.score}% CSAT</p>
                                         </div>
                                         <div className="h-4 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden flex">
                                             <div className="h-full bg-emerald-500 transition-all duration-1000" style={{ width: `${row.score}%` }} />
@@ -133,7 +133,7 @@ const FeedbackEngagement: React.FC = () => {
                                         </div>
                                         <div className="flex justify-between">
                                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Sentiment: {row.score > 80 ? 'Strongly Positive' : row.score > 60 ? 'Positive' : 'Critical'}</p>
-                                            <p className="text-[9px] font-bold text-rose-500 uppercase tracking-widest">{row.issues} AI Identified Issues</p>
+                                            <p className="text-[9px] font-bold text-danger uppercase tracking-widest">{row.issues} AI Identified Issues</p>
                                         </div>
                                     </div>
                                 ))}
@@ -143,22 +143,22 @@ const FeedbackEngagement: React.FC = () => {
                         {/* Reputation Protection AI */}
                         <div className="col-span-12 lg:col-span-4 space-y-8">
                             <div className="bg-slate-900 dark:bg-indigo-950 rounded-[3rem] p-8 text-white relative overflow-hidden group shadow-2xl">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-[80px] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000" />
-                                <div className="flex items-center gap-2 mb-6 text-emerald-400">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-success/20 rounded-full blur-[80px] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000" />
+                                <div className="flex items-center gap-2 mb-6 text-success">
                                     <Sparkles className="w-5 h-5 animate-pulse" />
                                     <h4 className="text-[10px] font-black uppercase tracking-widest">Reputation Guard</h4>
                                 </div>
                                 <h3 className="text-xl font-black mb-6 tracking-tight leading-tight italic">Reputation Growth Opportunity</h3>
                                 <div className="space-y-4">
-                                    <div className="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                                        <h4 className="text-2xl font-black text-emerald-400 mb-1">124</h4>
+                                    <div className="p-6 bg-white/5 border border-white/10 rounded-sm">
+                                        <h4 className="text-2xl font-black text-success mb-1">124</h4>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 mb-4">Promoters Ready for Review</p>
                                         <button className="w-full py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-600/20">
                                             Send Google Review Invites
                                         </button>
                                     </div>
-                                    <div className="p-6 bg-rose-500/10 border border-rose-500/20 rounded-2xl">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-rose-400 mb-2 italic">Detractor Alert</p>
+                                    <div className="p-6 bg-danger/10 border border-danger/20 rounded-sm">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-danger mb-2 italic">Detractor Alert</p>
                                         <p className="text-xs font-medium italic mb-1">1 Detractor with "Consumer Court" mention.</p>
                                         <p className="text-xs text-slate-400 font-medium italic">Route to VIP resolution immediately.</p>
                                     </div>
@@ -203,7 +203,7 @@ const FeedbackEngagement: React.FC = () => {
                                 <div className="flex items-start justify-between relative z-10">
                                     <div className="flex items-start gap-6">
                                         <div className="flex flex-col items-center gap-1">
-                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-lg ${row.sentiment === 'POSITIVE' ? 'bg-emerald-500/10 text-emerald-600' : row.sentiment === 'NEGATIVE' ? 'bg-rose-500/10 text-rose-600' : 'bg-slate-500/10 text-slate-600'}`}>
+                                            <div className={`w-14 h-14 rounded-sm flex items-center justify-center font-black text-lg ${row.sentiment === 'POSITIVE' ? 'bg-success/10 text-emerald-600' : row.sentiment === 'NEGATIVE' ? 'bg-danger/10 text-rose-600' : 'bg-slate-500/10 text-slate-600'}`}>
                                                 {row.rating}
                                             </div>
                                             <span className="text-[8px] font-black uppercase text-slate-400 tracking-widest">NPS</span>
@@ -251,7 +251,7 @@ const FeedbackEngagement: React.FC = () => {
                         ))}
                     </div>
                     <div className="p-8 bg-slate-50/50 dark:bg-slate-900/50 text-center">
-                        <button className="text-[10px] font-black uppercase tracking-widest text-indigo-600 flex items-center gap-2 mx-auto">
+                        <button className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2 mx-auto">
                             Load historical intelligence <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>

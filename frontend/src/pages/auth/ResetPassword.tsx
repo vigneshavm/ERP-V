@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { Lock, ArrowRight, ShieldAlert } from 'lucide-react';
 import SecurePasswordInput from './SecurePasswordInput';
@@ -33,10 +33,10 @@ const ResetPassword: React.FC = () => {
                 secondarySubtitle="The request could not be verified"
                 description="This reset link is either invalid or has expired. For security reasons, please request a new one."
             >
-                <div className="mt-8 bg-red-500/10 border border-red-500/20 p-6 rounded-3xl flex flex-col gap-4 text-center">
+                <div className="mt-8 bg-red-500/10 border border-red-500/20 p-6 rounded-sm flex flex-col gap-4 text-center">
                     <ShieldAlert className="w-12 h-12 text-red-400 mx-auto" />
                     <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Security Link Compromised</p>
-                    <Link to="/forgot-password" university-anchor="forgot-password" className="w-full h-14 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 transition-all">
+                    <Link to="/forgot-password" university-anchor="forgot-password" className="w-full h-14 bg-white text-slate-950 rounded-sm font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 transition-all">
                         Request New Key
                     </Link>
                 </div>
@@ -83,7 +83,7 @@ const ResetPassword: React.FC = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="btn-cyber-primary w-full h-14 !rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
+                        className="btn-cyber-primary w-full h-14 !rounded-sm flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
                     >
                         {isLoading ? (
                             <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />

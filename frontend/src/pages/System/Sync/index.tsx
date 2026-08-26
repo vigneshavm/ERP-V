@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '@/redux/store';
@@ -191,23 +191,23 @@ const Sync: React.FC = () => {
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Sync Intelligence Premium Portal */}
             <div className="bg-slate-900 rounded-[2.5rem] p-8 border border-slate-800 shadow-xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full -mr-32 -mt-32 blur-[80px]" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-32 -mt-32 blur-[80px]" />
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-6">
-                        <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-600/20">
+                        <div className="w-16 h-16 bg-indigo-600 rounded-sm flex items-center justify-center text-white shadow-xl shadow-indigo-600/20">
                             <Cpu className="w-8 h-8" />
                         </div>
                         <div>
                             <div className="flex items-center gap-2 mb-1">
-                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">Sync <span className="text-indigo-400">Intelligence</span></h3>
-                                <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-500/20">Premium System</span>
+                                <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">Sync <span className="text-primary">Intelligence</span></h3>
+                                <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/20">Premium System</span>
                             </div>
                             <p className="text-slate-400 font-medium max-w-xl">Access transaction-level ledger, real-time node topology, and AI-driven sync anomaly detection.</p>
                         </div>
                     </div>
                     <button
                         onClick={() => dispatch(setActiveTab('GROW_SYNC_DEVICE'))}
-                        className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                        className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
                     >
                         <Activity className="w-4 h-4" /> Switch to Intelligence View
                     </button>
@@ -232,9 +232,9 @@ const Sync: React.FC = () => {
                 </div>
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 flex items-center justify-between">
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-sm p-6 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white dark:bg-slate-700 rounded-xl flex items-center justify-center text-indigo-600">
+                    <div className="w-12 h-12 bg-white dark:bg-slate-700 rounded-xl flex items-center justify-center text-primary">
                         <Clock className="w-6 h-6" />
                     </div>
                     <div>
@@ -268,7 +268,7 @@ const Sync: React.FC = () => {
                         <button
                             key={tab.id}
                             onClick={() => handleSectionChange(tab.id as any)}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${activeSection === tab.id ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${activeSection === tab.id ? 'bg-white dark:bg-slate-700 text-primary shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             <Icon className="w-4 h-4" />
                             {tab.label}
@@ -291,16 +291,16 @@ const Sync: React.FC = () => {
 
             {activeSection === 'add' && (
                 <div className="max-w-2xl mx-auto text-center space-y-10">
-                    <button onClick={() => handleSectionChange('device')} className="text-sm font-bold text-slate-500 hover:text-indigo-600 flex items-center gap-1 mx-auto">
+                    <button onClick={() => handleSectionChange('device')} className="text-sm font-bold text-slate-500 hover:text-primary flex items-center gap-1 mx-auto">
                         ← Back to Devices
                     </button>
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-12">
-                        <div className="w-20 h-20 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-8">
-                            <QrCode className="w-10 h-10 text-indigo-600" />
+                    <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-12">
+                        <div className="w-20 h-20 bg-indigo-100 rounded-sm flex items-center justify-center mx-auto mb-8">
+                            <QrCode className="w-10 h-10 text-primary" />
                         </div>
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-4">Add New Device</h2>
                         <p className="text-slate-500 mb-10">Scan this QR code from your new device to securely link it to your tenant.</p>
-                        <div className="w-48 h-48 bg-slate-100 dark:bg-slate-800 rounded-2xl mx-auto flex items-center justify-center mb-8 border-4 border-dashed border-slate-200 dark:border-slate-700">
+                        <div className="w-48 h-48 bg-slate-100 dark:bg-slate-800 rounded-sm mx-auto flex items-center justify-center mb-8 border-4 border-dashed border-slate-200 dark:border-slate-700">
                             <QrCode className="w-32 h-32 text-slate-300" />
                         </div>
                         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Code expires in 5:00</p>

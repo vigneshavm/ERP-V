@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 import { X, CheckCircle, FileText } from 'lucide-react';
 import { PurchaseOrder } from "../../../types/purchase";
@@ -53,7 +53,7 @@ const CreateBillModal: React.FC<CreateBillModalProps> = ({ isOpen, onClose, orde
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-lg shadow-2xl border dark:border-neutral-700 flex flex-col">
+            <div className="bg-white dark:bg-neutral-800 rounded-sm w-full max-w-lg shadow-2xl border dark:border-neutral-700 flex flex-col">
                 <div className="p-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-bold mb-1">Create Bill</h2>

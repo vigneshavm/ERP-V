@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { XCircle } from 'lucide-react';
 
 interface PaymentModalProps {
@@ -35,7 +35,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-md shadow-2xl border dark:border-neutral-700 overflow-hidden flex flex-col">
+            <div className="bg-white dark:bg-neutral-800 rounded-sm w-full max-w-md shadow-2xl border dark:border-neutral-700 overflow-hidden flex flex-col">
                 <div className="p-6 border-b dark:border-neutral-700 flex items-center justify-between">
                     <div>
                         <h2 className="text-xl font-black uppercase tracking-tight italic">Record Payment</h2>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import {
     Layers,
     Search,
@@ -166,13 +166,13 @@ const CategoryManager: React.FC = () => {
     const getSortIcon = (field: keyof Category) => {
         if (sortBy !== field) return <ArrowUpDown className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-50" />;
         return order === 'asc'
-            ? <ArrowUp className="w-3 h-3 text-indigo-600" />
-            : <ArrowDown className="w-3 h-3 text-indigo-600" />;
+            ? <ArrowUp className="w-3 h-3 text-primary" />
+            : <ArrowDown className="w-3 h-3 text-primary" />;
     };
 
     if (error) {
         return (
-            <div className="flex flex-col items-center justify-center p-12 bg-slate-50 border border-slate-200 rounded-2xl h-[500px]">
+            <div className="flex flex-col items-center justify-center p-12 bg-slate-50 border border-slate-200 rounded-sm h-[500px]">
                 <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center mb-4">
                     <AlertTriangle className="w-6 h-6" />
                 </div>
@@ -198,7 +198,7 @@ const CategoryManager: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                        <Layers className="w-6 h-6 text-indigo-600" />
+                        <Layers className="w-6 h-6 text-primary" />
                         Category Management
                     </h1>
                     <p className="text-slate-500 text-sm mt-1">
@@ -218,12 +218,12 @@ const CategoryManager: React.FC = () => {
             {/* KPI Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total Categories', value: stats?.totalCategories.toLocaleString() || '-', icon: Layers, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+                    { label: 'Total Categories', value: stats?.totalCategories.toLocaleString() || '-', icon: Layers, color: 'text-primary', bg: 'bg-indigo-50' },
                     { label: 'Total Items SKUs', value: stats?.totalItems.toLocaleString() || '-', icon: Package, color: 'text-emerald-600', bg: 'bg-emerald-50' },
                     { label: 'Stock Valuation', value: stats ? `₹${(stats.totalStockValue / 1000000).toFixed(2)}M` : '-', icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-50' },
                     { label: 'Avg Items / Cat', value: stats?.avgItemsPerCategory.toLocaleString() || '-', icon: BarChart3, color: 'text-blue-600', bg: 'bg-blue-50' }
                 ].map((stat, idx) => (
-                    <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div key={idx} className="bg-white p-5 rounded-sm border border-slate-200 shadow-sm flex items-center gap-4">
                         <div className={`p-3 rounded-xl ${stat.bg}`}>
                             <stat.icon className={`w-6 h-6 ${stat.color}`} />
                         </div>
@@ -236,7 +236,7 @@ const CategoryManager: React.FC = () => {
             </div>
 
             {/* Main Content Card */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
                 {/* Controls Toolbar */}
                 <div className="p-4 border-b border-slate-200 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50/50">
                     <div className="relative w-full md:w-80">
@@ -249,11 +249,11 @@ const CategoryManager: React.FC = () => {
                         />
                         <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                         {isLoading && search && (
-                            <Loader2 className="w-3 h-3 text-indigo-600 absolute right-3 top-3 animate-spin" />
+                            <Loader2 className="w-3 h-3 text-primary absolute right-3 top-3 animate-spin" />
                         )}
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" onClick={refreshData} title="Refresh Data">
+                        <button className="p-2 text-slate-400 hover:text-primary hover:bg-indigo-50 rounded-lg transition-colors" onClick={refreshData} title="Refresh Data">
                             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                         </button>
                         <div className="h-6 w-px bg-slate-200 mx-1" />
@@ -271,7 +271,7 @@ const CategoryManager: React.FC = () => {
                                 <th className="px-6 py-4 w-12 text-center">
                                     <input
                                         type="checkbox"
-                                        className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                        className="rounded border-slate-300 text-primary focus:ring-indigo-500"
                                         checked={categories.length > 0 && selectedItems.length === categories.length}
                                         onChange={toggleSelectAll}
                                         disabled={isLoading}
@@ -330,7 +330,7 @@ const CategoryManager: React.FC = () => {
                                         <td className="px-6 py-4 text-center">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                                className="rounded border-slate-300 text-primary focus:ring-indigo-500"
                                                 checked={selectedItems.includes(cat.id)}
                                                 onChange={() => toggleSelectItem(cat.id)}
                                             />
@@ -347,7 +347,7 @@ const CategoryManager: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <span className={`font-bold ${cat.itemCount > 0 ? 'text-indigo-600' : 'text-slate-400'}`}>
+                                            <span className={`font-bold ${cat.itemCount > 0 ? 'text-primary' : 'text-slate-400'}`}>
                                                 {cat.itemCount.toLocaleString()}
                                             </span>
                                         </td>
@@ -384,7 +384,7 @@ const CategoryManager: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2 text-slate-400">
-                                                <button className="p-2 hover:bg-white hover:text-indigo-600 rounded-lg hover:shadow-sm border border-transparent hover:border-slate-200 transition-all">
+                                                <button className="p-2 hover:bg-white hover:text-primary rounded-lg hover:shadow-sm border border-transparent hover:border-slate-200 transition-all">
                                                     <Edit className="w-4 h-4" />
                                                 </button>
                                                 <button className="p-2 hover:bg-rose-50 hover:text-rose-600 rounded-lg border border-transparent hover:border-rose-100 transition-all">

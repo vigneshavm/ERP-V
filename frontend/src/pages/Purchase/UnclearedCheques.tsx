@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
 import { updatePaymentStatus } from '../../redux/slices/paymentOutSlice';
@@ -81,13 +81,13 @@ const UnclearedCheques: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
                         { label: 'Vaulted Instruments', val: filteredCheques.length, icon: ShieldCheck, color: 'text-primary', bg: 'bg-primary/10' },
-                        { label: 'Aggregate Quantum', val: `₹${totalPending.toLocaleString()}`, icon: Zap, color: 'text-amber-500', bg: 'bg-amber-50' },
-                        { label: 'Due Today', val: filteredCheques.filter(c => new Date(c.chequeDate) <= new Date()).length, icon: Clock, color: 'text-rose-500', bg: 'bg-rose-50' },
-                        { label: 'Operational Nodes', val: cheques.length, icon: Activity, color: 'text-indigo-500', bg: 'bg-indigo-50' }
+                        { label: 'Aggregate Quantum', val: `₹${totalPending.toLocaleString()}`, icon: Zap, color: 'text-warning', bg: 'bg-amber-50' },
+                        { label: 'Due Today', val: filteredCheques.filter(c => new Date(c.chequeDate) <= new Date()).length, icon: Clock, color: 'text-danger', bg: 'bg-rose-50' },
+                        { label: 'Operational Nodes', val: cheques.length, icon: Activity, color: 'text-primary', bg: 'bg-indigo-50' }
                     ].map((card, i) => (
                         <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
-                                <div className={`p-4 ${card.bg} ${card.color} rounded-2xl group-hover:scale-110 transition-all duration-500`}>
+                                <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />
                                 </div>
                                 <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
@@ -112,16 +112,16 @@ const UnclearedCheques: React.FC = () => {
                                 placeholder="Search by Vendor, Chq Node ID, or Reference..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
                     <div className="flex items-end gap-6 w-full md:w-auto">
                         <div className="text-right">
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 leading-none">Vault Aggregate</p>
-                            <p className="text-3xl font-black text-amber-500 tabular-nums tracking-tighter">₹{totalPending.toLocaleString()}</p>
+                            <p className="text-3xl font-black text-warning tabular-nums tracking-tighter">₹{totalPending.toLocaleString()}</p>
                         </div>
-                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl text-neutral-400 hover:text-primary transition-all active:scale-95">
+                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-sm text-neutral-400 hover:text-primary transition-all active:scale-95">
                             <Filter className="w-6 h-6" />
                         </button>
                     </div>
@@ -154,7 +154,7 @@ const UnclearedCheques: React.FC = () => {
                                     <tr>
                                         <td colSpan={5} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
                                                     <CheckCircle2 className="w-10 h-10" />
                                                 </div>
                                                 <div>
@@ -178,13 +178,13 @@ const UnclearedCheques: React.FC = () => {
                                                 </td>
                                                 <td className="px-8 py-6">
                                                     <div className="flex items-center gap-3">
-                                                        <Calendar className={`w-4 h-4 ${isDue ? 'text-rose-500 animate-pulse' : 'text-primary'}`} />
+                                                        <Calendar className={`w-4 h-4 ${isDue ? 'text-danger animate-pulse' : 'text-primary'}`} />
                                                         <span className={`text-xs font-black uppercase tracking-tighter ${isDue ? 'text-rose-600' : 'text-neutral-900 dark:text-white'}`}>
                                                             {new Date(cheque.chequeDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                         </span>
                                                     </div>
                                                     {!isDue && <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mt-1 italic">Maturity in {daysToClear} Days</p>}
-                                                    {isDue && <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Overdue Node</p>}
+                                                    {isDue && <p className="text-[9px] font-black text-danger uppercase tracking-widest mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Overdue Node</p>}
                                                 </td>
                                                 <td className="px-8 py-6">
                                                     <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter truncate max-w-[200px]">{cheque.supplierId?.businessName || 'Unknown Entity'}</p>
@@ -202,7 +202,7 @@ const UnclearedCheques: React.FC = () => {
                                                     <div className="flex justify-center gap-3">
                                                         <button
                                                             onClick={() => handleStatusUpdate(cheque._id, 'cleared')}
-                                                            className="p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-2xl hover:bg-emerald-100 transition-all active:scale-95 border border-emerald-100 dark:border-emerald-800/30"
+                                                            className="p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-success rounded-sm hover:bg-emerald-100 transition-all active:scale-95 border border-emerald-100 dark:border-emerald-800/30"
                                                             title="Authorize Clearance"
                                                         >
                                                             <CheckCircle className="w-6 h-6" />
@@ -212,7 +212,7 @@ const UnclearedCheques: React.FC = () => {
                                                                 const reason = prompt("Enter institutional bounce narrative (e.g. Insufficient Liquidity):");
                                                                 if (reason) handleStatusUpdate(cheque._id, 'bounced', reason);
                                                             }}
-                                                            className="p-3 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-2xl hover:bg-rose-100 transition-all active:scale-95 border border-rose-100 dark:border-rose-800/30"
+                                                            className="p-3 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-danger rounded-sm hover:bg-rose-100 transition-all active:scale-95 border border-rose-100 dark:border-rose-800/30"
                                                             title="Execute Rejection Node"
                                                         >
                                                             <XCircle className="w-6 h-6" />
@@ -229,8 +229,8 @@ const UnclearedCheques: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-4 p-8 bg-amber-500/5 rounded-[2.5rem] border border-amber-500/10 animate-in zoom-in-95 duration-1000">
-                    <div className="p-3 bg-amber-500/10 rounded-2xl">
-                        <AlertTriangle className="text-amber-500 w-6 h-6" />
+                    <div className="p-3 bg-warning/10 rounded-sm">
+                        <AlertTriangle className="text-warning w-6 h-6" />
                     </div>
                     <div>
                         <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-1">Fiscal Surveillance Warning</p>

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ShoppingCart, Car, Home, Smartphone, Zap, Pizza, MoreVertical } from 'lucide-react';
 
 interface ExpenseListItemProps {
@@ -13,20 +13,20 @@ const getCategoryIcon = (category: string) => {
         case 'shopping': return <ShoppingCart className="w-5 h-5 text-blue-400" />;
         case 'transportation': return <Car className="w-5 h-5 text-yellow-400" />;
         case 'living':
-        case 'rent': return <Home className="w-5 h-5 text-emerald-400" />;
+        case 'rent': return <Home className="w-5 h-5 text-success" />;
         case 'mobile':
-        case 'internet': return <Smartphone className="w-5 h-5 text-purple-400" />;
-        case 'utilities': return <Zap className="w-5 h-5 text-amber-500" />;
-        case 'food': return <Pizza className="w-5 h-5 text-rose-400" />;
+        case 'internet': return <Smartphone className="w-5 h-5 text-accent" />;
+        case 'utilities': return <Zap className="w-5 h-5 text-warning" />;
+        case 'food': return <Pizza className="w-5 h-5 text-danger" />;
         default: return <ShoppingCart className="w-5 h-5 text-neutral-400" />;
     }
 };
 
 const ExpenseListItem: React.FC<ExpenseListItemProps> = ({ category, amount, description, date }) => {
     return (
-        <div className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all hover:translate-x-1 group">
+        <div className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-sm hover:bg-white/10 transition-all hover:translate-x-1 group">
             <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-sm bg-white/5 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
                     {getCategoryIcon(category)}
                 </div>
                 <div>

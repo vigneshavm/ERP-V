@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -98,11 +98,11 @@ const SalesInvoice = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "paid":
-        return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800";
+        return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-success border-emerald-200 dark:border-emerald-800";
       case "partial":
-        return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800";
+        return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-warning border-amber-200 dark:border-amber-800";
       case "unpaid":
-        return "bg-danger/10 text-danger dark:bg-rose-900/30 dark:text-rose-400 border-rose-200 dark:border-rose-800";
+        return "bg-danger/10 text-danger dark:bg-rose-900/30 dark:text-danger border-rose-200 dark:border-rose-800";
       default:
         return "bg-neutral-100 text-main dark:bg-neutral-800 dark:text-secondary opacity-50 border-neutral-200 dark:border-neutral-700";
     }
@@ -391,7 +391,7 @@ const SalesInvoice = () => {
         {/* Delete Modal */}
         {deleteConfirm && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in duration-300">
-            <div className="glass-panel rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-default/30 animate-scale-in">
+            <div className="glass-panel rounded-sm shadow-2xl max-w-sm w-full p-6 border border-default/30 animate-scale-in">
               <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <AlertTriangle className="w-6 h-6 text-danger" />
               </div>

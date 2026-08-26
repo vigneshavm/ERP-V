@@ -1,4 +1,39 @@
-export const salesInvoices = [
+export interface MockInvoiceItem {
+    id: string;
+    invoice_id: string;
+    sku: string;
+    name: string;
+    qty: number;
+    rate: number;
+    gst: number;
+    total: number;
+}
+
+export interface MockSalesInvoice {
+    id: string;
+    invoice_no: string;
+    tenant_id: string;
+    branch_id: string;
+    customer_id: string;
+    customer_name: string;
+    customer_phone: string;
+    date: string;
+    subtotal: number;
+    gst: number;
+    total: number;
+    net_amount: number;
+    paid_amount: number;
+    balance_amount: number;
+    status: string;
+    payment_mode: string;
+    payment_method: string;
+    due_date: string;
+    sector: string;
+    business_type: string;
+    items: MockInvoiceItem[];
+}
+
+export const salesInvoices: MockSalesInvoice[] = [
     {
         "id": "INV-TEN001-0001",
         "invoice_no": "SI-TEN001-00001",

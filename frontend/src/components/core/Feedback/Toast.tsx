@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { CheckCircle, XCircle, Loader2, AlertTriangle, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'loading' | 'warning';
@@ -24,12 +24,12 @@ const toastStyles: Record<ToastType, { bg: string; icon: React.ReactNode; border
     loading: {
         bg: 'bg-indigo-50 dark:bg-indigo-900/20',
         border: 'border-indigo-500',
-        icon: <Loader2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400 animate-spin" />,
+        icon: <Loader2 className="w-5 h-5 text-indigo-600 dark:text-primary animate-spin" />,
     },
     warning: {
         bg: 'bg-amber-50 dark:bg-amber-900/20',
         border: 'border-amber-500',
-        icon: <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
+        icon: <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-warning" />,
     },
 };
 

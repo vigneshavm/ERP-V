@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../redux/store";
 import {
@@ -59,7 +59,7 @@ const MetricCard = ({ title, value, subtext, icon: Icon, color, trend }: any) =>
                 <p className="text-neutral-500 dark:text-neutral-400 text-[10px] font-black uppercase tracking-widest">{title}</p>
                 <h3 className="text-2xl font-black text-neutral-900 dark:text-white mt-1 italic tracking-tight">{value}</h3>
                 {subtext && (
-                    <p className={`text-[10px] font-bold mt-2 flex items-center gap-1 ${trend === 'up' ? 'text-emerald-500' : trend === 'down' ? 'text-rose-500' : 'text-neutral-400'}`}>
+                    <p className={`text-[10px] font-bold mt-2 flex items-center gap-1 ${trend === 'up' ? 'text-success' : trend === 'down' ? 'text-danger' : 'text-neutral-400'}`}>
                         {subtext}
                     </p>
                 )}
@@ -295,14 +295,14 @@ const InventoryManager: React.FC = () => {
                             {inventoryMetrics.lowStock > 0 ? (
                                 <>Inventory needs attention. <span className="text-primary underline decoration-2 underline-offset-4 font-black">{items.find((i: any) => i.stockQty <= i.lowStockLimit)?.sku || 'Some SKUs'}</span> is low.</>
                             ) : (
-                                <>Inventory healthy. <span className="text-emerald-400 font-black italic">Perfectly balanced.</span></>
+                                <>Inventory healthy. <span className="text-success font-black italic">Perfectly balanced.</span></>
                             )}
                         </p>
                     </div>
                 </div>
 
                 {/* Controls Bar */}
-                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
                     <div className="flex flex-col md:flex-row gap-4 w-full xl:w-auto items-stretch md:items-center">
                         <div className="relative flex-1 xl:w-[450px]">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
@@ -343,7 +343,7 @@ const InventoryManager: React.FC = () => {
                             </button>
 
                             {showMoreActions && (
-                                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200">
                                     <div className="px-4 py-2 border-b border-neutral-100 dark:border-neutral-700 mb-1">
                                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Bulk Operations</p>
                                     </div>
@@ -371,7 +371,7 @@ const InventoryManager: React.FC = () => {
                                     <div className="h-px bg-neutral-100 dark:bg-neutral-700 mx-2 my-1"></div>
                                     <button
                                         onClick={() => { setShowMoreActions(false); setShowImportModal(true); }}
-                                        className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-emerald-500/5 hover:text-emerald-500 transition-all flex items-center gap-3"
+                                        className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-emerald-500/5 hover:text-success transition-all flex items-center gap-3"
                                     >
                                         <Download className="w-4 h-4" /> Import Excel/CSV
                                     </button>
@@ -382,7 +382,7 @@ const InventoryManager: React.FC = () => {
                 </div>
 
                 {/* Product Ledger */}
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm tabular-nums border-collapse">
                             <thead className="bg-neutral-50/50 dark:bg-neutral-700/50 border-b border-neutral-200 dark:border-neutral-700 text-neutral-500 font-black uppercase tracking-[0.25em] text-[10px]">
@@ -458,7 +458,7 @@ const InventoryManager: React.FC = () => {
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <div className="flex flex-col">
-                                                        <div className={`text-sm font-black italic ${isLowStock ? 'text-rose-500' : 'text-neutral-900 dark:text-neutral-100'}`}>
+                                                        <div className={`text-sm font-black italic ${isLowStock ? 'text-danger' : 'text-neutral-900 dark:text-neutral-100'}`}>
                                                             {item.stockQty} {item.unit}
                                                         </div>
                                                         <div className="flex items-center gap-1.5 mt-1">
@@ -487,7 +487,7 @@ const InventoryManager: React.FC = () => {
                                                         </button>
 
                                                         {rowActionDropdown === item._id && (
-                                                            <div className="absolute right-6 top-16 w-56 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200 text-left">
+                                                            <div className="absolute right-6 top-16 w-56 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm shadow-2xl z-[50] py-2 animate-in fade-in slide-in-from-top-2 duration-200 text-left">
                                                                 <button
                                                                     onClick={() => { handleEditProduct(item); setRowActionDropdown(null); }}
                                                                     className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-primary/5 hover:text-primary transition-all flex items-center gap-3"
@@ -558,7 +558,7 @@ const InventoryManager: React.FC = () => {
                 </div>
 
                 {/* Automation Advisory */}
-                <div className="bg-neutral-900 dark:bg-neutral-800/50 text-white p-10 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden group">
+                <div className="bg-neutral-900 dark:bg-neutral-800/50 text-white p-10 rounded-sm border border-white/10 shadow-2xl relative overflow-hidden group">
                     <TrendingUp className="absolute -bottom-16 -right-16 w-64 h-64 text-primary opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-1000" />
                     <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
                         <div className="flex-1">
@@ -570,7 +570,7 @@ const InventoryManager: React.FC = () => {
                                 Enable auto-restocking protocols for items identified as "Critical Velocity" to avoid stock-outs. The agent currently monitors 14 high-volume SKUs for optimal reorder timing.
                             </p>
                         </div>
-                        <button className="px-10 py-5 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-[0.25em] shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all">
+                        <button className="px-10 py-5 bg-primary text-white rounded-sm font-black text-sm uppercase tracking-[0.25em] shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all">
                             Enable Auto-Restock
                         </button>
                     </div>
@@ -611,7 +611,7 @@ const InventoryManager: React.FC = () => {
             {/* Stock Aging Modal */}
             {showAgingModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-neutral-800 w-full max-w-5xl rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                    <div className="bg-white dark:bg-neutral-800 w-full max-w-5xl rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                         <div className="px-10 py-8 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
                             <div>
                                 <h3 className="text-2xl font-black italic flex items-center gap-3 text-neutral-900 dark:text-neutral-100">

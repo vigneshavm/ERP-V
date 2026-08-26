@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Info, Camera, Plus, FileText, Trash2 } from 'lucide-react';
 import { GRNItem } from "../../../types/purchase";
 
@@ -20,7 +20,7 @@ const GRNSummary: React.FC<GRNSummaryProps> = ({
 
     return (
         <div className="space-y-6">
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+            <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <Info className="w-5 h-5 text-primary" /> Summary
                 </h3>
@@ -40,11 +40,11 @@ const GRNSummary: React.FC<GRNSummaryProps> = ({
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+            <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <Camera className="w-5 h-5 text-primary" /> Attachments
                 </h3>
-                <div className="border-2 border-dashed border-neutral-200 dark:border-neutral-700 rounded-2xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer capitalize">
+                <div className="border-2 border-dashed border-neutral-200 dark:border-neutral-700 rounded-sm p-8 text-center hover:border-primary/50 transition-colors cursor-pointer capitalize">
                     <Plus className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
                     <p className="text-xs text-neutral-500 font-medium">Upload Delivery Challan or Photos</p>
                 </div>
@@ -61,12 +61,12 @@ const GRNSummary: React.FC<GRNSummaryProps> = ({
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+            <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-primary" /> Discrepancy Notes
                 </h3>
                 <textarea
-                    className="w-full p-4 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm focus:ring-2 focus:ring-primary outline-none min-h-[120px]"
+                    className="w-full p-4 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm focus:ring-2 focus:ring-primary outline-none min-h-[120px]"
                     placeholder="Any shortages, damages, or notes from the delivery..."
                     value={notes || ''}
                     onChange={e => onNotesChange(e.target.value)}

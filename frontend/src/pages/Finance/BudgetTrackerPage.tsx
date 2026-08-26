@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
     Target,
     TrendingUp,
@@ -95,7 +95,7 @@ const BudgetTrackerPage: React.FC = () => {
         return (
             <Layout>
                 <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-                    <div className="w-16 h-16 border-[6px] border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+                    <div className="w-16 h-16 border-[6px] border-success/20 border-t-emerald-500 rounded-full animate-spin"></div>
                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] animate-pulse">Initializing EXPANAGER...</p>
                 </div>
             </Layout>
@@ -146,7 +146,7 @@ const BudgetTrackerPage: React.FC = () => {
                                 <p className="text-sm font-bold text-neutral-500 italic">Fiscal Period: {report?.report_period}</p>
                             </div>
                             
-                            <div className="flex items-center gap-1.5 p-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-2xl">
+                            <div className="flex items-center gap-1.5 p-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-sm">
                                 {[
                                     { id: 'budget', label: 'Surveillance', icon: LayoutDashboard },
                                     { id: 'calendar', label: 'Temporal', icon: CalendarIcon },
@@ -156,7 +156,7 @@ const BudgetTrackerPage: React.FC = () => {
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id as any)}
                                         className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id 
-                                            ? 'bg-white dark:bg-neutral-700 text-emerald-500 shadow-md scale-105' 
+                                            ? 'bg-white dark:bg-neutral-700 text-success shadow-md scale-105' 
                                             : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
                                     >
                                         {tab.label}
@@ -173,7 +173,7 @@ const BudgetTrackerPage: React.FC = () => {
                             <div className="lg:col-span-8 space-y-8">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">Transaction Ledger</h3>
-                                    <div className="flex items-center gap-4 text-emerald-500">
+                                    <div className="flex items-center gap-4 text-success">
                                         <ChevronRight className="w-4 h-4 rotate-180 cursor-pointer" />
                                         <span className="text-[10px] font-black tracking-widest uppercase">June 2025</span>
                                         <ChevronRight className="w-4 h-4 cursor-pointer" />
@@ -197,7 +197,7 @@ const BudgetTrackerPage: React.FC = () => {
                                     <div key={idx} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[2.5rem] p-10 shadow-sm">
                                         <div className="flex items-center justify-between mb-8">
                                             <h3 className="text-xl font-black text-neutral-900 dark:text-white uppercase tracking-tight">Consolidated Summary: {m.month}</h3>
-                                            <span className="px-4 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-full text-[10px] font-black uppercase tracking-widest">Active Monitoring</span>
+                                            <span className="px-4 py-1.5 bg-success/10 text-emerald-600 dark:text-success rounded-full text-[10px] font-black uppercase tracking-widest">Active Monitoring</span>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                             <div className="space-y-4">
@@ -211,7 +211,7 @@ const BudgetTrackerPage: React.FC = () => {
                                                 </p>
                                             </div>
                                             <div className="flex flex-col justify-center items-end text-right">
-                                                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-500 mb-2">
+                                                <div className="flex items-center gap-2 text-emerald-600 dark:text-success mb-2">
                                                     <ShieldCheck className="w-5 h-5" />
                                                     <span className="text-xs font-black uppercase tracking-widest">Operational Safety</span>
                                                 </div>
@@ -225,8 +225,8 @@ const BudgetTrackerPage: React.FC = () => {
                             {/* Right Side: Intelligence & Categories */}
                             <div className="lg:col-span-4 space-y-8">
                                 <div className="bg-neutral-950 text-white rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden group">
-                                    <Zap className="absolute -top-6 -right-6 w-24 h-24 text-emerald-500 opacity-10 group-hover:scale-125 transition duration-1000" />
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-6 flex items-center gap-2">
+                                    <Zap className="absolute -top-6 -right-6 w-24 h-24 text-success opacity-10 group-hover:scale-125 transition duration-1000" />
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-success mb-6 flex items-center gap-2">
                                         <Zap className="w-4 h-4 fill-emerald-500" /> Oracle Insights
                                     </p>
                                     <div className="space-y-6">

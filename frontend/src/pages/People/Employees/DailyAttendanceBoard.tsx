@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
 import {
@@ -194,7 +194,7 @@ const DailyAttendanceBoard: React.FC = () => {
                 </div>
 
                 {/* Board */}
-                <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="mt-6 bg-white dark:bg-slate-800 rounded-sm shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                     {isLoading ? (
                         <div className="py-32 flex flex-col items-center justify-center">
                             <Loader2 className="w-12 h-12 animate-spin text-blue-500 mb-4" />

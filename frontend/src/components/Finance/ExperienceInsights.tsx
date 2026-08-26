@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
     ResponsiveContainer,
     LineChart,
@@ -54,7 +54,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
             {/* Header Section */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <div className="p-2 hover:bg-white/5 rounded-full transition-colors cursor-pointer text-emerald-500">
+                    <div className="p-2 hover:bg-white/5 rounded-full transition-colors cursor-pointer text-success">
                         <ArrowRight className="w-5 h-5 rotate-180" />
                     </div>
                     <h2 className="text-xl font-medium text-neutral-300">Year 2024-2025</h2>
@@ -65,13 +65,13 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
             </div>
 
             {/* Toggle */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-neutral-900/50 border border-white/5 rounded-2xl">
+            <div className="flex items-center gap-3 px-4 py-3 bg-neutral-900/50 border border-white/5 rounded-sm">
                 <input
                     type="checkbox"
                     id="exclude-investment"
                     checked={excludeInvestment}
                     onChange={(e) => setExcludeInvestment(e.target.checked)}
-                    className="w-5 h-5 rounded border-neutral-700 bg-neutral-800 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-neutral-900"
+                    className="w-5 h-5 rounded border-neutral-700 bg-neutral-800 text-success focus:ring-emerald-500 focus:ring-offset-neutral-900"
                 />
                 <label htmlFor="exclude-investment" className="text-sm font-medium text-neutral-400">
                     Exclude categories of type <span className="text-neutral-200 font-bold">INVESTMENT</span> from data calculations
@@ -81,17 +81,17 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
             {/* Hero Insights */}
             <div className="text-center space-y-2 py-4">
                 <p className="text-sm font-medium text-neutral-500">Average monthly balance for the year 2024-2025</p>
-                <h3 className="text-4xl font-bold text-emerald-500">₹{Math.round(avgBalance).toLocaleString('en-IN')}/month</h3>
+                <h3 className="text-4xl font-bold text-success">₹{Math.round(avgBalance).toLocaleString('en-IN')}/month</h3>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="text-center space-y-1">
                     <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Average monthly expense</p>
-                    <p className="text-xl font-bold text-rose-500">₹{Math.round(avgExpense).toLocaleString('en-IN')}/month</p>
+                    <p className="text-xl font-bold text-danger">₹{Math.round(avgExpense).toLocaleString('en-IN')}/month</p>
                 </div>
                 <div className="text-center space-y-1">
                     <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Average monthly income</p>
-                    <p className="text-xl font-bold text-emerald-500">₹{Math.round(avgIncome).toLocaleString('en-IN')}/month</p>
+                    <p className="text-xl font-bold text-success">₹{Math.round(avgIncome).toLocaleString('en-IN')}/month</p>
                 </div>
             </div>
 
@@ -148,7 +148,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
                     const percentage = parseFloat(cat.percentage);
                     return (
                         <div key={idx} className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-white/5 flex items-center justify-center shrink-0">
+                            <div className="w-12 h-12 rounded-sm bg-neutral-900 border border-white/5 flex items-center justify-center shrink-0">
                                 {categoryIcons[cat.category] || categoryIcons['Default']}
                             </div>
                             <div className="flex-1 space-y-2">

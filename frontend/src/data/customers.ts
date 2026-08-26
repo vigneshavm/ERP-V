@@ -1,4 +1,21 @@
-export const customers = [
+export interface MockCustomer {
+    id: string;
+    tenant_id: string;
+    name: string;
+    phone: string;
+    email: string;
+    address: string;
+    outstanding_balance: number;
+    loyalty_points: number;
+    sector: string;
+    creditBalance: number;
+    creditLimit: number;
+    lastPaymentDate: string | null;
+    riskScore: string | null;
+    tier?: string;
+}
+
+export const customers: MockCustomer[] = [
     {
         "id": "C001-TEN001",
         "tenant_id": "TEN001",

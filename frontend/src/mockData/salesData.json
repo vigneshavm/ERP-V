@@ -1,16 +1,35 @@
 {
     "pipelineStages": [
-        { "label": "Draft Estimates", "val": "12", "amount": "₹4.2L", "iconName": "FileText", "color": "text-muted", "bg": "bg-slate-500/10", "border": "border-default" },
-        { "label": "Pending Approval", "val": "8", "amount": "₹12.5L", "iconName": "Clock", "color": "text-amber-400", "bg": "bg-amber-500/10", "border": "border-amber-500/30" },
-        { "label": "Awaiting Payment", "val": "24", "amount": "₹45.8L", "iconName": "AlertCircle", "color": "text-rose-400", "bg": "bg-rose-500/10", "border": "border-rose-500/30" },
-        { "label": "Settled (MTD)", "val": "142", "amount": "₹1.2Cr", "iconName": "CheckCircle2", "color": "text-emerald-400", "bg": "bg-emerald-500/10", "border": "border-emerald-500/30" }
+        { "label": "Draft Estimates", "val": "12", "amount": "₹4.2L", "iconName": "FileText", "color": "text-secondary", "bg": "bg-surface", "border": "border-default" },
+        { "label": "Pending Approval", "val": "8",  "amount": "₹12.5L", "iconName": "Clock",     "color": "text-warning", "bg": "bg-warning/10", "border": "border-warning/30" },
+        { "label": "Awaiting Payment", "val": "24", "amount": "₹45.8L", "iconName": "AlertCircle","color": "text-danger",  "bg": "bg-danger/10",  "border": "border-danger/30"  },
+        { "label": "Settled (MTD)",    "val": "142","amount": "₹1.2Cr", "iconName": "CheckCircle2","color": "text-success", "bg": "bg-success/10", "border": "border-success/30" }
     ],
     "invoices": [
-        { "id": "TEX-2026-0891", "date": "Oct 14, 2026", "due": "Oct 28, 2026", "client": "Meera's Boutique", "amount": "1,45,000", "status": "Unpaid", "color": "amber" },
-        { "id": "TEX-2026-0890", "date": "Oct 12, 2026", "due": "Oct 26, 2026", "client": "Elite Garments Surat", "amount": "4,50,000", "status": "Paid", "color": "emerald" },
-        { "id": "TEX-2026-0889", "date": "Sep 28, 2026", "due": "Oct 12, 2026", "client": "Heritage Silks Chennai", "amount": "8,90,000", "status": "Overdue", "color": "rose" },
-        { "id": "TEX-2026-0888", "date": "Sep 25, 2026", "due": "Oct 09, 2026", "client": "Vardhman Wholesale", "amount": "2,15,500", "status": "Paid", "color": "emerald" },
-        { "id": "TEX-2026-0887", "date": "Sep 24, 2026", "due": "Oct 08, 2026", "client": "Modern Fashion Hub", "amount": "6,75,000", "status": "Paid", "color": "emerald" }
+        { "id": "TEX-2026-0891", "date": "14 Oct 2026", "due": "28 Oct 2026", "client": "Meera's Boutique",         "amount": "1,45,000", "status": "Unpaid"  },
+        { "id": "TEX-2026-0890", "date": "12 Oct 2026", "due": "26 Oct 2026", "client": "Elite Garments Surat",     "amount": "4,50,000", "status": "Paid"    },
+        { "id": "TEX-2026-0889", "date": "28 Sep 2026", "due": "12 Oct 2026", "client": "Heritage Silks Chennai",   "amount": "8,90,000", "status": "Overdue" },
+        { "id": "TEX-2026-0888", "date": "25 Sep 2026", "due": "09 Oct 2026", "client": "Vardhman Wholesale",       "amount": "2,15,500", "status": "Paid"    },
+        { "id": "TEX-2026-0887", "date": "24 Sep 2026", "due": "08 Oct 2026", "client": "Modern Fashion Hub",       "amount": "6,75,000", "status": "Paid"    },
+        { "id": "TEX-2026-0886", "date": "20 Sep 2026", "due": "04 Oct 2026", "client": "Sri Murugan Textiles",     "amount": "3,20,000", "status": "Unpaid"  },
+        { "id": "TEX-2026-0885", "date": "18 Sep 2026", "due": "02 Oct 2026", "client": "Aruna Silks Kanchipuram",  "amount": "9,50,000", "status": "Overdue" },
+        { "id": "TEX-2026-0884", "date": "15 Sep 2026", "due": "29 Sep 2026", "client": "Rainbow Cotton Mills",     "amount": "1,80,000", "status": "Paid"    },
+        { "id": "TEX-2026-0883", "date": "12 Sep 2026", "due": "26 Sep 2026", "client": "Tiruppur Export House",    "amount": "7,60,000", "status": "Paid"    },
+        { "id": "TEX-2026-0882", "date": "10 Sep 2026", "due": "24 Sep 2026", "client": "A. Arumuga Mudaliar & Sons","amount": "5,40,000", "status": "Unpaid" },
+        { "id": "TEX-2026-0881", "date": "08 Sep 2026", "due": "22 Sep 2026", "client": "Lakshmi Fancy Stores",     "amount": "2,25,000", "status": "Paid"    },
+        { "id": "TEX-2026-0880", "date": "05 Sep 2026", "due": "19 Sep 2026", "client": "Bharathi Saree Palace",    "amount": "4,10,000", "status": "Overdue" },
+        { "id": "TEX-2026-0879", "date": "02 Sep 2026", "due": "16 Sep 2026", "client": "Coimbatore Cloth House",   "amount": "6,30,000", "status": "Paid"    },
+        { "id": "TEX-2026-0878", "date": "30 Aug 2026", "due": "13 Sep 2026", "client": "Dhanalakshmi Textiles",    "amount": "3,75,000", "status": "Unpaid"  },
+        { "id": "TEX-2026-0877", "date": "28 Aug 2026", "due": "11 Sep 2026", "client": "Salem Silk Traders",       "amount": "5,90,000", "status": "Paid"    },
+        { "id": "TEX-2026-0876", "date": "25 Aug 2026", "due": "08 Sep 2026", "client": "Erode Cotton Merchants",   "amount": "1,60,000", "status": "Paid"    },
+        { "id": "TEX-2026-0875", "date": "22 Aug 2026", "due": "05 Sep 2026", "client": "Vijaya Garments Trichy",   "amount": "8,10,000", "status": "Overdue" },
+        { "id": "TEX-2026-0874", "date": "20 Aug 2026", "due": "03 Sep 2026", "client": "New India Textiles",       "amount": "2,95,000", "status": "Paid"    },
+        { "id": "TEX-2026-0873", "date": "18 Aug 2026", "due": "01 Sep 2026", "client": "Kumaran Silks Pvt Ltd",    "amount": "11,50,000","status": "Unpaid"  },
+        { "id": "TEX-2026-0872", "date": "15 Aug 2026", "due": "29 Aug 2026", "client": "Madurai Fancy Cloth",      "amount": "4,80,000", "status": "Paid"    },
+        { "id": "TEX-2026-0871", "date": "12 Aug 2026", "due": "26 Aug 2026", "client": "Nalli Silks Wholesale",    "amount": "9,20,000", "status": "Paid"    },
+        { "id": "TEX-2026-0870", "date": "10 Aug 2026", "due": "24 Aug 2026", "client": "Pothys Distributors",      "amount": "6,55,000", "status": "Unpaid"  },
+        { "id": "TEX-2026-0869", "date": "08 Aug 2026", "due": "22 Aug 2026", "client": "Velmurugan Knitwear",      "amount": "1,95,000", "status": "Overdue" },
+        { "id": "TEX-2026-0868", "date": "05 Aug 2026", "due": "19 Aug 2026", "client": "SNM Cloth Merchants",      "amount": "3,40,000", "status": "Paid"    },
+        { "id": "TEX-2026-0867", "date": "02 Aug 2026", "due": "16 Aug 2026", "client": "Abirami Sarees Tirunelveli","amount": "7,85,000", "status": "Paid"   }
     ]
 }
-

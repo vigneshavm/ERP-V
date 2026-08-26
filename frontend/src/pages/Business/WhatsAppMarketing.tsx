@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Layout from "../../components/shared/Layout/index.js";
 import PageHeader from "../../components/shared/Layout/PageHeader.js";
 import FormInput from "../../components/core/Form/Input.js";
@@ -152,7 +152,7 @@ const WhatsAppMarketing: React.FC = () => {
         <button
             key="broadcast"
             onClick={() => setShowBroadcastForm(!showBroadcastForm)}
-            className={`px-6 py-2.5 font-bold rounded-2xl transition-all active:scale-95 flex items-center shadow-lg ${showBroadcastForm
+            className={`px-6 py-2.5 font-bold rounded-sm transition-all active:scale-95 flex items-center shadow-lg ${showBroadcastForm
                 ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 shadow-gray-200'
                 : 'bg-gradient-to-r from-emerald-600 to-green-600 text-white hover:from-emerald-700 hover:to-green-700 shadow-green-200'
                 }`}
@@ -229,7 +229,7 @@ const WhatsAppMarketing: React.FC = () => {
                     <div className="w-full lg:w-80 shrink-0">
                         <div className="bg-white/10 backdrop-blur-xl rounded-[2rem] border border-white/20 p-6 shadow-2xl">
                             <div className="flex items-center justify-between mb-6">
-                                <div className="p-3 bg-white/10 rounded-2xl border border-white/10">
+                                <div className="p-3 bg-white/10 rounded-sm border border-white/10">
                                     <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                                     </svg>
@@ -240,14 +240,14 @@ const WhatsAppMarketing: React.FC = () => {
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5">
+                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-sm border border-white/5">
                                     <span className="text-sm font-bold opacity-80">Sync Status</span>
                                     <span className="flex items-center text-xs font-black uppercase text-green-400">
                                         <span className="w-1.5 h-1.5 rounded-full bg-green-400 mr-2 shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span>
                                         Connected
                                     </span>
                                 </div>
-                                <div className="flex items-center justify-between p-3 bg-green-400 text-green-950 rounded-2xl font-black text-[10px] tracking-widest uppercase shadow-xl shadow-green-900/20 active:scale-95 transition-all cursor-pointer">
+                                <div className="flex items-center justify-between p-3 bg-green-400 text-green-950 rounded-sm font-black text-[10px] tracking-widest uppercase shadow-xl shadow-green-900/20 active:scale-95 transition-all cursor-pointer">
                                     Manage Channels
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
                                 </div>
@@ -269,7 +269,7 @@ const WhatsAppMarketing: React.FC = () => {
                         <div className={`absolute top-0 right-0 w-24 h-24 bg-${stat.color}-50 rounded-bl-[100px] -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700 opacity-50`}></div>
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
-                                <div className={`w-12 h-12 flex items-center justify-center bg-${stat.color}-50 rounded-2xl text-2xl shadow-inner group-hover:scale-110 transition-transform`}>
+                                <div className={`w-12 h-12 flex items-center justify-center bg-${stat.color}-50 rounded-sm text-2xl shadow-inner group-hover:scale-110 transition-transform`}>
                                     {stat.icon}
                                 </div>
                                 <span className={`text-[10px] font-black italic tracking-widest text-${stat.color}-600 uppercase`}>{stat.trend}</span>
@@ -305,7 +305,7 @@ const WhatsAppMarketing: React.FC = () => {
                                                     <div
                                                         key={group.id}
                                                         onClick={() => toggleGroup(group.id)}
-                                                        className={`flex items-center p-4 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${selectedGroups.includes(group.id)
+                                                        className={`flex items-center p-4 border-2 rounded-sm cursor-pointer transition-all duration-300 ${selectedGroups.includes(group.id)
                                                             ? 'border-green-600 bg-green-50/50 shadow-lg shadow-green-100 group overflow-hidden'
                                                             : 'border-gray-100 hover:border-green-200 hover:bg-gray-50'
                                                             }`}
@@ -336,7 +336,7 @@ const WhatsAppMarketing: React.FC = () => {
                                                 name="scheduleDate"
                                                 value={formData.scheduleDate}
                                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, scheduleDate: e.target.value })}
-                                                className="rounded-2xl border-gray-100 focus:ring-green-500/20"
+                                                className="rounded-sm border-gray-100 focus:ring-green-500/20"
                                             />
                                             <FormInput
                                                 label="Schedule Time"
@@ -344,7 +344,7 @@ const WhatsAppMarketing: React.FC = () => {
                                                 name="scheduleTime"
                                                 value={formData.scheduleTime}
                                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, scheduleTime: e.target.value })}
-                                                className="rounded-2xl border-gray-100 focus:ring-green-500/20"
+                                                className="rounded-sm border-gray-100 focus:ring-green-500/20"
                                             />
                                         </div>
                                     </div>
@@ -377,7 +377,7 @@ const WhatsAppMarketing: React.FC = () => {
                                             <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Rich Media Assets</label>
                                             <div className="group border-2 border-dashed border-gray-100 rounded-[1.25rem] p-8 text-center hover:bg-green-50 hover:border-green-200 transition-all cursor-pointer relative overflow-hidden">
                                                 <div className="absolute inset-0 bg-green-400 opacity-0 group-hover:opacity-[0.02] transition-opacity"></div>
-                                                <div className="w-12 h-12 bg-gray-50 text-gray-400 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 group-hover:text-green-600 group-hover:bg-white transition-all shadow-inner">
+                                                <div className="w-12 h-12 bg-gray-50 text-gray-400 rounded-sm flex items-center justify-center mx-auto mb-3 group-hover:scale-110 group-hover:text-green-600 group-hover:bg-white transition-all shadow-inner">
                                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                     </svg>
@@ -392,11 +392,11 @@ const WhatsAppMarketing: React.FC = () => {
                                 <div className="flex flex-col sm:flex-row items-center gap-4 pt-8 border-t border-gray-100">
                                     <button
                                         onClick={handleSendBroadcast}
-                                        className="w-full sm:w-auto px-10 py-4 bg-gray-900 text-white font-black uppercase tracking-widest rounded-2xl hover:bg-black shadow-xl shadow-gray-200 transition-all active:scale-95 text-xs"
+                                        className="w-full sm:w-auto px-10 py-4 bg-gray-900 text-white font-black uppercase tracking-widest rounded-sm hover:bg-black shadow-xl shadow-gray-200 transition-all active:scale-95 text-xs"
                                     >
                                         Execute Campaign 🚀
                                     </button>
-                                    <button className="w-full sm:w-auto px-8 py-4 bg-white border-2 border-gray-900 text-gray-900 font-black uppercase tracking-widest rounded-2xl hover:bg-gray-900 hover:text-white transition-all text-xs">
+                                    <button className="w-full sm:w-auto px-8 py-4 bg-white border-2 border-gray-900 text-gray-900 font-black uppercase tracking-widest rounded-sm hover:bg-gray-900 hover:text-white transition-all text-xs">
                                         Save as Template
                                     </button>
                                     <div className="flex-1"></div>
@@ -459,7 +459,7 @@ const WhatsAppMarketing: React.FC = () => {
 
                                         {/* Chat Bubbles */}
                                         <div className="flex-1 p-4 relative z-10 space-y-3">
-                                            <div className="self-start max-w-[90%] bg-white rounded-2xl rounded-tl-none p-3 shadow-sm transform transition-all duration-500 hover:scale-[1.02]">
+                                            <div className="self-start max-w-[90%] bg-white rounded-sm rounded-tl-none p-3 shadow-sm transform transition-all duration-500 hover:scale-[1.02]">
                                                 <p className="text-[13px] text-gray-800 whitespace-pre-wrap leading-snug font-medium">
                                                     {formData.message || messagePreview || 'Your high-converting campaign message will materialize here in real-time...'}
                                                 </p>
@@ -518,7 +518,7 @@ const WhatsAppMarketing: React.FC = () => {
                                         'Always include a clear Call-To-Action'
                                     ].map((tip, idx) => (
                                         <li key={idx} className="flex items-start gap-3 text-[11px] font-bold opacity-80 leading-snug">
-                                            <span className="text-emerald-400">★</span>
+                                            <span className="text-success">★</span>
                                             {tip}
                                         </li>
                                     ))}

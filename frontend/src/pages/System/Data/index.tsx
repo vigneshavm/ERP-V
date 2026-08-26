@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+﻿import React, { lazy, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { setActiveTab } from '@/redux/slices/uiSlice';
@@ -14,7 +14,7 @@ type DataTab = 'export' | 'import' | 'labels' | 'series';
 
 const TabLoading = () => (
     <div className="min-h-[400px] flex flex-col items-center justify-center text-slate-400 gap-4">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
         <p className="text-xs font-black uppercase tracking-widest">Loading Intelligence Layer...</p>
     </div>
 );
@@ -66,7 +66,7 @@ const DataManager: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl w-fit shadow-inner">
+            <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-sm w-fit shadow-inner">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     return (
@@ -74,7 +74,7 @@ const DataManager: React.FC = () => {
                             key={tab.id}
                             onClick={() => handleTabChange(tab.id as DataTab)}
                             className={`flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeDataTab === tab.id
-                                ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-xl scale-105'
+                                ? 'bg-white dark:bg-slate-700 text-primary shadow-xl scale-105'
                                 : 'text-slate-500 hover:text-slate-700 hover:bg-white/50 dark:hover:bg-white/5'
                                 }`}
                         >

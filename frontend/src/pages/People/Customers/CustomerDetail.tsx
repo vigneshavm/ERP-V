@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+﻿import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getCustomerById, getCustomerTransactions, reset } from "../../../redux/slices/customerSlice";
@@ -55,12 +55,12 @@ const CustomerDetail = () => {
         return (
             <Layout>
                 <div className="p-20 text-center flex flex-col items-center gap-4">
-                    <div className="w-20 h-20 rounded-3xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center grayscale opacity-50">
+                    <div className="w-20 h-20 rounded-sm bg-slate-50 dark:bg-slate-800 flex items-center justify-center grayscale opacity-50">
                         <UserCheck className="w-10 h-10 text-slate-400" />
                     </div>
                     <p className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-widest">Entry Restricted</p>
                     <p className="text-sm text-slate-500 max-w-xs">{message || 'This consumer profile has been archived or does not exist in the current terminal.'}</p>
-                    <button onClick={() => navigate('/customers')} className="mt-4 px-8 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all font-medium">Return to Portfolio</button>
+                    <button onClick={() => navigate('/customers')} className="mt-4 px-8 py-3 bg-indigo-600 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all font-medium">Return to Portfolio</button>
                 </div>
             </Layout>
         );
@@ -103,11 +103,11 @@ const CustomerDetail = () => {
                             <p className="text-xs font-bold opacity-80 mt-1 flex items-center gap-1.5"><TrendingUp className="w-3 h-3" /> Net outstanding balance</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4 relative z-10">
-                            <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-md">
+                            <div className="bg-white/10 p-4 rounded-sm backdrop-blur-md">
                                 <p className="text-[9px] font-black uppercase opacity-60">Risk Index</p>
                                 <p className="text-sm font-black mt-1">{customer.dues > 100000 ? 'High' : 'Low'}</p>
                             </div>
-                            <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-md">
+                            <div className="bg-white/10 p-4 rounded-sm backdrop-blur-md">
                                 <p className="text-[9px] font-black uppercase opacity-60">Credit Limit</p>
                                 <p className="text-sm font-black mt-1">₹5.0L</p>
                             </div>
@@ -128,21 +128,21 @@ const CustomerDetail = () => {
                 <div className="col-span-12 lg:col-span-8 space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
                         <DetailCard title="Reachability Node" icon={MapPin}>
-                            <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800/50 group-hover:border-indigo-500/30 transition-all">
+                            <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800/50 group-hover:border-primary/30 transition-all">
                                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Facility Address</p>
                                 <p className="text-sm font-bold text-slate-700 dark:text-slate-300 leading-relaxed italic">"{customer.address || 'Operational address not registered in global database.'}"</p>
                             </div>
                         </DetailCard>
                         <DetailCard title="Operational Status" icon={ShieldCheck}>
                             <div className="space-y-4">
-                                <div className="flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-800/30">
+                                <div className="flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-sm border border-emerald-100 dark:border-emerald-800/30">
                                     <div className="flex items-center gap-3 text-emerald-600">
                                         <ShieldCheck className="w-5 h-5" />
                                         <span className="text-xs font-black uppercase tracking-widest">Active Partner</span>
                                     </div>
-                                    <ArrowUpRight className="w-4 h-4 text-emerald-400" />
+                                    <ArrowUpRight className="w-4 h-4 text-success" />
                                 </div>
-                                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-sm border border-slate-100 dark:border-slate-800">
                                     <div className="flex items-center gap-3 text-slate-500">
                                         <Calendar className="w-5 h-5" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Joined {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'N/A'}</span>
@@ -161,7 +161,7 @@ const CustomerDetail = () => {
                                 </div>
                                 <h3 className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-tight">Market Behavior</h3>
                             </div>
-                            <button className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+                            <button className="p-3 text-slate-400 hover:text-primary hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
                                 <Download className="w-4 h-4" />
                             </button>
                         </div>

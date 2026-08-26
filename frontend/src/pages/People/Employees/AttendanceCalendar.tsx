@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Calendar as CalendarIcon, CheckSquare, ListChecks, X, CheckCircle2, Clock, PieChart, XCircle } from 'lucide-react';
 import { Card } from "../../../components/core/Display/Card";
 import { Attendance } from "../../../types/hr";
@@ -58,7 +58,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                         icon = <PieChart className="w-3 h-3" />;
                     } else if (status === 'ABSENT') {
                         bgClass = 'bg-rose-50 dark:bg-rose-900/40 border-rose-200 dark:border-rose-800';
-                        textClass = 'text-rose-400 dark:text-rose-300 font-bold';
+                        textClass = 'text-danger dark:text-rose-300 font-bold';
                         icon = <XCircle className="w-3 h-3" />;
                     }
 

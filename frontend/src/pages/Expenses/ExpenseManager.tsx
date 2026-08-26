@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import Layout from "../../components/shared/Layout";
@@ -56,7 +56,7 @@ const ExpenseManagerPage: React.FC = () => {
 
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Total Monthly Burn</p>
                         <h3 className="text-3xl font-black italic">₹{(sectorTx.reduce((acc, t) => acc + t.amount, 0) / 1000).toFixed(1)}k</h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -65,19 +65,19 @@ const ExpenseManagerPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group hover:border-primary/30 transition">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group hover:border-primary/30 transition">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1 italic">Highest Sector</p>
                         <h3 className="text-xl font-black uppercase text-primary">Rent & Utilities</h3>
                         <p className="text-[10px] text-neutral-500 mt-2 font-bold uppercase">₹49,500 total impact</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Audit Score</p>
                         <h3 className="text-3xl font-black text-success italic">98%</h3>
                         <p className="text-[10px] text-neutral-500 mt-2 font-bold uppercase italic tracking-tighter">Compliant Spend Detected</p>
                     </div>
 
-                    <div className="bg-neutral-950 text-white p-5 rounded-3xl shadow-xl shadow-primary/10 relative overflow-hidden group">
+                    <div className="bg-neutral-950 text-white p-5 rounded-sm shadow-xl shadow-primary/10 relative overflow-hidden group">
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-1 italic">Agent Strategy</p>
                         <p className="text-xs font-bold leading-relaxed pr-8">Reduce cloud costs by <span className="text-primary italic">switching to yearly</span> billing.</p>
                         <ArrowRight className="absolute bottom-4 right-4 w-4 h-4 text-primary group-hover:translate-x-1 transition" />
@@ -94,10 +94,10 @@ const ExpenseManagerPage: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="Search Description, ID or Vendor..."
-                                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium"
+                                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium"
                                 />
                             </div>
-                            <button className="px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm uppercase tracking-widest text-neutral-500">
+                            <button className="px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm uppercase tracking-widest text-neutral-500">
                                 <Filter className="w-4 h-4" /> Filter
                             </button>
                         </div>
@@ -209,7 +209,7 @@ const ExpenseManagerPage: React.FC = () => {
                                 </div>
                                 <h4 className="text-xl font-black mb-4 leading-tight italic">Detect Leakage. <span className="text-primary underline">Secure Profit.</span></h4>
                                 <div className="space-y-4 mb-8">
-                                    <div className="p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition">
+                                    <div className="p-4 bg-white/5 border border-white/10 rounded-sm hover:bg-white/10 transition">
                                         <div className="flex justify-between items-center mb-1">
                                             <span className="text-[9px] font-black text-neutral-500 uppercase">Anomaly Check</span>
                                             <span className="text-[9px] font-black text-success uppercase italic">Normal</span>
@@ -217,7 +217,7 @@ const ExpenseManagerPage: React.FC = () => {
                                         <p className="text-[10px] font-bold text-neutral-400 leading-relaxed italic">No abnormal repetitive vendor payouts detected in last 30 hours.</p>
                                     </div>
                                 </div>
-                                <button className="w-full py-4 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                <button className="w-full py-4 bg-primary text-white rounded-sm font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
                                     Full Expense Audit Scan
                                 </button>
                             </div>

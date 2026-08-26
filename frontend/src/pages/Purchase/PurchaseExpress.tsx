@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
     Zap, Save, Search, Plus, Trash2, CreditCard, 
@@ -136,7 +136,7 @@ const PurchaseExpress: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800">
+                            <div className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-900 rounded-sm border border-neutral-200 dark:border-neutral-800">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Auto-Print Labels</span>
                                 <button 
                                     onClick={() => setAutoPrint(!autoPrint)}
@@ -278,7 +278,7 @@ const PurchaseExpress: React.FC = () => {
                             <div className="p-10 space-y-10">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-6">
-                                        <div className="p-4 bg-emerald-50 text-emerald-500 dark:bg-emerald-900/20 rounded-[1.5rem]">
+                                        <div className="p-4 bg-emerald-50 text-success dark:bg-emerald-900/20 rounded-[1.5rem]">
                                             <ShoppingBag className="w-6 h-6" />
                                         </div>
                                         <div>
@@ -379,7 +379,7 @@ const PurchaseExpress: React.FC = () => {
                                                 <span className="text-sm font-black text-primary tracking-tighter tabular-nums">₹{item.line_total?.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                             </div>
                                             <div className="col-span-1 flex justify-end">
-                                                <button onClick={() => removeItem(idx)} className="p-3 text-neutral-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-all">
+                                                <button onClick={() => removeItem(idx)} className="p-3 text-neutral-300 hover:text-danger hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-all">
                                                     <Trash2 className="w-5 h-5" />
                                                 </button>
                                             </div>
@@ -421,7 +421,7 @@ const PurchaseExpress: React.FC = () => {
 
                             <div className="relative z-10 space-y-12">
                                 <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
+                                    <div className="p-3 bg-white/5 rounded-sm border border-white/5">
                                         <BarChart3 className="w-6 h-6 text-primary" />
                                     </div>
                                     <h3 className="text-xs font-black uppercase tracking-[0.2em]">Fiscal Summary</h3>
@@ -443,7 +443,7 @@ const PurchaseExpress: React.FC = () => {
                                     {isInterState && (
                                         <div className="flex justify-between items-center">
                                             <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Tax (IGST @18%)</span>
-                                            <span className="text-sm font-black tabular-nums tracking-tighter text-amber-500">₹{igst.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                            <span className="text-sm font-black tabular-nums tracking-tighter text-warning">₹{igst.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                         </div>
                                     )}
                                     <div className="h-px bg-white/5 my-8" />
@@ -485,14 +485,14 @@ const PurchaseExpress: React.FC = () => {
                         </div>
 
                         {/* Audit Log / Pulse Node */}
-                        <div className="p-10 bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/10 rounded-[3.5rem] space-y-6 animate-pulse hover:animate-none transition-all">
+                        <div className="p-10 bg-emerald-500/5 dark:bg-success/10 border border-emerald-500/10 rounded-[3.5rem] space-y-6 animate-pulse hover:animate-none transition-all">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-2xl text-emerald-500 shadow-sm border border-emerald-500/20">
+                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-sm text-success shadow-sm border border-success/20">
                                     <Activity className="w-6 h-6" />
                                 </div>
-                                <h4 className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest leading-none">System Intelligence</h4>
+                                <h4 className="text-[10px] font-black text-emerald-600 dark:text-success uppercase tracking-widest leading-none">System Intelligence</h4>
                             </div>
-                            <p className="text-[11px] text-emerald-800 dark:text-emerald-400 font-bold leading-relaxed italic border-l-2 border-emerald-500/30 pl-4">
+                            <p className="text-[11px] text-emerald-800 dark:text-success font-bold leading-relaxed italic border-l-2 border-success/30 pl-4">
                                 {supplierId ? `Inwarding stock from ${supplierName}. Financial ledger and inventory buckets will be mutated on commit.` : "Standing by for entity selection and payload definition. High-velocity mode active."}
                             </p>
                         </div>

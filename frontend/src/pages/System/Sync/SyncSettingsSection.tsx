@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { SyncConfig, SyncSettings } from "../../../types/tenant";
 
 interface SyncSettingsSectionProps {
@@ -15,7 +15,7 @@ const SyncSettingsSection: React.FC<SyncSettingsSectionProps> = ({
             <h2 className="text-xl font-black text-slate-900 dark:text-white">Sync Settings</h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 space-y-6">
+                <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-8 space-y-6">
                     <h3 className="text-lg font-black text-slate-900 dark:text-white">General</h3>
 
                     <div className="flex items-center justify-between">
@@ -74,7 +74,7 @@ const SyncSettingsSection: React.FC<SyncSettingsSectionProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 space-y-6">
+                <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-8 space-y-6">
                     <h3 className="text-lg font-black text-slate-900 dark:text-white">What to Sync</h3>
 
                     {Object.entries(settings.syncDomains).map(([key, value]) => {

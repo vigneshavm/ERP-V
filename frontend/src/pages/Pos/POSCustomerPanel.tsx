@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, useRef } from 'react';
 import { User, Smartphone, Mail, CreditCard, Send, RotateCcw, Crown, Zap, History, Gift, MessageSquare, Smile } from 'lucide-react';
 import { Customer } from "../../types/sales";
@@ -193,7 +193,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
 
 
 
-            <div className="flex flex-col gap-2 bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+            <div className="flex flex-col gap-2 bg-white dark:bg-slate-900 rounded-sm p-4 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-600/5 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700" />
                 <div className="flex justify-between items-center relative z-10">
                     <div className="flex items-center gap-2">
@@ -213,7 +213,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                         </div>
                     </div>
                     {activeCustomer.id !== 'c1' && (
-                        <button onClick={() => onSetCustomer('c1')} className="p-1.5 bg-rose-50 dark:bg-rose-900/20 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg transition-all">
+                        <button onClick={() => onSetCustomer('c1')} className="p-1.5 bg-rose-50 dark:bg-rose-900/20 text-danger hover:bg-rose-500 hover:text-white rounded-lg transition-all">
                             <RotateCcw className="w-3.5 h-3.5" />
                         </button>
                     )}
@@ -226,7 +226,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                             <div className="flex flex-col">
                                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Customer Tier</span>
                                 <div className="flex items-center gap-1.5">
-                                    <Crown className="w-3 h-3 text-amber-500" />
+                                    <Crown className="w-3 h-3 text-warning" />
                                     <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">
                                         {activeCustomer.tier || 'BRONZE'}
                                     </span>
@@ -234,7 +234,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                             </div>
                         </div>
                         <div className="text-right">
-                            <span className="text-[8px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block">Wallet Points</span>
+                            <span className="text-[8px] font-black text-primary dark:text-primary uppercase tracking-widest block">Wallet Points</span>
                             <p className="text-sm font-black text-slate-900 dark:text-white tracking-tight">{activeCustomer.points.toLocaleString()} <span className="text-[10px] text-slate-400 uppercase ml-0.5">Pts</span></p>
                         </div>
                     </div>
@@ -244,10 +244,10 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                 {activeCustomer.id !== 'c1' && (
                     <div className="mt-2 p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-900/30 flex items-center justify-between relative z-10">
                         <div className="flex items-center gap-2">
-                            <Zap className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse" />
+                            <Zap className="w-3.5 h-3.5 text-primary dark:text-primary animate-pulse" />
                             <span className="text-[9px] font-black text-indigo-700 dark:text-indigo-300 uppercase tracking-widest">Points for this order</span>
                         </div>
-                        <p className="text-xs font-black text-indigo-600 dark:text-indigo-400">+ 184</p>
+                        <p className="text-xs font-black text-primary dark:text-primary">+ 184</p>
                     </div>
                 )}
 
@@ -301,7 +301,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                                 <MessageSquare className="w-3.5 h-3.5" />
                             </button>
                             <div className="flex flex-col items-center">
-                                <Smile className="w-3.5 h-3.5 text-emerald-500" />
+                                <Smile className="w-3.5 h-3.5 text-success" />
                                 <span className="text-[7px] font-black text-slate-400">92% CSAT</span>
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+﻿import React, { ChangeEvent, useState } from 'react';
 import {
     Upload, Loader2, AlertCircle, LayoutTemplate, CheckCircle2, Zap,
     FileSpreadsheet, Download, Table, Trash2, Save, FileText, AlertTriangle,
@@ -125,11 +125,11 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
             {/* Mode Switcher */}
-            <div className="flex bg-slate-100 dark:bg-slate-800/50 p-1.5 rounded-3xl w-fit mx-auto shadow-inner border border-slate-200 dark:border-slate-700">
+            <div className="flex bg-slate-100 dark:bg-slate-800/50 p-1.5 rounded-sm w-fit mx-auto shadow-inner border border-slate-200 dark:border-slate-700">
                 <button
                     onClick={() => setMode('AI')}
-                    className={`flex items-center gap-2 px-8 py-3 rounded-2xl text-sm font-black transition-all ${mode === 'AI'
-                        ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-md'
+                    className={`flex items-center gap-2 px-8 py-3 rounded-sm text-sm font-black transition-all ${mode === 'AI'
+                        ? 'bg-white dark:bg-slate-700 text-primary shadow-md'
                         : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
                         }`}
                 >
@@ -138,7 +138,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                 </button>
                 <button
                     onClick={() => setMode('BULK')}
-                    className={`flex items-center gap-2 px-8 py-3 rounded-2xl text-sm font-black transition-all ${mode === 'BULK'
+                    className={`flex items-center gap-2 px-8 py-3 rounded-sm text-sm font-black transition-all ${mode === 'BULK'
                         ? 'bg-white dark:bg-slate-700 text-emerald-600 shadow-md'
                         : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
                         }`}
@@ -161,7 +161,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                             disabled={aiProcessing}
                         />
                         <label htmlFor="invoiceUpload" className="cursor-pointer flex flex-col items-center gap-5">
-                            <div className={`w-20 h-20 rounded-3xl flex items-center justify-center shadow-xl transition-all ${aiProcessing ? 'bg-emerald-600 animate-pulse' : 'bg-white dark:bg-slate-800 group-hover:scale-110'
+                            <div className={`w-20 h-20 rounded-sm flex items-center justify-center shadow-xl transition-all ${aiProcessing ? 'bg-emerald-600 animate-pulse' : 'bg-white dark:bg-slate-800 group-hover:scale-110'
                                 }`}>
                                 {aiProcessing ?
                                     <Loader2 className="w-10 h-10 text-white animate-spin" /> :
@@ -177,7 +177,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                                 </p>
                             </div>
                             {!aiProcessing && (
-                                <span className="px-8 py-3 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 dark:shadow-none active:scale-95">
+                                <span className="px-8 py-3 bg-emerald-600 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.2em] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 dark:shadow-none active:scale-95">
                                     Browse Invoice
                                 </span>
                             )}
@@ -185,7 +185,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                     </div>
 
                     {(aiError) && (
-                        <div className="p-5 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/50 rounded-2xl flex items-center gap-4 text-rose-600 dark:text-rose-400 animate-in fade-in slide-in-from-top-4">
+                        <div className="p-5 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/50 rounded-sm flex items-center gap-4 text-rose-600 dark:text-danger animate-in fade-in slide-in-from-top-4">
                             <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shrink-0 shadow-sm">
                                 <AlertCircle className="w-5 h-5 shadow-sm" />
                             </div>
@@ -208,7 +208,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                                 </p>
                                 <button
                                     onClick={downloadPurchaseTemplate}
-                                    className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-slate-900 dark:bg-slate-700 text-white rounded-2xl text-xs font-black uppercase tracking-wider hover:bg-slate-800 transition-all shadow-lg active:scale-95"
+                                    className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-slate-900 dark:bg-slate-700 text-white rounded-sm text-xs font-black uppercase tracking-wider hover:bg-slate-800 transition-all shadow-lg active:scale-95"
                                 >
                                     <FileSpreadsheet className="w-4 h-4" />
                                     Download Template
@@ -229,7 +229,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                                 />
                                 <label htmlFor="bulkUpload" className="cursor-pointer group">
                                     <div className="p-8 border-2 border-dashed border-emerald-100 dark:border-emerald-800/30 rounded-[1.5rem] text-center group-hover:bg-emerald-50/50 dark:group-hover:bg-emerald-900/10 transition-all">
-                                        <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                                        <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-sm flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                                             {isBulkProcessing ? <Loader2 className="w-6 h-6 text-emerald-600 animate-spin" /> : <Upload className="w-6 h-6 text-emerald-600" />}
                                         </div>
                                         <p className="text-xs font-bold text-slate-600 dark:text-slate-400">Click to upload .xlsx or .csv</p>
@@ -241,17 +241,17 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                         {/* Stats & Actions */}
                         <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
                             <div className="grid grid-cols-3 gap-6">
-                                <div className="p-5 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-slate-700/50">
+                                <div className="p-5 bg-slate-50 dark:bg-slate-900/50 rounded-sm border border-slate-100 dark:border-slate-700/50">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Rows</p>
                                     <p className="text-2xl font-black text-slate-900 dark:text-white">{bulkResults.length}</p>
                                 </div>
-                                <div className="p-5 bg-emerald-50 dark:bg-emerald-900/10 rounded-3xl border border-emerald-100 dark:border-emerald-900/20">
+                                <div className="p-5 bg-emerald-50 dark:bg-emerald-900/10 rounded-sm border border-emerald-100 dark:border-emerald-900/20">
                                     <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Valid Records</p>
-                                    <p className="text-2xl font-black text-emerald-700 dark:text-emerald-400">{stagedPurchases.length}</p>
+                                    <p className="text-2xl font-black text-emerald-700 dark:text-success">{stagedPurchases.length}</p>
                                 </div>
-                                <div className="p-5 bg-rose-50 dark:bg-rose-900/10 rounded-3xl border border-rose-100 dark:border-rose-900/20">
+                                <div className="p-5 bg-rose-50 dark:bg-rose-900/10 rounded-sm border border-rose-100 dark:border-rose-900/20">
                                     <p className="text-[10px] font-black text-rose-600 uppercase tracking-widest mb-1">Errors</p>
-                                    <p className="text-2xl font-black text-rose-700 dark:text-rose-400">{bulkResults.filter(r => !r.isValid).length}</p>
+                                    <p className="text-2xl font-black text-rose-700 dark:text-danger">{bulkResults.filter(r => !r.isValid).length}</p>
                                 </div>
                             </div>
 
@@ -267,7 +267,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                                 <button
                                     onClick={processBulkUpload}
                                     disabled={stagedPurchases.length === 0 || isBulkProcessing}
-                                    className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${stagedPurchases.length > 0 && !isBulkProcessing
+                                    className={`flex items-center gap-3 px-8 py-4 rounded-sm text-xs font-black uppercase tracking-widest transition-all ${stagedPurchases.length > 0 && !isBulkProcessing
                                         ? 'bg-emerald-600 text-white shadow-xl shadow-emerald-200 dark:shadow-none hover:bg-emerald-700 active:scale-95'
                                         : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                         }`}
@@ -285,7 +285,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                             <div className="px-8 py-6 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/30">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                                        <Table className="w-5 h-5 text-indigo-600" />
+                                        <Table className="w-5 h-5 text-primary" />
                                     </div>
                                     <div>
                                         <h4 className="font-black text-slate-900 dark:text-white text-lg tracking-tight">Data Preview</h4>
@@ -294,7 +294,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                                 </div>
                                 <button
                                     onClick={() => { setBulkResults([]); setStagedPurchases([]); }}
-                                    className="p-3 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-2xl transition-colors"
+                                    className="p-3 text-danger hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-sm transition-colors"
                                     title="Clear Data"
                                 >
                                     <Trash2 className="w-5 h-5" />
@@ -330,7 +330,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                                                                 <span className="text-[10px] font-black uppercase">Fix Required</span>
                                                             </div>
                                                             {res.errors.map((err, ei) => (
-                                                                <p key={ei} className="text-[9px] text-rose-400 font-medium leading-tight">• {err}</p>
+                                                                <p key={ei} className="text-[9px] text-danger font-medium leading-tight">• {err}</p>
                                                             ))}
                                                         </div>
                                                     )}
@@ -350,12 +350,12 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                                                     <span className="text-sm font-black text-slate-900 dark:text-white">{res.row['Quantity']}</span>
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
-                                                    <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">₹{parseFloat(String(res.row['Rate'] || 0)).toLocaleString()}</span>
+                                                    <span className="text-xs font-black text-emerald-600 dark:text-success">₹{parseFloat(String(res.row['Rate'] || 0)).toLocaleString()}</span>
                                                 </td>
                                                 <td className="px-6 py-4 text-center">
                                                     <button
                                                         onClick={() => removeBulkRow(idx)}
-                                                        className="p-2 text-slate-300 hover:text-rose-500 transition-colors"
+                                                        className="p-2 text-slate-300 hover:text-danger transition-colors"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
@@ -392,7 +392,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
 
                         return visibleBranches.map(b => (
                             <label key={b.id} className={`
-                                flex items-center gap-3 px-5 py-3 rounded-2xl border-2 transition-all cursor-pointer
+                                flex items-center gap-3 px-5 py-3 rounded-sm border-2 transition-all cursor-pointer
                                 ${targetBranch === b.id
                                     ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
                                     : 'border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500'}

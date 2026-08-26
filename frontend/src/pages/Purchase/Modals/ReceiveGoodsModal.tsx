@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle, Package } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../../types/purchase";
@@ -53,7 +53,7 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-2xl shadow-2xl border dark:border-neutral-700 flex flex-col max-h-[90vh]">
+            <div className="bg-white dark:bg-neutral-800 rounded-sm w-full max-w-2xl shadow-2xl border dark:border-neutral-700 flex flex-col max-h-[90vh]">
                 <div className="p-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-bold mb-1">Receive Goods</h2>

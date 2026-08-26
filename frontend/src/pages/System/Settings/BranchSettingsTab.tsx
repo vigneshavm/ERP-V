@@ -10,20 +10,24 @@ const BranchSettingsTab: React.FC = () => {
     const [newBranchName, setNewBranchName] = useState('');
 
     useEffect(() => {
-        api.get('/stores').then(res => {
-            setBranches(res.data);
-            if (res.data.length > 0 && !selectedBranchId) {
-                setSelectedBranchId(res.data[0]._id);
+        api.get('/api/stores').then(res => {
+            const data = Array.isArray(res.data) ? res.data : [];
+            setBranches(data);
+            if (data.length > 0 && !selectedBranchId) {
+                setSelectedBranchId(data[0]._id);
             }
-        }).catch(err => console.error("Failed to load stores", err));
+        }).catch(err => {
+            console.error("Failed to load stores", err);
+            setBranches([]);
+        });
     }, []);
 
-    const selectedBranch = branches.find((b: any) => b._id === selectedBranchId);
+    const selectedBranch = Array.isArray(branches) ? branches.find((b: any) => b._id === selectedBranchId) : undefined;
 
     const handleCreateBranch = async () => {
         if (!newBranchName) return;
         try {
-            const res = await api.post('/stores', { name: newBranchName, city: 'City', address: '' });
+            const res = await api.post('/api/stores', { name: newBranchName, city: 'City', address: '' });
             setBranches([...branches, res.data]);
             setSelectedBranchId(res.data._id);
             setIsCreating(false);
@@ -35,7 +39,7 @@ const BranchSettingsTab: React.FC = () => {
 
     const handleUpdateBranch = async (id: string, field: string, value: string) => {
         try {
-            const res = await api.put(`/stores/${id}`, { [field]: value });
+            const res = await api.put(`/api/stores/${id}`, { [field]: value });
             setBranches(branches.map(b => b._id === id ? res.data : b));
         } catch (err) {
             console.error(err);
@@ -69,13 +73,13 @@ const BranchSettingsTab: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                    {branches.map((br: any) => {
+                    {(Array.isArray(branches) ? branches : []).map((br: any) => {
                         const isActive = selectedBranchId === br._id;
                         return (
                             <button
                                 key={br._id}
                                 onClick={() => setSelectedBranchId(br._id)}
-                                className={`w-full group relative p-4 rounded-2xl transition-all duration-300 text-left border ${isActive
+                                className={`w-full group relative p-4 rounded-sm transition-all duration-300 text-left border ${isActive
                                     ? 'bg-white dark:bg-slate-800 border-indigo-200 dark:border-indigo-500 shadow-xl shadow-indigo-100/50 dark:shadow-none translate-x-1'
                                     : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300'
                                     }`}
@@ -104,18 +108,18 @@ const BranchSettingsTab: React.FC = () => {
                     <div className="p-8 space-y-10">
                         {/* Header Stats */}
                         <div className="grid grid-cols-3 gap-6">
-                            <div className="p-5 rounded-3xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
+                            <div className="p-5 rounded-sm bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
                                 <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Total Billing Counters</p>
                                 <p className="text-2xl font-black text-slate-800 dark:text-white">{selectedBranch?.counters?.length || 0}</p>
                             </div>
-                            <div className="p-5 rounded-3xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
+                            <div className="p-5 rounded-sm bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
                                 <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Active Status</p>
                                 <div className="flex items-center gap-1.5 text-emerald-600">
                                     <CheckCircle2 className="w-4 h-4" />
                                     <span className="text-sm font-bold">Operational</span>
                                 </div>
                             </div>
-                            <div className="p-5 rounded-3xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
+                            <div className="p-5 rounded-sm bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
                                 <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Region Code</p>
                                 <p className="text-sm font-bold text-slate-800 dark:text-white">{selectedBranch?.city?.substring(0, 3).toUpperCase()}-{(selectedBranch?.id || '').substring(0, 4)}</p>
                             </div>
@@ -144,16 +148,16 @@ const BranchSettingsTab: React.FC = () => {
                         <div className="space-y-6 pb-8">
                             <div className="flex items-center justify-between">
                                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Billing Counters Management</h4>
-                                <button className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-1 hover:gap-2 transition-all">
+                                <button className="text-[11px] font-black text-primary dark:text-primary flex items-center gap-1 hover:gap-2 transition-all">
                                     MANAGE ALL <ChevronRight className="w-3 h-3" />
                                 </button>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {(selectedBranch?.counters || []).map((c: Counter) => (
-                                    <div key={c.id} className="group flex items-center justify-between p-5 bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-indigo-200 transition-all shadow-sm">
+                                    <div key={c.id} className="group flex items-center justify-between p-5 bg-white dark:bg-slate-800/50 rounded-sm border border-slate-100 dark:border-slate-800 hover:border-indigo-200 transition-all shadow-sm">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-primary transition-colors">
                                                 <Settings2 className="w-5 h-5" />
                                             </div>
                                             <div>

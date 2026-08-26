@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { formatCurrency } from "@/utils/helpers";
 
@@ -13,7 +13,7 @@ const FinanceOverview: React.FC<FinanceOverviewProps> = ({ totalSales, totalExpe
     const profitMargin = totalSales > 0 ? (netProfit / totalSales) * 100 : 0;
 
     return (
-        <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 border border-neutral-100 dark:border-neutral-700 shadow-xl relative overflow-hidden group">
+        <div className="bg-white dark:bg-neutral-800 rounded-sm p-8 border border-neutral-100 dark:border-neutral-700 shadow-xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 group-hover:scale-150 transition duration-700" />
 
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-8">

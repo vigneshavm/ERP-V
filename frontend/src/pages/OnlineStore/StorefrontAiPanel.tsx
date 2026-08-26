@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Sparkles, X, Loader2, Send, Bot, RotateCcw } from 'lucide-react';
 
 interface StorefrontAiPanelProps {
@@ -29,7 +29,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
     if (!showAi && !aiResult && !visualSearchImage) return null;
 
     return (
-        <div className="mb-8 bg-white dark:bg-slate-900 rounded-2xl border border-indigo-100 dark:border-indigo-900 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
+        <div className="mb-8 bg-white dark:bg-slate-900 rounded-sm border border-indigo-100 dark:border-indigo-900 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
             {showAi && !visualSearchImage && (
                 <div className="bg-gradient-to-r from-indigo-600 to-violet-600 p-4 text-white flex justify-between items-center">
                     <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
                         <div>
                             <h3 className="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2">
                                 Visual Search Active
-                                {isVisualSearching && <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />}
+                                {isVisualSearching && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
                             </h3>
                             <p className="text-slate-500 dark:text-slate-400 text-sm">
                                 {isVisualSearching ? 'Analyzing image and matching products...' : 'Here are products that visually match your upload.'}
@@ -89,10 +89,10 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
                     <div className="animate-in fade-in">
                         <div className="flex gap-4">
                             <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0">
-                                <Bot className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                                <Bot className="w-6 h-6 text-primary dark:text-primary" />
                             </div>
                             <div className="flex-1">
-                                <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none text-sm text-slate-800 dark:text-slate-200 leading-relaxed shadow-sm">
+                                <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-sm rounded-tl-none text-sm text-slate-800 dark:text-slate-200 leading-relaxed shadow-sm">
                                     {aiResult.text}
                                 </div>
                                 <div className="mt-3 flex items-center gap-2">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
     Ticket,
     Plus,
@@ -38,8 +38,8 @@ const MarketingCoupons: React.FC = () => {
             usage: '1,240 / 5,000',
             revenue: '₹1,24,500',
             expiry: '2026-08-31',
-            color: 'text-indigo-600',
-            bg: 'bg-indigo-500/10'
+            color: 'text-primary',
+            bg: 'bg-primary/10'
         },
         {
             id: 'cp2',
@@ -51,7 +51,7 @@ const MarketingCoupons: React.FC = () => {
             revenue: '₹84,200',
             expiry: 'No Expiry',
             color: 'text-emerald-600',
-            bg: 'bg-emerald-500/10'
+            bg: 'bg-success/10'
         },
         {
             id: 'cp3',
@@ -63,7 +63,7 @@ const MarketingCoupons: React.FC = () => {
             revenue: '₹0',
             expiry: '2026-10-30',
             color: 'text-amber-600',
-            bg: 'bg-amber-500/10'
+            bg: 'bg-warning/10'
         }
     ];
 
@@ -82,7 +82,7 @@ const MarketingCoupons: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter italic leading-none">
-                        Marketing <span className="text-indigo-600 dark:text-indigo-400">Coupons</span>
+                        Marketing <span className="text-primary dark:text-primary">Coupons</span>
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium italic">Incentivize growth with high-performance discount architecture.</p>
                 </div>
@@ -94,7 +94,7 @@ const MarketingCoupons: React.FC = () => {
                     </button>
                     <button
                         onClick={() => dispatch(setActiveTab('GROW_DASHBOARD'))}
-                        className="flex items-center gap-2 px-4 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-2xl transition-all shadow-sm active:scale-95"
+                        className="flex items-center gap-2 px-4 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-sm transition-all shadow-sm active:scale-95"
                     >
                         <LayoutDashboard className="w-5 h-5" />
                     </button>
@@ -104,7 +104,7 @@ const MarketingCoupons: React.FC = () => {
             {/* Premium Coupon KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                    { label: 'Total Sales Revenue', value: '₹4,82,500', icon: BarChart3, color: 'text-indigo-600', trend: '+24% from ads', sub: 'Last 30 days' },
+                    { label: 'Total Sales Revenue', value: '₹4,82,500', icon: BarChart3, color: 'text-primary', trend: '+24% from ads', sub: 'Last 30 days' },
                     { label: 'Redemption Rate', value: '32.4%', icon: Ticket, color: 'text-emerald-600', trend: 'High conversion', sub: 'vs 18% industry' },
                     { label: 'Avg. Discount Val', value: '₹145', icon: Zap, color: 'text-blue-600', trend: 'Optimal margin', sub: 'Healthy balance' },
                     { label: 'Unique Customers', value: '3,842', icon: Users, color: 'text-amber-600', trend: '+12% win-back', sub: 'New vs Returning' }
@@ -116,11 +116,11 @@ const MarketingCoupons: React.FC = () => {
                             <div className="flex items-end justify-between">
                                 <div>
                                     <h3 className="text-3xl font-black mb-1">{kpi.value}</h3>
-                                    <p className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 uppercase tracking-widest">
+                                    <p className="text-[9px] font-bold text-success flex items-center gap-1 uppercase tracking-widest">
                                         {kpi.trend}
                                     </p>
                                 </div>
-                                <div className={`w-12 h-12 bg-slate-50 dark:bg-slate-900/50 rounded-2xl flex items-center justify-center ${kpi.color}`}>
+                                <div className={`w-12 h-12 bg-slate-50 dark:bg-slate-900/50 rounded-sm flex items-center justify-center ${kpi.color}`}>
                                     <kpi.icon className="w-6 h-6" />
                                 </div>
                             </div>
@@ -136,7 +136,7 @@ const MarketingCoupons: React.FC = () => {
                     <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-50/50 dark:bg-slate-900/50">
                         <div className="flex items-center gap-4">
                             <h3 className="text-xl font-black italic tracking-tight">Active Coupons</h3>
-                            <div className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-900/30">
+                            <div className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-primary rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-900/30">
                                 {coupons.length} Active
                             </div>
                         </div>
@@ -150,7 +150,7 @@ const MarketingCoupons: React.FC = () => {
                                     className="pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold w-full md:w-48 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-sm"
                                 />
                             </div>
-                            <button className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-500 hover:text-indigo-600 transition-all shadow-sm">
+                            <button className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-500 hover:text-primary transition-all shadow-sm">
                                 <Filter className="w-4 h-4" />
                             </button>
                         </div>
@@ -171,7 +171,7 @@ const MarketingCoupons: React.FC = () => {
                                     <tr key={coupon.id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-all">
                                         <td className="p-6">
                                             <div className="flex items-center gap-4">
-                                                <div className={`w-12 h-12 ${coupon.bg} ${coupon.color} rounded-2xl flex flex-col items-center justify-center border border-current opacity-70`}>
+                                                <div className={`w-12 h-12 ${coupon.bg} ${coupon.color} rounded-sm flex flex-col items-center justify-center border border-current opacity-70`}>
                                                     <Ticket className="w-5 h-5 mb-0.5" />
                                                     <span className="text-[8px] font-black uppercase">{coupon.type.slice(0, 3)}</span>
                                                 </div>
@@ -187,12 +187,12 @@ const MarketingCoupons: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="p-6 text-center">
-                                            <span className="text-sm font-black text-indigo-600">{coupon.value}</span>
+                                            <span className="text-sm font-black text-primary">{coupon.value}</span>
                                         </td>
                                         <td className="p-6 text-center">
                                             <div className="inline-flex flex-col">
                                                 <span className="text-sm font-black">{coupon.revenue}</span>
-                                                <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">ROI 12x</span>
+                                                <span className="text-[9px] font-bold text-success uppercase tracking-tighter">ROI 12x</span>
                                             </div>
                                         </td>
                                         <td className="p-6 text-right space-y-2">
@@ -225,7 +225,7 @@ const MarketingCoupons: React.FC = () => {
                         <p className="text-sm font-medium text-rose-100 leading-relaxed opacity-90 italic">
                             Redemption patterns are 100% healthy. No multi-account abuse detected in the last 24 hours.
                         </p>
-                        <div className="mt-6 flex items-center justify-between bg-white/10 p-4 rounded-2xl border border-white/10">
+                        <div className="mt-6 flex items-center justify-between bg-white/10 p-4 rounded-sm border border-white/10">
                             <div>
                                 <p className="text-[10px] font-black uppercase opacity-60">Risk Profile</p>
                                 <p className="text-sm font-black">Very Low</p>
@@ -236,16 +236,16 @@ const MarketingCoupons: React.FC = () => {
 
                     {/* AI Suggestions Box */}
                     <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden group border border-slate-800">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-[80px] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000" />
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[80px] -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000" />
                         <div className="flex items-center gap-2 mb-6">
-                            <Sparkles className="w-5 h-5 text-indigo-400 shadow-indigo-500" />
+                            <Sparkles className="w-5 h-5 text-primary shadow-indigo-500" />
                             <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">Growth Optimization</h4>
                         </div>
                         <h3 className="text-xl font-black mb-4 tracking-tight leading-tight italic">Viral Potential Detected!</h3>
                         <p className="text-xs font-medium text-slate-400 leading-relaxed mb-6">
                             "SUMMER50" is being shared heavily on WhatsApp. Increase stock for beachwear to capitalize on the 32% growth.
                         </p>
-                        <button className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg active:scale-95">
+                        <button className="w-full py-4 bg-indigo-600 text-white rounded-sm font-black text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg active:scale-95">
                             Launch Shared Viral Campaign
                         </button>
                     </div>
@@ -276,7 +276,7 @@ const MarketingCoupons: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-                        <button className="w-full mt-8 py-3.5 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-600 hover:border-indigo-600 transition-all">
+                        <button className="w-full mt-8 py-3.5 border border-slate-200 dark:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-primary hover:border-indigo-600 transition-all">
                             View Detailed Attribution Map
                         </button>
                     </div>

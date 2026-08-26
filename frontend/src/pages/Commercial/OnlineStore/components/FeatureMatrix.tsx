@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Check, X, Info } from 'lucide-react';
 
 const FeatureMatrix = () => {
@@ -32,13 +32,13 @@ const FeatureMatrix = () => {
 
     const renderValue = (val: string | boolean) => {
         if (typeof val === 'boolean') {
-            return val ? <Check className="w-5 h-5 text-emerald-500 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />;
+            return val ? <Check className="w-5 h-5 text-success mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />;
         }
         return <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{val}</span>;
     };
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
             <div className="p-6 border-b border-slate-200 dark:border-slate-700">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Feature Comparison</h3>
                 <p className="text-slate-500 dark:text-slate-400 text-sm">Detailed breakdown of platform capabilities per plan</p>
@@ -50,7 +50,7 @@ const FeatureMatrix = () => {
                         <tr className="bg-slate-50 dark:bg-slate-900/50">
                             <th className="p-4 w-1/3 text-xs font-bold text-slate-500 uppercase tracking-wider">Feature</th>
                             <th className="p-4 w-1/6 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Starter</th>
-                            <th className="p-4 w-1/6 text-center text-xs font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50/50 dark:bg-indigo-900/20 border-t-2 border-indigo-500">Growth</th>
+                            <th className="p-4 w-1/6 text-center text-xs font-bold text-primary uppercase tracking-wider bg-indigo-50/50 dark:bg-indigo-900/20 border-t-2 border-indigo-500">Growth</th>
                             <th className="p-4 w-1/6 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Scale</th>
                         </tr>
                     </thead>

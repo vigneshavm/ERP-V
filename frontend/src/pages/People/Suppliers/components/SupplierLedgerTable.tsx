@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Book, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface Transaction {
@@ -81,8 +81,8 @@ const SupplierLedgerTable: React.FC<SupplierLedgerTableProps> = ({ data, loading
 
     const SortIcon = ({ column }: { column: SortKey }) => {
         if (sortConfig?.key !== column) return <ArrowUpDown className="w-3 h-3 text-slate-300 dark:text-neutral-600 opacity-50 group-hover:opacity-100" />;
-        if (sortConfig.direction === 'asc') return <ArrowUp className="w-3 h-3 text-indigo-500" />;
-        return <ArrowDown className="w-3 h-3 text-indigo-500" />;
+        if (sortConfig.direction === 'asc') return <ArrowUp className="w-3 h-3 text-primary" />;
+        return <ArrowDown className="w-3 h-3 text-primary" />;
     };
 
     const renderHeader = (label: string, key: SortKey, align: 'left' | 'right' = 'left') => (
@@ -98,18 +98,18 @@ const SupplierLedgerTable: React.FC<SupplierLedgerTableProps> = ({ data, loading
     );
 
     return (
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative">
+        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative">
             {/* Table Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-neutral-700 print:hidden">
                 <div>
                     <h3 className="text-sm font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
-                        <Book className="w-4 h-4 text-indigo-500" /> Transaction History
+                        <Book className="w-4 h-4 text-primary" /> Transaction History
                     </h3>
                     <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-bold uppercase tracking-widest mt-0.5">
                         {data.transactions.length} transaction{data.transactions.length !== 1 ? 's' : ''} in period
                     </p>
                 </div>
-                {loading && <RefreshCw className="w-4 h-4 text-indigo-500 animate-spin" />}
+                {loading && <RefreshCw className="w-4 h-4 text-primary animate-spin" />}
             </div>
 
             <div className="overflow-x-auto">
@@ -145,21 +145,21 @@ const SupplierLedgerTable: React.FC<SupplierLedgerTableProps> = ({ data, loading
                             >
                                 <td className="py-3.5 px-5 text-slate-600 dark:text-neutral-400 font-medium text-sm whitespace-nowrap">{new Date(t.date).toLocaleDateString('en-IN')}</td>
                                 <td className="py-3.5 px-5 whitespace-nowrap">
-                                    <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${t.type === 'BILL' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-500/20' :
-                                        t.type === 'PAYMENT' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-500/20' :
-                                            'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100/50 dark:border-amber-500/20'
+                                    <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${t.type === 'BILL' ? 'bg-indigo-50 text-primary dark:bg-primary/10 dark:text-primary border border-indigo-100/50 dark:border-primary/20' :
+                                        t.type === 'PAYMENT' ? 'bg-emerald-50 text-emerald-600 dark:bg-success/10 dark:text-success border border-emerald-100/50 dark:border-success/20' :
+                                            'bg-amber-50 text-amber-600 dark:bg-warning/10 dark:text-warning border border-amber-100/50 dark:border-warning/20'
                                         }`}>
                                         {t.type === 'DEBIT_NOTE' ? (t.purchaseReturnId ? 'Return' : 'D.Note') : t.type}
                                     </span>
                                 </td>
                                 <td className="py-3.5 px-5 whitespace-nowrap">
-                                    <div className="font-bold text-slate-800 dark:text-neutral-200 text-sm group-hover:text-indigo-500 transition-colors">#{t.refNo}</div>
+                                    <div className="font-bold text-slate-800 dark:text-neutral-200 text-sm group-hover:text-primary transition-colors">#{t.refNo}</div>
                                     <div className="text-xs text-slate-400 dark:text-neutral-500 mt-0.5 truncate max-w-[200px]">{t.description}</div>
                                 </td>
-                                <td className="py-3.5 px-5 text-right font-black text-emerald-600 dark:text-emerald-400 text-sm whitespace-nowrap">
+                                <td className="py-3.5 px-5 text-right font-black text-emerald-600 dark:text-success text-sm whitespace-nowrap">
                                     {t.debit > 0 ? formatCurrency(t.debit) : '—'}
                                 </td>
-                                <td className="py-3.5 px-5 text-right font-black text-rose-500 dark:text-rose-400 text-sm whitespace-nowrap">
+                                <td className="py-3.5 px-5 text-right font-black text-danger dark:text-danger text-sm whitespace-nowrap">
                                     {t.credit > 0 ? formatCurrency(t.credit) : '—'}
                                 </td>
                                 <td className="py-3.5 px-5 text-right font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
@@ -174,9 +174,9 @@ const SupplierLedgerTable: React.FC<SupplierLedgerTableProps> = ({ data, loading
                     <tfoot>
                         <tr className="bg-slate-50/80 dark:bg-neutral-900/50">
                             <td colSpan={3} className="py-4 px-5 text-right text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider">Closing Balance</td>
-                            <td className="py-4 px-5 text-right font-black text-emerald-600 dark:text-emerald-400 text-sm">{formatCurrency(data.totals.debit)}</td>
-                            <td className="py-4 px-5 text-right font-black text-rose-500 dark:text-rose-400 text-sm">{formatCurrency(data.totals.credit)}</td>
-                            <td className="py-4 px-5 text-right font-black text-indigo-500 text-lg">{formatCurrency(data.closingBalance)}</td>
+                            <td className="py-4 px-5 text-right font-black text-emerald-600 dark:text-success text-sm">{formatCurrency(data.totals.debit)}</td>
+                            <td className="py-4 px-5 text-right font-black text-danger dark:text-danger text-sm">{formatCurrency(data.totals.credit)}</td>
+                            <td className="py-4 px-5 text-right font-black text-primary text-lg">{formatCurrency(data.closingBalance)}</td>
                         </tr>
                     </tfoot>
                 </table>

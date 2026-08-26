@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { MessageSquare, RefreshCw, Layers, History, CheckCircle2, AlertCircle, Plus, Info, Zap } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -124,7 +124,7 @@ const SmsTrackerPage: React.FC = () => {
                         <Zap className="absolute -top-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 transition duration-1000" />
                         <div className="relative z-10 space-y-8">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center text-primary">
+                                <div className="w-12 h-12 bg-primary/20 rounded-sm flex items-center justify-center text-primary">
                                     <MessageSquare className="w-6 h-6" />
                                 </div>
                                 <div>
@@ -141,7 +141,7 @@ const SmsTrackerPage: React.FC = () => {
                                         value={testSender}
                                         onChange={(e) => setTestSender(e.target.value)}
                                         placeholder="e.g., HDFCBK"
-                                        className="w-full bg-neutral-900 border border-neutral-800 rounded-2xl px-5 py-3 text-sm focus:ring-2 focus:ring-primary/40 transition-all font-mono font-bold tracking-tighter uppercase"
+                                        className="w-full bg-neutral-900 border border-neutral-800 rounded-sm px-5 py-3 text-sm focus:ring-2 focus:ring-primary/40 transition-all font-mono font-bold tracking-tighter uppercase"
                                     />
                                 </div>
                                 <div className="md:col-span-3">
@@ -150,7 +150,7 @@ const SmsTrackerPage: React.FC = () => {
                                         value={testSms}
                                         onChange={(e) => setTestSms(e.target.value)}
                                         placeholder="Paste the bank transaction string here..."
-                                        className="w-full bg-neutral-900 border border-neutral-800 rounded-2xl px-5 py-3 text-sm focus:ring-2 focus:ring-primary/40 transition-all font-bold italic h-16"
+                                        className="w-full bg-neutral-900 border border-neutral-800 rounded-sm px-5 py-3 text-sm focus:ring-2 focus:ring-primary/40 transition-all font-bold italic h-16"
                                     />
                                 </div>
                             </div>
@@ -164,8 +164,8 @@ const SmsTrackerPage: React.FC = () => {
 
                 {/* KPI Pulse Node Row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-amber-500/30 transition-all duration-500">
-                        <div className="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-warning/30 transition-all duration-500">
+                        <div className="w-16 h-16 bg-warning/10 text-warning rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                             <Layers className="w-8 h-8" />
                         </div>
                         <div>
@@ -175,8 +175,8 @@ const SmsTrackerPage: React.FC = () => {
                             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mt-1 italic">Pending Resolution</div>
                         </div>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-emerald-500/30 transition-all duration-500">
-                        <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-success/30 transition-all duration-500">
+                        <div className="w-16 h-16 bg-success/10 text-success rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                             <CheckCircle2 className="w-8 h-8" />
                         </div>
                         <div>
@@ -201,7 +201,7 @@ const SmsTrackerPage: React.FC = () => {
 
                 {/* Resolution Workspace */}
                 <div className="space-y-8">
-                    <div className="flex gap-4 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 self-start">
+                    <div className="flex gap-4 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-sm border border-neutral-100 dark:border-neutral-800 self-start">
                         <button
                             onClick={() => setFilter('pending')}
                             className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === 'pending'
@@ -256,7 +256,7 @@ const SmsTrackerPage: React.FC = () => {
 
                 {/* Intelligence Advisory Footer */}
                 <div className="bg-neutral-900 dark:bg-neutral-100 p-10 rounded-[3rem] shadow-2xl flex items-center gap-8 group">
-                    <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                    <div className="w-14 h-14 rounded-sm bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
                         <Zap className="w-7 h-7 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from "../../components/shared/Layout";
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
@@ -62,10 +62,10 @@ const MetaCallback: React.FC = () => {
     return (
         <Layout>
             <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
-                <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 max-w-md w-full text-center">
+                <div className="bg-white p-8 rounded-sm shadow-xl border border-slate-100 max-w-md w-full text-center">
                     {status === 'loading' && (
                         <div className="flex flex-col items-center space-y-4">
-                            <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
+                            <Loader2 className="w-12 h-12 text-primary animate-spin" />
                             <h2 className="text-xl font-bold text-slate-800">Connecting...</h2>
                             <p className="text-slate-500">{message}</p>
                         </div>

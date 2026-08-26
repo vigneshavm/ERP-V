@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
@@ -212,7 +212,7 @@ const OnlineStore: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 animate-fade-in relative rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 animate-fade-in relative rounded-sm overflow-hidden border border-slate-200 dark:border-slate-800">
             {/* --- Top Navigation Bar --- */}
             <div className="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex items-center gap-4">
                 <div className="flex-1 max-w-2xl relative flex items-center">
@@ -221,7 +221,7 @@ const OnlineStore: React.FC = () => {
                         placeholder="Search for products..."
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-12 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-2xl text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner"
+                        className="w-full pl-10 pr-12 py-3 bg-slate-100 dark:bg-slate-800 border-none rounded-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner"
                     />
                     <Search className="w-5 h-5 text-slate-400 absolute left-3" />
                     <button
@@ -237,7 +237,7 @@ const OnlineStore: React.FC = () => {
                 <div className="flex items-center gap-2 ml-auto">
                     <button
                         onClick={() => setShowAi(!showAi)}
-                        className={`hidden md:flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border ${showAi ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900'}`}
+                        className={`hidden md:flex items-center gap-2 px-6 py-3 rounded-sm font-black text-xs uppercase tracking-widest transition-all border ${showAi ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 text-primary dark:text-primary border-indigo-200 dark:border-indigo-900'}`}
                     >
                         <Sparkles className="w-4 h-4" />
                         <span>AI Assistant</span>
@@ -283,7 +283,7 @@ const OnlineStore: React.FC = () => {
                                             value={aiQuery}
                                             onChange={e => setAiQuery(e.target.value)}
                                             placeholder="Describe what you are looking for..."
-                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 pr-14 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none h-24 text-slate-900 dark:text-white placeholder:text-slate-400 font-medium"
+                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-sm p-6 pr-14 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none h-24 text-slate-900 dark:text-white placeholder:text-slate-400 font-medium"
                                             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAiSearch(); } }}
                                         />
                                         <button onClick={handleAiSearch} disabled={!aiQuery.trim()} className="absolute right-4 bottom-4 p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-indigo-500/20">
@@ -291,7 +291,7 @@ const OnlineStore: React.FC = () => {
                                         </button>
                                     </div>
                                 )}
-                                {aiResult && <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-sm font-medium leading-relaxed">{aiResult.text}</div>}
+                                {aiResult && <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-sm text-sm font-medium leading-relaxed">{aiResult.text}</div>}
                             </div>
                         </div>
                     )}
@@ -310,7 +310,7 @@ const OnlineStore: React.FC = () => {
                                     <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2 leading-tight line-clamp-2">{product.name}</h3>
                                     <div className="mt-auto flex items-center justify-between">
                                         <span className="block text-2xl font-black text-slate-900 dark:text-white">₹{product.sellingPrice.toLocaleString()}</span>
-                                        <button onClick={() => dispatch(addToCart({ ...product, qty: 1, price: product.sellingPrice }))} disabled={product.stockQty <= 0} className="p-4 bg-[#020617] dark:bg-[#4F46E5] text-white rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-xl">
+                                        <button onClick={() => dispatch(addToCart({ ...product, qty: 1, price: product.sellingPrice }))} disabled={product.stockQty <= 0} className="p-4 bg-[#020617] dark:bg-[#4F46E5] text-white rounded-sm hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-xl">
                                             <ShoppingCart className="w-5 h-5" />
                                         </button>
                                     </div>

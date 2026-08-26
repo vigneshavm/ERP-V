@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Rocket, TrendingUp, Users, ShoppingCart, ArrowRight, LayoutGrid, Sparkles, MessageSquare, Bell, Clock, Target as TargetIcon } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveTab } from "../../redux/slices/uiSlice";
@@ -47,8 +47,8 @@ const GrowDashboard: React.FC = () => {
             change: '+12.5%',
             target: 'Target: ₹50k',
             icon: TrendingUp,
-            color: 'text-emerald-500',
-            bg: 'bg-emerald-500/10'
+            color: 'text-success',
+            bg: 'bg-success/10'
         },
         {
             label: 'Website Visitors',
@@ -68,7 +68,7 @@ const GrowDashboard: React.FC = () => {
             target: `ROI: ${marketingStats?.revenue || '0'}`,
             icon: ShoppingCart,
             color: 'text-purple-500',
-            bg: 'bg-purple-500/10'
+            bg: 'bg-accent/10'
         },
     ];
 
@@ -114,12 +114,12 @@ const GrowDashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
             {/* Minimal High-Impact Hero */}
             <div className="bg-slate-900 dark:bg-black rounded-[3rem] p-10 lg:p-14 text-white shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-600/10 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
                     <div className="max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-500/10 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-indigo-500/20 text-indigo-400">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-primary/20 text-primary">
                             <Sparkles className="w-3 h-3" /> Intelligent Growth Engine
                         </div>
                         <h1 className="text-4xl lg:text-6xl font-black tracking-tighter mb-6 leading-tight">
@@ -150,8 +150,8 @@ const GrowDashboard: React.FC = () => {
                         <div className="bg-white/5 backdrop-blur-xl rounded-[2rem] p-6 border border-white/10 group transition-all hover:bg-white/10">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Sync Status</h4>
                             <div className="flex items-center gap-3">
-                                <div className={`w-10 h-10 rounded-xl ${syncStats?.syncStatus === 'SUCCESS' ? 'bg-emerald-500/20' : 'bg-amber-500/20'} flex items-center justify-center`}>
-                                    <Rocket className={`w-5 h-5 ${syncStats?.syncStatus === 'SUCCESS' ? 'text-emerald-400' : 'text-amber-400'}`} />
+                                <div className={`w-10 h-10 rounded-xl ${syncStats?.syncStatus === 'SUCCESS' ? 'bg-success/20' : 'bg-warning/20'} flex items-center justify-center`}>
+                                    <Rocket className={`w-5 h-5 ${syncStats?.syncStatus === 'SUCCESS' ? 'text-success' : 'text-warning'}`} />
                                 </div>
                                 <div>
                                     <p className="text-sm font-black">{syncStats ? (syncStats.syncStatus === 'SUCCESS' ? 'All Systems Operational' : 'Sync in Progress') : 'Checking status...'}</p>
@@ -164,7 +164,7 @@ const GrowDashboard: React.FC = () => {
                         <div className="bg-white/5 backdrop-blur-xl rounded-[2rem] p-6 border border-white/10 group transition-all hover:bg-white/10">
                             <div className="flex justify-between items-center mb-2">
                                 <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Next Milestone</h4>
-                                <TargetIcon className="w-3 h-3 text-indigo-400 opacity-50" />
+                                <TargetIcon className="w-3 h-3 text-primary opacity-50" />
                             </div>
                             <p className="text-sm font-black mb-1">₹50,000 Sales Target</p>
                             <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -189,10 +189,10 @@ const GrowDashboard: React.FC = () => {
                             </div>
                         )}
                         <div className="flex items-center justify-between mb-6">
-                            <div className={`p-4 rounded-2xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
+                            <div className={`p-4 rounded-sm ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
                                 <stat.icon className="w-6 h-6" />
                             </div>
-                            <span className="text-[10px] font-black bg-emerald-100 text-emerald-600 dark:bg-emerald-400/10 px-3 py-1 rounded-full">{stat.change}</span>
+                            <span className="text-[10px] font-black bg-emerald-100 text-emerald-600 dark:bg-success/10 px-3 py-1 rounded-full">{stat.change}</span>
                         </div>
                         <p className="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">{stat.label}</p>
                         <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-2">{stat.value}</h3>
@@ -205,12 +205,12 @@ const GrowDashboard: React.FC = () => {
             <div className="bg-white dark:bg-slate-800 rounded-[3rem] p-10 border border-slate-200 dark:border-slate-700 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-2xl font-black tracking-tight">Recent Insights & Alerts</h3>
-                    <button className="text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors uppercase tracking-widest">Mark all read</button>
+                    <button className="text-xs font-bold text-primary hover:text-indigo-700 transition-colors uppercase tracking-widest">Mark all read</button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {alerts.map((alert, idx) => (
-                        <div key={idx} className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-slate-700 flex items-start gap-4 hover:border-indigo-500/50 transition-colors group">
-                            <div className={`mt-1 p-2 rounded-lg ${alert.type === 'action' ? 'bg-indigo-500/10 text-indigo-500' : alert.type === 'warning' ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'} group-hover:scale-110 transition-transform`}>
+                        <div key={idx} className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-sm border border-slate-100 dark:border-slate-700 flex items-start gap-4 hover:border-indigo-500/50 transition-colors group">
+                            <div className={`mt-1 p-2 rounded-lg ${alert.type === 'action' ? 'bg-primary/10 text-primary' : alert.type === 'warning' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'} group-hover:scale-110 transition-transform`}>
                                 <alert.icon className="w-5 h-5" />
                             </div>
                             <div>

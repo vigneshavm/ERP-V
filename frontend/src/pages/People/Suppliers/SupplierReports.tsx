@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import {
@@ -65,7 +65,7 @@ const SupplierReports: React.FC = () => {
                 {/* Top Payables */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-3 bg-rose-50 dark:bg-rose-900/20 rounded-2xl text-rose-600">
+                        <div className="p-3 bg-rose-50 dark:bg-rose-900/20 rounded-sm text-rose-600">
                             <DollarSign className="w-6 h-6" />
                         </div>
                         <div>
@@ -96,7 +96,7 @@ const SupplierReports: React.FC = () => {
                 {/* Purchase Trends */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl text-indigo-600">
+                        <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-sm text-primary">
                             <TrendingUp className="w-6 h-6" />
                         </div>
                         <div>
@@ -150,7 +150,7 @@ const SupplierReports: React.FC = () => {
                 {/* Profit Impact Leaders */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl text-emerald-600">
+                        <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-sm text-emerald-600">
                             <PieChart className="w-6 h-6" />
                         </div>
                         <div>
@@ -160,7 +160,7 @@ const SupplierReports: React.FC = () => {
                     </div>
                     <div className="space-y-4">
                         {data?.profitability?.map((item: any, i: number) => (
-                            <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                            <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-sm">
                                 <div>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{item.supplierName}</p>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Margin</p>
@@ -178,7 +178,7 @@ const SupplierReports: React.FC = () => {
             {/* Overdue List */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-2xl text-amber-600">
+                    <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-sm text-amber-600">
                         <AlertCircle className="w-6 h-6" />
                     </div>
                     <div>
@@ -200,7 +200,7 @@ const SupplierReports: React.FC = () => {
                             <tr key={i} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors rounded-xl">
                                 <td className="py-3 pl-4 text-xs font-bold text-slate-600 dark:text-slate-300 rounded-l-xl">{bill.billNo}</td>
                                 <td className="py-3 text-xs font-bold text-slate-800 dark:text-white">{bill.supplier?.businessName}</td>
-                                <td className="py-3 text-xs font-bold text-rose-500">{new Date(bill.dueDate).toLocaleDateString()}</td>
+                                <td className="py-3 text-xs font-bold text-danger">{new Date(bill.dueDate).toLocaleDateString()}</td>
                                 <td className="py-3 pr-4 text-xs font-black text-slate-800 dark:text-white text-right rounded-r-xl">₹{bill.amount.toLocaleString()}</td>
                             </tr>
                         ))}

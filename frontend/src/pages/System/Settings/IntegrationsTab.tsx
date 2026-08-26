@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Shield, Zap, CheckCircle, Smartphone, AlertTriangle, Link as LinkIcon, Globe, MessageSquare, ExternalLink } from 'lucide-react';
 
 import { WhatsAppService } from "../../../services/whatsappService";
@@ -37,7 +37,7 @@ const IntegrationsTab: React.FC = () => {
             {/* Active Integrations Summary */}
             <div className="grid md:grid-cols-4 gap-6">
                 {Object.entries(integrations).map(([key, data]) => (
-                    <div key={key} className="p-5 rounded-3xl bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
+                    <div key={key} className="p-5 rounded-sm bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{key}</span>
                             <div className={`w-2 h-2 rounded-full ${data.enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
@@ -71,11 +71,11 @@ const IntegrationsTab: React.FC = () => {
                         <div className="lg:col-span-1 space-y-8">
                             {/* Configuration Form */}
                             <div className="space-y-4">
-                                <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl flex items-start gap-4 mb-6">
+                                <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-sm flex items-start gap-4 mb-6">
                                     <Smartphone className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
                                     <div>
                                         <p className="text-xs font-bold text-emerald-800 dark:text-emerald-200">WhatsApp Cloud API (Sandbox)</p>
-                                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 mt-1 font-medium">
+                                        <p className="text-[10px] text-emerald-600 dark:text-success mt-1 font-medium">
                                             Setup credentials from <span className="font-bold underline">Meta for Developers</span>.
                                         </p>
                                     </div>
@@ -87,7 +87,7 @@ const IntegrationsTab: React.FC = () => {
                                         type="password"
                                         value={config.accessToken}
                                         onChange={e => setConfig({ ...config, accessToken: e.target.value })}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
+                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
                                         placeholder="EAAG..."
                                     />
                                 </div>
@@ -97,7 +97,7 @@ const IntegrationsTab: React.FC = () => {
                                         type="text"
                                         value={config.phoneId}
                                         onChange={e => setConfig({ ...config, phoneId: e.target.value })}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
+                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
                                         placeholder="1098..."
                                     />
                                 </div>
@@ -107,7 +107,7 @@ const IntegrationsTab: React.FC = () => {
                                         type="text"
                                         value={config.accountId}
                                         onChange={e => setConfig({ ...config, accountId: e.target.value })}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
+                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm text-xs font-mono outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
                                         placeholder="1155..."
                                     />
                                 </div>
@@ -138,7 +138,7 @@ const IntegrationsTab: React.FC = () => {
                             </div>
 
                             {/* Sandbox Checklist */}
-                            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-700">
+                            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-sm p-6 border border-slate-100 dark:border-slate-700">
                                 <h4 className="font-bold text-slate-900 dark:text-white mb-4 text-xs uppercase tracking-wider">Sandbox Checklist</h4>
                                 <ul className="space-y-3">
                                     {[
@@ -160,17 +160,17 @@ const IntegrationsTab: React.FC = () => {
                         <div className="lg:col-span-2 grid md:grid-cols-2 gap-8 content-start">
                             <div className="space-y-3">
                                 <h5 className="flex items-center gap-2 text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider">
-                                    <Zap className="w-4 h-4 text-amber-500" /> Automation Status
+                                    <Zap className="w-4 h-4 text-warning" /> Automation Status
                                 </h5>
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-sm border border-slate-100 dark:border-slate-800">
                                         <p className="text-xs font-bold text-slate-600 dark:text-slate-300">Auto-send Invoices</p>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" className="sr-only peer" defaultChecked />
                                             <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
                                         </label>
                                     </div>
-                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-sm border border-slate-100 dark:border-slate-800">
                                         <p className="text-xs font-bold text-slate-600 dark:text-slate-300">Payment Reminders</p>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" className="sr-only peer" defaultChecked />
@@ -185,9 +185,9 @@ const IntegrationsTab: React.FC = () => {
                                     <Shield className="w-4 h-4 text-blue-500" /> Security & Logs
                                 </h5>
                                 <div className="p-6 bg-slate-900 text-slate-300 rounded-[1.5rem] font-mono text-[10px] space-y-2 border border-slate-800">
-                                    <p className="text-emerald-400">[info] Webhook connected: ID_2943</p>
+                                    <p className="text-success">[info] Webhook connected: ID_2943</p>
                                     <p>[info] Latency check: 12ms</p>
-                                    <p className="text-amber-400">[warn] Rate limit remaining: 98%</p>
+                                    <p className="text-warning">[warn] Rate limit remaining: 98%</p>
                                     <p className="opacity-50">[debug] Handshake localized (IN-SOUTH)</p>
                                 </div>
                             </div>
@@ -243,12 +243,12 @@ const MailIcon = ({ className }: { className?: string }) => (
 );
 
 const IntegrationCard = ({ icon, title, provider, status, color }: { icon: React.ReactNode, title: string, provider: string, status: string, color: string }) => (
-    <div className="group p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl hover:border-indigo-300 transition-all shadow-sm">
+    <div className="group p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:border-indigo-300 transition-all shadow-sm">
         <div className="flex items-center justify-between mb-4">
-            <div className={`w-12 h-12 rounded-2xl bg-${color}-50 dark:bg-${color}-900/20 text-${color}-600 dark:text-${color}-400 flex items-center justify-center`}>
+            <div className={`w-12 h-12 rounded-sm bg-${color}-50 dark:bg-${color}-900/20 text-${color}-600 dark:text-${color}-400 flex items-center justify-center`}>
                 {icon}
             </div>
-            <button className="text-slate-300 hover:text-indigo-600 transition-colors">
+            <button className="text-slate-300 hover:text-primary transition-colors">
                 <ExternalLink className="w-4 h-4" />
             </button>
         </div>

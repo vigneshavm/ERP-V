@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -47,7 +47,7 @@ const inputCls =
     'w-full px-3 py-2.5 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 transition-all placeholder:text-slate-300 dark:placeholder:text-neutral-600';
 const labelCls =
     'block text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider mb-1';
-const requiredDot = <span className="text-rose-500 ml-0.5">*</span>;
+const requiredDot = <span className="text-danger ml-0.5">*</span>;
 
 const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialData }) => {
     const dispatch = useDispatch<AppDispatch>();
@@ -249,7 +249,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             className={inputCls}
                             placeholder="ex: 29XXXXX9438X1X"
                         />
-                        <p className="text-[10px] text-indigo-400 mt-1 font-medium">Auto-populate supplier details from GSTIN</p>
+                        <p className="text-[10px] text-primary mt-1 font-medium">Auto-populate supplier details from GSTIN</p>
                     </div>
                     <div>
                         <label className={labelCls}>PAN Number</label>
@@ -365,7 +365,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                             className={inputCls}
                             placeholder="e.g. Maharashtra"
                         />
-                        <p className="text-[10px] text-amber-500 mt-1 font-medium">Important for GST (IGST vs SGST/CGST)</p>
+                        <p className="text-[10px] text-warning mt-1 font-medium">Important for GST (IGST vs SGST/CGST)</p>
                     </div>
                 </div>
             </div>
@@ -400,7 +400,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                     <button
                         type="button"
                         onClick={addBankAccount}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg text-xs font-semibold transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-primary hover:bg-indigo-50 dark:hover:bg-primary/10 rounded-lg text-xs font-semibold transition-colors"
                     >
                         <Plus className="w-3.5 h-3.5" /> Add Account
                     </button>
@@ -418,7 +418,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                                 <button
                                     type="button"
                                     onClick={() => removeBankAccount(index)}
-                                    className="absolute top-3 right-3 p-1.5 text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
+                                    className="absolute top-3 right-3 p-1.5 text-slate-300 hover:text-danger transition-colors opacity-0 group-hover:opacity-100"
                                 >
                                     <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -449,7 +449,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                                             type="button"
                                             onClick={() => updateBankAccount(index, 'isDefault', true)}
                                             className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${account.isDefault
-                                                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
+                                                ? 'bg-emerald-50 dark:bg-success/10 text-emerald-600 dark:text-success border border-emerald-200 dark:border-success/20'
                                                 : 'bg-white dark:bg-neutral-800 text-slate-400 hover:text-slate-600 border border-slate-200 dark:border-neutral-700'
                                                 }`}
                                         >

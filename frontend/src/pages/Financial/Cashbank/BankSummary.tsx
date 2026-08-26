@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from "../../../components/shared/Layout";
@@ -85,15 +85,15 @@ const BankSummary: React.FC = () => {
                 icon={BarChart3}
                 stats={
                     <>
-                        <div className="px-4 py-2 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                        <div className="px-4 py-2 bg-white/10 rounded-sm backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                             <Building2 className="w-4 h-4" />
                             {accountCount} Active Institution{accountCount !== 1 ? 's' : ''}
                         </div>
-                        <div className="px-4 py-2 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                            <TrendingUp className="w-4 h-4 text-emerald-400" />
+                        <div className="px-4 py-2 bg-white/10 rounded-sm backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <TrendingUp className="w-4 h-4 text-success" />
                             Avg: ₹{accountCount > 0 ? (totalBalance / accountCount).toLocaleString('en-IN', { maximumFractionDigits: 0 }) : 0}
                         </div>
-                        <div className="px-4 py-2 bg-emerald-500/20 rounded-2xl backdrop-blur-md border border-emerald-400/30 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-emerald-300">
+                        <div className="px-4 py-2 bg-success/20 rounded-sm backdrop-blur-md border border-success/30 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-emerald-300">
                             <CheckCircle2 className="w-4 h-4" />
                             Financial Health: Optimal
                         </div>
@@ -101,10 +101,10 @@ const BankSummary: React.FC = () => {
                 }
                 extraActions={
                     <>
-                        <button onClick={() => navigate('/cashbank/position')} className="px-6 py-4 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/20 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between">
+                        <button onClick={() => navigate('/cashbank/position')} className="px-6 py-4 bg-white/10 hover:bg-white/20 rounded-sm border border-white/20 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between">
                             Treasury Command Center <ChevronRight className="w-4 h-4" />
                         </button>
-                        <button onClick={() => navigate('/cashbank/cash-in-hand')} className="px-6 py-4 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/20 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between">
+                        <button onClick={() => navigate('/cashbank/cash-in-hand')} className="px-6 py-4 bg-white/10 hover:bg-white/20 rounded-sm border border-white/20 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between">
                             Vault Surveillance <ChevronRight className="w-4 h-4" />
                         </button>
                     </>
@@ -130,7 +130,7 @@ const BankSummary: React.FC = () => {
                             return (
                                 <div key={type} className={`${config.bg} border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 transition-all hover:shadow-lg hover:scale-[1.02] group`}>
                                     <div className="flex items-center justify-between mb-4">
-                                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${config.color} flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform`}>
+                                        <div className={`w-12 h-12 rounded-sm bg-gradient-to-br ${config.color} flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform`}>
                                             <Icon className="w-6 h-6" />
                                         </div>
                                         <span className={`text-2xl font-black ${config.text}`}>{typeAccounts.length}</span>
@@ -174,7 +174,7 @@ const BankSummary: React.FC = () => {
                         <p className="text-xs font-medium text-slate-400 mt-2 mb-6">Initialize your banking portfolio by adding your first institution.</p>
                         <button
                             onClick={() => navigate('/cashbank/bank-accounts')}
-                            className="px-8 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-indigo-700 transition-all"
+                            className="px-8 py-3 bg-indigo-600 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-indigo-700 transition-all"
                         >
                             Add First Institution
                         </button>
@@ -190,7 +190,7 @@ const BankSummary: React.FC = () => {
                                 <div key={account._id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 transition-all hover:shadow-xl hover:border-indigo-100 dark:hover:border-indigo-900 group">
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-14 h-14 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl flex items-center justify-center text-xl font-black text-slate-600 dark:text-slate-300 group-hover:scale-110 transition-transform">
+                                            <div className="w-14 h-14 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-sm flex items-center justify-center text-xl font-black text-slate-600 dark:text-slate-300 group-hover:scale-110 transition-transform">
                                                 {account.bankName?.charAt(0) || 'B'}
                                             </div>
                                             <div>
@@ -212,7 +212,7 @@ const BankSummary: React.FC = () => {
                                         </div>
                                         <button
                                             onClick={() => navigate(`/cashbank/ledger/${account._id}`)}
-                                            className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 rounded-xl text-[9px] font-black text-slate-500 uppercase tracking-widest transition-all flex items-center gap-1.5"
+                                            className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-primary rounded-xl text-[9px] font-black text-slate-500 uppercase tracking-widest transition-all flex items-center gap-1.5"
                                         >
                                             <FileText className="w-3.5 h-3.5" /> Ledger
                                         </button>

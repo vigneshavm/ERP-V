@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Building2, ArrowUpDown, TrendingUp, ExternalLink } from 'lucide-react';
 import { AgedBill } from '../hooks/useOutstandingPayables';
 
@@ -22,7 +22,7 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
     onQuickPayment
 }) => {
     return (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     {viewMode === 'bill-wise' ? (
@@ -65,7 +65,7 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                                                         <span className="font-bold text-emerald-600">#{bill.billNumber}</span>
                                                         <span>•</span>
                                                         <span>{new Date(bill.billDate).toLocaleDateString()}</span>
-                                                        {bill.hasDiscount && <span className="flex items-center gap-0.5 text-amber-500 font-bold"><TrendingUp size={10} /> Discount Eligible</span>}
+                                                        {bill.hasDiscount && <span className="flex items-center gap-0.5 text-warning font-bold"><TrendingUp size={10} /> Discount Eligible</span>}
                                                     </div>
                                                 </div>
                                             </div>
@@ -73,7 +73,7 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col gap-1">
                                                 <div className="flex items-center gap-2">
-                                                    <div className={`text-[10px] font-bold uppercase ${bill.daysOverdue > 0 ? 'text-rose-500' : bill.daysOverdue > -7 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                                                    <div className={`text-[10px] font-bold uppercase ${bill.daysOverdue > 0 ? 'text-danger' : bill.daysOverdue > -7 ? 'text-warning' : 'text-success'}`}>
                                                         {bill.daysOverdue > 0 ? `${bill.daysOverdue} Days Overdue` : `${Math.abs(bill.daysOverdue)} Days Left`}
                                                     </div>
                                                     <div className="w-16 h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -128,7 +128,7 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                                             <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-black rounded-lg">{v.count} Items</span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <div className={`text-sm font-black ${v.overdue > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>₹{v.overdue.toFixed(2)}</div>
+                                            <div className={`text-sm font-black ${v.overdue > 0 ? 'text-danger' : 'text-success'}`}>₹{v.overdue.toFixed(2)}</div>
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="text-sm font-black text-slate-800 dark:text-white">₹{v.total.toFixed(2)}</div>

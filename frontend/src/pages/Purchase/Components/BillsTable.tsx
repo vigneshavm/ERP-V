@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Eye, CreditCard, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { Bill } from '../../../redux/slices/billSlice';
@@ -75,7 +75,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
     const navigate = useNavigate();
 
     return (
-        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm overflow-hidden shadow-sm">
             {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-20">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-600 mb-4"></div>
@@ -105,7 +105,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                 <tr key={bill._id} className="group hover:bg-slate-50/50 dark:hover:bg-neutral-800/50 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="font-semibold text-indigo-600 dark:text-indigo-400">{bill.bill_number}</span>
+                                            <span className="font-semibold text-primary dark:text-primary">{bill.bill_number}</span>
                                             <span className="text-[10px] text-neutral-500">{new Date(bill.date || bill.bill_date).toLocaleDateString()}</span>
                                         </div>
                                     </td>

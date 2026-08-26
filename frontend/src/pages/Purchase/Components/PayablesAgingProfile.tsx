@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { TrendingUp } from 'lucide-react';
 
 interface PayablesAgingProfileProps {
@@ -17,10 +17,10 @@ const PayablesAgingProfile: React.FC<PayablesAgingProfileProps> = ({
     totalPayable
 }) => {
     return (
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm">
             <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-widest flex items-center gap-2">
-                    <TrendingUp size={16} className="text-emerald-500" /> Payables Aging Profile
+                    <TrendingUp size={16} className="text-success" /> Payables Aging Profile
                 </h3>
                 <div className="flex gap-4">
                     {Object.entries(agingAnalysis).map(([key, val]) => (

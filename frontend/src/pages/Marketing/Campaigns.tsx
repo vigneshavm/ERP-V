@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "@/redux/store";
@@ -89,7 +89,7 @@ const Campaigns: React.FC = () => {
                                 onClick={() => handleTemplateSelect(template)}
                                 className="group bg-white dark:bg-[#020617] rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-8 hover:border-[#4F46E5] hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer relative overflow-hidden"
                             >
-                                <div className="aspect-video bg-slate-100 dark:bg-slate-900 rounded-3xl mb-6 flex items-center justify-center relative overflow-hidden">
+                                <div className="aspect-video bg-slate-100 dark:bg-slate-900 rounded-sm mb-6 flex items-center justify-center relative overflow-hidden">
                                     <Layout className="w-10 h-10 text-[#64748B] group-hover:text-[#4F46E5] transition-colors" />
                                 </div>
                                 <h3 className="text-xl font-black text-[#020617] dark:text-[#F8FAFC] mb-1">{template.name}</h3>
@@ -114,7 +114,7 @@ const Campaigns: React.FC = () => {
                                 <textarea
                                     value={creative.message}
                                     onChange={(e) => setCreative(prev => ({ ...prev, message: e.target.value }))}
-                                    className="w-full p-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-sm outline-none focus:ring-2 focus:ring-[#4F46E5] resize-none"
+                                    className="w-full p-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-sm font-bold text-sm outline-none focus:ring-2 focus:ring-[#4F46E5] resize-none"
                                     rows={4}
                                 />
                             </div>
@@ -125,7 +125,7 @@ const Campaigns: React.FC = () => {
                                 </label>
                                 <div className="relative group cursor-pointer">
                                     <input type="file" onChange={handleImageUpload} accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                                    <div className="w-full py-8 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2 text-[#64748B] group-hover:border-[#4F46E5] group-hover:bg-[#4F46E5]/5 transition-all">
+                                    <div className="w-full py-8 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-sm flex flex-col items-center justify-center gap-2 text-[#64748B] group-hover:border-[#4F46E5] group-hover:bg-[#4F46E5]/5 transition-all">
                                         {previewImage ? <img src={previewImage} alt="Preview" className="w-12 h-12 object-cover rounded-xl" /> : <Plus className="w-6 h-6" />}
                                         <span className="text-[10px] font-black uppercase tracking-widest">Upload</span>
                                     </div>
@@ -173,7 +173,7 @@ const Campaigns: React.FC = () => {
                                     </div>
 
                                     {creative.format !== 'BANNER' && (
-                                        <div className="flex-1 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 mb-6 overflow-hidden">
+                                        <div className="flex-1 bg-white/10 backdrop-blur-md rounded-sm border border-white/20 mb-6 overflow-hidden">
                                             {previewImage && <img src={previewImage} className="w-full h-full object-cover" />}
                                         </div>
                                     )}

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AlertTriangle, ShoppingCart, Bell, Download } from 'lucide-react';
 
 const ALERTS = [
@@ -22,7 +22,7 @@ const LowStockAlerts: React.FC = () => {
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-red-600 flex items-center justify-center"><Bell className="w-5 h-5 text-white" /></div>
+                    <div className="w-10 h-10 rounded-sm bg-red-600 flex items-center justify-center"><Bell className="w-5 h-5 text-white" /></div>
                     <div>
                         <h1 className="text-2xl font-black text-slate-900 dark:text-white">Low Stock Alerts</h1>
                         <p className="text-xs text-slate-500">Items below reorder level — action needed</p>
@@ -39,7 +39,7 @@ const LowStockAlerts: React.FC = () => {
                     { label: 'Warning Items', value: warning, sub: 'Below reorder level', border: 'border-l-amber-500' },
                     { label: 'Total Alerts', value: ALERTS.length, sub: 'Require reorder', border: 'border-l-blue-500' },
                 ].map((k, i) => (
-                    <div key={i} className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 border-l-4 ${k.border} p-5`}>
+                    <div key={i} className={`bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 border-l-4 ${k.border} p-5`}>
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{k.label}</p>
                         <p className="text-2xl font-black text-slate-900 dark:text-white">{k.value}</p>
                         <p className="text-xs text-slate-500 mt-1">{k.sub}</p>
@@ -52,10 +52,10 @@ const LowStockAlerts: React.FC = () => {
                     const pct = Math.round((item.current / item.reorder) * 100);
                     const daysLeft = Math.round(item.current / item.avgSales);
                     return (
-                        <div key={item.sku} className={`bg-white dark:bg-slate-800 rounded-2xl p-5 ${STATUS[item.status]}`}>
+                        <div key={item.sku} className={`bg-white dark:bg-slate-800 rounded-sm p-5 ${STATUS[item.status]}`}>
                             <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-3">
-                                    <AlertTriangle className={`w-5 h-5 ${item.status === 'Critical' ? 'text-red-500' : 'text-amber-500'}`} />
+                                    <AlertTriangle className={`w-5 h-5 ${item.status === 'Critical' ? 'text-red-500' : 'text-warning'}`} />
                                     <div>
                                         <p className="font-black text-slate-900 dark:text-white">{item.name}</p>
                                         <p className="text-xs text-slate-400">{item.sku} · {item.category}</p>

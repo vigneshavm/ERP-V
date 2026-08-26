@@ -92,6 +92,7 @@ export const getAllSalesInvoices = async (req: AuthenticatedRequest, res: Respon
             isDeleted: { $ne: true }
         })
             .populate('customer', 'name phone')
+            .populate('createdBy', 'name')
             .sort({ createdAt: -1 });
         res.status(200).json(invoices);
     } catch (err) {

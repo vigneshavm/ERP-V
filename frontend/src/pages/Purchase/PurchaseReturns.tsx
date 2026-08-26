@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
@@ -84,11 +84,11 @@ const PurchaseReturns: React.FC = () => {
             case 'Initiated':
                 return <span className={`${baseClass} bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400`}><Activity className="w-3 h-3" /> Initiated</span>;
             case 'In-Transit':
-                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400`}><Truck className="w-3 h-3" /> In-Transit</span>;
+                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning`}><Truck className="w-3 h-3" /> In-Transit</span>;
             case 'Credited':
-                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400`}><ShieldCheck className="w-3 h-3" /> Credited</span>;
+                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success`}><ShieldCheck className="w-3 h-3" /> Credited</span>;
             case 'Cancelled':
-                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400`}><AlertCircle className="w-3 h-3" /> Cancelled</span>;
+                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger`}><AlertCircle className="w-3 h-3" /> Cancelled</span>;
             default:
                 return <span className={`${baseClass} bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400`}>{status}</span>;
         }
@@ -145,13 +145,13 @@ const PurchaseReturns: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
                         { label: 'Total Nodes', val: stats.total, icon: RotateCcw, color: 'text-primary', bg: 'bg-primary/10' },
-                        { label: 'Quantum Reversal', val: formatCurrency(stats.totalAmount), icon: Zap, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-                        { label: 'Floating Credits', val: formatCurrency(stats.pendingAmount), icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50' },
-                        { label: 'Resolved (Credited)', val: stats.total - returns.filter(r => r.status !== 'Credited').length, icon: ShieldCheck, color: 'text-indigo-500', bg: 'bg-indigo-50' }
+                        { label: 'Quantum Reversal', val: formatCurrency(stats.totalAmount), icon: Zap, color: 'text-success', bg: 'bg-emerald-50' },
+                        { label: 'Floating Credits', val: formatCurrency(stats.pendingAmount), icon: Clock, color: 'text-warning', bg: 'bg-amber-50' },
+                        { label: 'Resolved (Credited)', val: stats.total - returns.filter(r => r.status !== 'Credited').length, icon: ShieldCheck, color: 'text-primary', bg: 'bg-indigo-50' }
                     ].map((card, i) => (
                         <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
-                                <div className={`p-4 ${card.bg} ${card.color} rounded-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                                <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />
                                 </div>
                                 <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
@@ -176,7 +176,7 @@ const PurchaseReturns: React.FC = () => {
                                 placeholder="Search Return ID, Vendor, or GRN..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
@@ -186,7 +186,7 @@ const PurchaseReturns: React.FC = () => {
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
-                                className="w-full px-6 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
+                                className="w-full px-6 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
                             >
                                 <option value="all">All States</option>
                                 <option value="Initiated">Initiated</option>
@@ -196,7 +196,7 @@ const PurchaseReturns: React.FC = () => {
                                 <option value="Cancelled">Cancelled</option>
                             </select>
                         </div>
-                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl text-neutral-400 hover:text-primary transition-all active:scale-95">
+                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-sm text-neutral-400 hover:text-primary transition-all active:scale-95">
                             <Filter className="w-6 h-6" />
                         </button>
                     </div>
@@ -253,7 +253,7 @@ const PurchaseReturns: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="px-8 py-6 text-right">
-                                            <button className="p-3 text-neutral-300 group-hover:text-primary group-hover:bg-primary/5 rounded-2xl transition-all active:scale-95">
+                                            <button className="p-3 text-neutral-300 group-hover:text-primary group-hover:bg-primary/5 rounded-sm transition-all active:scale-95">
                                                 <ChevronRight className="w-6 h-6" />
                                             </button>
                                         </td>
@@ -264,7 +264,7 @@ const PurchaseReturns: React.FC = () => {
                                     <tr>
                                         <td colSpan={7} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center justify-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
                                                     <RotateCcw className="w-10 h-10" />
                                                 </div>
                                                 <div>

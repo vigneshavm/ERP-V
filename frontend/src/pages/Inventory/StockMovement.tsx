@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ArrowUpDown, Search, TrendingUp, TrendingDown, Download } from 'lucide-react';
 
 const MOVEMENTS = [
@@ -26,7 +26,7 @@ const StockMovement: React.FC = () => {
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center"><ArrowUpDown className="w-5 h-5 text-white" /></div>
+                    <div className="w-10 h-10 rounded-sm bg-indigo-600 flex items-center justify-center"><ArrowUpDown className="w-5 h-5 text-white" /></div>
                     <div>
                         <h1 className="text-2xl font-black text-slate-900 dark:text-white">Stock Movement</h1>
                         <p className="text-xs text-slate-500">All stock in/out transaction log</p>
@@ -43,14 +43,14 @@ const StockMovement: React.FC = () => {
                     { label: 'Stock In (Units)', value: totalIn, border: 'border-l-emerald-500' },
                     { label: 'Stock Out (Units)', value: totalOut, border: 'border-l-red-500' },
                 ].map((k, i) => (
-                    <div key={i} className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 border-l-4 ${k.border} p-5`}>
+                    <div key={i} className={`bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 border-l-4 ${k.border} p-5`}>
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{k.label}</p>
                         <p className="text-2xl font-black text-slate-900 dark:text-white">{k.value}</p>
                     </div>
                 ))}
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex gap-3 items-center">
                     <div className="relative flex-1 max-w-sm">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -76,7 +76,7 @@ const StockMovement: React.FC = () => {
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                             {filtered.map(m => (
                                 <tr key={m.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                                    <td className="px-4 py-3 text-xs font-black text-indigo-600">{m.id}</td>
+                                    <td className="px-4 py-3 text-xs font-black text-primary">{m.id}</td>
                                     <td className="px-4 py-3 text-xs text-slate-500">{m.date}</td>
                                     <td className="px-4 py-3 text-sm font-bold text-slate-900 dark:text-white">{m.item}</td>
                                     <td className="px-4 py-3 text-xs text-slate-400">{m.sku}</td>

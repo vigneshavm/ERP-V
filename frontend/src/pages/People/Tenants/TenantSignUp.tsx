@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../../redux/slices/authSlice';
 import {
@@ -173,8 +173,8 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
         <div className="min-h-screen relative flex items-center justify-center p-4 md:p-8 lg:p-12 overflow-hidden bg-slate-900">
             {/* Background Effects */}
             <div className="absolute inset-0">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/20 blur-[150px] rounded-full" />
-                <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-500/20 blur-[120px] rounded-full" />
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 blur-[150px] rounded-full" />
+                <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-success/20 blur-[120px] rounded-full" />
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]" />
             </div>
 
@@ -184,7 +184,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
 
                     {/* Header */}
                     <div className="text-center mb-10">
-                        <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-500/30">
+                        <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-sm flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-500/30">
                             <Building2 className="w-10 h-10 text-white" />
                         </div>
                         <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2">
@@ -199,7 +199,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                     <div className="flex items-center justify-center gap-2 mb-10">
                         {[1, 2, 3].map((s) => (
                             <div key={s} className="flex items-center gap-2">
-                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all ${step >= s
+                                <div className={`w-10 h-10 rounded-sm flex items-center justify-center font-black text-sm transition-all ${step >= s
                                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
                                     : 'bg-white/10 text-slate-500'
                                     }`}>
@@ -231,7 +231,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             value={businessName}
                                             onChange={(e) => handleBusinessNameChange(e.target.value)}
                                             placeholder="Your Business Name"
-                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-sm text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                 </div>
@@ -244,8 +244,8 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                                 key={s.id}
                                                 type="button"
                                                 onClick={() => setSector(s.id)}
-                                                className={`p-4 rounded-2xl border text-left transition-all ${sector === s.id
-                                                    ? 'bg-indigo-600/20 border-indigo-500 text-white'
+                                                className={`p-4 rounded-sm border text-left transition-all ${sector === s.id
+                                                    ? 'bg-primary/20 border-indigo-500 text-white'
                                                     : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
                                                     }`}
                                             >
@@ -331,7 +331,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                         value={subdomain}
                                         onChange={(e) => setSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
                                         placeholder="yourstore"
-                                        className="w-full h-14 pl-12 pr-28 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                        className="w-full h-14 pl-12 pr-28 bg-white/5 border border-white/10 rounded-sm text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                     />
                                     <span className="absolute right-4 top-4 text-slate-500 text-sm font-medium">.app.com</span>
                                 </div>
@@ -357,7 +357,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             value={ownerName}
                                             onChange={(e) => setOwnerName(e.target.value)}
                                             placeholder="Your Name"
-                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-sm text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                     </div>
                                 </div>
@@ -372,7 +372,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                                 value={ownerEmail}
                                                 onChange={(e) => setOwnerEmail(e.target.value)}
                                                 placeholder="you@business.com"
-                                                className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                                className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-sm text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                             />
                                         </div>
                                     </div>
@@ -386,7 +386,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                                 value={ownerMobile}
                                                 onChange={(e) => setOwnerMobile(e.target.value)}
                                                 placeholder="9876543210"
-                                                className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                                className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-sm text-white font-semibold outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                             />
                                         </div>
                                     </div>
@@ -401,12 +401,12 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             value={ownerPassword}
                                             onChange={(e) => setOwnerPassword(e.target.value)}
                                             placeholder="••••••••"
-                                            className="w-full h-14 pl-12 pr-12 bg-white/5 border border-white/10 rounded-2xl text-white font-mono tracking-widest outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                            className="w-full h-14 pl-12 pr-12 bg-white/5 border border-white/10 rounded-sm text-white font-mono tracking-widest outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-4 text-slate-500 hover:text-indigo-400 transition-colors"
+                                            className="absolute right-4 top-4 text-slate-500 hover:text-primary transition-colors"
                                         >
                                             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                         </button>
@@ -423,9 +423,9 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                 <p className="text-slate-400 text-xs">Review your details and start growing</p>
                             </div>
 
-                            <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-4">
+                            <div className="bg-white/5 rounded-sm p-6 border border-white/10 space-y-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-indigo-600/20 rounded-2xl flex items-center justify-center text-indigo-400">
+                                    <div className="w-12 h-12 bg-primary/20 rounded-sm flex items-center justify-center text-primary">
                                         <Building2 className="w-6 h-6" />
                                     </div>
                                     <div>
@@ -436,7 +436,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                 </div>
 
                                 <div className="border-t border-white/10 pt-4 flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-emerald-600/20 rounded-2xl flex items-center justify-center text-emerald-400">
+                                    <div className="w-12 h-12 bg-emerald-600/20 rounded-sm flex items-center justify-center text-success">
                                         <User className="w-6 h-6" />
                                     </div>
                                     <div>
@@ -450,11 +450,11 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                             {/* Benefits Preview */}
                             <div className="grid grid-cols-3 gap-4">
                                 {[
-                                    { icon: Zap, label: 'Growth Platform', color: 'text-violet-400' },
-                                    { icon: ShieldCheck, label: 'Secure & Scalable', color: 'text-emerald-400' },
-                                    { icon: Sparkles, label: 'AI Insights', color: 'text-amber-400' }
+                                    { icon: Zap, label: 'Growth Platform', color: 'text-accent' },
+                                    { icon: ShieldCheck, label: 'Secure & Scalable', color: 'text-success' },
+                                    { icon: Sparkles, label: 'AI Insights', color: 'text-warning' }
                                 ].map((benefit, idx) => (
-                                    <div key={idx} className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
+                                    <div key={idx} className="text-center p-4 bg-white/5 rounded-sm border border-white/10">
                                         <benefit.icon className={`w-6 h-6 ${benefit.color} mx-auto mb-2`} />
                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{benefit.label}</p>
                                     </div>
@@ -465,7 +465,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
 
                     {/* Error Display */}
                     {error && (
-                        <div className="flex items-center gap-3 text-xs font-bold p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl mt-6 animate-in zoom-in-95">
+                        <div className="flex items-center gap-3 text-xs font-bold p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-sm mt-6 animate-in zoom-in-95">
                             <AlertCircle className="w-5 h-5 shrink-0" />
                             <span>{error}</span>
                         </div>
@@ -477,7 +477,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                             <button
                                 type="button"
                                 onClick={handleBack}
-                                className="flex-1 h-14 bg-white/10 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/20 transition-all"
+                                className="flex-1 h-14 bg-white/10 text-white rounded-sm font-bold flex items-center justify-center gap-2 hover:bg-white/20 transition-all"
                             >
                                 <ArrowLeft className="w-4 h-4" /> Back
                             </button>
@@ -487,7 +487,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                             <button
                                 type="button"
                                 onClick={handleNext}
-                                className="flex-1 h-14 bg-white text-slate-900 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-slate-100 transition-all shadow-xl"
+                                className="flex-1 h-14 bg-white text-slate-900 rounded-sm font-black flex items-center justify-center gap-2 hover:bg-slate-100 transition-all shadow-xl"
                             >
                                 Continue <ArrowRight className="w-4 h-4" />
                             </button>
@@ -496,7 +496,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                 type="button"
                                 onClick={handleSubmit}
                                 disabled={isLoading}
-                                className="flex-1 h-14 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl font-black flex items-center justify-center gap-2 hover:from-indigo-500 hover:to-violet-500 transition-all shadow-xl shadow-indigo-600/30 disabled:opacity-50"
+                                className="flex-1 h-14 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-sm font-black flex items-center justify-center gap-2 hover:from-indigo-500 hover:to-violet-500 transition-all shadow-xl shadow-indigo-600/30 disabled:opacity-50"
                             >
                                 {isLoading ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />

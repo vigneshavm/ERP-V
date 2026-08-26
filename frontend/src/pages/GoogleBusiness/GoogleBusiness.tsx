@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
 import {
@@ -65,7 +65,7 @@ const GoogleBusiness: React.FC = () => {
                 <div className="relative mb-12">
                     <div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 animate-pulse" />
                     <div className="relative w-32 h-32 bg-white dark:bg-slate-900 rounded-[2.5rem] flex items-center justify-center shadow-2xl border border-white/50 dark:border-slate-800/50">
-                        <Globe className="w-16 h-16 text-indigo-600" />
+                        <Globe className="w-16 h-16 text-primary" />
                     </div>
                 </div>
                 <h2 className="text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter italic">
@@ -77,7 +77,7 @@ const GoogleBusiness: React.FC = () => {
                 <button
                     onClick={handleSync}
                     disabled={isLoading}
-                    className="px-12 py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-[0.2em] text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-indigo-500/20 flex items-center gap-6"
+                    className="px-12 py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-sm font-black uppercase tracking-[0.2em] text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-indigo-500/20 flex items-center gap-6"
                 >
                     {isLoading ? <RefreshCw className="animate-spin w-5 h-5" /> : <Globe className="w-5 h-5" />}
                     Initialize Connection
@@ -93,10 +93,10 @@ const GoogleBusiness: React.FC = () => {
                 <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border border-white dark:border-slate-800 rounded-[3rem] p-10 shadow-2xl shadow-indigo-500/5">
                     <div className="flex items-center justify-between mb-12">
                         <div>
-                            <h3 className="text-3xl font-black tracking-tight italic uppercase">Identity <span className="text-indigo-600">Architect</span></h3>
+                            <h3 className="text-3xl font-black tracking-tight italic uppercase">Identity <span className="text-primary">Architect</span></h3>
                             <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Configure your online presence</p>
                         </div>
-                        <button className="flex items-center gap-3 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all group">
+                        <button className="flex items-center gap-3 px-8 py-4 bg-indigo-600 text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all group">
                             <Save className="w-4 h-4 group-hover:scale-125 transition-transform" /> Sync Changes
                         </button>
                     </div>
@@ -109,23 +109,23 @@ const GoogleBusiness: React.FC = () => {
                             { label: 'Digital Hub (URL)', val: gbpConfig.website, icon: Globe },
                         ].map((field, i) => (
                             <div key={i} className="space-y-3 group">
-                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-indigo-500 transition-colors flex items-center gap-2">
+                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-primary transition-colors flex items-center gap-2">
                                     <field.icon className="w-3 h-3" /> {field.label}
                                 </label>
                                 <div className="relative">
                                     <input type="text" defaultValue={field.val} className="w-full p-5 bg-slate-50 dark:bg-black/50 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 transition-all pr-12" />
-                                    <Edit3 className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-colors" />
+                                    <Edit3 className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-hover:text-primary transition-colors" />
                                 </div>
                             </div>
                         ))}
                         <div className="space-y-3 md:col-span-2 group">
-                            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-indigo-500 transition-colors flex items-center gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-primary transition-colors flex items-center gap-2">
                                 <MapPin className="w-3 h-3" /> Geographical Presence (Full Address)
                             </label>
                             <input type="text" defaultValue={gbpConfig.address} className="w-full p-5 bg-slate-50 dark:bg-black/50 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 transition-all" />
                         </div>
                         <div className="space-y-3 md:col-span-2 group">
-                            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-indigo-500 transition-colors flex items-center gap-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-primary transition-colors flex items-center gap-2">
                                 <Edit3 className="w-3 h-3" /> Brand Narrative (Description)
                             </label>
                             <textarea defaultValue={gbpConfig.description} rows={5} className="w-full p-6 bg-slate-50 dark:bg-black/50 border border-slate-100 dark:border-slate-800 rounded-[2rem] font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 transition-all resize-none" />
@@ -135,11 +135,11 @@ const GoogleBusiness: React.FC = () => {
 
                 {/* Operations Clock */}
                 <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border border-white dark:border-slate-800 rounded-[3rem] p-10 shadow-2xl shadow-indigo-500/5 overflow-hidden relative">
-                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl" />
-                    <h3 className="text-3xl font-black tracking-tight italic uppercase mb-10">Operations <span className="text-indigo-600">Blueprint</span></h3>
+                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
+                    <h3 className="text-3xl font-black tracking-tight italic uppercase mb-10">Operations <span className="text-primary">Blueprint</span></h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {DAYS.map((day) => (
-                            <div key={day} className="flex items-center justify-between p-5 bg-white dark:bg-black/40 border border-slate-50 dark:border-slate-800 rounded-2xl group hover:border-indigo-500/30 transition-all">
+                            <div key={day} className="flex items-center justify-between p-5 bg-white dark:bg-black/40 border border-slate-50 dark:border-slate-800 rounded-sm group hover:border-primary/30 transition-all">
                                 <span className="font-black text-slate-700 dark:text-slate-300 text-sm">{day}</span>
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1">
@@ -147,7 +147,7 @@ const GoogleBusiness: React.FC = () => {
                                         <span className="text-slate-300">-</span>
                                         <input type="text" defaultValue="21:00" className="w-16 text-center p-2 bg-slate-50 dark:bg-slate-900 rounded-lg text-[10px] font-black focus:ring-1 focus:ring-indigo-500 outline-none" />
                                     </div>
-                                    <div className="w-10 h-5 bg-indigo-500/10 rounded-full relative p-1 cursor-pointer">
+                                    <div className="w-10 h-5 bg-primary/10 rounded-full relative p-1 cursor-pointer">
                                         <div className="absolute right-1 w-3 h-3 bg-indigo-500 rounded-full shadow-lg" />
                                     </div>
                                 </div>
@@ -181,7 +181,7 @@ const GoogleBusiness: React.FC = () => {
                         <p className="text-sm text-indigo-50 leading-relaxed font-bold italic mb-8 opacity-80">
                             "Elite status profile. Ranking 42% higher than local competitors this month."
                         </p>
-                        <button className="w-full py-5 bg-white text-indigo-600 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:bg-white/90 hover:scale-105 active:scale-95 shadow-xl">
+                        <button className="w-full py-5 bg-white text-primary rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:bg-white/90 hover:scale-105 active:scale-95 shadow-xl">
                             Unlock Full Potential
                         </button>
                     </div>
@@ -192,19 +192,19 @@ const GoogleBusiness: React.FC = () => {
                     <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-8 ml-2">Proprietary Controls</h4>
                     <div className="grid grid-cols-1 gap-4">
                         {[
-                            { icon: Share2, label: 'Broadcast Link', color: 'text-indigo-600', bg: 'bg-indigo-500/10' },
-                            { icon: QrCode, label: 'Visual Access (QR)', color: 'text-violet-600', bg: 'bg-violet-500/10' },
+                            { icon: Share2, label: 'Broadcast Link', color: 'text-primary', bg: 'bg-primary/10' },
+                            { icon: QrCode, label: 'Visual Access (QR)', color: 'text-violet-600', bg: 'bg-accent/10' },
                             { icon: ExternalLink, label: 'Maps Live Feed', color: 'text-fuchsia-600', bg: 'bg-fuchsia-500/10' },
-                            { icon: ArrowUpRight, label: 'Ads Manager', color: 'text-amber-600', bg: 'bg-amber-500/10' }
+                            { icon: ArrowUpRight, label: 'Ads Manager', color: 'text-amber-600', bg: 'bg-warning/10' }
                         ].map((item, idx) => (
-                            <button key={idx} className="w-full flex items-center justify-between p-5 rounded-[1.5rem] bg-white dark:bg-black/50 border border-slate-50 dark:border-slate-800 hover:border-indigo-500/30 hover:scale-[1.02] transition-all group overflow-hidden">
+                            <button key={idx} className="w-full flex items-center justify-between p-5 rounded-[1.5rem] bg-white dark:bg-black/50 border border-slate-50 dark:border-slate-800 hover:border-primary/30 hover:scale-[1.02] transition-all group overflow-hidden">
                                 <div className="flex items-center gap-4 relative z-10">
                                     <div className={`w-12 h-12 ${item.bg} rounded-xl flex items-center justify-center ${item.color} group-hover:scale-110 transition-transform`}>
                                         <item.icon className="w-6 h-6" />
                                     </div>
                                     <span className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-tight">{item.label}</span>
                                 </div>
-                                <ArrowUpRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-400 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+                                <ArrowUpRight className="w-5 h-5 text-slate-300 group-hover:text-primary group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
                             </button>
                         ))}
                     </div>
@@ -216,18 +216,18 @@ const GoogleBusiness: React.FC = () => {
     const renderReviews = () => (
         <div className="max-w-5xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="text-center space-y-4">
-                <h3 className="text-6xl font-black tracking-tight italic uppercase italic">Review <span className="text-indigo-600">Architect</span></h3>
+                <h3 className="text-6xl font-black tracking-tight italic uppercase italic">Review <span className="text-primary">Architect</span></h3>
                 <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[11px]">Curate your public testimony</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 {[
-                    { label: 'Reputation Score', val: '4.9', icon: Star, color: 'text-amber-500' },
-                    { label: 'Total Testimonials', val: '1,280', icon: MessageSquare, color: 'text-indigo-500' },
-                    { label: 'Response Pulse', val: '98%', icon: TrendingUp, color: 'text-emerald-500' },
+                    { label: 'Reputation Score', val: '4.9', icon: Star, color: 'text-warning' },
+                    { label: 'Total Testimonials', val: '1,280', icon: MessageSquare, color: 'text-primary' },
+                    { label: 'Response Pulse', val: '98%', icon: TrendingUp, color: 'text-success' },
                 ].map((kpi, i) => (
-                    <div key={i} className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border border-white dark:border-slate-800 p-8 rounded-[2rem] text-center shadow-lg group hover:border-indigo-500/30 transition-all">
-                        <div className={`w-12 h-12 ${kpi.color} bg-white dark:bg-black rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
+                    <div key={i} className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border border-white dark:border-slate-800 p-8 rounded-[2rem] text-center shadow-lg group hover:border-primary/30 transition-all">
+                        <div className={`w-12 h-12 ${kpi.color} bg-white dark:bg-black rounded-sm mx-auto mb-6 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
                             <kpi.icon className="w-6 h-6" />
                         </div>
                         <h4 className="text-4xl font-black mb-1">{kpi.val}</h4>
@@ -243,20 +243,20 @@ const GoogleBusiness: React.FC = () => {
                         <div className="relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[3rem] p-10 shadow-sm transition-all">
                             <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
                                 <div className="flex items-center gap-6">
-                                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900 dark:to-violet-900 rounded-[2rem] flex items-center justify-center font-black text-2xl text-indigo-600 shadow-inner">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900 dark:to-violet-900 rounded-[2rem] flex items-center justify-center font-black text-2xl text-primary shadow-inner">
                                         {review.reviewerName.split(' ').map((n: string) => n[0]).join('')}
                                     </div>
                                     <div className="text-center md:text-left">
                                         <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-1 uppercase tracking-tight">{review.reviewerName}</h4>
                                         <div className="flex items-center justify-center md:justify-start gap-1">
                                             {[...Array(5)].map((_, i) => (
-                                                <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-amber-500 text-amber-500' : 'text-slate-200 dark:text-slate-800'}`} />
+                                                <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-amber-500 text-warning' : 'text-slate-200 dark:text-slate-800'}`} />
                                             ))}
                                             <span className="text-[10px] text-slate-400 ml-4 font-black italic">{new Date(review.createdAt).toLocaleDateString()}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <span className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${review.status === 'REPLIED' ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-600 border border-amber-500/20'}`}>
+                                <span className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${review.status === 'REPLIED' ? 'bg-success/10 text-emerald-600 border border-success/20' : 'bg-warning/10 text-amber-600 border border-warning/20'}`}>
                                     <div className={`w-1.5 h-1.5 rounded-full ${review.status === 'REPLIED' ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
                                     {review.status}
                                 </span>
@@ -267,7 +267,7 @@ const GoogleBusiness: React.FC = () => {
                             </p>
 
                             {review.reply ? (
-                                <div className="bg-slate-50 dark:bg-black/50 rounded-[2.5rem] p-8 border border-emerald-500/20 relative overflow-hidden group/reply">
+                                <div className="bg-slate-50 dark:bg-black/50 rounded-[2.5rem] p-8 border border-success/20 relative overflow-hidden group/reply">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -mr-16 -mt-16 blur-3xl opacity-0 group-hover/reply:opacity-100 transition-opacity" />
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center text-white">
@@ -281,7 +281,7 @@ const GoogleBusiness: React.FC = () => {
                                 <div className="flex flex-col md:flex-row items-center gap-6">
                                     <div className="relative flex-1 w-full">
                                         <textarea placeholder="Compose a world-class response..." className="w-full p-6 bg-slate-50 dark:bg-black/50 rounded-[2rem] border border-slate-100 dark:border-slate-800 outline-none font-bold text-sm focus:ring-4 focus:ring-indigo-500/10 transition-all min-h-[100px] resize-none" />
-                                        <MessageSquare className="absolute right-6 bottom-6 w-5 h-5 text-indigo-400" />
+                                        <MessageSquare className="absolute right-6 bottom-6 w-5 h-5 text-primary" />
                                     </div>
                                     <button className="whitespace-nowrap px-12 py-6 bg-indigo-600 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-indigo-600/30">
                                         Dispatch Reply
@@ -299,7 +299,7 @@ const GoogleBusiness: React.FC = () => {
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                 <div>
-                    <h3 className="text-6xl font-black tracking-tight italic uppercase">Feed <span className="text-indigo-600">Architect</span></h3>
+                    <h3 className="text-6xl font-black tracking-tight italic uppercase">Feed <span className="text-primary">Architect</span></h3>
                     <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[11px] mt-2">Broadcast your brand essence to the world</p>
                 </div>
                 <button className="flex items-center gap-4 px-10 py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-105 active:scale-95 transition-all group">
@@ -315,13 +315,13 @@ const GoogleBusiness: React.FC = () => {
                         <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[3.5rem] overflow-hidden shadow-2xl transition-all duration-500 group-hover:-translate-y-4">
                             <div className="h-64 bg-gradient-to-br from-indigo-100 to-fuchsia-100 dark:from-indigo-950 dark:to-fuchsia-950 relative group/photo">
                                 <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                                    <Globe className="w-48 h-48 text-indigo-500/20" />
+                                    <Globe className="w-48 h-48 text-primary/20" />
                                 </div>
                                 <div className="absolute top-6 left-6 px-5 py-2 bg-white/95 dark:bg-slate-900/95 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl backdrop-blur-md">
                                     {post.type}
                                 </div>
                                 <div className="absolute inset-0 bg-indigo-900/40 backdrop-blur-sm opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center flex-col gap-4">
-                                    <button className="p-4 bg-white rounded-2xl text-indigo-600 scale-0 group-hover/photo:scale-100 transition-transform duration-500 delay-100"><Eye className="w-6 h-6" /></button>
+                                    <button className="p-4 bg-white rounded-sm text-primary scale-0 group-hover/photo:scale-100 transition-transform duration-500 delay-100"><Eye className="w-6 h-6" /></button>
                                     <span className="text-white font-black text-[10px] uppercase tracking-widest">Preview Live Feed</span>
                                 </div>
                             </div>
@@ -330,13 +330,13 @@ const GoogleBusiness: React.FC = () => {
                                 <div className="flex items-center justify-between pt-8 border-t border-slate-50 dark:border-slate-800">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-2 h-2 rounded-full ${post.status === 'LIVE' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-rose-500'}`} />
-                                        <span className={`text-[11px] font-black italic tracking-widest uppercase ${post.status === 'LIVE' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                        <span className={`text-[11px] font-black italic tracking-widest uppercase ${post.status === 'LIVE' ? 'text-success' : 'text-danger'}`}>
                                             {post.status}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-6">
                                         <span className="flex items-center gap-2 text-[11px] font-black text-slate-400"><Eye className="w-4 h-4" /> 1.2k</span>
-                                        <span className="flex items-center gap-2 text-[11px] font-black text-rose-500"><Heart className="w-4 h-4 fill-rose-500" /> 84</span>
+                                        <span className="flex items-center gap-2 text-[11px] font-black text-danger"><Heart className="w-4 h-4 fill-rose-500" /> 84</span>
                                     </div>
                                 </div>
                             </div>
@@ -351,12 +351,12 @@ const GoogleBusiness: React.FC = () => {
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                 <div>
-                    <h3 className="text-6xl font-black tracking-tight italic uppercase italic">Search <span className="text-indigo-600">Intelligence</span></h3>
+                    <h3 className="text-6xl font-black tracking-tight italic uppercase italic">Search <span className="text-primary">Intelligence</span></h3>
                     <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[11px] mt-2">Neural mapping of customer connectivity</p>
                 </div>
                 <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl p-2 rounded-[2rem] border border-white dark:border-slate-800 shadow-xl flex gap-2">
                     {['7D', '30D', '90D', '1Y'].map((range) => (
-                        <button key={range} className={`w-14 h-14 rounded-2xl text-[10px] font-black uppercase transition-all ${range === '30D' ? 'bg-indigo-600 text-white shadow-xl scale-110' : 'text-slate-400 hover:bg-slate-100'}`}>
+                        <button key={range} className={`w-14 h-14 rounded-sm text-[10px] font-black uppercase transition-all ${range === '30D' ? 'bg-indigo-600 text-white shadow-xl scale-110' : 'text-slate-400 hover:bg-slate-100'}`}>
                             {range}
                         </button>
                     ))}
@@ -375,11 +375,11 @@ const GoogleBusiness: React.FC = () => {
                         <div className={`absolute -inset-1 bg-gradient-to-br ${kpi.color} rounded-[3rem] blur-xl opacity-0 group-hover:opacity-20 transition-all duration-700`} />
                         <div className="relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/50 dark:border-slate-800/50 p-10 rounded-[3rem] shadow-sm overflow-hidden text-center">
                             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/5 to-transparent rounded-full -mr-12 -mt-12" />
-                            <div className={`w-16 h-16 bg-gradient-to-br ${kpi.color} rounded-2xl mx-auto mb-8 flex items-center justify-center text-white shadow-2xl shadow-indigo-500/30 group-hover:rotate-12 transition-transform`}>
+                            <div className={`w-16 h-16 bg-gradient-to-br ${kpi.color} rounded-sm mx-auto mb-8 flex items-center justify-center text-white shadow-2xl shadow-indigo-500/30 group-hover:rotate-12 transition-transform`}>
                                 <kpi.icon className="w-8 h-8" />
                             </div>
                             <h3 className="text-5xl font-black mb-2 tabular-nums tracking-tighter italic">{kpi.value}</h3>
-                            <p className="text-[10px] font-black tracking-[0.4em] uppercase text-indigo-600 flex flex-col items-center gap-2">
+                            <p className="text-[10px] font-black tracking-[0.4em] uppercase text-primary flex flex-col items-center gap-2">
                                 {kpi.label}
                                 <span className="text-slate-400 font-bold">{kpi.unit}</span>
                             </p>
@@ -395,7 +395,7 @@ const GoogleBusiness: React.FC = () => {
                     <div className="absolute -top-10 -right-10 w-96 h-96 bg-indigo-500/5 rounded-full blur-[120px]" />
                     <div className="flex flex-col md:flex-row items-center justify-between mb-20 gap-8">
                         <div>
-                            <h4 className="text-4xl font-black italic uppercase tracking-tight">Performance <span className="text-indigo-600">Trajectory</span></h4>
+                            <h4 className="text-4xl font-black italic uppercase tracking-tight">Performance <span className="text-primary">Trajectory</span></h4>
                             <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.3em] mt-2">Neural growth mapping across 12 cycles</p>
                         </div>
                         <div className="flex gap-10">
@@ -415,7 +415,7 @@ const GoogleBusiness: React.FC = () => {
                         {[35, 45, 30, 60, 40, 50, 75, 45, 65, 55, 85, 40].map((h, i) => (
                             <div key={i} className="flex-1 flex flex-col gap-4 items-center group/bar perspective-1000">
                                 <div className="relative w-full h-full flex flex-col justify-end">
-                                    <div style={{ height: `${h * 0.7}%` }} className="absolute bottom-0 w-full bg-indigo-500/20 rounded-t-[1.5rem] group-hover/bar:bg-indigo-500/30 transition-all duration-700" />
+                                    <div style={{ height: `${h * 0.7}%` }} className="absolute bottom-0 w-full bg-primary/20 rounded-t-[1.5rem] group-hover/bar:bg-indigo-500/30 transition-all duration-700" />
                                     <div style={{ height: `${h * 0.4}%` }} className="relative w-full bg-gradient-to-t from-indigo-600 to-violet-500 rounded-t-[1.5rem] group-hover/bar:scale-y-110 group-hover/bar:shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all duration-700 origin-bottom" />
                                     <div style={{ height: `${h * 0.2}%` }} className="absolute bottom-0 w-full bg-emerald-500/60 blur-[1px] rounded-t-[1.5rem] translate-y-[-2px] group-hover/bar:h-[30%] transition-all duration-500" />
                                 </div>
@@ -432,7 +432,7 @@ const GoogleBusiness: React.FC = () => {
         <div className="min-h-screen bg-slate-50/30 dark:bg-[#020617] relative">
             {/* Mesh Gradient Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-50 dark:opacity-20 z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/20 blur-[120px] rounded-full animate-float" />
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full animate-float" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-fuchsia-500/20 blur-[120px] rounded-full animate-float delay-1000" />
             </div>
 
@@ -443,7 +443,7 @@ const GoogleBusiness: React.FC = () => {
 
                     <div className="space-y-6 relative z-10 text-center xl:text-left">
                         <div className="flex items-center justify-center xl:justify-start gap-4">
-                            <div className="px-5 py-2 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-indigo-600/30 animate-pulse">
+                            <div className="px-5 py-2 bg-indigo-600 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-indigo-600/30 animate-pulse">
                                 Live Connection
                             </div>
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
@@ -454,7 +454,7 @@ const GoogleBusiness: React.FC = () => {
                             COMMAND <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600 group-hover/header:tracking-widest transition-all duration-1000">CENTER</span>
                         </h1>
                         <div className="flex items-center justify-center xl:justify-start gap-3">
-                            <div className="w-12 h-12 bg-slate-900 dark:bg-white rounded-2xl flex items-center justify-center text-white dark:text-slate-900 shadow-xl group-hover/header:rotate-[360deg] transition-transform duration-1000">
+                            <div className="w-12 h-12 bg-slate-900 dark:bg-white rounded-sm flex items-center justify-center text-white dark:text-slate-900 shadow-xl group-hover/header:rotate-[360deg] transition-transform duration-1000">
                                 <Globe className="w-6 h-6" />
                             </div>
                             <div className="text-left">
@@ -476,7 +476,7 @@ const GoogleBusiness: React.FC = () => {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex items-center gap-4 px-8 py-5 rounded-2xl transition-all duration-500 whitespace-nowrap group relative ${activeTab === tab.id ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl scale-105' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                                className={`flex items-center gap-4 px-8 py-5 rounded-sm transition-all duration-500 whitespace-nowrap group relative ${activeTab === tab.id ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl scale-105' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
                             >
                                 <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'animate-bounce' : 'group-hover:scale-125 transition-transform'}`} />
                                 <span className="text-[11px] font-black uppercase tracking-[0.2em]">{tab.label}</span>
@@ -492,7 +492,7 @@ const GoogleBusiness: React.FC = () => {
                     {activeTab === 'posts' && renderPosts()}
                     {activeTab === 'photos' && <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-12">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-6xl font-black tracking-tight italic uppercase">Portfolio <span className="text-indigo-600">Grid</span></h3>
+                            <h3 className="text-6xl font-black tracking-tight italic uppercase">Portfolio <span className="text-primary">Grid</span></h3>
                             <button className="px-10 py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-xl flex items-center gap-4 hover:scale-105 transition-all">
                                 <Camera className="w-5 h-5" /> Import Assets
                             </button>
@@ -500,8 +500,8 @@ const GoogleBusiness: React.FC = () => {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
                             {[...Array(8)].map((_, i) => (
                                 <div key={i} className="aspect-square bg-white dark:bg-slate-900 rounded-[3rem] border-4 border-dashed border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center gap-6 group cursor-pointer hover:border-indigo-500/50 hover:bg-slate-50 transition-all">
-                                    <div className="w-20 h-20 bg-slate-50 dark:bg-black rounded-3xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                                        <Plus className="w-8 h-8 text-slate-300 group-hover:text-indigo-500" />
+                                    <div className="w-20 h-20 bg-slate-50 dark:bg-black rounded-sm flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                                        <Plus className="w-8 h-8 text-slate-300 group-hover:text-primary" />
                                     </div>
                                     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 italic">Empty Asset Cell</span>
                                 </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { ArrowLeft, RefreshCw, TrendingUp, TrendingDown, Users, AlertTriangle, ShieldCheck, Activity, ChevronRight, ArrowUpRight } from 'lucide-react';
 import api from '../../services/api';
 import { useBranchResolver } from '../../hooks/useBranchResolver';
@@ -79,14 +79,14 @@ const PayableSnapshot: React.FC = () => {
                             </div>
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md">
+                                    <div className="w-10 h-10 rounded-sm bg-white/10 flex items-center justify-center backdrop-blur-md">
                                         <ShieldCheck className="w-5 h-5 text-indigo-200" />
                                     </div>
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-200">Aggregate Liability Exposure</p>
                                 </div>
                                 <h2 className="text-6xl font-black tracking-tighter tabular-nums">₹{totalPayable.toLocaleString('en-IN')}</h2>
                                 <p className="text-sm font-bold text-indigo-200/80 mt-6 flex items-center gap-2 italic">
-                                    <TrendingUp className="w-5 h-5 text-emerald-400" /> Consolidated institutional payables across all branches
+                                    <TrendingUp className="w-5 h-5 text-success" /> Consolidated institutional payables across all branches
                                 </p>
                             </div>
                         </div>
@@ -98,17 +98,17 @@ const PayableSnapshot: React.FC = () => {
                             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
                                 <div>
                                     <div className="flex items-center gap-3 mb-4">
-                                        <div className="p-2.5 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-xl">
+                                        <div className="p-2.5 bg-rose-50 dark:bg-rose-900/20 text-danger rounded-xl">
                                             <AlertTriangle className="w-5 h-5" />
                                         </div>
-                                        <h3 className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Critical Overdue Volume</h3>
+                                        <h3 className="text-[10px] font-black text-danger uppercase tracking-widest">Critical Overdue Volume</h3>
                                     </div>
-                                    <p className="text-4xl font-black text-rose-600 dark:text-rose-400 tracking-tighter tabular-nums">₹{totalOverdue.toLocaleString('en-IN')}</p>
+                                    <p className="text-4xl font-black text-rose-600 dark:text-danger tracking-tighter tabular-nums">₹{totalOverdue.toLocaleString('en-IN')}</p>
                                     <p className="text-xs font-bold text-neutral-400 mt-2 italic">Immediate capital allocation required for {topOverdueSuppliers.length} nodes.</p>
                                 </div>
                                 <button
                                     onClick={() => navigate('/purchase/ageing-analysis')}
-                                    className="px-8 py-4 bg-rose-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-rose-500/20 hover:bg-rose-600 hover:scale-105 active:scale-95 transition-all"
+                                    className="px-8 py-4 bg-rose-500 text-white rounded-sm text-xs font-black uppercase tracking-widest shadow-xl shadow-rose-500/20 hover:bg-rose-600 hover:scale-105 active:scale-95 transition-all"
                                 >
                                     Review Ageing Intel
                                 </button>
@@ -124,7 +124,7 @@ const PayableSnapshot: React.FC = () => {
                             </div>
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-8">
-                                    <div className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-primary">
+                                    <div className="w-10 h-10 rounded-sm bg-white/5 flex items-center justify-center text-primary">
                                         <Users className="w-5 h-5" />
                                     </div>
                                     <h3 className="text-sm font-black uppercase tracking-widest">Priority Payments</h3>
@@ -136,7 +136,7 @@ const PayableSnapshot: React.FC = () => {
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-xs font-black text-neutral-200 uppercase tracking-tighter truncate">{sup.supplierName || sup.businessName}</p>
-                                                    <p className="text-[10px] font-black text-rose-500 mt-1 uppercase tracking-widest italic">{sup.daysOverdue || '0'} Days Overdue</p>
+                                                    <p className="text-[10px] font-black text-danger mt-1 uppercase tracking-widest italic">{sup.daysOverdue || '0'} Days Overdue</p>
                                                 </div>
                                                 <p className="text-sm font-black text-white ml-4 tabular-nums">₹{(sup.totalAmount || sup.amount || 0).toLocaleString()}</p>
                                             </div>
@@ -170,18 +170,18 @@ const PayableSnapshot: React.FC = () => {
 
                         <div className="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 p-10 rounded-[3.5rem] space-y-6">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-2xl text-amber-500 shadow-sm border border-amber-100 dark:border-amber-900/20">
+                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-sm text-warning shadow-sm border border-amber-100 dark:border-amber-900/20">
                                     <TrendingUp className="w-6 h-6" />
                                 </div>
-                                <h4 className="text-[10px] font-black text-amber-900/60 dark:text-amber-400 uppercase tracking-widest leading-none">Institutional Advisory</h4>
+                                <h4 className="text-[10px] font-black text-amber-900/60 dark:text-warning uppercase tracking-widest leading-none">Institutional Advisory</h4>
                             </div>
                             <div className="space-y-4">
                                 {totalOverdue > 0 ? (
-                                    <p className="text-[11px] text-amber-800 dark:text-amber-400 font-bold leading-relaxed italic opacity-80 border-l-2 border-amber-500/30 pl-4">
+                                    <p className="text-[11px] text-amber-800 dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
                                         Significant overdue volume detected. Prioritize settlement of aged nodes to maintain supply-chain integrity.
                                     </p>
                                 ) : (
-                                    <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-bold leading-relaxed italic opacity-80 border-l-2 border-emerald-500/30 pl-4">
+                                    <p className="text-[11px] text-emerald-700 dark:text-success font-bold leading-relaxed italic opacity-80 border-l-2 border-success/30 pl-4">
                                         Liability distribution aligns with optimized ERP cash-flow patterns for the current fiscal cycle.
                                     </p>
                                 )}

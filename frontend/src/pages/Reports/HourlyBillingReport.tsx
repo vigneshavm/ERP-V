@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
@@ -54,9 +54,9 @@ const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange }) 
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Top Analysis Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-lg text-amber-600 dark:text-amber-400">
+                        <div className="p-2 bg-amber-50 dark:bg-warning/10 rounded-lg text-amber-600 dark:text-warning">
                             <Clock className="w-5 h-5" />
                         </div>
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Insights</span>
@@ -66,9 +66,9 @@ const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange }) 
                     <p className="text-xs text-slate-500 mt-1">{peakHour?.transactions} bills generated in this hour</p>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg text-indigo-600 dark:text-indigo-400">
+                        <div className="p-2 bg-indigo-50 dark:bg-primary/10 rounded-lg text-primary dark:text-primary">
                             <Zap className="w-5 h-5" />
                         </div>
                     </div>
@@ -78,15 +78,15 @@ const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange }) 
                         return (
                             <>
                                 <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹{topRev?.revenue.toLocaleString()}</h3>
-                                <p className="text-xs text-indigo-500 font-medium mt-1">at {topRev?.label}</p>
+                                <p className="text-xs text-primary font-medium mt-1">at {topRev?.label}</p>
                             </>
                         );
                     })()}
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400">
+                        <div className="p-2 bg-emerald-50 dark:bg-success/10 rounded-lg text-emerald-600 dark:text-success">
                             <Users className="w-5 h-5" />
                         </div>
                     </div>
@@ -99,7 +99,7 @@ const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange }) 
             </div>
 
             {/* Main Trend Chart */}
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div>
                         <h4 className="font-bold text-slate-900 dark:text-white">Transaction Density (24h)</h4>
@@ -153,7 +153,7 @@ const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange }) 
             </div>
 
             {/* Hourly Revenue Breakdown */}
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                 <h4 className="font-bold text-slate-900 dark:text-white mb-6">Revenue Spread by Hour</h4>
                 <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
@@ -184,7 +184,7 @@ const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange }) 
             </div>
 
             {/* Time slot Table */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                 <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/20">
                     <h4 className="font-bold text-slate-900 dark:text-white text-sm">Hourly Transaction Ledger</h4>
                 </div>
@@ -205,7 +205,7 @@ const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange }) 
                                         {stat.label}
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <span className="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 px-2.5 py-1 rounded-full text-xs font-bold">
+                                        <span className="bg-indigo-50 text-primary dark:bg-primary/10 px-2.5 py-1 rounded-full text-xs font-bold">
                                             {stat.transactions}
                                         </span>
                                     </td>

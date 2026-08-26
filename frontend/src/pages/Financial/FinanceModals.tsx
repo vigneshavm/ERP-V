@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { X, Plus, Save } from 'lucide-react';
 
 interface FinanceModalsProps {
@@ -23,7 +23,7 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             {showExpenseModal && (
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-700 animate-in zoom-in-95 duration-200">
+                <div className="bg-white dark:bg-neutral-800 rounded-sm shadow-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-700 animate-in zoom-in-95 duration-200">
                     <div className="flex items-center justify-between p-6 border-b border-neutral-100 dark:border-neutral-700">
                         <h3 className="text-xl font-bold">Log New Expense</h3>
                         <button onClick={() => setShowExpenseModal(false)} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition"><X className="w-5 h-5" /></button>
@@ -85,7 +85,7 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
             )}
 
             {showChequeModal && (
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-700 animate-in zoom-in-95 duration-200">
+                <div className="bg-white dark:bg-neutral-800 rounded-sm shadow-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-700 animate-in zoom-in-95 duration-200">
                     <div className="flex items-center justify-between p-6 border-b border-neutral-100 dark:border-neutral-700">
                         <h3 className="text-xl font-bold">Register Cheque</h3>
                         <button onClick={() => setShowChequeModal(false)} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition"><X className="w-5 h-5" /></button>

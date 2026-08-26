@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from "../../redux/store";
@@ -106,7 +106,7 @@ const ResetPassword = () => {
     if (!sessionChecked) {
         return (
             <div className="h-screen bg-slate-900 flex items-center justify-center p-4">
-                <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+                <Loader2 className="w-10 h-10 animate-spin text-primary" />
             </div>
         );
     }
@@ -115,13 +115,13 @@ const ResetPassword = () => {
         <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-hidden bg-[#0F172A]">
             {/* Professional Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-indigo-500/10 blur-[120px] rounded-full" />
+                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/10 blur-[120px] rounded-full" />
                 <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] bg-blue-600/10 blur-[120px] rounded-full" />
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]" />
             </div>
 
             <div className="relative z-10 w-full max-w-[480px] animate-in fade-in zoom-in-95 duration-700">
-                <div className="bg-slate-900/50 backdrop-blur-3xl border border-white/5 rounded-3xl md:rounded-[2.5rem] shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12 max-h-[90dvh] overflow-y-auto scrollbar-none">
+                <div className="bg-slate-900/50 backdrop-blur-3xl border border-white/5 rounded-sm md:rounded-[2.5rem] shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12 max-h-[90dvh] overflow-y-auto scrollbar-none">
 
                     {/* Enterprise Identity */}
                     <div className="mb-6 md:mb-8">
@@ -140,7 +140,7 @@ const ResetPassword = () => {
 
                     {isSuccess ? (
                         <div className="text-center py-4 animate-in fade-in slide-in-from-bottom-8">
-                            <div className="w-24 h-24 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 border border-emerald-500/20">
+                            <div className="w-24 h-24 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto mb-8 border border-success/20">
                                 <CheckCircle2 className="w-12 h-12" />
                             </div>
                             <h2 className="text-2xl font-bold text-white mb-3">Update Successful</h2>
@@ -157,13 +157,13 @@ const ResetPassword = () => {
                                 <div className="group">
                                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 ml-1">New Password</label>
                                     <div className="relative">
-                                        <Lock className="w-4.5 h-4.5 text-slate-500 absolute left-4 top-4 group-focus-within:text-indigo-500 transition-colors" />
+                                        <Lock className="w-4.5 h-4.5 text-slate-500 absolute left-4 top-4 group-focus-within:text-primary transition-colors" />
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             placeholder="Min 8 characters"
-                                            className="w-full h-14 pl-12 pr-12 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-white font-mono tracking-widest transition-all p-4"
+                                            className="w-full h-14 pl-12 pr-12 bg-white/5 border border-white/10 rounded-sm outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-white font-mono tracking-widest transition-all p-4"
                                             disabled={isLoading}
                                         />
                                         <button
@@ -179,13 +179,13 @@ const ResetPassword = () => {
                                 <div className="group">
                                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 ml-1">Confirm Identity</label>
                                     <div className="relative">
-                                        <Lock className="w-4.5 h-4.5 text-slate-500 absolute left-4 top-4 group-focus-within:text-indigo-500 transition-colors" />
+                                        <Lock className="w-4.5 h-4.5 text-slate-500 absolute left-4 top-4 group-focus-within:text-primary transition-colors" />
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             placeholder="Repeat password"
-                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-white font-mono tracking-widest transition-all p-4"
+                                            className="w-full h-14 pl-12 pr-4 bg-white/5 border border-white/10 rounded-sm outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-white font-mono tracking-widest transition-all p-4"
                                             disabled={isLoading}
                                         />
                                     </div>
@@ -217,7 +217,7 @@ const ResetPassword = () => {
                             </div>
 
                             {(isError || localError) && (
-                                <div className="flex items-center gap-3 text-xs font-bold p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl animate-in zoom-in-95">
+                                <div className="flex items-center gap-3 text-xs font-bold p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-sm animate-in zoom-in-95">
                                     <AlertCircle className="w-5 h-5 shrink-0" />
                                     <span>{isError || localError}</span>
                                 </div>
@@ -270,7 +270,7 @@ const ResetPassword = () => {
 };
 
 const Requirement = ({ label, met }: { label: string, met: boolean }) => (
-    <div className={`flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider transition-all duration-300 ${met ? 'text-emerald-400' : 'text-slate-600'}`}>
+    <div className={`flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider transition-all duration-300 ${met ? 'text-success' : 'text-slate-600'}`}>
         <div className={`w-1 h-1 rounded-full ${met ? 'bg-emerald-400' : 'bg-slate-800'}`} />
         {label}
     </div>

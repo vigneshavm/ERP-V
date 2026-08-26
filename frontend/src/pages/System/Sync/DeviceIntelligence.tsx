@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
     Activity,
     Server,
@@ -50,17 +50,17 @@ const SyncIntelligence: React.FC = () => {
         <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
             {/* Premium Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-900 p-10 rounded-[3rem] border border-slate-800 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full -mr-32 -mt-32 blur-[100px] group-hover:bg-indigo-600/20 transition-all duration-1000" />
+                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full -mr-32 -mt-32 blur-[100px] group-hover:bg-primary/20 transition-all duration-1000" />
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-600/10 rounded-full -ml-32 -mb-32 blur-[80px]" />
 
                 <div className="relative z-10">
                     <div className="flex items-center gap-4 mb-3">
-                        <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-600/20 border border-indigo-500/30">
+                        <div className="w-14 h-14 bg-indigo-600 rounded-sm flex items-center justify-center text-white shadow-xl shadow-indigo-600/20 border border-primary/30">
                             <Cpu className="w-8 h-8" />
                         </div>
                         <div>
                             <h1 className="text-4xl font-black text-white tracking-tight leading-none italic uppercase">
-                                Sync <span className="text-indigo-400">Intelligence</span>
+                                Sync <span className="text-primary">Intelligence</span>
                             </h1>
                             <p className="text-slate-400 font-bold mt-2 uppercase tracking-[0.2em] text-[10px]">The Nervous System of Retail Reliability</p>
                         </div>
@@ -69,12 +69,12 @@ const SyncIntelligence: React.FC = () => {
 
                 <div className="flex items-center gap-4 relative z-10">
                     <div className="flex flex-col items-end mr-4">
-                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1.5">
+                        <span className="text-[10px] font-black text-success uppercase tracking-widest flex items-center gap-1.5">
                             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" /> Live Pulse Active
                         </span>
                         <span className="text-xs text-slate-500 font-medium">Auto-refreshing every 5s</span>
                     </div>
-                    <button className="flex items-center gap-3 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95">
+                    <button className="flex items-center gap-3 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95">
                         <ShieldCheck className="w-4 h-4" /> Global Force Resync
                     </button>
                 </div>
@@ -98,12 +98,12 @@ const SyncIntelligence: React.FC = () => {
                     {/* Critical Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
-                            { label: 'Active Nodes', value: devices.filter(d => d.isOnline).length, total: devices.length, icon: Server, color: 'text-indigo-400' },
-                            { label: 'Sync Health', value: '98.4%', total: 'Target: 99.9%', icon: Activity, color: 'text-emerald-400' },
-                            { label: 'Pending Ops', value: devices.reduce((acc, d) => acc + d.pendingOps, 0), total: 'Across Fleet', icon: Database, color: 'text-amber-400' },
-                            { label: 'Anomalies', value: anomalies.length, total: 'Last 24h', icon: AlertTriangle, color: 'text-rose-400' }
+                            { label: 'Active Nodes', value: devices.filter(d => d.isOnline).length, total: devices.length, icon: Server, color: 'text-primary' },
+                            { label: 'Sync Health', value: '98.4%', total: 'Target: 99.9%', icon: Activity, color: 'text-success' },
+                            { label: 'Pending Ops', value: devices.reduce((acc, d) => acc + d.pendingOps, 0), total: 'Across Fleet', icon: Database, color: 'text-warning' },
+                            { label: 'Anomalies', value: anomalies.length, total: 'Last 24h', icon: AlertTriangle, color: 'text-danger' }
                         ].map((stat, idx) => (
-                            <div key={idx} className="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 shadow-xl group hover:border-indigo-500/30 transition-all">
+                            <div key={idx} className="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 shadow-xl group hover:border-primary/30 transition-all">
                                 <stat.icon className={`w-8 h-8 ${stat.color} mb-6`} />
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">{stat.label}</p>
                                 <h3 className="text-3xl font-black text-white mb-1 group-hover:scale-110 origin-left transition-transform">{stat.value}</h3>
@@ -117,45 +117,45 @@ const SyncIntelligence: React.FC = () => {
                         <div className="col-span-12 lg:col-span-8 bg-slate-900 rounded-[3rem] p-10 border border-slate-800 shadow-xl relative overflow-hidden">
                             <div className="flex items-center justify-between mb-10 relative z-10">
                                 <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-3">
-                                    <Map className="w-6 h-6 text-indigo-500" /> Geographic Node Topology
+                                    <Map className="w-6 h-6 text-primary" /> Geographic Node Topology
                                 </h3>
                                 <div className="flex items-center gap-4">
-                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-emerald-500 uppercase tracking-widest"><span className="w-2 h-2 bg-emerald-500 rounded-full" /> Healthy</span>
-                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-amber-500 uppercase tracking-widest"><span className="w-2 h-2 bg-amber-500 rounded-full" /> Lagging</span>
-                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-rose-500 uppercase tracking-widest"><span className="w-2 h-2 bg-rose-500 rounded-full" /> Disconnected</span>
+                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-success uppercase tracking-widest"><span className="w-2 h-2 bg-emerald-500 rounded-full" /> Healthy</span>
+                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-warning uppercase tracking-widest"><span className="w-2 h-2 bg-amber-500 rounded-full" /> Lagging</span>
+                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-danger uppercase tracking-widest"><span className="w-2 h-2 bg-rose-500 rounded-full" /> Disconnected</span>
                                 </div>
                             </div>
 
                             {/* Visual Topology Representation */}
-                            <div className="h-64 flex items-center justify-center border border-slate-800/50 rounded-3xl bg-slate-950/50 relative">
+                            <div className="h-64 flex items-center justify-center border border-slate-800/50 rounded-sm bg-slate-950/50 relative">
                                 <div className="absolute inset-0 overflow-hidden opacity-20">
                                     <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #334155 1px, transparent 0)', backgroundSize: '24px 24px' }} />
                                 </div>
                                 <div className="z-10 flex items-center gap-12">
                                     <div className="flex flex-col items-center gap-4">
-                                        <div className="w-20 h-20 rounded-full bg-indigo-600/20 border-2 border-indigo-500 flex items-center justify-center text-indigo-400 animate-pulse">
+                                        <div className="w-20 h-20 rounded-full bg-primary/20 border-2 border-indigo-500 flex items-center justify-center text-primary animate-pulse">
                                             <Globe className="w-10 h-10" />
                                         </div>
-                                        <span className="text-[10px] font-black text-indigo-400 uppercase">Cloud HUB</span>
+                                        <span className="text-[10px] font-black text-primary uppercase">Cloud HUB</span>
                                     </div>
                                     <div className="w-32 h-[2px] bg-gradient-to-r from-indigo-500 to-emerald-500 relative">
                                         <div className="absolute top-1/2 left-0 w-2 h-2 bg-emerald-400 rounded-full -translate-y-1/2 animate-ping" style={{ left: '20%' }} />
                                         <div className="absolute top-1/2 left-0 w-2 h-2 bg-emerald-400 rounded-full -translate-y-1/2 animate-ping" style={{ left: '60%' }} />
                                     </div>
                                     <div className="flex flex-col items-center gap-4">
-                                        <div className="w-20 h-20 rounded-full bg-emerald-600/20 border-2 border-emerald-500 flex items-center justify-center text-emerald-400">
+                                        <div className="w-20 h-20 rounded-full bg-emerald-600/20 border-2 border-emerald-500 flex items-center justify-center text-success">
                                             <Server className="w-10 h-10" />
                                         </div>
-                                        <span className="text-[10px] font-black text-emerald-400 uppercase">Branch Server</span>
+                                        <span className="text-[10px] font-black text-success uppercase">Branch Server</span>
                                     </div>
                                     <div className="w-32 h-[2px] bg-gradient-to-r from-emerald-500 to-rose-500 relative">
                                         <div className="absolute top-1/2 left-0 w-2 h-2 bg-rose-400 rounded-full -translate-y-1/2" style={{ left: '40%' }} />
                                     </div>
                                     <div className="flex flex-col items-center gap-4">
-                                        <div className="w-20 h-20 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-rose-400">
+                                        <div className="w-20 h-20 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-danger">
                                             <Monitor className="w-10 h-10" />
                                         </div>
-                                        <span className="text-[10px] font-black text-rose-400 uppercase">POS Terminals</span>
+                                        <span className="text-[10px] font-black text-danger uppercase">POS Terminals</span>
                                     </div>
                                 </div>
                             </div>
@@ -163,25 +163,25 @@ const SyncIntelligence: React.FC = () => {
 
                         {/* AI Anomaly Panel */}
                         <div className="col-span-12 lg:col-span-4 bg-slate-900 rounded-[3rem] p-10 border border-slate-800 shadow-xl">
-                            <div className="flex items-center gap-3 mb-8 text-indigo-400">
+                            <div className="flex items-center gap-3 mb-8 text-primary">
                                 <Zap className="w-6 h-6 animate-pulse" />
                                 <h3 className="text-xl font-black italic uppercase tracking-tight text-white">Anomaly Alerts</h3>
                             </div>
                             <div className="space-y-4">
                                 {anomalies.map((alert, i) => (
-                                    <div key={i} className="p-4 bg-rose-500/5 border border-rose-500/20 rounded-2xl flex items-start gap-4 animate-in slide-in-from-right-4 duration-300">
-                                        <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+                                    <div key={i} className="p-4 bg-rose-500/5 border border-danger/20 rounded-sm flex items-start gap-4 animate-in slide-in-from-right-4 duration-300">
+                                        <AlertTriangle className="w-5 h-5 text-danger shrink-0 mt-0.5" />
                                         <div>
                                             <p className="text-xs font-bold text-white leading-tight mb-2 uppercase italic tracking-tight">{alert}</p>
-                                            <button className="text-[9px] font-black text-indigo-400 uppercase tracking-widest hover:text-indigo-300 transition-colors">
+                                            <button className="text-[9px] font-black text-primary uppercase tracking-widest hover:text-indigo-300 transition-colors">
                                                 Resolve Now →
                                             </button>
                                         </div>
                                     </div>
                                 ))}
                                 {anomalies.length === 0 && (
-                                    <div className="p-8 text-center bg-slate-800/30 rounded-3xl border border-dashed border-slate-700">
-                                        <ShieldCheck className="w-8 h-8 text-emerald-500 mx-auto mb-3" />
+                                    <div className="p-8 text-center bg-slate-800/30 rounded-sm border border-dashed border-slate-700">
+                                        <ShieldCheck className="w-8 h-8 text-success mx-auto mb-3" />
                                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">System architecture stable. All nodes reporting healthy sync states.</p>
                                     </div>
                                 )}
@@ -201,9 +201,9 @@ const SyncIntelligence: React.FC = () => {
                         <div className="flex items-center gap-4">
                             <div className="relative">
                                 <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-                                <input type="text" placeholder="Search devices..." className="pl-12 pr-6 py-4 bg-slate-950 border border-slate-800 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-indigo-500 transition-all w-72" />
+                                <input type="text" placeholder="Search devices..." className="pl-12 pr-6 py-4 bg-slate-950 border border-slate-800 rounded-sm text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-indigo-500 transition-all w-72" />
                             </div>
-                            <button className="p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-400 hover:text-white transition-all"><Filter className="w-5 h-5" /></button>
+                            <button className="p-4 bg-slate-950 border border-slate-800 rounded-sm text-slate-400 hover:text-white transition-all"><Filter className="w-5 h-5" /></button>
                         </div>
                     </div>
 
@@ -224,7 +224,7 @@ const SyncIntelligence: React.FC = () => {
                                     <tr key={device.id} className="group hover:bg-white/5 transition-all">
                                         <td className="px-10 py-8">
                                             <div className="flex items-center gap-5">
-                                                <div className={`p-4 rounded-2xl border ${device.status === 'ACTIVE' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-rose-500/10 border-rose-500/20 text-rose-500'} shadow-sm`}>
+                                                <div className={`p-4 rounded-sm border ${device.status === 'ACTIVE' ? 'bg-success/10 border-success/20 text-success' : 'bg-danger/10 border-danger/20 text-danger'} shadow-sm`}>
                                                     {device.platform === 'Windows' || device.platform === 'macOS' ? <Monitor className="w-6 h-6" /> : <Smartphone className="w-6 h-6" />}
                                                 </div>
                                                 <div>
@@ -232,7 +232,7 @@ const SyncIntelligence: React.FC = () => {
                                                     <div className="flex items-center gap-2 mt-1">
                                                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{device.id}</span>
                                                         <span className="w-1 h-1 bg-slate-700 rounded-full" />
-                                                        <span className="text-[10px] font-black text-indigo-400/70 uppercase tracking-widest">v{device.appVersion}</span>
+                                                        <span className="text-[10px] font-black text-primary/70 uppercase tracking-widest">v{device.appVersion}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -244,7 +244,7 @@ const SyncIntelligence: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-8 text-center">
                                             <div className="flex flex-col items-center gap-1">
-                                                <span className={`text-xs font-black ${device.isOnline ? 'text-emerald-500' : 'text-slate-500'}`}>
+                                                <span className={`text-xs font-black ${device.isOnline ? 'text-success' : 'text-slate-500'}`}>
                                                     {new Date(device.lastSyncAt).toLocaleTimeString()}
                                                 </span>
                                                 <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${device.isOnline ? 'text-emerald-600' : 'text-rose-600'}`}>
@@ -268,10 +268,10 @@ const SyncIntelligence: React.FC = () => {
                                         </td>
                                         <td className="px-10 py-8 text-right">
                                             <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
-                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-indigo-400 hover:border-indigo-400/30 transition-all shadow-sm" title="Force Resync">
+                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-primary hover:border-indigo-400/30 transition-all shadow-sm" title="Force Resync">
                                                     <RefreshCcw className="w-4 h-4" />
                                                 </button>
-                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-rose-400 hover:border-rose-400/30 transition-all shadow-sm" title="Freeze Device">
+                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-danger hover:border-rose-400/30 transition-all shadow-sm" title="Freeze Device">
                                                     <Power className="w-4 h-4" />
                                                 </button>
                                                 <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-white transition-all shadow-sm" title="Manage Diagnostics">
@@ -301,7 +301,7 @@ const SyncIntelligence: React.FC = () => {
                                 {entry.status === 'CONFLICT' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-rose-500" />}
                                 <div className="flex items-center gap-8">
                                     <div className="flex flex-col items-center gap-1">
-                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xs ${entry.status === 'SYNCED' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : entry.status === 'CONFLICT' ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 'bg-slate-500/10 text-slate-400 border border-slate-500/20'}`}>
+                                        <div className={`w-14 h-14 rounded-sm flex items-center justify-center font-black text-xs ${entry.status === 'SYNCED' ? 'bg-success/10 text-success border border-success/20' : entry.status === 'CONFLICT' ? 'bg-danger/10 text-danger border border-danger/20' : 'bg-slate-500/10 text-slate-400 border border-slate-500/20'}`}>
                                             {entry.status.charAt(0)}
                                         </div>
                                         <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em]">{entry.status}</span>
@@ -310,7 +310,7 @@ const SyncIntelligence: React.FC = () => {
                                         <div className="flex items-center gap-4 mb-2">
                                             <h4 className="text-xl font-black text-white uppercase tracking-tight italic">{entry.id}</h4>
                                             <ArrowRight className="w-4 h-4 text-slate-700" />
-                                            <span className="px-4 py-1.5 bg-slate-950 border border-slate-800 rounded-full text-[10px] font-black text-indigo-400 uppercase tracking-widest shadow-sm">
+                                            <span className="px-4 py-1.5 bg-slate-950 border border-slate-800 rounded-full text-[10px] font-black text-primary uppercase tracking-widest shadow-sm">
                                                 {entry.eventType} → {entry.entityId}
                                             </span>
                                         </div>
@@ -324,7 +324,7 @@ const SyncIntelligence: React.FC = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <button className="flex items-center gap-3 px-6 py-3 bg-slate-950 border border-slate-800 hover:border-indigo-500/30 hover:text-indigo-400 text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
+                                    <button className="flex items-center gap-3 px-6 py-3 bg-slate-950 border border-slate-800 hover:border-primary/30 hover:text-primary text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
                                         View Payload
                                     </button>
                                 </div>
@@ -337,14 +337,14 @@ const SyncIntelligence: React.FC = () => {
             {/* Monetization / Admin Layer Footer */}
             <div className="bg-gradient-to-r from-indigo-900/20 to-transparent p-10 rounded-[3rem] border border-slate-800/50 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div>
-                    <h4 className="text-xl font-black text-white italic uppercase tracking-tight mb-2">Synchronization Intelligence <span className="text-indigo-400 px-3 py-1 bg-indigo-500/10 rounded-full text-[10px] font-black align-middle ml-2">PREMIUM</span></h4>
+                    <h4 className="text-xl font-black text-white italic uppercase tracking-tight mb-2">Synchronization Intelligence <span className="text-primary px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black align-middle ml-2">PREMIUM</span></h4>
                     <p className="text-sm text-slate-400 font-medium">Powering zero-loss retail operations with transaction-level auditing and anomaly detection.</p>
                 </div>
                 <div className="flex gap-4">
-                    <button className="px-8 py-4 bg-slate-950 border border-slate-800 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-white transition-all shadow-xl">
+                    <button className="px-8 py-4 bg-slate-950 border border-slate-800 rounded-sm text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-white transition-all shadow-xl">
                         View Audit Log
                     </button>
-                    <button className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl transition-all shadow-indigo-600/20">
+                    <button className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl transition-all shadow-indigo-600/20">
                         Configuration Console
                     </button>
                 </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
     Plus,
     Search,
@@ -86,12 +86,12 @@ const EmailEngagement: React.FC = () => {
             <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm flex-shrink-0">
                 <div className="flex items-center gap-6 px-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">
+                        <div className="w-10 h-10 bg-indigo-600 rounded-sm flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">
                             <Inbox className="w-5 h-5 text-white/90" />
                         </div>
                         <div>
                             <h1 className="text-xl font-black tracking-tight leading-none italic uppercase">
-                                Customer <span className="text-indigo-600">Engagement</span>
+                                Customer <span className="text-primary">Engagement</span>
                             </h1>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Operational Email Hub</p>
                         </div>
@@ -99,12 +99,12 @@ const EmailEngagement: React.FC = () => {
 
                     <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden md:block" />
 
-                    <div className="hidden md:flex items-center gap-1 p-1 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                    <div className="hidden md:flex items-center gap-1 p-1 bg-slate-50 dark:bg-slate-800/50 rounded-sm">
                         {(['INBOX', 'AUTOMATIONS', 'INSIGHTS'] as const).map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTabLocal(tab)}
-                                className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                                className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
                             >
                                 {tab}
                             </button>
@@ -115,11 +115,11 @@ const EmailEngagement: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => dispatch(setActiveTab('GROW_DASHBOARD'))}
-                        className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-2xl transition-all shadow-sm flex items-center gap-2 text-xs font-black uppercase tracking-widest"
+                        className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-sm transition-all shadow-sm flex items-center gap-2 text-xs font-black uppercase tracking-widest"
                     >
                         <LayoutDashboard className="w-4 h-4" />
                     </button>
-                    <button className="flex items-center gap-3 px-6 py-3.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all">
+                    <button className="flex items-center gap-3 px-6 py-3.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all">
                         <Plus className="w-4 h-4" /> New Ticket
                     </button>
                 </div>
@@ -134,13 +134,13 @@ const EmailEngagement: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="Search by name, email or order #..."
-                                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-medium"
+                                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-medium"
                             />
                         </div>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Filter:</span>
-                                <button className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-900/30">Active</button>
+                                <button className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-primary rounded-lg text-[9px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-900/30">Active</button>
                                 <button className="px-3 py-1 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors font-medium">Unassigned</button>
                             </div>
                             <button className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
@@ -154,7 +154,7 @@ const EmailEngagement: React.FC = () => {
                             <div
                                 key={thread.id}
                                 onClick={() => setSelectedThreadId(thread.id)}
-                                className={`p-5 rounded-3xl cursor-pointer transition-all border-2 relative group ${selectedThreadId === thread.id ? 'bg-indigo-50/50 dark:bg-indigo-900/10 border-indigo-600 shadow-lg shadow-indigo-600/5' : 'bg-transparent border-transparent hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                                className={`p-5 rounded-sm cursor-pointer transition-all border-2 relative group ${selectedThreadId === thread.id ? 'bg-indigo-50/50 dark:bg-indigo-900/10 border-indigo-600 shadow-lg shadow-indigo-600/5' : 'bg-transparent border-transparent hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                             >
                                 <div className="flex justify-between items-start mb-2">
                                     <h4 className="font-black text-slate-900 dark:text-white line-clamp-1">{thread.customerName}</h4>
@@ -218,11 +218,11 @@ const EmailEngagement: React.FC = () => {
 
                         {/* Customer Message */}
                         <div className="flex gap-4 max-w-[85%]">
-                            <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center flex-shrink-0 text-indigo-600 font-black">
+                            <div className="w-10 h-10 rounded-sm bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center flex-shrink-0 text-primary font-black">
                                 AS
                             </div>
                             <div className="space-y-2">
-                                <div className="p-5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl rounded-tl-none shadow-sm">
+                                <div className="p-5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-sm rounded-tl-none shadow-sm">
                                     <p className="text-sm font-medium leading-relaxed italic">
                                         "Hi, I received my order #ORD-9942 this morning. However, looking at the silk saree, it seems to have a small tear near the border. I also noticed that the matching blouse piece is missing from the package. Can you please look into this immediately?"
                                     </p>
@@ -233,19 +233,19 @@ const EmailEngagement: React.FC = () => {
 
                         {/* AI Detection Notice */}
                         <div className="flex justify-center">
-                            <div className="px-4 py-2 bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/20 rounded-2xl flex items-center gap-3">
-                                <Sparkles className="w-3.5 h-3.5 text-rose-500" />
+                            <div className="px-4 py-2 bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/20 rounded-sm flex items-center gap-3">
+                                <Sparkles className="w-3.5 h-3.5 text-danger" />
                                 <span className="text-[10px] font-black text-rose-600 uppercase tracking-widest">AI: Sentiment detected as "Frustrated / Unhappy"</span>
                             </div>
                         </div>
 
                         {/* Agent Workspace (Reply) */}
                         <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
-                            <div className="p-4 bg-slate-900 dark:bg-indigo-950 rounded-3xl mb-4 relative overflow-hidden group">
+                            <div className="p-4 bg-slate-900 dark:bg-indigo-950 rounded-sm mb-4 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
-                                    <Sparkles className="w-5 h-5 text-indigo-400 animate-pulse" />
+                                    <Sparkles className="w-5 h-5 text-primary animate-pulse" />
                                 </div>
-                                <h4 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-3 flex items-center gap-2">
                                     Suggested AI Reply
                                 </h4>
                                 <p className="text-xs font-medium text-slate-100 leading-relaxed italic mb-4">
@@ -262,7 +262,7 @@ const EmailEngagement: React.FC = () => {
                                     placeholder="Type your response or '/' for templates..."
                                 />
                                 <div className="absolute bottom-4 right-4 flex items-center gap-2">
-                                    <button className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all">
+                                    <button className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-sm text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all">
                                         Send Reply <Send className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
@@ -275,8 +275,8 @@ const EmailEngagement: React.FC = () => {
                 <div className="col-span-12 lg:col-span-3 space-y-8">
                     {/* View Switcher Overlay for Stats */}
                     <div className="bg-slate-900 dark:bg-black rounded-[2.5rem] p-8 text-white relative overflow-hidden group shadow-2xl">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-[80px] -mr-16 -mt-16" />
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 mb-6 flex items-center gap-2">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[80px] -mr-16 -mt-16" />
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6 flex items-center gap-2">
                             <ShieldCheck className="w-4 h-4" /> Engagement DNA
                         </h3>
 
@@ -287,7 +287,7 @@ const EmailEngagement: React.FC = () => {
                                     <p className="text-2xl font-black italic">₹48.2K</p>
                                 </div>
                                 <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
-                                    <TrendingUp className="w-5 h-5 text-emerald-400" />
+                                    <TrendingUp className="w-5 h-5 text-success" />
                                 </div>
                             </div>
 
@@ -297,17 +297,17 @@ const EmailEngagement: React.FC = () => {
                                     <p className="text-2xl font-black italic">2</p>
                                 </div>
                                 <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
-                                    <FileText className="w-5 h-5 text-indigo-400" />
+                                    <FileText className="w-5 h-5 text-primary" />
                                 </div>
                             </div>
 
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Overdue Status</p>
-                                    <p className="text-2xl font-black text-rose-400 italic">None</p>
+                                    <p className="text-2xl font-black text-danger italic">None</p>
                                 </div>
                                 <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
-                                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                                    <CheckCircle2 className="w-5 h-5 text-success" />
                                 </div>
                             </div>
                         </div>
@@ -317,20 +317,20 @@ const EmailEngagement: React.FC = () => {
                     <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6">Engagement Actions</h4>
                         <div className="grid grid-cols-2 gap-4">
-                            <button className="p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-2xl flex flex-col items-center justify-center gap-3 transition-all border border-transparent hover:border-indigo-100 group">
-                                <CreditCard className="w-5 h-5 text-slate-400 group-hover:text-indigo-600" />
+                            <button className="p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-sm flex flex-col items-center justify-center gap-3 transition-all border border-transparent hover:border-indigo-100 group">
+                                <CreditCard className="w-5 h-5 text-slate-400 group-hover:text-primary" />
                                 <span className="text-[9px] font-black uppercase tracking-widest">Email Bill</span>
                             </button>
-                            <button className="p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-2xl flex flex-col items-center justify-center gap-3 transition-all border border-transparent hover:border-emerald-100 group">
+                            <button className="p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-sm flex flex-col items-center justify-center gap-3 transition-all border border-transparent hover:border-emerald-100 group">
                                 <Zap className="w-5 h-5 text-slate-400 group-hover:text-emerald-600" />
                                 <span className="text-[9px] font-black uppercase tracking-widest">Pay Link</span>
                             </button>
-                            <button className="p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-2xl flex flex-col items-center justify-center gap-3 transition-all border border-transparent hover:border-amber-100 group">
+                            <button className="p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-sm flex flex-col items-center justify-center gap-3 transition-all border border-transparent hover:border-amber-100 group">
                                 <RotateCcw className="w-5 h-5 text-slate-400 group-hover:text-amber-600" />
                                 <span className="text-[9px] font-black uppercase tracking-widest">Return Label</span>
                             </button>
-                            <button className="p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-2xl flex flex-col items-center justify-center gap-3 transition-all border border-transparent hover:border-indigo-100 group">
-                                <FileText className="w-5 h-5 text-slate-400 group-hover:text-indigo-600" />
+                            <button className="p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-sm flex flex-col items-center justify-center gap-3 transition-all border border-transparent hover:border-indigo-100 group">
+                                <FileText className="w-5 h-5 text-slate-400 group-hover:text-primary" />
                                 <span className="text-[9px] font-black uppercase tracking-widest">Ledger</span>
                             </button>
                         </div>

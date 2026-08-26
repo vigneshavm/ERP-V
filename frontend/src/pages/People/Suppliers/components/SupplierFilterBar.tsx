@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Search, RefreshCcw } from 'lucide-react';
 
 interface SupplierFilterBarProps {
@@ -35,7 +35,7 @@ const SupplierFilterBar: React.FC<SupplierFilterBarProps> = ({
             <div className="flex items-center gap-3">
                 {/* Search */}
                 <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
                     <input
                         type="text"
                         placeholder={placeholder}
@@ -53,7 +53,7 @@ const SupplierFilterBar: React.FC<SupplierFilterBarProps> = ({
                                 key={status}
                                 onClick={() => onFilterChange(status)}
                                 className={`px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-colors ${filterStatus === status
-                                    ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                                    ? 'bg-indigo-50 dark:bg-primary/10 text-primary dark:text-primary'
                                     : 'text-slate-400 dark:text-neutral-500 hover:text-slate-600 dark:hover:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700'
                                     }`}
                             >
@@ -69,7 +69,7 @@ const SupplierFilterBar: React.FC<SupplierFilterBarProps> = ({
             <div className="flex items-center gap-2">
                 <button
                     onClick={onRefresh}
-                    className={`p-2 text-slate-400 hover:text-indigo-500 hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-all ${isLoading ? 'animate-spin' : ''}`}
+                    className={`p-2 text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-all ${isLoading ? 'animate-spin' : ''}`}
                     title="Refresh"
                 >
                     <RefreshCcw className="w-4 h-4" />

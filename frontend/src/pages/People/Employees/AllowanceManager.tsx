@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../../redux/store";
 import {
@@ -209,7 +209,7 @@ const AllowanceManager: React.FC = () => {
             ) : (
                 <>
                     {activeTab === 'breakdown' && (
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm animate-in slide-in-from-bottom-4 duration-500">
+                        <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm animate-in slide-in-from-bottom-4 duration-500">
                             <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-800 dark:text-white">Employee Benefit Breakdown</h3>
@@ -254,7 +254,7 @@ const AllowanceManager: React.FC = () => {
                                     </div>
 
                                     <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus-within:ring-2 focus-within:ring-emerald-500/20">
-                                        <TrendingUp className="w-4 h-4 text-emerald-500" />
+                                        <TrendingUp className="w-4 h-4 text-success" />
                                         <select
                                             className="bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
                                             value={selectedBenefitId}
@@ -292,7 +292,7 @@ const AllowanceManager: React.FC = () => {
                                             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Worked Days</th>
                                             {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Prorated Basic</th>}
                                             {earnings.filter(c => selectedBenefitId === 'ALL' || c._id === selectedBenefitId).map(c => (
-                                                <th key={c._id} className="px-6 py-4 text-[10px] font-bold text-emerald-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                                                <th key={c._id} className="px-6 py-4 text-[10px] font-bold text-success uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                                                     {c.name} {isTeaAllowanceSelected && '(Rate)'}
                                                 </th>
                                             ))}
@@ -388,7 +388,7 @@ const AllowanceManager: React.FC = () => {
                                                         }
 
                                                         return (
-                                                            <td key={c._id} className="px-6 py-4 font-mono text-sm text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                                                            <td key={c._id} className="px-6 py-4 font-mono text-sm text-emerald-600 dark:text-success whitespace-nowrap">
                                                                 {amount > 0 ? `₹${Math.round(amount).toLocaleString()}` : '-'}
                                                             </td>
                                                         );
@@ -455,7 +455,7 @@ const AllowanceManager: React.FC = () => {
                                                 }, 0);
 
                                                 return (
-                                                    <td key={c._id} className="px-6 py-4 text-emerald-600 dark:text-emerald-400 font-mono">
+                                                    <td key={c._id} className="px-6 py-4 text-emerald-600 dark:text-success font-mono">
                                                         ₹{Math.round(total).toLocaleString()}
                                                     </td>
                                                 );
@@ -538,7 +538,7 @@ const AllowanceManager: React.FC = () => {
                         <div className="grid lg:grid-cols-2 gap-8 animate-in slide-in-from-bottom-4 duration-500">
                             {/* Earnings Section */}
                             <div className="space-y-4">
-                                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider text-sm px-1">
+                                <div className="flex items-center gap-2 text-emerald-600 dark:text-success font-bold uppercase tracking-wider text-sm px-1">
                                     <TrendingUp className="w-4 h-4" />
                                     Earnings (Allowances)
                                 </div>
@@ -562,7 +562,7 @@ const AllowanceManager: React.FC = () => {
 
                             {/* Deductions Section */}
                             <div className="space-y-4">
-                                <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold uppercase tracking-wider text-sm px-1">
+                                <div className="flex items-center gap-2 text-rose-600 dark:text-danger font-bold uppercase tracking-wider text-sm px-1">
                                     <TrendingDown className="w-4 h-4" />
                                     Deductions
                                 </div>
@@ -591,7 +591,7 @@ const AllowanceManager: React.FC = () => {
             {/* Form Modal */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700">
+                    <div className="bg-white dark:bg-slate-800 rounded-sm shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700">
                         <div className="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
                             <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                                 {editingId ? <Pencil className="w-5 h-5 text-blue-600" /> : <PlusCircle className="w-5 h-5 text-blue-600" />}
@@ -707,8 +707,8 @@ const ComponentCard = ({
         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 group hover:shadow-md transition-all flex items-center justify-between">
             <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-colors ${component.type === 'EARNING'
-                    ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-100'
-                    : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 group-hover:bg-rose-100'
+                    ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-success group-hover:bg-emerald-100'
+                    : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-danger group-hover:bg-rose-100'
                     }`}>
                     {component.name.charAt(0)}
                 </div>
@@ -723,7 +723,7 @@ const ComponentCard = ({
                         </span>
                         {component.calculationType === 'FLAT' && <span>₹{component.defaultValue.toLocaleString()}</span>}
                         <span className="text-slate-300 dark:text-slate-700">|</span>
-                        <span className={`flex items-center gap-1 ${component.isTaxable ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`}>
+                        <span className={`flex items-center gap-1 ${component.isTaxable ? 'text-amber-600 dark:text-warning' : 'text-slate-400'}`}>
                             <CheckCircle2 className="w-3 h-3" />
                             {component.isTaxable ? 'Taxable' : 'Non-Taxable'}
                         </span>
@@ -739,7 +739,7 @@ const ComponentCard = ({
                 </button>
                 <button
                     onClick={onDelete}
-                    className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all"
+                    className="p-2 text-slate-300 hover:text-danger hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all"
                 >
                     <Trash2 className="w-4 h-4" />
                 </button>

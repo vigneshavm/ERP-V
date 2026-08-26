@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 import { toast } from "react-toastify";
@@ -386,7 +386,7 @@ const Return = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             {/* Invoice Selection */}
-            <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+            <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden">
               <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
                 <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider flex items-center gap-2">
                   <FileText className="w-4 h-4" /> Select Invoice
@@ -428,7 +428,7 @@ const Return = () => {
 
             {/* Customer Info */}
             {formData.customer && (
-              <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+              <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden">
                 <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
                   <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider flex items-center gap-2">
                     <User className="w-4 h-4" /> Customer
@@ -475,7 +475,7 @@ const Return = () => {
 
             {/* Return Items */}
             {formData.items.length > 0 && (
-              <div className="glass-panel border border-default/30 rounded-2xl shadow-sm overflow-hidden">
+              <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden">
                 <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
                   <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Return Items</h2>
                 </div>
@@ -686,7 +686,7 @@ const Return = () => {
 
           {/* Summary Sidebar */}
           <div className="lg:col-span-1">
-            <div className="glass-panel border border-indigo-100 rounded-2xl shadow-sm overflow-hidden sticky top-4">
+            <div className="glass-panel border border-indigo-100 rounded-sm shadow-sm overflow-hidden sticky top-4">
               <div className="bg-primary/10/50 px-6 py-3 border-b border-indigo-100">
                 <h2 className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Return Summary</h2>
               </div>

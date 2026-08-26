@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
 import Layout from "../../../components/shared/Layout";
@@ -141,7 +141,7 @@ const BankReconciliation: React.FC = () => {
 
                 {/* Parity Pulse KPIs */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
+                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
                         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Landmark className="w-16 h-16" />
                         </div>
@@ -150,13 +150,13 @@ const BankReconciliation: React.FC = () => {
                         <p className="text-[10px] text-neutral-500 mt-2 font-bold italic underline decoration-neutral-200">As of Jan 11, 2026</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
+                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.1em] mb-1">ERP Ledger Balance</p>
                         <h3 className="text-2xl font-black tabular-nums">₹{metrics.erp_bal.toLocaleString()}</h3>
                         <p className="text-[10px] text-neutral-500 mt-2 font-bold italic underline decoration-neutral-200">System Recorded</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
+                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.1em] mb-1">Reconciliation Delta</p>
                         <h3 className="text-2xl font-black text-error">₹{metrics.difference.toLocaleString()}</h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -165,7 +165,7 @@ const BankReconciliation: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-primary text-white p-6 rounded-3xl shadow-xl shadow-primary/20 relative group overflow-hidden">
+                    <div className="bg-primary text-white p-6 rounded-sm shadow-xl shadow-primary/20 relative group overflow-hidden">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700" />
                         <p className="text-[10px] font-black text-primary-light uppercase tracking-[0.1em] mb-1">Unresolved Items</p>
                         <h3 className="text-2xl font-black italic">{metrics.unresolved} <span className="text-xs font-bold uppercase not-italic opacity-80">Pending Action</span></h3>
@@ -180,7 +180,7 @@ const BankReconciliation: React.FC = () => {
                         <input
                             type="text"
                             placeholder="Search UTR, Ref or Issue..."
-                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -214,7 +214,7 @@ const BankReconciliation: React.FC = () => {
                                     <div className="flex-1 w-full text-center md:text-left">
                                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3">Bank Statement</p>
                                         {item.bankEntry ? (
-                                            <div className="bg-neutral-50 dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800">
+                                            <div className="bg-neutral-50 dark:bg-neutral-900 p-4 rounded-sm border border-neutral-100 dark:border-neutral-800">
                                                 <div className="flex items-center justify-between mb-1">
                                                     <span className="text-xs font-black italic">₹{item.bankEntry.amount.toLocaleString()}</span>
                                                     <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase ${item.bankEntry.type === 'CREDIT' ? 'bg-success/10 text-success' : 'bg-error text-white'}`}>
@@ -225,7 +225,7 @@ const BankReconciliation: React.FC = () => {
                                                 <p className="text-[9px] text-neutral-400 mt-1 uppercase font-black">UTR: {item.bankEntry.utr}</p>
                                             </div>
                                         ) : (
-                                            <div className="p-4 rounded-2xl border border-dashed border-neutral-200 flex flex-col items-center justify-center min-h-[85px]">
+                                            <div className="p-4 rounded-sm border border-dashed border-neutral-200 flex flex-col items-center justify-center min-h-[85px]">
                                                 <Unlink className="w-5 h-5 text-neutral-300 mb-1" />
                                                 <p className="text-[10px] italic font-bold text-neutral-400">No matching credit found</p>
                                             </div>
@@ -246,7 +246,7 @@ const BankReconciliation: React.FC = () => {
                                     <div className="flex-1 w-full text-center md:text-right">
                                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3">ERP Bank Ledger</p>
                                         {item.erpEntry ? (
-                                            <div className="bg-neutral-50 dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800">
+                                            <div className="bg-neutral-50 dark:bg-neutral-900 p-4 rounded-sm border border-neutral-100 dark:border-neutral-800">
                                                 <div className="flex items-center justify-between mb-1 flex-row-reverse">
                                                     <span className="text-xs font-black italic">₹{item.erpEntry.amount.toLocaleString()}</span>
                                                     <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase ${item.erpEntry.direction === 'IN' ? 'bg-primary/10 text-primary' : 'bg-neutral-500 text-white'}`}>
@@ -257,7 +257,7 @@ const BankReconciliation: React.FC = () => {
                                                 <p className="text-[9px] text-neutral-400 mt-1 uppercase font-black">Ref: {item.erpEntry.reference_no}</p>
                                             </div>
                                         ) : (
-                                            <div className="p-4 rounded-2xl border border-dashed border-neutral-200 flex flex-col items-center justify-center min-h-[85px]">
+                                            <div className="p-4 rounded-sm border border-dashed border-neutral-200 flex flex-col items-center justify-center min-h-[85px]">
                                                 <Link className="w-5 h-5 text-primary mb-1" />
                                                 <p className="text-[10px] italic font-bold text-primary">Post entry to ledger</p>
                                             </div>
@@ -266,7 +266,7 @@ const BankReconciliation: React.FC = () => {
                                 </div>
 
                                 {item.status !== 'MATCHED' && (
-                                    <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-primary/5 border border-primary/10 rounded-2xl group/advice">
+                                    <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-primary/5 border border-primary/10 rounded-sm group/advice">
                                         <div className="flex items-center gap-3">
                                             <div className="p-2 bg-primary text-white rounded-xl shadow-lg shadow-primary/20">
                                                 <Zap className="w-4 h-4" />
@@ -348,7 +348,7 @@ const BankReconciliation: React.FC = () => {
                                 </h4>
 
                                 <div className="space-y-4 mb-8">
-                                    <div className="p-4 bg-white/5 border border-white/10 rounded-2xl group/sub hover:bg-white/10 transition-all cursor-pointer">
+                                    <div className="p-4 bg-white/5 border border-white/10 rounded-sm group/sub hover:bg-white/10 transition-all cursor-pointer">
                                         <div className="flex justify-between items-start mb-2">
                                             <span className="text-[10px] font-black text-error uppercase tracking-widest">Fraud Risk Alert</span>
                                             <Clock className="w-3.5 h-3.5 text-neutral-500" />
@@ -359,14 +359,14 @@ const BankReconciliation: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <button className="w-full py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-[0.1em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                                <button className="w-full py-4 bg-primary text-white rounded-sm font-black text-xs uppercase tracking-[0.1em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
                                     Execute Auto-Resolution <Zap className="w-4 h-4 fill-current" />
                                 </button>
                             </div>
                         </div>
 
                         {/* Quick Tips */}
-                        <div className="p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl border border-neutral-100 dark:border-neutral-800 flex gap-3 italic">
+                        <div className="p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-sm border border-neutral-100 dark:border-neutral-800 flex gap-3 italic">
                             <Activity className="w-5 h-5 text-neutral-400 shrink-0" />
                             <p className="text-[10px] text-neutral-500 leading-relaxed font-medium">
                                 The Reconciliation Agent uses <span className="text-primary font-black uppercase">Deep Settlement Matching</span> to ensure every rupee from your payment terminal actually hits your bank account without leakages.

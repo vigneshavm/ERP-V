@@ -1,11 +1,11 @@
 {
     "returns": [
-        { "id": "#TRX-9001", "terminal": "Terminal 1", "cashier": "Cashier 1", "time": "10:41 AM", "amount": "$145.50" },
-        { "id": "#TRX-9002", "terminal": "Terminal 2", "cashier": "Cashier 2", "time": "10:42 AM", "amount": "$245.50" },
-        { "id": "#TRX-9003", "terminal": "Terminal 3", "cashier": "Cashier 3", "time": "10:43 AM", "amount": "$345.50" },
-        { "id": "#TRX-9004", "terminal": "Terminal 4", "cashier": "Cashier 4", "time": "10:44 AM", "amount": "$445.50" },
-        { "id": "#TRX-9005", "terminal": "Terminal 5", "cashier": "Cashier 5", "time": "10:45 AM", "amount": "$545.50" },
-        { "id": "#TRX-9006", "terminal": "Terminal 6", "cashier": "Cashier 6", "time": "10:46 AM", "amount": "$645.50" }
+        { "id": "#TRX-9001", "terminal": "Terminal 1", "cashier": "Arjun Mehta", "time": "10:41 AM", "amount": "$145.50" },
+        { "id": "#TRX-9002", "terminal": "Terminal 2", "cashier": "Priya Sharma", "time": "10:42 AM", "amount": "$245.50" },
+        { "id": "#TRX-9003", "terminal": "Terminal 3", "cashier": "Rohit Verma", "time": "10:43 AM", "amount": "$345.50" },
+        { "id": "#TRX-9004", "terminal": "Terminal 4", "cashier": "Sneha Iyer", "time": "10:44 AM", "amount": "$445.50" },
+        { "id": "#TRX-9005", "terminal": "Terminal 5", "cashier": "Kiran Das", "time": "10:45 AM", "amount": "$545.50" },
+        { "id": "#TRX-9006", "terminal": "Terminal 6", "cashier": "Anjali Verma", "time": "10:46 AM", "amount": "$645.50" }
     ]
 }
 

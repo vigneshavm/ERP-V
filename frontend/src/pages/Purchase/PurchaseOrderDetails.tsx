@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { ArrowLeft, CheckCircle, FileOutput, Printer, Lock, Info, Clock, Activity, FileText, CheckCircle2, XCircle, ChevronRight, Zap, ShieldCheck } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../hooks/usePurchaseOrders";
 import { useSelector, useDispatch } from 'react-redux';
@@ -83,7 +83,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
     if (!order) {
         return (
             <div className="p-20 text-center">
-                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-800 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center mx-auto mb-6">
                     <Info className="w-10 h-10 text-neutral-400" />
                 </div>
                 <h3 className="text-sm font-black uppercase tracking-widest text-neutral-900 dark:text-white">Node Not Found</h3>
@@ -119,7 +119,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             {/* Context Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
-                    <button onClick={handleBack} className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl hover:bg-neutral-50 shadow-sm transition active:scale-95">
+                    <button onClick={handleBack} className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm hover:bg-neutral-50 shadow-sm transition active:scale-95">
                         <ArrowLeft className="w-5 h-5 text-neutral-500" />
                     </button>
                     <div>
@@ -136,14 +136,14 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl hover:bg-neutral-50 shadow-sm transition active:scale-95">
+                    <button className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm hover:bg-neutral-50 shadow-sm transition active:scale-95">
                         <Printer className="w-5 h-5 text-neutral-400" />
                     </button>
 
                     {canSubmit && (
                         <button
                             onClick={() => onUpdateStatus?.(order.id, 'Pending Approval')}
-                            className="px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
+                            className="px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
                         >
                             <Zap className="w-4 h-4" /> Submit Protocol
                         </button>
@@ -153,13 +153,13 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                         <div className="flex gap-3">
                             <button
                                 onClick={() => onUpdateStatus?.(order.id, 'Draft')}
-                                className="px-6 py-3 bg-rose-50 text-rose-600 dark:bg-rose-900/20 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all active:scale-95 flex items-center gap-2"
+                                className="px-6 py-3 bg-rose-50 text-rose-600 dark:bg-rose-900/20 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all active:scale-95 flex items-center gap-2"
                             >
                                 <XCircle className="w-4 h-4" /> Reject Node
                             </button>
                             <button
                                 onClick={() => onUpdateStatus?.(order.id, 'Approved')}
-                                className="px-6 py-3 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-600 transition hover:scale-105 active:scale-95"
+                                className="px-6 py-3 bg-emerald-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-600 transition hover:scale-105 active:scale-95"
                             >
                                 <CheckCircle2 className="w-4 h-4" /> Authorize Node
                             </button>
@@ -169,7 +169,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {canReceive && (
                         <button
                             onClick={() => setShowReceiveModal(true)}
-                            className="px-6 py-3 bg-indigo-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:bg-indigo-600 transition hover:scale-105 active:scale-95"
+                            className="px-6 py-3 bg-indigo-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:bg-indigo-600 transition hover:scale-105 active:scale-95"
                         >
                             <FileOutput className="w-4 h-4" /> Initialize Receipt
                         </button>
@@ -178,7 +178,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {canBill && (
                         <button
                             onClick={() => setShowBillModal(true)}
-                            className="px-6 py-3 bg-purple-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-purple-500/20 flex items-center gap-2 hover:bg-purple-600 transition hover:scale-105 active:scale-95"
+                            className="px-6 py-3 bg-purple-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-purple-500/20 flex items-center gap-2 hover:bg-purple-600 transition hover:scale-105 active:scale-95"
                         >
                             <FileText className="w-4 h-4" /> Generate Invoice
                         </button>
@@ -187,7 +187,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {canPay && (
                         <button
                             onClick={() => onUpdateStatus?.(order.id, 'Paid')}
-                            className="px-6 py-3 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-600 transition hover:scale-105 active:scale-95"
+                            className="px-6 py-3 bg-emerald-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-600 transition hover:scale-105 active:scale-95"
                         >
                             <ShieldCheck className="w-4 h-4" /> Resolve Settlement
                         </button>
@@ -303,10 +303,10 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {order.notes && (
                         <div className="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 p-10 rounded-[3rem] relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-6 opacity-10">
-                                <FileText className="w-20 h-20 text-amber-500" />
+                                <FileText className="w-20 h-20 text-warning" />
                             </div>
-                            <h4 className="text-[10px] font-black text-amber-900/60 dark:text-amber-400 uppercase tracking-widest mb-4">Protocol Narrative</h4>
-                            <p className="text-xs font-bold text-amber-800 dark:text-amber-300 italic leading-relaxed pl-6 border-l-2 border-amber-500/30">
+                            <h4 className="text-[10px] font-black text-amber-900/60 dark:text-warning uppercase tracking-widest mb-4">Protocol Narrative</h4>
+                            <p className="text-xs font-bold text-amber-800 dark:text-amber-300 italic leading-relaxed pl-6 border-l-2 border-warning/30">
                                 {order.notes}
                             </p>
                         </div>
@@ -323,7 +323,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 mb-10">Operational Intel</h4>
                             <div className="space-y-8">
                                 <div className="flex items-start gap-5">
-                                    <div className="p-3 bg-white/5 rounded-2xl">
+                                    <div className="p-3 bg-white/5 rounded-sm">
                                         <Activity className="w-5 h-5 text-primary" />
                                     </div>
                                     <div>
@@ -332,8 +332,8 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-5">
-                                    <div className="p-3 bg-white/5 rounded-2xl">
-                                        <Clock className="w-5 h-5 text-amber-400" />
+                                    <div className="p-3 bg-white/5 rounded-sm">
+                                        <Clock className="w-5 h-5 text-warning" />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">ETA Constraint</p>
@@ -341,8 +341,8 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-5">
-                                    <div className="p-3 bg-white/5 rounded-2xl">
-                                        <Zap className="w-5 h-5 text-emerald-400" />
+                                    <div className="p-3 bg-white/5 rounded-sm">
+                                        <Zap className="w-5 h-5 text-success" />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Fiscal Aggregate</p>
@@ -355,7 +355,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 
                     <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-primary/10 rounded-2xl text-primary">
+                            <div className="p-3 bg-primary/10 rounded-sm text-primary">
                                 <ShieldCheck className="w-6 h-6" />
                             </div>
                             <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Protocol Validator</h4>

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Check, X, Zap, Shield, Crown, Building, Loader2, CreditCard, ChevronRight, Activity, LucideIcon } from 'lucide-react';
 import api from "../../../services/api";
@@ -89,16 +89,16 @@ const SubscriptionTab: React.FC = () => {
             {/* Active Subscription Summary */}
             <section className="bg-slate-900 rounded-[2.5rem] p-10 flex flex-col md:flex-row items-center gap-10 border border-slate-800 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
-                    <Shield className="w-64 h-64 text-emerald-500" />
+                    <Shield className="w-64 h-64 text-success" />
                 </div>
 
-                <div className="relative z-10 w-24 h-24 rounded-3xl bg-emerald-600 flex items-center justify-center shadow-xl shadow-emerald-500/20 shrink-0">
+                <div className="relative z-10 w-24 h-24 rounded-sm bg-emerald-600 flex items-center justify-center shadow-xl shadow-emerald-500/20 shrink-0">
                     <Activity className="w-12 h-12 text-white" />
                 </div>
 
                 <div className="relative z-10 flex-1 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-                        <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-[10px] font-black tracking-widest border border-emerald-500/20">ACTIVE SUBSCRIPTION</span>
+                        <span className="px-3 py-1 bg-success/10 text-success rounded-full text-[10px] font-black tracking-widest border border-success/20">ACTIVE SUBSCRIPTION</span>
                         <span className="text-slate-500 text-xs font-bold font-mono">ID: BZA-9284-X</span>
                     </div>
                     <h3 className="text-3xl font-black text-white leading-tight mb-2">
@@ -115,10 +115,10 @@ const SubscriptionTab: React.FC = () => {
                 </div>
 
                 <div className="relative z-10 space-y-3 shrink-0">
-                    <button className="w-full px-8 py-3.5 bg-white text-slate-900 rounded-2xl text-[11px] font-black tracking-widest shadow-lg active:scale-95 transition-all">
+                    <button className="w-full px-8 py-3.5 bg-white text-slate-900 rounded-sm text-[11px] font-black tracking-widest shadow-lg active:scale-95 transition-all">
                         VIEW BILLING HISTORY
                     </button>
-                    <button className="w-full px-8 py-3.5 bg-slate-800 text-slate-300 rounded-2xl text-[11px] font-black tracking-widest border border-slate-700 hover:bg-slate-700 transition-all">
+                    <button className="w-full px-8 py-3.5 bg-slate-800 text-slate-300 rounded-sm text-[11px] font-black tracking-widest border border-slate-700 hover:bg-slate-700 transition-all">
                         CANCEL PLAN
                     </button>
                 </div>
@@ -147,7 +147,7 @@ const SubscriptionTab: React.FC = () => {
                                 )}
 
                                 <div className="mb-8">
-                                    <div className={`w-14 h-14 rounded-2xl mb-4 flex items-center justify-center transition-transform group-hover:scale-110 duration-500 ${plan.popular ? 'bg-indigo-600 text-white shadow-xl' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'
+                                    <div className={`w-14 h-14 rounded-sm mb-4 flex items-center justify-center transition-transform group-hover:scale-110 duration-500 ${plan.popular ? 'bg-indigo-600 text-white shadow-xl' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'
                                         }`}>
                                         <Icon className="w-7 h-7" />
                                     </div>
@@ -165,7 +165,7 @@ const SubscriptionTab: React.FC = () => {
                                 <div className="space-y-4 mb-10 flex-1">
                                     {plan.features.map(f => (
                                         <div key={f} className="flex items-center gap-3 text-xs font-bold text-slate-600 dark:text-slate-400">
-                                            <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                                            <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-success flex items-center justify-center shrink-0">
                                                 <Check className="w-3 h-3" />
                                             </div>
                                             {f}
@@ -175,7 +175,7 @@ const SubscriptionTab: React.FC = () => {
 
                                 <button
                                     onClick={() => !isCurrent && handleSwitchPlan(plan.code)}
-                                    className={`w-full py-4 rounded-2xl text-[11px] font-black tracking-widest transition-all ${isCurrent
+                                    className={`w-full py-4 rounded-sm text-[11px] font-black tracking-widest transition-all ${isCurrent
                                         ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-200 dark:shadow-none'
                                         : plan.popular
                                             ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200 dark:shadow-none hover:bg-slate-900'
@@ -195,7 +195,7 @@ const SubscriptionTab: React.FC = () => {
                 <div className="flex items-center gap-6">
                     <div className="flex -space-x-4">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-sm">
+                            <div key={i} className="w-12 h-12 rounded-sm bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center shadow-sm">
                                 <CreditCard className="w-5 h-5 text-slate-400" />
                             </div>
                         ))}
@@ -208,9 +208,9 @@ const SubscriptionTab: React.FC = () => {
                 <div className="flex items-center gap-4">
                     <div className="text-right hidden md:block">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Assistance</p>
-                        <p className="text-xs font-bold text-indigo-600">Contact billing support</p>
+                        <p className="text-xs font-bold text-primary">Contact billing support</p>
                     </div>
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg">
+                    <div className="w-12 h-12 rounded-sm bg-indigo-600 text-white flex items-center justify-center shadow-lg">
                         <ChevronRight className="w-6 h-6" />
                     </div>
                 </div>

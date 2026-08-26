@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Search } from 'lucide-react';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 
 const BillsFilters: React.FC<Props> = ({ searchTerm, onSearchChange, statusFilter, onStatusFilterChange }) => {
     return (
-        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-4">
+        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-4">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="w-full sm:w-96 relative">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
@@ -31,7 +31,7 @@ const FormInput: React.FC<FormInputProps> & { IconWrapper: React.FC<IconWrapperP
         <div className={`${className}`}>
             {label && (
                 <label htmlFor={name} className="block text-sm font-bold text-secondary mb-2 uppercase tracking-wide">
-                    {label} {required && <span className="text-rose-500">*</span>}
+                    {label} {required && <span className="text-danger">*</span>}
                 </label>
             )}
             <div className="relative">

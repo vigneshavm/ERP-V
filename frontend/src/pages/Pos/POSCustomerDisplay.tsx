@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { CartItem } from "../../types/sales";
 
@@ -47,7 +47,7 @@ export const POSCustomerDisplay: React.FC = () => {
 
             <div className="flex-1 flex overflow-hidden">
                 {/* Cart List */}
-                <div className="flex-1 p-6 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-800 m-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="flex-1 p-6 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-800 m-4 rounded-sm shadow-sm border border-slate-200 dark:border-slate-700">
                     <h2 className="text-xl font-bold mb-4 border-b pb-2 dark:border-slate-700">Your Basket</h2>
 
                     {state.cart.length === 0 ? (
@@ -79,7 +79,7 @@ export const POSCustomerDisplay: React.FC = () => {
                 {/* Right Side: Totals & Ads */}
                 <div className="w-1/3 flex flex-col gap-4 p-4 pl-0">
                     {/* Total Card */}
-                    <div className="bg-indigo-600 text-white rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center">
+                    <div className="bg-indigo-600 text-white rounded-sm p-8 shadow-xl flex flex-col items-center justify-center text-center">
                         <span className="text-indigo-200 uppercase tracking-widest font-bold mb-2">Total Amount</span>
                         <div className="text-6xl font-extrabold font-mono tracking-tight">
                             ₹{state.total.toFixed(2)}
@@ -88,7 +88,7 @@ export const POSCustomerDisplay: React.FC = () => {
                     </div>
 
                     {/* QR / Payment / Ad Placeholder */}
-                    <div className="flex-1 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 flex items-center justify-center relative overflow-hidden">
+                    <div className="flex-1 bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 p-6 flex items-center justify-center relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-900 z-0"></div>
                         <div className="z-10 text-center">
                             <span className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 block">Scan to Pay</span>

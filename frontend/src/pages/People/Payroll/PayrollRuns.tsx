@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
@@ -130,7 +130,7 @@ const PayrollRuns = () => {
                                         <td className="px-6 py-3 text-right">
                                             <button
                                                 onClick={() => navigate(`/people/payroll/payslip/${p._id}`, { state: { payslip: p } })}
-                                                className="text-indigo-600 hover:underline text-sm font-medium"
+                                                className="text-primary hover:underline text-sm font-medium"
                                             >
                                                 View Slip
                                             </button>
@@ -253,7 +253,7 @@ const PayrollRuns = () => {
                                             <button
                                                 title="View Details"
                                                 onClick={() => navigate(`/people/payroll/run/${run._id}`)}
-                                                className="hover:text-indigo-600 transition-colors"
+                                                className="hover:text-primary transition-colors"
                                             >
                                                 <Eye size={18} />
                                             </button>

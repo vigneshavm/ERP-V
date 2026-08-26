@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Trash2, Plus, Search, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, RotateCcw, Truck, Ban, ShieldCheck, Zap, Info, Activity, ChevronDown } from 'lucide-react';
 import { PurchaseReturn, PurchaseReturnItem, ReturnReason, PurchaseReturnStatus, GRN, PurchaseOrder } from "../../types/purchase";
@@ -219,7 +219,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                     <select
                                         value={returnData.vendor_id || ''}
                                         onChange={(e) => handleVendorChange(e.target.value)}
-                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
+                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
                                     >
                                         <option value="">Select entity...</option>
                                         {vendors.map(v => <option key={v._id || v.id} value={v._id || v.id}>{v.businessName || v.name}</option>)}
@@ -231,7 +231,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                         value={returnData.grn_id || ''}
                                         onChange={(e) => handleGRNChange(e.target.value)}
                                         disabled={!returnData.vendor_id}
-                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30 cursor-pointer"
+                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30 cursor-pointer"
                                     >
                                         <option value="">Select node...</option>
                                         {grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({new Date(g.receivedDate).toLocaleDateString()})</option>)}
@@ -243,7 +243,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                         <select
                                             value={returnData.reason}
                                             onChange={(e) => setReturnData({ ...returnData, reason: e.target.value as ReturnReason })}
-                                            className="w-full pl-6 pr-12 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-rose-500/10 outline-none appearance-none cursor-pointer"
+                                            className="w-full pl-6 pr-12 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-rose-500/10 outline-none appearance-none cursor-pointer"
                                         >
                                             <option value="Defective">Defective / Damaged</option>
                                             <option value="Wrong Item">Wrong Item Received</option>
@@ -260,7 +260,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                         type="date"
                                         value={returnData.return_date}
                                         onChange={(e) => setReturnData({ ...returnData, return_date: e.target.value })}
-                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 outline-none"
+                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 outline-none"
                                     />
                                 </div>
                             </div>
@@ -321,7 +321,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                             <tr>
                                                 <td colSpan={5} className="px-8 py-32 text-center">
                                                     <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
-                                                        <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                        <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
                                                             <Info className="w-10 h-10" />
                                                         </div>
                                                         <div>
@@ -370,7 +370,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                             </div>
 
                             <div className="pt-6 border-t border-white/5 flex items-start gap-4 relative z-10 opacity-60 italic">
-                                <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                                <AlertCircle className="w-5 h-5 text-warning flex-shrink-0" />
                                 <p className="text-[10px] font-black leading-relaxed text-neutral-400">
                                     Generating this reversal node will initialize a <span className="text-white underline">Debit Note</span> and decrement institutional vault counts upon authorization.
                                 </p>
@@ -396,7 +396,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                         value={returnData.tracking_number || ''}
                                         onChange={(e) => setReturnData({ ...returnData, tracking_number: e.target.value })}
                                         placeholder="Carrier code..."
-                                        className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                                        className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                     />
                                 </div>
                             </div>
@@ -408,7 +408,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                 <FileText className="w-5 h-5" /> Institutional Narrative
                             </h3>
                             <textarea
-                                className="w-full px-6 py-5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-3xl text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none h-40"
+                                className="w-full px-6 py-5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none h-40"
                                 placeholder="Audit trail remarks, incident details..."
                             />
                         </div>

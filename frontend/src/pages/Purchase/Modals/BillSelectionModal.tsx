@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { X, CheckCircle, Search, Filter } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../redux/store';
@@ -110,7 +110,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-4xl shadow-2xl border dark:border-slate-700 flex flex-col max-h-[90vh]">
+            <div className="bg-white dark:bg-slate-800 rounded-sm w-full max-w-4xl shadow-2xl border dark:border-slate-700 flex flex-col max-h-[90vh]">
                 <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 rounded-t-2xl">
                     <div>
                         <h2 className="text-xl font-bold mb-1 text-slate-800 dark:text-white">Select Bills for Settlement</h2>
@@ -177,7 +177,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
                                                     type="checkbox"
                                                     checked={isSelected}
                                                     onChange={() => toggleBill(bill)}
-                                                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                                    className="rounded border-slate-300 text-primary focus:ring-indigo-500"
                                                 />
                                             </td>
                                             <td className="px-4 py-3">
@@ -223,7 +223,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
                     <div className="flex items-center gap-4">
                         <div className="text-right mr-4">
                             <div className="text-sm text-slate-500">Total To Pay</div>
-                            <div className="text-xl font-bold text-indigo-600 dark:text-indigo-400">₹{totalAllocated.toLocaleString()}</div>
+                            <div className="text-xl font-bold text-primary dark:text-primary">₹{totalAllocated.toLocaleString()}</div>
                         </div>
 
                         <button

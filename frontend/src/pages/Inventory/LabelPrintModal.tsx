@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+﻿import React, { useRef } from 'react';
 import { X, Printer, Download } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { toast } from 'react-toastify';
@@ -40,10 +40,10 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="bg-white dark:bg-gray-800 rounded-sm shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <Printer className="w-6 h-6 text-emerald-500" />
+                        <Printer className="w-6 h-6 text-success" />
                         Print Labels ({products.length})
                     </h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ChevronLeft, ChevronRight, Calculator, CalendarDays, Wallet, AlertCircle } from 'lucide-react';
 import { Card } from "../../../components/core/Display/Card";
 import { formatCurrency } from "../../../utils/helpers";
@@ -38,9 +38,9 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
                 </div>
 
                 <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1 border border-gray-200">
-                    <button onClick={() => onMonthChange(-1)} className="p-1.5 hover:bg-white hover:text-indigo-600 hover:shadow-sm rounded-md text-gray-500 transition-all"><ChevronLeft size={18} /></button>
+                    <button onClick={() => onMonthChange(-1)} className="p-1.5 hover:bg-white hover:text-primary hover:shadow-sm rounded-md text-gray-500 transition-all"><ChevronLeft size={18} /></button>
                     <span className="min-w-[140px] text-center text-sm font-semibold text-gray-800 select-none">{currentMonthName}</span>
-                    <button onClick={() => onMonthChange(1)} className="p-1.5 hover:bg-white hover:text-indigo-600 hover:shadow-sm rounded-md text-gray-500 transition-all"><ChevronRight size={18} /></button>
+                    <button onClick={() => onMonthChange(1)} className="p-1.5 hover:bg-white hover:text-primary hover:shadow-sm rounded-md text-gray-500 transition-all"><ChevronRight size={18} /></button>
                 </div>
             </div>
 
@@ -91,7 +91,7 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
                         : 'bg-indigo-50/50 border-indigo-100'
                     }`}>
                     <div className="flex justify-between items-start mb-2 relative z-10">
-                        <div className={`p-2 rounded-lg group-hover:scale-110 transition-transform ${stats.balance < 0 ? 'bg-rose-100 text-rose-600' : 'bg-indigo-100 text-indigo-600'
+                        <div className={`p-2 rounded-lg group-hover:scale-110 transition-transform ${stats.balance < 0 ? 'bg-rose-100 text-rose-600' : 'bg-indigo-100 text-primary'
                             }`}>
                             <AlertCircle size={18} />
                         </div>
@@ -100,7 +100,7 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
                             {formatCurrency(Math.abs(stats.balance))}
                         </span>
                     </div>
-                    <p className={`text-xs font-bold uppercase tracking-wide relative z-10 ${stats.balance < 0 ? 'text-rose-600' : 'text-indigo-600'
+                    <p className={`text-xs font-bold uppercase tracking-wide relative z-10 ${stats.balance < 0 ? 'text-rose-600' : 'text-primary'
                         }`}>
                         {stats.balance < 0 ? 'Due Payment' : 'Credit Balance'}
                     </p>

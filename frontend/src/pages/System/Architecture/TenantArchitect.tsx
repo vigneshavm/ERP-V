@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Shield, Globe, Zap, Settings, CheckCircle, AlertTriangle,
@@ -117,16 +117,16 @@ const TenantArchitect: React.FC = () => {
     const channels: { id: GrowthChannelType; label: string; icon: any; color: string }[] = [
         { id: 'WHATSAPP' as GrowthChannelType, label: 'WhatsApp', icon: MessageSquare, color: 'text-green-500' },
         { id: 'EMAIL' as GrowthChannelType, label: 'Email', icon: Mail, color: 'text-blue-500' },
-        { id: 'SMS' as GrowthChannelType, label: 'SMS', icon: Smartphone, color: 'text-indigo-500' },
+        { id: 'SMS' as GrowthChannelType, label: 'SMS', icon: Smartphone, color: 'text-primary' },
         { id: 'SOCIAL' as GrowthChannelType, label: 'Social Media', icon: Share2, color: 'text-pink-500' },
         { id: 'ONLINE_STORE' as GrowthChannelType, label: 'Online Store', icon: ShoppingBag, color: 'text-orange-500' }
     ];
 
     const renderOverview = () => (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-sm p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
                 <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl flex items-center justify-center text-indigo-600">
+                    <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl flex items-center justify-center text-primary">
                         <Activity className="w-6 h-6" />
                     </div>
                     <div>
@@ -135,23 +135,23 @@ const TenantArchitect: React.FC = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-sm border border-slate-200 dark:border-slate-800">
                         <p className="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Active Channels</p>
                         <p className="text-3xl font-bold text-slate-900 dark:text-white">{selectedTenant.enabledChannels.length} <span className="text-sm text-slate-400 font-medium ml-1">/ {channels.length}</span></p>
                     </div>
-                    <div className="p-6 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-900/20">
-                        <p className="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400 tracking-wider mb-2">Health Score</p>
-                        <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-500">{selectedTenant.health}%</p>
+                    <div className="p-6 bg-emerald-50 dark:bg-emerald-900/10 rounded-sm border border-emerald-100 dark:border-emerald-900/20">
+                        <p className="text-xs font-bold uppercase text-emerald-600 dark:text-success tracking-wider mb-2">Health Score</p>
+                        <p className="text-3xl font-bold text-emerald-700 dark:text-success">{selectedTenant.health}%</p>
                     </div>
-                    <div className="p-6 bg-indigo-50 dark:bg-indigo-900/10 rounded-2xl border border-indigo-100 dark:border-indigo-900/20">
-                        <p className="text-xs font-bold uppercase text-indigo-600 dark:text-indigo-400 tracking-wider mb-2">Plan Tier</p>
-                        <p className="text-3xl font-bold text-indigo-700 dark:text-indigo-500">Enterprise</p>
+                    <div className="p-6 bg-indigo-50 dark:bg-indigo-900/10 rounded-sm border border-indigo-100 dark:border-indigo-900/20">
+                        <p className="text-xs font-bold uppercase text-primary dark:text-primary tracking-wider mb-2">Plan Tier</p>
+                        <p className="text-3xl font-bold text-indigo-700 dark:text-primary">Enterprise</p>
                     </div>
                 </div>
             </div>
 
             {/* Protocol Injector (Global) */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-sm p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">
                         <Zap className="w-5 h-5" />
@@ -192,9 +192,9 @@ const TenantArchitect: React.FC = () => {
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                 {/* Header Card */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div className="bg-white dark:bg-slate-900 rounded-sm p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isEnabled ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                        <div className={`w-14 h-14 rounded-sm flex items-center justify-center ${isEnabled ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
                             <channel.icon className="w-7 h-7" />
                         </div>
                         <div>
@@ -222,7 +222,7 @@ const TenantArchitect: React.FC = () => {
                 {isEnabled && (
                     <>
                         {/* Provider Selection */}
-                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div className="bg-white dark:bg-slate-900 rounded-sm p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
                             <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4">Route Provider</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {providers.filter(p => p.channel === channelId).map(provider => {
@@ -235,7 +235,7 @@ const TenantArchitect: React.FC = () => {
                                         >
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="font-bold text-slate-900 dark:text-white text-sm">{provider.name}</span>
-                                                {isSelected && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                                                {isSelected && <CheckCircle2 className="w-4 h-4 text-primary" />}
                                             </div>
                                             <p className="text-xs text-slate-500 line-clamp-2">{provider.description}</p>
                                         </div>
@@ -246,9 +246,9 @@ const TenantArchitect: React.FC = () => {
 
                         {/* Configuration & Vault */}
                         {activeConnection?.providerId && (
-                            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div className="bg-white dark:bg-slate-900 rounded-sm p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <Key className="w-5 h-5 text-indigo-600" />
+                                    <Key className="w-5 h-5 text-primary" />
                                     <h3 className="text-base font-bold text-slate-900 dark:text-white">Credential Vault</h3>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -274,12 +274,12 @@ const TenantArchitect: React.FC = () => {
                         )}
 
                         {/* Quotas */}
-                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div className="bg-white dark:bg-slate-900 rounded-sm p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
                             <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4">Usage Quotas</h3>
                             <div className="space-y-4">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-slate-500">Monthly Throughput Limit</span>
-                                    <span className="font-bold text-indigo-600">50,000</span>
+                                    <span className="font-bold text-primary">50,000</span>
                                 </div>
                                 <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                                     <div className="h-full bg-indigo-600 w-3/4 rounded-full" />
@@ -294,7 +294,7 @@ const TenantArchitect: React.FC = () => {
     if (isLoading || !selectedTenant || !tenantConfig || !config) {
         return (
             <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-slate-950">
-                <RefreshCw className="w-8 h-8 text-indigo-600 animate-spin" />
+                <RefreshCw className="w-8 h-8 text-primary animate-spin" />
             </div>
         );
     }
@@ -306,19 +306,19 @@ const TenantArchitect: React.FC = () => {
                 <div className="w-full md:w-72 flex-shrink-0 flex flex-col gap-4">
                     <button
                         onClick={() => navigate(-1)}
-                        className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors py-2 group"
+                        className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors py-2 group"
                     >
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                         <span className="font-bold text-sm">Back to Console</span>
                     </button>
 
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-2 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col h-full">
+                    <div className="bg-white dark:bg-slate-900 rounded-sm p-2 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col h-full">
                         <div className="p-4 border-b border-slate-100 dark:border-slate-800 mb-2">
                             <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">Architecture</h3>
                         </div>
                         <button
                             onClick={() => setActiveSection('OVERVIEW')}
-                            className={`w-full px-4 py-3 rounded-xl text-left font-bold text-sm transition-all flex items-center gap-3 ${activeSection === 'OVERVIEW' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400' : 'text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                            className={`w-full px-4 py-3 rounded-xl text-left font-bold text-sm transition-all flex items-center gap-3 ${activeSection === 'OVERVIEW' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-primary' : 'text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                         >
                             <Activity className="w-4 h-4" /> Overview
                         </button>
@@ -335,7 +335,7 @@ const TenantArchitect: React.FC = () => {
                                             className={`w-full px-4 py-3 rounded-xl text-left font-medium text-sm transition-all flex items-center justify-between group ${activeSection === channel.id ? 'bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white' : 'text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <channel.icon className={`w-4 h-4 ${activeSection === channel.id ? 'text-indigo-600' : 'text-slate-400'}`} />
+                                                <channel.icon className={`w-4 h-4 ${activeSection === channel.id ? 'text-primary' : 'text-slate-400'}`} />
                                                 {channel.label}
                                             </div>
                                             {isEnabled && <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" />}

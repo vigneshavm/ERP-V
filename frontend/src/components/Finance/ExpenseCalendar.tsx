@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface DayData {
@@ -82,12 +82,12 @@ const ExpenseCalendar: React.FC<ExpenseCalendarProps> = ({ expenses }) => {
                     >
                         <span className="text-xs font-bold text-neutral-400 group-hover:text-white">{d.day}</span>
                         {d.expense > 0 && (
-                            <span className="text-[10px] font-black text-rose-500 tabular-nums">
+                            <span className="text-[10px] font-black text-danger tabular-nums">
                                 {d.expense > 999 ? `${(d.expense / 1000).toFixed(1)}k` : d.expense}
                             </span>
                         )}
                         {d.income > 0 && (
-                            <span className="text-[10px] font-black text-emerald-500 tabular-nums">
+                            <span className="text-[10px] font-black text-success tabular-nums">
                                 {d.income > 999 ? `${(d.income / 1000).toFixed(1)}k` : d.income}
                             </span>
                         )}

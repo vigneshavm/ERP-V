@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Plus, AlertCircle } from 'lucide-react';
 import { PurchaseBillItem } from "../../../types/purchase";
 
@@ -9,7 +9,7 @@ interface BillItemsTableProps {
 
 const BillItemsTable: React.FC<BillItemsTableProps> = ({ items, onUpdateItem }) => {
     return (
-        <div className="bg-white dark:bg-neutral-950 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-neutral-950 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
                 <h3 className="font-bold flex items-center gap-2">
                     Invoice Items
@@ -70,7 +70,7 @@ const BillItemsTable: React.FC<BillItemsTableProps> = ({ items, onUpdateItem }) 
                                 <td className="px-6 py-4 text-center">
                                     {item.variance_flag && (
                                         <div className="relative group/tool">
-                                            <AlertCircle className="w-4 h-4 text-amber-500" />
+                                            <AlertCircle className="w-4 h-4 text-warning" />
                                             <div className="absolute bottom-full right-0 mb-2 p-2 bg-neutral-900 text-white text-[10px] rounded opacity-0 group-hover/tool:opacity-100 pointer-events-none whitespace-nowrap z-30">
                                                 Variance Flagged: Rate/Qty mismatch
                                             </div>

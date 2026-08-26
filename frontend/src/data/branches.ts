@@ -1,4 +1,14 @@
-export const branches = [
+export interface MockBranch {
+    id: string;
+    tenant_id: string;
+    name: string;
+    city: string;
+    is_active: boolean;
+    sector: string;
+    business_type: string;
+}
+
+export const branches: MockBranch[] = [
     {
         "id": "BR001",
         "tenant_id": "TEN001",

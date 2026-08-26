@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { getPayments, updatePaymentStatus } from '../../redux/slices/paymentOutSlice';
@@ -49,11 +49,11 @@ const PaymentOutList: React.FC = () => {
         const baseClass = "px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5";
         switch (status?.toLowerCase()) {
             case 'cleared':
-                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400`}><CheckCircle2 className="w-3 h-3" /> Cleared</span>;
+                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success`}><CheckCircle2 className="w-3 h-3" /> Cleared</span>;
             case 'pending':
-                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400`}><Clock className="w-3 h-3" /> Pending</span>;
+                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning`}><Clock className="w-3 h-3" /> Pending</span>;
             case 'bounced':
-                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400`}><XCircle className="w-3 h-3" /> Bounced</span>;
+                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger`}><XCircle className="w-3 h-3" /> Bounced</span>;
             default:
                 return <span className={`${baseClass} bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400`}>{status}</span>;
         }
@@ -80,13 +80,13 @@ const PaymentOutList: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
                         { label: 'Settlement Nodes', val: stats.total, icon: Zap, color: 'text-primary', bg: 'bg-primary/10' },
-                        { label: 'Fiscal Outflow', val: `₹${stats.totalValue.toLocaleString()}`, icon: ArrowUpRight, color: 'text-rose-500', bg: 'bg-rose-50' },
-                        { label: 'Pending Nodes', val: stats.pending, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50' },
-                        { label: 'Verified (Cleared)', val: stats.cleared, icon: ShieldCheck, color: 'text-indigo-500', bg: 'bg-indigo-50' }
+                        { label: 'Fiscal Outflow', val: `₹${stats.totalValue.toLocaleString()}`, icon: ArrowUpRight, color: 'text-danger', bg: 'bg-rose-50' },
+                        { label: 'Pending Nodes', val: stats.pending, icon: Clock, color: 'text-warning', bg: 'bg-amber-50' },
+                        { label: 'Verified (Cleared)', val: stats.cleared, icon: ShieldCheck, color: 'text-primary', bg: 'bg-indigo-50' }
                     ].map((card, i) => (
                         <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
-                                <div className={`p-4 ${card.bg} ${card.color} rounded-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                                <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />
                                 </div>
                                 <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
@@ -111,14 +111,14 @@ const PaymentOutList: React.FC = () => {
                                 placeholder="Search Payment ID, Vendor, or Ref..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
                     <div className="flex items-end gap-6 w-full md:w-auto">
                         <div className="flex-1 md:w-64">
                             <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Fiscal State</label>
-                            <div className="flex gap-2 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800">
+                            <div className="flex gap-2 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-sm border border-neutral-100 dark:border-neutral-800">
                                 {['all', 'pending', 'cleared', 'bounced'].map(status => (
                                     <button
                                         key={status}
@@ -133,7 +133,7 @@ const PaymentOutList: React.FC = () => {
                                 ))}
                             </div>
                         </div>
-                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-2xl text-neutral-400 hover:text-primary transition-all active:scale-95">
+                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-sm text-neutral-400 hover:text-primary transition-all active:scale-95">
                             <Filter className="w-6 h-6" />
                         </button>
                     </div>
@@ -161,7 +161,7 @@ const PaymentOutList: React.FC = () => {
                                     <tr>
                                         <td colSpan={7} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
                                                     <Info className="w-10 h-10" />
                                                 </div>
                                                 <div>

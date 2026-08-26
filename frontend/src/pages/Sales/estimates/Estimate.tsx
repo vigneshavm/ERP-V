@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { getAllItems } from "../../../redux/slices/inventorySlice";
@@ -215,8 +215,8 @@ const Estimate = () => {
           <div className="relative">
             <div className="absolute -left-4 top-0 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
             <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
-              Proforma <span className="text-amber-500">Architect</span>
-              <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-lg text-xs font-bold uppercase tracking-widest">
+              Proforma <span className="text-warning">Architect</span>
+              <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-xs font-bold uppercase tracking-widest">
                 Valuation Node
               </span>
             </h1>
@@ -228,7 +228,7 @@ const Estimate = () => {
           
           <div className="flex items-center gap-3 w-full md:w-auto">
             <Link to="/sales/estimates" className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all text-xs font-bold shadow-sm">
-              <ArrowLeft className="w-4 h-4 text-amber-500" /> Back to Registry
+              <ArrowLeft className="w-4 h-4 text-warning" /> Back to Registry
             </Link>
           </div>
         </header>
@@ -240,7 +240,7 @@ const Estimate = () => {
             {/* Section 1: Entity Mapping */}
             <div className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 p-8 shadow-sm">
                <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500">
+                <div className="w-12 h-12 bg-warning/10 rounded-sm flex items-center justify-center text-warning">
                   <User className="w-6 h-6" />
                 </div>
                 <div>
@@ -250,33 +250,33 @@ const Estimate = () => {
               </div>
 
               {customer ? (
-                <div className="p-6 bg-amber-500/5 rounded-3xl border border-amber-500/10 flex items-center justify-between transition-all hover:bg-amber-500/10">
+                <div className="p-6 bg-amber-500/5 rounded-sm border border-amber-500/10 flex items-center justify-between transition-all hover:bg-warning/10">
                   <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
+                    <div className="w-14 h-14 bg-amber-500 rounded-sm flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
                       <User className="w-7 h-7" />
                     </div>
                     <div>
                       <p className="font-black text-neutral-900 dark:text-white text-lg tracking-tighter">{customer.name}</p>
                       <div className="flex items-center gap-4 mt-1">
-                        <span className="text-[10px] text-amber-500 font-black uppercase tracking-widest flex items-center gap-1">
+                        <span className="text-[10px] text-warning font-black uppercase tracking-widest flex items-center gap-1">
                           <Phone className="w-3 h-3" /> {customer.phone}
                         </span>
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${customer.dues > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${customer.dues > 0 ? 'text-danger' : 'text-success'}`}>
                           Dues: ₹{customer.dues.toLocaleString()}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <button onClick={() => setCustomer(null)} className="p-3 text-neutral-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all">
+                  <button onClick={() => setCustomer(null)} className="p-3 text-neutral-400 hover:text-danger hover:bg-danger/10 rounded-xl transition-all">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => setShowCustomerSelect(true)}
-                  className="w-full py-12 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-[32px] flex flex-col items-center justify-center gap-5 text-neutral-400 hover:border-amber-500/50 hover:text-amber-500 hover:bg-amber-500/[0.02] transition-all group"
+                  className="w-full py-12 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-[32px] flex flex-col items-center justify-center gap-5 text-neutral-400 hover:border-amber-500/50 hover:text-warning hover:bg-amber-500/[0.02] transition-all group"
                 >
-                  <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all shadow-inner">
+                  <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center group-hover:scale-110 transition-all shadow-inner">
                     <Plus className="w-8 h-8 opacity-40 group-hover:opacity-100" />
                   </div>
                   <span className="font-black text-[10px] uppercase tracking-[0.2em]">Initialize Customer Path</span>
@@ -288,7 +288,7 @@ const Estimate = () => {
             <div className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 shadow-sm flex flex-col overflow-hidden">
                <div className="p-8 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-950/50">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500">
+                  <div className="w-12 h-12 bg-danger/10 rounded-sm flex items-center justify-center text-danger">
                     <Zap className="w-6 h-6" />
                   </div>
                   <div>
@@ -297,7 +297,7 @@ const Estimate = () => {
                   </div>
                 </div>
                 <div className="relative w-full max-w-xs group">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warning" />
                   <input
                     type="text"
                     placeholder="Search SKUs..."
@@ -313,7 +313,7 @@ const Estimate = () => {
                   <button
                     key={item._id}
                     onClick={() => addToCart(item)}
-                    className="group p-5 bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 rounded-3xl text-left hover:border-amber-500/50 hover:bg-amber-500/[0.02] transition-all flex flex-col justify-between"
+                    className="group p-5 bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 rounded-sm text-left hover:border-amber-500/50 hover:bg-amber-500/[0.02] transition-all flex flex-col justify-between"
                   >
                     <div>
                       <div className="flex justify-between items-start mb-2">
@@ -324,7 +324,7 @@ const Estimate = () => {
                     </div>
                     <div className="flex items-end justify-between mt-auto">
                       <p className="text-lg font-mono font-black text-neutral-900 dark:text-white tracking-tighter flex items-center">
-                        <span className="text-xs text-amber-500 mr-1 font-bold">₹</span>{item.sellingPrice.toLocaleString()}
+                        <span className="text-xs text-warning mr-1 font-bold">₹</span>{item.sellingPrice.toLocaleString()}
                       </p>
                       <div className="p-2 bg-amber-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100 shadow-lg shadow-amber-500/20">
                         <Plus className="w-3 h-3" />
@@ -341,7 +341,7 @@ const Estimate = () => {
             <div className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 flex flex-col shadow-sm sticky top-8">
               <div className="p-8 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-900 dark:bg-black rounded-t-[32px]">
                 <div className="flex items-center gap-3">
-                  <ShoppingBag className="w-5 h-5 text-amber-500" />
+                  <ShoppingBag className="w-5 h-5 text-warning" />
                   <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">Cart Matrix</h3>
                 </div>
                 <span className="px-2 py-1 bg-amber-500 text-neutral-900 rounded-md text-[10px] font-black">{cart.length}</span>
@@ -360,7 +360,7 @@ const Estimate = () => {
                         <p className="font-black text-neutral-900 dark:text-white text-[11px] uppercase truncate tracking-tight">{item.name}</p>
                         <p className="text-[10px] font-bold text-neutral-400 font-mono tracking-tighter mt-1">₹{item.price.toLocaleString()} / UNIT</p>
                       </div>
-                      <div className="flex items-center gap-3 bg-neutral-50 dark:bg-neutral-950 p-1.5 rounded-2xl border border-neutral-200 dark:border-neutral-800">
+                      <div className="flex items-center gap-3 bg-neutral-50 dark:bg-neutral-950 p-1.5 rounded-sm border border-neutral-200 dark:border-neutral-800">
                         <button onClick={() => updateQuantity(item.itemId, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-rose-500 hover:text-white rounded-xl transition-all">
                           <Minus className="w-4 h-4" />
                         </button>
@@ -369,7 +369,7 @@ const Estimate = () => {
                           <Plus className="w-4 h-4" />
                         </button>
                       </div>
-                      <button onClick={() => removeFromCart(item.itemId)} className="ml-4 p-2 text-neutral-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100">
+                      <button onClick={() => removeFromCart(item.itemId)} className="ml-4 p-2 text-neutral-300 hover:text-danger transition-colors opacity-0 group-hover:opacity-100">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -384,33 +384,33 @@ const Estimate = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center group">
                     <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                      <Tag className="w-3.5 h-3.5 text-rose-500" /> Yield Discount
+                      <Tag className="w-3.5 h-3.5 text-danger" /> Yield Discount
                     </span>
                     <input
                       type="number"
                       value={discount}
                       onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
-                      className="w-24 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl py-2 px-3 text-sm font-mono font-black text-rose-500 text-right outline-none focus:border-rose-500/50 transition-all"
+                      className="w-24 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl py-2 px-3 text-sm font-mono font-black text-danger text-right outline-none focus:border-rose-500/50 transition-all"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                      <Info className="w-3.5 h-3.5 text-amber-500" /> Matrix Notes
+                      <Info className="w-3.5 h-3.5 text-warning" /> Matrix Notes
                     </label>
                     <textarea
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Protocol adjustments..."
                       rows={2}
-                      className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 text-[11px] font-bold text-neutral-600 dark:text-neutral-400 focus:border-amber-500/50 outline-none transition-all resize-none shadow-inner"
+                      className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm p-4 text-[11px] font-bold text-neutral-600 dark:text-neutral-400 focus:border-amber-500/50 outline-none transition-all resize-none shadow-inner"
                     />
                   </div>
                 </div>
 
                 {/* Total Valuation Block */}
-                <div className="bg-neutral-950 rounded-3xl p-8 relative overflow-hidden group border border-neutral-800">
-                   <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-all"></div>
+                <div className="bg-neutral-950 rounded-sm p-8 relative overflow-hidden group border border-neutral-800">
+                   <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-all"></div>
                    <div className="flex flex-col">
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Subtotal</span>
@@ -418,17 +418,17 @@ const Estimate = () => {
                     </div>
                     <p className="text-[11px] font-black text-white/50 uppercase tracking-[0.3em] mt-4 mb-2">Net Valuation</p>
                     <h2 className="text-4xl font-display font-black text-white tracking-tighter flex items-baseline gap-2">
-                      <span className="text-amber-500 text-2xl font-mono">₹</span>
+                      <span className="text-warning text-2xl font-mono">₹</span>
                       {total.toLocaleString()}
                     </h2>
                    </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <button onClick={handleClear} className="py-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all">
+                  <button onClick={handleClear} className="py-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all">
                     Purge Matrix
                   </button>
-                  <button onClick={handleSaveEstimate} disabled={isLoading || cart.length === 0} className="py-4 bg-amber-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50">
+                  <button onClick={handleSaveEstimate} disabled={isLoading || cart.length === 0} className="py-4 bg-amber-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50">
                     {isLoading ? "Syncing..." : "Finalize Protocol"}
                   </button>
                 </div>
@@ -445,20 +445,20 @@ const Estimate = () => {
           <div className="relative bg-white dark:bg-neutral-900 w-full max-w-2xl rounded-[40px] border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden flex flex-col h-[80vh]">
             <div className="p-8 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-950/50">
               <h3 className="text-xl font-display font-black tracking-tighter text-neutral-900 dark:text-white uppercase">Initialize Entity Path</h3>
-              <button onClick={() => setShowCustomerSelect(false)} className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:text-rose-500 transition-all">
+              <button onClick={() => setShowCustomerSelect(false)} className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-sm hover:text-danger transition-all">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
             <div className="p-8 space-y-6 flex-1 overflow-hidden flex flex-col">
               <div className="relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-amber-500" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-warning" />
                 <input
                   type="text"
                   placeholder="Scan Entity (Name, Contact...)"
                   value={customerSearchTerm}
                   onChange={(e) => setCustomerSearchTerm(e.target.value)}
-                  className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-3xl py-5 pl-14 pr-6 text-sm font-bold focus:border-amber-500 outline-none transition-all dark:text-white shadow-inner"
+                  className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-5 pl-14 pr-6 text-sm font-bold focus:border-amber-500 outline-none transition-all dark:text-white shadow-inner"
                 />
               </div>
 
@@ -467,10 +467,10 @@ const Estimate = () => {
                   <button
                     key={c._id}
                     onClick={() => selectCustomer(c)}
-                    className="w-full p-6 bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 rounded-3xl flex items-center justify-between hover:border-amber-500/50 hover:bg-amber-500/[0.02] transition-all group"
+                    className="w-full p-6 bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 rounded-sm flex items-center justify-between hover:border-amber-500/50 hover:bg-amber-500/[0.02] transition-all group"
                   >
                     <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 bg-neutral-200 dark:bg-neutral-800 rounded-2xl flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all">
+                      <div className="w-12 h-12 bg-neutral-200 dark:bg-neutral-800 rounded-sm flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all">
                         <User className="w-6 h-6" />
                       </div>
                       <div className="text-left">
@@ -478,7 +478,7 @@ const Estimate = () => {
                         <p className="text-[10px] font-bold text-neutral-400 mt-1 uppercase tracking-widest">{c.phone}</p>
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-neutral-300 group-hover:text-amber-500 transition-all" />
+                    <ChevronRight className="w-5 h-5 text-neutral-300 group-hover:text-warning transition-all" />
                   </button>
                 ))}
               </div>

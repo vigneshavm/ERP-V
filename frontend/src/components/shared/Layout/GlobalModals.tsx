@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import ChangePasswordModal from '../Auth/ChangePasswordModal';
 
 interface GlobalModalsProps {
@@ -39,7 +39,7 @@ const GlobalModals: React.FC<GlobalModalsProps> = ({
             {/* Confirmation Modal */}
             {confirmDialog.isOpen && (
                 <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in">
-                    <div className="glass-panel rounded-2xl p-6 max-w-sm w-full border border-white/10 shadow-2xl">
+                    <div className="glass-panel rounded-sm p-6 max-w-sm w-full border border-white/10 shadow-2xl">
                         <h3 className="text-xl font-display font-bold text-main mb-2">{confirmDialog.title}</h3>
                         <p className="text-secondary mb-6">{confirmDialog.message}</p>
                         <div className="flex gap-3 justify-end">

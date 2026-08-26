@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
 import { SystemRole } from "../../../types/common";
@@ -270,7 +270,7 @@ const StaffManager: React.FC = () => {
                             {/* Counter Assignment */}
                             {newEmp.branchId && (
                                 <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg animate-in fade-in slide-in-from-top-2">
-                                    <label className="block text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-1">Terminal Assignment</label>
+                                    <label className="block text-xs font-bold text-indigo-700 dark:text-primary uppercase mb-1">Terminal Assignment</label>
                                     <select
                                         className="w-full px-3 py-2 border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-indigo-900 dark:text-indigo-300"
                                         value={newEmp.assignedCounterId}
@@ -281,13 +281,13 @@ const StaffManager: React.FC = () => {
                                             <option key={c.id} value={c.id}>{c.id} - {c.name}</option>
                                         ))}
                                     </select>
-                                    <p className="text-[10px] text-indigo-500 dark:text-indigo-400 mt-1 italic">Assigning a terminal locks this staff to a specific counter.</p>
+                                    <p className="text-[10px] text-primary dark:text-primary mt-1 italic">Assigning a terminal locks this staff to a specific counter.</p>
                                 </div>
                             )}
 
                             <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
                                 <div className="flex items-center gap-2">
-                                    <ShieldCheck className={`w-4 h-4 ${newEmp.is2faEnabled ? 'text-emerald-500' : 'text-slate-400'}`} />
+                                    <ShieldCheck className={`w-4 h-4 ${newEmp.is2faEnabled ? 'text-success' : 'text-slate-400'}`} />
                                     <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Enable 2FA Protection</span>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
@@ -346,7 +346,7 @@ const StaffManager: React.FC = () => {
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <h4 className="font-bold text-slate-800 dark:text-white">{emp.name}</h4>
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === SystemRole.OWNER ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800' : emp.system_role === SystemRole.ADMIN ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === SystemRole.OWNER ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-accent border-purple-200 dark:border-purple-800' : emp.system_role === SystemRole.ADMIN ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
                                                     {emp.system_role}
                                                 </span>
                                             </div>
@@ -363,16 +363,16 @@ const StaffManager: React.FC = () => {
                                                 {emp.assigned_counter_id && (
                                                     <>
                                                         <span className="text-slate-300 dark:text-slate-700">|</span>
-                                                        <span className="font-bold text-indigo-600 dark:text-indigo-400">Terminal: {emp.assigned_counter_id}</span>
+                                                        <span className="font-bold text-primary dark:text-primary">Terminal: {emp.assigned_counter_id}</span>
                                                     </>
                                                 )}
                                                 <span className="text-slate-300 dark:text-slate-700">|</span>
-                                                <span className={`font-bold flex items-center gap-1 ${emp.is2faEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                                                <span className={`font-bold flex items-center gap-1 ${emp.is2faEnabled ? 'text-emerald-600 dark:text-success' : 'text-slate-400'}`}>
                                                     <ShieldCheck className="w-3 h-3" />
                                                     {emp.is2faEnabled ? '2FA ON' : '2FA OFF'}
                                                 </span>
                                                 <span className="text-slate-300 dark:text-slate-700">|</span>
-                                                <span className="text-indigo-600 dark:text-indigo-400 font-bold">
+                                                <span className="text-primary dark:text-primary font-bold">
                                                     ₹{emp.baseSalary || emp.dailyRate}/ {emp.wageType?.toLowerCase()}
                                                 </span>
                                                 <span className="text-slate-300 dark:text-slate-700">|</span>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../../redux/store";
 import { getSupplierGroups, deleteSupplierGroup, SupplierGroup } from "../../../redux/slices/supplierGroupSlice";
@@ -100,12 +100,12 @@ const SupplierGroups: React.FC = () => {
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {/* Total Groups */}
-                    <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-indigo-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                    <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                            <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-primary/10 text-primary dark:text-primary">
                                 <FolderPlus className="w-4 h-4" />
                             </div>
-                            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Total Groups</span>
+                            <span className="text-xs font-bold text-primary dark:text-primary uppercase tracking-wide">Total Groups</span>
                         </div>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{groups.length}</span>
                     </div>
@@ -113,10 +113,10 @@ const SupplierGroups: React.FC = () => {
                     {/* Total Suppliers */}
                     <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-success/10 text-emerald-600 dark:text-success">
                                 <Truck className="w-4 h-4" />
                             </div>
-                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Total Suppliers</span>
+                            <span className="text-xs font-bold text-emerald-600 dark:text-success uppercase tracking-wide">Total Suppliers</span>
                         </div>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{totalSuppliers}</span>
                     </div>
@@ -135,10 +135,10 @@ const SupplierGroups: React.FC = () => {
                     {/* Unassigned */}
                     <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                            <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-warning/10 text-amber-600 dark:text-warning">
                                 <Tag className="w-4 h-4" />
                             </div>
-                            <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wide">Unassigned</span>
+                            <span className="text-xs font-bold text-amber-600 dark:text-warning uppercase tracking-wide">Unassigned</span>
                         </div>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{totalSuppliers - assignedSuppliers}</span>
                     </div>
@@ -147,7 +147,7 @@ const SupplierGroups: React.FC = () => {
                 {/* Filter Bar */}
                 <div className="flex items-center justify-between">
                     <div className="relative group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
                         <input
                             type="text"
                             placeholder="Search groups..."
@@ -159,7 +159,7 @@ const SupplierGroups: React.FC = () => {
                 </div>
 
                 {/* Groups Table */}
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden">
+                <div className="bg-white dark:bg-neutral-800 rounded-sm border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
@@ -271,7 +271,7 @@ const SupplierGroups: React.FC = () => {
                                                             <div className="h-px bg-slate-100 dark:bg-neutral-700 my-1" />
                                                             <button
                                                                 onClick={() => { handleDeleteGroup(group._id); setOpenMenuId(null); }}
-                                                                className="w-full px-4 py-2.5 text-left text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2 font-medium"
+                                                                className="w-full px-4 py-2.5 text-left text-sm text-rose-600 dark:text-danger hover:bg-rose-50 dark:hover:bg-danger/10 flex items-center gap-2 font-medium"
                                                             >
                                                                 <Trash2 className="w-3.5 h-3.5" /> Delete
                                                             </button>
@@ -288,10 +288,10 @@ const SupplierGroups: React.FC = () => {
                 </div>
 
                 {/* Quick Tips */}
-                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/10 dark:to-purple-900/10 p-5 rounded-2xl border border-indigo-100 dark:border-indigo-500/20">
+                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/10 dark:to-purple-900/10 p-5 rounded-sm border border-indigo-100 dark:border-primary/20">
                     <h4 className="font-bold text-indigo-900 dark:text-indigo-100 flex items-center gap-2 mb-2">
-                        <div className="p-1 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg">
-                            <Star className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        <div className="p-1 bg-indigo-100 dark:bg-primary/20 rounded-lg">
+                            <Star className="w-4 h-4 text-primary dark:text-primary" />
                         </div>
                         Tips for Supplier Groups
                     </h4>

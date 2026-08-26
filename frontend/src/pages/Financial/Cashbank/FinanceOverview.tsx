@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "@/redux/store";
 import { addTransaction, addCheque, updateChequeStatus } from "@/redux/slices/financeSlice";
@@ -210,7 +210,7 @@ const FinanceOverviewPage: React.FC = () => {
 
                     {/* View Controls & Main View */}
                     <div className="lg:col-span-12 space-y-4">
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-neutral-800 p-2 rounded-2xl border border-neutral-200 dark:border-neutral-700">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-neutral-800 p-2 rounded-sm border border-neutral-200 dark:border-neutral-700">
                             <div className="flex p-1 bg-neutral-100 dark:bg-neutral-900 rounded-xl w-full md:w-auto">
                                 {[
                                     { id: 'OVERVIEW', label: 'P&L Pulse', icon: PieChart },
@@ -311,10 +311,10 @@ const FinanceOverviewPage: React.FC = () => {
                             </p>
                         </div>
                         <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-4">
-                            <button className="px-8 py-4 bg-white text-neutral-950 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all">
+                            <button className="px-8 py-4 bg-white text-neutral-950 rounded-sm font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all">
                                 Run Audit
                             </button>
-                            <button className="px-8 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+                            <button className="px-8 py-4 bg-primary text-white rounded-sm font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
                                 Optimization Settings
                             </button>
                         </div>

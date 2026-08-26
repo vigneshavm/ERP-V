@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Store, Globe, Phone, Mail, MapPin, Info, Users } from 'lucide-react';
 import { GeneralTabProps } from './types';
 
@@ -21,7 +21,7 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-neutral-50/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6">
+                <div className="bg-neutral-50/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6">
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-1.5">
                             <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">Official App / Business Name</label>
@@ -63,7 +63,7 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-neutral-50/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6">
+                <div className="bg-neutral-50/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6">
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="md:col-span-2 space-y-1.5">
                             <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">Street / Building Address</label>
@@ -99,7 +99,7 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-neutral-50/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6">
+                <div className="bg-neutral-50/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6">
                     <div className="grid md:grid-cols-3 gap-6">
                         <div className="space-y-1.5">
                             <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">Primary Phone</label>
@@ -129,7 +129,7 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
             </section>
 
             {/* Information Alert */}
-            <div className="p-4 bg-primary/10 border border-primary/20 rounded-2xl flex items-start gap-3">
+            <div className="p-4 bg-primary/10 border border-primary/20 rounded-sm flex items-start gap-3">
                 <Info className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                 <p className="text-[11px] text-primary/80 font-bold leading-relaxed">
                     These details will appear on your tax invoices, purchase orders, and official reports. Ensure that the GSTIN/PAN (if applicable) and Address match your registered documents.

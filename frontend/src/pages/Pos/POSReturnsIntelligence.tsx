@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import {
@@ -49,8 +49,8 @@ interface POSReturn {
 
 const RISK_COLORS: Record<RiskLevel, string> = {
     CRITICAL: 'bg-error text-white shadow-lg shadow-error/20',
-    HIGH: 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400',
-    MEDIUM: 'bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400',
+    HIGH: 'bg-amber-100 text-amber-700 dark:bg-warning/20 dark:text-warning',
+    MEDIUM: 'bg-sky-50 text-sky-700 dark:bg-info/10 dark:text-info',
     LOW: 'bg-success/10 text-success',
 };
 
@@ -194,7 +194,7 @@ const POSReturnsIntelligence: React.FC = () => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="px-2 py-0.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-black uppercase tracking-widest rounded-md border border-rose-500/20">
+                            <span className="px-2 py-0.5 bg-danger/10 text-rose-600 dark:text-danger text-[10px] font-black uppercase tracking-widest rounded-md border border-danger/20">
                                 Refund Auditor
                             </span>
                             <span className="text-neutral-300 dark:text-neutral-700">/</span>
@@ -203,18 +203,18 @@ const POSReturnsIntelligence: React.FC = () => {
                             </span>
                         </div>
                         <h2 className="text-4xl font-black text-neutral-900 dark:text-white tracking-tight leading-none flex items-center gap-3">
-                            POS Returns <RotateCcw className="w-8 h-8 text-rose-500 animate-pulse" />
+                            POS Returns <RotateCcw className="w-8 h-8 text-danger animate-pulse" />
                         </h2>
                         <p className="text-sm text-neutral-500 mt-2 font-medium italic">
                             Refund risk profiling and return integrity for{' '}
-                            <span className="text-rose-500 font-bold not-italic">{tenant_id}</span>
+                            <span className="text-danger font-bold not-italic">{tenant_id}</span>
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-neutral-50 transition-all active:scale-95">
-                            <Download className="w-4 h-4 text-rose-500" /> Export Refund Log
+                        <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-neutral-50 transition-all active:scale-95">
+                            <Download className="w-4 h-4 text-danger" /> Export Refund Log
                         </button>
-                        <button className="flex items-center gap-2 px-6 py-3 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-rose-600/20 hover:bg-rose-700 transition-all active:scale-95">
+                        <button className="flex items-center gap-2 px-6 py-3 bg-rose-600 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-rose-600/20 hover:bg-rose-700 transition-all active:scale-95">
                             <RefreshCcw className="w-4 h-4" /> Refresh Engine
                         </button>
                     </div>
@@ -249,7 +249,7 @@ const POSReturnsIntelligence: React.FC = () => {
                     <div className="bg-neutral-950 text-white p-6 rounded-[2rem] shadow-xl shadow-neutral-900/20 relative group overflow-hidden border border-neutral-800 flex flex-col justify-between">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700 w-24 h-24" />
                         <div>
-                            <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-2 italic">Agent Strategy</p>
+                            <p className="text-[10px] font-black text-danger uppercase tracking-widest mb-2 italic">Agent Strategy</p>
                             <h3 className="text-xs font-bold leading-relaxed opacity-90">
                                 "Block cash refunds &gt;₹1K without manager OTP at Chennai Main."
                             </h3>
@@ -267,7 +267,7 @@ const POSReturnsIntelligence: React.FC = () => {
                         <button
                             key={tab}
                             onClick={() => setViewMode(tab)}
-                            className={`pb-4 text-[10px] font-black uppercase tracking-[0.3em] transition-all relative ${viewMode === tab ? 'text-rose-500' : 'text-neutral-400 hover:text-neutral-600'}`}
+                            className={`pb-4 text-[10px] font-black uppercase tracking-[0.3em] transition-all relative ${viewMode === tab ? 'text-danger' : 'text-neutral-400 hover:text-neutral-600'}`}
                         >
                             {tab === 'LEDGER' ? 'Return Ledger' : 'Reason Analysis'}
                             {viewMode === tab && <div className="absolute bottom-0 left-0 w-full h-1 bg-rose-500 rounded-t-full" />}
@@ -286,16 +286,16 @@ const POSReturnsIntelligence: React.FC = () => {
                                 {/* Filters */}
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <div className="relative flex-1 group">
-                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-rose-500 transition-colors" />
+                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-danger transition-colors" />
                                         <input
                                             type="text"
                                             placeholder="Search Return ID, Cashier, Branch or Bill..."
-                                            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm font-medium outline-none focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all shadow-sm"
+                                            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm font-medium outline-none focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all shadow-sm"
                                             value={searchTerm}
                                             onChange={e => setSearchTerm(e.target.value)}
                                         />
                                     </div>
-                                    <div className="flex bg-white dark:bg-neutral-800 p-1.5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                                    <div className="flex bg-white dark:bg-neutral-800 p-1.5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
                                         {(['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'] as const).map(r => (
                                             <button
                                                 key={r}
@@ -385,7 +385,7 @@ const POSReturnsIntelligence: React.FC = () => {
                                         <h3 className="font-black text-lg tracking-tight">Return Reason Breakdown</h3>
                                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-0.5">{returns.length} Returns This Period</p>
                                     </div>
-                                    <div className="p-3 bg-rose-50 dark:bg-rose-500/10 text-rose-500 rounded-2xl">
+                                    <div className="p-3 bg-rose-50 dark:bg-danger/10 text-danger rounded-sm">
                                         <BarChart3 className="w-5 h-5" />
                                     </div>
                                 </div>
@@ -399,7 +399,7 @@ const POSReturnsIntelligence: React.FC = () => {
                                                 </span>
                                                 <div className="flex items-center gap-3 tabular-nums text-neutral-500">
                                                     <span>{count} returns</span>
-                                                    <span className="text-rose-500 font-black">{pct}%</span>
+                                                    <span className="text-danger font-black">{pct}%</span>
                                                 </div>
                                             </div>
                                             <div className="w-full h-2 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
@@ -434,7 +434,7 @@ const POSReturnsIntelligence: React.FC = () => {
                                     { name: 'Credit Note First Policy', status: true },
                                     { name: 'Same-Day Return Limit', status: false },
                                 ].map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800">
+                                    <div key={i} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900 rounded-sm border border-neutral-100 dark:border-neutral-800">
                                         <span className="text-[11px] font-black uppercase tracking-tight text-neutral-700 dark:text-neutral-300">{item.name}</span>
                                         <div className={`flex items-center gap-1.5 ${item.status ? 'text-success' : 'text-error'}`}>
                                             {item.status
@@ -455,7 +455,7 @@ const POSReturnsIntelligence: React.FC = () => {
                             </h4>
                             <div className="space-y-3">
                                 {returns.filter(r => r.risk_level === 'CRITICAL').map(r => (
-                                    <div key={r.id} className="p-4 bg-white dark:bg-neutral-800 rounded-2xl border border-error/20 hover:border-error/40 shadow-sm transition-all">
+                                    <div key={r.id} className="p-4 bg-white dark:bg-neutral-800 rounded-sm border border-error/20 hover:border-error/40 shadow-sm transition-all">
                                         <div className="flex justify-between items-center mb-1.5">
                                             <span className="text-[9px] font-black uppercase tracking-[0.15em] text-error">{r.id}</span>
                                             <Clock className="w-3 h-3 text-neutral-400" />
@@ -463,7 +463,7 @@ const POSReturnsIntelligence: React.FC = () => {
                                         <p className="text-[11px] font-bold leading-relaxed text-neutral-700 dark:text-neutral-300">
                                             ₹{r.amount.toLocaleString()} cash refund by <span className="font-black">{r.cashier}</span> — {r.flags[0]?.replace(/_/g, ' ')}
                                         </p>
-                                        <button className="mt-2 text-[9px] font-black text-rose-500 uppercase tracking-widest hover:underline underline-offset-4">
+                                        <button className="mt-2 text-[9px] font-black text-danger uppercase tracking-widest hover:underline underline-offset-4">
                                             Investigate
                                         </button>
                                     </div>
@@ -478,7 +478,7 @@ const POSReturnsIntelligence: React.FC = () => {
 
                         {/* Insight Tip */}
                         <div className="p-5 bg-rose-500/5 rounded-[1.5rem] border border-rose-500/10 flex gap-4">
-                            <div className="p-2 bg-rose-500/10 text-rose-500 rounded-xl shrink-0 h-fit">
+                            <div className="p-2 bg-danger/10 text-danger rounded-xl shrink-0 h-fit">
                                 <Zap className="w-5 h-5" />
                             </div>
                             <p className="text-[10px] text-neutral-500 leading-relaxed font-black uppercase tracking-tight italic">

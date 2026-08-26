@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 interface StatsCardProps {
     title: string;
@@ -22,7 +22,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
     className = ''
 }) => {
     return (
-        <div className={`bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-2xl p-5 shadow-sm hover:shadow-md transition-all ${className}`}>
+        <div className={`bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-5 shadow-sm hover:shadow-md transition-all ${className}`}>
             <div className="flex items-start justify-between">
                 <div>
                     <h3 className="text-sm font-medium text-slate-500 dark:text-neutral-400 mb-1">{title}</h3>

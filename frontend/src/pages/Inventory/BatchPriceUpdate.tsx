@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Search, Save, AlertCircle, CheckCircle, Package, ArrowRight, Printer } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -100,7 +100,7 @@ const BatchPriceUpdate: React.FC = () => {
         <div className="p-6 max-w-4xl mx-auto">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                    <Printer className="w-8 h-8 text-emerald-500" />
+                    <Printer className="w-8 h-8 text-success" />
                     Batch Price Update
                 </h1>
                 <p className="text-gray-500 dark:text-gray-400 mt-1">
@@ -142,7 +142,7 @@ const BatchPriceUpdate: React.FC = () => {
 
                 {/* Item Details & Update Section */}
                 {item && (
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-2 border-emerald-500/20 animation-fade-in">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-2 border-success/20 animation-fade-in">
                         <div className="flex items-start justify-between mb-6">
                             <div>
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">{item.name}</h3>
@@ -153,7 +153,7 @@ const BatchPriceUpdate: React.FC = () => {
                             <div className="text-right">
                                 <div className="text-sm text-gray-500 dark:text-gray-400">Current Stock</div>
                                 <div className="text-2xl font-bold text-gray-800 dark:text-white flex items-center justify-end gap-2">
-                                    <Package className="w-5 h-5 text-emerald-500" />
+                                    <Package className="w-5 h-5 text-success" />
                                     {item.stockQty}
                                 </div>
                             </div>
@@ -170,7 +170,7 @@ const BatchPriceUpdate: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+                                <label className="block text-sm font-bold text-emerald-600 dark:text-success mb-2">
                                     New Selling Price (₹)
                                 </label>
                                 <input
@@ -211,7 +211,7 @@ const BatchPriceUpdate: React.FC = () => {
                             </button>
                         </div>
 
-                        <div className="mt-4 flex items-center gap-2 text-sm text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
+                        <div className="mt-4 flex items-center gap-2 text-sm text-amber-600 dark:text-warning bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
                             <AlertCircle className="w-4 h-4 flex-shrink-0" />
                             This will update the global price for this item and add all {item.stockQty} units to the label reprint queue.
                         </div>

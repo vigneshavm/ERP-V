@@ -1,176 +1,179 @@
-import React, { useState } from 'react';
-import { Search, Filter, Plus, Box, AlertTriangle, TrendingUp, TrendingDown, MoreVertical, Layers, Zap } from 'lucide-react';
-import inventoryData from '../../mockData/inventoryData.json';
-
-// --- Types & Mock Data ---
-interface Product {
-    id: string;
-    name: string;
-    sku: string;
-    category: string;
-    stock: number;
-    status: 'In Stock' | 'Low Stock' | 'Out of Stock';
-    price: string;
-    trend: 'up' | 'down';
-    image: string;
-}
-
-const IconMap: Record<string, React.ElementType> = {
-    Box, AlertTriangle, TrendingUp, Zap
-};
-
-const MOCK_INVENTORY: Product[] = inventoryData.MOCK_INVENTORY as Product[];
+import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+    Search, Filter, Plus, Box, AlertTriangle, TrendingUp, 
+    TrendingDown, MoreVertical, Layers, Zap, Package, 
+    ShieldCheck, RefreshCw, IndianRupee, BarChart3, ChevronRight
+} from 'lucide-react';
+import { inventory, MockProduct } from '../../data';
+import Layout from '../../components/shared/Layout';
 
 const InventoryMockUI: React.FC = () => {
-    const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
+
+    const metrics = useMemo(() => {
+        const totalItems = inventory.length;
+        const totalStock = (inventory as MockProduct[]).reduce((sum, item) => sum + item.stock, 0);
+        const lowStockCount = (inventory as MockProduct[]).filter(item => item.stock < 15).length;
+        const totalValue = (inventory as MockProduct[]).reduce((sum, item) => sum + (item.selling_price * item.stock), 0);
+
+        return [
+            { label: 'Total Stock Units', value: totalStock.toLocaleString(), trend: '+4.2%', icon: Box, color: 'text-primary', bg: 'bg-primary/10' },
+            { label: 'Inventory Valuation', value: `₹${(totalValue/100000).toFixed(2)}L`, trend: '+1.5%', icon: IndianRupee, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+            { label: 'Low Stock Nodes', value: lowStockCount, trend: '-2', icon: AlertTriangle, color: 'text-amber-500', bg: 'bg-amber-500/10' }
+        ];
+    }, []);
 
     return (
-        <div className="min-h-screen bg-app text-main font-sans selection:bg-emerald-500/30">
-            {/* Background Ambient Glows */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-emerald-600/10 rounded-full blur-[120px]" />
-                <div className="absolute top-[40%] -right-[10%] w-[40%] h-[60%] bg-blue-600/10 rounded-full blur-[140px]" />
-            </div>
-
-            {/* Main Layout */}
-            <div className="relative z-10 flex h-screen overflow-hidden">
-                
-                {/* Minimalist Sidebar */}
-                <aside className="w-20 lg:w-64 border-r border-white/5 bg-input backdrop-blur-xl flex flex-col items-center lg:items-start py-8">
-                    <div className="w-12 h-12 lg:w-auto lg:h-auto lg:px-6 mb-12 flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                            <Layers className="w-5 h-5 text-main" />
-                        </div>
-                        <span className="hidden lg:block font-black text-xl tracking-tighter">BizzAI.</span>
+        <Layout>
+            <div className="p-8 space-y-8 h-full flex flex-col text-main animate-fade-in relative z-10">
+                {/* Header */}
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
+                            Inventory <span className="text-primary">Matrix</span>
+                        </h1>
+                        <p className="text-[10px] uppercase tracking-[0.2em] font-black text-neutral-500 dark:text-neutral-400 mt-1">
+                            Asset Monitoring Node // System V4.0
+                        </p>
                     </div>
-                    
-                    <nav className="w-full px-4 space-y-4">
-                        {inventoryData.sidebarNav.map((item, idx) => {
-                            const Icon = IconMap[item.iconName];
-                            return (
-                                <button key={idx} className={`w-full flex items-center justify-center lg:justify-start gap-3 p-3 rounded-xl transition-all ${item.active ? 'bg-white/10 text-emerald-400 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]' : 'text-zinc-500 hover:text-main hover:bg-white/5'}`}>
-                                    {Icon && <Icon className="w-5 h-5" />}
-                                    <span className="hidden lg:block font-bold text-sm tracking-wide">{item.label}</span>
-                                </button>
-                            );
-                        })}
-                    </nav>
-                </aside>
+                    <div className="flex gap-4">
+                        <button className="h-12 px-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white font-bold text-xs tracking-widest rounded-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all shadow-sm flex items-center gap-3 uppercase">
+                            <BarChart3 className="w-4 h-4 text-primary" /> Stock Audit
+                        </button>
+                        <button className="h-12 px-8 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-sm transition-all shadow-lg shadow-primary/20 flex items-center gap-3 hover:opacity-90">
+                            <Plus className="w-4 h-4" /> Initialize Item
+                        </button>
+                    </div>
+                </div>
 
-                {/* Main Content Area */}
-                <main className="flex-1 flex flex-col h-full overflow-hidden">
-                    {/* Top Nav */}
-                    <header className="h-20 border-b border-white/5 bg-card backdrop-blur-md flex items-center justify-between px-8">
-                        <div>
-                            <h1 className="text-2xl font-black tracking-tight flex items-center gap-3">
-                                Inventory Matrix
-                                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase tracking-widest font-black">Live</span>
-                            </h1>
-                            <p className="text-xs text-zinc-500 font-medium tracking-wide mt-1">Manage core system assets and structural components.</p>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <div className="relative group">
-                                <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-emerald-400 transition-colors" />
-                                <input 
-                                    type="text" 
-                                    placeholder="Search by SKU or Name..." 
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-64 bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-medium placeholder:text-zinc-600"
-                                />
-                            </div>
-                            <button className="h-10 px-6 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center gap-2">
-                                <Plus className="w-4 h-4" /> Initialize Item
-                            </button>
-                        </div>
-                    </header>
-
-                    {/* Dashboard Metrics */}
-                    <div className="px-8 py-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {inventoryData.dashboardMetrics.map((stat, idx) => {
-                            const Icon = IconMap[stat.iconName];
-                            return (
-                                <div key={idx} className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-6 relative overflow-hidden group hover:bg-white/[0.04] transition-colors">
-                                    <div className={`absolute top-0 right-0 w-32 h-32 bg-${stat.color}-500/10 blur-[50px] -mr-10 -mt-10 group-hover:bg-${stat.color}-500/20 transition-colors`} />
-                                    <div className="flex justify-between items-start mb-4 relative z-10">
-                                        <div className={`p-3 rounded-2xl bg-white/5 border border-white/10 text-${stat.color}-400`}>
-                                            {Icon && <Icon className="w-5 h-5" />}
-                                        </div>
-                                        <span className="text-xs font-bold px-2 py-1 bg-white/5 rounded-lg text-zinc-400">{stat.trend}</span>
-                                    </div>
-                                    <h3 className="text-zinc-500 text-xs font-black uppercase tracking-widest mb-1 relative z-10">{stat.label}</h3>
-                                    <p className="text-4xl font-black tracking-tighter relative z-10">{stat.value}</p>
+                {/* Metrics Matrix */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {metrics.map((card, i) => (
+                        <div key={i} className="bg-white dark:bg-neutral-900 p-6 rounded-sm border border-neutral-200 dark:border-neutral-800 flex flex-col gap-4 group hover:border-primary/50 transition-all cursor-pointer shadow-sm relative overflow-hidden">
+                            <div className="flex justify-between items-start relative z-10">
+                                <div className={`p-3 rounded-sm ${card.bg} ${card.color} border border-current/10`}>
+                                    <card.icon className="w-5 h-5" />
                                 </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Data Grid */}
-                    <div className="flex-1 px-8 pb-8 overflow-hidden flex flex-col">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-sm font-black uppercase tracking-widest text-zinc-400">Inventory Registry</h2>
-                            <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-main transition-colors">
-                                <Filter className="w-4 h-4" />
-                            </button>
-                        </div>
-
-                        <div className="flex-1 bg-white/[0.01] border border-white/5 rounded-[2rem] overflow-hidden flex flex-col">
-                            {/* Grid Header */}
-                            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/5 bg-input text-xs font-black uppercase tracking-widest text-zinc-500">
-                                <div className="col-span-5">Asset Descriptor</div>
-                                <div className="col-span-2">Category</div>
-                                <div className="col-span-2">Status</div>
-                                <div className="col-span-2 text-right">Valuation</div>
-                                <div className="col-span-1"></div>
+                                <span className={`text-[9px] font-black ${card.color} uppercase tracking-[0.2em] transition-colors`}>{card.trend} V/PREV</span>
                             </div>
+                            <div className="relative z-10">
+                                <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">{card.label}</p>
+                                <p className="text-2xl font-display font-black tracking-tighter text-neutral-900 dark:text-white tabular-nums">{card.value}</p>
+                            </div>
+                            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                        </div>
+                    ))}
+                </div>
 
-                            {/* Grid Body */}
-                            <div className="flex-1 overflow-y-auto">
-                                {MOCK_INVENTORY.map((item) => (
-                                    <div key={item.id} className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors items-center group">
-                                        <div className="col-span-5 flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 overflow-hidden relative">
-                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
-                                            </div>
-                                            <div>
-                                                <h3 className="font-bold text-sm tracking-wide text-zinc-200 group-hover:text-main transition-colors">{item.name}</h3>
-                                                <p className="text-xs font-mono text-zinc-600 mt-0.5">{item.sku}</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="col-span-2 flex items-center">
-                                            <span className="px-3 py-1 bg-white/5 rounded-lg text-xs font-medium text-zinc-400 border border-white/5">{item.category}</span>
-                                        </div>
-                                        
-                                        <div className="col-span-2 flex items-center">
-                                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border flex items-center gap-2
-                                                ${item.status === 'In Stock' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 
-                                                  item.status === 'Low Stock' ? 'bg-orange-500/10 border-orange-500/20 text-orange-400' : 
-                                                  'bg-red-500/10 border-red-500/20 text-red-400'}`}
-                                            >
-                                                <div className={`w-1.5 h-1.5 rounded-full ${item.status === 'In Stock' ? 'bg-emerald-400' : item.status === 'Low Stock' ? 'bg-orange-400' : 'bg-red-400'} animate-pulse`} />
-                                                {item.status} ({item.stock})
-                                            </div>
-                                        </div>
-
-                                        <div className="col-span-2 flex items-center justify-end font-mono font-bold text-sm">
-                                            {item.price}
-                                        </div>
-
-                                        <div className="col-span-1 flex justify-end">
-                                            <button className="p-2 text-zinc-600 hover:text-main hover:bg-white/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
-                                                <MoreVertical className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
+                {/* Filter & Registry */}
+                <div className="flex-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm flex flex-col overflow-hidden shadow-sm">
+                    <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex flex-col lg:flex-row justify-between items-center gap-4">
+                        <div className="flex items-center gap-4">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-900 dark:text-white flex items-center gap-2">
+                                <Layers className="w-4 h-4 text-primary" /> Active Stock Registry
+                            </h3>
+                            <div className="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800 hidden lg:block" />
+                            <div className="flex gap-4">
+                                {['ALL ITEMS', 'LOW STOCK', 'CATEGORY WISE'].map((tab, idx) => (
+                                    <button key={tab} className={`text-[9px] font-black uppercase tracking-widest transition-all ${idx === 0 ? 'text-primary' : 'text-neutral-400 hover:text-neutral-600'}`}>{tab}</button>
                                 ))}
                             </div>
                         </div>
+                        <div className="relative w-full lg:w-64">
+                            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                            <input 
+                                type="text" 
+                                placeholder="FILTER BY SKU / NAME..." 
+                                className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-2 pl-10 pr-4 text-[9px] font-black tracking-widest uppercase focus:border-primary outline-none" 
+                            />
+                        </div>
                     </div>
-                </main>
+
+                    <div className="flex-1 overflow-auto custom-scrollbar">
+                        <table className="w-full text-left border-collapse">
+                            <thead className="bg-neutral-50 dark:bg-neutral-950 sticky top-0 z-20 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800">
+                                <tr className="text-neutral-500 dark:text-neutral-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                                    <th className="px-8 py-5">Asset Descriptor</th>
+                                    <th className="px-8 py-5">Classification</th>
+                                    <th className="px-8 py-5">Stock Level</th>
+                                    <th className="px-8 py-5 text-right">Unit Valuation</th>
+                                    <th className="px-8 py-5 text-right">Asset Worth</th>
+                                    <th className="px-8 py-5 w-10"></th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                {inventory.map((item, idx) => (
+                                    <tr key={idx} className="hover:bg-primary/[0.02] transition-all group">
+                                        <td className="px-8 py-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-sm bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 overflow-hidden relative group/img">
+                                                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                                                        <Zap className="w-4 h-4 text-primary" />
+                                                    </div>
+                                                    <img src={`https://api.dicebear.com/7.x/shapes/svg?seed=${item.id}`} alt="" className="w-full h-full object-cover p-2" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tight">{item.name}</p>
+                                                    <p className="text-[10px] font-mono text-neutral-400 mt-1 uppercase">SKU: {item.id.split('-').pop()}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 rounded-sm text-[9px] font-black uppercase tracking-widest text-neutral-500 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
+                                                {item.category}
+                                            </span>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex-1 h-1.5 w-24 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
+                                                    <div className={`h-full rounded-full transition-all ${item.stock < 15 ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`} style={{ width: `${Math.min(item.stock, 100)}%` }} />
+                                                </div>
+                                                <span className={`text-[10px] font-black uppercase tabular-nums ${item.stock < 15 ? 'text-amber-500' : 'text-emerald-500'}`}>{item.stock}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-right">
+                                            <div className="flex items-center justify-end gap-1 font-mono text-xs font-black text-neutral-400">
+                                                <IndianRupee className="w-3 h-3" />
+                                                {(item as MockProduct).selling_price.toLocaleString()}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-right">
+                                            <div className="flex items-center justify-end gap-1 font-mono text-xs font-black text-neutral-900 dark:text-white tabular-nums">
+                                                <IndianRupee className="w-3 h-3" />
+                                                {((item as MockProduct).selling_price * (item as MockProduct).stock).toLocaleString()}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <button className="p-2 text-neutral-300 hover:text-primary transition-all">
+                                                <MoreVertical className="w-4 h-4" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Protocol Footer */}
+                <div className="bg-primary/5 border border-primary/10 p-6 rounded-sm flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-6">
+                        <div className="p-3 bg-primary/10 rounded-sm text-primary">
+                            <ShieldCheck className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Asset Validation Layer Active</h4>
+                            <p className="text-[10px] text-neutral-500 font-bold mt-1 uppercase tracking-widest italic">All stock adjustments are cryptographically signed and logged to the central ledger.</p>
+                        </div>
+                    </div>
+                    <button className="p-3 text-neutral-400 hover:text-primary transition-all flex items-center gap-2">
+                        <RefreshCw className="w-4 h-4" />
+                        <span className="text-[9px] font-black uppercase tracking-widest">Resync Nodes</span>
+                    </button>
+                </div>
             </div>
-        </div>
+        </Layout>
     );
 };
 

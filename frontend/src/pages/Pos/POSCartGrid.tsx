@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Product } from "../../types/product";
 import { CartItem } from "../../types/sales";
@@ -708,7 +708,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
             {/* Visual Search Banner */}
             {/* Visual Search Banner - COMMENTED OUT
             {visualMatches && (
-                <div className="bg-indigo-50 dark:bg-indigo-900/20 px-4 py-2 flex justify-between items-center border-b border-indigo-100 dark:border-indigo-500/20">
+                <div className="bg-indigo-50 dark:bg-indigo-900/20 px-4 py-2 flex justify-between items-center border-b border-indigo-100 dark:border-primary/20">
                     <span className="text-indigo-700 dark:text-indigo-300 text-sm flex items-center gap-2">
                         <Camera className="w-4 h-4" />
                         Visual Search: Found {visualMatches.length} matches

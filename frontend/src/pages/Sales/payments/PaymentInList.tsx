@@ -1,17 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
     Search, Plus, Filter, Download, Printer, Eye,
     MoreHorizontal, Calendar, IndianRupee, History,
-    CreditCard, X
+    CreditCard, X, TrendingUp, BarChart2, ChevronLeft, ChevronRight,
+    ArrowUpRight, Wallet
 } from 'lucide-react';
 import { setActiveTab } from "../../../redux/slices/uiSlice";
-import { RootState } from "../../../redux/store";
 import { getTable } from "../../../services/dataSource";
 import Layout from "../../../components/shared/Layout";
-import PageHeader from "../../../components/shared/Layout/PageHeader";
-import StatsCard from "../../../components/shared/Display/StatsCard";
 
 // Demo Data Interface
 interface PaymentRecord {
@@ -33,6 +31,11 @@ const PaymentInList: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [payments, setPayments] = useState<PaymentRecord[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const token = user?.token;
 
     // Fetch payments on mount
     React.useEffect(() => {
@@ -74,271 +77,269 @@ const PaymentInList: React.FC = () => {
         );
     }, [searchQuery, payments]);
 
+    const totalPages = Math.max(1, Math.ceil(filteredPayments.length / itemsPerPage));
+    const safePage = Math.min(currentPage, totalPages);
+    const startIndex = (safePage - 1) * itemsPerPage;
+    const paginatedPayments = filteredPayments.slice(startIndex, startIndex + itemsPerPage);
+
     // Dashboard Metrics
     const metrics = useMemo(() => {
         const totalValue = payments.reduce((sum, p) => sum + p.amount, 0);
         const creditCount = payments.filter(p => (p.excessAmount || 0) > 0).length;
+        const todayCollections = payments.slice(0, 5).reduce((sum, p) => sum + p.amount, 0); // Mocking today's collections
         return {
             totalValue,
             count: payments.length,
-            creditCount
+            creditCount,
+            todayCollections
         };
     }, [payments]);
 
-    // Format currency
     const formatCurrency = (amount: number) =>
         new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
 
+    if (loading) {
+        return (
+            <Layout>
+                <div className="flex flex-col items-center justify-center py-20 min-h-[60vh]">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
+                    <p className="text-secondary opacity-70 font-black uppercase tracking-widest text-[10px]">Reconciling Ledgers...</p>
+                </div>
+            </Layout>
+        );
+    }
+
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in pb-10">
-                <PageHeader
-                    title="Payment In"
-                    description="Track and manage customer payment records"
-                    actions={
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => window.print()}
-                                className="btn btn-secondary glass-panel"
-                                title="Print List"
-                            >
-                                <Printer className="w-4 h-4" />
-                            </button>
-                            <button
-                                onClick={() => dispatch(setActiveTab('PAYMENT_IN'))}
-                                className="btn btn-primary"
-                            >
-                                <Plus className="w-4 h-4" />
-                                Record Payment
-                            </button>
-                        </div>
-                    }
-                />
-
-                {/* Dashboard Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <StatsCard
-                        title="Total Collections"
-                        value={formatCurrency(metrics.totalValue)}
-                        icon={<IndianRupee className="w-full h-full" />}
-                        trend="Total received"
-                        trendUp={true}
-                        iconBgColor="bg-emerald-100"
-                        iconColor="text-success"
-                    />
-                    <StatsCard
-                        title="Transactions"
-                        value={metrics.count}
-                        icon={<History className="w-full h-full" />}
-                        iconBgColor="bg-blue-100"
-                        iconColor="text-info"
-                    />
-                    <StatsCard
-                        title="With Credit/Excess"
-                        value={metrics.creditCount}
-                        icon={<CreditCard className="w-full h-full" />}
-                        trend="Carry-forward balance"
-                        trendUp={true}
-                        iconBgColor="bg-amber-100"
-                        iconColor="text-amber-600"
-                    />
+            <div className="flex-1 w-full bg-app text-main font-sans selection:bg-primary/30 relative">
+                {/* Ambient Background Blobs */}
+                <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                    <div className="absolute top-[-15%] left-[5%] w-[55%] h-[55%] bg-success/10 rounded-full blur-[160px] animate-aura opacity-60" />
+                    <div className="absolute bottom-[-10%] right-[5%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[140px] animate-aura opacity-50" style={{ animationDelay: '7s' }} />
+                    <div className="absolute top-[40%] right-[20%] w-[25%] h-[25%] bg-accent/5 rounded-full blur-[100px] animate-aura opacity-40" style={{ animationDelay: '3s' }} />
                 </div>
 
-                <div className="glass-panel dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden flex flex-col">
-                    {/* Controls */}
-                    <div className="p-4 bg-neutral-50/50 dark:bg-neutral-800/50 border-b border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row gap-4 items-center justify-between">
-                        <div className="relative flex-1 max-w-md group w-full">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary opacity-50 group-focus-within:text-brand-500 transition-colors" />
-                            <input
-                                type="text"
-                                placeholder="Search receipt #, customer name..."
+                <main className="relative z-10 max-w-7xl mx-auto px-6 py-10 space-y-10">
+                    {/* Header */}
+                    <header className="flex justify-between items-end">
+                        <div className="relative pl-5">
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--color-primary),0.5)]" />
+                            <h1 className="text-3xl font-display font-black tracking-tighter text-main flex items-center gap-3">
+                                Payment <span className="text-primary">Intelligence</span>
+                                <span className="px-3 py-1 bg-success/10 border border-success/20 text-success rounded-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+                                    <ArrowUpRight className="w-3 h-3" /> Collections
+                                </span>
+                            </h1>
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="flex h-2 w-2 rounded-full bg-success animate-pulse" />
+                                <p className="text-[10px] uppercase tracking-[0.2em] font-black text-secondary">Real-Time Revenue Monitoring</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <button className="flex items-center gap-2 px-5 py-2.5 rounded-sm bg-card border border-default text-xs font-black uppercase tracking-widest text-muted hover:text-main hover:border-primary/30 transition-all">
+                                <Download className="w-4 h-4" /> Export Ledger
+                            </button>
+                            <button 
+                                onClick={() => dispatch(setActiveTab('PAYMENT_IN'))}
+                                className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-sm hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all text-xs font-black uppercase tracking-widest"
+                            >
+                                <Plus className="w-4 h-4" /> Record Payment
+                            </button>
+                        </div>
+                    </header>
+
+                    {/* KPI Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        {[
+                            { label: 'Total Collections', val: formatCurrency(metrics.totalValue), icon: IndianRupee, color: 'success', trend: '+14.2%' },
+                            { label: 'Today Collections', val: formatCurrency(metrics.todayCollections), icon: Wallet, color: 'primary', trend: 'Live' },
+                            { label: 'Transactions', val: metrics.count, icon: History, color: 'info', trend: 'Monthly' },
+                            { label: 'With Excess', val: metrics.creditCount, icon: CreditCard, color: 'warning', trend: 'Credit' }
+                        ].map((stat, i) => (
+                            <div key={i} className="glass-panel border border-default rounded-sm p-6 group hover:border-primary/30 transition-all">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className={`p-3 bg-${stat.color}/10 text-${stat.color} rounded-sm`}>
+                                        <stat.icon className="w-5 h-5" />
+                                    </div>
+                                    <span className={`text-[10px] font-black ${stat.trend.includes('+') ? 'text-success bg-success/10' : 'text-primary bg-primary/10'} px-2 py-1 rounded-full`}>
+                                        {stat.trend}
+                                    </span>
+                                </div>
+                                <p className="text-3xl font-black text-main tracking-tighter mb-1">{stat.val}</p>
+                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest">{stat.label}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Filters & Search */}
+                    <div className="glass-panel p-5 rounded-sm border border-default flex flex-wrap gap-5 items-center">
+                        <div className="relative flex-1 min-w-[300px]">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                            <input 
+                                type="text" 
+                                placeholder="Search receipt #, customer name, or phone..." 
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="input pl-10 w-full"
+                                className="w-full bg-card border border-default rounded-sm py-3 pl-12 pr-4 text-xs font-bold focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all text-main placeholder:text-secondary"
                             />
                         </div>
-                        <div className="flex gap-2 w-full md:w-auto">
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery('')}
-                                    className="btn btn-ghost text-secondary opacity-70"
-                                >
-                                    <X className="w-4 h-4 mr-2" /> Clear
-                                </button>
-                            )}
-                            <button className="btn btn-secondary">
-                                <Filter className="w-4 h-4" /> Filter
+                        <div className="flex gap-3">
+                            <button className="flex items-center gap-2 px-4 py-2 bg-app border border-default rounded-sm text-[10px] font-black uppercase tracking-widest text-main hover:border-primary/30 transition-all">
+                                <Filter className="w-3 h-3" /> Advanced Filters
                             </button>
-                            <button className="btn btn-secondary">
-                                <Download className="w-4 h-4" /> Export
+                            <button 
+                                onClick={() => setSearchQuery('')}
+                                className={`flex items-center gap-2 px-4 py-2 bg-app border border-default rounded-sm text-[10px] font-black uppercase tracking-widest text-secondary hover:text-main transition-all ${!searchQuery && 'opacity-50 cursor-not-allowed'}`}
+                            >
+                                <X className="w-3 h-3" /> Clear
                             </button>
                         </div>
                     </div>
 
-                    {/* Data Display */}
-                    <div className="flex-1 overflow-auto">
-                        {loading ? (
-                            <div className="flex flex-col items-center justify-center py-20">
-                                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-600 mb-4"></div>
-                                <p className="text-secondary opacity-70 font-medium font-outfit">Loading payments...</p>
+                    {/* Data Table */}
+                    <div className="glass-panel rounded-sm border border-default overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="bg-surface/50 sticky top-0 z-20 border-b border-default">
+                                    <tr className="text-[9px] font-black uppercase tracking-widest text-secondary">
+                                        <th className="px-6 py-4">Receipt No</th>
+                                        <th className="px-6 py-4">Date / Customer</th>
+                                        <th className="px-6 py-4">Allocation</th>
+                                        <th className="px-6 py-4">Modes</th>
+                                        <th className="px-6 py-4 text-right">Amount</th>
+                                        <th className="px-6 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-default">
+                                    {paginatedPayments.length > 0 ? (
+                                        paginatedPayments.map((payment) => (
+                                            <tr 
+                                                key={payment.id} 
+                                                className="hover:bg-primary/[0.03] transition-all group cursor-pointer"
+                                                onClick={() => navigate(`/sales/payment-in/${payment.id}`)}
+                                            >
+                                                <td className="px-6 py-5">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center">
+                                                            <IndianRupee className="w-4 h-4 text-primary" />
+                                                        </div>
+                                                        <span className="font-mono text-sm font-bold text-main tracking-tighter group-hover:text-primary transition-colors">
+                                                            {payment.receiptNo}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-5">
+                                                    <div className="font-bold text-main text-sm">{payment.customerName}</div>
+                                                    <div className="text-[10px] text-secondary font-black uppercase tracking-widest mt-0.5 flex items-center gap-2">
+                                                        <Calendar className="w-3 h-3" />
+                                                        {new Date(payment.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-5">
+                                                    <div className="flex items-center gap-2">
+                                                        {payment.allocatedCount && payment.allocatedCount > 0 ? (
+                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest bg-info/10 text-info border border-info/20">
+                                                                {payment.allocatedCount} Invoices
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-200">
+                                                                Advance
+                                                            </span>
+                                                        )}
+                                                        {(payment.excessAmount || 0) > 0 && (
+                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest bg-success/10 text-success border border-success/20">
+                                                                +Credit
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-5">
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {payment.modes.map((mode, idx) => (
+                                                            <span key={idx} className="px-2 py-0.5 bg-surface/50 text-secondary border border-default/30 text-[9px] uppercase font-black rounded-sm">
+                                                                {mode}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-5 text-right">
+                                                    <div className="text-lg font-display font-black tracking-tighter text-main tabular-nums">{formatCurrency(payment.amount)}</div>
+                                                    <div className="text-[9px] text-success font-black uppercase tracking-widest mt-1">Verified</div>
+                                                </td>
+                                                <td className="px-6 py-5 text-right">
+                                                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <button 
+                                                            className="p-2 rounded-sm bg-card border border-default text-muted hover:text-primary transition-all"
+                                                            title="Print Receipt"
+                                                            onClick={(e) => { e.stopPropagation(); window.print(); }}
+                                                        >
+                                                            <Printer className="w-4 h-4" />
+                                                        </button>
+                                                        <button className="p-2 rounded-sm bg-card border border-default text-muted hover:text-main transition-all">
+                                                            <MoreHorizontal className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={6} className="px-8 py-20 text-center">
+                                                <div className="flex flex-col items-center gap-3">
+                                                    <div className="p-4 bg-card rounded-full border border-default">
+                                                        <Search className="w-8 h-8 text-muted" />
+                                                    </div>
+                                                    <p className="text-sm font-medium text-muted">No payment records found.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-4">
+                            <div className="text-xs font-bold text-secondary">
+                                Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredPayments.length)} of {filteredPayments.length} entries
                             </div>
-                        ) : filteredPayments.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-20 text-center px-4 font-outfit">
-                                <div className="w-16 h-16 bg-surface/30 rounded-full flex items-center justify-center mb-4">
-                                    <Search className="w-8 h-8 opacity-50" />
-                                </div>
-                                <p className="text-lg font-bold text-main dark:text-neutral-200">No records found</p>
-                                <p className="text-sm text-secondary opacity-70 mt-1 max-w-xs">
-                                    Try adjusting your search or record a new payment.
-                                </p>
-                                <button
-                                    onClick={() => dispatch(setActiveTab('PAYMENT_IN'))}
-                                    className="btn btn-primary mt-6"
+                            <div className="flex gap-1">
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={safePage === 1}
+                                    className="p-2 rounded-sm bg-card border border-default text-main hover:bg-surface disabled:opacity-50 transition-all"
                                 >
-                                    Record Payment
+                                    <ChevronLeft className="w-4 h-4" />
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                                    <button
+                                        key={p}
+                                        onClick={() => setCurrentPage(p)}
+                                        className={`w-8 h-8 rounded-sm text-xs font-bold transition-all ${
+                                            safePage === p 
+                                            ? 'bg-primary text-white shadow-sm border border-primary' 
+                                            : 'bg-card border border-default text-main hover:bg-surface'
+                                        }`}
+                                    >
+                                        {p}
+                                    </button>
+                                ))}
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={safePage === totalPages}
+                                    className="p-2 rounded-sm bg-card border border-default text-main hover:bg-surface disabled:opacity-50 transition-all"
+                                >
+                                    <ChevronRight className="w-4 h-4" />
                                 </button>
                             </div>
-                        ) : (
-                            <>
-                                {/* Desktop Table View */}
-                                <div className="hidden md:block">
-                                    <table className="w-full text-left font-outfit">
-                                        <thead className="bg-neutral-50 dark:bg-neutral-800 border-b border-default/30">
-                                            <tr>
-                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Receipt No</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Date</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Customer</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Allocation</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Mode</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider text-right">Amount</th>
-                                                <th className="px-6 py-3 text-xs font-bold text-secondary opacity-70 uppercase tracking-wider text-right">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800 glass-panel dark:bg-neutral-900">
-                                            {filteredPayments.map((payment) => (
-                                                <tr
-                                                    key={payment.id}
-                                                    className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer group"
-                                                    onClick={() => navigate(`/sales/payment-in/${payment.id}`)}
-                                                >
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-brand-600 dark:text-brand-400">
-                                                        {payment.receiptNo}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
-                                                        <div className="flex items-center gap-2">
-                                                            <Calendar className="w-3 h-3" />
-                                                            {new Date(payment.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex items-center">
-                                                            <div className="h-8 w-8 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold text-xs mr-3">
-                                                                {payment.customerName.charAt(0)}
-                                                            </div>
-                                                            <div>
-                                                                <div className="text-sm font-bold text-main font-outfit">{payment.customerName}</div>
-                                                                <div className="text-xs text-secondary opacity-70">{payment.customerPhone}</div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex items-center gap-2">
-                                                            {payment.allocatedCount && payment.allocatedCount > 0 ? (
-                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-info/10 text-blue-700 border border-blue-100">
-                                                                    {payment.allocatedCount} Inv
-                                                                </span>
-                                                            ) : (
-                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                                                                    Advance
-                                                                </span>
-                                                            )}
-                                                            {(payment.excessAmount || 0) > 0 && (
-                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-700 border border-green-200">
-                                                                    +Credit
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex flex-wrap gap-1">
-                                                            {payment.modes.map((mode, idx) => (
-                                                                <span key={idx} className="px-2 py-0.5 bg-surface/30 text-secondary border border-default/30 text-[10px] uppercase font-bold rounded">
-                                                                    {mode}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-main">
-                                                        {formatCurrency(payment.amount)}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <button
-                                                                className="p-1.5 hover:bg-surface/60 rounded text-secondary opacity-70 hover:text-brand-600 transition-colors"
-                                                                title="View"
-                                                            >
-                                                                <Eye className="w-4 h-4" />
-                                                            </button>
-                                                            <button
-                                                                className="p-1.5 hover:bg-surface/60 rounded text-secondary opacity-70 hover:text-brand-600 transition-colors"
-                                                                title="Print"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    window.print();
-                                                                }}
-                                                            >
-                                                                <Printer className="w-4 h-4" />
-                                                            </button>
-                                                            <button className="p-1.5 hover:bg-surface/60 rounded text-secondary opacity-70 hover:text-main transition-colors" title="More">
-                                                                <MoreHorizontal className="w-4 h-4" />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                {/* Mobile Card View */}
-                                <div className="md:hidden divide-y divide-neutral-100 dark:divide-neutral-800">
-                                    {filteredPayments.map((payment) => (
-                                        <div
-                                            key={payment.id}
-                                            onClick={() => navigate(`/sales/payment-in/${payment.id}`)}
-                                            className="p-4 active:bg-surface/40 transition-colors"
-                                        >
-                                            <div className="flex justify-between items-start mb-2">
-                                                <div>
-                                                    <div className="font-bold text-brand-600 dark:text-brand-400">{payment.receiptNo}</div>
-                                                    <div className="text-sm font-bold text-main">{payment.customerName}</div>
-                                                </div>
-                                                <div className="font-bold text-main">{formatCurrency(payment.amount)}</div>
-                                            </div>
-                                            <div className="flex justify-between items-center mt-3">
-                                                <div className="text-xs text-secondary opacity-70">
-                                                    {new Date(payment.date).toLocaleDateString()}
-                                                </div>
-                                                <div className="flex gap-1">
-                                                    {payment.modes.map((mode, idx) => (
-                                                        <span key={idx} className="px-2 py-0.5 bg-surface/30 text-secondary border border-default/30 text-[10px] uppercase font-bold rounded">
-                                                            {mode}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </div>
+                        </div>
+                    )}
+                </main>
             </div>
         </Layout>
     );
 };
 
 export default PaymentInList;
-
-

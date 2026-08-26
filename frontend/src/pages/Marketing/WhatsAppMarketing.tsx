@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
     MessageSquare, Send, Eye, Zap, Plus, LayoutDashboard,
     Smartphone, ShieldCheck, Filter, RefreshCw, Sparkles,
@@ -67,7 +67,7 @@ const WhatsAppMarketing: React.FC = () => {
                         <div className="relative z-10">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{kpi.label}</p>
                             <h3 className="text-3xl font-black italic">{kpi.val}</h3>
-                            <span className="text-[10px] font-bold text-emerald-500">{kpi.trend}</span>
+                            <span className="text-[10px] font-bold text-success">{kpi.trend}</span>
                         </div>
                     </div>
                 ))}
@@ -77,12 +77,12 @@ const WhatsAppMarketing: React.FC = () => {
             <div className="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden">
                 <div className="flex items-center justify-between mb-10">
                     <div>
-                        <h3 className="text-2xl font-black italic uppercase">Broadcast <span className="text-indigo-600">Engine</span></h3>
+                        <h3 className="text-2xl font-black italic uppercase">Broadcast <span className="text-primary">Engine</span></h3>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Manage your one-to-many marketing blasts</p>
                     </div>
                     <button
                         onClick={() => setViewMode('create')}
-                        className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-indigo-600/20"
+                        className="px-8 py-4 bg-indigo-600 text-white rounded-sm font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-indigo-600/20"
                     >
                         Create Campaign
                     </button>
@@ -90,10 +90,10 @@ const WhatsAppMarketing: React.FC = () => {
 
                 <div className="space-y-4">
                     {mockCampaigns.map(camp => (
-                        <div key={camp.id} className="p-6 bg-slate-50/50 dark:bg-black/20 border border-slate-100 dark:border-slate-800 rounded-3xl flex items-center justify-between group hover:border-indigo-500/30 transition-all cursor-pointer">
+                        <div key={camp.id} className="p-6 bg-slate-50/50 dark:bg-black/20 border border-slate-100 dark:border-slate-800 rounded-sm flex items-center justify-between group hover:border-primary/30 transition-all cursor-pointer">
                             <div className="flex items-center gap-6">
-                                <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-sm">
-                                    <MessageSquare className="w-5 h-5 text-indigo-600" />
+                                <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-sm flex items-center justify-center shadow-sm">
+                                    <MessageSquare className="w-5 h-5 text-primary" />
                                 </div>
                                 <div>
                                     <h4 className="font-black italic uppercase text-slate-900 dark:text-white">{camp.name}</h4>
@@ -109,7 +109,7 @@ const WhatsAppMarketing: React.FC = () => {
                                     <p className="text-lg font-black italic text-emerald-600">{camp.conversion}</p>
                                     <p className="text-[8px] font-black text-slate-400 tracking-widest uppercase">Conversion</p>
                                 </div>
-                                <span className={`px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-[0.2em] ${camp.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-indigo-500/10 text-indigo-600 animate-pulse'}`}>
+                                <span className={`px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-[0.2em] ${camp.status === 'COMPLETED' ? 'bg-success/10 text-emerald-600' : 'bg-primary/10 text-primary animate-pulse'}`}>
                                     {camp.status}
                                 </span>
                             </div>
@@ -123,8 +123,8 @@ const WhatsAppMarketing: React.FC = () => {
     const renderAudience = () => (
         <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-700">
             <div className="bg-slate-900 rounded-[3rem] p-12 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/20 rounded-full -mr-48 -mt-48 blur-3xl" />
-                <h3 className="text-4xl font-black italic uppercase italic mb-4">Audience <span className="text-indigo-400">Architect</span></h3>
+                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full -mr-48 -mt-48 blur-3xl" />
+                <h3 className="text-4xl font-black italic uppercase italic mb-4">Audience <span className="text-primary">Architect</span></h3>
                 <p className="text-slate-400 font-bold italic mb-12">Target your customers with surgical precision based on their behavior.</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -136,7 +136,7 @@ const WhatsAppMarketing: React.FC = () => {
                     ].map((filter, i) => (
                         <div key={i} className="bg-white/5 border border-white/10 p-8 rounded-[2rem] hover:bg-white/10 transition-colors">
                             <div className="flex items-center gap-4 mb-6">
-                                <filter.icon className="w-5 h-5 text-indigo-400" />
+                                <filter.icon className="w-5 h-5 text-primary" />
                                 <h4 className="font-black italic uppercase tracking-widest">{filter.title}</h4>
                             </div>
                             <div className="flex flex-wrap gap-2">
@@ -159,7 +159,7 @@ const WhatsAppMarketing: React.FC = () => {
                 { code: 'BOGO2026', title: 'Weekend Blast', stats: '2042 Claims', roi: '15.8x', color: 'bg-rose-600' }
             ].map((coupon, i) => (
                 <div key={i} className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-xl group border-b-[8px] border-b-indigo-500/10 hover:border-b-indigo-500 transition-all">
-                    <div className={`${coupon.color} w-16 h-16 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl`}>
+                    <div className={`${coupon.color} w-16 h-16 rounded-sm flex items-center justify-center text-white mb-8 shadow-2xl`}>
                         <Percent className="w-8 h-8" />
                     </div>
                     <div className="space-y-2 mb-8 text-center">
@@ -184,8 +184,8 @@ const WhatsAppMarketing: React.FC = () => {
     return (
         <div className="min-h-screen bg-neutral-50/50 dark:bg-[#020617] relative">
             <div className="fixed inset-0 pointer-events-none opacity-40 dark:opacity-20 z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/20 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/10 blur-[120px] rounded-full" />
+                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-success/10 blur-[120px] rounded-full" />
             </div>
 
             <div className="relative z-10 max-w-[1400px] mx-auto p-12 space-y-12">
@@ -194,14 +194,14 @@ const WhatsAppMarketing: React.FC = () => {
                         <div className="flex items-center gap-3 mb-2">
                             <span className="px-3 py-1 bg-indigo-600 text-white text-[10px] font-black rounded-lg uppercase tracking-widest shadow-lg shadow-indigo-600/20">PART A</span>
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                <ShieldCheck className="w-3 h-3 text-emerald-500" /> MARKETING MODULE UNLOCKED
+                                <ShieldCheck className="w-3 h-3 text-success" /> MARKETING MODULE UNLOCKED
                             </span>
                         </div>
                         <h1 className="text-6xl font-black italic uppercase tracking-tighter">
-                            WhatsApp <span className="text-indigo-600">Marketing</span>
+                            WhatsApp <span className="text-primary">Marketing</span>
                         </h1>
                     </div>
-                    <div className="flex bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-xl">
+                    <div className="flex bg-white dark:bg-slate-900 p-2 rounded-sm border border-slate-100 dark:border-slate-800 shadow-xl">
                         {[
                             { id: 'campaigns', label: 'Campaigns', icon: Zap },
                             { id: 'audience', label: 'Audience', icon: Users },
@@ -237,6 +237,6 @@ const WhatsAppMarketing: React.FC = () => {
 };
 
 // Internal icon proxy
-const DollarSign2 = (props: any) => <div {...props} className="text-indigo-600 font-black text-2xl">₹</div>;
+const DollarSign2 = (props: any) => <div {...props} className="text-primary font-black text-2xl">₹</div>;
 
 export default WhatsAppMarketing;

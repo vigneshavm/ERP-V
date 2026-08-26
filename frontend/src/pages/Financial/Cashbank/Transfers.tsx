@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Layout from "../../../components/shared/Layout";
@@ -124,7 +124,7 @@ const Transfers: React.FC = () => {
                     </select>
 
                     <div className="flex flex-col items-center text-center space-y-3 pointer-events-none">
-                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${account ? 'bg-indigo-600 text-white rotate-12 scale-110 shadow-lg' : 'bg-slate-50 dark:bg-slate-800 text-slate-300'}`}>
+                        <div className={`w-16 h-16 rounded-sm flex items-center justify-center transition-all ${account ? 'bg-indigo-600 text-white rotate-12 scale-110 shadow-lg' : 'bg-slate-50 dark:bg-slate-800 text-slate-300'}`}>
                             {account ? (account.isBank ? <Building2 className="w-8 h-8" /> : <Wallet className="w-8 h-8" />) : <Plus className="w-8 h-8" />}
                         </div>
                         <div>
@@ -179,7 +179,7 @@ const Transfers: React.FC = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                         <div className="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[3rem] p-10 shadow-sm space-y-8">
                             <div className="flex items-center gap-3">
-                                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl text-indigo-600">
+                                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-sm text-primary">
                                     <Activity className="w-6 h-6" />
                                 </div>
                                 <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Execution Parameters</h3>
@@ -189,7 +189,7 @@ const Transfers: React.FC = () => {
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Transfer Volume (₹)</label>
                                     <div className="relative group">
-                                        <IndianRupee className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                                        <IndianRupee className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-300 group-hover:text-primary transition-colors" />
                                         <input
                                             type="number"
                                             value={formData.amount}
@@ -202,7 +202,7 @@ const Transfers: React.FC = () => {
                                         />
                                     </div>
                                     {insufficientBalance && (
-                                        <p className="flex items-center gap-1.5 text-[10px] font-bold text-rose-500 ml-1 uppercase leading-none">
+                                        <p className="flex items-center gap-1.5 text-[10px] font-bold text-danger ml-1 uppercase leading-none">
                                             <AlertCircle className="w-3 h-3" /> Volume exceeds source unit reserve
                                         </p>
                                     )}
@@ -211,7 +211,7 @@ const Transfers: React.FC = () => {
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Narrative Log</label>
                                     <div className="relative group h-full">
-                                        <FileText className="absolute left-6 top-7 w-6 h-6 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                                        <FileText className="absolute left-6 top-7 w-6 h-6 text-slate-300 group-hover:text-primary transition-colors" />
                                         <textarea
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -232,7 +232,7 @@ const Transfers: React.FC = () => {
                                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Balance Impact Log</h4>
 
                                     <div className="space-y-4">
-                                        <div className="flex justify-between items-center bg-white/10 p-4 rounded-2xl backdrop-blur-md">
+                                        <div className="flex justify-between items-center bg-white/10 p-4 rounded-sm backdrop-blur-md">
                                             <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Source Unit</span>
                                             <span className="text-sm font-black text-rose-300">
                                                 - ₹{formData.amount.toLocaleString('en-IN')}
@@ -241,7 +241,7 @@ const Transfers: React.FC = () => {
                                         <div className="flex justify-center text-indigo-200">
                                             <ArrowRight className="w-4 h-4 rotate-90" />
                                         </div>
-                                        <div className="flex justify-between items-center bg-white/10 p-4 rounded-2xl backdrop-blur-md">
+                                        <div className="flex justify-between items-center bg-white/10 p-4 rounded-sm backdrop-blur-md">
                                             <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Target Unit</span>
                                             <span className="text-sm font-black text-emerald-300">
                                                 + ₹{formData.amount.toLocaleString('en-IN')}
@@ -252,7 +252,7 @@ const Transfers: React.FC = () => {
                                     <button
                                         type="submit"
                                         disabled={isLoading || !formData.fromAccount || !formData.toAccount || formData.amount <= 0 || insufficientBalance || formData.fromAccount === formData.toAccount}
-                                        className="w-full py-5 bg-white text-indigo-600 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        className="w-full py-5 bg-white text-primary rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                     >
                                         {isLoading ? (
                                             <>
@@ -273,7 +273,7 @@ const Transfers: React.FC = () => {
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-amber-900 dark:text-amber-300 uppercase tracking-widest leading-none mb-2">Clearing Protocol</p>
-                                    <p className="text-[10px] font-medium text-amber-800 dark:text-amber-400 leading-relaxed italic">Verify all institutional parameters before execution. Internal clearing is final and will reflect immediately in global liquidity surveillance.</p>
+                                    <p className="text-[10px] font-medium text-amber-800 dark:text-warning leading-relaxed italic">Verify all institutional parameters before execution. Internal clearing is final and will reflect immediately in global liquidity surveillance.</p>
                                 </div>
                             </div>
                         </div>

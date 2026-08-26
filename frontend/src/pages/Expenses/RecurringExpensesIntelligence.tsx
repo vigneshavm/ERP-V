@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import { useRecurringExpenses } from "../../hooks/useRecurringExpenses";
@@ -101,7 +101,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                         <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Cash Required (30D)</p>
                         <h3 className="text-2xl font-black tabular-nums text-primary">₹{intelligence.cashRequired30Days.toLocaleString()}</h3>
                         <div className="flex items-center gap-1.5 mt-2 text-neutral-500 font-bold text-[10px] uppercase">
-                            <ShieldAlert className="w-3.5 h-3.5 text-amber-500" /> Reserve needed soon
+                            <ShieldAlert className="w-3.5 h-3.5 text-warning" /> Reserve needed soon
                         </div>
                     </div>
 
@@ -140,7 +140,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                 {intelligence.summaryByBranch.map((branch, idx) => (
                                     <div key={idx} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors">
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border font-black ${riskColorMap[branch.risk_level]}`}>
+                                            <div className={`w-12 h-12 rounded-sm flex items-center justify-center border font-black ${riskColorMap[branch.risk_level]}`}>
                                                 {branch.cost_ratio}
                                             </div>
                                             <div>
@@ -181,7 +181,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {intelligence.upcomingDues.map((due, idx) => (
-                                        <div key={idx} className="bg-white/5 border border-white/10 p-5 rounded-2xl flex items-center justify-between hover:bg-white/10 transition-all">
+                                        <div key={idx} className="bg-white/5 border border-white/10 p-5 rounded-sm flex items-center justify-between hover:bg-white/10 transition-all">
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${due.status === 'OVERDUE' ? 'bg-error/20 text-error' : 'bg-primary/20 text-primary'}`}>
                                                     {due.category_name[0]}
@@ -208,7 +208,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                     <div className="space-y-4">
                         <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest px-2">Anomaly Guard</h4>
 
-                        <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
                             <div className="flex items-center gap-3 text-error mb-4">
                                 <ShieldAlert className="w-5 h-5" />
                                 <span className="text-[10px] font-black uppercase tracking-widest">Utility Spike Detected</span>
@@ -231,7 +231,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                             </button>
                         </div>
 
-                        <div className="bg-primary text-white p-6 rounded-3xl shadow-xl shadow-primary/20 relative overflow-hidden group">
+                        <div className="bg-primary text-white p-6 rounded-sm shadow-xl shadow-primary/20 relative overflow-hidden group">
                             <TrendingDown className="absolute -bottom-6 -right-6 w-32 h-32 opacity-10 group-hover:scale-110 transition-transform duration-700" />
                             <h4 className="font-black text-lg mb-2">Cost Optimization</h4>
                             <p className="text-[11px] opacity-90 leading-relaxed mb-6 italic">
@@ -242,7 +242,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                             </button>
                         </div>
 
-                        <div className="p-5 rounded-3xl border border-neutral-100 bg-neutral-50/50 flex items-start gap-4">
+                        <div className="p-5 rounded-sm border border-neutral-100 bg-neutral-50/50 flex items-start gap-4">
                             <div className="p-2 bg-white rounded-xl text-neutral-400 shrink-0 shadow-sm">
                                 <Info className="w-5 h-5" />
                             </div>

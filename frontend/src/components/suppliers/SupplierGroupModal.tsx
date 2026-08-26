@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { createSupplierGroup, updateSupplierGroup } from '../../redux/slices/supplierGroupSlice';
@@ -112,7 +112,7 @@ const SupplierGroupModal: React.FC<SupplierGroupModalProps> = ({ isOpen, onClose
                 {/* Categorization Grid */}
                 <div>
                     <h4 className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white mb-4">
-                        <Tag className="w-4 h-4 text-indigo-500" /> Categorization
+                        <Tag className="w-4 h-4 text-primary" /> Categorization
                     </h4>
                     <div className="grid grid-cols-2 gap-4">
                         <div>

@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 import {
     Plus,
@@ -35,8 +35,8 @@ const MarketingCampaigns: React.FC = () => {
             engagement: '12%',
             conversion: '3.2%',
             lastUpdated: '2h ago',
-            color: 'text-emerald-500',
-            bg: 'bg-emerald-500/10'
+            color: 'text-success',
+            bg: 'bg-success/10'
         },
         {
             id: 'c2',
@@ -60,21 +60,21 @@ const MarketingCampaigns: React.FC = () => {
             conversion: '5.8%',
             lastUpdated: '3d ago',
             color: 'text-purple-500',
-            bg: 'bg-purple-500/10'
+            bg: 'bg-accent/10'
         }
     ];
 
     if (viewMode === 'builder') {
         return (
             <div className="space-y-6">
-                <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm">
                     <button
                         onClick={() => setViewMode('manager')}
-                        className="flex items-center gap-2 px-4 py-2 text-slate-500 hover:text-indigo-600 font-black uppercase tracking-widest text-xs transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-slate-500 hover:text-primary font-black uppercase tracking-widest text-xs transition-colors"
                     >
                         <ArrowRight className="w-4 h-4 rotate-180" /> Back to Manager
                     </button>
-                    <div className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-900/30">
+                    <div className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-primary rounded-xl text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-900/30">
                         Campaign Studio
                     </div>
                 </div>
@@ -89,14 +89,14 @@ const MarketingCampaigns: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none italic">
-                        Marketing <span className="text-indigo-600">Campaigns</span>
+                        Marketing <span className="text-primary">Campaigns</span>
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Create, manage, and monitor your multi-channel growth campaigns.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => setViewMode('builder')}
-                        className="flex items-center gap-3 px-6 py-3.5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:scale-105 transition-all"
+                        className="flex items-center gap-3 px-6 py-3.5 bg-indigo-600 text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:scale-105 transition-all"
                     >
                         <Plus className="w-4 h-4" /> Start New Campaign
                     </button>
@@ -108,7 +108,7 @@ const MarketingCampaigns: React.FC = () => {
                 <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden relative group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
                     <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl flex items-center justify-center text-indigo-600">
+                        <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-sm flex items-center justify-center text-primary">
                             <TrendingUp className="w-6 h-6" />
                         </div>
                         <div>
@@ -123,7 +123,7 @@ const MarketingCampaigns: React.FC = () => {
                 <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden relative group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
                     <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl flex items-center justify-center text-emerald-600">
+                        <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-sm flex items-center justify-center text-emerald-600">
                             <MousePointer2 className="w-6 h-6" />
                         </div>
                         <div>
@@ -138,7 +138,7 @@ const MarketingCampaigns: React.FC = () => {
                 <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden relative group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
                     <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 bg-purple-50 dark:bg-purple-900/20 rounded-2xl flex items-center justify-center text-purple-600">
+                        <div className="w-12 h-12 bg-purple-50 dark:bg-purple-900/20 rounded-sm flex items-center justify-center text-purple-600">
                             <CheckCircle2 className="w-6 h-6" />
                         </div>
                         <div>
@@ -158,7 +158,7 @@ const MarketingCampaigns: React.FC = () => {
                     <div className="flex items-center gap-4">
                         <h3 className="text-xl font-black tracking-tight">Campaign Manager</h3>
                         <div className="flex bg-slate-200/50 dark:bg-slate-800 p-1 rounded-xl">
-                            <button className="p-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-indigo-600">
+                            <button className="p-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-primary">
                                 <LayoutList className="w-4 h-4" />
                             </button>
                             <button className="p-1.5 rounded-lg text-slate-400 opacity-50">
@@ -204,7 +204,7 @@ const MarketingCampaigns: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="p-6">
-                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${camp.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10' :
+                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${camp.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-600 dark:bg-success/10' :
                                                 camp.status === 'SCHEDULED' ? 'bg-blue-100 text-blue-600 dark:bg-blue-500/10' :
                                                     'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
                                             }`}>
@@ -220,7 +220,7 @@ const MarketingCampaigns: React.FC = () => {
                                     </td>
                                     <td className="p-6 text-center">
                                         <div className="flex flex-col items-center gap-1">
-                                            <p className="font-black text-sm text-indigo-600">{camp.engagement}</p>
+                                            <p className="font-black text-sm text-primary">{camp.engagement}</p>
                                             <div className="w-12 h-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                                                 <div className="bg-indigo-500 h-full w-[65%]" />
                                             </div>
@@ -228,7 +228,7 @@ const MarketingCampaigns: React.FC = () => {
                                     </td>
                                     <td className="p-6 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <button className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-400 hover:text-indigo-600 transition-colors scale-90 group-hover:scale-100">
+                                            <button className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-400 hover:text-primary transition-colors scale-90 group-hover:scale-100">
                                                 <BarChart3 className="w-4 h-4" />
                                             </button>
                                             <button className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors scale-90 group-hover:scale-100">
@@ -246,7 +246,7 @@ const MarketingCampaigns: React.FC = () => {
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Showing 3 of 12 global campaigns</p>
                     <div className="flex items-center gap-4">
                         <button className="text-xs font-black uppercase tracking-widest text-slate-400 opacity-50 cursor-not-allowed">Previous</button>
-                        <button className="text-xs font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-700 transition-colors">Next Page</button>
+                        <button className="text-xs font-black uppercase tracking-widest text-primary hover:text-indigo-700 transition-colors">Next Page</button>
                     </div>
                 </div>
             </div>

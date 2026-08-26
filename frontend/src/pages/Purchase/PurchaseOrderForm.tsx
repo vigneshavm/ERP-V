@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+﻿import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { ArrowLeft, Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, ChevronDown, CheckCircle2, Package, Truck, CreditCard, Zap } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../types/purchase";
 import { usePurchaseItems } from "../../hooks/usePurchaseItems";
@@ -304,7 +304,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 setItems(t.items as any);
                                 setShowTemplates(false);
                             }}
-                            className="text-left p-6 bg-white dark:bg-neutral-800 rounded-3xl border border-primary/20 hover:border-primary hover:shadow-xl transition-all group"
+                            className="text-left p-6 bg-white dark:bg-neutral-800 rounded-sm border border-primary/20 hover:border-primary hover:shadow-xl transition-all group"
                         >
                             <div className="font-black text-xs text-primary uppercase tracking-widest group-hover:underline">{t.name}</div>
                             <div className="text-[10px] font-bold text-neutral-400 mt-2 uppercase tracking-widest">{t.items.length} Nodes • {t.vendor_name}</div>
@@ -316,11 +316,11 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
             {/* Supplier Warning Node */}
             {supplierStatus && (supplierStatus.overdueCount > 0 || supplierStatus.isCreditRisk) && (
                 <div className="mx-8 mt-6 p-6 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/30 rounded-[2.5rem] flex items-center gap-6 animate-in slide-in-from-top-4 duration-500">
-                    <div className="p-4 bg-rose-500 text-white rounded-2xl shadow-lg shadow-rose-500/20">
+                    <div className="p-4 bg-rose-500 text-white rounded-sm shadow-lg shadow-rose-500/20">
                         <AlertTriangle className="w-6 h-6" />
                     </div>
                     <div>
-                        <h4 className="text-[10px] font-black text-rose-800 dark:text-rose-400 uppercase tracking-widest">Supplier Risk Surveillance</h4>
+                        <h4 className="text-[10px] font-black text-rose-800 dark:text-danger uppercase tracking-widest">Supplier Risk Surveillance</h4>
                         <p className="text-xs font-bold text-rose-700 dark:text-rose-300 mt-1 italic leading-relaxed">
                             {supplierStatus.overdueCount > 0 && `Institutional overdue detected: ${supplierStatus.overdueCount} bills totaling ₹${supplierStatus.overdueAmount?.toFixed(2)}.`}
                             {supplierStatus.isCreditRisk && ` Credit utilization threshold breached (${supplierStatus.creditUtilization?.toFixed(1)}%).`}
@@ -336,7 +336,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div className="md:col-span-1">
                             <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Node Protocol #</label>
-                            <div className="px-5 py-3 bg-neutral-100 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black text-neutral-500 font-mono tracking-tighter opacity-70">
+                            <div className="px-5 py-3 bg-neutral-100 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black text-neutral-500 font-mono tracking-tighter opacity-70">
                                 {header.po_number}
                             </div>
                         </div>
@@ -346,7 +346,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 type="date"
                                 value={header.po_date}
                                 onChange={e => setHeader({ ...header, po_date: e.target.value })}
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
@@ -355,7 +355,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 type="date"
                                 value={header.expected_delivery || ''}
                                 onChange={e => setHeader({ ...header, expected_delivery: e.target.value })}
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
@@ -363,7 +363,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             <select
                                 value={header.vendor_id || ''}
                                 onChange={e => setHeader({ ...header, vendor_id: e.target.value })}
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             >
                                 <option value="">Select entity...</option>
                                 {Array.isArray(vendors) && vendors.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
@@ -380,7 +380,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 <select
                                     value={header.delivery_location}
                                     onChange={e => setHeader({ ...header, delivery_location: e.target.value })}
-                                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none"
+                                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none"
                                 >
                                     <option value="Main Warehouse">Main Warehouse</option>
                                     <option value="Production Unit A">Production Unit A</option>
@@ -397,7 +397,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 value={header.delivery_address || ''}
                                 onChange={e => setHeader({ ...header, delivery_address: e.target.value })}
                                 placeholder="Plot, Sector, Landmark..."
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
@@ -407,7 +407,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 value={header.reference_number || ''}
                                 onChange={e => setHeader({ ...header, reference_number: e.target.value })}
                                 placeholder="e.g. QUO-2024-X"
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
@@ -419,7 +419,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 <h3 className="text-sm font-black uppercase tracking-widest">Inventory Nodes</h3>
                                 <button
                                     onClick={handleAddLot}
-                                    className="px-4 py-1.5 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 hover:bg-indigo-100 transition-all"
+                                    className="px-4 py-1.5 bg-indigo-50 text-primary dark:bg-indigo-900/20 dark:text-primary text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 hover:bg-indigo-100 transition-all"
                                 >
                                     <Plus className="w-3.5 h-3.5" /> Bulk Lot
                                 </button>
@@ -431,10 +431,10 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                     placeholder="Add SKU node..."
                                     value={productSearch}
                                     onChange={e => { setProductSearch(e.target.value); setShowProductDropdown(true); }}
-                                    className="w-full pl-12 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                    className="w-full pl-12 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                 />
                                 {showProductDropdown && products.length > 0 && (
-                                    <div className="absolute top-full mt-3 w-full bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl shadow-2xl z-[55] overflow-hidden animate-in fade-in slide-in-from-top-2">
+                                    <div className="absolute top-full mt-3 w-full bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-sm shadow-2xl z-[55] overflow-hidden animate-in fade-in slide-in-from-top-2">
                                         {products.map(p => (
                                             <button
                                                 key={p.id}
@@ -521,7 +521,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                                 </button>
                                             </td>
                                             <td className="px-8 py-5 text-center">
-                                                <button onClick={() => removeItem(idx)} className="p-2 text-neutral-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all">
+                                                <button onClick={() => removeItem(idx)} className="p-2 text-neutral-300 hover:text-danger hover:bg-rose-50 rounded-xl transition-all">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </td>
@@ -550,14 +550,14 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             <textarea
                                 value={header.notes || ''}
                                 onChange={e => setHeader({ ...header, notes: e.target.value })}
-                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-3xl p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
                                 placeholder="Internal protocol instructions, quality constraints, audit remarks..."
                             />
                         </div>
                         <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 space-y-6">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                                    <ShieldCheck className="w-5 h-5 text-success" />
                                     <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Governance Clauses (T&C)</h4>
                                 </div>
                                 <select
@@ -571,7 +571,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             <textarea
                                 value={header.terms_and_conditions || ''}
                                 onChange={e => setHeader({ ...header, terms_and_conditions: e.target.value })}
-                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-3xl p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all resize-none"
+                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all resize-none"
                                 placeholder="Mandatory procurement clauses, liability limitations, payment constraints..."
                             />
                         </div>
@@ -584,15 +584,15 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                         </label>
                         <div className="flex flex-wrap gap-4">
                             {attachments.map((file, i) => (
-                                <div key={i} className="flex items-center gap-3 px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-neutral-100 dark:border-neutral-700 group transition-all hover:border-primary/20">
+                                <div key={i} className="flex items-center gap-3 px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 rounded-sm text-[10px] font-black uppercase tracking-widest border border-neutral-100 dark:border-neutral-700 group transition-all hover:border-primary/20">
                                     <FileText className="w-4 h-4 text-neutral-400" />
                                     <span className="max-w-[150px] truncate">{file}</span>
-                                    <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="text-neutral-300 hover:text-rose-500 transition-colors">
+                                    <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="text-neutral-300 hover:text-danger transition-colors">
                                         <X className="w-4 h-4" />
                                     </button>
                                 </div>
                             ))}
-                            <label className="flex items-center gap-3 px-6 py-2.5 bg-white dark:bg-neutral-800 border-2 border-dashed border-neutral-100 dark:border-neutral-700 rounded-2xl text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all shadow-sm">
+                            <label className="flex items-center gap-3 px-6 py-2.5 bg-white dark:bg-neutral-800 border-2 border-dashed border-neutral-100 dark:border-neutral-700 rounded-sm text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all shadow-sm">
                                 <Plus className="w-4 h-4" /> Upload Node Intel
                                 <input type="file" multiple className="hidden" onChange={handleFileUpload} />
                             </label>
@@ -614,7 +614,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                 </div>
                                 <div className="flex justify-between items-center text-xs font-black text-neutral-400 uppercase tracking-widest">
                                     <span>Institutional Discount</span>
-                                    <span className="text-emerald-500 tabular-nums">-₹{totals.discount.toLocaleString()}</span>
+                                    <span className="text-success tabular-nums">-₹{totals.discount.toLocaleString()}</span>
                                 </div>
                                 
                                 <div className="pt-6 border-t border-neutral-100 dark:border-neutral-700 space-y-4">
@@ -659,12 +659,12 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                             <div className="grid grid-cols-2 gap-4">
                                 <button
                                     onClick={() => setHeader({ ...header, status: 'Draft' })}
-                                    className="py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    className="py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
                                 >
                                     <FileText className="w-4 h-4" /> Draft
                                 </button>
                                 <button
-                                    className="py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    className="py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
                                 >
                                     <Truck className="w-4 h-4" /> Dispatch
                                 </button>
@@ -713,10 +713,10 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                     
                     <div className="bg-amber-50 dark:bg-amber-900/10 p-8 rounded-[3rem] border border-amber-100 dark:border-amber-900/20">
                         <div className="flex items-center gap-3 mb-4">
-                            <Zap className="w-5 h-5 text-amber-500 animate-pulse" />
-                            <h5 className="text-[10px] font-black text-amber-900/60 dark:text-amber-400 uppercase tracking-widest">Protocol Optimizer</h5>
+                            <Zap className="w-5 h-5 text-warning animate-pulse" />
+                            <h5 className="text-[10px] font-black text-amber-900/60 dark:text-warning uppercase tracking-widest">Protocol Optimizer</h5>
                         </div>
-                        <p className="text-[10px] text-amber-800 dark:text-amber-500 font-bold italic leading-relaxed pl-4 border-l-2 border-amber-500/30">
+                        <p className="text-[10px] text-amber-800 dark:text-warning font-bold italic leading-relaxed pl-4 border-l-2 border-warning/30">
                             Ensure all SKU nodes are verified against supplier quotations to prevent institutional fiscal discrepancies.
                         </p>
                     </div>

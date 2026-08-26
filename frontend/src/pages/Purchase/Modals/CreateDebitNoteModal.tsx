@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { XCircle, Plus, Trash2, Percent } from 'lucide-react';
 import { debitNoteService, DebitNote } from "../../../services/debitNoteService";
 import { toast } from 'react-toastify';
@@ -101,7 +101,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-fade-in">
+            <div className="bg-white dark:bg-neutral-800 rounded-sm w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-fade-in">
                 <div className="p-6 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-black text-neutral-900 dark:text-white uppercase tracking-tight">Create Debit Note</h2>
@@ -204,7 +204,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                         </div>
 
                         {newNote.items?.map((item, idx) => (
-                            <div key={idx} className="bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-700 space-y-4">
+                            <div key={idx} className="bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-sm border border-neutral-100 dark:border-neutral-700 space-y-4">
                                 <div className="flex gap-4 items-end">
                                     <div className="flex-1">
                                         <label className="text-[10px] font-bold text-neutral-400 uppercase mb-1 block">Description</label>
@@ -291,7 +291,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                             ></textarea>
                         </div>
 
-                        <div className="bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-2xl border border-neutral-200 dark:border-neutral-700 space-y-2">
+                        <div className="bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-sm border border-neutral-200 dark:border-neutral-700 space-y-2">
                             <div className="flex justify-between text-xs font-medium text-neutral-500">
                                 <span>Subtotal</span>
                                 <span>₹{(newNote.subTotal || 0).toLocaleString()}</span>

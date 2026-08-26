@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Truck } from 'lucide-react';
 import FormField from "../../../components/shared/Form/FormField";
 import { PurchaseOrder } from "../../../types/purchase";
@@ -23,7 +23,7 @@ const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
     vendorName
 }) => {
     return (
-        <div className="bg-white dark:bg-neutral-800 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
+        <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <Truck className="w-5 h-5 text-primary" /> General Information
             </h3>

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface MetricCardProps {
@@ -30,14 +30,14 @@ const MetricCard: React.FC<MetricCardProps> = ({
         <div className={`${isDark
             ? 'bg-neutral-950 dark:bg-card text-white border-neutral-800 shadow-2xl'
             : 'bg-card text-main border-default shadow-sm'
-            } ${compact ? 'p-4 lg:p-5 rounded-2xl' : 'p-6 lg:p-8 rounded-[2rem]'} border relative overflow-hidden group transition-all hover:border-primary/50`}>
+            } ${compact ? 'p-4 lg:p-5 rounded-sm' : 'p-6 lg:p-8 rounded-[2rem]'} border relative overflow-hidden group transition-all hover:border-primary/50`}>
 
             {/* Ambient Background Glow */}
             <div className={`absolute top-0 right-0 ${compact ? 'w-20 h-20' : 'w-32 h-32'} bg-${color}-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700`} />
 
             <div className={`flex items-center justify-between ${compact ? 'mb-2' : 'mb-4'} relative z-10`}>
                 <div className="flex items-center gap-3 lg:gap-4">
-                    <div className={`${compact ? 'w-10 h-10 rounded-xl' : 'w-12 h-12 rounded-2xl'} flex items-center justify-center transition-all ${isDark
+                    <div className={`${compact ? 'w-10 h-10 rounded-xl' : 'w-12 h-12 rounded-sm'} flex items-center justify-center transition-all ${isDark
                         ? 'bg-primary/20 text-primary group-hover:bg-primary/30'
                         : `bg-${color}-100 dark:bg-${color}-900/20 text-${color}-600 group-hover:bg-${color}-500/10`
                         }`}>
@@ -68,8 +68,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
             {/* Trend & Subtext Information */}
             {subtext && (
                 <div className={`${compact ? 'mt-1.5' : 'mt-2'} relative z-10`}>
-                    <p className={`text-[9px] font-bold flex items-center gap-1.5 ${trend === 'up' ? 'text-emerald-500' :
-                        trend === 'down' ? 'text-rose-500' :
+                    <p className={`text-[9px] font-bold flex items-center gap-1.5 ${trend === 'up' ? 'text-success' :
+                        trend === 'down' ? 'text-danger' :
                             'text-neutral-400'
                         }`}>
                         {trend === 'up' && <TrendingUp size={10} strokeWidth={3} />}

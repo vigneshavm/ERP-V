@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState } from 'react';
+﻿import React, { lazy, Suspense, useState } from 'react';
 import { LogOut, Loader2 } from 'lucide-react';
 import { Tenant } from "@/types/tenant";
 
@@ -35,7 +35,7 @@ const AdminView: React.FC<AdminViewProps> = ({ onLogout, onLoginAsTenant }) => {
             <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
                 <div className="max-w-7xl mx-auto">
                     {/* Tab Navigation */}
-                    <div className="flex bg-white dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 w-fit mb-8 shadow-sm">
+                    <div className="flex bg-white dark:bg-slate-800 p-1 rounded-sm border border-slate-200 dark:border-slate-700 w-fit mb-8 shadow-sm">
                         <button
                             onClick={() => setActiveTab('fleet')}
                             className={`px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${activeTab === 'fleet' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}

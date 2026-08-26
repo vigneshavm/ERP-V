@@ -9,17 +9,14 @@ import {
     Search,
     Eye,
     Trash2,
-    Calculator,
     CheckCircle2,
     Clock,
     XCircle,
-    ArrowLeft,
     TrendingUp,
     FileCheck,
     AlertTriangle,
     Download,
     Filter,
-    ChevronRight,
     Calendar,
     Briefcase,
     Zap,
@@ -27,30 +24,24 @@ import {
     User,
     Truck,
     IndianRupee,
-    Layers,
     ShieldCheck
 } from 'lucide-react';
 import { SalesOrder } from '../../../types/sales';
+import Layout from '../../../components/shared/Layout';
 
 const SalesOrderList = () => {
     const navigate = useNavigate();
     const [orders, setOrders] = useState<SalesOrder[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filters, setFilters] = useState({
-        status: '',
-        search: '',
-        overdue: false
-    });
+    const [filters, setFilters] = useState({ status: '', search: '', overdue: false });
 
     const isOverdue = (order: SalesOrder) => {
         if (!order.expectedDeliveryDate) return false;
-        return new Date(order.expectedDeliveryDate) < new Date() && 
+        return new Date(order.expectedDeliveryDate) < new Date() &&
                !['Delivered', 'Invoiced', 'Cancelled'].includes(order.status);
     };
 
-    useEffect(() => {
-        fetchOrders();
-    }, [filters.status, filters.overdue]);
+    useEffect(() => { fetchOrders(); }, [filters.status, filters.overdue]);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -60,15 +51,12 @@ const SalesOrderList = () => {
             const params = new URLSearchParams();
             if (filters.status) params.append('status', filters.status);
             if (filters.overdue) params.append('overdue', 'true');
-
-            const response = await api.get(
-                `/api/sales-orders?${params.toString()}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
+            const response = await api.get(`/api/sales-orders?${params.toString()}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setOrders(response.data);
         } catch (error: any) {
-            toast.error('Failed to sync order matrix');
+            toast.error('Failed to fetch orders');
         } finally {
             setLoading(false);
         }
@@ -76,27 +64,22 @@ const SalesOrderList = () => {
 
     const filteredOrders = useMemo(() => {
         if (!filters.search) return orders;
-        const searchLower = filters.search.toLowerCase();
-        return orders.filter((order) =>
-            order.orderNumber.toLowerCase().includes(searchLower) ||
-            order.customer?.name.toLowerCase().includes(searchLower)
+        const s = filters.search.toLowerCase();
+        return orders.filter(o =>
+            o.orderNumber.toLowerCase().includes(s) ||
+            o.customer?.name.toLowerCase().includes(s)
         );
     }, [orders, filters.search]);
 
     const getStatusConfig = (status: string) => {
         switch (status) {
             case 'Delivered':
-            case 'Invoiced':
-                return { color: 'text-emerald-500', bg: 'bg-emerald-500/10', icon: CheckCircle2 };
-            case 'Confirmed':
-                return { color: 'text-amber-500', bg: 'bg-amber-500/10', icon: Zap };
+            case 'Invoiced':           return { color: 'text-success', bg: 'bg-success/10', border: 'border-success/30', icon: CheckCircle2 };
+            case 'Confirmed':          return { color: 'text-warning', bg: 'bg-warning/10', border: 'border-warning/30', icon: Zap };
             case 'Partially Delivered':
-            case 'Partially Invoiced':
-                return { color: 'text-blue-500', bg: 'bg-blue-500/10', icon: Clock };
-            case 'Cancelled':
-                return { color: 'text-rose-500', bg: 'bg-rose-500/10', icon: XCircle };
-            default:
-                return { color: 'text-neutral-500', bg: 'bg-neutral-500/10', icon: FileCheck };
+            case 'Partially Invoiced': return { color: 'text-info',    bg: 'bg-info/10',    border: 'border-info/30',    icon: Clock };
+            case 'Cancelled':          return { color: 'text-danger',  bg: 'bg-danger/10',  border: 'border-danger/30',  icon: XCircle };
+            default:                   return { color: 'text-secondary',bg: 'bg-surface',   border: 'border-default',    icon: FileCheck };
         }
     };
 
@@ -107,253 +90,262 @@ const SalesOrderList = () => {
         return { total, overdueCount, pendingCount, count: orders.length };
     }, [orders]);
 
+    const kpiCards = [
+        { label: 'Total Value',     value: `₹${metrics.total.toLocaleString()}`, icon: TrendingUp,   color: 'text-warning', bg: 'bg-warning/10',   border: 'border-warning/30',   sub: 'Gross Order Value' },
+        { label: 'Active Orders',   value: metrics.pendingCount,                  icon: Clock,         color: 'text-info',    bg: 'bg-info/10',      border: 'border-info/30',      sub: 'Fulfillment Pending' },
+        { label: 'Total Orders',    value: metrics.count,                          icon: Briefcase,     color: 'text-primary', bg: 'bg-primary/10',   border: 'border-primary/30',   sub: 'All Documented Orders' },
+        { label: 'Overdue',         value: metrics.overdueCount,                   icon: AlertTriangle, color: metrics.overdueCount > 0 ? 'text-danger' : 'text-success', bg: metrics.overdueCount > 0 ? 'bg-danger/10' : 'bg-success/10', border: metrics.overdueCount > 0 ? 'border-danger/30' : 'border-success/30', sub: 'SLA Breach Risk' },
+    ];
+
     return (
-        <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-white font-sans selection:bg-amber-500/30 overflow-x-hidden flex flex-col transition-colors animate-fade-in relative">
-            {/* Ambient Background */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />
-                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-rose-600/10 rounded-full blur-[150px]" />
-            </div>
-
-            <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8 space-y-8">
-                {/* Modern Header */}
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div className="relative">
-                        <div className="absolute -left-4 top-0 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
-                        <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
-                            Order <span className="text-amber-500">Logistics</span>
-                            <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-lg text-xs font-bold uppercase tracking-widest">
-                                Protocol Matrix
-                            </span>
-                        </h1>
-                        <div className="flex items-center gap-2 mt-1">
-                            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <p className="text-[10px] uppercase tracking-[0.2em] font-black text-neutral-500 dark:text-neutral-400">Ledger Pipeline Active // Operational Status: Nominal</p>
-                        </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 w-full md:w-auto">
-                        <button className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:scale-110 transition-transform shadow-sm group">
-                            <RefreshCw className="w-4 h-4 text-neutral-500 group-hover:text-amber-500" onClick={fetchOrders} />
-                        </button>
-                        <Link to="/sales/orders/new" className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20">
-                            <Plus className="w-4 h-4" /> Initialize Order Protocol
-                        </Link>
-                    </div>
-                </header>
-
-                {/* Industrial KPI Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[
-                        { label: 'Cumulative Volume', value: `₹${metrics.total.toLocaleString()}`, icon: TrendingUp, color: 'text-amber-500', trend: '+12.4%', detail: 'Gross Logistical Value' },
-                        { label: 'Active Pipeline', value: metrics.pendingCount, icon: Clock, color: 'text-blue-500', trend: 'Live', detail: 'Fulfillment Pending' },
-                        { label: 'Protocol Nodes', value: metrics.count, icon: Briefcase, color: 'text-neutral-500', trend: 'Verified', detail: 'Total Documented Orders' },
-                        { label: 'Critical Overdue', value: metrics.overdueCount, icon: AlertTriangle, color: metrics.overdueCount > 0 ? 'text-rose-500' : 'text-emerald-500', trend: 'Priority', detail: 'SLA Breach Risk' },
-                    ].map((stat, i) => (
-                        <div key={i} className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 p-8 shadow-sm group hover:border-amber-500/30 transition-all relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-neutral-500/5 to-transparent rounded-bl-[100px]"></div>
-                            <div className="relative z-10 flex flex-col h-full">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className={`p-3 rounded-2xl ${stat.color.replace('text', 'bg')}/10 ${stat.color}`}>
-                                        <stat.icon className="w-6 h-6" />
-                                    </div>
-                                    <span className={`text-[10px] font-black uppercase tracking-widest ${stat.trend.includes('+') ? 'text-emerald-500' : 'text-neutral-400'}`}>
-                                        {stat.trend}
-                                    </span>
-                                </div>
-                                <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">{stat.label}</h3>
-                                <div className="text-3xl font-display font-black text-neutral-900 dark:text-white tracking-tighter mt-auto">
-                                    {stat.value}
-                                </div>
-                                <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest mt-2">{stat.detail}</p>
-                            </div>
-                        </div>
-                    ))}
+        <Layout>
+            <div className="relative space-y-8 pt-4">
+                {/* Ambient Background Blobs */}
+                <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                    <div className="absolute top-[-15%] left-[5%] w-[55%] h-[55%] bg-warning/10 rounded-full blur-[160px] animate-aura opacity-60" />
+                    <div className="absolute bottom-[-10%] right-[5%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[140px] animate-aura opacity-50" style={{ animationDelay: '7s' }} />
+                    <div className="absolute top-[40%] right-[20%] w-[25%] h-[25%] bg-accent/5 rounded-full blur-[100px] animate-aura opacity-40" style={{ animationDelay: '3s' }} />
                 </div>
 
-                {/* Institutional Data Matrix */}
-                <div className="bg-white dark:bg-neutral-900 rounded-[40px] border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden flex flex-col">
-                    {/* Matrix Control Bar */}
-                    <div className="p-8 border-b border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row gap-6 items-center justify-between bg-neutral-50/50 dark:bg-neutral-950/50">
-                        <div className="relative w-full md:max-w-md group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500 group-focus-within:scale-110 transition-transform" />
+                <div className="relative z-10 space-y-8">
+                    {/* Header */}
+                    <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div className="relative pl-5">
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning rounded-full shadow-[0_0_15px_rgba(var(--color-warning),0.5)]" />
+                            <h1 className="text-3xl font-display font-black tracking-tighter text-main flex items-center gap-3">
+                                Sales <span className="text-warning">Orders</span>
+                                <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-sm text-[10px] font-black uppercase tracking-widest">
+                                    Order Register
+                                </span>
+                            </h1>
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="flex h-2 w-2 rounded-full bg-success animate-pulse" />
+                                <p className="text-[10px] uppercase tracking-[0.2em] font-black text-secondary">
+                                    {orders.length} orders synced
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 w-full md:w-auto">
+                            <button
+                                onClick={fetchOrders}
+                                className={`p-2.5 bg-card border border-default rounded-sm hover:bg-surface transition-all ${loading ? 'animate-spin' : ''}`}
+                            >
+                                <RefreshCw className="w-4 h-4 text-warning" />
+                            </button>
+                            <button className="flex items-center gap-2 px-5 py-2.5 bg-card border border-default rounded-sm text-xs font-black uppercase tracking-widest text-muted hover:text-main hover:border-warning/30 transition-all">
+                                <Download className="w-4 h-4" /> Export
+                            </button>
+                            <Link
+                                to="/sales/orders/new"
+                                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-warning text-warning-fg rounded-sm shadow-lg shadow-warning/20 transition-all text-xs font-black uppercase tracking-widest hover:opacity-90"
+                            >
+                                <Plus className="w-4 h-4" /> New Order
+                            </Link>
+                        </div>
+                    </header>
+
+                    {/* KPI Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {kpiCards.map((card, i) => (
+                            <div key={i} className="card-interactive p-6 relative overflow-hidden group bg-card/60 backdrop-blur-2xl border border-default">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className={`p-3 rounded-sm ${card.bg} ${card.color} border ${card.border}`}>
+                                        <card.icon className="w-5 h-5" />
+                                    </div>
+                                    <div className="text-[10px] font-black text-success bg-success/10 border border-success/30 px-2 py-1 rounded-sm uppercase tracking-widest">
+                                        +12.4%
+                                    </div>
+                                </div>
+                                <h3 className={`text-2xl font-display font-black tracking-tighter tabular-nums ${card.color}`}>
+                                    {loading ? '—' : card.value}
+                                </h3>
+                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest mt-1">{card.label}</p>
+                                <div className="mt-3 h-1 w-full bg-border rounded-full overflow-hidden">
+                                    <div className={`h-full rounded-full w-[65%] ${card.bg.replace('/10', '')}`} />
+                                </div>
+                                <p className="text-[9px] font-bold text-secondary mt-2 flex items-center gap-1">
+                                    <Zap className="w-3 h-3 text-warning" /> {card.sub}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Toolbar — standalone bordered card */}
+                    <div className="glass-panel rounded-sm border border-default p-5 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div className="relative w-full md:w-96">
+                            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-warning" />
                             <input
                                 type="text"
-                                placeholder="Scan Matrix (Order #, Entity...)"
+                                placeholder="Search order number or customer..."
                                 value={filters.search}
                                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                                className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl py-4 pl-12 pr-6 text-xs font-bold focus:border-amber-500/50 outline-none transition-all dark:text-white shadow-inner"
+                                className="w-full bg-card border border-default rounded-sm py-3 pl-12 pr-4 text-xs font-bold focus:outline-none focus:border-warning/50 focus:ring-2 focus:ring-warning/10 transition-all text-main placeholder:text-secondary"
                             />
                         </div>
-
-                        <div className="flex items-center gap-4 w-full md:w-auto">
-                            <div className="flex items-center gap-2 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 p-1.5 rounded-2xl">
-                                <button 
-                                    onClick={() => setFilters({ ...filters, overdue: !filters.overdue })}
-                                    className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${filters.overdue ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'text-neutral-400 hover:text-neutral-900 dark:hover:text-white'}`}
-                                >
-                                    SLA Breach
-                                </button>
-                                <select
-                                    value={filters.status}
-                                    onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                                    className="bg-transparent text-[10px] font-black uppercase tracking-widest px-4 py-2 outline-none text-neutral-500 dark:text-neutral-400 cursor-pointer"
-                                >
-                                    <option value="">All Status Protocols</option>
-                                    <option value="Confirmed">Confirmed</option>
-                                    <option value="Invoiced">Invoiced</option>
-                                    <option value="Delivered">Delivered</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                </select>
+                        <div className="flex items-center gap-3 w-full md:w-auto">
+                            <div className="flex bg-surface p-1 rounded-sm border border-default overflow-x-auto gap-1">
+                                {['', 'Confirmed', 'Invoiced', 'Delivered', 'Cancelled'].map(s => (
+                                    <button
+                                        key={s || 'all'}
+                                        onClick={() => setFilters({ ...filters, status: s })}
+                                        className={`px-4 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                                            filters.status === s
+                                                ? 'bg-card text-warning shadow-sm border border-default'
+                                                : 'text-secondary hover:text-main'
+                                        }`}
+                                    >
+                                        {s || 'All'}
+                                    </button>
+                                ))}
                             </div>
-                            <button className="p-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:text-amber-500 transition-colors">
-                                <Download className="w-4 h-4" />
+                            <button
+                                onClick={() => setFilters({ ...filters, overdue: !filters.overdue })}
+                                className={`px-4 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border whitespace-nowrap ${
+                                    filters.overdue
+                                        ? 'bg-danger text-white border-danger'
+                                        : 'bg-card border-default text-secondary hover:text-danger hover:border-danger/30'
+                                }`}
+                            >
+                                Overdue Only
                             </button>
                         </div>
                     </div>
 
-                    {/* Data Matrix */}
-                    <div className="overflow-x-auto custom-scrollbar">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-neutral-50 dark:bg-neutral-950/50">
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Order Node</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Customer Entity</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Operational Log</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800">Status Protocol</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 text-right">Net Valuation</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-neutral-200 dark:border-neutral-800 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                {loading ? (
+                    {/* Table — standalone bordered card */}
+                    <div className="glass-panel flex flex-col overflow-hidden rounded-sm border border-default">
+                        <div className="flex-1 overflow-auto min-h-[400px]">
+                            <table className="w-full text-left border-collapse">
+                                <thead className="bg-surface/50 sticky top-0 z-20 border-b border-default">
                                     <tr>
-                                        <td colSpan={6} className="px-8 py-20 text-center">
-                                            <div className="flex flex-col items-center gap-4">
-                                                <div className="w-12 h-12 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
-                                                <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] animate-pulse">Syncing Order Matrix...</p>
-                                            </div>
-                                        </td>
+                                        <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-secondary">Order No.</th>
+                                        <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-secondary">Customer</th>
+                                        <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-secondary">Dates</th>
+                                        <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-secondary text-center">Status</th>
+                                        <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-secondary text-right">Amount (INR)</th>
+                                        <th className="px-6 py-4 w-24" />
                                     </tr>
-                                ) : filteredOrders.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={6} className="px-8 py-20 text-center">
-                                            <div className="flex flex-col items-center gap-4 text-neutral-300 dark:text-neutral-700">
-                                                <Package className="w-16 h-16 opacity-20" />
-                                                <p className="text-xs font-black uppercase tracking-widest">Protocol Matrix Empty</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredOrders.map((order) => (
-                                        <tr 
-                                            key={order._id} 
-                                            className="group hover:bg-amber-500/[0.02] transition-colors cursor-pointer"
-                                            onClick={() => navigate(`/sales/sales-order/${order._id}`)}
-                                        >
-                                            <td className="px-8 py-6">
-                                                <div className="flex flex-col">
-                                                    <span className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tight group-hover:text-amber-500 transition-colors">{order.orderNumber}</span>
-                                                    <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">ID: {order._id?.slice(-8).toUpperCase()}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-500 group-hover:bg-amber-500 group-hover:text-white transition-all">
-                                                        <User className="w-5 h-5" />
+                                </thead>
+                                <tbody className="divide-y divide-default">
+                                    {loading ? (
+                                        [...Array(5)].map((_, i) => (
+                                            <tr key={i} className="animate-pulse">
+                                                {[...Array(6)].map((_, j) => (
+                                                    <td key={j} className="px-6 py-5">
+                                                        <div className="h-4 bg-surface rounded-sm w-full" />
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))
+                                    ) : filteredOrders.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={6} className="px-8 py-20 text-center">
+                                                <div className="flex flex-col items-center gap-4">
+                                                    <div className="p-6 bg-surface rounded-sm border border-default">
+                                                        <Package className="w-10 h-10 text-secondary opacity-30" />
                                                     </div>
-                                                    <div className="flex flex-col">
-                                                        <span className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tight">{order.customer?.name}</span>
-                                                        <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-0.5">{order.customer?.phone}</span>
+                                                    <div>
+                                                        <h3 className="text-base font-black text-main uppercase tracking-widest">No Orders Found</h3>
+                                                        <p className="text-sm text-secondary mt-1">Refine your search or filter.</p>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] font-black text-neutral-900 dark:text-white uppercase tracking-widest flex items-center gap-2">
-                                                        <Calendar className="w-3 h-3 text-amber-500" /> {new Date(order.orderDate).toLocaleDateString()}
-                                                    </span>
-                                                    <span className={`text-[9px] font-bold uppercase tracking-widest mt-1 flex items-center gap-2 ${isOverdue(order) ? 'text-rose-500' : 'text-neutral-400'}`}>
-                                                        <Truck className="w-3 h-3" /> SLA: {new Date(order.expectedDeliveryDate).toLocaleDateString()}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                {(() => {
-                                                    const config = getStatusConfig(order.status);
-                                                    const Icon = config.icon;
-                                                    return (
-                                                        <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${config.bg} ${config.color} border border-${config.color.split('-')[1]}-500/20 shadow-sm`}>
-                                                            <Icon className="w-3.5 h-3.5" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest">{order.status}</span>
-                                                        </div>
-                                                    );
-                                                })()}
-                                            </td>
-                                            <td className="px-8 py-6 text-right">
-                                                <div className="flex flex-col items-end">
-                                                    <span className="text-sm font-mono font-black text-neutral-900 dark:text-white tracking-tighter flex items-center gap-1">
-                                                        <IndianRupee className="w-3 h-3 text-amber-500" /> {order.totalAmount?.toLocaleString()}
-                                                    </span>
-                                                    <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">Matrix Yield</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6 text-right">
-                                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                                                    <button 
-                                                        className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-amber-500 rounded-xl hover:bg-amber-500 hover:text-white transition-all shadow-sm"
-                                                        title="Matrix View"
-                                                    >
-                                                        <Eye className="w-4 h-4" />
-                                                    </button>
-                                                    <button 
-                                                        className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm"
-                                                        title="Purge Object"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Matrix Status Bar */}
-                    <div className="p-8 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div className="flex items-center gap-6">
-                            <div className="flex -space-x-3">
-                                {[1, 2, 3, 4].map(i => (
-                                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-neutral-900 bg-neutral-200 dark:bg-neutral-800 overflow-hidden shadow-xl shadow-black/5 flex items-center justify-center">
-                                        <User className="w-5 h-5 text-neutral-400" />
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-widest">Active Dispatch Nodes</span>
-                                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Protocol Version 4.0 // Stable Matrix</span>
-                            </div>
+                                    ) : (
+                                        filteredOrders.map((order) => {
+                                            const config = getStatusConfig(order.status);
+                                            const Icon = config.icon;
+                                            return (
+                                                <tr
+                                                    key={order._id}
+                                                    className="hover:bg-warning/[0.03] transition-all group border-l-4 border-l-transparent hover:border-l-warning cursor-pointer"
+                                                    onClick={() => navigate(`/sales/sales-order/${order._id}`)}
+                                                >
+                                                    <td className="px-6 py-5">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-8 h-8 rounded-sm bg-warning/10 border border-warning/20 flex items-center justify-center">
+                                                                <ShoppingCart className="w-4 h-4 text-warning" />
+                                                            </div>
+                                                            <div>
+                                                                <span className="font-mono text-sm font-bold text-main group-hover:text-warning transition-colors tracking-tighter">{order.orderNumber}</span>
+                                                                <div className="text-[9px] text-secondary font-bold uppercase tracking-widest mt-0.5">ID: {order._id?.slice(-8).toUpperCase()}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-5">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-8 h-8 rounded-sm bg-warning/10 border border-warning/20 flex items-center justify-center text-[10px] font-black text-warning">
+                                                                {order.customer?.name?.[0]?.toUpperCase() || 'C'}
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-sm font-black text-main uppercase tracking-tight">{order.customer?.name}</div>
+                                                                <div className="text-[10px] text-secondary font-bold uppercase tracking-widest">{order.customer?.phone}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-5">
+                                                        <div className="flex flex-col gap-1">
+                                                            <span className="text-[10px] font-black text-main uppercase tracking-widest flex items-center gap-2">
+                                                                <Calendar className="w-3 h-3 text-warning" /> {new Date(order.orderDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                            </span>
+                                                            <span className={`text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 ${isOverdue(order) ? 'text-danger' : 'text-secondary'}`}>
+                                                                <Truck className="w-3 h-3" /> SLA: {new Date(order.expectedDeliveryDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-5">
+                                                        <div className="flex justify-center">
+                                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border ${config.bg} ${config.color} ${config.border}`}>
+                                                                <Icon className="w-3.5 h-3.5" /> {order.status}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-5 text-right">
+                                                        <div className="text-lg font-display font-black tracking-tighter text-main tabular-nums">
+                                                            ₹{order.totalAmount?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                        </div>
+                                                        <div className="text-[9px] text-success font-black uppercase tracking-widest mt-1">+ GST INCLUDED</div>
+                                                    </td>
+                                                    <td className="px-6 py-5">
+                                                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); navigate(`/sales/sales-order/${order._id}`); }}
+                                                                className="p-2 text-secondary hover:text-warning hover:bg-warning/10 rounded-sm transition-all"
+                                                                title="View"
+                                                            >
+                                                                <Eye className="w-4 h-4" />
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                className="p-2 text-secondary hover:text-danger hover:bg-danger/10 rounded-sm transition-all"
+                                                                title="Delete"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <div className="flex flex-col items-end">
-                                <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.2em]">Operational Pulse</span>
-                                <div className="w-48 h-1 bg-neutral-200 dark:bg-neutral-800 rounded-full mt-2 overflow-hidden shadow-inner">
-                                    <div className="w-[85%] h-full bg-emerald-500 rounded-full animate-pulse" />
-                                </div>
+
+                        {/* Footer */}
+                        <div className="p-5 border-t border-default bg-surface/20 flex justify-between items-center">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                                Showing <span className="text-main">{filteredOrders.length}</span> of <span className="text-main">{orders.length}</span> orders
+                            </p>
+                            <div className="flex items-center gap-2">
+                                <ShieldCheck className="w-3.5 h-3.5 text-warning" />
+                                <span className="text-[9px] font-black text-secondary uppercase tracking-widest">Ledger Verified</span>
                             </div>
-                            <button className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:scale-110 transition-transform shadow-lg shadow-black/5">
-                                <ShieldCheck className="w-4 h-4 text-amber-500" />
-                            </button>
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
+        </Layout>
     );
 };
 
 export default SalesOrderList;
-
-

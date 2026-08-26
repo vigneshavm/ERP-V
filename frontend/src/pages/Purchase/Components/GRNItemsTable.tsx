@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Package, Search, CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
 import { GRNItem, InspectionStatus } from "../../../types/purchase";
 
@@ -23,7 +23,7 @@ const GRNItemsTable: React.FC<GRNItemsTableProps> = ({
     };
 
     return (
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center">
                 <h3 className="text-lg font-bold flex items-center gap-2">
                     <Package className="w-5 h-5 text-primary" /> Item Inspection

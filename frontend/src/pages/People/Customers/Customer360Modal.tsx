@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
     X,
     User,
@@ -51,13 +51,13 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                 {/* Header */}
                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-start bg-slate-50/50 dark:bg-slate-900/50">
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 rounded-3xl bg-indigo-600 text-white flex items-center justify-center text-3xl font-black shadow-xl shadow-indigo-600/20">
+                        <div className="w-20 h-20 rounded-sm bg-indigo-600 text-white flex items-center justify-center text-3xl font-black shadow-xl shadow-indigo-600/20">
                             {customer.name.charAt(0)}
                         </div>
                         <div>
                             <div className="flex items-center gap-3 mb-1">
                                 <h2 className="text-3xl font-black text-slate-900 dark:text-white italic uppercase tracking-tight">{customer.name}</h2>
-                                <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/20 flex items-center gap-1.5">
+                                <span className="px-3 py-1 bg-success/10 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-success/20 flex items-center gap-1.5">
                                     <Smile className="w-3 h-3" /> High Satisfaction
                                 </span>
                             </div>
@@ -68,7 +68,7 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                             </div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-2xl transition-all">
+                    <button onClick={onClose} className="p-3 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-sm transition-all">
                         <X className="w-6 h-6 text-slate-400" />
                     </button>
                 </div>
@@ -80,7 +80,7 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                         <div className="bg-emerald-50 dark:bg-emerald-900/10 p-6 rounded-[2.5rem] border border-emerald-100 dark:border-emerald-900/30">
                             <div className="flex justify-between items-start mb-4">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Satisfaction Trend</p>
-                                <TrendingUp className="w-5 h-5 text-emerald-500" />
+                                <TrendingUp className="w-5 h-5 text-success" />
                             </div>
                             <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-1">92%</h3>
                             <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest italic">+5.4% from last month</p>
@@ -89,8 +89,8 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                         {/* Loyalty Card */}
                         <div className="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-[2.5rem] border border-indigo-100 dark:border-indigo-900/30">
                             <div className="flex justify-between items-start mb-4">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Loyalty Status</p>
-                                <Crown className="w-5 h-5 text-amber-500" />
+                                <p className="text-[10px] font-black uppercase tracking-widest text-primary">Loyalty Status</p>
+                                <Crown className="w-5 h-5 text-warning" />
                             </div>
                             <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-1">{customer.tier || 'BRONZE'}</h3>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{customer.points.toLocaleString()} Points Balance</p>
@@ -99,8 +99,8 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                         {/* Revenue Card */}
                         <div className="bg-slate-900 dark:bg-slate-800 p-6 rounded-[2.5rem] text-white">
                             <div className="flex justify-between items-start mb-4">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Lifetime Value</p>
-                                <Zap className="w-5 h-5 text-indigo-400" />
+                                <p className="text-[10px] font-black uppercase tracking-widest text-primary">Lifetime Value</p>
+                                <Zap className="w-5 h-5 text-primary" />
                             </div>
                             <h3 className="text-3xl font-black mb-1">₹{(customer.totalPurchases || 0).toLocaleString()}</h3>
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Across {customer.purchaseCount || 0} Invoices</p>
@@ -115,10 +115,10 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                             </h4>
                             <div className="space-y-4">
                                 {/* Last Feedback */}
-                                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-700 relative group overflow-hidden">
+                                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-sm border border-slate-100 dark:border-slate-700 relative group overflow-hidden">
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-12 -mt-12" />
                                     <div className="flex justify-between items-start mb-3 relative z-10">
-                                        <div className="flex gap-1 text-amber-500">
+                                        <div className="flex gap-1 text-warning">
                                             {[...Array(5)].map((_, i) => <Star key={i} className={`w-3.5 h-3.5 ${i < cxData.lastFeedback.rating ? 'fill-current' : 'opacity-20'}`} />)}
                                         </div>
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{cxData.lastFeedback.date}</span>
@@ -128,7 +128,7 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                                     </p>
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm">
-                                            <MessageSquare className="w-3 h-3 text-indigo-600" /> {cxData.lastFeedback.channel}
+                                            <MessageSquare className="w-3 h-3 text-primary" /> {cxData.lastFeedback.channel}
                                         </div>
                                         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest shadow-md">
                                             <Smile className="w-3 h-3" /> Positive Sentiment
@@ -137,7 +137,7 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                                 </div>
 
                                 {/* Placeholder for past complaints or additional feed */}
-                                <div className="p-8 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl">
+                                <div className="p-8 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-sm">
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No unresolved complaints found</p>
                                 </div>
                             </div>
@@ -145,11 +145,11 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
 
                         {/* Action Shortcuts */}
                         <div className="grid grid-cols-2 gap-4">
-                            <button className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-indigo-600 transition-all group">
+                            <button className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm hover:border-indigo-600 transition-all group">
                                 <span className="text-xs font-black uppercase tracking-widest">Send Promo Blast</span>
-                                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
+                                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                             </button>
-                            <button className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-emerald-600 transition-all group">
+                            <button className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm hover:border-emerald-600 transition-all group">
                                 <span className="text-xs font-black uppercase tracking-widest">Request Testimonial</span>
                                 <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
                             </button>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+﻿import { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -90,8 +90,8 @@ const DeliveryChallanDetail = () => {
     if (isLoading || !challan) {
         return (
             <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col items-center justify-center gap-4">
-                <div className="w-12 h-12 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
-                <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] animate-pulse">Syncing Dispatch Node...</p>
+                <div className="w-12 h-12 border-4 border-warning/20 border-t-amber-500 rounded-full animate-spin"></div>
+                <p className="text-[10px] font-black text-warning uppercase tracking-[0.2em] animate-pulse">Syncing Dispatch Node...</p>
             </div>
         );
     }
@@ -112,7 +112,7 @@ const DeliveryChallanDetail = () => {
                     <div className="flex items-center gap-6">
                         <button 
                             onClick={() => navigate('/sales/challans')}
-                            className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:scale-110 transition-transform text-neutral-500 hover:text-amber-500 shadow-sm"
+                            className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm hover:scale-110 transition-transform text-neutral-500 hover:text-warning shadow-sm"
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </button>
@@ -120,7 +120,7 @@ const DeliveryChallanDetail = () => {
                             <div className="absolute -left-4 top-0 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
                             <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
                                 {challan.challanNumber}
-                                <span className={`px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-lg text-xs font-bold uppercase tracking-widest`}>
+                                <span className={`px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-xs font-bold uppercase tracking-widest`}>
                                     {challan.status === 'Converted' ? 'Fiscal Finalized' : 'Dispatch Protocol'}
                                 </span>
                             </h1>
@@ -134,19 +134,19 @@ const DeliveryChallanDetail = () => {
                     <div className="flex items-center gap-3">
                         <button 
                             onClick={handlePrint}
-                            className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:text-amber-500 transition-colors shadow-sm group"
+                            className="p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:text-warning transition-colors shadow-sm group"
                         >
                             <Printer className="w-4 h-4" />
                         </button>
                         {challan.status !== 'Converted' && (
                             <button 
                                 onClick={() => setConvertConfirm(true)}
-                                className="px-6 py-3 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
+                                className="px-6 py-3 bg-emerald-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
                             >
                                 <Receipt className="w-4 h-4 inline-block mr-2" /> Transition to Invoice
                             </button>
                         )}
-                        <button className="hidden md:flex items-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20">
+                        <button className="hidden md:flex items-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20">
                             <Download className="w-4 h-4" /> Export Manifest
                         </button>
                     </div>
@@ -158,10 +158,10 @@ const DeliveryChallanDetail = () => {
                         {lifecycleStages.map((stage, index) => (
                             <div key={stage.name} className="flex-1 flex items-center gap-4 last:flex-none">
                                 <div className="flex flex-col items-center gap-2 relative">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${stage.completed ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : stage.current ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20 animate-pulse' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'}`}>
+                                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all ${stage.completed ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : stage.current ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20 animate-pulse' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'}`}>
                                         {stage.completed ? <CheckCircle2 className="w-6 h-6" /> : <span className="font-black">{index + 1}</span>}
                                     </div>
-                                    <span className={`text-[9px] font-black uppercase tracking-widest absolute -bottom-6 whitespace-nowrap ${stage.current ? 'text-amber-500' : 'text-neutral-400'}`}>
+                                    <span className={`text-[9px] font-black uppercase tracking-widest absolute -bottom-6 whitespace-nowrap ${stage.current ? 'text-warning' : 'text-neutral-400'}`}>
                                         {stage.name}
                                     </span>
                                 </div>
@@ -196,11 +196,11 @@ const DeliveryChallanDetail = () => {
                             <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] overflow-hidden shadow-sm">
                                 <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50">
                                     <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <User className="w-4 h-4 text-amber-500" /> Consignee Entity
+                                        <User className="w-4 h-4 text-warning" /> Consignee Entity
                                     </h3>
                                 </div>
                                 <div className="p-8 flex items-center gap-6">
-                                    <div className="w-16 h-16 rounded-3xl bg-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-amber-500/20">
+                                    <div className="w-16 h-16 rounded-sm bg-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-amber-500/20">
                                         {challan.customer?.name?.charAt(0).toUpperCase() || '?'}
                                     </div>
                                     <div>
@@ -217,7 +217,7 @@ const DeliveryChallanDetail = () => {
                             <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] overflow-hidden shadow-sm">
                                 <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50">
                                     <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <Truck className="w-4 h-4 text-amber-500" /> Logistics Matrix
+                                        <Truck className="w-4 h-4 text-warning" /> Logistics Matrix
                                     </h3>
                                 </div>
                                 <div className="p-8 grid grid-cols-2 gap-6">
@@ -283,9 +283,9 @@ const DeliveryChallanDetail = () => {
                         {challan.notes && (
                             <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[32px] p-8 shadow-sm">
                                 <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
-                                    <Info className="w-4 h-4 text-amber-500" /> Operational Directives
+                                    <Info className="w-4 h-4 text-warning" /> Operational Directives
                                 </h3>
-                                <p className="text-sm font-bold text-neutral-600 dark:text-neutral-400 leading-relaxed bg-neutral-50/50 dark:bg-neutral-950/50 p-6 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-inner">
+                                <p className="text-sm font-bold text-neutral-600 dark:text-neutral-400 leading-relaxed bg-neutral-50/50 dark:bg-neutral-950/50 p-6 rounded-sm border border-neutral-100 dark:border-neutral-800 shadow-inner">
                                     {challan.notes}
                                 </p>
                             </div>
@@ -296,12 +296,12 @@ const DeliveryChallanDetail = () => {
                     <div className="space-y-8 sticky top-8 print:hidden">
                         {/* Fulfillment Summary */}
                         <div className="bg-neutral-900 dark:bg-white rounded-[40px] p-8 text-white dark:text-neutral-900 shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-[100px]" />
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-bl-[100px]" />
                             <h3 className="text-[10px] font-black opacity-50 uppercase tracking-[0.3em] mb-8">Dispatch Summary</h3>
                             <div className="space-y-4 relative z-10">
                                 {[
                                     { label: 'Manifest Nodes', value: challan.items.length, color: 'text-white dark:text-neutral-900' },
-                                    { label: 'Logistics Protocol', value: (challan.transportMode || 'ROAD').toUpperCase(), color: 'text-amber-400 dark:text-amber-600' },
+                                    { label: 'Logistics Protocol', value: (challan.transportMode || 'ROAD').toUpperCase(), color: 'text-warning dark:text-amber-600' },
                                 ].map((item, i) => (
                                     <div key={i} className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
                                         <span>{item.label}</span>
@@ -311,7 +311,7 @@ const DeliveryChallanDetail = () => {
                                 <div className="pt-6 border-t border-white/10 dark:border-neutral-200 mt-2">
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-2">Gross Dispatch Quantity</p>
                                     <div className="text-4xl font-display font-black tracking-tighter flex items-center gap-2">
-                                        <Layers className="w-8 h-8 text-amber-500" />
+                                        <Layers className="w-8 h-8 text-warning" />
                                         {totalQuantity}
                                     </div>
                                 </div>
@@ -327,11 +327,11 @@ const DeliveryChallanDetail = () => {
                                 <div className="p-8">
                                     <div 
                                         onClick={() => navigate(`/sales/invoice/${challan.convertedToInvoice._id}`)}
-                                        className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-950 rounded-2xl border border-neutral-100 dark:border-neutral-800 group cursor-pointer hover:border-emerald-500/30 transition-all"
+                                        className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-950 rounded-sm border border-neutral-100 dark:border-neutral-800 group cursor-pointer hover:border-success/30 transition-all"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <Receipt className="w-4 h-4 text-emerald-500" />
-                                            <span className="text-xs font-black uppercase tracking-tight group-hover:text-emerald-500">{challan.convertedToInvoice.invoiceNo}</span>
+                                            <Receipt className="w-4 h-4 text-success" />
+                                            <span className="text-xs font-black uppercase tracking-tight group-hover:text-success">{challan.convertedToInvoice.invoiceNo}</span>
                                         </div>
                                         <ChevronRight className="w-4 h-4 text-neutral-300 group-hover:translate-x-1 transition-transform" />
                                     </div>
@@ -373,7 +373,7 @@ const DeliveryChallanDetail = () => {
                     <div className="bg-white dark:bg-neutral-900 rounded-[40px] p-10 max-w-md w-full shadow-2xl border border-neutral-200 dark:border-neutral-800 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-[100px]" />
                         <div className="relative z-10 text-center">
-                            <div className="w-20 h-20 bg-emerald-500/10 text-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                            <div className="w-20 h-20 bg-success/10 text-success rounded-sm flex items-center justify-center mx-auto mb-6">
                                 <Receipt className="w-10 h-10" />
                             </div>
                             <h3 className="text-2xl font-display font-black text-neutral-900 dark:text-white uppercase tracking-tight mb-2">Transition Protocol?</h3>
@@ -383,13 +383,13 @@ const DeliveryChallanDetail = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <button 
                                     onClick={() => setConvertConfirm(false)}
-                                    className="px-6 py-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all"
+                                    className="px-6 py-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all"
                                 >
                                     Cancel
                                 </button>
                                 <button 
                                     onClick={handleConvert}
-                                    className="px-6 py-4 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
+                                    className="px-6 py-4 bg-emerald-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
                                 >
                                     Transition
                                 </button>

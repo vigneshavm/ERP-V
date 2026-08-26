@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Hash, Search, Plus, Edit, Trash2, Download } from 'lucide-react';
 
 const UNITS = [
@@ -25,7 +25,7 @@ const UnitsHSNAgent: React.FC = () => {
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-teal-600 flex items-center justify-center"><Hash className="w-5 h-5 text-white" /></div>
+                    <div className="w-10 h-10 rounded-sm bg-teal-600 flex items-center justify-center"><Hash className="w-5 h-5 text-white" /></div>
                     <div>
                         <h1 className="text-2xl font-black text-slate-900 dark:text-white">Units & HSN Agent</h1>
                         <p className="text-xs text-slate-500">Manage measurement units and GST HSN codes</p>
@@ -50,7 +50,7 @@ const UnitsHSNAgent: React.FC = () => {
                 ))}
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div className="p-4 border-b border-slate-100 dark:border-slate-700">
                     <div className="relative max-w-sm">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -93,7 +93,7 @@ const UnitsHSNAgent: React.FC = () => {
                                 <tr key={h.code} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                                     <td className="px-4 py-3 font-black text-teal-600">{h.code}</td>
                                     <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300">{h.description}</td>
-                                    <td className="px-4 py-3"><span className="px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded-lg text-xs font-black">{h.gst}</span></td>
+                                    <td className="px-4 py-3"><span className="px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-success rounded-lg text-xs font-black">{h.gst}</span></td>
                                     <td className="px-4 py-3 text-sm font-bold text-slate-500">{h.items} items</td>
                                     <td className="px-4 py-3 flex gap-2">
                                         <button className="p-1.5 hover:bg-teal-50 dark:hover:bg-teal-900/20 text-teal-600 rounded-lg transition-colors"><Edit className="w-3.5 h-3.5" /></button>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getAllCustomers, reset } from "../../../redux/slices/customerSlice";
@@ -231,7 +231,7 @@ const CustomersWithDues = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => navigate(`/customers/${customer._id}`)}
-                                                    className="text-indigo-600 dark:text-[rgb(var(--color-primary))] hover:text-indigo-900 dark:hover:text-[rgb(var(--color-primary-hover))] mr-4 font-medium"
+                                                    className="text-primary dark:text-[rgb(var(--color-primary))] hover:text-indigo-900 dark:hover:text-[rgb(var(--color-primary-hover))] mr-4 font-medium"
                                                 >
                                                     View
                                                 </button>

@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+﻿import { useState, ChangeEvent } from 'react';
 import * as XLSX from 'xlsx';
 import Layout from "@/components/shared/Layout/Layout";
 import api from "@/services/api";
@@ -252,7 +252,7 @@ const BulkImport = () => {
 
             <div className="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-200 dark:border-indigo-900/20 rounded-xl p-6 mb-6">
                 <div className="flex items-start">
-                    <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg mr-4 text-indigo-600">
+                    <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg mr-4 text-primary">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -275,7 +275,7 @@ const BulkImport = () => {
                     <button
                         type="button"
                         onClick={downloadSampleFile}
-                        className="flex items-center space-x-2 px-4 py-2 text-indigo-600 border border-indigo-100 dark:border-slate-800 rounded-lg hover:bg-slate-50 transition-all text-[10px] font-black uppercase tracking-widest"
+                        className="flex items-center space-x-2 px-4 py-2 text-primary border border-indigo-100 dark:border-slate-800 rounded-lg hover:bg-slate-50 transition-all text-[10px] font-black uppercase tracking-widest"
                     >
                         <span>Download Sample</span>
                     </button>
@@ -290,7 +290,7 @@ const BulkImport = () => {
                         id="file-upload"
                     />
                     <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-indigo-50 transition-colors">
-                        <svg className="w-8 h-8 text-slate-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-8 h-8 text-slate-400 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
                     </div>
@@ -308,16 +308,16 @@ const BulkImport = () => {
                         <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{mappingData.length}</p>
                     </div>
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-4 border border-slate-100 dark:border-slate-800">
-                        <p className="text-emerald-500 text-[9px] font-black uppercase tracking-widest">Valid</p>
-                        <p className="text-2xl font-black text-emerald-500 mt-1">{validRowsCount}</p>
+                        <p className="text-success text-[9px] font-black uppercase tracking-widest">Valid</p>
+                        <p className="text-2xl font-black text-success mt-1">{validRowsCount}</p>
                     </div>
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-4 border border-slate-100 dark:border-slate-800">
-                        <p className="text-amber-500 text-[9px] font-black uppercase tracking-widest">Warnings</p>
-                        <p className="text-2xl font-black text-amber-500 mt-1">{warningRowsCount}</p>
+                        <p className="text-warning text-[9px] font-black uppercase tracking-widest">Warnings</p>
+                        <p className="text-2xl font-black text-warning mt-1">{warningRowsCount}</p>
                     </div>
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-4 border border-slate-100 dark:border-slate-800">
-                        <p className="text-rose-500 text-[9px] font-black uppercase tracking-widest">Invalid</p>
-                        <p className="text-2xl font-black text-rose-500 mt-1">{errorRowsCount}</p>
+                        <p className="text-danger text-[9px] font-black uppercase tracking-widest">Invalid</p>
+                        <p className="text-2xl font-black text-danger mt-1">{errorRowsCount}</p>
                     </div>
                 </div>
             )}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -67,13 +67,13 @@ const AddCustomer = () => {
             />
 
             <div className="max-w-5xl mx-auto space-y-6">
-                <div className="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/30 p-4 rounded-2xl flex items-start gap-4">
+                <div className="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/30 p-4 rounded-sm flex items-start gap-4">
                     <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
-                        <Info className="w-5 h-5 text-indigo-600" />
+                        <Info className="w-5 h-5 text-primary" />
                     </div>
                     <div>
                         <p className="text-xs font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-widest leading-none mt-1">Onboarding Protocol</p>
-                        <p className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium mt-2 leading-relaxed italic">All consumer records are multi-indexed by phone number and email to prevent marketplace duplication. Ensure accuracy of contact nodes for logistics integrity.</p>
+                        <p className="text-[11px] text-primary dark:text-primary font-medium mt-2 leading-relaxed italic">All consumer records are multi-indexed by phone number and email to prevent marketplace duplication. Ensure accuracy of contact nodes for logistics integrity.</p>
                     </div>
                 </div>
 

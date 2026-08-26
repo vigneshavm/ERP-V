@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from "../../redux/store";
@@ -124,7 +124,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                 <div className="relative z-10 w-full h-full p-12 lg:p-20 flex flex-col justify-between">
                     <div>
                         <div className="flex items-center gap-3 mb-8">
-                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl shadow-white/10 ring-4 ring-white/5">
+                            <div className="w-12 h-12 bg-white rounded-sm flex items-center justify-center shadow-xl shadow-white/10 ring-4 ring-white/5">
                                 <Store className="w-7 h-7 text-slate-950" />
                             </div>
                             <span className="text-2xl font-black text-white tracking-tighter uppercase">{tenant?.name || DEFAULT_BRANDING.NAME}</span>
@@ -177,14 +177,14 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-4">
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-indigo-400">Identity</label>
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-primary">Identity</label>
                                 <div className="relative">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-indigo-500 transition-colors" />
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-primary transition-colors" />
                                     <input
                                         type="text"
                                         value={identity}
                                         onChange={(e) => setIdentity(e.target.value)}
-                                        className="w-full h-14 bg-slate-900 border border-slate-800 rounded-2xl pl-12 pr-4 text-white font-medium outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600"
+                                        className="w-full h-14 bg-slate-900 border border-slate-800 rounded-sm pl-12 pr-4 text-white font-medium outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600"
                                         placeholder="Email, ID or Mobile"
                                         required
                                     />
@@ -193,16 +193,16 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
 
                             <div className="space-y-2 group">
                                 <div className="flex justify-between items-center ml-1">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest transition-colors group-focus-within:text-indigo-400">Security Key</label>
-                                    <button type="button" className="text-[10px] font-black text-indigo-500 hover:text-indigo-400 uppercase tracking-widest transition-colors">Recover Access</button>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest transition-colors group-focus-within:text-primary">Security Key</label>
+                                    <button type="button" className="text-[10px] font-black text-primary hover:text-primary uppercase tracking-widest transition-colors">Recover Access</button>
                                 </div>
                                 <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-indigo-500 transition-colors" />
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-primary transition-colors" />
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full h-14 bg-slate-900 border border-slate-800 rounded-2xl pl-12 pr-12 text-white font-mono tracking-widest outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600"
+                                        className="w-full h-14 bg-slate-900 border border-slate-800 rounded-sm pl-12 pr-12 text-white font-mono tracking-widest outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600"
                                         placeholder="••••••••"
                                         required
                                     />
@@ -218,7 +218,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                         </div>
 
                         {(error || isError) && (
-                            <div className="flex items-start gap-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-xs font-bold animate-in zoom-in-95 leading-relaxed">
+                            <div className="flex items-start gap-4 p-4 bg-red-500/10 border border-red-500/20 rounded-sm text-red-400 text-xs font-bold animate-in zoom-in-95 leading-relaxed">
                                 <AlertCircle className="w-5 h-5 shrink-0" />
                                 <span>{error || message}</span>
                             </div>
@@ -227,7 +227,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full h-14 bg-white text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-white/5"
+                            className="w-full h-14 bg-white text-slate-950 rounded-sm font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-white/5"
                         >
                             {isLoading ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -243,7 +243,7 @@ const Login: React.FC<LoginProps> = ({ tenant, allowedSector, onBack }) => {
                         <div className="h-px flex-1 bg-slate-800/50" />
                     </div>
 
-                    <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl flex flex-col gap-4 text-center">
+                    <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-sm flex flex-col gap-4 text-center">
                         <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Authorized Access Only</p>
                         <p className="text-slate-400 text-xs font-medium leading-relaxed">
                             This system is protected by high-level encryption. All unauthorized attempts are logged and reported.

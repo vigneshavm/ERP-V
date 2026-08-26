@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
 import Layout from "../../../components/shared/Layout";
@@ -108,7 +108,7 @@ const BankIntelligence: React.FC = () => {
 
                 {/* Financial Pulse Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Landmark className="w-16 h-16" />
                         </div>
@@ -120,13 +120,13 @@ const BankIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Upcoming Payables</p>
                         <h3 className="text-2xl font-black text-error">₹{(liquidityMetrics.dueSoon / 100000).toFixed(2)}L</h3>
                         <p className="text-xs text-neutral-500 mt-2 font-medium italic">Due within 7 days</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Recon Alerts</p>
                         <h3 className="text-2xl font-black text-warning">{liquidityMetrics.reconAlerts}</h3>
                         <div className="flex items-center gap-1.5 mt-2 font-bold text-warning text-xs">
@@ -135,9 +135,9 @@ const BankIntelligence: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Liquidity Runway</p>
-                        <h3 className="text-2xl font-black text-indigo-500">{liquidityMetrics.runwayDays} <span className="text-xs">Days</span></h3>
+                        <h3 className="text-2xl font-black text-primary">{liquidityMetrics.runwayDays} <span className="text-xs">Days</span></h3>
                         <p className="text-xs text-neutral-500 mt-2">Based on current burn rate</p>
                     </div>
                 </div>
@@ -175,11 +175,11 @@ const BankIntelligence: React.FC = () => {
                                 </div>
 
                                 {filteredAccounts.map(acc => (
-                                    <div key={acc.id} className={`group bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 shadow-sm transition-all hover:border-primary/30 ${acc.status === 'MISMATCH' ? 'border-l-4 border-l-error' : ''
+                                    <div key={acc.id} className={`group bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm p-6 shadow-sm transition-all hover:border-primary/30 ${acc.status === 'MISMATCH' ? 'border-l-4 border-l-error' : ''
                                         }`}>
                                         <div className="flex flex-col sm:flex-row justify-between gap-6">
                                             <div className="flex gap-4">
-                                                <div className="p-4 bg-neutral-100 dark:bg-neutral-900 rounded-2xl text-primary shrink-0">
+                                                <div className="p-4 bg-neutral-100 dark:bg-neutral-900 rounded-sm text-primary shrink-0">
                                                     <Landmark className="w-8 h-8" />
                                                 </div>
                                                 <div>
@@ -205,7 +205,7 @@ const BankIntelligence: React.FC = () => {
                                         </div>
 
                                         {acc.status === 'MISMATCH' && (
-                                            <div className="mt-6 p-4 bg-error/5 border border-error/10 rounded-2xl flex items-center justify-between gap-4">
+                                            <div className="mt-6 p-4 bg-error/5 border border-error/10 rounded-sm flex items-center justify-between gap-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="p-2 bg-error text-white rounded-full">
                                                         <AlertTriangle className="w-4 h-4" />
@@ -244,7 +244,7 @@ const BankIntelligence: React.FC = () => {
                         {view === 'RECON' && (
                             <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 p-8 shadow-sm">
                                 <div className="flex items-center gap-3 mb-8">
-                                    <div className="p-3 bg-primary/10 text-primary rounded-2xl">
+                                    <div className="p-3 bg-primary/10 text-primary rounded-sm">
                                         <Target className="w-6 h-6" />
                                     </div>
                                     <h3 className="text-xl font-black tracking-tight">Digital Collection Matcher</h3>
@@ -256,7 +256,7 @@ const BankIntelligence: React.FC = () => {
                                         { channel: 'Card (Swipe)', pos: 125000, bank: 125000, status: 'MATCHED' },
                                         { channel: 'Wallet (PineLabs)', pos: 12000, bank: 9000, status: 'PENDING' }
                                     ].map((row, i) => (
-                                        <div key={i} className="flex flex-col sm:flex-row items-center gap-6 p-6 border border-neutral-100 dark:border-neutral-700 rounded-3xl group hover:border-primary/30 transition-all">
+                                        <div key={i} className="flex flex-col sm:flex-row items-center gap-6 p-6 border border-neutral-100 dark:border-neutral-700 rounded-sm group hover:border-primary/30 transition-all">
                                             <div className="w-full sm:w-1/3">
                                                 <h4 className="font-black text-neutral-500 uppercase text-[10px] tracking-widest mb-1">{row.channel}</h4>
                                                 <p className="font-bold text-lg">Daily Batch #401</p>
@@ -296,7 +296,7 @@ const BankIntelligence: React.FC = () => {
                         <h4 className="text-xs font-black text-neutral-400 uppercase tracking-widest pl-1">Financial Intelligence Radar</h4>
 
                         {/* Compliance & Payables */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 p-6 shadow-sm">
                             <div className="flex items-center justify-between mb-6">
                                 <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">upcoming payables</span>
                                 <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-900 rounded text-[9px] font-bold text-neutral-500 italic">Audit Ready</span>
@@ -346,7 +346,7 @@ const BankIntelligence: React.FC = () => {
                                 </h4>
 
                                 <div className="space-y-4 mb-8">
-                                    <div className="p-3 bg-white/5 border border-white/10 rounded-2xl">
+                                    <div className="p-3 bg-white/5 border border-white/10 rounded-sm">
                                         <p className="text-[10px] font-medium text-neutral-400 leading-relaxed">
                                             Detected <span className="text-white font-bold">₹8.5L idle</span> at Madurai Savings.
                                             Agent recommends moving to HDFC Chennai to cover GST obligation due on 20th Jan.
@@ -354,13 +354,13 @@ const BankIntelligence: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <button className="w-full py-4 bg-primary text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                                <button className="w-full py-4 bg-primary text-white rounded-sm font-black text-[11px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
                                     <ArrowRightLeft className="w-4 h-4" /> Execute Fund Rebalancing
                                 </button>
                             </div>
                         </div>
 
-                        <div className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl border border-neutral-100 dark:border-neutral-800 flex items-start gap-3">
+                        <div className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-sm border border-neutral-100 dark:border-neutral-800 flex items-start gap-3">
                             <Info className="w-4 h-4 text-neutral-400 mt-0.5" />
                             <p className="text-[10px] text-neutral-500 leading-relaxed italic">
                                 Wings Intelligence manages complex settlement cycles of Payment Gateways (T+1, T+2) automatically to ensure bank ledger mirrors real business performance.

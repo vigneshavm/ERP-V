@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Trash2 } from 'lucide-react';
 
 interface Props {
@@ -12,7 +12,7 @@ const DeleteBillModal: React.FC<Props> = ({ isOpen, onClose, onConfirm }) => {
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl border dark:border-neutral-700">
+            <div className="bg-white dark:bg-neutral-800 rounded-sm w-full max-w-sm p-6 shadow-2xl border dark:border-neutral-700">
                 <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
                     <Trash2 className="w-6 h-6 text-red-600" />
                 </div>

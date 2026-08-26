@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
     Store,
@@ -56,11 +56,11 @@ const BusinessSubNav: React.FC = () => {
                             >
                                 <div className={`p-2 rounded-lg mb-1 transition-colors ${isActive
                                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
-                                    : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600'
+                                    : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-primary'
                                     }`}>
                                     <Icon size={18} />
                                 </div>
-                                <span className={`text-[13px] font-bold whitespace-nowrap ${isActive ? 'text-indigo-600' : 'text-slate-600'
+                                <span className={`text-[13px] font-bold whitespace-nowrap ${isActive ? 'text-primary' : 'text-slate-600'
                                     }`}>
                                     {item.name}
                                 </span>

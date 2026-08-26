@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Search, Filter, Plus, FileText, CheckCircle, Clock, AlertCircle, Lock, MoreHorizontal, Trash2, Printer, Download, ChevronUp, ChevronDown, Eye, FileSpreadsheet, Info, ArrowUpDown, Activity } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderStatus, PurchaseOrderItem } from "../../hooks/usePurchaseOrders";
 import { toast } from 'react-toastify';
@@ -72,20 +72,20 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
         const baseClass = "px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5";
         switch (status) {
             case 'Approved':
-                return <span className={`${baseClass} bg-cyan-50 text-cyan-600 dark:bg-cyan-900/20 dark:text-cyan-400`}><CheckCircle className="w-3 h-3" /> Approved</span>;
+                return <span className={`${baseClass} bg-cyan-50 text-cyan-600 dark:bg-cyan-900/20 dark:text-info`}><CheckCircle className="w-3 h-3" /> Approved</span>;
             case 'Fully Received':
             case 'Converted':
             case 'Paid':
-                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400`}><Lock className="w-3 h-3" /> {status}</span>;
+                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success`}><Lock className="w-3 h-3" /> {status}</span>;
             case 'Partial Receipt':
-                return <span className={`${baseClass} bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400`}><Activity className="w-3 h-3" /> Partial</span>;
+                return <span className={`${baseClass} bg-indigo-50 text-primary dark:bg-indigo-900/20 dark:text-primary`}><Activity className="w-3 h-3" /> Partial</span>;
             case 'Billed':
-                return <span className={`${baseClass} bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400`}><FileText className="w-3 h-3" /> Billed</span>;
+                return <span className={`${baseClass} bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-accent`}><FileText className="w-3 h-3" /> Billed</span>;
             case 'Pending':
             case 'Pending Approval':
-                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400`}><Clock className="w-3 h-3" /> Pending</span>;
+                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning`}><Clock className="w-3 h-3" /> Pending</span>;
             case 'Cancelled':
-                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400`}><AlertCircle className="w-3 h-3" /> Cancelled</span>;
+                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger`}><AlertCircle className="w-3 h-3" /> Cancelled</span>;
             default:
                 return <span className={`${baseClass} bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400`}>{status}</span>;
         }
@@ -106,12 +106,12 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                     placeholder="Search PO # or Supplier..."
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                    className="w-full pl-12 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                                 />
                             </div>
                         </div>
                         {selectedOrders.length > 0 && (
-                            <div className="flex items-center gap-4 bg-primary/5 text-primary px-6 py-2.5 rounded-2xl border border-primary/10 animate-in zoom-in-95 self-end md:self-auto">
+                            <div className="flex items-center gap-4 bg-primary/5 text-primary px-6 py-2.5 rounded-sm border border-primary/10 animate-in zoom-in-95 self-end md:self-auto">
                                 <span className="text-[10px] font-black uppercase tracking-widest">{selectedOrders.length} Nodes Active</span>
                                 <div className="h-4 w-px bg-primary/20 mx-2" />
                                 <button className="p-1.5 hover:bg-primary/10 rounded-xl transition-all" title="Bulk Approve"><CheckCircle className="w-4 h-4" /></button>
@@ -122,10 +122,10 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                     </div>
 
                     <div className="flex items-center gap-3 w-full xl:w-auto justify-end">
-                        <button className="p-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl text-neutral-400 hover:text-emerald-500 transition-all">
+                        <button className="p-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl text-neutral-400 hover:text-success transition-all">
                             <FileSpreadsheet className="w-4 h-4" />
                         </button>
-                        <button className="p-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl text-neutral-400 hover:text-rose-500 transition-all">
+                        <button className="p-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl text-neutral-400 hover:text-danger transition-all">
                             <Download className="w-4 h-4" />
                         </button>
                     </div>
@@ -138,7 +138,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                         <select
                             value={statusFilter}
                             onChange={e => setStatusFilter(e.target.value)}
-                            className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                         >
                             <option value="All">All Statuses</option>
                             {['Draft', 'Pending Approval', 'Approved', 'Partial Receipt', 'Fully Received', 'Billed', 'Paid', 'Cancelled'].map(s => (
@@ -151,7 +151,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                         <select
                             value={vendorFilter}
                             onChange={e => setVendorFilter(e.target.value)}
-                            className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                         >
                             <option value="All">All Entities</option>
                             {vendors.map(v => <option key={v} value={v}>{v}</option>)}
@@ -164,14 +164,14 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                 type="date"
                                 value={dateRange.from}
                                 onChange={e => setDateRange({ ...dateRange, from: e.target.value })}
-                                className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                             />
                             <span className="text-neutral-300 font-bold">→</span>
                             <input
                                 type="date"
                                 value={dateRange.to}
                                 onChange={e => setDateRange({ ...dateRange, to: e.target.value })}
-                                className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                             />
                         </div>
                     </div>
@@ -215,7 +215,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                             <tr>
                                 <td colSpan={8} className="px-8 py-32 text-center">
                                     <div className="flex flex-col items-center gap-6 max-w-sm mx-auto opacity-40">
-                                        <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                        <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
                                             <Info className="w-10 h-10" />
                                         </div>
                                         <div>

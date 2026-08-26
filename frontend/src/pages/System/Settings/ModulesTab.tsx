@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ShoppingCart, Package, CreditCard, Users, Truck, BarChart3, ChevronRight, CheckCircle2, Zap, LucideIcon, Briefcase, FileText, History, ClipboardList, Store } from 'lucide-react';
 import { ModulesTabProps } from './types';
 
@@ -28,11 +28,11 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
     return (
         <div className="p-6 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header Advisory */}
-            <div className="bg-slate-900 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 border border-slate-800 shadow-2xl overflow-hidden relative">
+            <div className="bg-slate-900 rounded-sm p-8 flex flex-col md:flex-row items-center gap-8 border border-slate-800 shadow-2xl overflow-hidden relative">
                 <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
-                    <Zap className="w-48 h-48 text-indigo-500" />
+                    <Zap className="w-48 h-48 text-primary" />
                 </div>
-                <div className="relative z-10 w-20 h-20 rounded-3xl bg-indigo-600 flex items-center justify-center shrink-0 shadow-xl shadow-indigo-500/20">
+                <div className="relative z-10 w-20 h-20 rounded-sm bg-indigo-600 flex items-center justify-center shrink-0 shadow-xl shadow-indigo-500/20">
                     <Zap className="w-10 h-10 text-white" />
                 </div>
                 <div className="relative z-10 flex-1 text-center md:text-left">
@@ -61,13 +61,13 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                     // cast to boolean
                     const isEnabled = !!modules[mod.id];
                     return (
-                        <div key={mod.id} className={`group p-6 rounded-2xl border transition-all duration-300 flex flex-col justify-between h-full ${isEnabled
+                        <div key={mod.id} className={`group p-6 rounded-sm border transition-all duration-300 flex flex-col justify-between h-full ${isEnabled
                             ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:border-indigo-300 dark:hover:border-indigo-500'
                             : 'bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700 opacity-60 grayscale hover:grayscale-0 transition-all'
                             }`}>
                             <div>
                                 <div className="flex items-center justify-between mb-6">
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors shadow-sm ${isEnabled
+                                    <div className={`w-14 h-14 rounded-sm flex items-center justify-center transition-colors shadow-sm ${isEnabled
                                         ? `bg-${mod.color}-50 dark:bg-${mod.color}-900/20 text-${mod.color}-600 dark:text-${mod.color}-400`
                                         : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
                                         }`}>
@@ -89,14 +89,14 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
 
                             <div className="flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
                                 {isEnabled ? (
-                                    <div className="flex items-center gap-1.5 text-emerald-500">
+                                    <div className="flex items-center gap-1.5 text-success">
                                         <CheckCircle2 className="w-3.5 h-3.5" />
                                         <span className="text-[10px] font-black tracking-widest uppercase">Operational</span>
                                     </div>
                                 ) : (
                                     <span className="text-[10px] font-black tracking-widest uppercase text-slate-400">Disabled</span>
                                 )}
-                                <button className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-1 hover:gap-2 transition-all">
+                                <button className="text-[10px] font-black text-primary dark:text-primary flex items-center gap-1 hover:gap-2 transition-all">
                                     SETTINGS <ChevronRight className="w-3 h-3" />
                                 </button>
                             </div>
@@ -106,9 +106,9 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
             </div>
 
             {/* Capability Limitation Alert */}
-            <div className="p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 rounded-2xl flex items-center justify-between text-amber-800 dark:text-amber-300">
+            <div className="p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 rounded-sm flex items-center justify-between text-amber-800 dark:text-amber-300">
                 <div className="flex items-center gap-3">
-                    <Zap className="w-5 h-5 text-amber-500" />
+                    <Zap className="w-5 h-5 text-warning" />
                     <p className="text-xs font-bold uppercase tracking-wide">Enterprise Feature Control</p>
                 </div>
                 <p className="text-[11px] font-medium opacity-80 italic">Need more modules? Check your current subscription plan.</p>

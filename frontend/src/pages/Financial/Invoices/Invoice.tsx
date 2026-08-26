@@ -1,4 +1,4 @@
-
+﻿
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -91,11 +91,11 @@ const Invoices = () => {
     const getStatusColor = (status: string) => {
         switch (status) {
             case "paid":
-                return "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30";
+                return "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-success border border-emerald-200 dark:border-emerald-900/30";
             case "partial":
-                return "bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30";
+                return "bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-warning border border-amber-200 dark:border-amber-900/30";
             case "unpaid":
-                return "bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-400 border border-rose-200 dark:border-rose-900/30";
+                return "bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-danger border border-rose-200 dark:border-rose-900/30";
             default:
                 return "bg-surface text-secondary border border-default";
         }
@@ -148,7 +148,7 @@ const Invoices = () => {
                 {/* Error Message */}
                 {isError && (
                     <div className="mb-6 p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/20 rounded-xl">
-                        <p className="text-rose-600 dark:text-rose-400 text-sm font-medium">{message}</p>
+                        <p className="text-rose-600 dark:text-danger text-sm font-medium">{message}</p>
                     </div>
                 )}
 

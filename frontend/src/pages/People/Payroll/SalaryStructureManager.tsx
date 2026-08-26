@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
@@ -190,7 +190,7 @@ const SalaryStructureManager = () => {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => dispatch(fetchSalaryComponents())}
-                                className="px-3 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg text-sm font-medium border border-transparent hover:border-indigo-100"
+                                className="px-3 py-2 text-primary hover:bg-indigo-50 rounded-lg text-sm font-medium border border-transparent hover:border-indigo-100"
                                 title="Refresh Components"
                             >
                                 🔄 Refresh
@@ -304,7 +304,7 @@ const SalaryStructureManager = () => {
                                                     {components.filter(c => c.type === 'EARNING').map(c => (
                                                         <div key={c._id} className="flex items-center gap-4">
                                                             <div className="w-1/3 text-sm font-medium text-gray-700">
-                                                                {c.name} {c.calculationType === 'PERCENTAGE' && <span className="text-[10px] text-indigo-500">(%)</span>}
+                                                                {c.name} {c.calculationType === 'PERCENTAGE' && <span className="text-[10px] text-primary">(%)</span>}
                                                             </div>
                                                             <div className="flex-1 relative">
                                                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
@@ -329,7 +329,7 @@ const SalaryStructureManager = () => {
                                                     {components.filter(c => c.type === 'DEDUCTION').map(c => (
                                                         <div key={c._id} className="flex items-center gap-4">
                                                             <div className="w-1/3 text-sm font-medium text-gray-700">
-                                                                {c.name} {c.calculationType === 'PERCENTAGE' && <span className="text-[10px] text-rose-500">(%)</span>}
+                                                                {c.name} {c.calculationType === 'PERCENTAGE' && <span className="text-[10px] text-danger">(%)</span>}
                                                             </div>
                                                             <div className="flex-1 relative">
                                                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">

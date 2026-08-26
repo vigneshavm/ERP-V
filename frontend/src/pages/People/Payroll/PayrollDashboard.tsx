@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
@@ -92,7 +92,7 @@ const PayrollDashboard = () => {
                 <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                         <h3 className="font-semibold text-gray-800">Recent Payroll Runs</h3>
-                        <button onClick={() => navigate('/people/payroll/history')} className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View All</button>
+                        <button onClick={() => navigate('/people/payroll/history')} className="text-sm text-primary hover:text-indigo-800 font-medium">View All</button>
                     </div>
 
                     {loading && runs.length === 0 ? (
@@ -129,7 +129,7 @@ const PayrollDashboard = () => {
                                         <td className="px-6 py-4 text-right">
                                             <button
                                                 onClick={() => navigate(`/people/payroll/run/${run._id}`)}
-                                                className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                                                className="text-primary hover:text-indigo-900 text-sm font-medium"
                                             >
                                                 View
                                             </button>

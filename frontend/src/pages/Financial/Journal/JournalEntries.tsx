@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { fetchJournalEntries } from '../../../redux/slices/journalEntrySlice';
@@ -66,11 +66,11 @@ const JournalEntries: React.FC = () => {
                             placeholder="Search by description or reference code..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-12 pr-6 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                            className="w-full pl-12 pr-6 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-sm focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                         />
                     </div>
                     <div className="flex gap-3 shrink-0">
-                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 rounded-2xl text-neutral-500 transition shadow-sm">
+                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 rounded-sm text-neutral-500 transition shadow-sm">
                             <Filter className="w-5 h-5" />
                         </button>
                     </div>
@@ -135,8 +135,8 @@ const JournalEntries: React.FC = () => {
                                                 </td>
                                                 <td className="px-8 py-6 whitespace-nowrap text-center">
                                                     <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${entry.status === 'POSTED'
-                                                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
-                                                        : 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400'
+                                                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success'
+                                                        : 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning'
                                                         }`}>
                                                         {entry.status}
                                                     </span>

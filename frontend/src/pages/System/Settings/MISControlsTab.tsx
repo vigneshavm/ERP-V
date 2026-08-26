@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AlertTriangle, DollarSign, FileText, Shield, Info, ChevronRight, CheckCircle2, LucideIcon } from 'lucide-react';
 import { MISControlsTabProps } from './types';
 
@@ -12,9 +12,9 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
     }
 
     const ControlItem: React.FC<ControlItemProps> = ({ k, label, desc, icon: Icon }) => (
-        <div className="group flex items-center justify-between p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-indigo-300 transition-all shadow-sm">
+        <div className="group flex items-center justify-between p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:border-indigo-300 transition-all shadow-sm">
             <div className="flex items-center gap-5">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-indigo-50 group-hover:text-primary transition-colors">
                     <Icon className="w-5 h-5" />
                 </div>
                 <div>
@@ -37,13 +37,13 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
     return (
         <div className="p-6 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Global Advisory Alert */}
-            <div className="p-6 bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800 rounded-3xl flex items-start gap-5">
-                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0">
-                    <AlertTriangle className="w-6 h-6 text-indigo-600" />
+            <div className="p-6 bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800 rounded-sm flex items-start gap-5">
+                <div className="w-12 h-12 rounded-sm bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0">
+                    <AlertTriangle className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                     <p className="text-sm font-black text-indigo-800 dark:text-indigo-200">Management Information System (MIS) Governance</p>
-                    <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1 leading-relaxed max-w-2xl">
+                    <p className="text-xs text-primary dark:text-primary mt-1 leading-relaxed max-w-2xl">
                         These protocols dictate the operational boundaries for your staff. Enabling or disabling these controls will immediately affect transaction workflows, inventory validation, and financial compliance across all terminals.
                     </p>
                 </div>
@@ -53,7 +53,7 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
             <section>
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
-                        <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        <DollarSign className="w-5 h-5 text-emerald-600 dark:text-success" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Financial & Inventory Governance</h3>
@@ -88,9 +88,9 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
                 </div>
 
                 {/* Discount Cap Card */}
-                <div className="mt-6 flex items-center justify-between p-6 bg-slate-50/50 dark:bg-slate-800/20 rounded-2xl border border-slate-100 dark:border-slate-800">
+                <div className="mt-6 flex items-center justify-between p-6 bg-slate-50/50 dark:bg-slate-800/20 rounded-sm border border-slate-100 dark:border-slate-800">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-sm bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center">
                             <DollarSign className="w-6 h-6 text-slate-400" />
                         </div>
                         <div>
@@ -105,7 +105,7 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
                             max="100"
                             value={misConfig.maxDiscountPercent}
                             onChange={(e) => setMaxDiscountPercent(parseInt(e.target.value) || 0)}
-                            className="w-24 px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-center font-black outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white shadow-sm"
+                            className="w-24 px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-sm text-center font-black outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white shadow-sm"
                         />
                         <span className="text-sm font-black text-slate-400">%</span>
                     </div>

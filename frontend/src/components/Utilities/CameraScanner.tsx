@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+﻿import React, { useRef, useEffect, useState } from 'react';
 import { Camera, X, Aperture, Scan, Image as ImageIcon } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 
@@ -164,7 +164,7 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
 
     return (
         <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-            <div className="bg-slate-900 rounded-2xl overflow-hidden shadow-2xl w-full max-w-lg border border-slate-700 relative flex flex-col max-h-[90vh]">
+            <div className="bg-slate-900 rounded-sm overflow-hidden shadow-2xl w-full max-w-lg border border-slate-700 relative flex flex-col max-h-[90vh]">
 
                 {/* Header */}
                 <div className="p-4 z-10 flex justify-between items-start bg-slate-900 border-b border-slate-700/50">

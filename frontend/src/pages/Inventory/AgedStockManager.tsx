@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "../../redux/store";
 import { getAgingReport } from "../../redux/slices/inventorySlice";
@@ -121,7 +121,7 @@ const AgedStockManager: React.FC = () => {
 
                 {/* KPI Pulse */}
                 < div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" >
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Trapped Capital</p>
                         <h3 className="text-3xl font-black text-error italic">₹{(metrics.trappedCapital / 100000).toFixed(2)}L</h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -130,13 +130,13 @@ const AgedStockManager: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Shelf Risk Nodes</p>
                         <h3 className="text-3xl font-black text-warning italic">{metrics.shelfRiskCount}</h3>
                         <p className="text-[10px] text-neutral-500 mt-2 font-bold uppercase tracking-tight">Products sitting &gt; 90 days</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
+                    <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Inventory Efficiency</p>
                         <h3 className="text-3xl font-black text-success italic">{metrics.efficiencyScore}%</h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -145,7 +145,7 @@ const AgedStockManager: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-neutral-950 text-white p-5 rounded-3xl shadow-xl shadow-primary/10 relative overflow-hidden group">
+                    <div className="bg-neutral-950 text-white p-5 rounded-sm shadow-xl shadow-primary/10 relative overflow-hidden group">
                         <Zap className="absolute -top-4 -right-4 w-20 h-20 text-primary opacity-10 group-hover:scale-110 transition duration-700" />
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-1 italic">Agent Protocol</p>
                         <p className="text-xs font-bold leading-relaxed pr-8">Liquidate <span className="text-primary italic">120+ day stock</span> to free up cash floor space.</p>
@@ -160,14 +160,14 @@ const AgedStockManager: React.FC = () => {
                         <input
                             type="text"
                             placeholder="Search Product, SKU or Class..."
-                            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium"
+                            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                     <div className="w-full md:w-64">
                         <select
-                            className="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-xs font-black uppercase tracking-widest outline-none shadow-sm transition"
+                            className="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black uppercase tracking-widest outline-none shadow-sm transition"
                             value={ageFilter}
                             onChange={(e) => setAgeFilter(e.target.value as any)}
                         >
@@ -266,7 +266,7 @@ const AgedStockManager: React.FC = () => {
 
                             <div className="space-y-6">
                                 {agedStock.filter(a => a.days_aged >= 120).slice(0, 2).map(a => (
-                                    <div key={a.id} className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl border border-transparent hover:border-error/20 transition cursor-default">
+                                    <div key={a.id} className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-sm border border-transparent hover:border-error/20 transition cursor-default">
                                         <div className="flex justify-between items-start mb-2">
                                             <h5 className="text-xs font-black uppercase tracking-tight text-neutral-900 dark:text-white truncate max-w-[150px]">{a.name}</h5>
                                             <span className="text-[10px] font-black text-error italic">{a.days_aged} Days Aged</span>
@@ -279,7 +279,7 @@ const AgedStockManager: React.FC = () => {
                                 ))}
 
                                 {agedStock.filter(a => a.days_to_expiry !== undefined && a.days_to_expiry < 30).slice(0, 1).map(a => (
-                                    <div key={a.id} className="p-4 bg-primary/5 rounded-2xl border border-transparent hover:border-primary/20 transition cursor-default">
+                                    <div key={a.id} className="p-4 bg-primary/5 rounded-sm border border-transparent hover:border-primary/20 transition cursor-default">
                                         <div className="flex justify-between items-start mb-2">
                                             <h5 className="text-xs font-black uppercase tracking-tight text-primary-dark dark:text-primary-light truncate max-w-[150px]">{a.name}</h5>
                                             <span className="text-[10px] font-black text-primary italic">Expiry in {a.days_to_expiry}d</span>
@@ -317,7 +317,7 @@ const AgedStockManager: React.FC = () => {
                                         <div className="bg-success h-full rounded-full" style={{ width: '92%' }} />
                                     </div>
                                 </div>
-                                <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-start gap-3">
+                                <div className="p-4 bg-white/5 border border-white/10 rounded-sm flex items-start gap-3">
                                     <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                                     <p className="text-[10px] text-neutral-400 font-bold leading-relaxed italic">
                                         Wings-Grade Aged Analysis identifies stock that has lost 30% of its initial market relevance.

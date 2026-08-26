@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Printer, Trash2, RefreshCw, AlertTriangle } from 'lucide-react';
@@ -80,7 +80,7 @@ const ReprintQueue: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                        <Printer className="w-8 h-8 text-emerald-500" />
+                        <Printer className="w-8 h-8 text-success" />
                         Label Reprint Queue
                     </h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-1">
@@ -154,7 +154,7 @@ const ReprintQueue: React.FC = () => {
                                     <td className="px-6 py-4 text-right text-gray-500 line-through">
                                         {item.oldPrice ? `₹${item.oldPrice}` : '-'}
                                     </td>
-                                    <td className="px-6 py-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
+                                    <td className="px-6 py-4 text-right font-bold text-emerald-600 dark:text-success">
                                         ₹{item.newPrice}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-500">

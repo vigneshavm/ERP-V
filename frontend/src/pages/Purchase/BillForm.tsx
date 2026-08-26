@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Plus, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, Ban, Zap, ShieldCheck, Activity, ChevronRight, FileSpreadsheet } from 'lucide-react';
 import { PurchaseBill, PurchaseBillItem, BillStatus } from "../../types/purchase";
@@ -152,13 +152,13 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                 disabled={isLoading}
                                 className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
                             >
-                                <Zap className={`w-4 h-4 ${isLoading ? 'animate-pulse text-amber-500' : 'text-primary'}`} /> {isLoading ? 'Extracting...' : 'Auto-Extract (OCR)'}
+                                <Zap className={`w-4 h-4 ${isLoading ? 'animate-pulse text-warning' : 'text-primary'}`} /> {isLoading ? 'Extracting...' : 'Auto-Extract (OCR)'}
                             </button>
                             
                             {id && bill.status !== 'Paid' && (
                                 <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
-                                    <button onClick={() => handleUpdateStatus('Hold')} className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors" title="Hold"><Clock className="w-4 h-4" /></button>
-                                    <button onClick={() => handleUpdateStatus('Disputed')} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Dispute"><AlertCircle className="w-4 h-4" /></button>
+                                    <button onClick={() => handleUpdateStatus('Hold')} className="p-2 text-warning hover:bg-amber-50 rounded-lg transition-colors" title="Hold"><Clock className="w-4 h-4" /></button>
+                                    <button onClick={() => handleUpdateStatus('Disputed')} className="p-2 text-danger hover:bg-rose-50 rounded-lg transition-colors" title="Dispute"><AlertCircle className="w-4 h-4" /></button>
                                     <button onClick={() => handleUpdateStatus('Rejected')} className="p-2 text-neutral-400 hover:bg-neutral-50 rounded-lg transition-colors" title="Reject"><Ban className="w-4 h-4" /></button>
                                 </div>
                             )}
@@ -189,7 +189,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
 
                             <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-6 duration-500">
                                 <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-6">
-                                    <FileSpreadsheet className="w-5 h-5 text-emerald-500" /> Vendor Documents
+                                    <FileSpreadsheet className="w-5 h-5 text-success" /> Vendor Documents
                                 </h3>
                                 <div className="space-y-6">
                                     <div>
@@ -199,7 +199,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                             value={bill.vendorInvoiceNo || ''}
                                             onChange={(e) => updateBillField('vendorInvoiceNo', e.target.value)}
                                             placeholder="INV-X"
-                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                         />
                                     </div>
                                     <div>
@@ -208,7 +208,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                             type="date"
                                             value={bill.bill_date || ''}
                                             onChange={(e) => updateBillField('bill_date', e.target.value)}
-                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                         />
                                     </div>
                                 </div>
@@ -230,16 +230,16 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                         value={bill.grn_id || ''}
                                         onChange={(e) => handleGRNChange(e.target.value)}
                                         disabled={!bill.vendor_id}
-                                        className="w-full px-6 py-3.5 bg-white dark:bg-neutral-800 border border-primary/20 rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30"
+                                        className="w-full px-6 py-3.5 bg-white dark:bg-neutral-800 border border-primary/20 rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30"
                                     >
                                         <option value="">Select Receipt Node...</option>
                                         {Array.isArray(grns) && grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({new Date(g.receivedDate).toLocaleDateString()})</option>)}
                                     </select>
                                 </div>
                                 {bill.po_number && (
-                                    <div className="flex items-center gap-3 px-6 py-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl animate-in zoom-in-95">
-                                        <CheckCircle className="w-5 h-5 text-emerald-500" />
-                                        <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Matched to Protocol {bill.po_number}</span>
+                                    <div className="flex items-center gap-3 px-6 py-4 bg-success/10 border border-success/20 rounded-sm animate-in zoom-in-95">
+                                        <CheckCircle className="w-5 h-5 text-success" />
+                                        <span className="text-[10px] font-black text-emerald-600 dark:text-success uppercase tracking-widest">Matched to Protocol {bill.po_number}</span>
                                     </div>
                                 )}
                             </div>
@@ -279,7 +279,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                     onChange={handleFileUpload}
                                     accept=".pdf,image/*"
                                 />
-                                <div className="w-16 h-16 bg-neutral-50 dark:bg-neutral-900 rounded-3xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform border border-neutral-100 dark:border-neutral-700">
+                                <div className="w-16 h-16 bg-neutral-50 dark:bg-neutral-900 rounded-sm flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform border border-neutral-100 dark:border-neutral-700">
                                     <Plus className="w-8 h-8 text-neutral-300 group-hover:text-primary" />
                                 </div>
                                 <p className="text-[10px] font-black text-neutral-500 dark:text-neutral-400 uppercase tracking-widest leading-relaxed">Upload Invoice Node<br/><span className="text-primary/60 opacity-60">Supports Intel Extraction</span></p>
@@ -289,7 +289,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                     <div key={i} className="flex items-center gap-3 px-4 py-2 bg-neutral-50 dark:bg-neutral-900 rounded-xl text-[10px] font-black uppercase tracking-widest border border-neutral-100 dark:border-neutral-700 group">
                                         <FileText className="w-4 h-4 text-neutral-400" />
                                         <span className="max-w-[120px] truncate">{at}</span>
-                                        <X className="w-4 h-4 cursor-pointer text-neutral-300 hover:text-rose-500" onClick={() => removeAttachment(i)} />
+                                        <X className="w-4 h-4 cursor-pointer text-neutral-300 hover:text-danger" onClick={() => removeAttachment(i)} />
                                     </div>
                                 ))}
                             </div>
@@ -303,7 +303,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                 value={bill.notes || ''}
                                 onChange={(e) => updateBillField('notes', e.target.value)}
                                 rows={4}
-                                className="w-full px-6 py-5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-3xl text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                className="w-full px-6 py-5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
                                 placeholder="Audit trail remarks..."
                             />
                         </div>

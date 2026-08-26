@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Search, Bot } from 'lucide-react';
 import { useStorefrontLogic } from "./useStorefrontLogic";
 import { StorefrontHeader } from "./StorefrontHeader";
@@ -109,13 +109,13 @@ const Storefront: React.FC = () => {
                                 <>
                                     <Bot className="w-16 h-16 mx-auto mb-4 opacity-20" />
                                     <p className="text-lg">AI couldn't find exact matches for your request.</p>
-                                    <button onClick={clearAi} className="mt-4 text-indigo-600 font-bold hover:underline">Clear Search</button>
+                                    <button onClick={clearAi} className="mt-4 text-primary font-bold hover:underline">Clear Search</button>
                                 </>
                             ) : (
                                 <>
                                     <Search className="w-16 h-16 mx-auto mb-4 opacity-20" />
                                     <p className="text-lg">No products found matching your filters.</p>
-                                    <button onClick={resetFilters} className="mt-4 text-indigo-600 font-bold hover:underline">Clear Filters</button>
+                                    <button onClick={resetFilters} className="mt-4 text-primary font-bold hover:underline">Clear Filters</button>
                                 </>
                             )}
                         </div>

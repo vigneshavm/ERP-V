@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Upload, Loader2, CheckCircle, HardDrive, AlertTriangle, Download, Archive, Trash2, RotateCw, Eye } from 'lucide-react';
 import { BackupConfig, BackupStatus, BackupDestination } from "@/types/tenant";
 
@@ -38,7 +38,7 @@ const BackupSection: React.FC<BackupSectionProps> = ({
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+                <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-6">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
                             <CheckCircle className="w-6 h-6" />
@@ -58,9 +58,9 @@ const BackupSection: React.FC<BackupSectionProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+                <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-6">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isStorageWarning ? 'bg-yellow-100 text-yellow-600' : 'bg-indigo-100 text-indigo-600'}`}>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isStorageWarning ? 'bg-yellow-100 text-yellow-600' : 'bg-indigo-100 text-primary'}`}>
                             <HardDrive className="w-6 h-6" />
                         </div>
                         <div>
@@ -80,19 +80,19 @@ const BackupSection: React.FC<BackupSectionProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-3">
+                <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-6 space-y-3">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Quick Actions</p>
-                    <button className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center gap-3">
+                    <button className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 hover:text-primary transition-all flex items-center gap-3">
                         <Download className="w-4 h-4" /> Download Latest Backup
                     </button>
-                    <button className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center gap-3">
+                    <button className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 hover:text-primary transition-all flex items-center gap-3">
                         <Archive className="w-4 h-4" /> View All Backups
                     </button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 space-y-6">
+                <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-8 space-y-6">
                     <h3 className="text-lg font-black text-slate-900 dark:text-white">Automatic Backups</h3>
                     <div className="flex items-center justify-between">
                         <div>
@@ -109,7 +109,7 @@ const BackupSection: React.FC<BackupSectionProps> = ({
                     {/* Add other auto backup settings if needed */}
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 space-y-6">
+                <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-8 space-y-6">
                     <h3 className="text-lg font-black text-slate-900 dark:text-white">What to Backup</h3>
                     {Object.entries(backupSettings.modulesToBackup).map(([key, value]) => {
                         const Icon = backupModuleIcons[key] || HardDrive;
@@ -133,7 +133,7 @@ const BackupSection: React.FC<BackupSectionProps> = ({
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                 <div className="p-6 border-b border-slate-100 dark:border-slate-800">
                     <h3 className="text-lg font-black text-slate-900 dark:text-white">Backup History</h3>
                 </div>
@@ -166,7 +166,7 @@ const BackupSection: React.FC<BackupSectionProps> = ({
                                         <div className="flex items-center gap-2">
                                             {backup.status === 'COMPLETED' && (
                                                 <>
-                                                    <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-600 transition-colors" title="Download">
+                                                    <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-primary transition-colors" title="Download">
                                                         <Download className="w-4 h-4" />
                                                     </button>
                                                     <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-green-600 transition-colors" title="Restore">

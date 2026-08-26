@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 import {
     Megaphone,
@@ -34,9 +34,9 @@ const MarketingMetrics: React.FC = () => {
     ];
 
     const channelPerformance = [
-        { name: 'WhatsApp Marketing', spend: '₹5,200', reach: '4,500', conversion: '5.2%', color: 'text-emerald-500', icon: MessageCircle },
+        { name: 'WhatsApp Marketing', spend: '₹5,200', reach: '4,500', conversion: '5.2%', color: 'text-success', icon: MessageCircle },
         { name: 'Email Campaigns', spend: '₹2,100', reach: '8,200', conversion: '2.1%', color: 'text-blue-500', icon: Mail },
-        { name: 'Social Media Ads', spend: '₹5,150', reach: '12,400', conversion: '1.8%', color: 'text-indigo-500', icon: Share2 },
+        { name: 'Social Media Ads', spend: '₹5,150', reach: '12,400', conversion: '1.8%', color: 'text-primary', icon: Share2 },
     ];
 
     return (
@@ -69,13 +69,13 @@ const MarketingMetrics: React.FC = () => {
                 {mainMetrics.map((metric, idx) => (
                     <div key={idx} className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-indigo-500 transition-all cursor-pointer overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700" />
-                        <div className={`w-12 h-12 ${metric.bg} rounded-2xl flex items-center justify-center ${metric.color} mb-4`}>
+                        <div className={`w-12 h-12 ${metric.bg} rounded-sm flex items-center justify-center ${metric.color} mb-4`}>
                             <metric.icon className="w-6 h-6" />
                         </div>
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">{metric.label}</p>
                         <div className="flex items-baseline gap-2">
                             <h3 className="text-2xl font-black text-slate-900 dark:text-white">{metric.value}</h3>
-                            <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${metric.trend === 'up' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-400/10' : 'bg-rose-100 text-rose-600 dark:bg-rose-400/10'}`}>
+                            <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${metric.trend === 'up' ? 'bg-emerald-100 text-emerald-600 dark:bg-success/10' : 'bg-rose-100 text-rose-600 dark:bg-danger/10'}`}>
                                 {metric.change}
                             </span>
                         </div>
@@ -92,7 +92,7 @@ const MarketingMetrics: React.FC = () => {
                                 <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Campaign Conversion Funnel</h3>
                                 <p className="text-sm text-slate-500 font-medium">Tracking user journey from first contact to purchase.</p>
                             </div>
-                            <Megaphone className="w-8 h-8 text-indigo-500 opacity-20" />
+                            <Megaphone className="w-8 h-8 text-primary opacity-20" />
                         </div>
 
                         <div className="space-y-6">
@@ -111,7 +111,7 @@ const MarketingMetrics: React.FC = () => {
                                             <span className="text-slate-900 dark:text-white">{row.count}</span>
                                         </div>
                                     </div>
-                                    <div className={`h-12 w-full ${row.color} rounded-2xl flex items-center px-4 overflow-hidden relative`}>
+                                    <div className={`h-12 w-full ${row.color} rounded-sm flex items-center px-4 overflow-hidden relative`}>
                                         <div className="absolute inset-0 bg-white/5 backdrop-blur-[1px]" />
                                     </div>
                                     {idx < 4 && (
@@ -128,7 +128,7 @@ const MarketingMetrics: React.FC = () => {
                 {/* Channel ROI Breakdown */}
                 <div className="space-y-8">
                     <div className="bg-slate-900 dark:bg-black rounded-[2.5rem] p-8 text-white shadow-xl border border-white/5 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 rounded-full -mr-24 -mt-24 blur-3xl group-hover:scale-125 transition-transform duration-1000" />
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-success/10 rounded-full -mr-24 -mt-24 blur-3xl group-hover:scale-125 transition-transform duration-1000" />
                         <h3 className="text-lg font-black tracking-tight mb-8">Channel ROI Efficiency</h3>
                         <div className="space-y-8 relative z-10">
                             {channelPerformance.map((channel, idx) => (
@@ -140,7 +140,7 @@ const MarketingMetrics: React.FC = () => {
                                             </div>
                                             <span className="text-xs font-black uppercase tracking-widest text-slate-300">{channel.name}</span>
                                         </div>
-                                        <span className="text-xs font-black text-emerald-400">ROI: {idx === 0 ? '6.2x' : idx === 1 ? '4.5x' : '3.8x'}</span>
+                                        <span className="text-xs font-black text-success">ROI: {idx === 0 ? '6.2x' : idx === 1 ? '4.5x' : '3.8x'}</span>
                                     </div>
                                     <div className="flex gap-1.5 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                         <div className={`h-full ${channel.color.replace('text', 'bg')} transition-all duration-1000 rounded-full`} style={{ width: channel.conversion.replace('%', '') + '0%' }} />
@@ -182,7 +182,7 @@ const MarketingMetrics: React.FC = () => {
                     <div className="bg-slate-900 rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden group">
                         <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform" />
                         <div className="flex items-center gap-2 mb-4 opacity-80">
-                            <Zap className="w-4 h-4 fill-current text-indigo-400" />
+                            <Zap className="w-4 h-4 fill-current text-primary" />
                             <span className="text-[10px] font-black uppercase tracking-[0.2em]">Wings ROI Engine</span>
                         </div>
                         <h4 className="text-lg font-black mb-2 leading-tight">Sync Boost Opportunity</h4>

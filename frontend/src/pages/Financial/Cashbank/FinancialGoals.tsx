@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
     Target,
     Plus,
@@ -76,7 +76,7 @@ const FinancialGoals: React.FC = () => {
                     <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-[3rem] border border-neutral-200 dark:border-neutral-800 p-12 text-center">
                         <h2 className="text-4xl font-black tracking-tight leading-tight text-neutral-900 dark:text-white">
                             Stay on top of your<br />
-                            <span className="text-emerald-500">Goals and Loans</span>
+                            <span className="text-success">Goals and Loans</span>
                         </h2>
                     </div>
 
@@ -90,7 +90,7 @@ const FinancialGoals: React.FC = () => {
                                 <div key={goal.id} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[2.5rem] p-8 hover:shadow-xl transition-all shadow-sm group">
                                     <div className="flex items-start justify-between mb-8">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-14 h-14 rounded-2xl flex items-center justify-center border border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800 group-hover:scale-110 transition-transform">
+                                            <div className="w-14 h-14 rounded-sm flex items-center justify-center border border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800 group-hover:scale-110 transition-transform">
                                                 <goal.icon className="w-7 h-7 text-primary" />
                                             </div>
                                             <div>
@@ -134,7 +134,7 @@ const FinancialGoals: React.FC = () => {
                                     <div className="pt-6 border-t border-neutral-100 dark:border-neutral-800">
                                         <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest leading-relaxed">
                                             Required Allocation:<br/>
-                                            <span className="text-emerald-500 text-xs">₹{dailyTarget.toLocaleString('en-IN')}/day</span> for 62 days.
+                                            <span className="text-success text-xs">₹{dailyTarget.toLocaleString('en-IN')}/day</span> for 62 days.
                                         </p>
                                     </div>
                                 </div>

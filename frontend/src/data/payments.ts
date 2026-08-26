@@ -1,4 +1,16 @@
-export const payments = [
+export interface MockPayment {
+    id: string;
+    tenant_id: string;
+    branch_id: string;
+    ref_type: string;
+    ref_id: string;
+    amount: number;
+    mode: string;
+    date: string;
+    sector: string;
+}
+
+export const payments: MockPayment[] = [
     {
         "id": "PAY-TEN001-00001",
         "tenant_id": "TEN001",

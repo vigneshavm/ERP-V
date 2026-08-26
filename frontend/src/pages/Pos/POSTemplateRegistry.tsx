@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { POSLogic } from "../../hooks/usePOSLogic";
 import { Skeleton } from "../../components/core/Feedback/Skeleton";
 
@@ -31,7 +31,7 @@ export const POSTemplateRegistry: React.FC<POSTemplateRegistryProps> = ({ logic 
     };
 
     return (
-        <React.Suspense fallback={<div className="p-8"><Skeleton className="w-full h-[600px] rounded-3xl" /></div>}>
+        <React.Suspense fallback={<div className="p-8"><Skeleton className="w-full h-[600px] rounded-sm" /></div>}>
             {renderTemplate()}
         </React.Suspense>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import {
@@ -85,13 +85,13 @@ const LoanAccounts: React.FC = () => {
                     {/* Hero Section */}
                     <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-[3rem] border border-neutral-200 dark:border-neutral-800 p-12 text-center">
                         <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-2">Aggregate Liability Position</p>
-                        <h2 className="text-5xl font-black text-rose-500 tracking-tighter tabular-nums">
+                        <h2 className="text-5xl font-black text-danger tracking-tighter tabular-nums">
                             ₹{totalOwe.toLocaleString('en-IN')}
                         </h2>
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex items-center gap-1.5 p-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-2xl w-fit">
+                    <div className="flex items-center gap-1.5 p-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-sm w-fit">
                         {(['all', 'borrowed', 'lent'] as const).map((tab) => (
                             <button
                                 key={tab}
@@ -116,7 +116,7 @@ const LoanAccounts: React.FC = () => {
                                 <div key={loan.id} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[2.5rem] p-8 hover:shadow-xl transition-all shadow-sm group">
                                     <div className="flex items-start justify-between mb-8">
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border border-neutral-100 dark:border-neutral-800 group-hover:scale-110 transition-transform ${isBorrowed ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-500' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500'}`}>
+                                            <div className={`w-14 h-14 rounded-sm flex items-center justify-center border border-neutral-100 dark:border-neutral-800 group-hover:scale-110 transition-transform ${isBorrowed ? 'bg-rose-50 dark:bg-rose-900/20 text-danger' : 'bg-emerald-50 dark:bg-emerald-900/20 text-success'}`}>
                                                 {isBorrowed ? <TrendingUp className="w-7 h-7" /> : <TrendingDown className="w-7 h-7" />}
                                             </div>
                                             <div>
@@ -130,7 +130,7 @@ const LoanAccounts: React.FC = () => {
                                         <div className="flex justify-between items-end">
                                             <div className="space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Remaining Balance</p>
-                                                <p className={`text-2xl font-black tracking-tighter ${isBorrowed ? 'text-rose-500' : 'text-emerald-500'}`}>
+                                                <p className={`text-2xl font-black tracking-tighter ${isBorrowed ? 'text-danger' : 'text-success'}`}>
                                                     ₹{loan.balanceRemaining.toLocaleString('en-IN')}
                                                 </p>
                                             </div>
@@ -150,7 +150,7 @@ const LoanAccounts: React.FC = () => {
                                             </div>
                                             <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-neutral-400">
                                                 <span>Inception</span>
-                                                <span className={isBorrowed ? 'text-rose-500' : 'text-emerald-500'}>{progress}% Cleared</span>
+                                                <span className={isBorrowed ? 'text-danger' : 'text-success'}>{progress}% Cleared</span>
                                                 <span>Settlement</span>
                                             </div>
                                         </div>
@@ -160,7 +160,7 @@ const LoanAccounts: React.FC = () => {
                                     <div className="pt-6 border-t border-neutral-100 dark:border-neutral-800">
                                         <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest leading-relaxed">
                                             Daily Impact:<br/>
-                                            <span className={isBorrowed ? 'text-rose-500' : 'text-emerald-500'}>₹{dailyPaydown.toLocaleString('en-IN')}/day</span> for the next 365 days.
+                                            <span className={isBorrowed ? 'text-danger' : 'text-success'}>₹{dailyPaydown.toLocaleString('en-IN')}/day</span> for the next 365 days.
                                         </p>
                                     </div>
                                 </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { CreditCard, Search, Plus, Download, CheckCircle, Clock, XCircle, ChevronRight } from 'lucide-react';
 
 const CREDITS = [
@@ -32,7 +32,7 @@ const CustomerCredits: React.FC = () => {
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-violet-600 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-sm bg-violet-600 flex items-center justify-center">
                         <CreditCard className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -56,7 +56,7 @@ const CustomerCredits: React.FC = () => {
                     { label: 'Total Issued', value: `₹${totalIssued.toLocaleString()}`, sub: `${CREDITS.length} credit notes`, border: 'border-l-violet-500' },
                     { label: 'Total Utilized', value: `₹${totalUsed.toLocaleString()}`, sub: `${Math.round((totalUsed / totalIssued) * 100)}% utilization`, border: 'border-l-amber-500' },
                 ].map((kpi, i) => (
-                    <div key={i} className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 border-l-4 ${kpi.border} p-5`}>
+                    <div key={i} className={`bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 border-l-4 ${kpi.border} p-5`}>
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{kpi.label}</p>
                         <p className="text-2xl font-black text-slate-900 dark:text-white">{kpi.value}</p>
                         <p className="text-xs text-slate-500 mt-1">{kpi.sub}</p>
@@ -64,7 +64,7 @@ const CustomerCredits: React.FC = () => {
                 ))}
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-wrap gap-3 items-center">
                     <div className="relative flex-1 min-w-48">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />

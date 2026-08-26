@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { X, Tag, CheckSquare, Upload, AlertTriangle, Box, Save } from 'lucide-react';
 import { Product } from '../../types/product';
 
@@ -31,7 +31,7 @@ export const BulkCategoryModal: React.FC<BulkCategoryModalProps> = ({ isOpen, on
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-md rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col">
+            <div className="bg-white dark:bg-neutral-800 w-full max-w-md rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col">
                 <div className="px-8 py-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
                     <h3 className="text-lg font-black italic flex items-center gap-2 uppercase tracking-tight">
                         <Tag className="w-5 h-5 text-primary" /> Migrate Category
@@ -41,7 +41,7 @@ export const BulkCategoryModal: React.FC<BulkCategoryModalProps> = ({ isOpen, on
                     </button>
                 </div>
                 <div className="p-8 space-y-6">
-                    <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-start gap-4">
+                    <div className="p-4 bg-primary/5 border border-primary/20 rounded-sm flex items-start gap-4">
                         <AlertTriangle className="w-6 h-6 text-primary shrink-0" />
                         <div>
                             <p className="text-xs font-bold text-main">Batch Update Action</p>
@@ -105,7 +105,7 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-md rounded-3xl border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col">
+            <div className="bg-white dark:bg-neutral-800 w-full max-w-md rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col">
                 <div className="px-8 py-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
                     <h3 className="text-lg font-black italic flex items-center gap-2 uppercase tracking-tight">
                         <CheckSquare className="w-5 h-5 text-emerald-600" /> Stock Audit Adjustment
@@ -115,7 +115,7 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
                     </button>
                 </div>
                 <div className="p-8 space-y-6">
-                    <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
+                    <div className="p-4 bg-emerald-500/5 border border-success/20 rounded-sm">
                         <p className="text-xs font-bold text-main">Batch Inventory Control</p>
                         <p className="text-[10px] text-neutral-500 font-bold mt-1">Adjusting <span className="text-emerald-600 font-black">{selectedCount} items</span> simultaneously.</p>
                     </div>

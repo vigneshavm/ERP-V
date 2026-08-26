@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { LucideIcon, Activity } from 'lucide-react';
 
 interface CashBankHeroProps {
@@ -26,7 +26,7 @@ const CashBankHero: React.FC<CashBankHeroProps> = ({
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
                 <div className="lg:col-span-2">
                     <div className="flex items-center gap-2 text-indigo-200 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-                        <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
+                        <Activity className="w-4 h-4 text-success animate-pulse" />
                         {title}
                     </div>
                     <h2 className="text-6xl font-black tracking-tighter">{value}</h2>

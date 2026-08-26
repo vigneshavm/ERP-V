@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { TransactionType } from "../../types/common";
 import { formatCurrency } from "../../utils/helpers";
@@ -50,7 +50,7 @@ const ExpenseManager: React.FC<ExpenseManagerProps> = ({ pieData, sectorTx, them
                 <div className="overflow-y-auto flex-1 pr-2 custom-scrollbar">
                     <div className="space-y-4">
                         {sectorTx.filter((t: any) => t.type === TransactionType.EXPENSE).map((tx: any) => (
-                            <div key={tx.id} className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-900 rounded-2xl group hover:scale-[1.02] transition-transform cursor-default">
+                            <div key={tx.id} className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-900 rounded-sm group hover:scale-[1.02] transition-transform cursor-default">
                                 <div>
                                     <p className="font-bold text-sm text-neutral-800 dark:text-neutral-200">{tx.description || tx.category}</p>
                                     <div className="flex items-center gap-2 mt-1">

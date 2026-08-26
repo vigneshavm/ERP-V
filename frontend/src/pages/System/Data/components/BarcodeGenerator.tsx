@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import JsBarcode from 'jsbarcode';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -489,7 +489,7 @@ const BarcodeGenerator = () => {
             />
 
             {error && (
-                <div className="mb-4 p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/20 rounded-lg text-rose-700 dark:text-rose-400">
+                <div className="mb-4 p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/20 rounded-lg text-rose-700 dark:text-danger">
                     {error}
                 </div>
             )}
@@ -577,7 +577,7 @@ const BarcodeGenerator = () => {
                                     type="checkbox"
                                     checked={formData.includeName}
                                     onChange={(e) => setFormData({ ...formData, includeName: e.target.checked })}
-                                    className="w-5 h-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+                                    className="w-5 h-5 text-primary rounded border-slate-300 focus:ring-indigo-500"
                                 />
                                 <span className="text-slate-500">Include Item Name</span>
                             </label>
@@ -586,7 +586,7 @@ const BarcodeGenerator = () => {
                                     type="checkbox"
                                     checked={formData.includePrice}
                                     onChange={(e) => setFormData({ ...formData, includePrice: e.target.checked })}
-                                    className="w-5 h-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+                                    className="w-5 h-5 text-primary rounded border-slate-300 focus:ring-indigo-500"
                                 />
                                 <span className="text-slate-500">Include Price</span>
                             </label>
@@ -605,11 +605,11 @@ const BarcodeGenerator = () => {
 
                         {selectedInventoryItems.length > 0 && (
                             <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
-                                <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                                <p className="text-sm text-primary dark:text-primary font-medium">
                                     <strong>{selectedInventoryItems.length}</strong> items selected
                                 </p>
                                 {bulkGenerated && (
-                                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">✓ Barcodes generated successfully</p>
+                                    <p className="text-xs text-emerald-600 dark:text-success mt-1 font-medium">✓ Barcodes generated successfully</p>
                                 )}
                             </div>
                         )}
@@ -638,7 +638,7 @@ const BarcodeGenerator = () => {
                                                         <svg ref={el => { bulkBarcodeRefs.current[index] = el; }}></svg>
                                                     )
                                                 ) : (
-                                                    <p className="text-xs text-rose-500">No SKU</p>
+                                                    <p className="text-xs text-danger">No SKU</p>
                                                 )}
                                                 {formData.includeName && (
                                                     <p className="text-xs font-medium text-slate-900 dark:text-white mt-2">{item.name}</p>
@@ -739,7 +739,7 @@ const BarcodeGenerator = () => {
 
                         {!bulkGenerated && (
                             <div className="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/10 rounded-lg border border-indigo-100 dark:border-indigo-900/20">
-                                <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-black mb-2 uppercase tracking-wider">Format Guidelines:</p>
+                                <p className="text-[10px] text-primary dark:text-primary font-black mb-2 uppercase tracking-wider">Format Guidelines:</p>
                                 <ul className="text-[10px] text-slate-500 space-y-1 font-bold">
                                     {formData.barcodeType === 'CODE128' && <li>• Any text up to 80 chars</li>}
                                     {formData.barcodeType === 'CODE39' && <li>• Letters, numbers, -.$/ +% (auto-uppercase)</li>}
@@ -755,7 +755,7 @@ const BarcodeGenerator = () => {
 
             {showInventoryModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
+                    <div className="bg-white dark:bg-slate-900 rounded-sm shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
                         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                             <h3 className="text-xl font-bold text-slate-900 dark:text-white">Select Inventory Items</h3>
                             <button
@@ -795,7 +795,7 @@ const BarcodeGenerator = () => {
                                                 <div>
                                                     <p className="font-bold text-slate-900 dark:text-white">{item.name}</p>
                                                     <p className="text-xs text-slate-500">SKU: {item.sku || 'N/A'}</p>
-                                                    <p className="text-sm font-bold text-indigo-600 mt-1">₹{item.sellingPrice}</p>
+                                                    <p className="text-sm font-bold text-primary mt-1">₹{item.sellingPrice}</p>
                                                 </div>
                                                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200'}`}>
                                                     {isSelected && (

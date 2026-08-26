@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
@@ -132,7 +132,7 @@ const RateRevisionForm: React.FC = () => {
                                     <select
                                         value={supplierId}
                                         onChange={e => setSupplierId(e.target.value)}
-                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
+                                        className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
                                     >
                                         <option value="">Select Entity...</option>
                                         {suppliers.map(s => (
@@ -150,7 +150,7 @@ const RateRevisionForm: React.FC = () => {
                                                 setItemId(e.target.value);
                                                 setBatchNumber('');
                                             }}
-                                            className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
+                                            className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
                                         >
                                             <option value="">Select Item...</option>
                                             {items.map(i => (
@@ -165,7 +165,7 @@ const RateRevisionForm: React.FC = () => {
                                             <select
                                                 value={batchNumber}
                                                 onChange={e => setBatchNumber(e.target.value)}
-                                                className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
+                                                className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
                                             >
                                                 <option value="">Select Batch...</option>
                                                 {items.find(i => i._id === itemId)?.batches
@@ -226,7 +226,7 @@ const RateRevisionForm: React.FC = () => {
                                                 type="number"
                                                 value={newRate}
                                                 onChange={e => setNewRate(parseFloat(e.target.value) || 0)}
-                                                className="w-full pl-12 pr-8 py-5 bg-white/5 border border-white/10 rounded-3xl text-3xl font-black text-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all tabular-nums"
+                                                className="w-full pl-12 pr-8 py-5 bg-white/5 border border-white/10 rounded-sm text-3xl font-black text-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all tabular-nums"
                                                 placeholder="0.00"
                                             />
                                         </div>
@@ -237,13 +237,13 @@ const RateRevisionForm: React.FC = () => {
                                     <div className="flex justify-between items-end">
                                         <div>
                                             <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] mb-4">Total Liability Delta</p>
-                                            <p className={`text-5xl font-black tracking-tighter tabular-nums ${diffAmount > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                                            <p className={`text-5xl font-black tracking-tighter tabular-nums ${diffAmount > 0 ? 'text-danger' : 'text-success'}`}>
                                                 {diffAmount > 0 ? '+' : ''}₹{Math.abs(diffAmount).toLocaleString()}
                                             </p>
                                         </div>
                                         {diffAmount > 0 && (
-                                            <div className="p-4 bg-rose-500/10 rounded-2xl border border-rose-500/20 animate-pulse">
-                                                <AlertCircle className="w-6 h-6 text-rose-500" />
+                                            <div className="p-4 bg-danger/10 rounded-sm border border-danger/20 animate-pulse">
+                                                <AlertCircle className="w-6 h-6 text-danger" />
                                             </div>
                                         )}
                                     </div>
@@ -265,8 +265,8 @@ const RateRevisionForm: React.FC = () => {
                         )}
                         
                         <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4 animate-in slide-in-from-right-10 duration-1000">
-                            <div className="p-3 bg-amber-500/10 rounded-2xl">
-                                <ShieldCheck className="text-amber-500 w-6 h-6" />
+                            <div className="p-3 bg-warning/10 rounded-sm">
+                                <ShieldCheck className="text-warning w-6 h-6" />
                             </div>
                             <div>
                                 <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Authorization Protocol</p>

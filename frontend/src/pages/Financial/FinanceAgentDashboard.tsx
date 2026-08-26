@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setActiveTab } from '../../redux/slices/uiSlice';
 import { AppView } from '../../types/common';
@@ -68,7 +68,7 @@ const AGENTS: Agent[] = [
         tagline: 'Analyzes net cash position, compares periods & flags anomalies',
         icon: <TrendingUp className="w-6 h-6" />,
         color: 'from-emerald-500 to-teal-500',
-        accentColor: 'text-emerald-400',
+        accentColor: 'text-success',
         glowColor: 'shadow-emerald-500/30',
         workflow: 'finance-cash-flow',
         capabilities: ['Net Cash Computation', 'Period Comparison', 'Anomaly Detection', 'PDC Projection'],
@@ -80,7 +80,7 @@ const AGENTS: Agent[] = [
         tagline: 'Tracks active loans, EMI schedules & bank balance sufficiency',
         icon: <Banknote className="w-6 h-6" />,
         color: 'from-violet-500 to-purple-600',
-        accentColor: 'text-violet-400',
+        accentColor: 'text-accent',
         glowColor: 'shadow-violet-500/30',
         workflow: 'finance-loan-emi',
         capabilities: ['EMI Schedule', 'Missed Payment Alerts', 'Balance Validation', 'Loan Health Score'],
@@ -115,7 +115,7 @@ const AGENTS: Agent[] = [
         tagline: 'Reconciles daily cash, PDCs & closing balance automatically',
         icon: <CalendarClock className="w-6 h-6" />,
         color: 'from-rose-500 to-pink-600',
-        accentColor: 'text-rose-400',
+        accentColor: 'text-danger',
         glowColor: 'shadow-rose-500/30',
         workflow: 'finance-day-end',
         capabilities: ['Cash In / Out Summary', 'PDC Clearance Check', 'Discrepancy Alerts', 'Day-End Save'],
@@ -131,7 +131,7 @@ const KPIS: KPI[] = [
         trend: 'up',
         delta: '+4.2%',
         icon: <Landmark className="w-5 h-5" />,
-        color: 'text-emerald-500',
+        color: 'text-success',
     },
     {
         label: "Today's Cash In",
@@ -140,7 +140,7 @@ const KPIS: KPI[] = [
         trend: 'up',
         delta: '+35.6%',
         icon: <ArrowUpRight className="w-5 h-5" />,
-        color: 'text-sky-500',
+        color: 'text-info',
     },
     {
         label: "Today's Cash Out",
@@ -149,7 +149,7 @@ const KPIS: KPI[] = [
         trend: 'down',
         delta: '+9.7%',
         icon: <ArrowDownRight className="w-5 h-5" />,
-        color: 'text-rose-500',
+        color: 'text-danger',
     },
     {
         label: 'Active Loans',
@@ -176,7 +176,7 @@ const KPIS: KPI[] = [
         trend: 'down',
         delta: '2 at risk of penalty',
         icon: <FileText className="w-5 h-5" />,
-        color: 'text-amber-500',
+        color: 'text-warning',
     },
 ];
 
@@ -201,16 +201,16 @@ const fmt = (n: number) => new Intl.NumberFormat('en-IN').format(n);
    Sub-components
  ───────────────────────────────────────────── */
 const AlertIcon: React.FC<{ type: Alert['type'] }> = ({ type }) => {
-    if (type === 'critical') return <CircleAlert className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />;
-    if (type === 'warning') return <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />;
-    return <CircleCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />;
+    if (type === 'critical') return <CircleAlert className="w-4 h-4 text-danger shrink-0 mt-0.5" />;
+    if (type === 'warning') return <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />;
+    return <CircleCheck className="w-4 h-4 text-success shrink-0 mt-0.5" />;
 };
 
 const HealthBadge: React.FC<{ health: LoanBar['health'] }> = ({ health }) => {
     const map = {
-        good: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800',
-        risk: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800',
-        critical: 'bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800',
+        good: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-success dark:border-emerald-800',
+        risk: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-warning dark:border-amber-800',
+        critical: 'bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-danger dark:border-rose-800',
     };
     return (
         <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border uppercase tracking-widest ${map[health]}`}>
@@ -239,7 +239,7 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
                         <X className="w-6 h-6" />
                     </button>
                     <div className="relative z-10">
-                        <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-4 backdrop-blur-sm">
+                        <div className="w-14 h-14 bg-white/20 rounded-sm flex items-center justify-center text-white mb-4 backdrop-blur-sm">
                             {agent.icon}
                         </div>
                         <h2 className="text-2xl font-black text-white tracking-tighter uppercase">{agent.name}</h2>
@@ -263,7 +263,7 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
 
                     <div>
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-4">Intelligence Protocol</p>
-                        <div className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-4 font-mono text-xs text-neutral-500 border border-neutral-200 dark:border-neutral-700 italic">
+                        <div className="bg-neutral-50 dark:bg-neutral-800 rounded-sm p-4 font-mono text-xs text-neutral-500 border border-neutral-200 dark:border-neutral-700 italic">
                             withskills/_agents/workflows/{agent.workflow}.md
                         </div>
                     </div>
@@ -286,7 +286,7 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
                     {agent.tab && (
                         <button
                             onClick={() => { onNavigate(agent.tab!); onClose(); }}
-                            className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-white bg-neutral-900 dark:bg-white dark:text-neutral-900 hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl`}
+                            className={`w-full py-4 rounded-sm font-black text-xs uppercase tracking-[0.2em] text-white bg-neutral-900 dark:bg-white dark:text-neutral-900 hover:opacity-90 transition-all flex items-center justify-center gap-3 shadow-xl`}
                         >
                             <Zap className="w-4 h-4 fill-current" />
                             Launch Intelligence Unit
@@ -294,7 +294,7 @@ const AgentDrawer: React.FC<{ agent: Agent | null; onClose: () => void; onNaviga
                     )}
                     <button
                         onClick={onClose}
-                        className="w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
+                        className="w-full py-4 rounded-sm font-black text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
                     >
                         Close Command
                     </button>
@@ -350,9 +350,9 @@ const FinanceAgentDashboard: React.FC = () => {
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">{kpi.label}</p>
                             <p className="text-xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums leading-none">{kpi.value}</p>
                             <div className="flex items-center gap-1.5 mt-2">
-                                {kpi.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />}
-                                {kpi.trend === 'down' && <ArrowDownRight className="w-3.5 h-3.5 text-rose-500" />}
-                                <span className={`text-[10px] font-black uppercase tracking-tight ${kpi.trend === 'up' ? 'text-emerald-500' : kpi.trend === 'down' ? 'text-rose-500' : 'text-neutral-500'}`}>
+                                {kpi.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-success" />}
+                                {kpi.trend === 'down' && <ArrowDownRight className="w-3.5 h-3.5 text-danger" />}
+                                <span className={`text-[10px] font-black uppercase tracking-tight ${kpi.trend === 'up' ? 'text-success' : kpi.trend === 'down' ? 'text-danger' : 'text-neutral-500'}`}>
                                     {kpi.delta}
                                 </span>
                             </div>
@@ -368,7 +368,7 @@ const FinanceAgentDashboard: React.FC = () => {
                             <div>
                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Temporal Cash Flow — 12M Audit</p>
                                 <h3 className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter mt-1 italic">
-                                    ₹45,750 <span className="text-sm font-bold text-emerald-500 ml-2">▲ Net Surplus</span>
+                                    ₹45,750 <span className="text-sm font-bold text-success ml-2">▲ Net Surplus</span>
                                 </h3>
                             </div>
                             <BarChart3 className="w-6 h-6 text-neutral-300 dark:text-neutral-700" />
@@ -383,7 +383,7 @@ const FinanceAgentDashboard: React.FC = () => {
                                     <div key={i} className="flex-1 flex flex-col items-center gap-2 group" title={`Inflow: ₹${v}k / Outflow: ₹${exp}k`}>
                                         <div className="w-full relative flex flex-col-reverse bg-neutral-100 dark:bg-neutral-900/50 rounded-t-lg overflow-hidden" style={{ height: 100 }}>
                                             <div className="w-full bg-primary/20 group-hover:bg-primary/40 transition-all duration-500" style={{ height: `${barH}%` }} />
-                                            <div className="absolute bottom-0 w-full bg-rose-500/20 group-hover:bg-rose-500/40 transition-all duration-500" style={{ height: `${expH}%` }} />
+                                            <div className="absolute bottom-0 w-full bg-danger/20 group-hover:bg-rose-500/40 transition-all duration-500" style={{ height: `${expH}%` }} />
                                         </div>
                                         <span className="text-[9px] font-black text-neutral-400">
                                             {['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][i]}
@@ -449,7 +449,7 @@ const FinanceAgentDashboard: React.FC = () => {
                             >
                                 <div className={`absolute inset-0 bg-gradient-to-br ${agent.color} opacity-0 group-hover:opacity-5 transition-all duration-500`} />
                                 <div className="relative z-10">
-                                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-white mb-4 shadow-lg ${agent.glowColor} group-hover:scale-110 transition-transform`}>
+                                    <div className={`w-12 h-12 rounded-sm bg-gradient-to-br ${agent.color} flex items-center justify-center text-white mb-4 shadow-lg ${agent.glowColor} group-hover:scale-110 transition-transform`}>
                                         {agent.icon}
                                     </div>
                                     <p className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{agent.name}</p>
@@ -498,7 +498,7 @@ const FinanceAgentDashboard: React.FC = () => {
                         </div>
                         <button
                             onClick={() => setActiveAgent(AGENTS.find(a => a.id === 'loan-emi')!)}
-                            className="mt-10 w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-violet-600 bg-violet-50 dark:bg-violet-900/10 hover:bg-violet-100 dark:hover:bg-violet-900/20 transition-all border border-violet-100 dark:border-violet-800/50"
+                            className="mt-10 w-full py-4 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-violet-600 bg-violet-50 dark:bg-violet-900/10 hover:bg-violet-100 dark:hover:bg-violet-900/20 transition-all border border-violet-100 dark:border-violet-800/50"
                         >
                             Review Detailed Schedules →
                         </button>
@@ -532,7 +532,7 @@ const FinanceAgentDashboard: React.FC = () => {
                         </div>
                         <button
                             onClick={() => navigateTo('PURCHASE_BILLS')}
-                            className="mt-10 w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-primary bg-primary/5 hover:bg-primary/10 transition-all border border-primary/10"
+                            className="mt-10 w-full py-4 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-primary bg-primary/5 hover:bg-primary/10 transition-all border border-primary/10"
                         >
                             Launch Payments Gateway →
                         </button>
@@ -541,7 +541,7 @@ const FinanceAgentDashboard: React.FC = () => {
 
                 {/* Intelligence Advisory */}
                 <div className="bg-neutral-900 dark:bg-neutral-100 p-8 rounded-[3rem] shadow-2xl flex items-center gap-6 group">
-                    <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-sm bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
                         <Bot className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">

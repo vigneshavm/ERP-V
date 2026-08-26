@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Users, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, FileText, DollarSign } from 'lucide-react';
 
 interface SupplierStatsCardsProps {
@@ -58,8 +58,8 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
                 {/* Total Outflow */}
                 <div className="bg-white dark:bg-neutral-800 border-2 border-rose-100 dark:border-rose-900/30 rounded-xl p-5 relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-1">
-                        <TrendingDown className="w-4 h-4 text-rose-500" />
-                        <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Total Outflow</span>
+                        <TrendingDown className="w-4 h-4 text-danger" />
+                        <span className="text-xs font-bold text-rose-600 dark:text-danger uppercase tracking-wide">Total Outflow</span>
                     </div>
                     <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(totalOutflow)}</span>
                 </div>
@@ -76,8 +76,8 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
                 {/* Net Period Change */}
                 <div className={`bg-white dark:bg-neutral-800 border-2 rounded-xl p-5 relative overflow-hidden ${netChange >= 0 ? 'border-amber-100 dark:border-amber-900/30' : 'border-emerald-100 dark:border-emerald-900/30'}`}>
                     <div className="flex items-center gap-2 mb-1">
-                        <DollarSign className={`w-4 h-4 ${netChange >= 0 ? 'text-amber-500' : 'text-emerald-500'}`} />
-                        <span className={`text-xs font-bold uppercase tracking-wide ${netChange >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>Net Change</span>
+                        <DollarSign className={`w-4 h-4 ${netChange >= 0 ? 'text-warning' : 'text-success'}`} />
+                        <span className={`text-xs font-bold uppercase tracking-wide ${netChange >= 0 ? 'text-amber-600 dark:text-warning' : 'text-emerald-600 dark:text-success'}`}>Net Change</span>
                     </div>
                     <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(netChange)}</span>
                 </div>
@@ -86,7 +86,7 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
                 <div className="bg-white dark:bg-neutral-800 border-2 border-purple-100 dark:border-purple-900/30 rounded-xl p-5 relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-1">
                         <Users className="w-4 h-4 text-purple-500" />
-                        <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide">Active Suppliers</span>
+                        <span className="text-xs font-bold text-purple-600 dark:text-accent uppercase tracking-wide">Active Suppliers</span>
                     </div>
                     <span className="text-3xl font-black text-slate-900 dark:text-white">{activeSuppliers}</span>
                 </div>
@@ -98,10 +98,10 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
         <div className={`grid grid-cols-1 ${showSupplierCount ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
             {/* All Suppliers */}
             {showSupplierCount && (
-                <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-indigo-500/30 rounded-xl p-5 relative overflow-hidden">
+                <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-1">
-                        <Users className="w-4 h-4 text-indigo-500" />
-                        <span className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wide">{labels.suppliers}</span>
+                        <Users className="w-4 h-4 text-primary" />
+                        <span className="text-xs font-bold text-primary dark:text-primary uppercase tracking-wide">{labels.suppliers}</span>
                     </div>
                     <span className="text-3xl font-black text-slate-900 dark:text-white">{totalSuppliers}</span>
                 </div>
@@ -110,10 +110,10 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
             {/* To Collect / Inflow */}
             <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden">
                 <div className="flex items-center gap-2 mb-1">
-                    <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
-                        <ArrowDownLeft className="w-3 h-3 text-emerald-500" />
+                    <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-success/10 flex items-center justify-center">
+                        <ArrowDownLeft className="w-3 h-3 text-success" />
                     </div>
-                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">{labels.collect}</span>
+                    <span className="text-xs font-bold text-emerald-600 dark:text-success uppercase tracking-wide">{labels.collect}</span>
                 </div>
                 <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(totalToCollect)}</span>
             </div>
@@ -121,10 +121,10 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
             {/* To Pay / Outflow */}
             <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden">
                 <div className="flex items-center gap-2 mb-1">
-                    <div className="w-5 h-5 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center">
-                        <ArrowUpRight className="w-3 h-3 text-rose-500" />
+                    <div className="w-5 h-5 rounded-full bg-rose-50 dark:bg-danger/10 flex items-center justify-center">
+                        <ArrowUpRight className="w-3 h-3 text-danger" />
                     </div>
-                    <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">{labels.pay}</span>
+                    <span className="text-xs font-bold text-rose-600 dark:text-danger uppercase tracking-wide">{labels.pay}</span>
                 </div>
                 <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(totalToPay)}</span>
             </div>

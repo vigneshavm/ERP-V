@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
 import { Search, RotateCcw } from 'lucide-react';
@@ -43,7 +43,7 @@ export const ReturnInvoiceSelector: React.FC<ReturnInvoiceSelectorProps> = ({ on
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden h-full flex flex-col">
             <div className="p-6 border-b border-slate-100 dark:border-slate-700">
                 <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-2">
-                    <RotateCcw className="w-5 h-5 text-indigo-500" />
+                    <RotateCcw className="w-5 h-5 text-primary" />
                     Select Invoice to Return
                 </h3>
                 <p className="text-sm text-slate-500 mb-4">Search by Invoice Number, Customer Name, or Phone</p>
@@ -99,7 +99,7 @@ export const ReturnInvoiceSelector: React.FC<ReturnInvoiceSelectorProps> = ({ on
                                 </div>
                                 <div className="text-right">
                                     <div className="text-lg font-bold text-slate-900 dark:text-white">₹{sale.totalAmount.toFixed(2)}</div>
-                                    <div className="text-xs text-indigo-600 opacity-0 group-hover:opacity-100 font-bold transition-opacity">
+                                    <div className="text-xs text-primary opacity-0 group-hover:opacity-100 font-bold transition-opacity">
                                         Select
                                     </div>
                                 </div>

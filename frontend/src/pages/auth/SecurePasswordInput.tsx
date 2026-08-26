@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 import { Eye, EyeOff, AlertCircle, Lock } from 'lucide-react';
 
@@ -80,7 +80,7 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
             {label && (
                 <label
                     htmlFor={id}
-                    className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-indigo-400"
+                    className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-primary"
                 >
                     {label}
                 </label>
@@ -92,7 +92,7 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
                 </div>
 
                 {icon && (
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-indigo-500 transition-colors" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-primary transition-colors" />
                 )}
 
                 <input
@@ -110,7 +110,7 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
                     autoComplete="new-password"
                     data-lpignore="true"
                     className={`w-full h-14 bg-slate-900 border ${error ? 'border-red-500/50' : 'border-slate-800'
-                        } rounded-2xl ${icon ? 'pl-12' : 'pl-4'} pr-12 text-white font-medium outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600 ${className}`}
+                        } rounded-sm ${icon ? 'pl-12' : 'pl-4'} pr-12 text-white font-medium outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600 ${className}`}
                     placeholder={placeholder}
                     aria-label={placeholder}
                     aria-describedby={showTooltip ? `${id}-security-message` : undefined}

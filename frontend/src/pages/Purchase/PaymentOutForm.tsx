@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { createPayment, PaymentOut } from '../../redux/slices/paymentOutSlice';
@@ -161,7 +161,7 @@ const PaymentOutForm: React.FC = () => {
                                     <select
                                         value={supplierId}
                                         onChange={e => setSupplierId(e.target.value)}
-                                        className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
+                                        className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
                                     >
                                         <option value="">Select Entity...</option>
                                         {suppliers.map(s => <option key={s._id} value={s._id}>{s.businessName}</option>)}
@@ -175,7 +175,7 @@ const PaymentOutForm: React.FC = () => {
                                             type="date"
                                             value={paymentDate}
                                             onChange={e => setPaymentDate(e.target.value)}
-                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                         />
                                     </div>
                                     <div>
@@ -184,7 +184,7 @@ const PaymentOutForm: React.FC = () => {
                                             type="number"
                                             value={amount}
                                             onChange={e => setAmount(parseFloat(e.target.value) || 0)}
-                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black tabular-nums focus:ring-4 focus:ring-emerald-500/10 outline-none"
+                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black tabular-nums focus:ring-4 focus:ring-emerald-500/10 outline-none"
                                             placeholder="0.00"
                                         />
                                     </div>
@@ -194,7 +194,7 @@ const PaymentOutForm: React.FC = () => {
 
                         <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-6 duration-700">
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-8">
-                                <CreditCard className="w-5 h-5 text-emerald-500" /> Settlement Mechanism
+                                <CreditCard className="w-5 h-5 text-success" /> Settlement Mechanism
                             </h3>
 
                             <div className="space-y-6">
@@ -224,7 +224,7 @@ const PaymentOutForm: React.FC = () => {
                                                 type="text"
                                                 value={referenceNo}
                                                 onChange={e => setReferenceNo(e.target.value)}
-                                                className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                                className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                                 placeholder="e.g. 123456"
                                             />
                                         </div>
@@ -235,7 +235,7 @@ const PaymentOutForm: React.FC = () => {
                                                 <select
                                                     value={bankAccountId}
                                                     onChange={e => setBankAccountId(e.target.value)}
-                                                    className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
+                                                    className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
                                                 >
                                                     <option value="">Select Account...</option>
                                                     {accounts.filter(a => a.accountType !== 'Cash').map(acc => (
@@ -254,7 +254,7 @@ const PaymentOutForm: React.FC = () => {
                                                     type="date"
                                                     value={chequeDate}
                                                     onChange={e => setChequeDate(e.target.value)}
-                                                    className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-2xl text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                                    className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                                 />
                                             </div>
                                         )}
@@ -264,10 +264,10 @@ const PaymentOutForm: React.FC = () => {
                                 {isNonCashMode && (
                                     <div className="p-6 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 rounded-[2rem] animate-in slide-in-from-top-4">
                                         <div className="flex items-center gap-3 mb-2">
-                                            <ShieldCheck className="w-4 h-4 text-amber-500" />
-                                            <p className="text-[10px] font-black text-amber-900/60 dark:text-amber-400 uppercase tracking-widest">Discount Settlement Protocol</p>
+                                            <ShieldCheck className="w-4 h-4 text-warning" />
+                                            <p className="text-[10px] font-black text-amber-900/60 dark:text-warning uppercase tracking-widest">Discount Settlement Protocol</p>
                                         </div>
-                                        <p className="text-[10px] font-bold text-amber-800 dark:text-amber-500 italic leading-relaxed">
+                                        <p className="text-[10px] font-bold text-amber-800 dark:text-warning italic leading-relaxed">
                                             Settling via discount reduces bill liability without affecting institutional vault/bank nodes.
                                         </p>
                                     </div>
@@ -281,12 +281,12 @@ const PaymentOutForm: React.FC = () => {
                         <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
                             <div className="p-10 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
                                 <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-3">
-                                    <Banknote className="w-5 h-5 text-amber-500" /> Liability Allocation Ledger
+                                    <Banknote className="w-5 h-5 text-warning" /> Liability Allocation Ledger
                                 </h3>
                                 <div className="flex items-center gap-6">
                                     <div className="text-right">
                                         <p className="text-[8px] font-black text-neutral-400 uppercase tracking-widest mb-1">Unallocated Node Quantum</p>
-                                        <p className={`text-xl font-black tabular-nums tracking-tighter ${unallocated > 0 ? 'text-emerald-500' : 'text-neutral-900 dark:text-white'}`}>₹{unallocated.toLocaleString()}</p>
+                                        <p className={`text-xl font-black tabular-nums tracking-tighter ${unallocated > 0 ? 'text-success' : 'text-neutral-900 dark:text-white'}`}>₹{unallocated.toLocaleString()}</p>
                                     </div>
                                     <button
                                         type="button"
@@ -318,7 +318,7 @@ const PaymentOutForm: React.FC = () => {
                                             <tr>
                                                 <td colSpan={6} className="px-8 py-32 text-center">
                                                     <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
-                                                        <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-3xl flex items-center justify-center">
+                                                        <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
                                                             <Banknote className="w-10 h-10" />
                                                         </div>
                                                         <div>
@@ -346,7 +346,7 @@ const PaymentOutForm: React.FC = () => {
                                                         <span className="text-sm font-black text-primary tabular-nums">₹{allocations[bill._id || '']?.toLocaleString()}</span>
                                                     </td>
                                                     <td className="px-8 py-6 text-right">
-                                                        <span className="text-xs font-black text-emerald-500 tabular-nums">
+                                                        <span className="text-xs font-black text-success tabular-nums">
                                                             {discounts[bill._id || ''] ? `-₹${discounts[bill._id || ''].toLocaleString()}` : '—'}
                                                         </span>
                                                     </td>
@@ -354,7 +354,7 @@ const PaymentOutForm: React.FC = () => {
                                                         <button
                                                             type="button"
                                                             onClick={() => removeBill(bill._id || '')}
-                                                            className="p-2 text-neutral-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                                                            className="p-2 text-neutral-300 hover:text-danger hover:bg-rose-50 rounded-xl transition-all"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
                                                         </button>
@@ -368,7 +368,7 @@ const PaymentOutForm: React.FC = () => {
                                             <tr>
                                                 <td colSpan={3} className="px-8 py-6 text-[10px] text-neutral-400 uppercase tracking-widest text-right">Aggregate Allocation</td>
                                                 <td className="px-8 py-6 text-right text-lg text-primary tabular-nums tracking-tighter">₹{totalAllocated.toLocaleString()}</td>
-                                                <td className="px-8 py-6 text-right text-sm text-emerald-500 tabular-nums tracking-tighter">₹{totalDiscount.toLocaleString()}</td>
+                                                <td className="px-8 py-6 text-right text-sm text-success tabular-nums tracking-tighter">₹{totalDiscount.toLocaleString()}</td>
                                                 <td></td>
                                             </tr>
                                         </tfoot>

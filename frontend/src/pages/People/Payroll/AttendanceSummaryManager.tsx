@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
@@ -179,7 +179,7 @@ const AttendanceSummaryManager = () => {
                                                 {record.isModified && (
                                                     <button
                                                         onClick={() => handleSaveRow(record.employeeId)}
-                                                        className="text-indigo-600 hover:text-indigo-900 font-medium flex items-center gap-1 justify-end w-full"
+                                                        className="text-primary hover:text-indigo-900 font-medium flex items-center gap-1 justify-end w-full"
                                                     >
                                                         <Save size={16} /> Save
                                                     </button>

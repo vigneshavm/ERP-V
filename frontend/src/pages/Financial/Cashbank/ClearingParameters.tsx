@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { X, Save, RefreshCw, Zap, ShieldCheck } from 'lucide-react';
 import api from '../../../services/api'; // Direct API import since no slice action exists yet
 import { useSelector } from 'react-redux';
@@ -81,7 +81,7 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
                             <button
                                 onClick={handleInitialize}
                                 disabled={initializing}
-                                className="px-8 py-4 bg-primary text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition shadow-lg shadow-primary/20 flex items-center gap-2 mx-auto disabled:opacity-50"
+                                className="px-8 py-4 bg-primary text-white rounded-sm text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition shadow-lg shadow-primary/20 flex items-center gap-2 mx-auto disabled:opacity-50"
                             >
                                 <RefreshCw className={`w-4 h-4 ${initializing ? 'animate-spin' : ''}`} />
                                 {initializing ? 'Initializing...' : 'Initialize Unit Protocols'}

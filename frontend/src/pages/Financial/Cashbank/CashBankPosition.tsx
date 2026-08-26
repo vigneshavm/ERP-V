@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from "../../../components/shared/Layout";
@@ -53,7 +53,7 @@ const CashBankPosition: React.FC = () => {
             className="flex items-center justify-between p-6 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] hover:border-primary group transition-all duration-300 shadow-sm"
         >
             <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${color} shadow-sm group-hover:scale-110`}>
+                <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-300 ${color} shadow-sm group-hover:scale-110`}>
                     <Icon className="w-6 h-6" />
                 </div>
                 <span className="text-xs font-black text-neutral-600 dark:text-neutral-400 uppercase tracking-widest group-hover:text-primary transition-colors">{title}</span>
@@ -92,8 +92,8 @@ const CashBankPosition: React.FC = () => {
                             icon={TrendingUp}
                             subtitle="Consolidated real-time market capital across all institutional nodes."
                             stats={
-                                <div className="px-5 py-2.5 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3">
-                                    <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
+                                <div className="px-5 py-2.5 bg-white/10 rounded-sm backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3">
+                                    <Activity className="w-4 h-4 text-success animate-pulse" />
                                     Operational Threshold: Healthy
                                 </div>
                             }
@@ -108,12 +108,12 @@ const CashBankPosition: React.FC = () => {
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Physical Vault Node</p>
                                     <h2 className="text-5xl font-black mt-3 tracking-tighter tabular-nums">₹{(position?.cashInHand || 0).toLocaleString('en-IN')}</h2>
                                     <p className="text-xs font-bold text-white/80 mt-4 flex items-center gap-2 italic">
-                                        <ArrowDownLeft className="w-4 h-4 text-emerald-400" /> Immediate physical liquidity
+                                        <ArrowDownLeft className="w-4 h-4 text-success" /> Immediate physical liquidity
                                     </p>
                                 </div>
                                 <button 
                                     onClick={() => navigate('/cashbank/cash-in-hand')} 
-                                    className="relative z-10 bg-white/10 hover:bg-white/20 px-8 py-3.5 rounded-2xl backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/20 active:scale-95"
+                                    className="relative z-10 bg-white/10 hover:bg-white/20 px-8 py-3.5 rounded-sm backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/20 active:scale-95"
                                 >
                                     Enter Vault Terminal
                                 </button>
@@ -132,7 +132,7 @@ const CashBankPosition: React.FC = () => {
                                 </div>
                                 <button 
                                     onClick={() => navigate('/cashbank/bank-accounts')} 
-                                    className="relative z-10 bg-white/5 hover:bg-white/10 px-8 py-3.5 rounded-2xl backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/5 active:scale-95"
+                                    className="relative z-10 bg-white/5 hover:bg-white/10 px-8 py-3.5 rounded-sm backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/5 active:scale-95"
                                 >
                                     Monitor Account Nodes
                                 </button>
@@ -148,7 +148,7 @@ const CashBankPosition: React.FC = () => {
                             </div>
                             <div className="relative z-10">
                                 <div className="flex items-center gap-4 mb-8">
-                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                                    <div className="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center text-primary shadow-sm">
                                         <PieChart className="w-6 h-6" />
                                     </div>
                                     <h3 className="text-lg font-black text-neutral-900 dark:text-white uppercase tracking-tighter">Capital Allocation</h3>
@@ -182,7 +182,7 @@ const CashBankPosition: React.FC = () => {
                         {/* Internal Clearing Execution */}
                         <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-[3rem] shadow-sm space-y-8">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 shadow-sm">
+                                <div className="w-12 h-12 rounded-sm bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-primary shadow-sm">
                                     <ArrowRightLeft className="w-6 h-6" />
                                 </div>
                                 <h3 className="text-lg font-black text-neutral-900 dark:text-white uppercase tracking-tighter">Node Management</h3>
@@ -203,7 +203,7 @@ const CashBankPosition: React.FC = () => {
                                 <QuickAction
                                     title="Registry Control"
                                     icon={ShieldCheck}
-                                    color="bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20"
+                                    color="bg-indigo-50 text-primary dark:bg-indigo-900/20"
                                     onClick={() => navigate('/cashbank/bank-accounts')}
                                 />
                             </div>
@@ -212,23 +212,23 @@ const CashBankPosition: React.FC = () => {
                         {/* Fiscal Advisory Stream */}
                         <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/5 border border-amber-100 dark:border-amber-900/20 p-10 rounded-[3rem] space-y-6">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-2xl text-amber-500 shadow-sm border border-amber-100 dark:border-amber-900/20">
+                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-sm text-warning shadow-sm border border-amber-100 dark:border-amber-900/20">
                                     <Zap className="w-6 h-6" />
                                 </div>
                                 <h4 className="text-sm font-black text-amber-900 dark:text-amber-300 uppercase tracking-[0.2em] leading-none">Fiscal Advisory</h4>
                             </div>
                             <div className="space-y-4">
                                 {(position?.breakdown.cash.percentage || 0) > 30 && (
-                                    <p className="text-[11px] text-amber-800 dark:text-amber-400 font-bold leading-relaxed italic opacity-80 border-l-2 border-amber-500/30 pl-4">
+                                    <p className="text-[11px] text-amber-800 dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
                                         High vault exposure detected. Consider re-routing capital to digital units for institutional risk mitigation.
                                     </p>
                                 )}
                                 {(position?.breakdown.bank.percentage || 0) > 95 && (
-                                    <p className="text-[11px] text-amber-800 dark:text-amber-400 font-bold leading-relaxed italic opacity-80 border-l-2 border-amber-500/30 pl-4">
+                                    <p className="text-[11px] text-amber-800 dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
                                         Minimum liquidity reached in physical nodes. Maintain operational reserve for immediate market clearance.
                                     </p>
                                 )}
-                                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-bold leading-relaxed italic opacity-80 border-l-2 border-emerald-500/30 pl-4">
+                                <p className="text-[11px] text-emerald-700 dark:text-success font-bold leading-relaxed italic opacity-80 border-l-2 border-success/30 pl-4">
                                     Asset distribution aligns with optimized ERP liquidity patterns for the current fiscal cycle.
                                 </p>
                             </div>

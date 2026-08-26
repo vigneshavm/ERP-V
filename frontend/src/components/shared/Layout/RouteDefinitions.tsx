@@ -16,6 +16,26 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
     return (
         <Routes>
             <Route path="/" element={renderContent()} />
+            {/* ─── MODULE ROOT REDIRECTS ──────────────────────────────────
+                 Navigating to /sales, /purchase, etc. redirects to the
+                 module's primary landing sub-route instead of falling through
+                 to the "Module Locked" wildcard page.
+            ──────────────────────────────────────────────────────────────── */}
+            <Route path="/sales" element={<Navigate to="/sales/invoices" replace />} />
+            <Route path="/purchase" element={<Navigate to="/purchase/register" replace />} />
+            <Route path="/inventory" element={<Navigate to="/inventory/products" replace />} />
+            <Route path="/finance" element={<Navigate to="/finance/mock" replace />} />
+            <Route path="/expenses" element={<Navigate to="/expenses/mock" replace />} />
+            <Route path="/customers" element={<Navigate to="/customers/mock" replace />} />
+            <Route path="/marketing" element={<Navigate to="/marketing/mock" replace />} />
+            <Route path="/reports" element={<Navigate to="/reports/mock" replace />} />
+            <Route path="/pos/terminal" element={<Navigate to="/pos" replace />} />
+            <Route path="/people" element={<Navigate to="/people/employees/labor" replace />} />
+            <Route path="/staff" element={<Navigate to="/people/employees/staff" replace />} />
+            <Route path="/grow" element={<Navigate to="/grow/mock" replace />} />
+            <Route path="/system" element={<Navigate to="/system/mock" replace />} />
+            <Route path="/engagement" element={<Navigate to="/engagement/mock" replace />} />
+
             {/* SALES ROUTES */}
             <Route path="/sales/new" element={
                 <Suspense fallback={<div>Loading Form...</div>}><LazyModules.SalesInvoiceForm /></Suspense>

@@ -135,6 +135,10 @@ app.get("/", (_req, res) => {
 // Routes Integration
 // =======================
 
+// STORE Module
+import storeRoutes from "./modules/store/routes/store.routes.js";
+app.use("/api/stores", storeRoutes);
+
 // CORE Module (Auth, User, Business, Health, etc.)
 import coreRoutes from "./modules/core/routes/core.routes.js";
 app.use("/api", coreRoutes);
@@ -157,6 +161,8 @@ app.use("/api/audit-logs", auditLogRoutes);
 // INVENTORY Module
 import inventoryRoutes from "./modules/inventory/routes/inventory.routes.js";
 app.use("/api/inventory", inventoryRoutes);
+
+
 
 // SALES Module
 import salesRoutes from "./modules/sales/routes/sales.routes.js";

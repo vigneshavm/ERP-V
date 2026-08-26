@@ -1,4 +1,25 @@
-export const purchases = [
+export interface MockPurchaseItem {
+    sku: string;
+    name: string;
+    qty: number;
+    cost: number;
+    total: number;
+}
+
+export interface MockPurchase {
+    id: string;
+    tenant_id: string;
+    supplier_id: string;
+    date: string;
+    subtotal: number;
+    gst: number;
+    total: number;
+    status: string;
+    items: MockPurchaseItem[];
+    sector: string;
+}
+
+export const purchases: MockPurchase[] = [
     {
         "id": "PUR0001",
         "tenant_id": "TEN001",
@@ -22,7 +43,7 @@ export const purchases = [
     {
         "id": "PUR0002",
         "tenant_id": "TEN001",
-        "supplier_id": "SUP001",
+        "supplier_id": "SUP002",
         "date": "2025-11-29",
         "subtotal": 97500,
         "gst": 17550,
@@ -42,7 +63,7 @@ export const purchases = [
     {
         "id": "PUR0003",
         "tenant_id": "TEN001",
-        "supplier_id": "SUP001",
+        "supplier_id": "SUP003",
         "date": "2025-12-13",
         "subtotal": 42300,
         "gst": 2115,

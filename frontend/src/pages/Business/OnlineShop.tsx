@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Layout from "../../components/shared/Layout/index.js";
 import PageHeader from "../../components/shared/Layout/PageHeader.js";
 import BusinessSubNav from './BusinessSubNav.js';
@@ -81,7 +81,7 @@ const OnlineShop: React.FC = () => {
                 return {
                     color: 'border-blue-200',
                     bg: 'bg-white',
-                    button: 'border-indigo-600 text-indigo-600 hover:bg-indigo-50'
+                    button: 'border-indigo-600 text-primary hover:bg-indigo-50'
                 };
             case 'PRO':
             case 'PROFESSIONAL':
@@ -160,7 +160,7 @@ const OnlineShop: React.FC = () => {
             {/* <BusinessSubNav /> */}
 
             {/* Hero Section - Refined with Glassmorphism */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-indigo-600 to-purple-700 text-white mb-12 shadow-2xl border border-white/10">
+            <div className="relative overflow-hidden rounded-sm bg-gradient-to-br from-indigo-700 via-indigo-600 to-purple-700 text-white mb-12 shadow-2xl border border-white/10">
                 <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-96 h-96 bg-indigo-400 opacity-10 rounded-full blur-3xl"></div>
 
@@ -179,18 +179,18 @@ const OnlineShop: React.FC = () => {
                         <div className="flex flex-wrap justify-center lg:justify-start gap-5">
                             <button
                                 onClick={() => handleUpdatePlan('Free')}
-                                className="px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 text-lg cursor-pointer"
+                                className="px-8 py-4 bg-white text-primary rounded-sm font-black hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 text-lg cursor-pointer"
                             >
                                 {updatingPlan === 'Free' ? 'Processing...' : 'Start Free Trial'}
                             </button>
-                            <button className="px-8 py-4 bg-indigo-800/40 backdrop-blur-md text-white border border-indigo-400/30 rounded-2xl font-bold hover:bg-indigo-700/50 transition-all hover:border-indigo-300">
+                            <button className="px-8 py-4 bg-indigo-800/40 backdrop-blur-md text-white border border-indigo-400/30 rounded-sm font-bold hover:bg-indigo-700/50 transition-all hover:border-indigo-300">
                                 View Demo Store
                             </button>
                         </div>
                     </div>
                     <div className="hidden lg:block relative group">
-                        <div className="absolute inset-0 bg-indigo-500 rounded-3xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                        <div className="relative w-72 h-80 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-6 shadow-2xl rotate-3 transform group-hover:rotate-0 transition-all duration-700 ease-out flex flex-col gap-4">
+                        <div className="absolute inset-0 bg-indigo-500 rounded-sm blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                        <div className="relative w-72 h-80 bg-white/10 backdrop-blur-xl rounded-sm border border-white/20 p-6 shadow-2xl rotate-3 transform group-hover:rotate-0 transition-all duration-700 ease-out flex flex-col gap-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="h-3 w-3 rounded-full bg-red-400/50"></div>
                                 <div className="h-3 w-3 rounded-full bg-yellow-400/50"></div>
@@ -221,19 +221,19 @@ const OnlineShop: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {features.map((feature, idx) => (
-                        <div key={idx} className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-500 group relative overflow-hidden">
+                        <div key={idx} className="bg-white rounded-sm p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-500 group relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-bl-[100px] -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
 
                             <div className="relative z-10">
                                 <div className="flex items-start justify-between mb-6">
-                                    <div className="p-4 bg-indigo-50 rounded-2xl text-3xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                                    <div className="p-4 bg-indigo-50 rounded-sm text-3xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner">
                                         {feature.icon}
                                     </div>
                                     <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-green-200 shadow-sm">
                                         {feature.status}
                                     </span>
                                 </div>
-                                <h4 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{feature.title}</h4>
+                                <h4 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors uppercase tracking-tight">{feature.title}</h4>
                                 <p className="text-gray-500 leading-relaxed text-sm font-medium">{feature.description}</p>
                             </div>
                         </div>
@@ -244,7 +244,7 @@ const OnlineShop: React.FC = () => {
             {/* Pricing Section - Dynamic Grid Implementation */}
             <div className="pb-20">
                 <div className="text-center mb-16">
-                    <div className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-xs font-black tracking-widest uppercase mb-4 border border-indigo-100">
+                    <div className="inline-block px-4 py-1.5 bg-indigo-50 text-primary rounded-full text-xs font-black tracking-widest uppercase mb-4 border border-indigo-100">
                         Flexible Pricing
                     </div>
                     <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight italic">The Growth Architect</h3>
@@ -276,10 +276,10 @@ const OnlineShop: React.FC = () => {
                                 )}
 
                                 {isCurrent && settings?.subscriptionEndDate && (
-                                    <div className="mt-8 mb-2 p-3 bg-indigo-50/50 rounded-2xl border border-indigo-100/50">
+                                    <div className="mt-8 mb-2 p-3 bg-indigo-50/50 rounded-sm border border-indigo-100/50">
                                         <div className="flex items-center justify-between text-[10px] font-black tracking-widest uppercase">
-                                            <span className="text-indigo-400">Next Billing Cycle</span>
-                                            <span className="text-indigo-600">
+                                            <span className="text-primary">Next Billing Cycle</span>
+                                            <span className="text-primary">
                                                 {new Date(settings.subscriptionEndDate).toLocaleDateString(undefined, {
                                                     month: 'long',
                                                     day: 'numeric',
@@ -300,7 +300,7 @@ const OnlineShop: React.FC = () => {
 
                                 <div className="mb-8">
                                     <div className="flex justify-between items-center mb-4">
-                                        <h4 className={`text-xl font-black uppercase tracking-wider ${isCurrent ? 'text-indigo-600' : 'text-gray-900'}`}>
+                                        <h4 className={`text-xl font-black uppercase tracking-wider ${isCurrent ? 'text-primary' : 'text-gray-900'}`}>
                                             {plan.name}
                                         </h4>
                                         {isCurrent && (
@@ -322,7 +322,7 @@ const OnlineShop: React.FC = () => {
                                 <div className="flex-1 space-y-5 mb-10">
                                     {plan.features.map((feature, featureIdx) => (
                                         <li key={featureIdx} className="flex items-start list-none">
-                                            <div className={`mt-1 mr-4 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${isCurrent ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-50 text-emerald-500'}`}>
+                                            <div className={`mt-1 mr-4 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${isCurrent ? 'bg-indigo-100 text-primary' : 'bg-gray-50 text-success'}`}>
                                                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
                                                 </svg>
@@ -338,7 +338,7 @@ const OnlineShop: React.FC = () => {
                                     onClick={() => !isCurrent && handleUpdatePlan(plan.name)}
                                     disabled={isCurrent || updatingPlan === plan.name}
                                     className={`w-full py-5 rounded-[1.5rem] font-black uppercase tracking-[0.15em] transition-all duration-300 text-sm active:scale-95 ${isCurrent
-                                        ? 'bg-indigo-100/50 text-indigo-400 cursor-default border-2 border-indigo-100/50'
+                                        ? 'bg-indigo-100/50 text-primary cursor-default border-2 border-indigo-100/50'
                                         : plan.popular
                                             ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-2xl shadow-indigo-200 border-2 border-indigo-600'
                                             : 'bg-white border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white shadow-xl shadow-gray-100'
@@ -354,7 +354,7 @@ const OnlineShop: React.FC = () => {
                 <div className="mt-20 p-10 rounded-[3rem] bg-gray-50 border border-gray-100 text-center max-w-4xl mx-auto shadow-inner">
                     <h4 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">Need a custom plan?</h4>
                     <p className="text-gray-500 mb-8 font-medium">Join 500+ high-growth brands already using BizzAI Enterprise solutions.</p>
-                    <button className="px-10 py-4 bg-gray-900 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-gray-800 transition-all hover:shadow-2xl">
+                    <button className="px-10 py-4 bg-gray-900 text-white rounded-sm font-black uppercase tracking-widest hover:bg-gray-800 transition-all hover:shadow-2xl">
                         Contact Sales
                     </button>
                 </div>

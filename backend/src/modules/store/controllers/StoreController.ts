@@ -18,6 +18,11 @@ export const createStore = async (req: AuthenticatedRequest, res: Response): Pro
         const { tenantId } = req;
         const { name, address, city, gstin, counters } = req.body;
 
+        if (!tenantId) {
+            res.status(401).json({ message: 'Tenant context missing. Please ensure you are logged in correctly.' });
+            return;
+        }
+
         if (!name) {
             res.status(400).json({ message: 'Store name is required' });
             return;
@@ -35,8 +40,12 @@ export const createStore = async (req: AuthenticatedRequest, res: Response): Pro
 
         res.status(201).json(newStore);
     } catch (err) {
-        error(`Create store failed: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+        const errorMsg = (err as Error).message;
+        error(`Create store failed: ${errorMsg}`, { stack: (err as Error).stack, body: req.body });
+        res.status(500).json({ 
+            message: 'Internal Server Error while creating store', 
+            error: process.env.NODE_ENV === 'development' ? errorMsg : undefined 
+        });
     }
 };
 

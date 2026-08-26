@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { CheckCircle, ArrowLeft, RefreshCw, Truck, ClipboardCheck } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
@@ -51,7 +51,7 @@ const GRNForm: React.FC = () => {
                 {/* Logistics Context Node */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-primary/20 transition-all">
-                        <div className="p-4 bg-primary/10 text-primary rounded-2xl group-hover:rotate-12 transition-transform">
+                        <div className="p-4 bg-primary/10 text-primary rounded-sm group-hover:rotate-12 transition-transform">
                             <Truck className="w-6 h-6" />
                         </div>
                         <div>
@@ -59,13 +59,13 @@ const GRNForm: React.FC = () => {
                             <p className="text-xl font-black text-neutral-900 dark:text-white tracking-tighter uppercase tabular-nums">In-Bound</p>
                         </div>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-emerald-500/20 transition-all">
-                        <div className="p-4 bg-emerald-50 text-emerald-500 dark:bg-emerald-900/20 rounded-2xl group-hover:rotate-12 transition-transform">
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-success/20 transition-all">
+                        <div className="p-4 bg-emerald-50 text-success dark:bg-emerald-900/20 rounded-sm group-hover:rotate-12 transition-transform">
                             <CheckCircle className="w-6 h-6" />
                         </div>
                         <div>
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-1">QA Protocol</p>
-                            <p className="text-xl font-black text-emerald-600 dark:text-emerald-400 tracking-tighter uppercase tabular-nums">Active</p>
+                            <p className="text-xl font-black text-emerald-600 dark:text-success tracking-tighter uppercase tabular-nums">Active</p>
                         </div>
                     </div>
                 </div>

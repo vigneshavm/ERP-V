@@ -1,4 +1,23 @@
-export const inventory = [
+export interface MockProduct {
+    id: string;
+    tenant_id: string;
+    branch_id: string;
+    sku: string;
+    name: string;
+    category: string;
+    stock: number;
+    cost: number;
+    selling_price: number;
+    gst_rate: number;
+    barcode: string;
+    sector: string;
+    business_type: string;
+    nameTamil?: string;
+    hsnCode?: string;
+    productType?: string;
+}
+
+export const inventory: MockProduct[] = [
     {
         "id": "SKU-TEN001-BR001-001",
         "tenant_id": "TEN001",
@@ -6,7 +25,7 @@ export const inventory = [
         "sku": "TS-RED-XL-BR001",
         "name": "Cotton T-Shirt Red XL (Chennai Main Branch)",
         "category": "Apparel",
-        "stock": 0,
+        "stock": 16,
         "cost": 400,
         "selling_price": 850,
         "gst_rate": 5,
@@ -21,7 +40,7 @@ export const inventory = [
         "sku": "TS-BLUE-L-BR001",
         "name": "Cotton T-Shirt Blue L (Chennai Main Branch)",
         "category": "Apparel",
-        "stock": 0,
+        "stock": 21,
         "cost": 400,
         "selling_price": 850,
         "gst_rate": 5,
@@ -231,7 +250,7 @@ export const inventory = [
         "sku": "TS-RED-XL-BR002",
         "name": "Cotton T-Shirt Red XL (Madurai Branch)",
         "category": "Apparel",
-        "stock": 0,
+        "stock": 33,
         "cost": 400,
         "selling_price": 850,
         "gst_rate": 5,
@@ -246,7 +265,7 @@ export const inventory = [
         "sku": "TS-BLUE-L-BR002",
         "name": "Cotton T-Shirt Blue L (Madurai Branch)",
         "category": "Apparel",
-        "stock": 0,
+        "stock": 14,
         "cost": 400,
         "selling_price": 850,
         "gst_rate": 5,
@@ -456,7 +475,7 @@ export const inventory = [
         "sku": "RICE-5KG-BR003",
         "name": "Basmati Rice 5Kg (Salem Warehouse)",
         "category": "Grains",
-        "stock": 0,
+        "stock": 10,
         "cost": 350,
         "selling_price": 450,
         "gst_rate": 5,
@@ -471,7 +490,7 @@ export const inventory = [
         "sku": "WHEAT-10KG-BR003",
         "name": "Wheat Flour 10Kg (Salem Warehouse)",
         "category": "Grains",
-        "stock": 0,
+        "stock": 16,
         "cost": 400,
         "selling_price": 520,
         "gst_rate": 5,
@@ -606,7 +625,7 @@ export const inventory = [
         "sku": "PHONE-SAM-A54-BR004",
         "name": "Samsung Galaxy A54 (Coimbatore TechMart)",
         "category": "Smartphones",
-        "stock": 0,
+        "stock": 20,
         "cost": 25000,
         "selling_price": 32999,
         "gst_rate": 18,
@@ -621,7 +640,7 @@ export const inventory = [
         "sku": "PHONE-IPH-15-BR004",
         "name": "iPhone 15 Pro Max (Coimbatore TechMart)",
         "category": "Smartphones",
-        "stock": 0,
+        "stock": 25,
         "cost": 120000,
         "selling_price": 159900,
         "gst_rate": 18,

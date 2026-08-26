@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { MessageCircle, Mail, Gift, MessageSquare } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "../../redux/store";
@@ -35,7 +35,7 @@ const CustomerEngagement: React.FC = () => {
     return (
         <div className="space-y-8">
             <header className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white dark:bg-[#020617] p-4 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
-                <div className="flex bg-slate-100 dark:bg-slate-900 p-1.5 rounded-3xl overflow-x-auto no-scrollbar max-w-full">
+                <div className="flex bg-slate-100 dark:bg-slate-900 p-1.5 rounded-sm overflow-x-auto no-scrollbar max-w-full">
                     <div className="px-4 py-2">
                         <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-tight">
                             {activeTab.replace('GROW_ENGAGEMENT_', '').replace('GROW_ENGAGEMENT', 'ENGAGEMENT').replace('_', ' ')}

@@ -1,4 +1,4 @@
-
+﻿
 import React, { useMemo } from 'react';
 import {
     DollarSign,
@@ -34,13 +34,13 @@ interface PremiumExpenseDashboardProps {
 const CATEGORY_MAP: Record<string, { icon: any, color: string, bgColor: string, textColor: string }> = {
     'Transportation': { icon: Car, color: '#3B82F6', bgColor: 'bg-blue-500/10', textColor: 'text-blue-600' },
     'Food': { icon: Utensils, color: '#EF4444', bgColor: 'bg-red-500/10', textColor: 'text-red-600' },
-    'Utilities': { icon: Zap, color: '#F59E0B', bgColor: 'bg-amber-500/10', textColor: 'text-amber-600' },
+    'Utilities': { icon: Zap, color: '#F59E0B', bgColor: 'bg-warning/10', textColor: 'text-amber-600' },
     'Shopping': { icon: ShoppingBag, color: '#EC4899', bgColor: 'bg-pink-500/10', textColor: 'text-pink-600' },
-    'Entertainment': { icon: ShoppingBag, color: '#8B5CF6', bgColor: 'bg-purple-500/10', textColor: 'text-purple-600' },
-    'Healthcare': { icon: Heart, color: '#10B981', bgColor: 'bg-emerald-500/10', textColor: 'text-emerald-600' },
-    'Housing': { icon: Home, color: '#6366F1', bgColor: 'bg-indigo-500/10', textColor: 'text-indigo-600' },
+    'Entertainment': { icon: ShoppingBag, color: '#8B5CF6', bgColor: 'bg-accent/10', textColor: 'text-purple-600' },
+    'Healthcare': { icon: Heart, color: '#10B981', bgColor: 'bg-success/10', textColor: 'text-emerald-600' },
+    'Housing': { icon: Home, color: '#6366F1', bgColor: 'bg-primary/10', textColor: 'text-primary' },
     'Office': { icon: Briefcase, color: '#14B8A6', bgColor: 'bg-teal-500/10', textColor: 'text-teal-600' },
-    'Travel': { icon: Globe, color: '#0EA5E9', bgColor: 'bg-sky-500/10', textColor: 'text-sky-600' },
+    'Travel': { icon: Globe, color: '#0EA5E9', bgColor: 'bg-info/10', textColor: 'text-sky-600' },
     'Others': { icon: DollarSign, color: '#6B7280', bgColor: 'bg-gray-500/10', textColor: 'text-gray-600' },
 };
 
@@ -154,7 +154,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
                                     ₹{stats.monthTotal.toLocaleString()}
                                 </h2>
                                 <div className="flex items-center gap-2">
-                                    <span className={`flex items-center text-xs font-bold ${stats.growth <= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    <span className={`flex items-center text-xs font-bold ${stats.growth <= 0 ? 'text-success' : 'text-red-400'}`}>
                                         {stats.growth <= 0 ? <ArrowDownRight className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
                                         {Math.abs(stats.growth).toFixed(1)}%
                                     </span>
@@ -246,7 +246,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
                         whileHover={{ y: -5 }}
                         className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-100 dark:border-neutral-700 shadow-sm flex flex-col items-center text-center group cursor-pointer transition-all hover:shadow-xl hover:shadow-neutral-200/50 dark:hover:shadow-black/20"
                     >
-                        <div className={`w-12 h-12 ${cat.bgColor} rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 duration-500`}>
+                        <div className={`w-12 h-12 ${cat.bgColor} rounded-sm flex items-center justify-center mb-4 transition-transform group-hover:scale-110 duration-500`}>
                             <cat.icon className={`w-6 h-6 ${cat.textColor}`} />
                         </div>
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">{cat.name}</p>

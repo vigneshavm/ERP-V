@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Tenant Onboarding Wizard
  * 
  * Multi-step wizard for new tenant signup with:
@@ -145,7 +145,7 @@ const TenantOnboarding: React.FC = () => {
     // Step 1: Welcome
     const renderWelcome = () => (
         <div className="text-center space-y-8 py-8">
-            <div className="w-24 h-24 bg-gradient-to-br from-brand-500 to-indigo-600 rounded-3xl mx-auto flex items-center justify-center shadow-2xl shadow-brand-600/20">
+            <div className="w-24 h-24 bg-gradient-to-br from-brand-500 to-indigo-600 rounded-sm mx-auto flex items-center justify-center shadow-2xl shadow-brand-600/20">
                 <Sparkles className="w-12 h-12 text-white" />
             </div>
 
@@ -211,7 +211,7 @@ const TenantOnboarding: React.FC = () => {
                                 value={businessName}
                                 onChange={e => setBusinessName(e.target.value)}
                                 placeholder="e.g., Vijayalakshmi Textiles & Readymades"
-                                className="input text-xl py-4 px-6 rounded-2xl border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-black/20 focus:scale-[1.01] transition-transform"
+                                className="input text-xl py-4 px-6 rounded-sm border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-black/20 focus:scale-[1.01] transition-transform"
                             />
                         </div>
 
@@ -222,7 +222,7 @@ const TenantOnboarding: React.FC = () => {
                                     <button
                                         key={type.id}
                                         onClick={() => setBusinessType(type.id)}
-                                        className={`p-5 rounded-2xl border-2 text-left transition-all duration-300 ${businessType === type.id
+                                        className={`p-5 rounded-sm border-2 text-left transition-all duration-300 ${businessType === type.id
                                             ? 'border-brand-600 bg-brand-50/50 dark:bg-brand-900/20 scale-[1.02] shadow-lg shadow-brand-600/10'
                                             : 'border-neutral-100 dark:border-neutral-800 bg-white/30 dark:bg-black/10 hover:border-brand-300'
                                             }`}
@@ -241,7 +241,7 @@ const TenantOnboarding: React.FC = () => {
                                     <button
                                         key={s.id}
                                         onClick={() => setSector(s.id)}
-                                        className={`p-4 rounded-2xl border-2 text-center transition-all duration-300 ${sector === s.id
+                                        className={`p-4 rounded-sm border-2 text-center transition-all duration-300 ${sector === s.id
                                             ? 'border-brand-600 bg-brand-50/50 dark:bg-brand-900/20 scale-[1.05] shadow-lg shadow-brand-600/10'
                                             : 'border-neutral-100 dark:border-neutral-800 bg-white/30 dark:bg-black/10 hover:border-brand-200'
                                             }`}
@@ -256,7 +256,7 @@ const TenantOnboarding: React.FC = () => {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                    <div className="glass-card p-6 rounded-3xl border-neutral-200/50 dark:border-white/5 bg-white/30 dark:bg-black/10">
+                    <div className="glass-card p-6 rounded-sm border-neutral-200/50 dark:border-white/5 bg-white/30 dark:bg-black/10">
                         <label className="block text-xs font-black uppercase tracking-widest text-neutral-400 mb-3 ml-1">Location Details</label>
                         <div className="space-y-4">
                             <input
@@ -275,7 +275,7 @@ const TenantOnboarding: React.FC = () => {
                             />
                         </div>
                     </div>
-                    <div className="glass-card p-6 rounded-3xl border-neutral-200/50 dark:border-white/5 bg-white/30 dark:bg-black/10">
+                    <div className="glass-card p-6 rounded-sm border-neutral-200/50 dark:border-white/5 bg-white/30 dark:bg-black/10">
                         <label className="block text-xs font-black uppercase tracking-widest text-neutral-400 mb-3 ml-1">GST Identification</label>
                         <div className="space-y-4">
                             <input
@@ -326,7 +326,7 @@ const TenantOnboarding: React.FC = () => {
                                 <div className="flex gap-4">
                                     <button
                                         onClick={() => setPreferredLogin('mobile')}
-                                        className={`flex-1 p-5 rounded-2xl border-2 transition-all duration-300 ${preferredLogin === 'mobile'
+                                        className={`flex-1 p-5 rounded-sm border-2 transition-all duration-300 ${preferredLogin === 'mobile'
                                             ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/20 shadow-lg shadow-brand-600/10'
                                             : 'border-neutral-100 dark:border-neutral-800 bg-white/30 dark:bg-black/10'
                                             }`}
@@ -337,7 +337,7 @@ const TenantOnboarding: React.FC = () => {
                                     </button>
                                     <button
                                         onClick={() => setPreferredLogin('email')}
-                                        className={`flex-1 p-5 rounded-2xl border-2 transition-all duration-300 ${preferredLogin === 'email'
+                                        className={`flex-1 p-5 rounded-sm border-2 transition-all duration-300 ${preferredLogin === 'email'
                                             ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/20 shadow-lg shadow-brand-600/10'
                                             : 'border-neutral-100 dark:border-neutral-800 bg-white/30 dark:bg-black/10'
                                             }`}
@@ -411,7 +411,7 @@ const TenantOnboarding: React.FC = () => {
                             <button
                                 key={count}
                                 onClick={() => setEmployeeCount(count)}
-                                className={`p-6 rounded-3xl border-2 text-center transition-all duration-300 ${employeeCount === count
+                                className={`p-6 rounded-sm border-2 text-center transition-all duration-300 ${employeeCount === count
                                     ? 'border-brand-600 bg-brand-600 text-white scale-110 shadow-2xl shadow-brand-600/30'
                                     : 'border-neutral-100 dark:border-neutral-800 bg-white/50 dark:bg-black/10 hover:border-brand-200'
                                     }`}
@@ -432,7 +432,7 @@ const TenantOnboarding: React.FC = () => {
                             <button
                                 key={count}
                                 onClick={() => setBranchCount(count)}
-                                className={`p-6 rounded-3xl border-2 text-center transition-all duration-300 ${branchCount === count
+                                className={`p-6 rounded-sm border-2 text-center transition-all duration-300 ${branchCount === count
                                     ? 'border-brand-600 bg-brand-600 text-white scale-110 shadow-2xl shadow-brand-600/30'
                                     : 'border-neutral-100 dark:border-neutral-800 bg-white/50 dark:bg-black/10 hover:border-brand-200'
                                     }`}
@@ -458,7 +458,7 @@ const TenantOnboarding: React.FC = () => {
                             <button
                                 key={opt.id}
                                 onClick={() => setExpectedTransactions(opt.id as any)}
-                                className={`p-6 rounded-3xl border-2 text-center transition-all duration-300 ${expectedTransactions === opt.id
+                                className={`p-6 rounded-sm border-2 text-center transition-all duration-300 ${expectedTransactions === opt.id
                                     ? 'border-brand-600 bg-brand-600 text-white scale-110 shadow-2xl shadow-brand-600/30'
                                     : 'border-neutral-100 dark:border-neutral-800 bg-white/50 dark:bg-black/10 hover:border-brand-200'
                                     }`}
@@ -508,7 +508,7 @@ const TenantOnboarding: React.FC = () => {
                                 </div>
                             )}
 
-                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 text-3xl ${isSelected ? 'onboarding-gradient-bg shadow-lg shadow-brand-600/20 scale-110' : 'bg-neutral-100 dark:bg-neutral-800 group-hover:bg-brand-50 dark:group-hover:bg-brand-900/20'}`}>
+                            <div className={`w-16 h-16 rounded-sm flex items-center justify-center mb-6 transition-all duration-500 text-3xl ${isSelected ? 'onboarding-gradient-bg shadow-lg shadow-brand-600/20 scale-110' : 'bg-neutral-100 dark:bg-neutral-800 group-hover:bg-brand-50 dark:group-hover:bg-brand-900/20'}`}>
                                 {module.icon}
                             </div>
 
@@ -533,7 +533,7 @@ const TenantOnboarding: React.FC = () => {
                 })}
             </div>
 
-            <div className="glass-card p-6 rounded-3xl border-brand-100 dark:border-brand-900/30 flex items-center justify-between">
+            <div className="glass-card p-6 rounded-sm border-brand-100 dark:border-brand-900/30 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
                         <Package className="w-6 h-6" />
@@ -621,7 +621,7 @@ const TenantOnboarding: React.FC = () => {
 
         return (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white dark:bg-neutral-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-auto shadow-2xl">
+                <div className="bg-white dark:bg-neutral-900 rounded-sm max-w-2xl w-full max-h-[90vh] overflow-auto shadow-2xl">
                     <div className="p-6 border-b border-neutral-200 dark:border-neutral-800">
                         <div className="flex items-center justify-between">
                             <h3 className="text-xl font-bold flex items-center gap-2">
@@ -787,7 +787,7 @@ const TenantOnboarding: React.FC = () => {
                             <div className="absolute -top-24 -right-24 w-48 h-48 onboarding-gradient-bg rounded-full blur-[80px] opacity-10" />
 
                             <div className="text-center space-y-4">
-                                <div className="w-20 h-20 rounded-3xl onboarding-gradient-bg flex items-center justify-center mx-auto shadow-xl shadow-brand-600/20 rotate-3">
+                                <div className="w-20 h-20 rounded-sm onboarding-gradient-bg flex items-center justify-center mx-auto shadow-xl shadow-brand-600/20 rotate-3">
                                     <recommendation.recommendedPlan.icon className="w-10 h-10 text-white" />
                                 </div>
                                 <div>
@@ -801,7 +801,7 @@ const TenantOnboarding: React.FC = () => {
 
                             <div className="grid grid-cols-1 gap-4">
                                 {recommendation.reasons.map((reason, idx) => (
-                                    <div key={idx} className="flex items-start gap-3 bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-sm">
+                                    <div key={idx} className="flex items-start gap-3 bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-sm border border-neutral-100 dark:border-neutral-800 shadow-sm">
                                         <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0 mt-0.5">
                                             <Check className="w-4 h-4 stroke-[3]" />
                                         </div>
@@ -810,7 +810,7 @@ const TenantOnboarding: React.FC = () => {
                                 ))}
                             </div>
 
-                            <div className="glass-card p-6 rounded-3xl border-brand-100 dark:border-brand-900/30 flex items-center justify-between">
+                            <div className="glass-card p-6 rounded-sm border-brand-100 dark:border-brand-900/30 flex items-center justify-between">
                                 <div className="space-y-1">
                                     <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Estimated Monthly</div>
                                     <div className="text-3xl font-black text-brand-600">₹{recommendation.monthlyEstimate.toLocaleString()}</div>
@@ -831,13 +831,13 @@ const TenantOnboarding: React.FC = () => {
                                         setSelectedPlan(recommendation.recommendedPlan);
                                         nextStep();
                                     }}
-                                    className="onboarding-gradient-bg text-white font-black text-xl py-5 rounded-2xl shadow-2xl shadow-brand-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                    className="onboarding-gradient-bg text-white font-black text-xl py-5 rounded-sm shadow-2xl shadow-brand-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
                                 >
                                     Activate {recommendation.recommendedPlan.name}
                                 </button>
                                 <button
                                     onClick={() => openPlanCustomizer(recommendation.recommendedPlan)}
-                                    className="btn btn-secondary py-4 rounded-2xl border-neutral-200 dark:border-neutral-800 font-bold flex items-center justify-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-900/50"
+                                    className="btn btn-secondary py-4 rounded-sm border-neutral-200 dark:border-neutral-800 font-bold flex items-center justify-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-900/50"
                                 >
                                     <Settings className="w-5 h-5" /> Customize Plan Add-ons
                                 </button>
@@ -861,7 +861,7 @@ const TenantOnboarding: React.FC = () => {
                             return (
                                 <div
                                     key={plan.id}
-                                    className={`p-6 rounded-3xl border-2 transition-all duration-500 overflow-hidden relative group ${isRecommended
+                                    className={`p-6 rounded-sm border-2 transition-all duration-500 overflow-hidden relative group ${isRecommended
                                         ? 'border-brand-600 bg-brand-50/50 dark:bg-brand-900/20 ring-4 ring-brand-600/10 shadow-xl'
                                         : 'border-neutral-100 dark:border-neutral-800 bg-white/30 dark:bg-black/10 hover:border-brand-300'
                                         }`}
@@ -916,8 +916,8 @@ const TenantOnboarding: React.FC = () => {
         return (
             <div className="space-y-12 max-w-5xl mx-auto step-bounce">
                 <div className="text-center space-y-4">
-                    <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-emerald-500/5 pulse">
-                        <CheckCircle className="w-12 h-12 text-emerald-500" />
+                    <div className="w-24 h-24 bg-success/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-emerald-500/5 pulse">
+                        <CheckCircle className="w-12 h-12 text-success" />
                     </div>
                     <div>
                         <h2 className="text-4xl font-black">Ready to <span className="onboarding-gradient-text">Blast Off!</span></h2>
@@ -969,7 +969,7 @@ const TenantOnboarding: React.FC = () => {
 
                         <div className="glass-card p-6 rounded-[2rem] border-brand-100 dark:border-brand-900/30 flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600">
+                                <div className="w-12 h-12 rounded-sm bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600">
                                     <Shield className="w-6 h-6" />
                                 </div>
                                 <div>
@@ -1012,7 +1012,7 @@ const TenantOnboarding: React.FC = () => {
                             <div className="pt-4">
                                 <button
                                     onClick={handleCompleteSetup}
-                                    className="w-full onboarding-gradient-bg py-5 rounded-2xl font-black text-xl shadow-xl shadow-brand-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                                    className="w-full onboarding-gradient-bg py-5 rounded-sm font-black text-xl shadow-xl shadow-brand-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
                                 >
                                     Complete Setup <ArrowRight className="w-6 h-6" />
                                 </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { useBusinessReports, ReportType, BusinessReportData } from "../../hooks/useBusinessReports";
@@ -187,7 +187,7 @@ const BusinessReportsHub: React.FC<BusinessReportsHubProps> = ({ view }) => {
                         <Activity className="absolute -top-10 -right-10 w-40 h-40 opacity-5 group-hover:rotate-12 transition-transform duration-1000" />
                         <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-6 italic">Agent Intelligence</h4>
                         <div className="space-y-6 relative z-10">
-                            <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                            <div className="p-4 bg-white/5 rounded-sm border border-white/10">
                                 <p className="text-[11px] font-bold leading-relaxed text-neutral-300">
                                     {view === 'REPORT_SALES' ? "Sales spike detected on Day 5 (+24%). Likely driven by Weekend promotional textile clearance." :
                                         view === 'REPORT_PURCHASE' ? "ABC Textiles is currently your lowest-lead-time vendor. Suggest consolidating 'Cotton' group orders." :
@@ -232,7 +232,7 @@ const BusinessReportsHub: React.FC<BusinessReportsHubProps> = ({ view }) => {
                                 ))}
                             </div>
 
-                            <button className="w-full py-4 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all mt-4">
+                            <button className="w-full py-4 bg-primary text-white rounded-sm font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all mt-4">
                                 Download Full AI Insight
                             </button>
                         </div>
@@ -317,7 +317,7 @@ const InventoryReport: React.FC<{ inventory: NonNullable<BusinessReportData['inv
             </div>
             <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm border-l-4 border-l-amber-500">
                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Low Stock Alerts</p>
-                <h3 className="text-2xl font-black tabular-nums text-amber-500">{inventory.low_stock_items} ITEMS</h3>
+                <h3 className="text-2xl font-black tabular-nums text-warning">{inventory.low_stock_items} ITEMS</h3>
                 <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400 mt-2">Reorder Immediate</p>
             </div>
             <div className="bg-neutral-900 text-white p-6 rounded-[2rem] shadow-xl border border-neutral-800">
@@ -384,7 +384,7 @@ const SupplierReport: React.FC<{ supplier: NonNullable<BusinessReportData['suppl
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-[9px] font-black uppercase text-neutral-500">GRN Mismatch</span>
-                        <span className="text-xs font-black text-amber-500">{supplier.grn_mismatches} INVs</span>
+                        <span className="text-xs font-black text-warning">{supplier.grn_mismatches} INVs</span>
                     </div>
                 </div>
             </div>
@@ -486,7 +486,7 @@ const FinancialHealthReport: React.FC<{ financial: NonNullable<BusinessReportDat
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4">
+                <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4">
                     <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-blue-500">
                         <Wallet className="w-5 h-5" />
                     </div>
@@ -495,7 +495,7 @@ const FinancialHealthReport: React.FC<{ financial: NonNullable<BusinessReportDat
                         <p className="text-sm font-black whitespace-nowrap">₹{financial.bank_balance.toLocaleString()}</p>
                     </div>
                 </div>
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4">
+                <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4">
                     <div className="p-3 bg-success/10 rounded-xl text-success">
                         <ArrowDownRight className="w-5 h-5" />
                     </div>
@@ -504,7 +504,7 @@ const FinancialHealthReport: React.FC<{ financial: NonNullable<BusinessReportDat
                         <p className="text-sm font-black whitespace-nowrap">₹{financial.receivables.toLocaleString()}</p>
                     </div>
                 </div>
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4">
+                <div className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4">
                     <div className="p-3 bg-error/10 rounded-xl text-error">
                         <ArrowUpRight className="w-5 h-5" />
                     </div>
@@ -680,7 +680,7 @@ const BalanceSheetReport: React.FC<{ balance_sheet: NonNullable<BusinessReportDa
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Current Ratio</p>
                         <h3 className="text-2xl font-black">{balance_sheet.ratios.current_ratio}</h3>
                     </div>
-                    <div className={`p-4 rounded-2xl ${parseFloat(balance_sheet.ratios.current_ratio) > 2 ? 'bg-success/10 text-success' : 'bg-amber-500/10 text-amber-500'}`}>
+                    <div className={`p-4 rounded-sm ${parseFloat(balance_sheet.ratios.current_ratio) > 2 ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
                         <ShieldAlert className="w-6 h-6" />
                     </div>
                 </div>
@@ -689,7 +689,7 @@ const BalanceSheetReport: React.FC<{ balance_sheet: NonNullable<BusinessReportDa
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Debt to Equity</p>
                         <h3 className="text-2xl font-black">{balance_sheet.ratios.debt_equity}</h3>
                     </div>
-                    <div className="p-4 bg-primary/10 text-primary rounded-2xl">
+                    <div className="p-4 bg-primary/10 text-primary rounded-sm">
                         <Zap className="w-6 h-6" />
                     </div>
                 </div>

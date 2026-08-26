@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { FileText } from 'lucide-react';
 import { PurchaseBill } from "../../../types/purchase";
 
@@ -11,7 +11,7 @@ interface BillBasicInfoProps {
 
 const BillBasicInfo: React.FC<BillBasicInfoProps> = ({ bill, vendors, onVendorChange, onBillChange }) => {
     return (
-        <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-6">
+        <div className="bg-white dark:bg-neutral-900 p-6 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-6">
             <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
                 <FileText className="w-4 h-4" /> Basic Information
             </h3>

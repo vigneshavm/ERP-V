@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { X, LucideIcon } from 'lucide-react';
 
 interface ModalProps {
@@ -30,7 +30,7 @@ const CashBankModal: React.FC<ModalProps> = ({
                 <div className="p-8 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         {Icon && (
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600">
+                            <div className="w-12 h-12 rounded-sm bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-primary">
                                 <Icon className="w-6 h-6" />
                             </div>
                         )}

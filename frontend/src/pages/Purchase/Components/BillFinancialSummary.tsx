@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Clock } from 'lucide-react';
 import { TaxBreakdown, BillStatus } from "../../../types/purchase";
 
@@ -17,7 +17,7 @@ interface BillFinancialSummaryProps {
 
 const BillFinancialSummary: React.FC<BillFinancialSummaryProps> = ({ totals, status, paymentTerms }) => {
     return (
-        <div className="bg-neutral-900 dark:bg-black rounded-2xl p-8 text-white shadow-2xl relative overflow-hidden">
+        <div className="bg-neutral-900 dark:bg-black rounded-sm p-8 text-white shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
             <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-[0.2em] mb-8">Financial Summary</h3>
 
@@ -56,7 +56,7 @@ const BillFinancialSummary: React.FC<BillFinancialSummaryProps> = ({ totals, sta
                     </div>
                     <div className="text-right">
                         <span className="block text-[10px] font-bold text-neutral-500 uppercase mb-1">Status</span>
-                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${status === 'Paid' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-brand-500/20 text-brand-500'}`}>
+                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${status === 'Paid' ? 'bg-success/20 text-success' : 'bg-brand-500/20 text-brand-500'}`}>
                             {status}
                         </span>
                     </div>

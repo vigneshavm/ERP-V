@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+﻿import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { deleteSupplier, getSupplierAnalytics } from "../../../redux/slices/supplierSlice";
@@ -128,8 +128,8 @@ const Suppliers: React.FC = () => {
       return <span className="text-slate-300 dark:text-neutral-600 ml-1 inline-flex flex-col text-[8px] leading-none"><ChevronUp className="w-2.5 h-2.5" /><ChevronDown className="w-2.5 h-2.5 -mt-0.5" /></span>;
     }
     return sortConfig.direction === 'asc'
-      ? <ChevronUp className="w-3 h-3 text-indigo-500 ml-1 inline" />
-      : <ChevronDown className="w-3 h-3 text-indigo-500 ml-1 inline" />;
+      ? <ChevronUp className="w-3 h-3 text-primary ml-1 inline" />
+      : <ChevronDown className="w-3 h-3 text-primary ml-1 inline" />;
   };
 
   return (
@@ -178,13 +178,13 @@ const Suppliers: React.FC = () => {
         />
 
         {/* Supplier Table — Clean reference style */}
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-slate-100 dark:border-neutral-700">
                   <th
-                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors select-none whitespace-nowrap"
+                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('businessName')}
                   >
                     Supplier Name <SortIcon column="businessName" />
@@ -197,25 +197,25 @@ const Suppliers: React.FC = () => {
                     Mobile Number
                   </th>
                   <th
-                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors select-none whitespace-nowrap"
+                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('totalAmount')}
                   >
                     Total Invoiced <SortIcon column="totalAmount" />
                   </th>
                   <th
-                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors select-none whitespace-nowrap"
+                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('totalPaid')}
                   >
                     Total Paid <SortIcon column="totalPaid" />
                   </th>
                   <th
-                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors select-none whitespace-nowrap"
+                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('netBalance')}
                   >
                     Balance <SortIcon column="netBalance" />
                   </th>
                   <th
-                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors select-none whitespace-nowrap"
+                    className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('lastPaymentDate')}
                   >
                     Last Payment <SortIcon column="lastPaymentDate" />
@@ -229,7 +229,7 @@ const Suppliers: React.FC = () => {
                   <tr>
                     <td colSpan={10} className="px-6 py-16 text-center">
                       <div className="flex flex-col items-center gap-3">
-                        <RefreshCcw className="w-6 h-6 text-indigo-500 animate-spin" />
+                        <RefreshCcw className="w-6 h-6 text-primary animate-spin" />
                         <p className="text-xs font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider">Loading suppliers...</p>
                       </div>
                     </td>
@@ -252,7 +252,7 @@ const Suppliers: React.FC = () => {
                     >
                       {/* Supplier Name */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-semibold text-slate-800 dark:text-neutral-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        <span className="text-sm font-semibold text-slate-800 dark:text-neutral-100 group-hover:text-primary dark:group-hover:text-primary transition-colors">
                           {supplier.businessName}
                         </span>
                       </td>
@@ -282,7 +282,7 @@ const Suppliers: React.FC = () => {
 
                       {/* Total Paid */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                        <span className="text-sm font-semibold text-emerald-600 dark:text-success">
                           ₹ {(supplier.totalPaid || 0).toLocaleString('en-IN')}
                         </span>
                       </td>
@@ -290,9 +290,9 @@ const Suppliers: React.FC = () => {
                       {/* Balance */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`text-sm font-bold flex items-center gap-1 ${(supplier.netBalance || 0) > 0
-                          ? 'text-emerald-600 dark:text-emerald-400'
+                          ? 'text-emerald-600 dark:text-success'
                           : (supplier.netBalance || 0) < 0
-                            ? 'text-rose-500 dark:text-rose-400'
+                            ? 'text-danger dark:text-danger'
                             : 'text-slate-500 dark:text-neutral-400'
                           }`}>
                           {(supplier.netBalance || 0) > 0 && <ArrowDownLeft className="w-3.5 h-3.5" />}
@@ -327,7 +327,7 @@ const Suppliers: React.FC = () => {
                               </button>
                               <button
                                 onClick={() => { setDeleteConfirm(supplier._id); setOpenMenuId(null); }}
-                                className="w-full px-4 py-2.5 text-left text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2 font-medium"
+                                className="w-full px-4 py-2.5 text-left text-sm text-rose-600 dark:text-danger hover:bg-rose-50 dark:hover:bg-danger/10 flex items-center gap-2 font-medium"
                               >
                                 <Trash2 className="w-3.5 h-3.5" /> Delete
                               </button>
@@ -353,8 +353,8 @@ const Suppliers: React.FC = () => {
       >
         <div className="space-y-4">
           <div className="flex flex-col items-center text-center gap-3">
-            <div className="w-14 h-14 rounded-xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center">
-              <Trash2 className="w-7 h-7 text-rose-500" />
+            <div className="w-14 h-14 rounded-xl bg-rose-50 dark:bg-danger/10 flex items-center justify-center">
+              <Trash2 className="w-7 h-7 text-danger" />
             </div>
             <div>
               <p className="text-lg font-bold text-slate-900 dark:text-white">Confirm Deletion</p>

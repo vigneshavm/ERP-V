@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Palette, Sun, Moon, Shield, Upload, Info, Image as ImageIcon } from 'lucide-react';
 import { BrandingTabProps } from './types';
 
@@ -25,7 +25,7 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
             <section>
                 <div className="flex items-center gap-3 mb-8">
                     <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center">
-                        <Palette className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+                        <Palette className="w-5 h-5 text-violet-600 dark:text-accent" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Visual Identity</h3>
@@ -37,10 +37,10 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                     {/* Theme Toggle */}
                     <div className="space-y-4">
                         <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Enterprise Interface Theme</label>
-                        <div className="flex bg-slate-100 dark:bg-slate-900/50 p-2 rounded-2xl border border-slate-200 dark:border-slate-800 w-full shadow-inner">
+                        <div className="flex bg-slate-100 dark:bg-slate-900/50 p-2 rounded-sm border border-slate-200 dark:border-slate-800 w-full shadow-inner">
                             <button
                                 onClick={() => setTenantTheme('light')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${tenantTheme === 'light' ? 'bg-white text-indigo-600 shadow-xl' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${tenantTheme === 'light' ? 'bg-white text-primary shadow-xl' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
                             >
                                 <Sun className="w-4 h-4" /> LIGHT
                             </button>
@@ -52,7 +52,7 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                             </button>
                             <button
                                 onClick={() => setTenantTheme('system')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${tenantTheme === 'system' ? 'bg-white dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 shadow-xl border border-indigo-100 dark:border-indigo-900/50' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                                className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all ${tenantTheme === 'system' ? 'bg-white dark:bg-primary/20 text-primary dark:text-primary shadow-xl border border-indigo-100 dark:border-indigo-900/50' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
                             >
                                 <Shield className="w-4 h-4" /> SYSTEM
                             </button>
@@ -111,7 +111,7 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                                 </div>
                             )}
                         </div>
-                        <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg border-4 border-white dark:border-slate-900 animate-bounce">
+                        <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-indigo-600 text-white rounded-sm flex items-center justify-center shadow-lg border-4 border-white dark:border-slate-900 animate-bounce">
                             <ImageIcon className="w-5 h-5" />
                         </div>
                     </div>
@@ -124,10 +124,10 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
 
                         <div className="flex flex-wrap justify-center md:justify-start gap-3">
                             <input type="file" id="logo-upload" accept="image/*" className="hidden" onChange={handleLogoUpload} />
-                            <label htmlFor="logo-upload" className="cursor-pointer inline-flex items-center gap-3 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-sm font-black transition-all shadow-lg hover:shadow-indigo-500/20 active:scale-95">
+                            <label htmlFor="logo-upload" className="cursor-pointer inline-flex items-center gap-3 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-sm text-sm font-black transition-all shadow-lg hover:shadow-indigo-500/20 active:scale-95">
                                 <Upload className="w-4 h-4" /> UPLOAD NEW ASSET
                             </label>
-                            <button className="px-8 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-2xl text-sm font-black hover:bg-slate-50 transition-all">
+                            <button className="px-8 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm text-sm font-black hover:bg-slate-50 transition-all">
                                 REMOVE
                             </button>
                         </div>

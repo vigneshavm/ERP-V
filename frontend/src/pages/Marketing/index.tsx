@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Palette, MessageSquare, Ticket, Mail, LayoutTemplate, Percent } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "@/redux/store";
@@ -40,7 +40,7 @@ const Marketing: React.FC = () => {
     return (
         <div className="space-y-8">
             <header className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white dark:bg-[#020617] p-4 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
-                <div className="flex bg-slate-100 dark:bg-slate-900 p-1.5 rounded-3xl overflow-x-auto no-scrollbar max-w-full">
+                <div className="flex bg-slate-100 dark:bg-slate-900 p-1.5 rounded-sm overflow-x-auto no-scrollbar max-w-full">
                     {/* Simplified Navigation for quick switching if needed, strictly we rely on Sidebar activeTab */}
                     {/* We can keep the existing buttons or expand them. For now, let's keep the quick toggles for main items or just rely on sidebar. 
                         The sidebar is the main nav. Let's just show context.

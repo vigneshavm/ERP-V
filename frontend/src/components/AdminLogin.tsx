@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Shield, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 
 interface AdminLoginProps {
@@ -33,9 +33,9 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
 
     return (
         <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden">
+            <div className="max-w-md w-full bg-slate-800 rounded-sm shadow-2xl border border-slate-700 overflow-hidden">
                 <div className="p-8 text-center border-b border-slate-700 bg-slate-800/50">
-                    <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-600/30">
+                    <div className="w-16 h-16 bg-indigo-600 rounded-sm flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-600/30">
                         <Shield className="w-8 h-8 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-1">System Access</h2>

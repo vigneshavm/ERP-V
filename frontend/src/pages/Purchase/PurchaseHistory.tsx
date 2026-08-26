@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Eye, Check, Lock } from 'lucide-react';
 import { PurchaseOrder } from "../../types/purchase";
 
@@ -38,12 +38,12 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
                                 </div>
                                 <p className="text-xs text-slate-500 mt-1">{new Date(order.po_date).toLocaleDateString()} {new Date(order.po_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
-                            <span className={`px-2 py-1 rounded text-xs font-bold ${order.status === 'Approved' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400'}`}>
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${order.status === 'Approved' ? 'bg-emerald-100 dark:bg-success/20 text-emerald-700 dark:text-success' : 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400'}`}>
                                 {order.status}
                             </span>
                         </div>
                         <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors flex items-center gap-1">
+                            <span className="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-primary dark:group-hover:text-primary transition-colors flex items-center gap-1">
                                 {order.items.length} items
                                 <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </span>

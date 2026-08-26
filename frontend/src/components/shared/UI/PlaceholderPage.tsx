@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Construction } from 'lucide-react';
 
 interface PlaceholderPageProps {
@@ -8,7 +8,7 @@ interface PlaceholderPageProps {
 
 const PlaceholderPage: React.FC<PlaceholderPageProps> = ({ title, description }) => {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[500px] h-full p-8 text-center bg-white dark:bg-slate-900 rounded-2xl m-4 border-2 border-dashed border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col items-center justify-center min-h-[500px] h-full p-8 text-center bg-white dark:bg-slate-900 rounded-sm m-4 border-2 border-dashed border-slate-200 dark:border-slate-800">
             <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 text-slate-400 animate-pulse">
                 <Construction className="w-10 h-10" />
             </div>

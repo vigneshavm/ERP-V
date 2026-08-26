@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ConflictEntry, SyncStatus } from "../../../types/tenant";
 import { CheckCircle2, AlertTriangle, Clock, GitMerge, Edit3 } from 'lucide-react';
 
@@ -13,7 +13,7 @@ const ConflictsSection: React.FC<ConflictsSectionProps> = ({ conflicts, formatTi
             <h2 className="text-xl font-black text-slate-900 dark:text-white">Conflict Resolution</h2>
 
             {conflicts.length === 0 ? (
-                <div className="text-center py-16 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                <div className="text-center py-16 bg-slate-50 dark:bg-slate-800/50 rounded-sm">
                     <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
                     <p className="text-lg font-bold text-slate-700 dark:text-slate-300">No Conflicts</p>
                     <p className="text-slate-500">All your data is perfectly synced across devices.</p>
@@ -21,7 +21,7 @@ const ConflictsSection: React.FC<ConflictsSectionProps> = ({ conflicts, formatTi
             ) : (
                 <div className="space-y-4">
                     {conflicts.map((conflict) => (
-                        <div key={conflict.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-red-200 dark:border-red-900/50 p-6">
+                        <div key={conflict.id} className="bg-white dark:bg-slate-900 rounded-sm border border-red-200 dark:border-red-900/50 p-6">
                             <div className="flex items-start justify-between">
                                 <div>
                                     <div className="flex items-center gap-2 mb-2">

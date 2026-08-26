@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -88,7 +88,7 @@ const EditCustomer = () => {
             />
 
             <div className="max-w-5xl mx-auto space-y-6">
-                <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30 p-4 rounded-2xl flex items-start gap-4 text-amber-900 dark:text-amber-300">
+                <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30 p-4 rounded-sm flex items-start gap-4 text-amber-900 dark:text-amber-300">
                     <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-xl">
                         < Zap className="w-5 h-5 text-amber-600" />
                     </div>

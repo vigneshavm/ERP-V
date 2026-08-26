@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { FileSpreadsheet, Printer, Search } from 'lucide-react';
 import Layout from "../../components/shared/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
@@ -66,7 +66,7 @@ const OutstandingPayables: React.FC = () => {
                             </button>
                             <button
                                 onClick={printReport}
-                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-600 hover:text-indigo-600 transition-all shadow-sm"
+                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-600 hover:text-primary transition-all shadow-sm"
                             >
                                 <Printer size={16} /> Print
                             </button>
@@ -111,9 +111,9 @@ const OutstandingPayables: React.FC = () => {
 
                 {/* Empty State */}
                 {filteredBills.length === 0 && (
-                    <div className="py-20 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mt-6">
+                    <div className="py-20 text-center bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm mt-6">
                         <div className="flex flex-col items-center gap-4">
-                            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-2xl flex items-center justify-center text-slate-300">
+                            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-sm flex items-center justify-center text-slate-300">
                                 <Search size={32} />
                             </div>
                             <div>

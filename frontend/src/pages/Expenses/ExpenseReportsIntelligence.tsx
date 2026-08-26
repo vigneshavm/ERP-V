@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import { useExpenseReports } from "../../hooks/useExpenseReports";
@@ -234,12 +234,12 @@ const ExpenseReportsIntelligence: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
-                            <button className="w-full mt-8 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                            <button className="w-full mt-8 py-4 bg-primary text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
                                 Apply Optimized Policies
                             </button>
                         </div>
 
-                        <div className="p-6 rounded-3xl bg-neutral-900 text-white relative overflow-hidden">
+                        <div className="p-6 rounded-sm bg-neutral-900 text-white relative overflow-hidden">
                             <Activity className="absolute top-0 right-0 p-4 opacity-10" />
                             <h5 className="text-[9px] font-black uppercase tracking-widest text-primary mb-2">Compliance Rating</h5>
                             <div className="flex items-end gap-2">

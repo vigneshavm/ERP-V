@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import { useExpenseCategories, ExpenseCategory } from "../../hooks/useExpenseCategories";
@@ -84,7 +84,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                     </div>
                     <button
                         onClick={startNew}
-                        className="px-6 py-3 bg-primary text-white rounded-2xl font-black text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"
+                        className="px-6 py-3 bg-primary text-white rounded-sm font-black text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"
                     >
                         <Plus className="w-5 h-5" />
                         <span>Create Category Policy</span>
@@ -128,7 +128,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="Search category policy..."
-                                className="w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20"
+                                className="w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border-none rounded-sm text-sm focus:ring-2 focus:ring-primary/20"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -156,7 +156,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                                     <tr key={cat.id} className="group hover:bg-neutral-50 transition-colors">
                                         <td className="p-6">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-2xl bg-primary/5 text-primary flex items-center justify-center font-black">
+                                                <div className="w-10 h-10 rounded-sm bg-primary/5 text-primary flex items-center justify-center font-black">
                                                     {cat.name[0]}
                                                 </div>
                                                 <div>
@@ -229,7 +229,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                                         <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 mb-2 block">Category Name</label>
                                         <input
                                             required
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20"
+                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-sm text-sm font-bold focus:ring-2 focus:ring-primary/20"
                                             placeholder="e.g. Travel, Rent..."
                                             value={editingCategory?.name}
                                             onChange={e => setEditingCategory(prev => prev ? ({ ...prev, name: e.target.value }) : null)}
@@ -240,14 +240,14 @@ const ExpenseCategoriesManager: React.FC = () => {
                                         <input
                                             type="number"
                                             required
-                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20 tabular-nums"
+                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-sm text-sm font-bold focus:ring-2 focus:ring-primary/20 tabular-nums"
                                             placeholder="100000"
                                             value={editingCategory?.monthly_budget}
                                             onChange={e => setEditingCategory(prev => prev ? ({ ...prev, monthly_budget: Number(e.target.value) }) : null)}
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="p-4 bg-neutral-50 dark:bg-neutral-900 rounded-2xl flex items-center justify-between">
+                                        <div className="p-4 bg-neutral-50 dark:bg-neutral-900 rounded-sm flex items-center justify-between">
                                             <div>
                                                 <p className="text-[10px] font-black uppercase tracking-widest">Cash Allowed</p>
                                                 <p className="text-[9px] text-neutral-400 font-bold">Bypass Bank requirement</p>
@@ -260,7 +260,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                                                 <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${editingCategory?.is_cash_allowed ? 'left-7' : 'left-1'}`} />
                                             </button>
                                         </div>
-                                        <div className="p-4 bg-neutral-50 dark:bg-neutral-900 rounded-2xl flex items-center justify-between">
+                                        <div className="p-4 bg-neutral-50 dark:bg-neutral-900 rounded-sm flex items-center justify-between">
                                             <div>
                                                 <p className="text-[10px] font-black uppercase tracking-widest">Approval Req.</p>
                                                 <p className="text-[9px] text-neutral-400 font-bold">Mandate owner sign-off</p>
@@ -279,13 +279,13 @@ const ExpenseCategoriesManager: React.FC = () => {
                                     <button
                                         type="button"
                                         onClick={() => setIsModalOpen(false)}
-                                        className="flex-1 px-6 py-4 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-2xl font-black text-sm hover:bg-neutral-50 transition-all"
+                                        className="flex-1 px-6 py-4 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-sm font-black text-sm hover:bg-neutral-50 transition-all"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        className="flex-1 px-6 py-4 bg-primary text-white rounded-2xl font-black text-sm shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
+                                        className="flex-1 px-6 py-4 bg-primary text-white rounded-sm font-black text-sm shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
                                     >
                                         Activate Policy
                                     </button>

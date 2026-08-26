@@ -1,2 +1,15 @@
-// Demo data removed
-export const demoDB: Record<string, any[]> = {};
+export * from './customers';
+export * from './sales_invoices';
+export * from './payments';
+export * from './estimates';
+export * from './transactions';
+export * from './inventory';
+export * from './employees';
+export * from './branches';
+export * from './suppliers';
+export * from './expenses';
+export * from './purchases';
+export * from './bank_accounts';
+export * from './pdcs';
+export * from './alerts';
+export * from './floor_alerts';

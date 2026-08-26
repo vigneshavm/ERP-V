@@ -91,8 +91,15 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
     return (
         <div
             ref={posContainerRef}
-            className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-neutral-50 dark:bg-neutral-950 p-4 pb-20 lg:pb-4' : 'h-[calc(100vh-4rem)] pb-20 lg:pb-0'}`}
+            className={`flex flex-col relative transition-all duration-300 ${isFullScreen ? 'h-screen fixed inset-0 z-50 bg-app p-4 pb-20 lg:pb-4' : 'h-[calc(100vh-4rem)] pb-20 lg:pb-0'}`}
         >
+            {/* Ambient Background Blobs */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                <div className="absolute top-[-15%] left-[5%] w-[55%] h-[55%] bg-warning/10 rounded-full blur-[160px] animate-aura opacity-60" />
+                <div className="absolute bottom-[-10%] right-[5%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[140px] animate-aura opacity-50" style={{ animationDelay: '7s' }} />
+                <div className="absolute top-[40%] right-[20%] w-[25%] h-[25%] bg-accent/5 rounded-full blur-[100px] animate-aura opacity-40" style={{ animationDelay: '3s' }} />
+            </div>
+
             {/* Sector Specific Badge */}
             <div className="absolute top-2 right-4 z-50 pointer-events-none opacity-20">
                 <div className="flex items-center gap-2 text-primary font-black tracking-tighter text-xl">
@@ -175,7 +182,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-6 flex-1 min-h-0 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden shadow-sm">
+            <div className="grid grid-cols-12 gap-6 flex-1 min-h-0 bg-card/80 backdrop-blur-md border border-default rounded-sm overflow-hidden shadow-xl">
                 {/* Main View Area */}
                 <div className={`col-span-12 lg:col-span-8 flex flex-col min-h-0 ${mobileTab === 'MAIN' ? 'flex' : 'hidden lg:flex'}`}>
                     {viewMode === 'VISUAL' ? (
@@ -203,14 +210,14 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                 </div>
 
                 {/* Sidebar Area */}
-                <div className={`col-span-12 lg:col-span-4 flex flex-col min-h-0 border-l border-neutral-200 dark:border-neutral-800 ${mobileTab === 'CART' ? 'flex' : 'hidden lg:flex'}`}>
+                <div className={`col-span-12 lg:col-span-4 flex flex-col min-h-0 border-l border-default ${mobileTab === 'CART' ? 'flex' : 'hidden lg:flex'}`}>
                     <div className="flex overflow-hidden flex-col h-full">
                         <POSTerminalInfo
                             cashierName={user?.name}
                             counterName={activeCounterName}
                             counterId={activeCounterId}
                         />
-                        <div className="p-2 bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-200 dark:border-neutral-800">
+                        <div className="p-2 bg-surface/50 border-b border-default">
                             <POSCustomerPanel
                                 activeCustomer={activeCustomer}
                                 customers={customers}
@@ -223,7 +230,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         {/* Last Bill Card */}
                         {lastBill && (
                             <div className="px-2 pb-1">
-                                <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-2 shadow-sm">
+                                <div className="bg-card border border-default rounded-sm p-2 shadow-sm">
                                     <div className="flex justify-between items-center mb-1">
                                         <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">Last Bill</span>
                                         <div className="flex gap-1">
@@ -257,7 +264,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             </div>
                         )}
 
-                        <div className="p-2 bg-neutral-50 dark:bg-neutral-900/50 border-t border-neutral-200 dark:border-neutral-800">
+                        <div className="p-2 bg-surface/50 border-t border-default">
                             <POSFooter
                                 cartSubtotal={cartSubtotal}
                                 taxAmount={taxAmount}

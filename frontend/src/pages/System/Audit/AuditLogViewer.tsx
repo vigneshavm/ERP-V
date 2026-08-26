@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Layout from '../../../components/shared/Layout/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { Search, Filter, Download, Shield, Eye, Calendar, Clock, Database, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -72,7 +72,7 @@ const AuditLogViewer = () => {
                 />
 
                 {/* Filters */}
-                <div className="bg-white dark:bg-neutral-900 p-5 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-800 flex flex-wrap gap-5 items-end mb-8 transition-colors">
+                <div className="bg-white dark:bg-neutral-900 p-5 rounded-sm shadow-sm border border-neutral-200 dark:border-neutral-800 flex flex-wrap gap-5 items-end mb-8 transition-colors">
                     <div className="flex-1 min-w-[150px]">
                         <label className="text-[10px] font-bold tracking-wider text-neutral-500 dark:text-neutral-400 block mb-1.5 uppercase">Entity Type</label>
                         <select
@@ -137,7 +137,7 @@ const AuditLogViewer = () => {
                 </div>
 
                 {/* Log List */}
-                <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden transition-colors">
+                <div className="bg-white dark:bg-neutral-900 rounded-sm shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden transition-colors">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left whitespace-nowrap">
                             <thead>
@@ -268,7 +268,7 @@ const AuditLogViewer = () => {
                 {/* Detail Modal */}
                 {selectedLog && (
                     <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-                        <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col border border-neutral-200 dark:border-neutral-800 animate-in zoom-in-95 duration-200">
+                        <div className="bg-white dark:bg-neutral-900 rounded-sm shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col border border-neutral-200 dark:border-neutral-800 animate-in zoom-in-95 duration-200">
                             <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-950/50">
                                 <h3 className="font-black text-lg text-neutral-900 dark:text-white flex items-center gap-2.5">
                                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">

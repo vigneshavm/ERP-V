@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setActiveTab } from '@/redux/slices/uiSlice';
 import { RootState, AppDispatch } from '@/redux/store';
@@ -122,7 +122,7 @@ const ReportsModule: React.FC = () => {
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
                 <button
                     onClick={() => setSelectedReportSlug(null)}
-                    className="flex items-center gap-2 text-neutral-500 hover:text-indigo-600 transition-colors text-xs font-black uppercase tracking-widest group"
+                    className="flex items-center gap-2 text-neutral-500 hover:text-primary transition-colors text-xs font-black uppercase tracking-widest group"
                 >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                     Back to Catalog
@@ -134,7 +134,7 @@ const ReportsModule: React.FC = () => {
                     <>
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 bg-white dark:bg-neutral-900 p-8 rounded-[2rem] border border-neutral-200 dark:border-neutral-800 shadow-sm">
                             <div className="flex items-start gap-5">
-                                <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                                <div className="w-14 h-14 rounded-sm bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
                                     <currentReport.icon className="w-7 h-7" />
                                 </div>
                                 <div>
@@ -189,7 +189,7 @@ const ReportsModule: React.FC = () => {
 
     const ReportCard = ({ report, categoryId }: { report: ReportItem, categoryId: string, key?: string }) => (
         <div
-            className="group relative bg-white dark:bg-neutral-900 rounded-2xl p-6 border border-neutral-200 dark:border-neutral-800 hover:border-primary dark:hover:border-primary hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 flex flex-col h-full cursor-pointer animate-in fade-in zoom-in-95"
+            className="group relative bg-white dark:bg-neutral-900 rounded-sm p-6 border border-neutral-200 dark:border-neutral-800 hover:border-primary dark:hover:border-primary hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 flex flex-col h-full cursor-pointer animate-in fade-in zoom-in-95"
             onClick={() => setSelectedReportSlug(report.slug)}
         >
             <div className="flex items-start justify-between mb-4">
@@ -293,15 +293,15 @@ const ReportsModule: React.FC = () => {
                                     </p>
 
                                     <div className="mt-10 flex flex-wrap justify-center lg:justify-start gap-4">
-                                        <div className="flex items-center gap-2 px-5 py-2.5 bg-neutral-800/40 rounded-2xl border border-neutral-700/50 text-xs font-bold text-neutral-300 backdrop-blur-sm">
+                                        <div className="flex items-center gap-2 px-5 py-2.5 bg-neutral-800/40 rounded-sm border border-neutral-700/50 text-xs font-bold text-neutral-300 backdrop-blur-sm">
                                             <Sparkles className="w-3 h-3 text-primary" />
                                             Tailored KPIs
                                         </div>
-                                        <div className="flex items-center gap-2 px-5 py-2.5 bg-neutral-800/40 rounded-2xl border border-neutral-700/50 text-xs font-bold text-neutral-300 backdrop-blur-sm">
+                                        <div className="flex items-center gap-2 px-5 py-2.5 bg-neutral-800/40 rounded-sm border border-neutral-700/50 text-xs font-bold text-neutral-300 backdrop-blur-sm">
                                             <Download className="w-3 h-3 text-primary" />
                                             Automated Exports
                                         </div>
-                                        <div className="flex items-center gap-2 px-5 py-2.5 bg-neutral-800/40 rounded-2xl border border-neutral-700/50 text-xs font-bold text-neutral-300 backdrop-blur-sm">
+                                        <div className="flex items-center gap-2 px-5 py-2.5 bg-neutral-800/40 rounded-sm border border-neutral-700/50 text-xs font-bold text-neutral-300 backdrop-blur-sm">
                                             <Lock className="w-3 h-3 text-primary" />
                                             Role-Based Access
                                         </div>
@@ -320,7 +320,7 @@ const ReportsModule: React.FC = () => {
                         {/* Enterprise Trust Badges */}
                         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 opacity-40 grayscale group-hover:grayscale-0 transition-all">
                             {['Data Integrity', 'GDPR Compliant', 'Real-time Sync', 'Audit Ready'].map(badge => (
-                                <div key={badge} className="flex items-center justify-center gap-2 p-4 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl">
+                                <div key={badge} className="flex items-center justify-center gap-2 p-4 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-sm">
                                     <div className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">{badge}</span>
                                 </div>
