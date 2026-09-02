@@ -5,32 +5,21 @@ import { getAllItems } from "../../../redux/slices/inventorySlice";
 import { getAllCustomers } from "../../../redux/slices/customerSlice";
 import api from "../../../services/api";
 import { toast } from "react-toastify";
-import EstimateTemplate from "../../../components/sales/EstimateTemplate";
 import { RootState } from "../../../redux/store";
 import {
-  Calculator,
-  FileText,
   User,
   Search,
   X,
   Phone,
-  AlertCircle,
-  CheckCircle,
   Plus,
   Trash2,
-  Save,
   ArrowLeft,
-  Clock,
   ChevronRight,
-  ShieldCheck,
   Zap,
   Info,
   Layers,
-  Globe,
-  RefreshCw,
   ShoppingBag,
   Tag,
-  IndianRupee,
   Minus
 } from 'lucide-react';
 import { Customer } from "../../../types/sales";

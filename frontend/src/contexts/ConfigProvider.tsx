@@ -4,7 +4,7 @@ import { RootState } from '@/redux/store';
 import { Tenant } from "../types/tenant";
 
 import { generatePalette } from "../utils/colorUtils";
-import { getStoredTheme, setStoredTheme, applyTheme, Theme } from "../utils/theme";
+import { getStoredTheme, applyTheme, Theme } from "../utils/theme";
 import { ConfigContext, useConfig } from './ConfigContext';
 export { useConfig };
 

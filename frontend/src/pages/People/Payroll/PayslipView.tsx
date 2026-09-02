@@ -1,8 +1,8 @@
-﻿import React, { useState } from 'react';
+﻿import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
-import { ArrowLeft, Printer, Download, Mail, Send, DollarSign, Calendar } from 'lucide-react';
+import { Printer, Mail } from 'lucide-react';
 import { formatDateISO } from '../../../utils/helpers';
 import api from '../../../services/api';
 const PayslipView = () => {
@@ -34,7 +34,7 @@ const PayslipView = () => {
         try {
             await api.post(`/api/hr/payroll/payslips/${payslip._id}/send`, { channels: ['EMAIL'] });
             showToast('Payslip queued for email delivery', 'success');
-        } catch (error) {
+        } catch {
             showToast('Failed to send email', 'error');
         }
     };

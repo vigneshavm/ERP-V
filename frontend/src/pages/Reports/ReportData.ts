@@ -1,5 +1,4 @@
 import {
-    FileText,
     BarChart3,
     TrendingUp,
     Users,
@@ -10,12 +9,10 @@ import {
     Database,
     History,
     BookOpen,
-    CreditCard,
     ClipboardList,
     PieChart,
     Building2,
     ShieldCheck,
-    Briefcase,
     Globe,
     Zap,
     Clock,

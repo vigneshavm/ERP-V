@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Building2, ArrowUpDown, TrendingUp, ExternalLink } from 'lucide-react';
 import { AgedBill } from '../hooks/useOutstandingPayables';
+import { formatDate } from '../../../utils/helpers';
 
 interface PayablesTableProps {
     viewMode: 'bill-wise' | 'vendor-wise';
@@ -16,8 +17,8 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
     viewMode,
     filteredBills,
     vendorSummary,
-    sortBy,
-    sortOrder,
+    sortBy: __sortBy,
+    sortOrder: __sortOrder,
     onSort,
     onQuickPayment
 }) => {
@@ -64,7 +65,7 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                                                     <div className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-2">
                                                         <span className="font-bold text-emerald-600">#{bill.billNumber}</span>
                                                         <span>•</span>
-                                                        <span>{new Date(bill.billDate).toLocaleDateString()}</span>
+                                                        <span>{formatDate(bill.billDate)}</span>
                                                         {bill.hasDiscount && <span className="flex items-center gap-0.5 text-warning font-bold"><TrendingUp size={10} /> Discount Eligible</span>}
                                                     </div>
                                                 </div>
@@ -83,7 +84,7 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                                                         />
                                                     </div>
                                                 </div>
-                                                <div className="text-[9px] text-slate-400 font-medium">Due: {new Date(bill.dueDate).toLocaleDateString()}</div>
+                                                <div className="text-[9px] text-slate-400 font-medium">Due: {formatDate(bill.dueDate)}</div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-right">

@@ -5,7 +5,7 @@ import { SmsParserService } from '../services/SmsParserService.js';
 import Expense from '../../expense/models/Expense.js';
 import BankAccount from '../../finance/models/BankAccount.js';
 import CashbankTransaction from '../../finance/models/CashbankTransaction.js';
-import { info, error } from '../../../config/logger.js';
+import { error } from '../../../config/logger.js';
 
 interface AuthenticatedRequest extends Request {
     user?: {

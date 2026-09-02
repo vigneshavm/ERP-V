@@ -4,27 +4,13 @@ import PageHeader from "../../../components/shared/Layout/PageHeader";
 import {
     TrendingDown,
     TrendingUp,
-    Plus,
-    X,
-    ChevronRight,
-    Mic,
-    Search,
-    Home,
-    TrendingUp as TrendingUpIcon,
-    PieChart,
-    Car,
-    Gift,
-    User,
-    Calendar,
-    ArrowRight,
-    Edit3,
-    Target
+    Plus
 } from 'lucide-react';
 import { Loan } from './types';
 
 const LoanAccounts: React.FC = () => {
     const [selectedTab, setSelectedTab] = useState<'all' | 'borrowed' | 'lent'>('all');
-    const [showAddLoan, setShowAddLoan] = useState(false);
+    const [_showAddLoan, setShowAddLoan] = useState(false);
 
     const loans: Loan[] = [
         {

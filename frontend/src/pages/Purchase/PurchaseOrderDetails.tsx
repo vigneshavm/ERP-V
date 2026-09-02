@@ -1,14 +1,15 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { ArrowLeft, CheckCircle, FileOutput, Printer, Lock, Info, Clock, Activity, FileText, CheckCircle2, XCircle, ChevronRight, Zap, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, FileOutput, Printer, Info, Clock, Activity, FileText, CheckCircle2, XCircle, Zap, ShieldCheck, Truck } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../hooks/usePurchaseOrders";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "../../redux/store";
 
 import CreateBillModal from './Modals/CreateBillModal';
-import ReceiveGoodsModal from './Modals/ReceiveGoodsModal';
+import ReceiveGoodsModal, { ReceiveGoodsItem } from './Modals/ReceiveGoodsModal';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AppDispatch } from '../../redux/store';
-import { fetchPurchaseById, resetSelectedOrder, updateOrder } from '../../redux/slices/purchaseSlice';
+import { fetchPurchaseById, addGRN } from '../../redux/slices/purchaseSlice';
+import { createGRN, mapGrnToFrontendGRN } from '../../services/grnService';
 
 interface Props {
     order?: PurchaseOrder;
@@ -17,9 +18,12 @@ interface Props {
     onApprove?: () => void;
     onConvert?: (order: PurchaseOrder, items: PurchaseOrderItem[]) => void;
     onUpdateStatus?: (orderId: string, status: string) => void;
+    // Called after a real GRN has been created against this order, so the caller can re-fetch
+    // the authoritative PO state (status/received quantities recalculated server-side).
+    onAfterReceive?: (orderId: string) => void;
 }
 
-const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propItems, onBack, onApprove, onConvert, onUpdateStatus }) => {
+const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propItems, onBack, onApprove: __onApprove, onConvert: __onConvert, onUpdateStatus, onAfterReceive }) => {
     const { role } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
@@ -48,6 +52,8 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 
     const [showReceiveModal, setShowReceiveModal] = useState(false);
     const [showBillModal, setShowBillModal] = useState(false);
+    const [isReceiving, setIsReceiving] = useState(false);
+    const [receiveError, setReceiveError] = useState<string | null>(null);
 
     const handleBillCreated = () => {
         if (!order) return;
@@ -55,18 +61,52 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
         setShowBillModal(false);
     };
 
-    // Permissions
+    // Permissions - status vocabulary matches backend IPurchase.status exactly (DRAFT ->
+    // SUBMITTED -> APPROVED -> SENT_TO_VENDOR -> [PARTIALLY_RECEIVED ->] COMPLETED).
     const isOwner = role === 'Owner';
-    const canApprove = isOwner && (order?.status === 'Pending Approval' || order?.status === 'Pending');
-    const canSubmit = order?.status === 'Draft';
-    const canReceive = order?.status === 'Approved' || order?.status === 'Partial Receipt';
-    const canBill = order?.status === 'Fully Received' || order?.status === 'Partial Receipt';
+    const canSubmit = order?.status === 'DRAFT';
+    const canApprove = isOwner && order?.status === 'SUBMITTED';
+    const canSendToVendor = order?.status === 'APPROVED';
+    const canReceive = order?.status === 'SENT_TO_VENDOR' || order?.status === 'PARTIALLY_RECEIVED';
+    const canBill = order?.status === 'COMPLETED' || order?.status === 'PARTIALLY_RECEIVED';
     const canPay = order?.status === 'Billed';
 
-    const handleReceiveConfirm = (receivedItems: any[], status: 'Partial Receipt' | 'Fully Received') => {
+    // Records a real Goods Receipt Note against this PO: POST /api/grn (GRNController.createGRN)
+    // computes acceptedQty per item, moves inventory via InventoryService.addStock, writes a
+    // StockLog entry, and recalculates the Purchase's status - this is no longer a local status
+    // relabel, it's the actual E2E-001 "create GRN / update inventory" step.
+    const handleReceiveConfirm = async (receivedItems: ReceiveGoodsItem[]) => {
         if (!order) return;
-        onUpdateStatus?.(order.id, status);
-        setShowReceiveModal(false);
+        const itemsToSend = receivedItems.filter(i => i.receivedQty > 0);
+        if (itemsToSend.length === 0) {
+            setShowReceiveModal(false);
+            return;
+        }
+        setIsReceiving(true);
+        setReceiveError(null);
+        try {
+            const result = await createGRN({
+                purchaseId: order.id,
+                items: itemsToSend.map(i => ({
+                    productId: i.productId,
+                    productName: i.productName,
+                    receivedQty: i.receivedQty,
+                    rejectedQty: i.rejectedQty,
+                })),
+            });
+            if (result?.grn) {
+                dispatch(addGRN(mapGrnToFrontendGRN(result.grn, {
+                    poNumber: order.po_number,
+                    vendorName: order.vendor_name,
+                })));
+            }
+            setShowReceiveModal(false);
+            onAfterReceive?.(order.id);
+        } catch (err: any) {
+            setReceiveError(err?.response?.data?.message || err?.message || 'Failed to record goods receipt');
+        } finally {
+            setIsReceiving(false);
+        }
     };
 
     if (isProcessing && !order) {
@@ -93,18 +133,20 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
         );
     }
 
-    // Lifecycle Steps
+    // Lifecycle Steps - matches backend IPurchase.status (DRAFT -> SUBMITTED -> APPROVED ->
+    // SENT_TO_VENDOR -> [PARTIALLY_RECEIVED ->] COMPLETED), plus the local-only Billed/Paid tail.
     const steps = [
-        { label: 'Draft', status: 'Draft' },
-        { label: 'Pending', status: ['Pending', 'Pending Approval'] },
-        { label: 'Approved', status: 'Approved' },
-        { label: 'Received', status: ['Partial Receipt', 'Fully Received', 'Converted'] },
+        { label: 'Draft', status: 'DRAFT' },
+        { label: 'Pending', status: 'SUBMITTED' },
+        { label: 'Approved', status: 'APPROVED' },
+        { label: 'Sent to Vendor', status: 'SENT_TO_VENDOR' },
+        { label: 'Received', status: ['PARTIALLY_RECEIVED', 'COMPLETED', 'RECEIVED'] },
         { label: 'Billed', status: 'Billed' },
         { label: 'Paid', status: 'Paid' }
     ];
 
     const getCurrentStepIndex = () => {
-        if (order.status === 'Cancelled') return -1;
+        if (order.status === 'CANCELLED') return -1;
         return steps.findIndex(step =>
             Array.isArray(step.status)
                 ? step.status.includes(order.status)
@@ -127,7 +169,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                             <h2 className="text-3xl font-black tracking-tighter text-neutral-900 dark:text-white uppercase">
                                 #{order.po_number}
                             </h2>
-                            <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full ${order.status === 'Cancelled' ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/20' : 'bg-primary/10 text-primary'}`}>
+                            <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full ${order.status === 'CANCELLED' ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/20' : 'bg-primary/10 text-primary'}`}>
                                 {order.status}
                             </span>
                         </div>
@@ -142,7 +184,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 
                     {canSubmit && (
                         <button
-                            onClick={() => onUpdateStatus?.(order.id, 'Pending Approval')}
+                            onClick={() => onUpdateStatus?.(order.id, 'SUBMITTED')}
                             className="px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
                         >
                             <Zap className="w-4 h-4" /> Submit Protocol
@@ -152,18 +194,27 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {canApprove && (
                         <div className="flex gap-3">
                             <button
-                                onClick={() => onUpdateStatus?.(order.id, 'Draft')}
+                                onClick={() => onUpdateStatus?.(order.id, 'DRAFT')}
                                 className="px-6 py-3 bg-rose-50 text-rose-600 dark:bg-rose-900/20 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all active:scale-95 flex items-center gap-2"
                             >
                                 <XCircle className="w-4 h-4" /> Reject Node
                             </button>
                             <button
-                                onClick={() => onUpdateStatus?.(order.id, 'Approved')}
+                                onClick={() => onUpdateStatus?.(order.id, 'APPROVED')}
                                 className="px-6 py-3 bg-emerald-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-600 transition hover:scale-105 active:scale-95"
                             >
                                 <CheckCircle2 className="w-4 h-4" /> Authorize Node
                             </button>
                         </div>
+                    )}
+
+                    {canSendToVendor && (
+                        <button
+                            onClick={() => onUpdateStatus?.(order.id, 'SENT_TO_VENDOR')}
+                            className="px-6 py-3 bg-sky-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-sky-500/20 flex items-center gap-2 hover:bg-sky-600 transition hover:scale-105 active:scale-95"
+                        >
+                            <Truck className="w-4 h-4" /> Send to Vendor
+                        </button>
                     )}
 
                     {canReceive && (
@@ -205,7 +256,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {steps.map((step, idx) => {
                         const isCompleted = currentStepIndex > idx;
                         const isCurrent = currentStepIndex === idx;
-                        const isCancelled = order.status === 'Cancelled';
+                        const isCancelled = order.status === 'CANCELLED';
 
                         return (
                             <React.Fragment key={step.label}>
@@ -370,9 +421,11 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             {/* Modals */}
             <ReceiveGoodsModal
                 isOpen={showReceiveModal}
-                onClose={() => setShowReceiveModal(false)}
+                onClose={() => { setShowReceiveModal(false); setReceiveError(null); }}
                 order={order}
                 onConfirm={handleReceiveConfirm}
+                isSubmitting={isReceiving}
+                error={receiveError}
             />
 
             <CreateBillModal

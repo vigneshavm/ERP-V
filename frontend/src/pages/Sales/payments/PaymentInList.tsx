@@ -2,9 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-    Search, Plus, Filter, Download, Printer, Eye,
+    Search, Plus, Filter, Download, Printer,
     MoreHorizontal, Calendar, IndianRupee, History,
-    CreditCard, X, TrendingUp, BarChart2, ChevronLeft, ChevronRight,
+    CreditCard, X, ChevronLeft, ChevronRight,
     ArrowUpRight, Wallet
 } from 'lucide-react';
 import { setActiveTab } from "../../../redux/slices/uiSlice";
@@ -35,7 +35,7 @@ const PaymentInList: React.FC = () => {
     const itemsPerPage = 10;
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const token = user?.token;
+    const _token = user?.token;
 
     // Fetch payments on mount
     React.useEffect(() => {

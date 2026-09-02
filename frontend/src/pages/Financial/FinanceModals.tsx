@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { X, Plus, Save } from 'lucide-react';
+import { X, Save } from 'lucide-react';
 
 interface FinanceModalsProps {
     showExpenseModal: boolean;

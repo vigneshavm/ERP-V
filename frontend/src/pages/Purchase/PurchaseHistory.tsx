@@ -1,6 +1,7 @@
-﻿import React from 'react';
+import React from 'react';
 import { Eye, Check, Lock } from 'lucide-react';
 import { PurchaseOrder } from "../../types/purchase";
+import { formatDate } from '../../utils/helpers';
 
 interface PurchaseHistoryProps {
     sectorOrders?: PurchaseOrder[];
@@ -36,9 +37,9 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
                                     <span className="text-[10px] font-bold px-1.5 py-0.5 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300 rounded">{getBranchName(order.branch_id || '')}</span>
                                     <h4 className="font-bold text-slate-800 dark:text-slate-200">{order.vendor_name}</h4>
                                 </div>
-                                <p className="text-xs text-slate-500 mt-1">{new Date(order.po_date).toLocaleDateString()} {new Date(order.po_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                <p className="text-xs text-slate-500 mt-1">{formatDate(order.po_date)} {new Date(order.po_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
-                            <span className={`px-2 py-1 rounded text-xs font-bold ${order.status === 'Approved' ? 'bg-emerald-100 dark:bg-success/20 text-emerald-700 dark:text-success' : 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400'}`}>
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${(order.status as string) === 'Approved' || order.status === 'APPROVED' ? 'bg-emerald-100 dark:bg-success/20 text-emerald-700 dark:text-success' : 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400'}`}>
                                 {order.status}
                             </span>
                         </div>
@@ -54,7 +55,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
                                     <span className="font-bold text-slate-400 dark:text-slate-600">Hidden</span>
                                 )}
 
-                                {order.status === 'Pending' && (
+                                {((order.status as string) === 'Pending' || order.status === 'SUBMITTED' || order.status === 'DRAFT') && (
                                     <>
                                         {role === 'Owner' ? (
                                             <button

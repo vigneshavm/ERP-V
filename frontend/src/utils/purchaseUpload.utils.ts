@@ -51,7 +51,7 @@ export const parsePurchaseFile = (file: File): Promise<RawPurchaseRow[]> => {
                 const worksheet = workbook.Sheets[firstSheetName];
                 const jsonData = XLSX.utils.sheet_to_json<RawPurchaseRow>(worksheet);
                 resolve(jsonData);
-            } catch (err) {
+            } catch {
                 reject(new Error('Failed to parse file. Please ensure it is a valid Excel or CSV file.'));
             }
         };

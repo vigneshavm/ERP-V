@@ -10,10 +10,8 @@ import {
     Trash2,
     LayoutGrid,
     Table as TableIcon,
-    LogOut,
     User,
-    Settings,
-    MoreHorizontal
+    Settings
 } from 'lucide-react';
 import { POSLogic } from "../../hooks/usePOSLogic";
 

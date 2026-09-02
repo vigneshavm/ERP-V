@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
 import { addSupplier, updateSupplier, getSupplierById } from '../../redux/slices/supplierSlice';
 import { getSupplierGroups } from '../../redux/slices/supplierGroupSlice';
-import { Save, X, Plus, Trash2, CreditCard, Landmark } from 'lucide-react';
+import { Save, Plus, Trash2, CreditCard, Landmark } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 interface SupplierFormData {
@@ -48,6 +48,14 @@ const inputCls =
 const labelCls =
     'block text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider mb-1';
 const requiredDot = <span className="text-danger ml-0.5">*</span>;
+
+// Moved to module scope - was defined inside SupplierForm's render body (recreated on every
+// render). Takes everything via props already, so no closure to thread through.
+const SectionTitle = ({ title }: { title: string }) => (
+    <div className="border-b border-slate-100 dark:border-neutral-700 pb-2 mb-5">
+        <h3 className="text-xs font-black text-slate-800 dark:text-neutral-200 uppercase tracking-wide">{title}</h3>
+    </div>
+);
 
 const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialData }) => {
     const dispatch = useDispatch<AppDispatch>();
@@ -162,13 +170,6 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
             toast.error(error || 'Failed to save supplier');
         }
     };
-
-    /* ─── Section Header Component ─────────────────────── */
-    const SectionTitle = ({ title }: { title: string }) => (
-        <div className="border-b border-slate-100 dark:border-neutral-700 pb-2 mb-5">
-            <h3 className="text-xs font-black text-slate-800 dark:text-neutral-200 uppercase tracking-wide">{title}</h3>
-        </div>
-    );
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">

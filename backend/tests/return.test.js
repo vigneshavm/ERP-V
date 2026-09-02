@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "../app.js";
+import app from "../dist/app.js";
 import { connect, closeDatabase, clearDatabase } from "./setup.js";
 
 beforeAll(async () => await connect(), 60000); // 60 second timeout for MongoDB setup

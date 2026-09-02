@@ -11,13 +11,8 @@ import {
     Trash2,
     Package,
     AlertCircle,
-    CheckCircle,
-    Clock,
-    CreditCard,
-    Banknote,
     TrendingDown,
     ShieldAlert,
-    BarChart2,
     Download
 } from 'lucide-react';
 

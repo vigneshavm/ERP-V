@@ -5,8 +5,6 @@ import { getCustomerById, getCustomerTransactions, reset } from "../../../redux/
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import {
-    Phone,
-    Mail,
     MapPin,
     TrendingUp,
     ShieldCheck,
@@ -24,7 +22,7 @@ const CustomerDetail = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const { id } = useParams<{ id: string }>();
-    const { customer, transactions, isLoading, isError, message } = useSelector(
+    const { customer, transactions, isLoading, message } = useSelector(
         (state: RootState) => state.customers
     );
 

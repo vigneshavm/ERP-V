@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { LucideIcon } from 'lucide-react';
 import { RootState } from "../../../redux/store";
 import { AppView } from "../../../types/common";
 import { setActiveTab, setSidebarOpen } from "../../../redux/slices/uiSlice";

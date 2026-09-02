@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import { getAccounts, createTransfer, reset, getCashBankPosition } from "../../../redux/slices/cashbankSlice";
@@ -39,7 +39,6 @@ const Transfers: React.FC = () => {
 
     const dispatch = useDispatch<AppDispatch>();
     const location = useLocation();
-    const navigate = useNavigate();
     const { accounts, isLoading, isTransferSuccess, position } = useSelector((state: RootState) => state.cashbank);
 
     useEffect(() => {

@@ -4,21 +4,13 @@ import {
     Search,
     Filter,
     MoreHorizontal,
-    Mail,
     Send,
     CheckCircle2,
     Clock,
-    AlertCircle,
     Inbox,
-    User,
-    ChevronRight,
-    MessageSquare,
     Zap,
     Sparkles,
-    Trash2,
     ShieldCheck,
-    BarChart3,
-    ArrowLeft,
     TrendingUp,
     LayoutDashboard,
     CreditCard,
@@ -28,7 +20,6 @@ import {
     BadgeAlert
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
 import { setActiveTab } from '@/redux/slices/uiSlice';
 
 const EmailEngagement: React.FC = () => {

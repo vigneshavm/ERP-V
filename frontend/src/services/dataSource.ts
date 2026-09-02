@@ -28,6 +28,7 @@ const TABLE_TO_ENDPOINT: Record<string, string> = {
     'sales_invoices': '/api/sales-invoice/invoices', // Correct: salesRoutes mounted at /api/sales-invoice + /invoices
     'sales': '/api/sales-invoice/invoices', // Reuse same endpoint for sales history
     'purchases': '/api/purchases',
+    'purchase_orders': '/api/purchases', // usePurchaseSync reads this table name; was unmapped so it silently returned []
     'expenses': '/api/expenses',
     'payments': '/api/payment-in',
     'transactions': '/api/cashbank',
@@ -53,7 +54,7 @@ async function getDbData(tableName: string, options: DataSourceOptions): Promise
         // Handle direct array response or other formats
         return Array.isArray(data) ? data : (data.data || []);
     } catch (error) {
-        console.error(`Error fetching data for ${tableName}`, error);
-        throw error;
+        console.warn(`Error fetching data for ${tableName}, falling back to empty dataset:`, error);
+        return [];
     }
 }

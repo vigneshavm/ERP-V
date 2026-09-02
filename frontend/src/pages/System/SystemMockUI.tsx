@@ -1,16 +1,13 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-    Cpu, Database, RefreshCw, Shield, FileSearch, 
-    Activity, ArrowRight, MoreHorizontal, Download, 
-    Server, Globe, Lock, Code, Zap, Package, 
+import { } from 'react-router-dom';
+import { Database, RefreshCw, Shield, FileSearch, 
+    Activity, MoreHorizontal, Download, 
+    Server, Lock, Zap, Package, 
     Terminal, User, DollarSign, Layers
 } from 'lucide-react';
-import { salesInvoices, purchases, inventory, branches } from '../../data';
 import Layout from '../../components/shared/Layout';
 
 const SystemMockUI: React.FC = () => {
-    const navigate = useNavigate();
 
     const healthMetrics = useMemo(() => {
         return [

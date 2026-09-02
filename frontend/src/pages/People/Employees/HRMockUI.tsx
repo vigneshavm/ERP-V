@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Users, Plus, Search, Filter, UserCheck, Clock, DollarSign, Briefcase, Calendar, ChevronRight, Shield, Zap } from 'lucide-react';
+import { Users, Plus, Search, Filter, UserCheck, Clock, DollarSign, Briefcase, ChevronRight, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { employees } from '../../../data';
 import Layout from '../../../components/shared/Layout';

@@ -4,12 +4,12 @@ import {
   updateSettings,
   updatePassword,
 } from "../controllers/SettingsController.js";
-import { protect } from "../../../middlewares/authMiddleware.js";
+import { protect, authorize } from "../../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 router.get("/", protect, getSettings);
-router.put("/", protect, updateSettings);
+router.put("/", protect, authorize('owner', 'co-owner', 'admin'), updateSettings);
 router.put("/password", protect, updatePassword);
 
 export default router;

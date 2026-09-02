@@ -1,44 +1,7 @@
 import Invoice from '../../sales/models/Invoice.js';
+import { decomposeGST } from '../../../utils/gstUtils.js';
 
-// ─────────────────────────────────────────────────────────────
-// Helper: decompose a flat total into taxable + CGST/SGST/IGST
-// ─────────────────────────────────────────────────────────────
-export const decomposeGST = (
-    totalLineValue: number,
-    gstRate: number,
-    isInterState: boolean,
-    isInclusive: boolean
-): { taxableAmount: number; cgst: number; sgst: number; igst: number; tax: number } => {
-    if (gstRate === 0) {
-        return { taxableAmount: totalLineValue, cgst: 0, sgst: 0, igst: 0, tax: 0 };
-    }
-
-    let taxableAmount: number;
-    if (isInclusive) {
-        // Extract tax from inclusive price
-        taxableAmount = totalLineValue / (1 + gstRate / 100);
-    } else {
-        taxableAmount = totalLineValue;
-    }
-
-    const taxAmount = totalLineValue - taxableAmount;
-
-    let cgst = 0, sgst = 0, igst = 0;
-    if (isInterState) {
-        igst = taxAmount;
-    } else {
-        cgst = taxAmount / 2;
-        sgst = taxAmount / 2;
-    }
-
-    return {
-        taxableAmount: +taxableAmount.toFixed(2),
-        cgst: +cgst.toFixed(2),
-        sgst: +sgst.toFixed(2),
-        igst: +igst.toFixed(2),
-        tax:  +taxAmount.toFixed(2),
-    };
-};
+export { decomposeGST };
 
 // ─────────────────────────────────────────────────────────────
 // GSTR-1 Report builder

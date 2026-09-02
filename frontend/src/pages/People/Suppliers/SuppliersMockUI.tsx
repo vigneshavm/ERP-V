@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-    Building2, Plus, Search, Filter, Star, AlertCircle, 
-    CheckCircle2, Clock, TrendingDown, Phone, MoreHorizontal, 
-    ArrowRight, Globe, ShieldCheck, Zap, ChevronRight
+    Building2, Plus, Search, Filter, AlertCircle, 
+    CheckCircle2, Clock, 
+    ArrowRight, Zap, ChevronRight
 } from 'lucide-react';
-import { suppliers, MockSupplier } from '../../../data';
+import { suppliers } from '../../../data';
 import Layout from '../../../components/shared/Layout';
 
 const SuppliersMockUI: React.FC = () => {

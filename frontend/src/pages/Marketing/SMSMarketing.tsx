@@ -1,14 +1,11 @@
 ﻿import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import {
-    MessageSquare, Send, Calendar, Users, BarChart3,
-    Shield, Zap, CheckCircle, AlertCircle, Plus,
-    Filter, Search, Layers, TrendingUp, Clock,
-    ChevronRight, ArrowUpRight, Copy, Trash2, Edit3,
-    Smartphone, Mail, Bell, Target, Sparkles, Star
+import { Send, BarChart3,
+    Shield, Zap, Plus, Search, Layers, TrendingUp, ArrowUpRight, Copy, Trash2, Edit3, Bell, Target, Sparkles, Star
 } from 'lucide-react';
-import { SMSCampaign, SMSConfig } from "@/types/tenant";
+import { SMSConfig } from "@/types/tenant";
+import { formatDate } from '../../utils/helpers';
 
 const SMSMarketing: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
@@ -64,7 +61,7 @@ const SMSMarketing: React.FC = () => {
                                             <div className={`w-1.5 h-1.5 rounded-full ${camp.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
                                             {camp.status}
                                         </span>
-                                        <span className="text-slate-400">{camp.sentAt ? new Date(camp.sentAt).toLocaleDateString() : 'Drafted'}</span>
+                                        <span className="text-slate-400">{camp.sentAt ? formatDate(camp.sentAt) : 'Drafted'}</span>
                                     </div>
                                 </div>
                             </div>

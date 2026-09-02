@@ -7,7 +7,6 @@ import AuthLayout from '../Views/AuthLayout';
 import AuthAlert from '../Views/AuthAlert';
 import AuthInput from '../../components/Auth/AuthInput';
 import { useLoginForm } from '../../hooks/auth/useLoginForm';
-import { resetAuthState } from '../../redux/slices/authSlice';
 
 interface LoginProps {
     isAdmin?: boolean;

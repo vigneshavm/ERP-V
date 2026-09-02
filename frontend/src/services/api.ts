@@ -33,36 +33,70 @@ api.interceptors.request.use(
     }
 );
 
+// Tracks consecutive 401s across ALL requests (any background poll included).
+// A single 401 no longer nukes the whole app -- with several independent
+// 30s-interval polls in flight (finance, HR, sales, purchases, products all
+// share this one axios instance), one of them can get an isolated 401 (e.g.
+// a transient device-cookie mismatch on that one request) while every other
+// request keeps succeeding on a perfectly valid session. Only when 401s
+// happen back-to-back with no successful request in between do we treat it
+// as a real, dead session and force the logout/redirect sequence.
+let consecutive401Count = 0;
+let isHandlingSessionExpiry = false;
+const SESSION_EXPIRY_THRESHOLD = 2;
+
 // Response interceptor to handle token expiration
 api.interceptors.response.use(
     (response: AxiosResponse) => {
-        // If response is successful, just return it
+        // Any successful response proves the session is still good -- reset
+        // the counter so an old, unrelated 401 can't combine with a future
+        // one to trigger a false-positive logout.
+        consecutive401Count = 0;
         return response;
     },
     (error: AxiosError) => {
         // Check if error is due to authentication (401 Unauthorized)
         if (error.response && error.response.status === 401) {
-            // Clear all user data from localStorage
-            localStorage.removeItem('user');
-            localStorage.removeItem('returnDraft');
+            consecutive401Count += 1;
 
-            // Show professional notification
-            toast.error('Your session has expired. Please log in again to continue.', {
-                position: 'top-center',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+            if (consecutive401Count < SESSION_EXPIRY_THRESHOLD) {
+                // Isolated 401 -- log it for diagnostics but don't treat the
+                // whole app session as dead over one failing request.
+                console.warn(
+                    `[api] Received a 401 from ${error.config?.url} (${consecutive401Count}/${SESSION_EXPIRY_THRESHOLD}) -- not forcing logout yet.`,
+                    error.response?.data
+                );
+                return Promise.reject(error);
+            }
 
-            // Dispatch custom event to trigger immediate Redux state cleanup in App.tsx
-            window.dispatchEvent(new Event('auth:unauthorized'));
+            // Guard against every in-flight request's 401 (multiple polling
+            // queries can fail in the same tick) each independently trying
+            // to clear storage / toast / redirect.
+            if (!isHandlingSessionExpiry) {
+                isHandlingSessionExpiry = true;
 
-            // Redirect to login page after a brief delay
-            setTimeout(() => {
-                window.location.href = '/login';
-            }, 1000);
+                // Clear all user data from localStorage
+                localStorage.removeItem('user');
+                localStorage.removeItem('returnDraft');
+
+                // Show professional notification
+                toast.error('Your session has expired. Please log in again to continue.', {
+                    position: 'top-center',
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+
+                // Dispatch custom event to trigger immediate Redux state cleanup in App.tsx
+                window.dispatchEvent(new Event('auth:unauthorized'));
+
+                // Redirect to login page after a brief delay
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 1000);
+            }
         }
 
         // Return the error for other cases

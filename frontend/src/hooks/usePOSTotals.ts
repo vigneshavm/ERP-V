@@ -15,7 +15,8 @@ export const usePOSTotals = ({ cart, activeSession, tenants, userId }: UsePOSTot
         let tax = 0;
 
         cart.forEach(item => {
-            const gstRate = (item.gstPercentage || 18) / 100;
+            // ?? not || — a genuinely 0%-GST item must stay 0%, not fall back to 18%
+            const gstRate = (item.gstPercentage ?? 18) / 100;
             const computedQty = item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty;
             const lineTotal = item.price * computedQty;
 
@@ -30,8 +31,9 @@ export const usePOSTotals = ({ cart, activeSession, tenants, userId }: UsePOSTot
         });
 
         const rawTotal = subtotal + tax;
-        const currentTenant = tenants.find(t => t.id === userId); // Note: Original used user?.tenantId which I'll pass as userId for context if needed, or better, pass tenantId directly.
-        // Actually the original use: const currentTenant = tenants.find(t => t.id === user?.tenantId);
+        // userId is the tenant id here (see usePOSTotals call site) — kept as a distinct prop
+        // name from tenantId since some callers pass user?.tenantId directly.
+        const currentTenant = tenants.find(t => t.id === userId);
 
         const redValue = currentTenant?.loyaltyConfig?.redemptionValue || 1;
         const redAmt = (activeSession.redeemedPoints || 0) * redValue;

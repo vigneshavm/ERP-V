@@ -1,22 +1,16 @@
 import React, { useState, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
-import { setActiveTab } from '../../redux/slices/uiSlice';
-import {
-    Banknote, Landmark, ArrowUpRight, ArrowDownRight, Briefcase,
-    FileSpreadsheet, Plus, Filter, Search, ShieldCheck, Activity,
-    RefreshCw, X, ChevronDown, SlidersHorizontal, IndianRupee,
+import { } from 'react-redux';
+import { Landmark, ArrowUpRight, ArrowDownRight, Briefcase,
+    FileSpreadsheet, Plus, Filter, Search, ShieldCheck, Activity, IndianRupee,
     CreditCard, Zap, ChevronRight
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { } from 'react-router-dom';
 import { salesInvoices, purchases, bank_accounts, pdcs, MockSalesInvoice } from '../../data';
 import Layout from '../../components/shared/Layout';
 
 const FinanceMockUI: React.FC = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const [searchQuery, setSearchQuery] = useState('');
-    const [filterType, setFilterType] = useState('all');
 
     const metrics = useMemo(() => {
         const totalSales = (salesInvoices as MockSalesInvoice[]).reduce((sum, inv) => sum + inv.total, 0);

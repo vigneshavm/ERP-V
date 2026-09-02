@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { generateReceiptJSON } from './receiptGenerator';
 import { Sale, CartItem } from "../types/sales";
 import { Tenant, Branch } from "../types/tenant";
@@ -98,6 +99,10 @@ const mockSale: Sale = {
 
 // --- Test Execution ---
 
-const result = generateReceiptJSON(mockSale, mockTenant, mockBranch);
-
-console.log(JSON.stringify(result, null, 2));
+describe('receiptGenerator', () => {
+    it('generates receipt JSON correctly', () => {
+        const result = generateReceiptJSON(mockSale, mockTenant, mockBranch);
+        expect(result).toBeDefined();
+        expect(result.receipt_data).toBeDefined();
+    });
+});

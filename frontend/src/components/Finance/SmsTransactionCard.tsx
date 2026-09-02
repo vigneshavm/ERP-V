@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { MessageSquare, Calendar, CreditCard, ArrowRight, Ban, CheckCircle2, ChevronDown, ChevronUp, Zap } from 'lucide-react';
+import { MessageSquare, Calendar, CreditCard, Ban, CheckCircle2, ChevronDown, ChevronUp, Zap } from 'lucide-react';
 
 const formatDate = (date: string | Date) => {
     return new Intl.DateTimeFormat('en-IN', {

@@ -2,7 +2,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../../redux/store";
 import { fetchCheques, registerCheque, updateChequeStatusBackend, fetchEffectiveBalance } from "../../../redux/slices/financeSlice";
-import { getAccounts, validatePayments, createTransfer } from "../../../redux/slices/cashbankSlice";
+import { getAccounts, validatePayments } from "../../../redux/slices/cashbankSlice";
 import { fetchPurchaseOrders } from "../../../redux/slices/purchaseSlice";
 import Layout from "../../../components/shared/Layout";
 import {
@@ -10,13 +10,9 @@ import {
     Clock,
     XCircle,
     Receipt,
-    Building2,
     Plus,
     Search,
     Calendar,
-    IndianRupee,
-    User,
-    FileText,
     X,
     CheckCircle2,
     ArrowDownLeft,
@@ -25,7 +21,6 @@ import {
     ShieldCheck,
     Zap,
     Download,
-    TrendingUp,
     Filter,
     ArrowRight,
     Layers,
@@ -38,7 +33,7 @@ import ClearingParameters from './ClearingParameters';
 
 const Cheques: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { cheques, effectiveBalance, bankBalance: reduxBankBalance, pdcAlerts, loading } = useSelector((state: RootState) => state.finance);
+    const { cheques, effectiveBalance, bankBalance: _reduxBankBalance, pdcAlerts, loading: _loading } = useSelector((state: RootState) => state.finance);
     const { currentSector } = useSelector((state: RootState) => state.auth);
     const { accounts } = useSelector((state: RootState) => state.cashbank);
     const { orders: purchases } = useSelector((state: RootState) => state.purchase);

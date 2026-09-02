@@ -1,39 +1,43 @@
 ﻿import React from 'react';
-import { AlertTriangle, DollarSign, FileText, Shield, Info, ChevronRight, CheckCircle2, LucideIcon } from 'lucide-react';
-import { MISControlsTabProps } from './types';
+import { AlertTriangle, DollarSign, FileText, Shield, CheckCircle2, LucideIcon } from 'lucide-react';
+import { MISControlsTabProps, MISConfig } from './types';
+
+// Moved to module scope (was defined inside MISControlsTab's render body, which recreated this
+// component - and reset its DOM/state - on every render). misConfig/onToggle are now passed in
+// as props instead of being read from an outer closure.
+interface ControlItemProps {
+    k: string;
+    label: string;
+    desc: string;
+    icon: LucideIcon;
+    misConfig: MISConfig;
+    onToggle: (key: string) => void;
+}
+
+const ControlItem: React.FC<ControlItemProps> = ({ k, label, desc, icon: Icon, misConfig, onToggle }) => (
+    <div className="group flex items-center justify-between p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:border-indigo-300 transition-all shadow-sm">
+        <div className="flex items-center gap-5">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-indigo-50 group-hover:text-primary transition-colors">
+                <Icon className="w-5 h-5" />
+            </div>
+            <div>
+                <p className="font-extrabold text-slate-800 dark:text-white text-sm leading-none mb-1">{label}</p>
+                <p className="text-[10px] text-slate-500 font-medium">{desc}</p>
+            </div>
+        </div>
+        <label className="relative inline-flex items-center cursor-pointer">
+            <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={!!(misConfig as any)[k]}
+                onChange={() => onToggle(k)}
+            />
+            <div className="w-12 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+        </label>
+    </div>
+);
 
 const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisToggle, setMaxDiscountPercent }) => {
-
-    interface ControlItemProps {
-        k: string;
-        label: string;
-        desc: string;
-        icon: LucideIcon;
-    }
-
-    const ControlItem: React.FC<ControlItemProps> = ({ k, label, desc, icon: Icon }) => (
-        <div className="group flex items-center justify-between p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:border-indigo-300 transition-all shadow-sm">
-            <div className="flex items-center gap-5">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-indigo-50 group-hover:text-primary transition-colors">
-                    <Icon className="w-5 h-5" />
-                </div>
-                <div>
-                    <p className="font-extrabold text-slate-800 dark:text-white text-sm leading-none mb-1">{label}</p>
-                    <p className="text-[10px] text-slate-500 font-medium">{desc}</p>
-                </div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    checked={!!misConfig[k]}
-                    onChange={() => handleMisToggle(k)}
-                />
-                <div className="w-12 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-            </label>
-        </div>
-    );
-
     return (
         <div className="p-6 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Global Advisory Alert */}
@@ -61,11 +65,11 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
                     </div>
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
-                    <ControlItem icon={Shield} k="allowNegativeStock" label="Restrict Negative Stock" desc="Block sales if physical stock is unavailable" />
-                    <ControlItem icon={Shield} k="allowSaleBelowCost" label="Restrict Sale Below Cost" desc="Prevent selling products at a loss" />
-                    <ControlItem icon={CheckCircle2} k="enableCreditSales" label="Enterprise Credit Sales" desc="Allow authorized customers to pay later" />
-                    <ControlItem icon={CheckCircle2} k="enableVendorPayables" label="Track Payables" desc="Monitor outstanding dues to suppliers" />
-                    <ControlItem icon={CheckCircle2} k="enableCustomerReceivables" label="Track Receivables" desc="Monitor outstanding customer payments" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="allowNegativeStock" label="Restrict Negative Stock" desc="Block sales if physical stock is unavailable" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="allowSaleBelowCost" label="Restrict Sale Below Cost" desc="Prevent selling products at a loss" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={CheckCircle2} k="enableCreditSales" label="Enterprise Credit Sales" desc="Allow authorized customers to pay later" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={CheckCircle2} k="enableVendorPayables" label="Track Payables" desc="Monitor outstanding dues to suppliers" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={CheckCircle2} k="enableCustomerReceivables" label="Track Receivables" desc="Monitor outstanding customer payments" />
                 </div>
             </section>
 
@@ -81,10 +85,10 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
                     </div>
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
-                    <ControlItem icon={Shield} k="allowPriceOverride" label="POS Price Override" desc="Allow staff to modify unit rates during billing" />
-                    <ControlItem icon={Shield} k="allowDiscountOverride" label="Custom Discount Logic" desc="Allow manual discount entry for items" />
-                    <ControlItem icon={Shield} k="allowBackdatedBills" label="Backdated Invoicing" desc="Allow creating bills for previous dates" />
-                    <ControlItem icon={Shield} k="allowCancelledBillsEdit" label="Recall Cancelled Bills" desc="Allow editing of invalidated transactions" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="allowPriceOverride" label="POS Price Override" desc="Allow staff to modify unit rates during billing" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="allowDiscountOverride" label="Custom Discount Logic" desc="Allow manual discount entry for items" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="allowBackdatedBills" label="Backdated Invoicing" desc="Allow creating bills for previous dates" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="allowCancelledBillsEdit" label="Recall Cancelled Bills" desc="Allow editing of invalidated transactions" />
                 </div>
 
                 {/* Discount Cap Card */}
@@ -124,11 +128,11 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
                     </div>
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
-                    <ControlItem icon={CheckCircle2} k="enableAuditTrail" label="Full Audit Logging" desc="Maintain immutable logs of all system edits" />
-                    <ControlItem icon={Shield} k="lockFinancialYearAfterClose" label="Lock Closed Financial Years" desc="Prevent edits to closed periods" />
-                    <ControlItem icon={Shield} k="requireApprovalForHighDiscount" label="Supervisor Approval (Discount)" desc="Flag high discounts for management sign-off" />
-                    <ControlItem icon={Shield} k="requireApprovalForVoidBill" label="Supervisor Approval (Void)" desc="Sign-off required for bill cancellations" />
-                    <ControlItem icon={Shield} k="requireApprovalForPriceChange" label="Supervisor Approval (Price)" desc="Sign-off required for price overrides" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={CheckCircle2} k="enableAuditTrail" label="Full Audit Logging" desc="Maintain immutable logs of all system edits" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="lockFinancialYearAfterClose" label="Lock Closed Financial Years" desc="Prevent edits to closed periods" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="requireApprovalForHighDiscount" label="Supervisor Approval (Discount)" desc="Flag high discounts for management sign-off" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="requireApprovalForVoidBill" label="Supervisor Approval (Void)" desc="Sign-off required for bill cancellations" />
+                    <ControlItem misConfig={misConfig} onToggle={handleMisToggle} icon={Shield} k="requireApprovalForPriceChange" label="Supervisor Approval (Price)" desc="Sign-off required for price overrides" />
                 </div>
             </section>
         </div>

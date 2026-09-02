@@ -8,15 +8,15 @@ import { RootState, AppDispatch } from '../../../redux/store';
 
 export const useBills = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { bills, isLoading, isError, message } = useSelector((state: RootState) => state.bill);
-    const { suppliers } = useSelector((state: RootState) => state.suppliers);
+    const { bills, isLoading, message: _message } = useSelector((state: RootState) => state.bill);
+    const { suppliers: _suppliers } = useSelector((state: RootState) => state.suppliers);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [showForm, setShowForm] = useState(false);
     const [editingBill, setEditingBill] = useState<Bill | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-    const [bankAccounts, setBankAccounts] = useState<any[]>([]);
+    const [_bankAccounts, setBankAccounts] = useState<any[]>([]);
     const [paymentModal, setPaymentModal] = useState<{ isOpen: boolean; bill: Bill | null }>({
         isOpen: false,
         bill: null

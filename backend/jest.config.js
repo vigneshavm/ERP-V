@@ -3,6 +3,6 @@ export default {
     transform: {}, // Disable transforms for ESM
     verbose: true,
     testMatch: ["**/tests/**/*.test.js"],
-    collectCoverage: true,
+    collectCoverage: false,
     collectCoverageFrom: ["./**/*.js", "!**/node_modules/**", "!**/config/**", "!**/coverage/**"],
 };

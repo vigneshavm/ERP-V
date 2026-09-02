@@ -15,7 +15,6 @@ import {
     Landmark,
     AlertTriangle,
     Banknote,
-    Activity,
     ChevronRight,
     FileText,
     ArrowRightLeft,

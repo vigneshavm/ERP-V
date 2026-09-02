@@ -5,16 +5,13 @@ import {
     Search,
     Gift,
     Star,
-    TrendingUp,
     Settings,
     Users,
     Award,
     Coins,
     ArrowUpRight,
     ArrowDownRight,
-    Calendar,
-    Download,
-    Percent
+    Download
 } from 'lucide-react';
 
 interface LoyaltyTransaction {
@@ -49,7 +46,7 @@ const LoyaltyPoints: React.FC = () => {
     const { currentSector } = useSelector((state: RootState) => state.auth);
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [activeTab, setActiveTab] = useState<'overview' | 'customers' | 'transactions' | 'settings'>('overview');
+    const [_activeTab] = useState<'overview' | 'customers' | 'transactions' | 'settings'>('overview');
 
     // Calculate loyalty data
     const loyaltyData = useMemo(() => {

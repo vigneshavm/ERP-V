@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
-    Search, ScanLine, ShoppingCart, CreditCard, Banknote, 
-    User, Trash2, Plus, Minus, Tag, ArrowRight, Zap 
+    Search, ShoppingCart, CreditCard, Banknote, 
+    User, Trash2, Plus, Minus, ArrowRight, Zap 
 } from 'lucide-react';
 import { inventory, MockProduct } from '../../data';
 import Layout from '../../components/shared/Layout';

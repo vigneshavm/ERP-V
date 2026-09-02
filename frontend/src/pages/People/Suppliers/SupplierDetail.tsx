@@ -1,7 +1,7 @@
 ﻿import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getSupplierById, reset, Supplier } from "../../../redux/slices/supplierSlice";
+import { getSupplierById, reset } from "../../../redux/slices/supplierSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
@@ -9,9 +9,7 @@ import {
   Building2,
   User,
   Phone,
-  Mail,
   MapPin,
-  CreditCard,
   History,
   Package,
   Edit3,

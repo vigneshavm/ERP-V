@@ -1,16 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { 
     Megaphone, Plus, Search, Filter, Mail, MessageSquare, 
-    Share2, Tag, Zap, BarChart2, Users, ArrowRight, 
-    MoreHorizontal, Send, MousePointer2, PieChart,
+    Share2, Zap, BarChart2, Users, Send,
     ChevronRight, Globe, Target
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { customers, salesInvoices } from '../../data';
+import { } from 'react-router-dom';
+import { customers } from '../../data';
 import Layout from '../../components/shared/Layout';
 
 const MarketingMockUI: React.FC = () => {
-    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
 
     const metrics = useMemo(() => {

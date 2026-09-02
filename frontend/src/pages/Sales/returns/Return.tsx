@@ -9,13 +9,8 @@ import {
   User,
   Phone,
   Mail,
-  CreditCard,
-  Banknote,
-  Building2,
-  X,
   Save,
   Trash2,
-  ChevronRight,
   AlertCircle,
   CheckCircle
 } from 'lucide-react';
@@ -287,7 +282,7 @@ const Return = () => {
         notes: formData.notes,
       };
 
-      const response = await api.post(`${API_URL}/api/returns`, returnData, {
+      const _response = await api.post(`${API_URL}/api/returns`, returnData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

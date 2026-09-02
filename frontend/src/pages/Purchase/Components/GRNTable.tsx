@@ -2,6 +2,7 @@ import React from 'react';
 import { Truck, CheckCircle, AlertTriangle, Clock, Eye, Receipt, ClipboardCheck } from 'lucide-react';
 import { GoodsReceivedNote } from '../hooks/useGRNData';
 import { useBranchResolver } from "../../../hooks/useBranchResolver";
+import { formatDate } from '../../../utils/helpers';
 
 interface GRNTableProps {
     records: GoodsReceivedNote[];
@@ -69,7 +70,7 @@ const GRNTable: React.FC<GRNTableProps> = ({ records, onView, onCreateBill }) =>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-secondary">
-                                        {new Date(grn.receivedDate).toLocaleDateString()}
+                                        {formatDate(grn.receivedDate)}
                                     </td>
                                     <td className="p-4 text-neutral-500">{getBranchName(grn.branchId)}</td>
                                     <td className="p-4 text-center">
@@ -126,7 +127,7 @@ const GRNTable: React.FC<GRNTableProps> = ({ records, onView, onCreateBill }) =>
                                     <span className="font-bold text-primary">{grn.receivedItems}</span>
                                     <span className="text-neutral-400"> / {grn.expectedItems} items</span>
                                 </div>
-                                <p className="text-xs text-neutral-500">{new Date(grn.receivedDate).toLocaleDateString()}</p>
+                                <p className="text-xs text-neutral-500">{formatDate(grn.receivedDate)}</p>
                             </div>
                         </div>
                     ))

@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { Calculator, Store, Landmark, FileText, CheckCircle2, CreditCard } from 'lucide-react';
+import { Calculator, Landmark, FileText, CheckCircle2, CreditCard } from 'lucide-react';
 import { FinanceTabProps } from './types';
 
 const FinanceTab: React.FC<FinanceTabProps> = ({

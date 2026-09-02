@@ -21,6 +21,23 @@ import {
     Activity
 } from 'lucide-react';
 
+// Moved to module scope - was defined inside CashBankPosition's render body (recreated, and lost
+// its DOM state, on every render). Takes everything via props already, so no closure to thread through.
+const QuickAction: React.FC<{ title: string; icon: React.ElementType; onClick: () => void; color: string }> = ({ title, icon: Icon, onClick, color }) => (
+    <button
+        onClick={onClick}
+        className="flex items-center justify-between p-6 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] hover:border-primary group transition-all duration-300 shadow-sm"
+    >
+        <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-300 ${color} shadow-sm group-hover:scale-110`}>
+                <Icon className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-black text-neutral-600 dark:text-neutral-400 uppercase tracking-widest group-hover:text-primary transition-colors">{title}</span>
+        </div>
+        <ChevronRight className="w-5 h-5 text-neutral-300 group-hover:translate-x-2 transition-all" />
+    </button>
+);
+
 const CashBankPosition: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -46,21 +63,6 @@ const CashBankPosition: React.FC = () => {
             </Layout>
         );
     }
-
-    const QuickAction: React.FC<{ title: string; icon: React.ElementType; onClick: () => void; color: string }> = ({ title, icon: Icon, onClick, color }) => (
-        <button
-            onClick={onClick}
-            className="flex items-center justify-between p-6 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] hover:border-primary group transition-all duration-300 shadow-sm"
-        >
-            <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-300 ${color} shadow-sm group-hover:scale-110`}>
-                    <Icon className="w-6 h-6" />
-                </div>
-                <span className="text-xs font-black text-neutral-600 dark:text-neutral-400 uppercase tracking-widest group-hover:text-primary transition-colors">{title}</span>
-            </div>
-            <ChevronRight className="w-5 h-5 text-neutral-300 group-hover:translate-x-2 transition-all" />
-        </button>
-    );
 
     return (
         <Layout>

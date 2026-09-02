@@ -4,40 +4,21 @@ import { RootState, AppDispatch } from "../../redux/store";
 import { getAllInvoices } from "../../redux/slices/posSlice";
 import { getDashboardStats } from "../../redux/slices/reportsSlice";
 import {
-    ShoppingCart,
     Search,
-    Filter,
-    AlertCircle,
-    CheckCircle2,
     ShieldAlert,
-    History,
     FileText,
     Zap,
     Download,
-    CreditCard,
-    Smartphone,
-    ArrowRightLeft,
-    AlertTriangle,
-    Info,
-    Calendar,
-    Wallet,
     Target,
-    MoreVertical,
     Clock,
     RefreshCcw,
-    Scale,
-    Link,
-    Unlink,
     TrendingUp,
-    TrendingDown,
     MapPin,
     Package,
     Users,
-    Percent,
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout";
 import MetricCard from "../../components/shared/UI/MetricCard";
-import { formatCurrency } from "../../utils/helpers";
 
 // --- Types ---
 
@@ -73,7 +54,7 @@ const POSOrdersIntelligence: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { user } = useSelector((state: RootState) => state.auth);
     const { salesHistory, isLoading: posLoading } = useSelector((state: RootState) => state.pos);
-    const { dashboardStats, isLoading: reportsLoading } = useSelector((state: RootState) => state.reports);
+    const { dashboardStats: _dashboardStats, isLoading: _reportsLoading } = useSelector((state: RootState) => state.reports);
     const tenant_id = user?.tenantId || 'TEN001';
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -100,6 +81,11 @@ const POSOrdersIntelligence: React.FC = () => {
                 risk_level = 'MEDIUM';
                 anomalies.push('HIGH_VALUE_CREDIT');
             }
+            // Intentional: flags invoices unpaid for more than 7 real-world days as of "now".
+            // Freezing this at mount time (the only way to fully silence the rule below) would stop
+            // new invoices from ever reaching CRITICAL after the initial load, which is worse than
+            // the current one-render-stale behavior.
+            // eslint-disable-next-line react-hooks/purity
             if (inv.paymentStatus === 'unpaid' && new Date(inv.createdAt) < new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) {
                 risk_level = 'CRITICAL';
                 anomalies.push('LONG_OVERDUE_DEBT');

@@ -294,7 +294,7 @@ const BankStatementView: React.FC = () => {
                                         </td>
                                     </tr>
                                 ) : (
-                                    displayed.map((tx, idx) => (
+                                    displayed.map((tx, __idx) => (
                                         <tr key={tx._id} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all cursor-default">
                                             <td className="px-8 py-6 whitespace-nowrap">
                                                 <span className="text-xs font-black text-neutral-500 font-mono tracking-tighter uppercase">{fmtDate(tx.date)}</span>

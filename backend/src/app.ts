@@ -149,6 +149,9 @@ app.use("/api/roles", roleRoutes);
 import syncRoutes from "./modules/core/routes/syncRoutes.js";
 app.use("/api/sync", syncRoutes);
 
+import sectorCategoryRoutes from "./modules/core/routes/sectorCategoryRoutes.js";
+app.use("/api", sectorCategoryRoutes);
+
 import feedbackRoutes from "./modules/core/routes/feedbackRoutes.js";
 app.use("/api/feedback", feedbackRoutes);
 
@@ -157,6 +160,11 @@ app.use("/api/notifications", notificationRoutes);
 
 import auditLogRoutes from "./modules/core/routes/auditLogRoutes.js";
 app.use("/api/audit-logs", auditLogRoutes);
+
+// Reports (dashboard-stats/stock/customers/sales) - was fully implemented but never mounted,
+// so every Shop Owner Dashboard report call was silently 404ing.
+import reportRoutes from "./modules/core/routes/reportRoutes.js";
+app.use("/api/reports", reportRoutes);
 
 // INVENTORY Module
 import inventoryRoutes from "./modules/inventory/routes/inventory.routes.js";
@@ -176,12 +184,18 @@ app.use("/api/delivery-challan", deliveryChallanRoutes);
 import posRoutes from "./modules/sales/routes/pos.routes.js";
 app.use("/api/pos", posRoutes);
 
+// CRM & Analytics Module
+import crmAnalyticsRoutes from "./modules/crm/routes/crmAnalyticsRoutes.js";
+app.use("/api/crm", crmAnalyticsRoutes);
+
 // PURCHASE Module
 import purchaseModuleRoutes from "./modules/purchase/routes/purchase.routes.js";
 import purchasePaymentRoutes from "./modules/purchase/routes/purchasePaymentRoutes.js";
+import grnRoutes from "./modules/purchase/routes/grnRoutes.js";
 app.use("/api/purchases", purchaseModuleRoutes);
 app.use("/api/purchase-payments", purchasePaymentRoutes);
 app.use("/api/purchase-returns", purchaseModuleRoutes);
+app.use("/api/grn", grnRoutes);
 
 // FINANCE Module
 import financeRoutes from "./modules/finance/routes/finance.routes.js";

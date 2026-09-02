@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Layout from "../../../components/shared/Layout/Layout";
-import FormInput from "../../../components/core/Form/Input";
 import { Database, Download, HardDrive, Cloud, Clock, CheckCircle, XCircle, Loader, Settings, Save, Trash2, Eye, Calendar, Archive } from 'lucide-react';
 
 const Backup = () => {

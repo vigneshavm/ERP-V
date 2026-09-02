@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from "../../../services/api";
 import { toast } from 'react-toastify';
 import {
-    FileText, Plus, Search, Eye, Trash2, Calculator,
-    CheckCircle, Clock, XCircle, TrendingUp, FileCheck,
-    AlertCircle, Download, Filter, Calendar, RefreshCw,
+    FileText, Plus, Search, Eye, Trash2, Calculator, TrendingUp, FileCheck, Filter, Calendar, RefreshCw,
     ChevronLeft, ChevronRight, Zap
 } from 'lucide-react';
 import Layout from '../../../components/shared/Layout';

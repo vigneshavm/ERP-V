@@ -4,42 +4,19 @@ import { RootState } from "../../redux/store";
 import {
     PieChart,
     Search,
-    Filter,
-    AlertCircle,
-    CheckCircle2,
     ShieldAlert,
-    History,
-    FileText,
     Zap,
     Download,
-    CreditCard,
-    Smartphone,
-    ArrowRightLeft,
     AlertTriangle,
-    Info,
-    Calendar,
-    Wallet,
     Target,
-    MoreVertical,
     Clock,
-    RefreshCcw,
-    Scale,
     TrendingUp,
-    Briefcase,
-    ShieldCheck,
     ChevronRight,
-    UserCircle,
     Receipt,
     DollarSign,
     BarChart3,
-    ArrowUpRight,
-    ArrowDownRight,
     Activity,
-    Lock,
-    TrendingDown,
     Building2,
-    Users,
-    MousePointer2,
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout";
 
@@ -382,7 +359,7 @@ const ExpenseIntelligence: React.FC = () => {
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                                {filteredTransactions.length > 0 ? filteredTransactions.map((tx, idx) => (
+                                                {filteredTransactions.length > 0 ? filteredTransactions.map((tx, __idx) => (
                                                     <tr key={tx.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors group">
                                                         <td className="px-5 py-4">
                                                             <span className="font-mono text-xs font-bold text-primary group-hover:underline cursor-pointer">{tx.id}</span>

@@ -1,11 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-    Shield, Globe, Zap, Settings, CheckCircle, AlertTriangle,
-    MessageSquare, Mail, Smartphone, Share2, ShoppingBag,
-    Layers, Cpu, Activity, Lock, Save, RefreshCw,
-    Users, MoreVertical, ExternalLink, ToggleLeft, ToggleRight,
-    BarChart2, X, Info, Phone, Key, Globe2, HelpCircle, XCircle, CheckCircle2,
+import { Zap,
+    MessageSquare, Mail, Smartphone, Share2, ShoppingBag, Cpu, Activity, RefreshCw, Key, CheckCircle2,
     ArrowLeft
 } from 'lucide-react';
 import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "@/types/tenant";

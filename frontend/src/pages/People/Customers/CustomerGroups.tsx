@@ -40,11 +40,11 @@ const DEFAULT_GROUPS: CustomerGroup[] = [
 const CustomerGroups: React.FC = () => {
     const { customers } = useSelector((state: RootState) => state.customers);
 
-    const [groups, setGroups] = useState<CustomerGroup[]>(DEFAULT_GROUPS);
+    const [groups] = useState<CustomerGroup[]>(DEFAULT_GROUPS);
     const [searchTerm, setSearchTerm] = useState('');
     const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [editingGroup, setEditingGroup] = useState<CustomerGroup | null>(null);
+    const [_showAddModal, setShowAddModal] = useState(false);
+    const [_editingGroup, setEditingGroup] = useState<CustomerGroup | null>(null);
 
     // Calculate member counts
     const groupsWithCounts = useMemo(() => {

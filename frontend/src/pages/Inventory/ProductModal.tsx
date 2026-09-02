@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { X, Save, Box, Tag, DollarSign, Package, AlertCircle } from 'lucide-react';
+import { X, Save, Box } from 'lucide-react';
 import { Product } from '../../types/product';
 
 interface ProductModalProps {
@@ -8,9 +8,11 @@ interface ProductModalProps {
     onSave: (productData: Partial<Product>) => Promise<void>;
     product?: Product | null;
     isLoading?: boolean;
+    categories?: string[];
 }
 
-const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, product, isLoading }) => {
+const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, product, isLoading, categories }) => {
+    const [isNewCategory, setIsNewCategory] = useState(false);
     const [formData, setFormData] = useState<Partial<Product>>({
         name: '',
         sku: '',
@@ -30,6 +32,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
             setFormData({
                 ...product
             });
+            // A product whose category isn't in the known list (e.g. legacy data, or a
+            // category the catalog no longer has) still needs to be editable as free text.
+            setIsNewCategory(!!product.category && !(categories || []).includes(product.category));
         } else {
             setFormData({
                 name: '',
@@ -44,6 +49,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                 location: '',
                 barcode: ''
             });
+            setIsNewCategory(false);
         }
     }, [product, isOpen]);
 
@@ -60,6 +66,18 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
             ...prev,
             [name]: type === 'number' ? parseFloat(value) || 0 : value
         }));
+    };
+
+    const NEW_CATEGORY_SENTINEL = '__new_category__';
+
+    const handleCategorySelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        if (e.target.value === NEW_CATEGORY_SENTINEL) {
+            setIsNewCategory(true);
+            setFormData(prev => ({ ...prev, category: '' }));
+            return;
+        }
+        setIsNewCategory(false);
+        setFormData(prev => ({ ...prev, category: e.target.value }));
     };
 
     return (
@@ -128,15 +146,43 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                             </div>
                             <div>
                                 <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1.5 block px-1">Category</label>
-                                <input
-                                    type="text"
-                                    name="category"
-                                    value={formData.category}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                    placeholder="Lenses"
-                                />
+                                {isNewCategory ? (
+                                    <div className="space-y-1.5">
+                                        <input
+                                            type="text"
+                                            name="category"
+                                            value={formData.category}
+                                            onChange={handleChange}
+                                            required
+                                            autoFocus
+                                            className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            placeholder="New category name"
+                                        />
+                                        {(categories || []).length > 0 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => { setIsNewCategory(false); setFormData(prev => ({ ...prev, category: '' })); }}
+                                                className="text-[10px] font-black text-neutral-400 hover:text-primary uppercase tracking-widest px-1"
+                                            >
+                                                ← Choose existing category instead
+                                            </button>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <select
+                                        name="category"
+                                        value={formData.category || ''}
+                                        onChange={handleCategorySelect}
+                                        required
+                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+                                    >
+                                        <option value="" disabled>Select category...</option>
+                                        {(categories || []).map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
+                                        <option value={NEW_CATEGORY_SENTINEL}>+ Add new category</option>
+                                    </select>
+                                )}
                             </div>
                         </div>
 

@@ -1,29 +1,19 @@
-﻿import React, { useMemo } from 'react';
+﻿import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import { useExpenseReports } from "../../hooks/useExpenseReports";
 import {
     BarChart3,
-    PieChart,
     TrendingUp,
     ShieldAlert,
-    AlertTriangle,
     CheckCircle2,
     Building2,
-    Calendar,
     Download,
     Filter,
-    ArrowRight,
     Zap,
     Scale,
-    FileText,
     Activity,
     Target,
-    Users,
-    MousePointer2,
-    ArrowUpRight,
-    Search,
-    ChevronDown,
     Info,
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout";
@@ -38,7 +28,7 @@ interface AuthState {
 
 const ExpenseReportsIntelligence: React.FC = () => {
     const auth = useSelector((state: RootState & { auth: AuthState }) => state.auth);
-    const user = auth.user;
+    const _user = auth.user;
     const { report, loading } = useExpenseReports();
 
     const riskColor = (risk: string) => risk === 'HIGH' ? 'text-error bg-error/10 border-error/20' : 'text-success bg-success/10 border-success/20';

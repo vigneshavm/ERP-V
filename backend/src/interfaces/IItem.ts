@@ -16,6 +16,9 @@ export interface IItem extends Document {
     unit: string;
     color?: string;
     size?: string;
+    brand?: string;
+    shelfCode?: string;
+    shelfType?: 'FULL' | 'HALF';
     washingInstructions?: string;
     categoryCode?: string;
     isActive: boolean;
@@ -34,6 +37,13 @@ export interface IItem extends Document {
         storeId: Types.ObjectId | string;
         qty: number;
         reservedQty: number;
+    }[];
+    warehouseId?: string;
+    binLocation?: string;
+    warehouseLevels?: {
+        warehouseId: string;
+        binLocation?: string;
+        qty: number;
     }[];
 
     // Virtuals

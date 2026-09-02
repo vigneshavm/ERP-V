@@ -4,17 +4,14 @@ import { RootState, AppDispatch } from "../../redux/store";
 import {
     addDailyRecord,
     updateDailyRecord,
-    deleteDailyRecord,
-    setDailyRecordSynced
+    deleteDailyRecord
 } from "../../redux/slices/financeSlice";
 import { SyncManager } from "../../services/SyncManager";
 import Layout from "../../components/shared/Layout";
-import {
-    IndianRupee, Plus, CheckCircle2, History,
+import { Plus, CheckCircle2, History,
     AlertCircle, Search,
     Edit2, Trash2, X, Zap,
-    TrendingUp, TrendingDown, Calendar, Download,
-    Filter, Layers, RotateCcw
+    TrendingUp, TrendingDown, Calendar, Download, Layers
 } from 'lucide-react';
 import { formatCurrency } from "../../utils/helpers";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
@@ -57,12 +54,12 @@ const DailyFinancePage: React.FC = () => {
 
     // List Filters
     const [recentSearch, setRecentSearch] = useState('');
-    const [recentFrom, setRecentFrom] = useState('');
-    const [recentTo, setRecentTo] = useState('');
-    const [netMin, setNetMin] = useState('');
-    const [netMax, setNetMax] = useState('');
-    const [recentSortBy, setRecentSortBy] = useState<'date' | 'net' | 'notes'>('date');
-    const [recentSortDir, setRecentSortDir] = useState<'desc' | 'asc'>('desc');
+    const [recentFrom] = useState('');
+    const [recentTo] = useState('');
+    const [netMin] = useState('');
+    const [netMax] = useState('');
+    const [recentSortBy] = useState<'date' | 'net' | 'notes'>('date');
+    const [recentSortDir] = useState<'desc' | 'asc'>('desc');
 
     const currentTotalSales = (parseFloat(cash) || 0) + (parseFloat(online) || 0);
 

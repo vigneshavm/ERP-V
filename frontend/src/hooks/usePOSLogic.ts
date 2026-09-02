@@ -1,23 +1,19 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
 import {
     setActiveCounter,
-    clearCart,
     setCustomer,
     setTaxMode, setPaymentMethod, setRedeemedPoints
 } from "../redux/slices/posSlice";
 import { lookupOrCreateCustomer } from "../redux/thunks/customerThunks";
 import { RootState, AppDispatch } from "../redux/store";
-import { calculateLoyaltyPoints } from "../utils/loyalty";
-import { Sale, Customer, CartItem, Session } from "../types/sales";
+import { Sale, Customer, CartItem } from "../types/sales";
 import { usePOSShortcuts } from './usePOSShortcuts';
 import { useBranchResolver } from './useBranchResolver';
 import { useAppSettings } from './useAppSettings';
 import { printSaleReceipt, downloadSaleReceiptPDF } from "../utils/printService";
-import { Sector, TaxMode, PaymentMethod } from "../types/common";
-import { db } from "../services/db";
-import { SyncManager } from "../services/SyncManager";
-import { productTypes } from '../data/productTypes';
+import { TaxMode, PaymentMethod } from "../types/common";
 
 const DEFAULT_CUSTOMER: Customer = {
     id: 'c1',
@@ -61,7 +57,7 @@ export const usePOSLogic = () => {
 
     const activeCustomerId = activeSession.customerId;
     const activeCustomer = customers.find(c => c.id === activeCustomerId) || customers[0] || DEFAULT_CUSTOMER;
-    const isBranchAll = currentBranch === 'All';
+    const _isBranchAll = currentBranch === 'All';
 
     const { isFullScreen, setViewMode, mobileTab, setMobileTab, viewMode,
         isProcessing, setIsProcessing, isPreOrder, setIsPreOrder,
@@ -155,13 +151,131 @@ export const usePOSLogic = () => {
         return Array.from(subCats).filter(Boolean) as string[];
     }, [products]);
 
-    // Merge inventory product types with productTypes from ItemCategories
+    // Product Type master list for POS Quick Entry (billing an item with no
+    // barcode). This used to be a static, hardcoded array (data/productTypes.ts)
+    // shown to every tenant regardless of their actual business — a Pharmacy
+    // or Electronics tenant would still see Saree/Dhothie/Lungi options, and
+    // even after that was replaced with the live sector API, every tenant in
+    // a sector still saw the FULL 114-item master list whether or not they'd
+    // actually chosen to use each category. Now it's fetched from the merged,
+    // tenant-scoped endpoint (GET /api/inventory/categories) and filtered to
+    // isRegistered === true, so Quick Entry only offers Product Types the
+    // tenant has actually added to their own Categories via Category Manager
+    // or Settings -> General "Add Selected to My Categories" — the same
+    // "registered" set that Settings' checklist shows as "Added".
+    const [dynamicProductTypes, setDynamicProductTypes] = useState<
+        { name: string; gstRate?: number; defaultUnit?: string }[]
+    >([]);
+
+    // ProductCategoryModel stores defaultUnit as the same lowercase short code
+    // used elsewhere on Item.unit ('pcs'/'kg'/'l'/'box'/'unit'/'mtr'/'set'),
+    // but POSCartGrid's Quick Entry logic was built against productTypes.ts's
+    // Title-case unit labels ('Piece'/'Meter'/'Set'/'Kg') -- e.g. it checks
+    // `defaultUnit === 'Meter'` to decide whether to show the cut-length field.
+    // Translate at the boundary so that existing comparison keeps working.
+    const UNIT_LABELS: Record<string, string> = {
+        pcs: 'Piece', mtr: 'Meter', set: 'Set', kg: 'Kg', l: 'Liter', box: 'Box', unit: 'Piece'
+    };
+    const toUnitLabel = (unit?: string) => {
+        if (!unit) return 'Piece';
+        return UNIT_LABELS[unit.toLowerCase()] || (unit.charAt(0).toUpperCase() + unit.slice(1).toLowerCase());
+    };
+
+    // Resolution chain, each step a react-query query rather than a plain
+    // useEffect + fetch: under React.StrictMode (enabled in main.tsx), a
+    // plain effect's fetch body runs twice on mount (mount -> cleanup ->
+    // mount again), firing a genuine duplicate network request each time --
+    // exactly what happened here before this rewrite (visible in DevTools
+    // as duplicate `settings` / `business-sectors` / `categories` calls).
+    // react-query dedupes concurrent requests sharing a queryKey against its
+    // cache, so the StrictMode double-mount reuses one in-flight request
+    // instead of firing two. This matches the pattern already used by
+    // useFinanceSync.ts and useTenantData.ts elsewhere in this codebase.
+
+    // Deliberately NOT sourced from `tenants` (state.tenant.tenants): on the
+    // POS page that array is populated by useTenantData.ts from GET
+    // /api/business/profile, whose hand-built tenant object never includes
+    // businessType/sector at all (see tenantQueries.ts). Those fields only
+    // land in `tenants` via a separate merge that runs when Settings ->
+    // General has been fetched/saved in the SAME session -- so a user who
+    // opens POS without ever visiting Settings first got an empty Product
+    // Type list with no request even attempted. Going straight to GET
+    // /api/settings (the same source Settings itself reads) makes this
+    // reliable regardless of navigation order.
+    const { data: tenantSettings } = useQuery({
+        queryKey: ['pos-tenant-settings', user?.tenantId],
+        queryFn: () => api.get('/api/settings').then(res => res.data?.data || {}),
+        enabled: !!user?.tenantId,
+    });
+    const settingsSector: string | undefined = tenantSettings?.sector || undefined;
+    const settingsBusinessType: string | undefined = tenantSettings?.businessType || undefined;
+
+    // tenant.sector (the short code, e.g. 'Textile') hasn't been backfilled
+    // for every tenant -- Settings -> General only resolves and saves it
+    // when the Business Sector dropdown value is actually *changed*, so a
+    // tenant whose businessType was set before that logic existed (or who
+    // has never touched the dropdown since) can have businessType populated
+    // with sector left blank. Resolve it the same way Settings.tsx does,
+    // only when GET /api/settings didn't already give us a sector.
+    const { data: businessSectors } = useQuery({
+        queryKey: ['business-sectors'],
+        queryFn: () => api.get('/api/business-sectors').then(res => res.data?.data || []),
+        enabled: !settingsSector && !!settingsBusinessType,
+    });
+    const resolvedSector: string | undefined = settingsSector
+        || (businessSectors || []).find((s: any) => s.name === settingsBusinessType)?.shortCode
+        || undefined;
+
+    const { data: registeredCategoryRows } = useQuery({
+        queryKey: ['pos-registered-categories', resolvedSector],
+        queryFn: () => api.get('/api/inventory/categories', { params: { page: 1, limit: 100000, sector: resolvedSector } })
+            .then(res => res.data?.data || []),
+        enabled: !!resolvedSector,
+    });
+
+    useEffect(() => {
+        if (!resolvedSector || !registeredCategoryRows) {
+            // No configured Business Sector at all, or the categories query
+            // hasn't resolved yet -- leaving the list empty (not fabricating
+            // one) is the honest result until Settings -> General has a
+            // sector set and the request completes.
+            setDynamicProductTypes([]);
+            return;
+        }
+        setDynamicProductTypes(
+            registeredCategoryRows
+                // Only categories the tenant has actually registered
+                // (Category Manager, or Settings' "Add Selected to My
+                // Categories") -- not every name the sector's shared
+                // master list happens to offer.
+                .filter((c: any) => c.isRegistered && c.status !== 'ARCHIVED')
+                .map((c: any) => ({
+                    name: c.name,
+                    gstRate: c.gstRate,
+                    defaultUnit: toUnitLabel(c.defaultUnit)
+                }))
+        );
+    }, [resolvedSector, registeredCategoryRows]);
+
+    // Name -> {gstRate, defaultUnit} lookup for Quick Entry's GST/unit
+    // auto-fill, replacing POSCartGrid's own direct import of the old static
+    // productTypes.ts array.
+    const productTypeDetails = useMemo(() => {
+        const map: Record<string, { gstRate?: number; defaultUnit?: string }> = {};
+        for (const pt of dynamicProductTypes) {
+            map[pt.name] = { gstRate: pt.gstRate, defaultUnit: pt.defaultUnit };
+        }
+        return map;
+    }, [dynamicProductTypes]);
+
+    // Merge inventory product types (already on real Items) with the dynamic
+    // sector Product Type catalog above.
     const allProductTypes = useMemo(() => {
         const inventoryTypes = new Set(products.map(p => p.productType || p.subCategory || p.category));
-        const categoryTypes = productTypes.map((pt: any) => pt.name);
+        const categoryTypes = dynamicProductTypes.map(pt => pt.name);
         const combined = new Set([...inventoryTypes, ...categoryTypes]);
         return Array.from(combined).filter(Boolean).sort() as string[];
-    }, [products]);
+    }, [products, dynamicProductTypes]);
 
     // --- Computed Branch Logic ---
     const allBranches = useMemo(() => {
@@ -233,7 +347,7 @@ export const usePOSLogic = () => {
                     taxMode: item.taxMode || defaultTaxMode
                 }, isReturnMode);
             }
-        } catch (err) {
+        } catch {
             console.warn('Barcode not found:', barcode);
             // Optional: Play an error beep or show toast
             alert(`Product with barcode ${barcode} not found!`);
@@ -354,6 +468,7 @@ export const usePOSLogic = () => {
         categories,
         getSubcategories,
         allProductTypes,
+        productTypeDetails,
         dispatch,
         lastBill,
         reprintLastBill,

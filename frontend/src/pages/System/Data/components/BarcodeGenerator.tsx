@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import JsBarcode from 'jsbarcode';
 import { QRCodeCanvas } from 'qrcode.react';
 import jsPDF from 'jspdf';
-import Layout from "@/components/shared/Layout/Layout";
 import PageHeader from "@/components/shared/Layout/PageHeader";
 import { getAllItems } from "@/redux/slices/inventorySlice";
 import { Product } from "@/types/product";
@@ -76,7 +75,7 @@ const BarcodeGenerator = () => {
         if (!barcodeRef.current) return;
 
         try {
-            let format = formData.barcodeType === 'UPC' ? 'UPC' : formData.barcodeType;
+            const format = formData.barcodeType === 'UPC' ? 'UPC' : formData.barcodeType;
             let value = (formData.sku || '').replace(/\s/g, '');
             if (!value) return;
 
@@ -293,7 +292,7 @@ const BarcodeGenerator = () => {
                     pdf.addImage(imgData, 'PNG', qx, qy, side, side);
                 } else {
                     const canvas = document.createElement('canvas');
-                    let format = type === 'UPC' ? 'UPC' : type;
+                    const format = type === 'UPC' ? 'UPC' : type;
                     let codeVal = (value || '').replace(/\s/g, '');
                     if (format === 'CODE39') codeVal = codeVal.toUpperCase();
                     if (format === 'EAN13' && /^\d{12}$/.test(codeVal)) codeVal += computeEAN13CheckDigit(codeVal);
@@ -405,7 +404,7 @@ const BarcodeGenerator = () => {
                     pdf.addImage(imgData, 'PNG', qx, qy, side, side);
                 } else {
                     const canvas = document.createElement('canvas');
-                    let format = type === 'UPC' ? 'UPC' : type;
+                    const format = type === 'UPC' ? 'UPC' : type;
                     let codeVal = (value || '').replace(/\s/g, '');
                     if (format === 'CODE39') codeVal = codeVal.toUpperCase();
                     if (format === 'EAN13' && /^\d{12}$/.test(codeVal)) codeVal += computeEAN13CheckDigit(codeVal);

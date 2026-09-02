@@ -24,7 +24,7 @@ interface NumberSeries {
 }
 
 const SequenceControl: React.FC = () => {
-    const [series, setSeries] = useState<NumberSeries[]>([
+    const [series] = useState<NumberSeries[]>([
         { id: '1', documentType: 'Invoice', prefix: 'CHN-INV', suffix: '', padding: 6, currentValue: 234, branchId: 'Chennai', year: '2025', status: 'ACTIVE' },
         { id: '2', documentType: 'Bill', prefix: 'MDU-PUR', suffix: '', padding: 6, currentValue: 91, branchId: 'Madurai', year: '2025', status: 'ACTIVE' },
         { id: '3', documentType: 'Payment', prefix: 'CHN-PAY', suffix: '', padding: 6, currentValue: 102, branchId: 'Chennai', year: '2025', status: 'ACTIVE' },

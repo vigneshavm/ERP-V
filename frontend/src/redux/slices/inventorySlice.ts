@@ -38,6 +38,12 @@ interface InventoryState {
   alerts: any[]; // Define Alert type if available
   pagination: Pagination | null;
   categories: string[];
+  // The full Product Category catalog (tenant-registered + sector master data,
+  // e.g. "Textile"/"Garment"), used for assigning a category to a SKU. This is
+  // NOT the same list as `categories` above, which is limited to whatever
+  // category values already happen to be used on an existing Item.
+  categoryCatalog: string[];
+  categoryCatalogError: string | null;
   isHydrating: boolean;
   isLoading: boolean;
   isSuccess: boolean;
@@ -59,6 +65,8 @@ const initialState: InventoryState = {
   alerts: [],
   pagination: null,
   categories: [],
+  categoryCatalog: [],
+  categoryCatalogError: null,
   isHydrating: true,
   isLoading: false,
   isSuccess: false,
@@ -71,7 +79,7 @@ const initialState: InventoryState = {
 // Get all items
 export const getAllItems = createAsyncThunk(
   'inventory/getAll',
-  async (params: { page?: number; limit?: number; search?: string; category?: string } | void, thunkAPI) => {
+  async (params: { page?: number; limit?: number; search?: string; category?: string; lowStockOnly?: boolean } | void, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as any;
       const token = state.auth.user?.token;
@@ -79,12 +87,15 @@ export const getAllItems = createAsyncThunk(
 
       let queryParams = "";
       if (params) {
-        const { page, limit, search, category } = params;
+        const { page, limit, search, category, lowStockOnly } = params;
         const parts = [];
         if (page) parts.push(`page=${page}`);
         if (limit) parts.push(`limit=${limit}`);
         if (search) parts.push(`search=${encodeURIComponent(search)}`);
         if (category && category !== 'ALL') parts.push(`category=${encodeURIComponent(category)}`);
+        // Filtered server-side (not client-side over the current page only) so the
+        // "Low Stock" view respects pagination/totals the same way the full list does.
+        if (lowStockOnly) parts.push(`lowStockOnly=true`);
         if (parts.length > 0) queryParams = `?${parts.join('&')}`;
       }
 
@@ -374,6 +385,71 @@ export const getStockHistory = createAsyncThunk(
   }
 );
 
+// Get distinct category values used across the tenant's items (for filter dropdowns).
+// Unlike deriving categories from `items`, this isn't limited to whatever page
+// happens to be loaded.
+export const getItemCategories = createAsyncThunk(
+  'inventory/getCategories',
+  async (_, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as any;
+      const token = state.auth.user?.token;
+      if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+
+      const response = await api.get(`${API_URL}/distinct-categories`, getConfig(token));
+      return response.data;
+    } catch (error: any) {
+      // Previously fell back to a hardcoded demo list here, which would have
+      // silently shown fake categories to a manager instead of a real error.
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to fetch categories");
+    }
+  }
+);
+
+// Get the full Product Category catalog for the tenant: categories already
+// registered via Category Manager (e.g. "Textile", "Garment") plus, when the
+// tenant has a business sector configured, that sector's master Product Type
+// list — merged server-side by GET /api/inventory/categories. This is what
+// "assign a category to a SKU" should offer, since a category can legitimately
+// exist before any Item has ever used it (unlike `getItemCategories` above,
+// which only reflects categories already present on existing Items).
+export const getCategoryCatalog = createAsyncThunk(
+  'inventory/getCategoryCatalog',
+  async (_, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as any;
+      const token = state.auth.user?.token;
+      if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+
+      const tenants = state.tenant?.tenants || [];
+      const currentTenant = tenants.find((t: any) => t.id === state.auth.user?.tenantId);
+      const sector = currentTenant?.sector || 'General';
+
+      // limit=100000: the same unpaginated-fetch pattern CategoryManager.tsx's
+      // own export feature already relies on to get every category in one call
+      // -- category counts are small (tens) for a real tenant, so this is cheap.
+      const response = await api.get(`${API_URL}/categories`, {
+        ...getConfig(token),
+        params: { page: 1, limit: 100000, sector },
+      });
+
+      const rows: Array<{ name: string; status?: string }> = response.data?.data || [];
+      const names = Array.from(
+        new Set(
+          rows
+            .filter(c => c.status !== 'ARCHIVED')
+            .map(c => c.name)
+            .filter(Boolean)
+        )
+      ).sort((a, b) => a.localeCompare(b));
+
+      return names;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to fetch category catalog");
+    }
+  }
+);
+
 export const inventorySlice = createSlice({
   name: 'inventory',
   initialState,
@@ -584,7 +660,7 @@ export const inventorySlice = createSlice({
       .addCase(applyAgingAction.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(applyAgingAction.fulfilled, (state, action) => {
+      .addCase(applyAgingAction.fulfilled, (state, __action) => {
         state.isLoading = false;
         state.isSuccess = true;
         // Optionally update the item in the report
@@ -671,6 +747,21 @@ export const inventorySlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+      })
+      // Get item categories (does not toggle the page-level isLoading spinner —
+      // this is a background lookup for the filter dropdown, not the item list).
+      .addCase(getItemCategories.fulfilled, (state, action: PayloadAction<string[]>) => {
+        state.categories = action.payload;
+      })
+      // On failure, keep whatever category list was already loaded rather than
+      // clearing it or fabricating one — a stale-but-real list beats a fake one.
+      .addCase(getItemCategories.rejected, () => {})
+      .addCase(getCategoryCatalog.fulfilled, (state, action: PayloadAction<string[]>) => {
+        state.categoryCatalog = action.payload;
+        state.categoryCatalogError = null;
+      })
+      .addCase(getCategoryCatalog.rejected, (state, action) => {
+        state.categoryCatalogError = (action.payload as string) || 'Failed to fetch category catalog';
       });
   },
 });

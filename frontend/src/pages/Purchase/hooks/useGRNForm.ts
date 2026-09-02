@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
 import { addGRN } from "../../../redux/slices/purchaseSlice";
 import { GRN, GRNItem, GRNStatus, PurchaseOrder } from "../../../types/purchase";
+import { normalizePurchaseOrderItem } from "../../../utils/purchaseNormalize";
+import { createGRN, mapGrnToFrontendGRN } from "../../../services/grnService";
 
 export const useGRNForm = () => {
     const { poId } = useParams<{ poId: string }>();
@@ -17,30 +19,42 @@ export const useGRNForm = () => {
     const [grnData, setGrnData] = useState<Partial<GRN>>({
         grnNumber: `GRN-${Math.floor(100000 + Math.random() * 900000)}`,
         receivedDate: new Date().toISOString().split('T')[0],
-        status: 'Draft',
+        status: 'INSPECTED',
         items: [],
         notes: '',
         attachments: []
     });
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
 
+    // A PO can only be received against once it's actually been sent to the vendor (or is
+    // already partially received) - matches PurchaseOrderDetails' canReceive check, so both
+    // receiving entry points (from a PO's own detail page, or from this standalone GRN form)
+    // agree on when receiving is allowed.
     const availablePOs = useMemo(() => {
-        return orders.filter((o: PurchaseOrder) => o.status === 'Approved' || o.status === 'Partial Receipt');
+        return orders.filter((o: PurchaseOrder) => o.status === 'SENT_TO_VENDOR' || o.status === 'PARTIALLY_RECEIVED');
     }, [orders]);
 
     const initializeGRNFromPO = (order: PurchaseOrder) => {
-        const items: GRNItem[] = order.items.map((item: any) => ({
-            id: `ITEM-${Math.random().toString(36).substr(2, 9)}`,
-            poItemId: item.product_id || '',
-            productId: item.product_id || '',
-            productName: item.product_name,
-            sku: item.sku,
-            orderedQty: item.quantity,
-            receivedQty: item.quantity - (item.received_quantity || 0),
-            acceptedQty: item.quantity - (item.received_quantity || 0),
-            rejectedQty: 0,
-            inspectionStatus: 'Accepted',
-            discrepancyNotes: ''
-        }));
+        const items: GRNItem[] = order.items.map((rawItem: any) => {
+            // Defensive: normalize in case `order` came from somewhere that skipped
+            // normalizePurchaseOrder (e.g. stale localStorage-persisted Redux state).
+            const item = normalizePurchaseOrderItem(rawItem);
+            const outstanding = Math.max(0, (item.quantity || 0) - (item.received_quantity || 0));
+            return {
+                id: `ITEM-${Math.random().toString(36).substr(2, 9)}`,
+                poItemId: item.product_id || '',
+                productId: item.product_id || '',
+                productName: item.product_name,
+                sku: item.sku,
+                orderedQty: item.quantity,
+                receivedQty: outstanding,
+                acceptedQty: outstanding,
+                rejectedQty: 0,
+                inspectionStatus: 'Accepted',
+                discrepancyNotes: ''
+            };
+        });
 
         setGrnData((prev: Partial<GRN>) => ({
             ...prev,
@@ -92,17 +106,47 @@ export const useGRNForm = () => {
         setGrnData((prev: Partial<GRN>) => ({ ...prev, items: newItems }));
     };
 
-    const saveGRN = (status: GRNStatus) => {
-        const finalGRN: GRN = {
-            ...grnData as GRN,
-            status,
-            created_at: new Date().toISOString(),
-            created_by: user?.name,
-            branch_id: currentBranch || 'Main'
-        };
+    // Actually calls the backend (POST /api/grn via GRNController.createGRN), which moves
+    // inventory and updates the parent PO's status - this used to only dispatch to local Redux
+    // and never touched the backend at all.
+    const saveGRN = async (___status?: GRNStatus) => {
+        if (!grnData.poId || !grnData.items || grnData.items.length === 0) {
+            setSaveError('Select a Purchase Order with items before saving a receipt.');
+            return;
+        }
 
-        dispatch(addGRN(finalGRN));
-        navigate('/purchase/grn');
+        setIsSaving(true);
+        setSaveError(null);
+        try {
+            const result = await createGRN({
+                purchaseId: grnData.poId as string,
+                notes: grnData.notes,
+                items: grnData.items
+                    .filter(i => i.receivedQty > 0)
+                    .map(i => ({
+                        productId: i.productId,
+                        productName: i.productName,
+                        receivedQty: i.receivedQty,
+                        rejectedQty: i.rejectedQty,
+                        lotNumber: i.batchNumber,
+                        rejectionReason: i.discrepancyNotes,
+                    })),
+            });
+
+            if (result?.grn) {
+                dispatch(addGRN(mapGrnToFrontendGRN(result.grn, {
+                    poNumber: grnData.poNumber,
+                    vendorName: grnData.vendorName,
+                    branchId: currentBranch || 'Main',
+                    createdBy: user?.name,
+                })));
+            }
+            navigate('/purchase/grn');
+        } catch (err: any) {
+            setSaveError(err?.response?.data?.message || err?.message || 'Failed to save goods receipt');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const setGrnField = (field: keyof GRN, value: any) => {
@@ -117,6 +161,8 @@ export const useGRNForm = () => {
         handlePOSelect,
         handleItemChange,
         saveGRN,
+        isSaving,
+        saveError,
         setGrnField,
         navigate
     };

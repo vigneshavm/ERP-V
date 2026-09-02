@@ -4,10 +4,8 @@ import { RootState } from "@/redux/store";
 import {
     Search,
     Users,
-    User,
     Phone,
     Mail,
-    MapPin,
     TrendingUp,
     Download,
     Plus,
@@ -17,6 +15,7 @@ import {
     ShoppingBag
 } from 'lucide-react';
 import Customer360Modal from './Customer360Modal';
+import { formatDate } from '../../../utils/helpers';
 
 const CustomerList: React.FC = () => {
     const { customers } = useSelector((state: RootState) => state.customers);
@@ -65,7 +64,7 @@ const CustomerList: React.FC = () => {
 
     // Filter and sort
     const filteredCustomers = useMemo(() => {
-        let result = enrichedCustomers.filter(customer => {
+        const result = enrichedCustomers.filter(customer => {
             if (searchTerm) {
                 const search = searchTerm.toLowerCase();
                 if (!customer.name.toLowerCase().includes(search) &&
@@ -280,7 +279,7 @@ const CustomerList: React.FC = () => {
                                         </td>
                                         <td className="p-4 text-neutral-500 text-sm">
                                             {customer.lastPurchase
-                                                ? new Date(customer.lastPurchase).toLocaleDateString()
+                                                ? formatDate(customer.lastPurchase)
                                                 : '-'
                                             }
                                         </td>

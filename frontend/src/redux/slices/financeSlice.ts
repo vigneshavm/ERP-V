@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { FinanceState, Transaction, Cheque, DayEndSummary } from "../../types/finance";
-import { TransactionType } from "../../types/common";
+import { FinanceState, Transaction, Cheque } from "../../types/finance";
 import api from "../../services/api.js";
 import { RootState } from '../store';
 

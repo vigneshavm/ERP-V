@@ -1,7 +1,6 @@
 ﻿import React, { useState, useMemo } from 'react';
-import { Search, Filter, Plus, FileText, CheckCircle, Clock, AlertCircle, Lock, MoreHorizontal, Trash2, Printer, Download, ChevronUp, ChevronDown, Eye, FileSpreadsheet, Info, ArrowUpDown, Activity } from 'lucide-react';
+import { Search, FileText, CheckCircle, Clock, AlertCircle, Lock, MoreHorizontal, Trash2, Printer, Download, Eye, FileSpreadsheet, Info, ArrowUpDown, Activity } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderStatus, PurchaseOrderItem } from "../../hooks/usePurchaseOrders";
-import { toast } from 'react-toastify';
 
 interface PurchaseOrderListProps {
     orders?: PurchaseOrder[];
@@ -9,7 +8,7 @@ interface PurchaseOrderListProps {
     onView?: (id: string) => void;
 }
 
-const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCreate = () => { }, onView = () => { } }) => {
+const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCreate: __onCreate = () => { }, onView = () => { } }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('All');
 
@@ -25,7 +24,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
     const vendors = useMemo(() => Array.from(new Set(orders.map((o: PurchaseOrder) => o.vendor_name || 'Unknown'))).sort(), [orders]);
 
     const filteredOrders = useMemo(() => {
-        let result = orders.filter((o: PurchaseOrder) => {
+        const result = orders.filter((o: PurchaseOrder) => {
             const matchesSearch = o.po_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 o.vendor_name?.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesStatus = statusFilter === 'All' || o.status === statusFilter;
@@ -71,20 +70,21 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
     const getStatusBadge = (status: PurchaseOrderStatus) => {
         const baseClass = "px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5";
         switch (status) {
-            case 'Approved':
+            case 'APPROVED':
                 return <span className={`${baseClass} bg-cyan-50 text-cyan-600 dark:bg-cyan-900/20 dark:text-info`}><CheckCircle className="w-3 h-3" /> Approved</span>;
-            case 'Fully Received':
-            case 'Converted':
+            case 'SENT_TO_VENDOR':
+                return <span className={`${baseClass} bg-sky-50 text-sky-600 dark:bg-sky-900/20 dark:text-info`}><Activity className="w-3 h-3" /> Sent to Vendor</span>;
+            case 'COMPLETED':
+            case 'RECEIVED':
             case 'Paid':
                 return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success`}><Lock className="w-3 h-3" /> {status}</span>;
-            case 'Partial Receipt':
+            case 'PARTIALLY_RECEIVED':
                 return <span className={`${baseClass} bg-indigo-50 text-primary dark:bg-indigo-900/20 dark:text-primary`}><Activity className="w-3 h-3" /> Partial</span>;
             case 'Billed':
                 return <span className={`${baseClass} bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-accent`}><FileText className="w-3 h-3" /> Billed</span>;
-            case 'Pending':
-            case 'Pending Approval':
+            case 'SUBMITTED':
                 return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning`}><Clock className="w-3 h-3" /> Pending</span>;
-            case 'Cancelled':
+            case 'CANCELLED':
                 return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger`}><AlertCircle className="w-3 h-3" /> Cancelled</span>;
             default:
                 return <span className={`${baseClass} bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400`}>{status}</span>;
@@ -141,7 +141,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                             className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                         >
                             <option value="All">All Statuses</option>
-                            {['Draft', 'Pending Approval', 'Approved', 'Partial Receipt', 'Fully Received', 'Billed', 'Paid', 'Cancelled'].map(s => (
+                            {['DRAFT', 'SUBMITTED', 'APPROVED', 'SENT_TO_VENDOR', 'PARTIALLY_RECEIVED', 'COMPLETED', 'Billed', 'Paid', 'CANCELLED'].map(s => (
                                 <option key={s} value={s}>{s}</option>
                             ))}
                         </select>

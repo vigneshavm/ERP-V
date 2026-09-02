@@ -1,17 +1,12 @@
 ﻿import React, { useState, useEffect } from 'react';
 import {
-    MessageSquare, Send, Eye, Zap, Plus, LayoutDashboard,
-    Smartphone, ShieldCheck, Filter, RefreshCw, Sparkles,
-    ArrowRight, Users, ChevronLeft, Loader2, Target,
-    TrendingUp, BarChart3, Layers, Shield, Copy, ArrowUpRight,
-    Star, MessageCircle, Heart, AlertTriangle, Calendar,
-    Tag, MousePointer2, Percent, Globe
+    MessageSquare, Send, Zap, ShieldCheck, Users, Target, Layers, Calendar,
+    Tag, Percent, Globe
 } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from "@/redux/store";
-import { setActiveTab } from "@/redux/slices/uiSlice";
 import { WhatsAppService } from "@/services/whatsappService";
-import { Tenant, Integrations } from "@/types/tenant";
+import { Tenant } from "@/types/tenant";
 
 // Helper to safely access tenant from state
 const useCurrentTenant = (): Tenant | null => {
@@ -25,15 +20,13 @@ const useCurrentTenant = (): Tenant | null => {
 };
 
 const WhatsAppMarketing: React.FC = () => {
-    const dispatch = useDispatch();
     const currentTenant = useCurrentTenant();
     const integrations = currentTenant?.integrations;
 
     // View State
     const [activeTab, setActiveTabLocal] = useState<'campaigns' | 'audience' | 'templates' | 'coupons'>('campaigns');
-    const [viewMode, setViewMode] = useState<'manager' | 'create'>('manager');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isConnected, setIsConnected] = useState(false);
+    const [_viewMode, setViewMode] = useState<'manager' | 'create'>('manager');
+    const [_isConnected, setIsConnected] = useState(false);
 
     // Mock Data
     const mockCampaigns: { id: string; name: string; status: string; date: string; recipients: number; revenue: string; conversion: string }[] = [

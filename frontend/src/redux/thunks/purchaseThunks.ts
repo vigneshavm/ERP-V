@@ -6,7 +6,7 @@ import { TransactionType } from "../../types/common";
 import { addTransaction } from '../slices/financeSlice';
 // import { recordVendorTransaction } from '../vendorSlice'; // Missing
 
-export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppDispatch, getState: () => RootState) => {
+export const processPurchaseApproval = (order: PurchaseOrder) => (dispatch: AppDispatch, __getState: () => RootState) => {
     dispatch(approveOrder(order.id));
     dispatch(addStockBulk(order.items.map(i => ({
         sku: i.sku || 'UNKNOWN',

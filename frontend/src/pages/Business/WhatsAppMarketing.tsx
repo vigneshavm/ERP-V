@@ -3,7 +3,6 @@ import Layout from "../../components/shared/Layout/index.js";
 import PageHeader from "../../components/shared/Layout/PageHeader.js";
 import FormInput from "../../components/core/Form/Input.js";
 import DataTable from "../../components/shared/Table/DataTable.js";
-import BusinessSubNav from './BusinessSubNav.js';
 import api from "../../services/api.js";
 import { toast } from 'react-toastify';
 
@@ -51,7 +50,7 @@ const WhatsAppMarketing: React.FC = () => {
     });
 
     const [templates, setTemplates] = useState<Template[]>([]);
-    const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>([
+    const [customerGroups] = useState<CustomerGroup[]>([
         { id: 1, name: 'All Customers', count: 0, selected: false },
         { id: 2, name: 'Premium Customers', count: 0, selected: false },
         { id: 3, name: 'New Customers', count: 0, selected: false },
@@ -64,7 +63,7 @@ const WhatsAppMarketing: React.FC = () => {
         read: 0,
         failed: 0
     });
-    const [loading, setLoading] = useState<boolean>(true);
+    const [_loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         fetchData();
@@ -99,7 +98,7 @@ const WhatsAppMarketing: React.FC = () => {
         }
 
         try {
-            const selectedGroupName = customerGroups
+            const _selectedGroupName = customerGroups
                 .filter(g => selectedGroups.includes(g.id))
                 .map(g => g.name)
                 .join(', ');

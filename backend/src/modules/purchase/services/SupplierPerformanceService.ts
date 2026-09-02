@@ -1,46 +1,56 @@
 import Purchase from "../models/Purchase.js";
 import PurchaseReturn from "../models/PurchaseReturn.js";
 import Supplier from "../models/Supplier.js";
-// GRN import removed as it was not found and is unused
-// Assuming GRN is part of Purchase or separate model. Based on previous context, GRN might be a separate collection or part of purchase flow.
-// Just in case, let's use Purchase dates if GRN model isn't distinct or use the GRN date if captured in Purchase/Bill.
-// Correction: We don't have a direct GRN mongoose model imported in previous steps, but we have Purchase. 
-// Let's assume for MVP: "Late" = Purchase Status COMPLETED date > Purchase Expected Date (if exists) or created vs update.
+import GRN from "../models/GRN.js";
 
 export const evaluateSupplier = async (supplierId: string) => {
     // 1. Fetch Summary Stats
-    const totalOrders = await Purchase.countDocuments({ vendorId: supplierId, status: 'COMPLETED' });
+    const totalOrders = await Purchase.countDocuments({ vendorId: supplierId, status: { $in: ['COMPLETED', 'RECEIVED'] } });
 
-    // 2. Calculate Late Deliveries (Proxy: Bill Date > PO Date + Buffer? Or if we have expectedDelivery)
-    // For now, let's assume if status is 'COMPLETED' and it took > 7 days from creation (mock logic) 
-    // OR ideally we check 'expectedDelivery' in PO vs 'updatedAt' (Completion).
-    // Let's rely on returns for quality score first as it's more deterministic.
-
+    // 2. Fetch GRNs to calculate real lead times and late deliveries
+    const grns = await GRN.find({ vendorId: supplierId }).populate('purchaseId');
     const returns = await PurchaseReturn.find({ supplier: supplierId });
     const totalReturns = returns.length;
 
-    // 3. Score Calculation
-    // Base Score: 100
-    // -5 for each return incidence
-    // -2 for each late delivery (mock: 10% of orders are late for simulation if no real date tracking)
+    let lateDeliveries = 0;
+    let totalLeadTimeDays = 0;
+    let grnDeliveryCount = 0;
 
-    let score = 100;
+    for (const grn of grns) {
+        const po = grn.purchaseId as any;
+        if (po && po.date) {
+            const leadTimeMs = new Date(grn.receivedDate).getTime() - new Date(po.date).getTime();
+            const leadTimeDays = Math.max(0, Math.round(leadTimeMs / (1000 * 60 * 60 * 24)));
+            totalLeadTimeDays += leadTimeDays;
+            grnDeliveryCount++;
 
-    // Return Penalty (Quality)
-    if (totalOrders > 0) {
-        const returnRate = totalReturns / totalOrders; // e.g., 0.1 (10%)
-        score -= (returnRate * 100); // -10 points
+            if (po.expectedDeliveryDate && new Date(grn.receivedDate) > new Date(po.expectedDeliveryDate)) {
+                lateDeliveries++;
+            }
+        }
     }
 
-    // Cap Score
+    const averageDeliveryTime = grnDeliveryCount > 0 ? Math.round((totalLeadTimeDays / grnDeliveryCount) * 10) / 10 : 3;
+
+    // 3. Reliability Score Calculation (Base: 100)
+    let score = 100;
+
+    if (totalOrders > 0) {
+        // Late delivery penalty: -5 per late delivery
+        const latePenalty = (lateDeliveries / totalOrders) * 40;
+        // Quality return penalty: -50 * return rate
+        const returnPenalty = (totalReturns / totalOrders) * 50;
+        score -= (latePenalty + returnPenalty);
+    }
+
     score = Math.max(0, Math.min(100, Math.round(score)));
 
-    // 4. Update Supplier
+    // 4. Update Supplier Performance Metrics
     const metrics = {
         totalOrders,
-        lateDeliveries: 0, // Placeholder until verified delivery tracking
+        lateDeliveries,
         totalReturns,
-        averageDeliveryTime: 3, // Mock average days
+        averageDeliveryTime,
         reliabilityScore: score,
         lastEvaluated: new Date()
     };

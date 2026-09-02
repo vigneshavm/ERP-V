@@ -4,21 +4,14 @@ import {
     Plus,
     Search,
     Filter,
-    MoreHorizontal,
     TrendingUp,
     Users,
-    ArrowRight,
     BarChart3,
     Zap,
     Sparkles,
-    Eye,
-    Clock,
     LayoutDashboard,
-    AlertTriangle,
     ShieldAlert,
     Share2,
-    Calendar,
-    MousePointer2,
     CheckCircle2
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
@@ -26,7 +19,7 @@ import { setActiveTab } from '@/redux/slices/uiSlice';
 
 const MarketingCoupons: React.FC = () => {
     const dispatch = useDispatch();
-    const [viewMode, setViewMode] = useState<'inventory' | 'create'>('inventory');
+    const [_viewMode] = useState<'inventory' | 'create'>('inventory');
 
     const coupons = [
         {

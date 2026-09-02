@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Filter, Search, Plus, Download, ChevronRight, BarChart2, Zap, ArrowRight, Layers } from 'lucide-react';
+import { Filter, Search, Plus, Download, BarChart2, Zap, ArrowRight, Layers } from 'lucide-react';
 import { salesInvoices, MockSalesInvoice } from '../../data';
 import Layout from '../../components/shared/Layout';
 

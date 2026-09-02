@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-    Filter, Search, Plus, Download, ChevronRight, 
-    BarChart2, ShieldCheck, FileText, Factory, 
+    Filter, Search, Plus, Download, ChevronRight, ShieldCheck, FileText, Factory, 
     Package, TrendingUp, AlertCircle, RefreshCw
 } from 'lucide-react';
 import { purchases, suppliers } from '../../data';

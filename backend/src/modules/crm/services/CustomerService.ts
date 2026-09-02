@@ -101,7 +101,7 @@ export class CustomerService {
             .populate("invoice", "invoiceNo totalAmount paymentStatus");
 
         return {
-            customer: { name: customer.name, phone: customer.phone },
+            customer: { name: customer.name, phone: customer.phone || '' },
             transactions: transactions.length ? transactions : []
         };
     }

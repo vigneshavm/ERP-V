@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import { Activity, Clock, ShieldCheck, DollarSign, Zap, Users, Monitor, TrendingUp, ArrowRightLeft, CreditCard, Plus, Terminal, User } from 'lucide-react';
-import { employees } from '../../data';
+import { Clock, ShieldCheck, Zap, Users, Monitor, TrendingUp, ArrowRightLeft, Plus, Terminal, User } from 'lucide-react';
 import Layout from '../../components/shared/Layout';
 
 const ShiftManagementIntelligenceMockUI: React.FC = () => {

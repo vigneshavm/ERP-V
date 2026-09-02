@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { HeldBill } from '../../redux/slices/posSlice';
-import { Clock, User, Trash2, ArrowRightCircle, ShoppingCart } from 'lucide-react';
+import { Clock, Trash2, ArrowRightCircle, ShoppingCart } from 'lucide-react';
 
 interface POSHeldBillsModalProps {
     isOpen: boolean;

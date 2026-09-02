@@ -7,13 +7,9 @@ import {
     FileText,
     Truck,
     Calendar,
-    Download,
     Printer,
-    Mail,
     Eye,
-    Phone,
-    RefreshCw,
-    Book
+    RefreshCw
 } from 'lucide-react';
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";

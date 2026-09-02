@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Plus, Users, UserPlus, Phone, Mail, MapPin, Briefcase, Activity, ChevronRight, Zap } from 'lucide-react';
+import { Search, Filter, UserPlus, Phone, Mail, Briefcase, ChevronRight, Zap } from 'lucide-react';
 import { customers, salesInvoices, MockCustomer, MockSalesInvoice } from '../../../data';
 import Layout from '../../../components/shared/Layout';
 
@@ -167,7 +167,7 @@ const CustomerMockUI: React.FC = () => {
                                                 </button>
                                             </div>
                                             <div className="glass-panel border border-default rounded-sm overflow-hidden backdrop-blur-sm">
-                                                {activeCustomer.recentInvoices.length > 0 ? activeCustomer.recentInvoices.map((inv, i) => (
+                                                {activeCustomer.recentInvoices.length > 0 ? activeCustomer.recentInvoices.map((inv, __i) => (
                                                     <div 
                                                         key={inv.invoice_no} 
                                                         onClick={() => navigate(`/sales/invoice/${inv.invoice_no}`)}

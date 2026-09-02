@@ -13,8 +13,6 @@ import {
   Trash2,
   Download,
   RefreshCcw,
-  Phone,
-  Mail,
   ArrowDownLeft,
   ArrowUpRight,
   ChevronUp,
@@ -27,6 +25,18 @@ import SupplierStatsCards from './components/SupplierStatsCards';
 import SupplierFilterBar from './components/SupplierFilterBar';
 import * as XLSX from 'xlsx';
 import { toast } from 'react-toastify';
+import { formatDate } from '../../../utils/helpers';
+
+// Moved to module scope - was defined inside Suppliers' render body (recreated on every render).
+// sortConfig is now passed in as a prop instead of being read from an outer closure.
+const SortIcon = ({ column, sortConfig }: { column: string; sortConfig: { key: string; direction: 'asc' | 'desc' } | null }) => {
+  if (!sortConfig || sortConfig.key !== column) {
+    return <span className="text-slate-300 dark:text-neutral-600 ml-1 inline-flex flex-col text-[8px] leading-none"><ChevronUp className="w-2.5 h-2.5" /><ChevronDown className="w-2.5 h-2.5 -mt-0.5" /></span>;
+  }
+  return sortConfig.direction === 'asc'
+    ? <ChevronUp className="w-3 h-3 text-primary ml-1 inline" />
+    : <ChevronDown className="w-3 h-3 text-primary ml-1 inline" />;
+};
 
 const Suppliers: React.FC = () => {
   const navigate = useNavigate();
@@ -69,7 +79,7 @@ const Suppliers: React.FC = () => {
       'Total Invoiced': s.totalAmount || 0,
       'Total Paid': s.totalPaid || 0,
       'Net Balance': s.netBalance || 0,
-      'Last Payment': s.lastPaymentDate ? new Date(s.lastPaymentDate).toLocaleDateString() : 'N/A'
+      'Last Payment': s.lastPaymentDate ? formatDate(s.lastPaymentDate) : 'N/A'
     }));
 
     const wb = XLSX.utils.book_new();
@@ -123,15 +133,6 @@ const Suppliers: React.FC = () => {
   const totalToCollect = suppliers.reduce((sum, s) => sum + (s.totalOutstanding || 0), 0);
 
   // Sort indicator
-  const SortIcon = ({ column }: { column: string }) => {
-    if (!sortConfig || sortConfig.key !== column) {
-      return <span className="text-slate-300 dark:text-neutral-600 ml-1 inline-flex flex-col text-[8px] leading-none"><ChevronUp className="w-2.5 h-2.5" /><ChevronDown className="w-2.5 h-2.5 -mt-0.5" /></span>;
-    }
-    return sortConfig.direction === 'asc'
-      ? <ChevronUp className="w-3 h-3 text-primary ml-1 inline" />
-      : <ChevronDown className="w-3 h-3 text-primary ml-1 inline" />;
-  };
-
   return (
     <Layout>
       <div className="space-y-6 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
@@ -187,7 +188,7 @@ const Suppliers: React.FC = () => {
                     className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('businessName')}
                   >
-                    Supplier Name <SortIcon column="businessName" />
+                    Supplier Name <SortIcon column="businessName" sortConfig={sortConfig} />
                   </th>
                   <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider whitespace-nowrap">
                     Group
@@ -200,25 +201,25 @@ const Suppliers: React.FC = () => {
                     className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('totalAmount')}
                   >
-                    Total Invoiced <SortIcon column="totalAmount" />
+                    Total Invoiced <SortIcon column="totalAmount" sortConfig={sortConfig} />
                   </th>
                   <th
                     className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('totalPaid')}
                   >
-                    Total Paid <SortIcon column="totalPaid" />
+                    Total Paid <SortIcon column="totalPaid" sortConfig={sortConfig} />
                   </th>
                   <th
                     className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('netBalance')}
                   >
-                    Balance <SortIcon column="netBalance" />
+                    Balance <SortIcon column="netBalance" sortConfig={sortConfig} />
                   </th>
                   <th
                     className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort('lastPaymentDate')}
                   >
-                    Last Payment <SortIcon column="lastPaymentDate" />
+                    Last Payment <SortIcon column="lastPaymentDate" sortConfig={sortConfig} />
                   </th>
                   <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider text-right w-16 whitespace-nowrap">
                   </th>

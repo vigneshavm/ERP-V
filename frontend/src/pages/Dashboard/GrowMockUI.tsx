@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
-import { 
-    Zap, Store, BarChart2, Globe, TrendingUp, Star, ShoppingBag, 
-    Mail, MessageSquare, Share2, ArrowRight, Users, Package,
+import { Store, Globe, TrendingUp, ShoppingBag, MessageSquare, Share2, ArrowRight, Users, Package,
     Target, Rocket, MousePointer2, ExternalLink
 } from 'lucide-react';
 import { inventory, customers, salesInvoices, MockSalesInvoice } from '../../data';

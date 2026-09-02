@@ -2,13 +2,13 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
-import { Award, Download, TrendingUp, Package, Star } from 'lucide-react';
+import { Award, Download, TrendingUp, Star } from 'lucide-react';
 
 interface BrandWiseSalesReportProps {
     timeRange: 'TODAY' | 'WEEK' | 'MONTH' | 'CUSTOM';
 }
 
-const BrandWiseSalesReport: React.FC<BrandWiseSalesReportProps> = ({ timeRange }) => {
+const BrandWiseSalesReport: React.FC<BrandWiseSalesReportProps> = ({ timeRange: __timeRange }) => {
     const { salesHistory } = useSelector((state: RootState) => state.pos);
     const { currentSector } = useSelector((state: RootState) => state.auth);
 
@@ -37,7 +37,7 @@ const BrandWiseSalesReport: React.FC<BrandWiseSalesReportProps> = ({ timeRange }
     }, [relevantSales]);
 
     const totalRevenue = brandStats.reduce((acc, s) => acc + s.revenue, 0);
-    const totalItems = brandStats.reduce((acc, s) => acc + s.items, 0);
+    const _totalItems = brandStats.reduce((acc, s) => acc + s.items, 0);
 
     const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#475569'];
 
@@ -167,7 +167,7 @@ const BrandWiseSalesReport: React.FC<BrandWiseSalesReportProps> = ({ timeRange }
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                            {brandStats.map((stat, idx) => (
+                            {brandStats.map((stat, __idx) => (
                                 <tr key={stat.name} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">

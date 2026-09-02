@@ -1,6 +1,6 @@
 ﻿import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Plus, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, Ban, Zap, ShieldCheck, Activity, ChevronRight, FileSpreadsheet } from 'lucide-react';
+import { Save, Plus, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, Ban, Zap, ShieldCheck, FileSpreadsheet } from 'lucide-react';
 import { PurchaseBill, PurchaseBillItem, BillStatus } from "../../types/purchase";
 import api from "../../services/api";
 import { toast } from 'react-toastify';
@@ -10,6 +10,7 @@ import BillBasicInfo from './Components/BillBasicInfo';
 import BillItemsTable from './Components/BillItemsTable';
 import BillFinancialSummary from './Components/BillFinancialSummary';
 import { useBillData } from './hooks/useBillData';
+import { formatDate } from '../../utils/helpers';
 
 interface Props {
     onBack?: () => void;
@@ -27,7 +28,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
         vendors,
         grns,
         attachments,
-        setAttachments,
+        setAttachments: _setAttachments,
         isLoading,
         setIsLoading,
         handleVendorChange,
@@ -38,7 +39,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
         removeAttachment
     } = useBillData(id, grnId, initialData);
 
-    const handleBack = () => {
+    const _handleBack = () => {
         if (onBack) onBack();
         else navigate('/purchase/bills');
     };
@@ -233,7 +234,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                         className="w-full px-6 py-3.5 bg-white dark:bg-neutral-800 border border-primary/20 rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30"
                                     >
                                         <option value="">Select Receipt Node...</option>
-                                        {Array.isArray(grns) && grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({new Date(g.receivedDate).toLocaleDateString()})</option>)}
+                                        {Array.isArray(grns) && grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({formatDate(g.receivedDate)})</option>)}
                                     </select>
                                 </div>
                                 {bill.po_number && (

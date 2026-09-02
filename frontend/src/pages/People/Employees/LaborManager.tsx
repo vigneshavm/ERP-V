@@ -1,19 +1,18 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch } from "../../../redux/store";
-import { addEmployee, markAttendance, addLaborPayment, setEmployees, createAdvanceAction, fetchAdvances } from "../../../redux/slices/laborSlice";
+import { addEmployee, setEmployees, createAdvanceAction, fetchAdvances, fetchAttendance, saveAttendance, bulkMarkAttendanceAction, updateEmployee, deactivateEmployee } from "../../../redux/slices/laborSlice";
 import { ensureBranchRecorded } from "../../../redux/slices/tenantSlice";
 import api from "../../../services/api.js";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import { TimeEntryModal } from "./TimeEntryModal.js";
-import { Users, Calendar, CreditCard, UserPlus } from 'lucide-react';
-import { getDaysInMonth, formatDateISO } from "../../../utils/helpers";
-import { securePassword } from "../../../utils/auth";
+import { Users, Calendar, CreditCard, UserPlus, Pencil, UserX } from 'lucide-react';
+import { formatDateISO } from "../../../utils/helpers";
 import { AttendanceStatus, Sector, SystemRole } from "../../../types/common";
 import { DailyLog } from "../../../types/hr";
-import { calculateLaborStats, convertMonthlyToDailyWage, generateLaborerPayload, mapDbUserToEmployee } from "../../../utils/laborUtils";
+import { calculateLaborStats, convertMonthlyToDailyWage } from "../../../utils/laborUtils";
 
 // Sub-components
 import LaborSidebar from './LaborSidebar';
@@ -22,14 +21,11 @@ import LaborStats from './LaborStats';
 import AttendanceCalendar from './AttendanceCalendar';
 import PaymentHistory from './PaymentHistory';
 
-// Helper for ID generation
-const generateId = () => Math.random().toString(36).substr(2, 9);
-
 export const LaborManager = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { employees, attendance, payments } = useSelector((state: RootState) => state.labor);
+  const { employees, attendance, payments, attendanceLoading, attendanceError } = useSelector((state: RootState) => state.labor);
   const { currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
-  const tenantBranches = useSelector((state: RootState) => state.tenant.branches);
+  const _tenantBranches = useSelector((state: RootState) => state.tenant.branches);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,8 +48,8 @@ export const LaborManager = () => {
     navigate(`${location.pathname}?tab=${tab.toLowerCase()}`, { replace: true });
   };
 
-  const [roles, setRoles] = useState<any[]>([]);
-  const [isRolesLoaded, setIsRolesLoaded] = useState(false);
+  const [roles] = useState<any[]>([]);
+  const [_isRolesLoaded] = useState(false);
 
   // View State
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -74,6 +70,18 @@ export const LaborManager = () => {
   const [wageType, setWageType] = useState<'DAILY' | 'MONTHLY'>('DAILY');
   const [monthlyInput, setMonthlyInput] = useState('');
 
+  // Edit Laborer Form State (reuses AddLaborerForm in "edit" mode)
+  const [isEditingLaborer, setIsEditingLaborer] = useState(false);
+  const [editEmp, setEditEmp] = useState({ name: '', role: '', roleId: '', dailyRate: '', mobile: '', branch: '' });
+  const [editWageType, setEditWageType] = useState<'DAILY' | 'MONTHLY'>('DAILY');
+  const [editMonthlyInput, setEditMonthlyInput] = useState('');
+
+  // STAFF-018: track load state explicitly so a failed fetch can render its
+  // own "Unable to load staff" + Retry state instead of silently looking
+  // identical to a tenant that genuinely has zero employees.
+  const [isLoadingEmployees, setIsLoadingEmployees] = useState(true);
+  const [employeesError, setEmployeesError] = useState<string | null>(null);
+
   // -- Computed Values --
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
@@ -81,8 +89,8 @@ export const LaborManager = () => {
 
   // Filter Employees
   const sectorEmps = (employees as any[]).filter(e => {
-    // Sector Check
-    if (e.sector !== currentSector) return false;
+    // Sector Check: Only filter out if currentSector is set and employee sector is set and explicitly different
+    if (currentSector && (currentSector as string) !== 'All' && e.sector && e.sector !== currentSector) return false;
 
     // Type Check
     if (staffType === 'OFFICE' && (e.wageType === 'DAILY' || e.wageType === 'HOURLY')) return false;
@@ -91,39 +99,52 @@ export const LaborManager = () => {
     return true;
   });
 
-  const activeTenantId = employees.length > 0 ? employees[0].tenantId : null;
+  const _activeTenantId = employees.length > 0 ? employees[0].tenantId : null;
 
-  // Load employees from API
-  React.useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await api.get('/api/hr/employees');
-        if (response.data && response.data.success) {
-          // Adapt to Redux format
-          const emps = response.data.data.map((e: any) => ({
-            id: e._id,
-            tenantId: e.tenantId,
-            name: e.name,
-            role: e.role,
-            roleId: e.roleId,
-            mobile: e.mobile,
-            dailyRate: e.dailyRate,
-            wageType: e.wageType,
-            branchId: e.branchId,
-            sector: currentSector, // Fallback or store in DB
-            isActive: e.isActive,
-            systemRole: SystemRole.STAFF,
-            pin: '****'
-          }));
-          // Update redux
-          dispatch(setEmployees(emps));
-        }
-      } catch (err) {
-        console.error("Failed to load employees", err);
+  const inFlightRequest = useRef<AbortController | null>(null);
+
+  const fetchEmployees = useCallback(async () => {
+    inFlightRequest.current?.abort();
+    const controller = new AbortController();
+    inFlightRequest.current = controller;
+
+    setIsLoadingEmployees(true);
+    setEmployeesError(null);
+    try {
+      const response = await api.get('/api/hr/employees', { signal: controller.signal });
+      if (controller.signal.aborted) return;
+      if (response.data && response.data.success) {
+        const emps = response.data.data.map((e: any) => ({
+          id: e._id,
+          tenantId: e.tenantId,
+          name: e.name,
+          role: e.role,
+          roleId: e.roleId,
+          mobile: e.mobile,
+          dailyRate: e.dailyRate,
+          wageType: e.wageType,
+          branchId: e.branchId,
+          sector: e.sector || currentSector,
+          isActive: e.isActive,
+          systemRole: SystemRole.STAFF,
+          pin: '****'
+        }));
+        dispatch(setEmployees(emps));
+      } else {
+        setEmployeesError(response.data?.message || 'The server returned an unexpected response.');
       }
-    };
+    } catch (err: any) {
+      if (controller.signal.aborted || err.code === 'ERR_CANCELED') return;
+      console.error("Failed to load employees", err);
+      setEmployeesError(err.response?.data?.message || err.message || 'Could not reach the server.');
+    } finally {
+      if (!controller.signal.aborted) setIsLoadingEmployees(false);
+    }
+  }, [dispatch, currentSector]);
+
+  useEffect(() => {
     fetchEmployees();
-  }, []);
+  }, [fetchEmployees]);
 
   useEffect(() => {
     if (selectedLaborerId) {
@@ -131,30 +152,20 @@ export const LaborManager = () => {
     }
   }, [selectedLaborerId, dispatch]);
 
-  // Removed legacy roles loading for now or keep if needed for role selection
-  React.useEffect(() => {
-    if (!isRolesLoaded && activeTenantId) {
-      // loadRoles(); // Disable Supabase role loading
+  // Load attendance for whichever month & employee is currently displayed.
+  // Runs on mount, on tab navigation to ATTENDANCE/STATS, employee change, and month/year change.
+  useEffect(() => {
+    if ((activeTab === 'ATTENDANCE' || activeTab === 'STATS') && selectedLaborerId) {
+      dispatch(fetchAttendance({ employeeId: selectedLaborerId, month: currentMonth, year: currentYear }));
     }
-  }, [isRolesLoaded, activeTenantId]);
+  }, [currentMonth, currentYear, activeTab, selectedLaborerId, dispatch]);
 
-  const loadRoles = async () => {
-    const tId = activeTenantId;
-    if (!tId) return;
-
-    // TODO: Load roles from API
-    // const { data } = await api.get('/roles', { params: { tenant_id: tId } });
-    const data: any[] = [];
-    if (data) {
-      setRoles(data);
-      setIsRolesLoaded(true);
+  // Default selection wrapped in effect to avoid state updates during render
+  useEffect(() => {
+    if (!selectedLaborerId && sectorEmps.length > 0) {
+      setSelectedLaborerId(sectorEmps[0].id);
     }
-  };
-
-  // Default selection
-  if (!selectedLaborerId && sectorEmps.length > 0) {
-    setSelectedLaborerId(sectorEmps[0].id);
-  }
+  }, [selectedLaborerId, sectorEmps]);
 
   const selectedLaborer = sectorEmps.find((l: any) => l.id === selectedLaborerId);
   const stats = selectedLaborer
@@ -217,26 +228,103 @@ export const LaborManager = () => {
     setNewEmp({ ...newEmp, dailyRate: daily > 0 ? daily.toString() : '' });
   };
 
-  const handleBulkAction = (status: AttendanceStatus | 'CLEAR') => {
+  // STAFF-014: Edit employee — pre-fills the (same) laborer form from the
+  // currently selected employee and opens it in an edit-mode modal.
+  const handleOpenEdit = () => {
     if (!selectedLaborer) return;
-    selectedDates.forEach(dateKey => {
-      const existing = (attendance as any[]).find(a => a.employeeId === selectedLaborer.id && a.date === dateKey);
-      if (status === 'CLEAR') {
-        dispatch(markAttendance({ id: existing?.id || generateId(), employeeId: selectedLaborer.id, date: dateKey, status: 'ABSENT', advanceTaken: existing?.advanceTaken || 0 }));
-      } else {
-        dispatch(markAttendance({ id: existing?.id || generateId(), employeeId: selectedLaborer.id, date: dateKey, status: status, advanceTaken: existing?.advanceTaken || 0, inTime: status === 'PRESENT' ? '09:00' : undefined, outTime: status === 'PRESENT' ? '18:00' : undefined }));
-      }
+    setEditEmp({
+      name: selectedLaborer.name || '',
+      role: selectedLaborer.role || '',
+      roleId: selectedLaborer.roleId || '',
+      dailyRate: selectedLaborer.dailyRate ? String(selectedLaborer.dailyRate) : '',
+      mobile: selectedLaborer.mobile || '',
+      branch: selectedLaborer.branchId || ''
     });
-    setIsSelectionMode(false); setSelectedDates(new Set());
+    setEditWageType(selectedLaborer.wageType === 'MONTHLY' ? 'MONTHLY' : 'DAILY');
+    setEditMonthlyInput('');
+    setIsEditingLaborer(true);
   };
 
-  const handleSaveAttendance = (log: DailyLog | null) => {
+  const handleEditMonthlyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value; setEditMonthlyInput(val);
+    const daily = convertMonthlyToDailyWage(val);
+    setEditEmp({ ...editEmp, dailyRate: daily > 0 ? daily.toString() : '' });
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedLaborer) return;
+
+    const data = {
+      name: editEmp.name,
+      role: editEmp.role || 'Staff',
+      roleId: editEmp.roleId,
+      mobile: editEmp.mobile,
+      dailyRate: parseFloat(editEmp.dailyRate) || 0,
+      wageType: editWageType,
+      branchId: editEmp.branch || selectedLaborer.branchId
+    };
+
+    try {
+      await dispatch(updateEmployee({ id: selectedLaborer.id, data })).unwrap();
+      setIsEditingLaborer(false);
+    } catch (err: any) {
+      alert("Failed to update staff details: " + err);
+    }
+  };
+
+  // STAFF-015: Deactivate employee — soft-deletes via the backend (isActive:false),
+  // which is also why it disappears from the list without a manual refetch:
+  // GET /api/hr/employees already only ever returns isActive:true employees.
+  const handleDeactivateLaborer = async () => {
+    if (!selectedLaborer) return;
+    if (!window.confirm(`Deactivate ${selectedLaborer.name}? They will no longer appear in the active staff list.`)) {
+      return;
+    }
+    try {
+      await dispatch(deactivateEmployee(selectedLaborer.id)).unwrap();
+      setSelectedLaborerId(null);
+    } catch (err: any) {
+      alert("Failed to deactivate staff member: " + err);
+    }
+  };
+
+  const handleBulkAction = async (status: AttendanceStatus | 'CLEAR') => {
+    if (!selectedLaborer) return;
+    const dates = Array.from(selectedDates);
+    if (dates.length === 0) return;
+
+    const targetStatus: AttendanceStatus = status === 'CLEAR' ? 'ABSENT' : status;
+    try {
+      await dispatch(bulkMarkAttendanceAction({ employeeId: selectedLaborer.id, dates, status: targetStatus })).unwrap();
+      setIsSelectionMode(false);
+      setSelectedDates(new Set());
+    } catch (err: any) {
+      alert("Failed to save bulk attendance: " + (err || "API error"));
+    }
+  };
+
+  const handleSaveAttendance = async (log: DailyLog | null) => {
     if (!selectedLaborer || !editingDate) return;
-    const existing = attendance.find((a: any) => a.employeeId === selectedLaborer.id && a.date === editingDate);
-    if (log) {
-      dispatch(markAttendance({ id: existing?.id || generateId(), employeeId: selectedLaborer.id, date: editingDate, status: log.status, advanceTaken: existing?.advanceTaken || 0, inTime: log.inTime, outTime: log.outTime }));
-    } else {
-      dispatch(markAttendance({ id: existing?.id || generateId(), employeeId: selectedLaborer.id, date: editingDate, status: 'ABSENT', advanceTaken: existing?.advanceTaken || 0 }));
+    try {
+      if (log) {
+        await dispatch(saveAttendance({
+          employeeId: selectedLaborer.id,
+          date: editingDate,
+          status: log.status,
+          inTime: log.inTime,
+          outTime: log.outTime
+        })).unwrap();
+      } else {
+        await dispatch(saveAttendance({
+          employeeId: selectedLaborer.id,
+          date: editingDate,
+          status: 'ABSENT'
+        })).unwrap();
+      }
+      setEditingDate(null);
+    } catch (err: any) {
+      alert("Failed to save attendance: " + (err || "API error"));
     }
   };
 
@@ -290,6 +378,19 @@ export const LaborManager = () => {
             />
           )}
 
+          {isEditingLaborer && selectedLaborer && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in">
+              <div className="w-full max-w-sm">
+                <AddLaborerForm
+                  newEmp={editEmp} setNewEmp={setEditEmp} wageType={editWageType} setWageType={setEditWageType}
+                  monthlyInput={editMonthlyInput} onMonthlyChange={handleEditMonthlyChange}
+                  roles={roles} onSubmit={handleSaveEdit} onCancel={() => setIsEditingLaborer(false)}
+                  title={`Edit ${selectedLaborer.name}`} submitLabel="Save Changes"
+                />
+              </div>
+            </div>
+          )}
+
           <div className="w-full lg:w-80 flex flex-col gap-4 shrink-0">
             <LaborSidebar
               employees={sectorEmps}
@@ -299,6 +400,9 @@ export const LaborManager = () => {
               isAddingLaborer={isAddingLaborer}
               staffType={staffType}
               onStaffTypeChange={setStaffType}
+              isLoading={isLoadingEmployees}
+              loadError={employeesError}
+              onRetry={fetchEmployees}
             />
 
             {isAddingLaborer && (
@@ -323,37 +427,55 @@ export const LaborManager = () => {
                 )}
 
                 <div className="flex flex-col flex-1 min-h-0">
-                  <div className="flex border-b border-gray-200 mb-4">
-                    <button
-                      onClick={() => setActiveTab('STATS')}
-                      className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'STATS'
-                        ? 'border-indigo-600 text-primary'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                        }`}
-                    >
-                      <Users className="w-4 h-4" />
-                      Field Staff Stats
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('ATTENDANCE')}
-                      className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'ATTENDANCE'
-                        ? 'border-indigo-600 text-primary'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                        }`}
-                    >
-                      <Calendar className="w-4 h-4" />
-                      Attendance Calendar
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('PAYMENTS')}
-                      className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'PAYMENTS'
-                        ? 'border-indigo-600 text-primary'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                        }`}
-                    >
-                      <CreditCard className="w-4 h-4" />
-                      Payments & Payroll
-                    </button>
+                  <div className="flex items-center justify-between border-b border-gray-200 mb-4">
+                    <div className="flex">
+                      <button
+                        onClick={() => setActiveTab('STATS')}
+                        className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'STATS'
+                          ? 'border-indigo-600 text-primary'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          }`}
+                      >
+                        <Users className="w-4 h-4" />
+                        Field Staff Stats
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('ATTENDANCE')}
+                        className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'ATTENDANCE'
+                          ? 'border-indigo-600 text-primary'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          }`}
+                      >
+                        <Calendar className="w-4 h-4" />
+                        Attendance Calendar
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('PAYMENTS')}
+                        className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'PAYMENTS'
+                          ? 'border-indigo-600 text-primary'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          }`}
+                      >
+                        <CreditCard className="w-4 h-4" />
+                        Payments & Payroll
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-1 pr-1">
+                      <button
+                        onClick={handleOpenEdit}
+                        title="Edit staff details"
+                        className="p-2 rounded-lg text-gray-400 hover:text-primary hover:bg-indigo-50 transition-colors"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={handleDeactivateLaborer}
+                        title="Deactivate staff member"
+                        className="p-2 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                      >
+                        <UserX className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex-1 overflow-y-auto custom-scrollbar">
@@ -364,6 +486,13 @@ export const LaborManager = () => {
                         onToggleSelectionMode={() => { setIsSelectionMode(!isSelectionMode); setSelectedDates(new Set()); }}
                         selectedDates={selectedDates} onDateClick={(day) => isSelectionMode ? setSelectedDates(prev => { const next = new Set(prev); if (next.has(formatDateISO(currentYear, currentMonth, day))) next.delete(formatDateISO(currentYear, currentMonth, day)); else next.add(formatDateISO(currentYear, currentMonth, day)); return next; }) : setEditingDate(formatDateISO(currentYear, currentMonth, day))}
                         onBulkAction={handleBulkAction}
+                        isLoading={attendanceLoading}
+                        loadError={attendanceError}
+                        onRetry={() => {
+                          if (selectedLaborerId) {
+                            dispatch(fetchAttendance({ employeeId: selectedLaborerId, month: currentMonth, year: currentYear }));
+                          }
+                        }}
                       />
                     )}
 

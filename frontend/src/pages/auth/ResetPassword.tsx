@@ -1,6 +1,6 @@
 ﻿import React, { useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { Lock, ArrowRight, ShieldAlert } from 'lucide-react';
+import { ArrowRight, ShieldAlert } from 'lucide-react';
 import SecurePasswordInput from './SecurePasswordInput';
 import AuthLayout from '../Views/AuthLayout';
 import AuthAlert from '../Views/AuthAlert';

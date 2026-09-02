@@ -194,7 +194,7 @@ export const WhatsAppService = {
     /**
      * [PART B - ENGAGEMENT] Triggers an operational/event-driven message
      */
-    triggerAutoMessage: async (integrations: Integrations, toMobile: string, eventType: string, data: any) => {
+    triggerAutoMessage: async (integrations: Integrations, toMobile: string, eventType: string, __data: any) => {
         // Logic to select template based on eventType and fill placeholders
         const templateMap: any = {
             'BILL_GENERATED': 'invoice_link',
@@ -207,7 +207,7 @@ export const WhatsAppService = {
     /**
      * [PART A - MARKETING] Fetches campaign-specific ROI data
      */
-    getMarketingAnalytics: async (integrations: Integrations) => {
+    getMarketingAnalytics: async (__integrations: Integrations) => {
         return {
             openRate: "82%",
             conversion: "4.8%",
@@ -219,7 +219,7 @@ export const WhatsAppService = {
     /**
      * [PART B - ENGAGEMENT] Fetches CRM-specific operational data
      */
-    getEngagementAnalytics: async (integrations: Integrations) => {
+    getEngagementAnalytics: async (__integrations: Integrations) => {
         return {
             avgResponseTime: "4m 20s",
             csat: "4.8/5.0",

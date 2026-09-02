@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { TransactionType } from "../../types/common";
-import { formatCurrency } from "../../utils/helpers";
+import { formatCurrency, formatDate} from "../../utils/helpers";
 
 interface ExpenseManagerProps {
     pieData: { name: string; value: number }[];
@@ -55,7 +55,7 @@ const ExpenseManager: React.FC<ExpenseManagerProps> = ({ pieData, sectorTx, them
                                     <p className="font-bold text-sm text-neutral-800 dark:text-neutral-200">{tx.description || tx.category}</p>
                                     <div className="flex items-center gap-2 mt-1">
                                         <span className="text-[10px] font-black uppercase tracking-wider text-neutral-400 bg-white dark:bg-neutral-800 px-2 py-0.5 rounded-md border border-neutral-100 dark:border-neutral-700">{tx.category}</span>
-                                        <span className="text-[10px] font-medium text-neutral-400">{new Date(tx.date).toLocaleDateString()}</span>
+                                        <span className="text-[10px] font-medium text-neutral-400">{formatDate(tx.date)}</span>
                                     </div>
                                 </div>
                                 <p className="font-black text-error text-sm">-₹{formatCurrency(tx.amount)}</p>

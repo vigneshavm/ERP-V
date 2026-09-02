@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { 
-    ArrowLeft, Edit3, Trash2, User, Mail, Phone, MapPin, 
-    Calendar, Briefcase, DollarSign, PieChart, Activity, 
-    Clock, ShieldCheck, Download, MoreVertical, IndianRupee,
+    ArrowLeft, Edit3, Trash2, User, Mail, Phone, MapPin, Activity, ShieldCheck, Download, IndianRupee,
     BriefcaseIcon, UserCheck, Zap, Star
 } from 'lucide-react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
     FileText, Plus, Search, Filter, CheckCircle2, Clock, 
-    AlertCircle, ArrowRight, Download, Printer, TrendingUp, 
+    AlertCircle, Download, Printer, TrendingUp, 
     ChevronLeft, ChevronRight 
 } from 'lucide-react';
 import { salesInvoices } from '../../data';
@@ -12,6 +12,14 @@ const IconMap: Record<string, React.ElementType> = {
 };
 
 const PAGE_SIZE = 10;
+
+// Moved to module scope - was defined inside SalesMockUI's render body (recreated on every
+// render). sortField/sortDir are now passed in as props instead of read from an outer closure.
+const SortIcon = ({ field, sortField, sortDir }: { field: 'date' | 'amount' | 'client' | 'id'; sortField: 'date' | 'amount' | 'client' | 'id' | null; sortDir: 'asc' | 'desc' }) => (
+    <span className={`ml-1 inline-block text-[9px] ${sortField === field ? 'text-warning' : 'text-secondary opacity-30'}`}>
+        {sortField === field ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+    </span>
+);
 
 const SalesMockUI: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -42,12 +50,6 @@ const SalesMockUI: React.FC = () => {
         }
         setCurrentPage(1);
     };
-
-    const SortIcon = ({ field }: { field: string }) => (
-        <span className={`ml-1 inline-block text-[9px] ${sortField === field ? 'text-warning' : 'text-secondary opacity-30'}`}>
-            {sortField === field ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
-        </span>
-    );
 
     // Pipeline Data
     const pipelineStages = useMemo(() => {
@@ -219,16 +221,16 @@ const SalesMockUI: React.FC = () => {
                             <thead className="bg-neutral-50 dark:bg-neutral-950 sticky top-0 z-20 border-b border-neutral-200 dark:border-neutral-800">
                                 <tr>
                                     <th onClick={() => handleSort('id')} className="px-8 py-5 text-[9px] font-black uppercase tracking-[0.2em] text-neutral-400 cursor-pointer hover:text-warning transition-colors select-none">
-                                        Deployment Node <SortIcon field="id" />
+                                        Deployment Node <SortIcon field="id" sortField={sortField} sortDir={sortDir} />
                                     </th>
                                     <th onClick={() => handleSort('date')} className="px-8 py-5 text-[9px] font-black uppercase tracking-[0.2em] text-neutral-400 cursor-pointer hover:text-warning transition-colors select-none">
-                                        Timestamp <SortIcon field="date" />
+                                        Timestamp <SortIcon field="date" sortField={sortField} sortDir={sortDir} />
                                     </th>
                                     <th onClick={() => handleSort('client')} className="px-8 py-5 text-[9px] font-black uppercase tracking-[0.2em] text-neutral-400 cursor-pointer hover:text-warning transition-colors select-none">
-                                        Client Entity <SortIcon field="client" />
+                                        Client Entity <SortIcon field="client" sortField={sortField} sortDir={sortDir} />
                                     </th>
                                     <th onClick={() => handleSort('amount')} className="px-8 py-5 text-[9px] font-black uppercase tracking-[0.2em] text-neutral-400 text-right cursor-pointer hover:text-warning transition-colors select-none">
-                                        Throughput <SortIcon field="amount" />
+                                        Throughput <SortIcon field="amount" sortField={sortField} sortDir={sortDir} />
                                     </th>
                                     <th className="px-8 py-5 text-[9px] font-black uppercase tracking-[0.2em] text-neutral-400 text-center">Protocol State</th>
                                     <th className="px-8 py-5 w-24" />

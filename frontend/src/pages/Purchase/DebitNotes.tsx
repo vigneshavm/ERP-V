@@ -24,6 +24,7 @@ import { debitNoteService, DebitNote } from "../../services/debitNoteService";
 import { toast } from 'react-toastify';
 import CreateDebitNoteModal from './Modals/CreateDebitNoteModal';
 import DebitNoteStats from './Components/DebitNoteStats';
+import { formatDate } from '../../utils/helpers';
 
 
 const REASON_LABELS: Record<string, string> = {
@@ -44,7 +45,7 @@ const STATUS_CONFIG: Record<string, { label: string; icon: any; color: string; b
 
 const DebitNotes: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { orders, grns } = useSelector((state: RootState) => state.purchase);
+    const { orders: _orders, grns } = useSelector((state: RootState) => state.purchase);
     const { bills } = useSelector((state: RootState) => state.bill);
     const { suppliers: vendors } = useSelector((state: RootState) => state.suppliers);
     const { currentBranch } = useSelector((state: RootState) => state.auth);
@@ -72,7 +73,7 @@ const DebitNotes: React.FC = () => {
         try {
             const data = await debitNoteService.getDebitNotes();
             setDebitNotes(data);
-        } catch (error: any) {
+        } catch {
             toast.error('Failed to fetch debit notes');
         } finally {
             setLoading(false);
@@ -269,7 +270,7 @@ const DebitNotes: React.FC = () => {
                                         <tr key={note._id || note.noteId} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
                                             <td className="p-4 font-mono text-xs text-error font-medium">{note.noteId}</td>
                                             <td className="p-4 text-neutral-600 dark:text-neutral-400">
-                                                {new Date(note.date).toLocaleDateString()}
+                                                {formatDate(note.date)}
                                             </td>
                                             <td className="p-4">
                                                 <div className="flex items-center gap-2">

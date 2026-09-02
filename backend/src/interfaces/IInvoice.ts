@@ -58,7 +58,11 @@ export interface IInvoice extends Document {
         igst: number;
         total: number;
     };
-
+    fulfillmentStatus?: 'UNFULFILLED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'REFUNDED';
+    shippedAt?: Date;
+    deliveredAt?: Date;
+    courierName?: string;
+    trackingNumber?: string;
     createdAt: Date;
     updatedAt: Date;
 }

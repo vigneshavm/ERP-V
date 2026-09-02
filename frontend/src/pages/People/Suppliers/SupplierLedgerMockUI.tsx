@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { 
-    ArrowLeft, Printer, Filter, Calendar, Book, 
-    RefreshCw, FileText, Search, ArrowUpRight, ArrowDownLeft,
-    Building2, MoreHorizontal, Download, ChevronRight, Zap,
+    ArrowLeft, Printer, Filter, Book, 
+    RefreshCw, Search, Download,
     ShieldCheck, CreditCard
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';

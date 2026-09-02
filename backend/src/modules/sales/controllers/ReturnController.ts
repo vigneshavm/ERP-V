@@ -490,6 +490,10 @@ export const getAllReturns = async (req: AuthenticatedRequest, res: Response): P
         const returns = await Return.find({ createdBy: req.user?._id })
             .populate('invoice', 'invoiceNo')
             .populate('customer', 'name phone')
+            // Needed so the POS Returns Intelligence pages can show who actually processed the
+            // return ("Audit Officer") instead of falling back to the customer's name - see
+            // POSReturnsIntelligence(MockUI).tsx's cashier mapping.
+            .populate('createdBy', 'name')
             .sort({ createdAt: -1 });
 
         res.status(200).json(returns);

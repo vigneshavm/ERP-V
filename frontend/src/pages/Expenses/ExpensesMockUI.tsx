@@ -1,16 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { 
-    Receipt, Plus, Search, Filter, TrendingUp, AlertTriangle, 
-    CheckCircle2, Wallet, Coffee, Car, Wrench, MoreHorizontal, 
-    Download, X, ChevronRight, Zap, IndianRupee, PieChart,
+    Receipt, Plus, Search, Filter, TrendingUp, Wallet, 
+    Download, ChevronRight, Zap, IndianRupee, PieChart,
     ShieldCheck, BarChart3
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { purchases, salesInvoices } from '../../data';
+import { } from 'react-router-dom';
+import { purchases } from '../../data';
 import Layout from '../../components/shared/Layout';
 
 const ExpensesMockUI: React.FC = () => {
-    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
 
     const metrics = useMemo(() => {

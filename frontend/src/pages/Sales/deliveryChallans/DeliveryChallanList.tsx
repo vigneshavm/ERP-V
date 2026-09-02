@@ -7,8 +7,8 @@ import { RootState } from "../../../redux/store";
 import {
     Truck, Plus, Search, Eye, Trash2, FileText,
     CheckCircle2, Clock, ArrowRightCircle, Package,
-    RefreshCw, Calendar, User, ShieldCheck, Zap,
-    Download, ArrowRight, Filter
+    RefreshCw, Calendar, ShieldCheck, Zap,
+    Download, ArrowRight
 } from 'lucide-react';
 import Layout from '../../../components/shared/Layout';
 

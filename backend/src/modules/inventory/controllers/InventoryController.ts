@@ -154,6 +154,11 @@ export class InventoryController {
 
             itemData.name = `${itemData.name} (Copy)`;
             if (itemData.sku) itemData.sku = `${itemData.sku}-COPY`;
+            // Barcode is not guaranteed unique in the schema, and getItemByBarcode()
+            // just returns the first match it finds. Carrying the original barcode
+            // over would let a POS scan resolve to the wrong SKU. Clear it so the
+            // duplicate needs its own barcode assigned/printed.
+            delete itemData.barcode;
             itemData.addedBy = authReq.user?._id as string;
 
             const result = await this.inventoryService.addItem(itemData, authReq.tenantId as string, authReq.user);
@@ -303,6 +308,37 @@ export class InventoryController {
         } catch (err: any) {
             error(`Get Inventory Stats Error: ${err.message}`);
             res.status(500).json({ message: 'Server Error', error: err.message });
+        }
+    };
+
+    // Distinct list of category values actually used across this tenant's items.
+    // Used to populate the Items page category filter, which previously only
+    // showed categories present on the currently loaded page of results.
+    public getDistinctCategories = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as any;
+        try {
+            const categories = await this.inventoryService.getDistinctCategories(authReq.tenantId as string);
+            res.status(200).json(categories);
+        } catch (err: any) {
+            // The service itself already catches its own DB errors and resolves to [],
+            // so reaching here means something unexpected broke -- surface it as a real
+            // error rather than quietly handing back a fabricated category list.
+            error(`Get Distinct Categories Error: ${err.message}`);
+            res.status(500).json({ message: 'Server Error', error: err.message });
+        }
+    };
+
+    // Backs the Inventory Variant Search page's Brand/Size/Color/Shelf filter dropdowns.
+    // Always DB-driven (global Brand/Size/Color/Shelf catalog collections unioned with
+    // whatever values this tenant's own Items already use) -- see InventoryService.getFilterOptions.
+    public getFilterOptions = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as any;
+        try {
+            const options = await this.inventoryService.getFilterOptions(authReq.tenantId as string);
+            res.status(200).json({ success: true, data: options });
+        } catch (err: any) {
+            error(`Get Filter Options Error: ${err.message}`);
+            res.status(500).json({ success: false, message: 'Server Error', error: err.message });
         }
     };
 }

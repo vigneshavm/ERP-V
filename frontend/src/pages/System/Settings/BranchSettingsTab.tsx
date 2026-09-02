@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building, MapPin, Plus, Settings2, Trash2, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Building, MapPin, Plus, Settings2, Trash2, CheckCircle2, ChevronRight, Save } from 'lucide-react';
 import api from '../../../services/api';
 import { Counter } from '../../../types/tenant/core';
 
@@ -8,6 +8,8 @@ const BranchSettingsTab: React.FC = () => {
     const [selectedBranchId, setSelectedBranchId] = useState<string | undefined>();
     const [isCreating, setIsCreating] = useState(false);
     const [newBranchName, setNewBranchName] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
 
     useEffect(() => {
         api.get('/api/stores').then(res => {
@@ -37,14 +39,32 @@ const BranchSettingsTab: React.FC = () => {
         }
     };
 
-    const handleUpdateBranch = async (id: string, field: string, value: string) => {
+    const handleLocalChange = (id: string, field: string, value: string) => {
+        setBranches(prev => prev.map(b => b._id === id ? { ...b, [field]: value } : b));
+        setSaveSuccess(false);
+    };
+
+    const handleSaveBranch = async (branchToSave: any) => {
+        if (!branchToSave || !branchToSave._id) return;
+        setIsSaving(true);
         try {
-            const res = await api.put(`/api/stores/${id}`, { [field]: value });
-            setBranches(branches.map(b => b._id === id ? res.data : b));
+            const res = await api.put(`/api/stores/${branchToSave._id}`, {
+                name: branchToSave.name,
+                city: branchToSave.city,
+                address: branchToSave.address
+            });
+            if (res.data) {
+                setBranches(prev => prev.map(b => b._id === branchToSave._id ? { ...b, ...res.data } : b));
+            }
+            setSaveSuccess(true);
+            setTimeout(() => setSaveSuccess(false), 3000);
         } catch (err) {
-            console.error(err);
+            console.error("Failed to update branch:", err);
+        } finally {
+            setIsSaving(false);
         }
     };
+
     return (
         <div className="flex h-[calc(100vh-280px)] animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Branch List Sidebar */}
@@ -60,10 +80,10 @@ const BranchSettingsTab: React.FC = () => {
                                 value={newBranchName} 
                                 onChange={e => setNewBranchName(e.target.value)} 
                                 placeholder="Branch Name" 
-                                className="w-full px-3 py-2 text-sm border rounded-lg"
+                                className="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 dark:bg-slate-900 dark:border-slate-700 dark:text-white"
                             />
                             <button onClick={handleCreateBranch} className="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-bold">Save</button>
-                            <button onClick={() => setIsCreating(false)} className="bg-slate-200 px-3 py-2 rounded-lg text-sm font-bold">Cancel</button>
+                            <button onClick={() => setIsCreating(false)} className="bg-slate-200 dark:bg-slate-800 dark:text-slate-300 px-3 py-2 rounded-lg text-sm font-bold">Cancel</button>
                         </div>
                     ) : (
                         <button onClick={() => setIsCreating(true)} className="w-full px-4 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-500/20">
@@ -121,25 +141,55 @@ const BranchSettingsTab: React.FC = () => {
                             </div>
                             <div className="p-5 rounded-sm bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
                                 <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Region Code</p>
-                                <p className="text-sm font-bold text-slate-800 dark:text-white">{selectedBranch?.city?.substring(0, 3).toUpperCase()}-{(selectedBranch?.id || '').substring(0, 4)}</p>
+                                <p className="text-sm font-bold text-slate-800 dark:text-white">{(selectedBranch?.city || 'HUB').substring(0, 3).toUpperCase()}-{(selectedBranch?._id || selectedBranch?.id || '').substring(0, 4)}</p>
                             </div>
                         </div>
 
                         {/* Configuration Form */}
                         <div className="space-y-6">
-                            <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Basic Configuration</h4>
+                            <div className="flex items-center justify-between">
+                                <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Basic Configuration</h4>
+                                <button 
+                                    onClick={() => handleSaveBranch(selectedBranch)}
+                                    disabled={isSaving}
+                                    className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-500/20 disabled:opacity-50"
+                                >
+                                    <Save className="w-3.5 h-3.5" />
+                                    {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Changes'}
+                                </button>
+                            </div>
+
                             <div className="grid md:grid-cols-2 gap-6 bg-slate-50/50 dark:bg-slate-800/20 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
                                 <div className="space-y-1">
                                     <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Display Name</label>
-                                    <input type="text" value={selectedBranch.name || ''} onChange={e => handleUpdateBranch(selectedBranch._id, 'name', e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                                    <input 
+                                        type="text" 
+                                        value={selectedBranch.name || ''} 
+                                        onChange={e => handleLocalChange(selectedBranch._id, 'name', e.target.value)}
+                                        onBlur={() => handleSaveBranch(selectedBranch)}
+                                        className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20" 
+                                    />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">City / Hub</label>
-                                    <input type="text" value={selectedBranch.city || ''} onChange={e => handleUpdateBranch(selectedBranch._id, 'city', e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                                    <input 
+                                        type="text" 
+                                        value={selectedBranch.city || ''} 
+                                        onChange={e => handleLocalChange(selectedBranch._id, 'city', e.target.value)}
+                                        onBlur={() => handleSaveBranch(selectedBranch)}
+                                        className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20" 
+                                    />
                                 </div>
                                 <div className="md:col-span-2 space-y-1">
                                     <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Physical Site Address</label>
-                                    <textarea rows={2} className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none" value={selectedBranch.address || ''} onChange={e => handleUpdateBranch(selectedBranch._id, 'address', e.target.value)}></textarea>
+                                    <textarea 
+                                        rows={3} 
+                                        className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500/20 resize-y" 
+                                        value={selectedBranch.address || ''} 
+                                        onChange={e => handleLocalChange(selectedBranch._id, 'address', e.target.value)}
+                                        onBlur={() => handleSaveBranch(selectedBranch)}
+                                        placeholder="Enter site street, door number, landmark, and pincode..."
+                                    />
                                 </div>
                             </div>
                         </div>

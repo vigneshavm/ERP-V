@@ -162,6 +162,16 @@ const invoiceSchema = new Schema<IInvoice>(
             igst:  { type: Number, default: 0 },
             total: { type: Number, default: 0 }
         },
+        // B2C Fulfillment Pipeline
+        fulfillmentStatus: {
+            type: String,
+            enum: ['UNFULFILLED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED'],
+            default: 'DELIVERED' // OTC POS sales are delivered immediately by default
+        },
+        shippedAt: { type: Date },
+        deliveredAt: { type: Date },
+        courierName: { type: String },
+        trackingNumber: { type: String }
     },
     { timestamps: true }
 );

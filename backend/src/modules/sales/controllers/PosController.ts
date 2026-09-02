@@ -7,6 +7,7 @@ import Invoice from "../../sales/models/Invoice.js";
 import Customer from "../../crm/models/Customer.js";
 import CashbankTransaction from "../../finance/models/CashbankTransaction.js";
 import BankAccount from "../../finance/models/BankAccount.js";
+import { stockReservationManager } from "../../inventory/services/StockReservationService.js";
 
 /**
  * @desc    Get all POS products (placeholder)
@@ -63,6 +64,14 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
     session.startTransaction();
 
     try {
+        // Resolved dynamically (same pattern as PurchaseController) to reduce stock through the
+        // same audited, FIFO-batch-aware path the purchase side uses for addStock() — the
+        // previous inline `product.stockQty -= item.quantity` skipped batch tracking and never
+        // wrote a StockLog entry.
+        const { container } = await import('tsyringe');
+        const { InventoryService } = await import('../../inventory/services/InventoryService.js');
+        const inventoryService = container.resolve(InventoryService);
+
         const {
             customerId,
             items,
@@ -98,8 +107,11 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
                 throw new AppError(`Item not found: ${item.name}`, 404);
             }
 
-            if (product.stockQty < item.quantity) {
-                throw new AppError(`Insufficient stock for ${product.name}. Available: ${product.stockQty}`, 400);
+            const reservedQty = stockReservationManager.getReservedQuantity((req as any).tenantId, product._id.toString());
+            const availableNetStock = product.stockQty - reservedQty;
+
+            if (availableNetStock < item.quantity) {
+                throw new AppError(`Insufficient stock for ${product.name}. Available (Net of Holds): ${availableNetStock}`, 400);
             }
 
             // Calculate Item Totals
@@ -118,10 +130,26 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
                 discount: item.discount || 0
             });
 
-            // 3. Update Stock
-            product.stockQty -= item.quantity;
-            await product.save({ session });
+            // 3. Update Stock — FIFO batch consumption + StockLog audit entry, inside this
+            // same Mongo transaction (reduceStock accepts a session so this stays atomic).
+            // The insufficient-stock check above already accounts for reservation holds; this
+            // re-checks against actual persisted stockQty (reduceStock's own safety net).
+            await inventoryService.reduceStock(
+                product._id.toString(),
+                item.quantity,
+                (req as any).tenantId,
+                (req as any).user,
+                'SALES',
+                session
+            );
         }
+
+        const {
+            customerPhone,
+            customerName,
+            marketingConsentOptIn = false,
+            pointsToRedeem = 0
+        } = req.body;
 
         const finalTotal = subtotal + taxTotal - discount;
 
@@ -136,31 +164,104 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
 
         const paymentStatus = (actualReceived + creditApplied) >= finalTotal ? 'paid' : (actualReceived > 0 ? 'partial' : 'unpaid');
 
-        // Handling Due/Credit
+        // Customer Lookup / Auto-Registration (Optional Phone BRD §3 & §4)
         let customer = null;
-        if (customerId) {
+        let resolvedCustomerId = customerId || null;
+
+        if (!resolvedCustomerId && (customerPhone || customerName)) {
+            let existingCust = null;
+            if (customerPhone) {
+                existingCust = await Customer.findOne({ phone: customerPhone, tenantId: (req as any).tenantId }).session(session);
+            }
+
+            if (existingCust) {
+                customer = existingCust;
+                resolvedCustomerId = existingCust._id;
+            } else {
+                const newCust = new Customer({
+                    name: customerName || 'Walk-in Customer',
+                    phone: customerPhone || '',
+                    owner: (req as any).user._id,
+                    tenantId: (req as any).tenantId,
+                    marketingConsent: {
+                        optIn: Boolean(marketingConsentOptIn),
+                        consentDate: new Date(),
+                        consentSource: 'POS_CHECKOUT',
+                        consentVersion: 'v1.0',
+                        channels: { sms: Boolean(customerPhone), email: false, whatsapp: Boolean(customerPhone) }
+                    }
+                });
+                await newCust.save({ session });
+                customer = newCust;
+                resolvedCustomerId = newCust._id;
+            }
+        } else if (customerId) {
             customer = await Customer.findOne({ _id: customerId, tenantId: (req as any).tenantId }).session(session);
-            if (customer) {
-                const amountToPay = finalTotal;
-                const totalCovered = actualReceived + creditApplied;
-                const balanceDue = amountToPay - totalCovered;
+        }
 
-                if (balanceDue > 0) {
-                    customer.dues += balanceDue;
-                }
-
-                if (creditApplied > 0) {
-                    customer.dues += creditApplied;
-                }
-
-                await customer.save({ session });
+        // Update Customer Marketing Opt-in if explicitly passed
+        if (customer && typeof marketingConsentOptIn === 'boolean') {
+            if (!customer.marketingConsent) {
+                customer.marketingConsent = {
+                    optIn: marketingConsentOptIn,
+                    consentDate: new Date(),
+                    consentSource: 'POS_CHECKOUT',
+                    consentVersion: 'v1.0',
+                    channels: { sms: Boolean(customer.phone), email: false, whatsapp: Boolean(customer.phone) }
+                };
+            } else {
+                customer.marketingConsent.optIn = marketingConsentOptIn;
+                customer.marketingConsent.consentDate = new Date();
             }
         }
 
-        // Duplicate paymentStatus key fix
+        // Loyalty Points Redemption (BRD §10)
+        let pointsDiscount = 0;
+        if (customer && pointsToRedeem > 0) {
+            const { LoyaltyService } = await import("../../crm/services/LoyaltyService.js");
+            pointsDiscount = await LoyaltyService.redeemPoints(
+                (req as any).tenantId,
+                customer._id.toString(),
+                invoiceNo,
+                pointsToRedeem,
+                session
+            );
+        }
+
+        // Customer Dues & Analytics Update (BRD §5, §12 & §20)
+        if (customer) {
+            const amountToPay = finalTotal - pointsDiscount;
+            const totalCovered = actualReceived + creditApplied;
+            const balanceDue = amountToPay - totalCovered;
+
+            if (balanceDue > 0) customer.dues += balanceDue;
+            if (creditApplied > 0) customer.dues += creditApplied;
+
+            // Update RFM Analytics Metrics
+            customer.totalSpend = (customer.totalSpend || 0) + actualReceived;
+            customer.totalOrders = (customer.totalOrders || 0) + 1;
+            customer.averageOrderValue = Number((customer.totalSpend / customer.totalOrders).toFixed(2));
+            customer.lastPurchaseDate = new Date();
+            if (!customer.firstPurchaseDate) customer.firstPurchaseDate = new Date();
+
+            // Automatic Loyalty Points Earning (BRD §7 & §8)
+            if (paymentStatus === 'paid' || actualReceived > 0) {
+                const { LoyaltyService } = await import("../../crm/services/LoyaltyService.js");
+                await LoyaltyService.earnPoints(
+                    (req as any).tenantId,
+                    customer._id.toString(),
+                    invoiceNo,
+                    actualReceived,
+                    session
+                );
+            }
+
+            await customer.save({ session });
+        }
+
         const invoiceData = {
             invoiceNo,
-            customer: customerId || null,
+            customer: resolvedCustomerId || null,
             items: processedItems,
             subtotal,
             tax: taxTotal,
@@ -234,7 +335,7 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
     } catch (err) {
         await session.abortTransaction();
         error(`Create Invoice Failed: ${(err as Error).message}`);
-        res.status(500).json({ message: (err as Error).message });
+        res.status((err as any).statusCode || 500).json({ success: false, message: (err as Error).message });
     } finally {
         session.endSession();
     }

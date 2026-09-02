@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateEmployee } from "../../../redux/slices/laborSlice";
 import { SecurityTabProps } from './types';
 import { RootState, AppDispatch } from "../../../redux/store";
-import { Role } from "../../../types/tenant";
 import { AppView, SystemRole } from "../../../types/common";
 import ChangePasswordModal from '../../../components/shared/Auth/ChangePasswordModal';
 

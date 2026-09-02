@@ -4,8 +4,8 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { createSupplierGroup, updateSupplierGroup } from '../../redux/slices/supplierGroupSlice';
 import Modal from '../shared/Overlay/Modal';
 import {
-    Tag, MapPin, DollarSign, Flag, Percent, Calendar,
-    CreditCard, Truck, AlertCircle, Save
+    Tag, Percent, Calendar,
+    CreditCard, Save
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 

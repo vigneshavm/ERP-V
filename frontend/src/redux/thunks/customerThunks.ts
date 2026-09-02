@@ -1,6 +1,5 @@
 import { AppDispatch, RootState } from "../store";
 import { Customer } from "../../types/sales";
-import { APP_CONFIG } from "../../config";
 // import { supabase } from '../../lib/supabase'; // Removed
 import { setCustomer, addCustomer } from '../slices/posSlice';
 import api from "../../services/api.js";

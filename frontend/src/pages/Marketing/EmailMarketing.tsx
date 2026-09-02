@@ -5,12 +5,8 @@ import {
     Filter,
     MoreHorizontal,
     Mail,
-    Send,
-    CheckCircle2,
     Clock,
     AlertCircle,
-    LayoutGrid,
-    LayoutList,
     TrendingUp,
     Users,
     MousePointer2,
@@ -19,8 +15,6 @@ import {
     Zap,
     Sparkles,
     Eye,
-    Download,
-    Calendar,
     LayoutDashboard
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';

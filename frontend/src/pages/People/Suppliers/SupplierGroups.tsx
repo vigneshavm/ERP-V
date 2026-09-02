@@ -9,15 +9,10 @@ import {
     Edit,
     Trash2,
     Tag,
-    Percent,
     UserPlus,
-    ChevronDown,
-    ChevronUp,
     Crown,
     Building,
     Star,
-    Clock,
-    CreditCard,
     MoreVertical
 } from 'lucide-react';
 
@@ -31,11 +26,11 @@ import SupplierGroupModal from "../../../components/suppliers/SupplierGroupModal
 const SupplierGroups: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { suppliers } = useSelector((state: RootState) => state.suppliers);
-    const { groups, isLoading } = useSelector((state: RootState) => state.supplierGroups);
+    const { groups, isLoading: _isLoading } = useSelector((state: RootState) => state.supplierGroups);
 
     // const [groups, setGroups] = useState<SupplierGroup[]>(DEFAULT_GROUPS); // Replaced by Redux
     const [searchTerm, setSearchTerm] = useState('');
-    const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+    const [_expandedGroup] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [editingGroup, setEditingGroup] = useState<SupplierGroup | null>(null);

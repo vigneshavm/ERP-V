@@ -15,7 +15,6 @@ import {
     ArrowRight,
     Target,
     ArrowDownCircle,
-    UserCircle,
     ClipboardList,
     DollarSign,
     Briefcase,
@@ -30,19 +29,16 @@ import {
     Printer,
     Upload,
     Download,
-    FileSpreadsheet,
     Wrench,
-    Grid,
     Rocket,
     Store,
     Megaphone,
     Layers,
     Calendar,
     Building,
-    Key,
-    Lock,
     TrendingUp,
-    CreditCard
+    CreditCard,
+    Search
 } from 'lucide-react';
 import { AppView, ModuleType } from '../types/common';
 
@@ -89,7 +85,12 @@ export const MENU_ITEMS: MenuItem[] = [
         module: 'POS',
         path: '/sales',
         children: [
-            { id: 'SALES_REGISTER', label: 'Register', icon: FileText, module: 'POS', path: '/sales/register' },
+            // '/sales/register' has no matching <Route> and silently fell through the
+            // catch-all + ModuleRenderer's SALES_REGISTER case to SalesMockUI. Point it at
+            // '/sales/invoices' instead -- the real, DB-backed SalesInvoice/SalesInvoiceRegister
+            // page that '/sales' itself already redirects to as the module's primary landing route
+            // (mirroring Purchase's '/purchase' -> '/purchase/register' pattern).
+            { id: 'SALES_REGISTER', label: 'Register', icon: FileText, module: 'POS', path: '/sales/invoices' },
             { id: 'SALES_INVOICE', label: 'Invoice', icon: Plus, module: 'POS', path: '/sales/new' },
             { id: 'ESTIMATE', label: 'Estimates', icon: FileText, module: 'POS', path: '/sales/estimates' },
             { id: 'SALES_ORDER', label: 'Orders', icon: ClipboardList, module: 'POS', path: '/sales/orders' },
@@ -137,6 +138,7 @@ export const MENU_ITEMS: MenuItem[] = [
         path: '/inventory',
         children: [
             { id: 'INVENTORY_ITEMS', label: 'Items', icon: Package, module: 'INVENTORY', path: '/inventory/items' },
+            { id: 'INVENTORY_SEARCH', label: 'Variant Search', icon: Search, module: 'INVENTORY', path: '/inventory/search' },
             { id: 'ITEM_CATEGORIES', label: 'Categories', icon: Layers, module: 'INVENTORY', path: '/inventory/categories' },
             { id: 'BATCH_EXPIRY', label: 'Batches', icon: Calendar, module: 'INVENTORY', path: '/inventory/batch-expiry' },
             { id: 'BARCODE_GENERATOR', label: 'Barcodes', icon: Barcode, module: 'INVENTORY', path: '/inventory/barcodes' },
@@ -231,8 +233,16 @@ export const MENU_ITEMS: MenuItem[] = [
         icon: PieChart,
         module: 'REPORTS',
         children: [
-            { id: 'REPORTS', label: 'Reports', icon: PieChart, module: 'REPORTS' },
-            { id: 'REPORT_SALES', label: 'Sales', icon: BarChart, module: 'REPORTS' },
+            // Both previously had no `path` at all, so clicking them set the
+            // sidebar's active-tab highlight but never actually navigated --
+            // dead links. `/reports` itself currently redirects to the
+            // clearly-labeled ReportsMockUI rather than the real report
+            // pages, since the "real"-looking BusinessReportsHub underneath
+            // /reports is still backed by hardcoded placeholder numbers, not
+            // live queries -- pointing here instead avoids presenting fake
+            // figures as if they were real report data.
+            { id: 'REPORTS', label: 'Reports', icon: PieChart, module: 'REPORTS', path: '/reports/mock' },
+            { id: 'REPORT_SALES', label: 'Sales', icon: BarChart, module: 'REPORTS', path: '/reports/mock' },
         ]
     },
     {

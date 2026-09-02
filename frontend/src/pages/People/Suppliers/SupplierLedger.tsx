@@ -114,7 +114,7 @@ const SupplierLedger: React.FC = () => {
 
     const handlePrint = () => { window.print(); };
 
-    const formatCurrency = (amount: number) => {
+    const _formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(amount);
     };
 

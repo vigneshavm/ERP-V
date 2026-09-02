@@ -11,7 +11,7 @@ interface LabelPrintModalProps {
 }
 
 export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClose, products, onPrintComplete }) => {
-    const printRef = useRef<HTMLDivElement>(null);
+    const _printRef = useRef<HTMLDivElement>(null);
 
     if (!isOpen) return null;
 
@@ -21,7 +21,7 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
         doc.text("Product Labels", 10, 10);
 
         let y = 30;
-        products.forEach((p, index) => {
+        products.forEach((p, __index) => {
             if (y > 270) {
                 doc.addPage();
                 y = 20;

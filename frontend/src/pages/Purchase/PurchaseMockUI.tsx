@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-    Truck, ShieldAlert, CheckCircle, Package, ArrowRight, 
-    Anchor, FileText, Search, Plus, Filter, Factory, 
+    Truck, ShieldAlert, Package, 
+    Anchor, Search, Plus, Filter, Factory, 
     RefreshCcw, ChevronRight, Zap, TrendingUp, DollarSign
 } from 'lucide-react';
 import { purchases, suppliers } from '../../data';

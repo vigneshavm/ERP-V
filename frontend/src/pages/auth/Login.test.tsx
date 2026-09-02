@@ -1,16 +1,25 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from "../../redux/slices/authSlice";
 import Login from './Login';
-import { RootState } from '../../redux/store';
 
-// Create a mock store for testing
+vi.mock('../../hooks/auth/useLoginForm', () => ({
+    useLoginForm: () => ({
+        form: {
+            register: vi.fn((name: string) => ({ name })),
+            formState: { errors: {} },
+        },
+        onSubmit: vi.fn((e) => e?.preventDefault?.()),
+        isLoading: false,
+    }),
+}));
+
 const createMockStore = (preloadedState?: any) => configureStore({
-    reducer: authReducer,
-    preloadedState: preloadedState?.auth,
+    reducer: { auth: authReducer } as any,
+    preloadedState: preloadedState,
 });
 
 describe('Login Component', () => {
@@ -35,7 +44,7 @@ describe('Login Component', () => {
             </Provider>
         );
 
-        expect(screen.getByPlaceholderText(/you@example.com/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Sign In/i })).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/you@company.com/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Authenticate Access/i })).toBeInTheDocument();
     });
 });

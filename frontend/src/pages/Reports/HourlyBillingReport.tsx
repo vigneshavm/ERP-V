@@ -2,13 +2,13 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { Clock, TrendingUp, Users, Zap, Calendar } from 'lucide-react';
+import { Clock, Users, Zap } from 'lucide-react';
 
 interface HourlyBillingReportProps {
     timeRange: 'TODAY' | 'WEEK' | 'MONTH' | 'CUSTOM';
 }
 
-const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange }) => {
+const HourlyBillingReport: React.FC<HourlyBillingReportProps> = ({ timeRange: __timeRange }) => {
     const { salesHistory } = useSelector((state: RootState) => state.pos);
     const { currentSector } = useSelector((state: RootState) => state.auth);
 

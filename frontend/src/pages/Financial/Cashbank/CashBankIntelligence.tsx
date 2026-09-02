@@ -15,7 +15,6 @@ import {
     Download,
     Smartphone,
     ArrowRightLeft,
-    Info,
     DollarSign,
 } from 'lucide-react';
 

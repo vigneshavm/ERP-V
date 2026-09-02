@@ -1,11 +1,12 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Trash2, Plus, Search, FileText, Paperclip, X, AlertCircle, CheckCircle, Clock, RotateCcw, Truck, Ban, ShieldCheck, Zap, Info, Activity, ChevronDown } from 'lucide-react';
-import { PurchaseReturn, PurchaseReturnItem, ReturnReason, PurchaseReturnStatus, GRN, PurchaseOrder } from "../../types/purchase";
+import { ArrowLeft, Save, FileText, AlertCircle, Truck, Zap, Info, Activity, ChevronDown } from 'lucide-react';
+import { PurchaseReturn, PurchaseReturnItem, ReturnReason, PurchaseReturnStatus, GRN } from "../../types/purchase";
 import api from "../../services/api";
 import { toast } from 'react-toastify';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import { formatDate } from '../../utils/helpers';
 
 interface Props {
     onBack?: () => void;
@@ -13,7 +14,7 @@ interface Props {
     initialData?: PurchaseReturn | null;
 }
 
-const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialData }) => {
+const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialData: __initialData }) => {
     const { id, grnId } = useParams<{ id?: string, grnId?: string }>();
     const navigate = useNavigate();
 
@@ -165,14 +166,14 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
             });
             toast.success("Purchase Return initiated successfully");
             navigate('/purchase/returns');
-        } catch (err) {
+        } catch {
             toast.error("Failed to save return");
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleUpdateStatus = (newStatus: PurchaseReturnStatus) => {
+    const _handleUpdateStatus = (newStatus: PurchaseReturnStatus) => {
         setReturnData(prev => ({ ...prev, status: newStatus }));
     };
 
@@ -234,7 +235,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                         className="w-full px-6 py-3.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30 cursor-pointer"
                                     >
                                         <option value="">Select node...</option>
-                                        {grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({new Date(g.receivedDate).toLocaleDateString()})</option>)}
+                                        {grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({formatDate(g.receivedDate)})</option>)}
                                     </select>
                                 </div>
                                 <div>

@@ -4,15 +4,14 @@ import { RootState } from "../../../redux/store";
 import {
     Search,
     FileText,
-    User,
     Calendar,
     Download,
     Printer,
     Mail,
     Eye,
-    Building,
     Phone
 } from 'lucide-react';
+import { formatDate } from '../../../utils/helpers';
 
 interface StatementData {
     customerId: string;
@@ -238,10 +237,10 @@ const CustomerStatements: React.FC = () => {
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-neutral-600 dark:text-neutral-400 print:text-gray-600">
-                                    Statement Date: {new Date().toLocaleDateString()}
+                                    Statement Date: {formatDate(new Date())}
                                 </p>
                                 <p className="text-sm text-neutral-600 dark:text-neutral-400 print:text-gray-600">
-                                    Period: {new Date(statementData.periodFrom).toLocaleDateString()} - {new Date(statementData.periodTo).toLocaleDateString()}
+                                    Period: {formatDate(statementData.periodFrom)} - {formatDate(statementData.periodTo)}
                                 </p>
                             </div>
                         </div>
@@ -311,7 +310,7 @@ const CustomerStatements: React.FC = () => {
                                 statementData.transactions.map((t, idx) => (
                                     <tr key={idx} className="hover:bg-neutral-50 dark:hover:bg-neutral-800 print:hover:bg-transparent">
                                         <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300">
-                                            {new Date(t.date).toLocaleDateString()}
+                                            {formatDate(t.date)}
                                         </td>
                                         <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 font-mono text-xs">
                                             {t.reference}

@@ -2,8 +2,8 @@
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import Layout from "../../components/shared/Layout";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { Receipt, TrendingDown, ArrowRight, Wallet, History, Search, Filter, Download } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { Receipt, TrendingDown, ArrowRight, History, Search, Filter, Download } from 'lucide-react';
 
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 

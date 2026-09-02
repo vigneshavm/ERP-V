@@ -29,7 +29,7 @@ const Bills: React.FC = () => {
         handleMarkAsPaid,
         handlePaymentSubmit,
         handleSaveBill,
-        handleEdit,
+        handleEdit: _handleEdit,
         handleDelete,
         totals
     } = useBills();

@@ -8,12 +8,11 @@ import CashBankStatsCard from './components/CashBankStatsCard';
 import {
     getAccountLedger,
     toggleReconciliation,
-    bulkReconcile as bulkReconcileThunk,
-    reset
+    bulkReconcile as bulkReconcileThunk
 } from "../../../redux/slices/cashbankSlice";
 import { RootState, AppDispatch } from "../../../redux/store";
-import { LedgerData, Transaction } from './types';
 import { ArrowLeft, Download, RefreshCw, CheckCircle2, X } from 'lucide-react';
+import { formatDate } from '../../../utils/helpers';
 
 const AccountLedger: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -264,7 +263,7 @@ const AccountLedger: React.FC = () => {
                                             />
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-600 dark:text-slate-400">
-                                            {new Date(txn.date).toLocaleDateString()}
+                                            {formatDate(txn.date)}
                                         </td>
                                         <td className="px-6 py-4 max-w-md">
                                             <p className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight truncate">{txn.description || 'No Narrative Data'}</p>

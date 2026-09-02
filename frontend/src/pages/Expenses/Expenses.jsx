@@ -5,6 +5,7 @@ import FormInput from "../../components/core/Form/Input.tsx";
 import { getAllExpenses, createExpense, deleteExpense, reset } from "../../redux/slices/expenseSlice.ts";
 import { getAccounts } from "../../redux/slices/cashbankSlice.ts";
 import { Receipt, Plus, Wallet, Calendar, FileText, TrendingDown, Search, Trash2, CreditCard, Banknote, Building2 } from 'lucide-react';
+import { formatDate } from '../../utils/helpers';
 
 const Expenses = () => {
     const dispatch = useDispatch();
@@ -15,7 +16,10 @@ const Expenses = () => {
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
-    const [formData, setFormData] = useState({
+    // Lazy initializer: the previous object-literal form called Date.now()/new Date() on every
+    // render (React only uses the value on mount, but still evaluates the expression each time -
+    // an impure call in the render body). The () => ({...}) form only runs once, on mount.
+    const [formData, setFormData] = useState(() => ({
         expenseNo: 'EXP-' + Date.now(),
         date: new Date().toISOString().split('T')[0],
         category: '',
@@ -24,7 +28,7 @@ const Expenses = () => {
         bankAccount: '',
         description: '',
         receipt: null
-    });
+    }));
 
     const expenseCategories = [
         'Rent', 'Utilities', 'Salaries', 'Transportation', 'Marketing', 'Office Supplies',
@@ -267,7 +271,7 @@ const Expenses = () => {
                                             <span className="font-semibold text-rose-600">{expense.expenseNo}</span>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-slate-600">
-                                            {new Date(expense.date).toLocaleDateString()}
+                                            {formatDate(expense.date)}
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium border ${categoryColors[expense.category] || 'bg-slate-50 text-slate-700 border-slate-200'}`}>

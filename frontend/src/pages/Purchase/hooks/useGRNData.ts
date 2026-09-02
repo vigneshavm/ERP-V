@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
-import { useBranchResolver } from "../../../hooks/useBranchResolver";
 
 export interface GoodsReceivedNote {
     id: string;
@@ -34,11 +33,12 @@ export const useGRNData = () => {
                 const totalItems = grn.items.reduce((sum, item) => sum + item.orderedQty, 0);
                 const receivedItems = grn.items.reduce((sum, item) => sum + item.receivedQty, 0);
 
-                // Map GRNStatus to local status
+                // Map GRNStatus (backend IGRN.status: INSPECTED|ACCEPTED|REJECTED|PARTIAL) to
+                // the local display-only status this page's table/filters use.
                 let status: 'COMPLETE' | 'PARTIAL' | 'PENDING' = 'PENDING';
-                if (grn.status === 'Accepted') status = 'COMPLETE';
-                else if (grn.status === 'Partial') status = 'PARTIAL';
-                else if (grn.status === 'Rejected') status = 'PENDING';
+                if (grn.status === 'ACCEPTED') status = 'COMPLETE';
+                else if (grn.status === 'PARTIAL') status = 'PARTIAL';
+                else if (grn.status === 'REJECTED' || grn.status === 'INSPECTED') status = 'PENDING';
 
                 return {
                     id: grn.id,
@@ -58,7 +58,7 @@ export const useGRNData = () => {
         }
 
         return orders
-            .filter(o => o.status === 'Approved' || o.status === 'Partial Receipt' || o.status === 'Fully Received')
+            .filter(o => o.status === 'SENT_TO_VENDOR' || o.status === 'PARTIALLY_RECEIVED' || o.status === 'COMPLETED')
             .map(order => {
                 const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
                 const receivedItems = order.items.reduce((sum, item) => sum + (item.received_quantity || 0), 0);

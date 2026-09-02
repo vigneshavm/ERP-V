@@ -5,17 +5,16 @@ import {
     Search,
     Book,
     User,
-    Calendar,
     TrendingUp,
     TrendingDown,
     Download,
-    Filter,
     ChevronDown,
     ChevronUp,
     Receipt,
     CreditCard,
     RotateCcw
 } from 'lucide-react';
+import { formatDate } from '../../../utils/helpers';
 
 interface LedgerEntry {
     id: string;
@@ -44,7 +43,7 @@ const CustomerLedgerPage: React.FC = () => {
     const { invoices: salesHistory } = useSelector((state: RootState) => state.pos);
     const { currentSector } = useSelector((state: RootState) => state.auth);
 
-    const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+    const [selectedCustomerId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
@@ -135,7 +134,7 @@ const CustomerLedgerPage: React.FC = () => {
         : null;
 
     // Filter entries by date
-    const filteredEntries = useMemo(() => {
+    const _filteredEntries = useMemo(() => {
         if (!selectedLedger) return [];
         return selectedLedger.entries.filter(entry => {
             if (dateFrom && new Date(entry.date) < new Date(dateFrom)) return false;
@@ -325,7 +324,7 @@ const CustomerLedgerPage: React.FC = () => {
                                             {ledger.entries.map(entry => (
                                                 <tr key={entry.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800">
                                                     <td className="p-3 text-neutral-600 dark:text-neutral-400">
-                                                        {new Date(entry.date).toLocaleDateString()}
+                                                        {formatDate(entry.date)}
                                                     </td>
                                                     <td className="p-3">
                                                         <div className="flex items-center gap-2">

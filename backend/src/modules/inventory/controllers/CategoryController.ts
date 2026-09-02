@@ -82,7 +82,7 @@ export class CategoryController {
             // 2. Call Service Layer
             const tenantId = authReq.tenantId as string;
             const { data, total } = await categoryService.findAll(tenantId, filters);
-            const stats = await categoryService.getStats(tenantId);
+            const stats = await categoryService.getStats(tenantId, sector);
 
             // 3. Construct Response Envelope
             const totalPages = Math.ceil(total / limit);
@@ -106,6 +106,36 @@ export class CategoryController {
             res.status(500).json({
                 success: false,
                 message: 'Internal Server Error'
+            });
+        }
+    };
+
+    /**
+     * @swagger
+     * /api/inventory/categories:
+     *   post:
+     *     summary: Create a new inventory category
+     *     tags: [Categories]
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       201:
+     *         description: Category created
+     *       400:
+     *         description: Validation error or duplicate name
+     *       500:
+     *         description: Internal Server Error
+     */
+    public createCategory = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as any;
+        try {
+            const category = await categoryService.createCategory(authReq.tenantId as string, authReq.body);
+            res.status(201).json({ success: true, data: category });
+        } catch (err: any) {
+            const statusCode = err.statusCode || 500;
+            res.status(statusCode).json({
+                success: false,
+                message: statusCode === 500 ? 'Internal Server Error' : err.message
             });
         }
     };

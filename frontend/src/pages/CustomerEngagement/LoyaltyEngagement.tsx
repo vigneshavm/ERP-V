@@ -1,36 +1,24 @@
 ﻿import React, { useState } from 'react';
 import {
-    Gift,
-    Star,
     TrendingUp,
     Users,
     Award,
     Coins,
     ArrowUpRight,
-    ArrowDownRight,
     Search,
     Filter,
     Settings,
     Plus,
-    BarChart3,
     Sparkles,
     ShieldCheck,
-    Clock,
     Zap,
-    ChevronRight,
     LayoutDashboard,
-    Smartphone,
-    Mail,
-    CreditCard,
-    AlertCircle,
-    UserCheck,
     Percent,
     Crown,
     History,
     Download
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
 import { setActiveTab } from '@/redux/slices/uiSlice';
 
 const LoyaltyEngagement: React.FC = () => {

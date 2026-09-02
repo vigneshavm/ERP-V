@@ -60,7 +60,7 @@ interface POSProductBrowserProps {
     onAddToCart: (product: Product) => void;
 }
 
-export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, currentBranch, currentSector, onAddToCart }) => {
+export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, currentBranch: __currentBranch, currentSector: __currentSector, onAddToCart }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('All');

@@ -56,7 +56,7 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
     onLookupOrCreateCustomer,
     onRemoveFromCart,
     onUpdateCartQty,
-    onUpdateCartLength,
+    onUpdateCartLength: __onUpdateCartLength,
     onSetTaxMode,
     onSetPaymentMethod,
     onSetRedeemedPoints

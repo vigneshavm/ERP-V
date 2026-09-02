@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getSupplierById, reset } from "../../../redux/slices/supplierSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import SupplierForm from "../../../components/suppliers/SupplierForm";
 import SupplierSubNav from "./SupplierSubNav";
-import { ArrowLeft } from 'lucide-react';
 
 const EditSupplier: React.FC = () => {
-    const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const { id } = useParams<{ id: string }>();
     const { supplier, isLoading } = useSelector((state: RootState) => state.suppliers);
@@ -54,8 +52,7 @@ const EditSupplier: React.FC = () => {
         groupId: (supplier.groupId as any)?._id || supplier.groupId || '',
         bankAccounts: supplier.bankAccounts || [],
         isOneTime: supplier.isOneTime || false,
-        defaultPaymentMode: supplier.defaultPaymentMode || 'NEFT',
-    } : undefined;
+        defaultPaymentMode: supplier.defaultPaymentMode || 'NEFT' } : undefined;
 
     return (
         <Layout>

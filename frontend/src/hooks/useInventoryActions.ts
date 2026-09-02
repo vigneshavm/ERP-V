@@ -21,7 +21,7 @@ export const useInventoryActions = ({
     currentBranch,
     imagePreview,
     resetForm,
-    displayedProductsLength
+    displayedProductsLength: _displayedProductsLength
 }: UseInventoryActionsProps) => {
     const dispatch = useDispatch<AppDispatch>();
     const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(new Set());

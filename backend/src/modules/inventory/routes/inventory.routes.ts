@@ -12,10 +12,13 @@ const inventoryController = container.resolve(InventoryController);
 const categoryController = new CategoryController();
 
 router.get("/categories", protect, categoryController.getAllCategories);
+router.post("/categories", protect, categoryController.createCategory);
 router.post("/", protect, inventoryController.addItem);
 router.post("/import", protect, importLimiter, inventoryController.importItems);
 router.get("/", protect, inventoryController.getAllItems);
 router.get("/inventory-stats", protect, inventoryController.getInventoryStats);
+router.get("/distinct-categories", protect, inventoryController.getDistinctCategories);
+router.get("/filters", protect, inventoryController.getFilterOptions);
 router.get("/low-stock", protect, inventoryController.getLowStockItems);
 router.get("/aging-report", protect, inventoryController.getStockAgingReport);
 router.post("/aging-action", protect, inventoryController.performAgingAction);

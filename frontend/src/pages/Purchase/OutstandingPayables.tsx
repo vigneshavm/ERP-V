@@ -10,7 +10,7 @@ import PayablesTable from './Components/PayablesTable';
 
 const OutstandingPayables: React.FC = () => {
     const {
-        isLoading,
+        isLoading: _isLoading,
         searchTerm,
         setSearchTerm,
         statusFilter,

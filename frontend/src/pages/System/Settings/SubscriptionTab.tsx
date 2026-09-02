@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Check, X, Zap, Shield, Crown, Building, Loader2, CreditCard, ChevronRight, Activity, LucideIcon } from 'lucide-react';
+import { Check, Zap, Shield, Crown, Building, CreditCard, ChevronRight, Activity, LucideIcon } from 'lucide-react';
 import api from "../../../services/api";
 import { toast } from 'react-toastify';
 import { RootState } from "../../../redux/store";

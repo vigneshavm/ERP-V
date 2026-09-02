@@ -76,8 +76,9 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         categories,
         getSubcategories,
         allProductTypes,
+        productTypeDetails,
         posContainerRef,
-        onClearCart,
+        onClearCart: _onClearCart,
         lastBill,
         reprintLastBill,
         downloadLastBill,
@@ -222,6 +223,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             onUpdateCartLength={onUpdateCartLength}
                             onOpenCategoryBrowser={() => setIsCategoryBrowserOpen(true)}
                             allProductTypes={allProductTypes}
+                            productTypeDetails={productTypeDetails}
                         />
                     )}
                 </div>

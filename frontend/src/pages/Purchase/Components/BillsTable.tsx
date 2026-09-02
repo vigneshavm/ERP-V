@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { FileText, Eye, CreditCard, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { Bill } from '../../../redux/slices/billSlice';
+import { formatDate } from '../../../utils/helpers';
 
 interface Props {
     bills: Bill[];
@@ -106,7 +107,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-primary dark:text-primary">{bill.bill_number}</span>
-                                            <span className="text-[10px] text-neutral-500">{new Date(bill.date || bill.bill_date).toLocaleDateString()}</span>
+                                            <span className="text-[10px] text-neutral-500">{formatDate(bill.date || bill.bill_date)}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -136,7 +137,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                         {getStatusBadge(bill.status)}
                                     </td>
                                     <td className="px-6 py-4 text-secondary">
-                                        {bill.dueDate || bill.due_date ? new Date(bill.dueDate || bill.due_date).toLocaleDateString() : '—'}
+                                        {bill.dueDate || bill.due_date ? formatDate(bill.dueDate || bill.due_date) : '—'}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-end gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">

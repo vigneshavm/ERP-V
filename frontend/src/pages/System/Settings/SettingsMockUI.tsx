@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { 
-    Settings, User, Shield, Bell, Palette, Globe, 
-    CreditCard, Building2, ChevronRight, Save, 
-    ToggleLeft, ToggleRight, Lock, Eye, Database,
+import { Shield, Bell, Palette, 
+    CreditCard, Building2, ChevronRight, Save, Lock, Eye, Database,
     Smartphone, Mail, MapPin, Activity, Zap
 } from 'lucide-react';
 import Layout from '../../../components/shared/Layout';

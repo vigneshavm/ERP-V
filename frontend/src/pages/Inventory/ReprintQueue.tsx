@@ -1,7 +1,7 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Printer, Trash2, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Printer, Trash2, RefreshCw } from 'lucide-react';
 import { useConfig } from "@/contexts/ConfigContext";
 import { LabelPrintModal } from "./LabelPrintModal";
 
@@ -29,10 +29,13 @@ const ReprintQueue: React.FC = () => {
             const res = await axios.get(`${apiUrl}/inventory/reprint-queue`, {
                 headers: { Authorization: `Bearer ${token}`, 'x-tenant-id': tenantId }
             });
-            setQueue(res.data);
+            const rawData = res.data;
+            const queueList = Array.isArray(rawData) ? rawData : (rawData?.data || rawData?.queue || rawData?.items || []);
+            setQueue(queueList);
         } catch (err) {
             console.error('Fetch Queue Error:', err);
             toast.error('Error fetching reprint queue');
+            setQueue([]);
         } finally {
             setLoading(false);
         }
@@ -58,9 +61,11 @@ const ReprintQueue: React.FC = () => {
         }
     };
 
+    const safeQueue = Array.isArray(queue) ? queue : [];
+
     // Prepare products for LabelPrintModal
     // Mapping QueueItem to the structure expected by LabelPrintModal (roughly matching Product type but with required fields)
-    const productsToPrint = queue.map(item => ({
+    const productsToPrint = safeQueue.map(item => ({
         id: item.itemId,
         name: item.itemName,
         sku: item.sku,
@@ -95,7 +100,7 @@ const ReprintQueue: React.FC = () => {
                     >
                         <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
                     </button>
-                    {queue.length > 0 && (
+                    {safeQueue.length > 0 && (
                         <>
                             <button
                                 onClick={handleClearQueue}
@@ -109,7 +114,7 @@ const ReprintQueue: React.FC = () => {
                                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transform active:scale-95 transition-all"
                             >
                                 <Printer className="w-5 h-5" />
-                                Print {queue.length} Items
+                                Print {safeQueue.length} Items
                             </button>
                         </>
                     )}
@@ -120,7 +125,7 @@ const ReprintQueue: React.FC = () => {
                 <div className="flex justify-center py-20">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
                 </div>
-            ) : queue.length === 0 ? (
+            ) : safeQueue.length === 0 ? (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
                     <Printer className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white">Queue is Empty</h3>
@@ -140,7 +145,7 @@ const ReprintQueue: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                            {queue.map((item, index) => (
+                            {safeQueue.map((item, index) => (
                                 <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="font-medium text-gray-900 dark:text-white">{item.itemName}</div>

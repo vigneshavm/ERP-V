@@ -1,14 +1,14 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Save, Printer, FileText, Search, Plus, Trash2,
-    Calendar, User, Truck, CreditCard, Loader2, ShoppingBag,
-    Paperclip, FileCheck, ClipboardList, Info, Upload, FileUp, X, CheckCircle2, AlertCircle
+    Calendar, User, Truck, Loader2, ShoppingBag,
+    Paperclip, FileCheck, ClipboardList, Upload, FileUp, X, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { RootState } from "../../redux/store";
 import { getAllSuppliers } from "../../redux/slices/supplierSlice";
 import { getAllItems } from "../../redux/slices/inventorySlice";
-import { useNavigate } from 'react-router-dom';
+import { } from 'react-router-dom';
 import { usePurchaseItems } from "../../hooks/usePurchaseItems";
 import api from "../../services/api";
 import { printBarcodeLabels } from "../../utils/labelPrinter";
@@ -75,11 +75,10 @@ interface PurchaseItem {
 
 
 const PurchaseEntry: React.FC = () => {
-    const navigate = useNavigate();
     const dispatch = useDispatch<any>();
     const { user } = useSelector((state: RootState) => state.auth);
-    const tenantId = user?.tenantId;
-    const branchId = user?.branchId; // Default to user branch
+    const _tenantId = user?.tenantId;
+    const _branchId = user?.branchId; // Default to user branch
 
     // Header State
     const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0]);
@@ -94,7 +93,7 @@ const PurchaseEntry: React.FC = () => {
     const { items, setItems, removeItem, totals } = usePurchaseItems([]);
     const [activeSearchRow, setActiveSearchRow] = useState<number | null>(null);
     const [dropdownHighlightIndex, setDropdownHighlightIndex] = useState<number>(-1);
-    const [searchCategoryFilter, setSearchCategoryFilter] = useState<string | null>(null);
+    const [_searchCategoryFilter, setSearchCategoryFilter] = useState<string | null>(null);
     const { items: products } = useSelector((state: RootState) => state.inventory);
 
     const [shippingAmount, setShippingAmount] = useState(0);
@@ -116,7 +115,7 @@ const PurchaseEntry: React.FC = () => {
     const [showPdfPanel, setShowPdfPanel] = useState(false);
     const [isPdfParsing, setIsPdfParsing] = useState(false);
     const [pdfFileName, setPdfFileName] = useState('');
-    const [pdfExtractedText, setPdfExtractedText] = useState('');
+    const [_pdfExtractedText, setPdfExtractedText] = useState('');
     const [pdfParseResult, setPdfParseResult] = useState<{ items: any[], raw: string } | null>(null);
     const pdfInputRef = useRef<HTMLInputElement>(null);
 
@@ -166,7 +165,7 @@ const PurchaseEntry: React.FC = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const { data } = await api.get('/api/inventory/categories');
+                const { data } = await api.get('/api/inventory/categories', { params: { limit: 100000 } });
                 // The API returns { success: true, data: [...] }
                 const list = data.data || data;
                 let parsedList = Array.isArray(list) ? list : [];
@@ -267,12 +266,9 @@ const PurchaseEntry: React.FC = () => {
             const pdfjs = await loadPdfJs();
             pdfjs.GlobalWorkerOptions.workerSrc =
                 `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.min.js`;
-            console.log('[PDF] pdfjs loaded, version:', pdfjs.version);
 
             const arrayBuffer = await file.arrayBuffer();
-            console.log('[PDF] ArrayBuffer size:', arrayBuffer.byteLength);
             const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
-            console.log('[PDF] Loaded. Pages:', pdf.numPages);
 
             let fullText = '';
             for (let i = 1; i <= pdf.numPages; i++) {
@@ -308,11 +304,7 @@ const PurchaseEntry: React.FC = () => {
                 }
 
                 fullText += pageLines.join('\n') + '\n';
-                if (i === 1) console.log('[PDF] Page 1 lines (first 20):', pageLines.slice(0, 20));
             }
-
-            console.log('[PDF] Extracted text length:', fullText.length);
-            console.log('[PDF] First 500 chars:', fullText.substring(0, 500));
 
             setPdfExtractedText(fullText);
 
@@ -339,7 +331,7 @@ const PurchaseEntry: React.FC = () => {
                 const nameRaw = clean
                     .replace(/\d+(?:,\d{2,3})*(?:\.\d+)?/g, '')
                     .replace(/\b(nos?|pcs?|kgs?|gms?|mtrs?|mts?|units?|box|bxs?|ltrs?|sets?|pair|pkt|packets?)\b/gi, '')
-                    .replace(/[₹$%@#^&*()_+=\[\]{};':"\\|<>/?]/g, ' ')
+                    .replace(/[₹$%@#^&*()_+=[\]{};':"\\|<>/?]/g, ' ')
                     .replace(/\s+/g, ' ')
                     .trim();
 
@@ -583,13 +575,13 @@ const PurchaseEntry: React.FC = () => {
         });
     };
 
-    const getFilteredCategories = (query: string) => {
+    const _getFilteredCategories = (query: string) => {
         const lower = (query || '').toLowerCase().trim();
         if (!lower) return categories;
         return categories.filter(c => c.name.toLowerCase().includes(lower));
     };
 
-    const generatePDF = (orderData: any) => {
+    const _generatePDF = (orderData: any) => {
         const doc = new jsPDF();
 
         // Header
@@ -661,10 +653,6 @@ const PurchaseEntry: React.FC = () => {
     };
 
     const handleSave = async (status: 'DRAFT' | 'COMPLETED', overrideOptions: any = {}) => {
-        console.log("=== VALIDATION CHECK ===");
-        console.log("Supplier ID:", supplierId);
-        console.log("Items Array:", items);
-        
         if (!supplierId) return toast.error('Please select a supplier from the list first.');
         
         // Strengthened check to ensure we catch both naming conventions and avoid whitespace bypass
@@ -674,7 +662,6 @@ const PurchaseEntry: React.FC = () => {
             (i.productName && i.productName.trim() !== '')
         );
         
-        console.log("Valid Items Count:", validItems.length);
         const hasItems = validItems.length > 0;
         const hasManualTotal = manualTotalAmount !== '' && Number(manualTotalAmount) > 0;
 
@@ -723,16 +710,9 @@ const PurchaseEntry: React.FC = () => {
                 ...overrideOptions
             };
 
-            console.log("=== PURCHASE API PAYLOAD ===", JSON.stringify(payload, null, 2));
-
             const { data } = await api.post('/api/purchases', payload);
 
             toast.success(`Purchase ${status === 'DRAFT' ? 'Saved as Draft' : 'Completed Successfully'}! #${data.purchase_number}`);
-
-            // Removed automatic PDF download
-            // if (status === 'COMPLETED') {
-            //     generatePDF({ ...payload.details, purchase_number: data.purchase_number });
-            // }
 
             // Enhanced Workflow: Reset Form instead of navigating
             resetForm();

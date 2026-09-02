@@ -1,16 +1,13 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-    BarChart2, TrendingUp, TrendingDown, Download, Filter, 
-    Search, PieChart, FileText, Package, ShoppingCart, 
-    DollarSign, ArrowRight, BarChart3, Database, 
+import { } from 'react-router-dom';
+import { TrendingUp, Download, Filter, FileText, Package, ShoppingCart, 
+    DollarSign, ArrowRight, Database, 
     ShieldCheck, Zap, Layers, RefreshCw, ChevronRight
 } from 'lucide-react';
 import { salesInvoices, purchases, inventory, transactions, MockSalesInvoice, MockProduct } from '../../data';
 import Layout from '../../components/shared/Layout';
 
 const ReportsMockUI: React.FC = () => {
-    const navigate = useNavigate();
 
     const metrics = useMemo(() => {
         const totalSales = (salesInvoices as MockSalesInvoice[]).reduce((sum, s) => sum + s.total, 0);

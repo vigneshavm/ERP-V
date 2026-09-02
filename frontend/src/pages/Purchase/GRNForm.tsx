@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { CheckCircle, ArrowLeft, RefreshCw, Truck, ClipboardCheck } from 'lucide-react';
+import { CheckCircle, ArrowLeft, Truck, ClipboardCheck, Loader2, AlertTriangle } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import { useGRNForm } from './hooks/useGRNForm';
@@ -15,6 +15,8 @@ const GRNForm: React.FC = () => {
         handlePOSelect,
         handleItemChange,
         saveGRN,
+        isSaving,
+        saveError,
         setGrnField,
         navigate
     } = useGRNForm();
@@ -39,14 +41,23 @@ const GRNForm: React.FC = () => {
                                 <ArrowLeft className="w-4 h-4 mr-2 inline" /> Abort
                             </button>
                             <button
-                                onClick={() => saveGRN('Accepted')}
-                                className="px-6 py-2.5 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition hover:scale-105 active:scale-95 flex items-center gap-2"
+                                onClick={() => saveGRN()}
+                                disabled={isSaving}
+                                className="px-6 py-2.5 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition hover:scale-105 active:scale-95 flex items-center gap-2 disabled:opacity-60"
                             >
-                                <ClipboardCheck className="w-4 h-4" /> Authorize & Receive
+                                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <ClipboardCheck className="w-4 h-4" />}
+                                {isSaving ? 'Recording...' : 'Authorize & Receive'}
                             </button>
                         </div>
                     }
                 />
+
+                {saveError && (
+                    <div className="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-2xl text-sm font-bold flex items-start gap-2">
+                        <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                        <span>{saveError}</span>
+                    </div>
+                )}
 
                 {/* Logistics Context Node */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

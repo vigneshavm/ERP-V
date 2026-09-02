@@ -55,4 +55,6 @@ export interface LaborState {
     employees: Employee[];
     attendance: Attendance[];
     payments: LaborPayment[];
+    attendanceLoading?: boolean;
+    attendanceError?: string | null;
 }

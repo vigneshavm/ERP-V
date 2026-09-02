@@ -8,10 +8,8 @@ import {
     Share2,
     Mail,
     Layout as LayoutIcon,
-    Image as ImageIcon,
     Palette,
     Download,
-    Send,
     Zap,
     ChevronRight,
     Smartphone,
@@ -20,8 +18,6 @@ import {
     UploadCloud
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout/index.js";
-import PageHeader from "../../components/shared/Layout/PageHeader.js";
-import BusinessSubNav from './BusinessSubNav.js';
 
 import api from "../../services/api.js";
 

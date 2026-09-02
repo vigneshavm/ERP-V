@@ -51,11 +51,11 @@ const SupplierLedgerTable: React.FC<SupplierLedgerTableProps> = ({ data, loading
     };
 
     const sortedTransactions = useMemo(() => {
-        let sortableItems = [...data.transactions];
+        const sortableItems = [...data.transactions];
         if (sortConfig !== null) {
             sortableItems.sort((a, b) => {
-                let aValue: any = a[sortConfig.key];
-                let bValue: any = b[sortConfig.key];
+                const aValue: any = a[sortConfig.key];
+                const bValue: any = b[sortConfig.key];
 
                 // Handle specifically for description/details if mapped differently, 
                 // but checking the interface, keys match directly for most.

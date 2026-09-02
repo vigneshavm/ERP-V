@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CreditCard, AlertOctagon, Banknote, Smartphone, Check, Loader2, PackageCheck } from 'lucide-react';
+import { CreditCard, Banknote, Smartphone, Check, Loader2 } from 'lucide-react';
 import { TaxMode, PaymentMethod } from "../../types/common";
 import { Customer } from "../../types/sales";
 import { LoyaltyConfig } from "../../types/tenant";
@@ -37,17 +37,17 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     taxMode,
     paymentMethod,
     isProcessing,
-    isBranchAll,
-    hasMultipleBranches,
+    isBranchAll: __isBranchAll,
+    hasMultipleBranches: __hasMultipleBranches,
     isEmpty,
-    isPreOrder,
+    isPreOrder: __isPreOrder,
     isRefund,
     activeCustomer,
     loyaltyConfig,
     onSetTaxMode,
     onSetPaymentMethod,
     onSetRedeemedPoints,
-    onSetIsPreOrder,
+    onSetIsPreOrder: __onSetIsPreOrder,
     onCheckout
 }) => {
     return (

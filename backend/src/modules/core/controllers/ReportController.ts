@@ -20,6 +20,7 @@ interface AuthenticatedRequest extends Request {
     user?: {
         _id: string;
         name?: string;
+        tenantId?: string;
         [key: string]: any;
     };
 }
@@ -40,9 +41,13 @@ interface AuthenticatedRequest extends Request {
  */
 export const getSalesReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        // Only get invoices and items for current user
-        const invoices = await Invoice.find({ createdBy: req.user?._id });
-        const items = await Item.find({ addedBy: req.user?._id });
+        // Shop-wide, not per-staff-member: scope by tenantId (matches how the rest of the app
+        // scopes reads - e.g. InventoryRepository, the purchase-module SupplierController's
+        // getSupplierAnalytics) rather than the single logged-in user, so a report reflects every
+        // invoice/item recorded by any staff member on this tenant, not just this one.
+        const tenantId = req.user?.tenantId;
+        const invoices = await Invoice.find({ tenantId, isDeleted: { $ne: true } });
+        const items = await Item.find({ tenantId });
 
         const report = generateAIReport(invoices, items);
         const stockAlerts = req.user?._id ? await checkStockAlerts(req.user._id) : [];
@@ -77,7 +82,7 @@ export const getSalesReport = async (req: AuthenticatedRequest, res: Response): 
  */
 export const getStockReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const items = await Item.find({ addedBy: req.user?._id }).sort({ stockQty: 1 });
+        const items = await Item.find({ tenantId: req.user?.tenantId }).sort({ stockQty: 1 });
         const lowStock = items.filter((i: any) => i.stockQty <= i.lowStockLimit);
         res.status(200).json({ totalItems: items.length, lowStock });
     } catch (err) {
@@ -107,7 +112,7 @@ export const getStockReport = async (req: AuthenticatedRequest, res: Response): 
 export const getCustomerReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const customers = await Customer.find({
-            owner: req.user?._id,
+            tenantId: req.user?.tenantId,
             dues: { $gt: 0 }
         }).sort({ dues: -1 });
         res.status(200).json(customers);
@@ -132,9 +137,13 @@ export const getCustomerReport = async (req: AuthenticatedRequest, res: Response
 export const getDashboardStats = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const userId = req.user?._id;
+        // Shop-wide scope for everything that has a tenantId field (Invoice, Customer). Expense
+        // has no tenantId on its schema (only createdBy) - see the monthlyExpenses aggregate
+        // below - so that one stays per-user until Expense is given a tenant field.
+        const tenantId = req.user?.tenantId;
 
         // 0. Summary metrics
-        const allInvoices = await Invoice.find({ createdBy: userId });
+        const allInvoices = await Invoice.find({ tenantId, isDeleted: { $ne: true } });
         const totalInvoices = allInvoices.length;
         const totalRevenue = allInvoices.reduce((sum: number, inv: any) => sum + (inv.totalAmount || 0), 0);
         const totalCollected = allInvoices.reduce((sum: number, inv: any) => {
@@ -150,7 +159,8 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
         const dailySales = await Invoice.aggregate([
             {
                 $match: {
-                    createdBy: userId,
+                    tenantId,
+                    isDeleted: { $ne: true },
                     createdAt: { $gte: thirtyDaysAgo }
                 }
             },
@@ -170,7 +180,8 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
         const monthlyRevenue = await Invoice.aggregate([
             {
                 $match: {
-                    createdBy: userId,
+                    tenantId,
+                    isDeleted: { $ne: true },
                     createdAt: { $gte: sixMonthsAgo }
                 }
             },
@@ -183,6 +194,8 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
             { $sort: { _id: 1 } }
         ]);
 
+        // Expense has no tenantId field (see backend/src/modules/expense/models/Expense.ts) -
+        // stays scoped to the logged-in user until that model gains shop-wide scoping.
         const monthlyExpenses = await Expense.aggregate([
             {
                 $match: {
@@ -213,7 +226,7 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
 
         // 3. Payment methods distribution (Invoices)
         const paymentMethods = await Invoice.aggregate([
-            { $match: { createdBy: userId } },
+            { $match: { tenantId, isDeleted: { $ne: true } } },
             {
                 $group: {
                     _id: '$paymentMethod',
@@ -225,7 +238,7 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
 
         // 4. Outstanding dues trend (Top 5 customers)
         const topCustomersWithDues = await Customer.find({
-            owner: userId,
+            tenantId,
             dues: { $gt: 0 }
         })
             .sort({ dues: -1 })

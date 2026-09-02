@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { Link } from 'react-router-dom';
-import { User, Mail, Store, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
+import { User, Mail, Store, ArrowRight, ShieldCheck } from 'lucide-react';
 import SecurePasswordInput from './SecurePasswordInput';
 import AuthLayout from '../Views/AuthLayout';
 import AuthAlert from '../Views/AuthAlert';

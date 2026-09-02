@@ -1,5 +1,5 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
-import { Search, Save, AlertCircle, CheckCircle, Package, ArrowRight, Printer } from 'lucide-react';
+import { Search, Save, AlertCircle, Package, ArrowRight, Printer } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useConfig } from "@/contexts/ConfigContext";

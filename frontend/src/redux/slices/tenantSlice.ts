@@ -1,7 +1,66 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Tenant, TenantState, TenantEcommerceConfig, GoogleBusinessConfig } from "../../types/tenant";
 import { SettingsState } from "../../types/settings";
 import { ModuleType } from "../../types/common";
+import api from "../../services/api";
+
+const SETTINGS_API_URL = "/api/settings";
+
+const getAuthConfig = (token: string) => ({
+    headers: {
+        Authorization: `Bearer ${token}`,
+    },
+});
+
+// Load flow: MongoDB -> GET /api/settings -> Redux (tenantSlice) -> Settings UI.
+// This is the DB-backed source of truth for the Settings page; it replaces the
+// old behavior of hydrating purely from whatever was already in Redux/mocks.
+export const fetchTenantSettings = createAsyncThunk(
+    'tenant/fetchSettings',
+    async (_: void, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as any;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+
+            const response = await api.get(SETTINGS_API_URL, getAuthConfig(token));
+            return response.data?.data;
+        } catch (error: any) {
+            const message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Save flow: Validation (Settings.tsx) -> PUT /api/settings -> Backend -> MongoDB
+// -> Response -> Redux (tenantSlice). The resolved server response (not the
+// optimistic local payload) is what gets merged into state, so Redux always
+// reflects what was actually persisted.
+export const saveTenantSettings = createAsyncThunk(
+    'tenant/saveSettings',
+    async (updates: Partial<Tenant>, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState() as any;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+
+            const response = await api.put(SETTINGS_API_URL, updates, getAuthConfig(token));
+            if (!response.data?.success) {
+                return thunkAPI.rejectWithValue(response.data?.message || "Failed to save settings");
+            }
+            return response.data?.data;
+        } catch (error: any) {
+            const message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
 
 const initialTenantState: TenantState = {
     tenants: [],
@@ -241,6 +300,36 @@ const tenantSlice = createSlice({
                 tenant.ecommerceConfig = action.payload.config;
             }
         },
+    },
+    extraReducers: (builder) => {
+        // Both the Load flow (fetchTenantSettings) and the Save flow
+        // (saveTenantSettings) land here: the DB-authoritative tenant record
+        // returned by the backend is merged onto whatever tenant is already
+        // in Redux, keeping MongoDB as the source of truth and Redux as cache.
+        const mergeServerTenant = (state: TenantState, data: any) => {
+            if (!data || !data.id) return;
+            const id = String(data.id);
+            const now = new Date().toISOString();
+            const index = state.tenants.findIndex(t => String(t.id) === id);
+            if (index !== -1) {
+                state.tenants[index] = {
+                    ...state.tenants[index],
+                    ...data,
+                    id: state.tenants[index].id,
+                    updatedAt: now
+                } as Tenant;
+            } else {
+                state.tenants.push({ ...data, id, updatedAt: now } as Tenant);
+            }
+        };
+
+        builder
+            .addCase(fetchTenantSettings.fulfilled, (state, action) => {
+                mergeServerTenant(state, action.payload);
+            })
+            .addCase(saveTenantSettings.fulfilled, (state, action) => {
+                mergeServerTenant(state, action.payload);
+            });
     }
 });
 

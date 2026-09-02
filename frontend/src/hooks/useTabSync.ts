@@ -36,10 +36,28 @@ export const useTabSync = () => {
         const allItems = flattenMenu(MENU_ITEMS);
         // We match exact paths first
         const matchedItem = allItems.find(item => item.path && item.path === path);
-        
+
         if (matchedItem) {
             if (activeTab !== matchedItem.id) {
                 dispatch(setActiveTab(matchedItem.id));
+            }
+            return;
+        }
+
+        // 2b. No exact match -- fall back to the menu item whose own `path` is
+        // the longest matching prefix of the current path. Without this, any
+        // route that isn't listed verbatim in MENU_ITEMS (e.g. every Settings
+        // sub-tab except the bare "/settings" -- "/settings/general",
+        // "/settings/branding", "/settings/finance", etc. are all real pages
+        // but none of them is an exact entry) left `activeTab` completely
+        // untouched, so the sidebar kept highlighting whatever section you'd
+        // visited *before* navigating here with no relation to where you
+        // actually are now.
+        const prefixMatches = allItems.filter(item => item.path && item.path !== '/' && path.startsWith(item.path));
+        if (prefixMatches.length > 0) {
+            const bestMatch = prefixMatches.reduce((best, item) => (item.path!.length > best.path!.length ? item : best));
+            if (activeTab !== bestMatch.id) {
+                dispatch(setActiveTab(bestMatch.id));
             }
             return;
         }

@@ -3,7 +3,7 @@ import { Document, Types } from "mongoose";
 export interface IStockLog extends Document {
     itemId: Types.ObjectId;
     tenantId: Types.ObjectId;
-    type: 'ADD' | 'SUBTRACT' | 'SET' | 'SALE' | 'PURCHASE' | 'INIT';
+    type: 'ADD' | 'SUBTRACT' | 'SET' | 'SALE' | 'SALES' | 'PURCHASE' | 'INIT' | 'ADJUST' | 'RETURN';
     delta: number;
     finalQty: number;
     reason?: string;

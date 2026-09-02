@@ -1,11 +1,7 @@
 ﻿import React, { useState } from 'react';
-import {
-    MessageSquare, Send, User, Search, Filter,
-    MoreVertical, Paperclip, Smile, ShieldCheck,
-    Clock, Smartphone, CheckCircle2, AlertCircle,
-    TrendingUp, Star, DollarSign, ListChecks, ArrowRight,
-    Sparkles, Zap, Layout, Settings, BarChart3,
-    AlertTriangle, Bot, MessageCircle, RefreshCw
+import { Send, User, Search, Filter, Paperclip, Smile, ShieldCheck,
+    Clock, Smartphone, Star, DollarSign,
+    Sparkles, Zap, Layout, BarChart3, Bot, MessageCircle, RefreshCw
 } from 'lucide-react';
 
 const WhatsAppEngagement: React.FC = () => {

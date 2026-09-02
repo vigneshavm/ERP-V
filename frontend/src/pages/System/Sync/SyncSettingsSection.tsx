@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { SyncConfig, SyncSettings } from "../../../types/tenant";
+import { SyncSettings } from "../../../types/tenant";
 
 interface SyncSettingsSectionProps {
     settings: SyncSettings;

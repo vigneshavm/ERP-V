@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { formatDate } from '../../utils/helpers';
 
 interface EstimateTemplateProps {
     estimate: {
@@ -27,7 +28,7 @@ const EstimateTemplate: React.FC<EstimateTemplateProps> = ({ estimate }) => {
                 <div className="text-right">
                     <p className="font-medium text-gray-700">Date:</p>
                     <p className="text-gray-600">
-                        {new Date(estimate.createdAt).toLocaleDateString()}
+                        {formatDate(estimate.createdAt)}
                     </p>
                 </div>
             </div>

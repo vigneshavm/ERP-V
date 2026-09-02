@@ -1,8 +1,6 @@
 ﻿import React from 'react';
-import { MessageCircle, Mail, Gift, MessageSquare } from 'lucide-react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
-import { setActiveTab } from "../../redux/slices/uiSlice";
 
 // Import components from Marketing folder where they currently reside
 import WhatsAppEngagement from './WhatsAppEngagement';
@@ -11,7 +9,6 @@ import LoyaltyEngagement from './LoyaltyEngagement';
 import FeedbackEngagement from './FeedbackEngagement';
 
 const CustomerEngagement: React.FC = () => {
-    const dispatch = useDispatch();
     const { activeTab } = useSelector((state: RootState) => state.ui);
 
     const renderContent = () => {

@@ -8,6 +8,7 @@ export interface ITenant extends Document {
     ownerId: mongoose.Types.ObjectId;
     status: 'ACTIVE' | 'SUSPENDED' | 'INACTIVE';
     businessType?: string;
+    sector?: string;
     gstNumber?: string;
     panNumber?: string;
     address?: {
@@ -36,6 +37,40 @@ export interface ITenant extends Document {
         theme?: string;
         settings?: Record<string, any>;
     };
+    // Additive Settings-page fields (kept separate from legacy address/contact/config
+    // so existing invoicing/GST/reporting code paths that read the legacy fields are unaffected)
+    primaryColor?: string;
+    loginLogoUrl?: string;
+    loginBgUrl?: string;
+    theme?: string;
+    companyDetails?: {
+        addressLine1?: string;
+        city?: string;
+        state?: string;
+        pincode?: string;
+        country?: string;
+        stateCode?: string;
+        phone?: string;
+        email?: string;
+        website?: string;
+    };
+    taxDetails?: {
+        gstin?: string;
+        pan?: string;
+        taxSystem?: string;
+        isGstEnabled?: boolean;
+    };
+    bankingDetails?: {
+        bankName?: string;
+        accountNumber?: string;
+        ifsc?: string;
+        accountHolderName?: string;
+    };
+    systemConfig?: {
+        pricingMode?: string;
+    };
+    defaultTaxMode?: string;
+    enabledModules?: Record<string, boolean>;
     subscriptionPlan: mongoose.Types.ObjectId | ISubscriptionPlan;
     subscriptionStartDate?: Date;
     subscriptionEndDate?: Date;
@@ -71,6 +106,10 @@ const tenantSchema = new Schema<ITenant>({
         default: 'ACTIVE'
     },
     businessType: {
+        type: String,
+        required: false
+    },
+    sector: {
         type: String,
         required: false
     },
@@ -110,6 +149,38 @@ const tenantSchema = new Schema<ITenant>({
         theme: { type: String },
         settings: { type: Map, of: String }
     },
+    primaryColor: { type: String },
+    loginLogoUrl: { type: String },
+    loginBgUrl: { type: String },
+    theme: { type: String },
+    companyDetails: {
+        addressLine1: { type: String },
+        city: { type: String },
+        state: { type: String },
+        pincode: { type: String },
+        country: { type: String },
+        stateCode: { type: String },
+        phone: { type: String },
+        email: { type: String },
+        website: { type: String }
+    },
+    taxDetails: {
+        gstin: { type: String },
+        pan: { type: String },
+        taxSystem: { type: String },
+        isGstEnabled: { type: Boolean }
+    },
+    bankingDetails: {
+        bankName: { type: String },
+        accountNumber: { type: String },
+        ifsc: { type: String },
+        accountHolderName: { type: String }
+    },
+    systemConfig: {
+        pricingMode: { type: String }
+    },
+    defaultTaxMode: { type: String },
+    enabledModules: { type: Map, of: Boolean },
     subscriptionPlan: {
         type: Schema.Types.ObjectId,
         ref: 'SubscriptionPlan',

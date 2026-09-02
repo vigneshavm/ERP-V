@@ -3,6 +3,7 @@ import { InvoiceRepository } from "../../../repositories/InvoiceRepository.js";
 import { CustomerRepository } from "../../../repositories/CustomerRepository.js";
 // import { BankAccountRepository } from "../repositories/BankAccountRepository.js"; // Stubbed for now
 import { AppError } from "../../../utils/AppError.js";
+import { calculateBatchGST } from "../../../utils/gstUtils.js";
 import { IInvoice } from "../../../interfaces/IInvoice.js"; // assuming interfaces are still in root or need migration?
 import { info } from "../../../config/logger.js";
 import BankAccount from "../../finance/models/BankAccount.js";
@@ -167,53 +168,21 @@ export class SalesService {
         const isInterState: boolean = invoiceData.isInterState ?? false;
         const isInclusive: boolean  = (invoiceData.taxMode ?? 'INCLUSIVE') === 'INCLUSIVE';
 
-        let totalCGST = 0, totalSGST = 0, totalIGST = 0;
-
-        // Decompose GST per line item
-        const enrichedItems = invoiceData.items.map((item: any) => {
-            const gstRate    = item.gstRate   ?? 0;
-            const lineValue  = item.total     ?? (item.price * item.quantity);
-
-            let taxableAmount = lineValue;
-            if (isInclusive && gstRate > 0) {
-                taxableAmount = lineValue / (1 + gstRate / 100);
-            }
-            const taxAmount = lineValue - taxableAmount;
-
-            let cgst = 0, sgst = 0, igst = 0;
-            if (isInterState) {
-                igst = taxAmount;
-            } else {
-                cgst = taxAmount / 2;
-                sgst = taxAmount / 2;
-            }
-
-            totalCGST += cgst;
-            totalSGST += sgst;
-            totalIGST += igst;
-
-            return {
-                ...item,
-                taxableAmount: +taxableAmount.toFixed(2),
-                cgst:          +cgst.toFixed(2),
-                sgst:          +sgst.toFixed(2),
-                igst:          +igst.toFixed(2),
-                tax:           +(cgst + sgst + igst).toFixed(2),
-            };
-        });
+        // Reusable GST batch computation
+        const gstResult = calculateBatchGST(invoiceData.items, isInterState, isInclusive);
 
         const invoice = await this.invoiceRepository.create({
             ...invoiceData,
-            items:          enrichedItems,
+            items:          gstResult.items,
             createdBy:      userId,
             tenantId:       tenantId,
             isInterState,
             taxMode:        invoiceData.taxMode ?? 'INCLUSIVE',
             taxBreakdown: {
-                cgst:  +totalCGST.toFixed(2),
-                sgst:  +totalSGST.toFixed(2),
-                igst:  +totalIGST.toFixed(2),
-                total: +(totalCGST + totalSGST + totalIGST).toFixed(2),
+                cgst:  gstResult.totalCGST,
+                sgst:  gstResult.totalSGST,
+                igst:  gstResult.totalIGST,
+                total: gstResult.totalTax,
             },
             paymentStatus:  invoiceData.status || 'unpaid',
             paymentMethod:  invoiceData.paymentMethod || 'due',

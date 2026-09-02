@@ -1,8 +1,6 @@
 ﻿import React from 'react';
-import { Palette, MessageSquare, Ticket, Mail, LayoutTemplate, Percent } from 'lucide-react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from "@/redux/store";
-import { setActiveTab } from "@/redux/slices/uiSlice";
 import Campaigns from './Campaigns';
 import WhatsAppMarketing from './WhatsAppMarketing';
 import SocialMediaMarketing from './SocialMediaMarketing';
@@ -12,7 +10,6 @@ import MarketingCoupons from './MarketingCoupons';
 import MarketingOffers from './MarketingOffers';
 
 const Marketing: React.FC = () => {
-    const dispatch = useDispatch();
     const { activeTab } = useSelector((state: RootState) => state.ui);
 
     const renderContent = () => {

@@ -2,14 +2,13 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
 import {
-    Globe, Phone, MapPin, Camera, Plus, Trash2, CheckCircle,
-    AlertCircle, RefreshCw, ExternalLink, Share2, QrCode, Save,
-    Star, Image as ImageIcon, BarChart3, Clock,
-    ChevronRight, Edit3, MessageCircle, MessageSquare, Heart, Eye,
-    TrendingUp, Filter, Calendar, Layout, ArrowUpRight
+    Globe, Phone, MapPin, Camera, Plus, RefreshCw, ExternalLink, Share2, QrCode, Save,
+    Star, BarChart3, Edit3, MessageCircle, MessageSquare, Heart, Eye,
+    TrendingUp, Layout, ArrowUpRight
 } from 'lucide-react';
 import { syncGoogleProfile } from '../../redux';
-import { GoogleReview, GooglePost, GooglePhoto, BusinessHour, Tenant } from "../../types/tenant";
+import { GoogleReview, GooglePost, Tenant } from "../../types/tenant";
+import { formatDate } from '../../utils/helpers';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -252,7 +251,7 @@ const GoogleBusiness: React.FC = () => {
                                             {[...Array(5)].map((_, i) => (
                                                 <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-amber-500 text-warning' : 'text-slate-200 dark:text-slate-800'}`} />
                                             ))}
-                                            <span className="text-[10px] text-slate-400 ml-4 font-black italic">{new Date(review.createdAt).toLocaleDateString()}</span>
+                                            <span className="text-[10px] text-slate-400 ml-4 font-black italic">{formatDate(review.createdAt)}</span>
                                         </div>
                                     </div>
                                 </div>

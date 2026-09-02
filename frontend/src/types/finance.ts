@@ -1,4 +1,4 @@
-import { Sector, TransactionType } from './common';
+import { Sector } from './common';
 
 export interface Expense {
     id: string; // Helper for _id

@@ -1,6 +1,6 @@
 ﻿
 import React, { useState } from 'react';
-import { X, CheckCircle, FileText } from 'lucide-react';
+import { X, FileText } from 'lucide-react';
 import { PurchaseOrder } from "../../../types/purchase";
 import { useDispatch } from 'react-redux';
 // We assume we can import these. If not, we might need to verify paths.

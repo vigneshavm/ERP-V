@@ -1,9 +1,11 @@
-﻿import React from 'react';
+import React from 'react';
 import { Calendar as CalendarIcon, CheckSquare, ListChecks, X, CheckCircle2, Clock, PieChart, XCircle } from 'lucide-react';
 import { Card } from "../../../components/core/Display/Card";
 import { Attendance } from "../../../types/hr";
 import { AttendanceStatus } from "../../../types/common";
 import { getDaysInMonth, getFirstDayOfMonth, formatDateISO } from "../../../utils/helpers";
+
+import { Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface AttendanceCalendarProps {
     currentYear: number;
@@ -15,10 +17,13 @@ interface AttendanceCalendarProps {
     selectedDates: Set<string>;
     onDateClick: (day: number) => void;
     onBulkAction: (status: AttendanceStatus | 'CLEAR') => void;
+    isLoading?: boolean;
+    loadError?: string | null;
+    onRetry?: () => void;
 }
 
 const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
-    currentYear, currentMonth, attendance, selectedLaborerId, isSelectionMode, onToggleSelectionMode, selectedDates, onDateClick, onBulkAction
+    currentYear, currentMonth, attendance, selectedLaborerId, isSelectionMode, onToggleSelectionMode, selectedDates, onDateClick, onBulkAction, isLoading, loadError, onRetry
 }) => {
     const renderCalendar = () => {
         const daysInMonth = getDaysInMonth(currentYear, currentMonth);
@@ -36,7 +41,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
 
                 {days.map(day => {
                     const dateKey = formatDateISO(currentYear, currentMonth, day);
-                    const log = attendance.find(a => a.employeeId === selectedLaborerId && a.date === dateKey);
+                    const log = attendance.find(a => (a.employeeId === selectedLaborerId || (a as any).employeeId?._id === selectedLaborerId) && a.date === dateKey);
                     const status = log?.status;
                     const isSelected = selectedDates.has(dateKey);
 
@@ -101,7 +106,28 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                     </button>
                 </div>
                 <div className="flex-1 overflow-auto">
-                    {renderCalendar()}
+                    {loadError ? (
+                        <div className="h-full flex flex-col items-center justify-center p-6 text-center text-slate-500">
+                            <AlertTriangle className="w-8 h-8 text-rose-500 mb-2" />
+                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Unable to load attendance</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{loadError}</p>
+                            {onRetry && (
+                                <button
+                                    onClick={onRetry}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-bold transition"
+                                >
+                                    <RefreshCw className="w-3.5 h-3.5" /> Retry
+                                </button>
+                            )}
+                        </div>
+                    ) : isLoading ? (
+                        <div className="h-full flex flex-col items-center justify-center p-6 text-slate-400">
+                            <Loader2 className="w-8 h-8 animate-spin mb-2 text-blue-600" />
+                            <p className="text-xs font-medium">Loading attendance records...</p>
+                        </div>
+                    ) : (
+                        renderCalendar()
+                    )}
                 </div>
                 <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
                     {isSelectionMode ? (

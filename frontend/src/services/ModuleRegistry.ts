@@ -13,7 +13,10 @@ export const Modules = {
     Finance: () => import("../pages/Financial/FinanceMockUI"),
     FinanceMockUI: () => import("../pages/Financial/FinanceMockUI"),
     AgedStockManager: () => import("../pages/Inventory/AgedStockManager"),
-    Inventory: () => import("../pages/Inventory/InventoryMockUI"),
+    // "Inventory" now points at the real, data-backed manager (see LazyModules.Inventory
+    // below) instead of the static InventoryMockUI demo it used to point to, so the
+    // Items tab actually loads real data and its search/category filters work.
+    Inventory: () => import("../pages/Inventory/InventoryManager"),
     InventoryMockUI: () => import("../pages/Inventory/InventoryMockUI"),
     POS: () => import("../pages/Pos/POSMockUI"),
     POSMockUI: () => import("../pages/Pos/POSMockUI"),
@@ -125,7 +128,10 @@ export const Modules = {
     SupplierGroups: () => import("../pages/People/Suppliers/SupplierGroups"),
     SupplierAgeing: () => import("../pages/Purchase/SupplierAgeing"),
     EditSupplier: () => import("../pages/People/Suppliers/EditSupplier"),
-    ItemCategories: () => import("../pages/Inventory/InventoryMockUI"),
+    // Was pointing at InventoryMockUI (the same generic demo table used for the
+    // old Items page) — the real CategoryManager already existed and is wired
+    // to the real /api/inventory/categories endpoint, it just wasn't used here.
+    ItemCategories: () => import("../pages/Inventory/CategoryManager"),
     StockSummary: () => import("../pages/Inventory/InventoryMockUI"),
     StockMovement: () => import("../pages/Inventory/InventoryMockUI"),
     LowStockAlerts: () => import("../pages/Inventory/InventoryMockUI"),
@@ -158,7 +164,7 @@ export const Modules = {
     RecurringExpensesIntelligence: () => import("../pages/Expenses/RecurringExpensesIntelligence"),
     ExpenseReportsIntelligence: () => import("../pages/Expenses/ExpenseReportsIntelligence"),
     // POS Intelligence
-    POSOrdersIntelligence: () => import("../pages/Pos/POSOrdersIntelligenceMockUI"),
+    POSOrdersIntelligence: () => import("../pages/Pos/POSOrdersIntelligence"),
     POSReturnsIntelligence: () => import("../pages/Pos/POSReturnsIntelligenceMockUI"),
     ShiftManagementIntelligence: () => import("../pages/Pos/ShiftManagementIntelligenceMockUI"),
     CashDrawerIntelligence: () => import("../pages/Pos/CashDrawerIntelligenceMockUI"),
@@ -175,6 +181,7 @@ export const Modules = {
     PayslipView: () => import("../pages/People/Payroll/PayslipView"),
     // New unregistered real pages
     InventoryManager: () => import("../pages/Inventory/InventoryManager"),
+    InventoryVariantSearch: () => import("../pages/Inventory/InventoryVariantSearch"),
     CategoryManager: () => import("../pages/Inventory/CategoryManager"),
     BatchPriceUpdate: () => import("../pages/Inventory/BatchPriceUpdate"),
     DailyFinance: () => import("../pages/Expenses/DailyFinance"),
@@ -194,6 +201,7 @@ const _lazyDashboard = lazy(Modules.Dashboard);
 const _lazyDashboardMockUI = lazy(Modules.DashboardMockUI);
 const _lazyFinanceMockUI = lazy(Modules.FinanceMockUI);
 const _lazyInventoryMockUI = lazy(Modules.InventoryMockUI);
+const _lazyInventoryManager = lazy(Modules.InventoryManager);
 const _lazyPOSMockUI = lazy(Modules.POSMockUI);
 const _lazyReportsMockUI = lazy(Modules.ReportsMockUI);
 const _lazyPurchaseMockUI = lazy(Modules.PurchaseMockUI);
@@ -319,9 +327,9 @@ const _lazyBankStatementView = lazy(Modules.BankStatementView);
 const _lazySmsTrackerPage = lazy(Modules.SmsTrackerPage);
 const _lazyBudgetTrackerPage = lazy(Modules.BudgetTrackerPage);
 const _lazyAgedStockManager = lazy(Modules.AgedStockManager);
+const _lazyInventoryVariantSearch = lazy(Modules.InventoryVariantSearch);
 const _lazyReprintQueue = lazy(Modules.ReprintQueue);
 const _lazyReports = lazy(Modules.Reports);
-const _lazyInventoryManager = lazy(Modules.InventoryManager);
 const _lazyCategoryManager = lazy(Modules.CategoryManager);
 const _lazyBatchPriceUpdate = lazy(Modules.BatchPriceUpdate);
 const _lazyDailyFinance = lazy(Modules.DailyFinance);
@@ -342,8 +350,9 @@ export const LazyModules = {
     Finance: _lazyFinanceMockUI,
     FinanceMockUI: _lazyFinanceMockUI,
     AgedStockManager: _lazyAgedStockManager,
-    Inventory: _lazyInventoryMockUI,
+    Inventory: _lazyInventoryManager,
     InventoryMockUI: _lazyInventoryMockUI,
+    InventoryManager: _lazyInventoryManager,
     POS: _lazyPOSMockUI,
     POSMockUI: _lazyPOSMockUI,
     Reports: _lazyReports,
@@ -454,7 +463,7 @@ export const LazyModules = {
     SupplierGroups: _lazySupplierGroups,
     SupplierAgeing: _lazySupplierAgeing,
     EditSupplier: _lazyEditSupplier,
-    ItemCategories: _lazyInventoryMockUI,
+    ItemCategories: _lazyCategoryManager,
     StockSummary: _lazyInventoryMockUI,
     StockMovement: _lazyInventoryMockUI,
     LowStockAlerts: _lazyInventoryMockUI,
@@ -502,8 +511,8 @@ export const LazyModules = {
     DailyAttendanceBoard: _lazyDailyAttendanceBoard,
     PayslipView: _lazyPayslipView,
     // Newly added real pages
-    InventoryManager: _lazyInventoryManager,
     CategoryManager: _lazyCategoryManager,
+    InventoryVariantSearch: _lazyInventoryVariantSearch,
     BatchPriceUpdate: _lazyBatchPriceUpdate,
     DailyFinance: _lazyDailyFinance,
     POSModule: _lazyPOSModule,

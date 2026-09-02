@@ -1,6 +1,5 @@
-﻿import React, { useState } from 'react';
-import { X, Tag, CheckSquare, Upload, AlertTriangle, Box, Save } from 'lucide-react';
-import { Product } from '../../types/product';
+import React, { useState } from 'react';
+import { X, Tag, CheckSquare, AlertTriangle } from 'lucide-react';
 
 interface BulkCategoryModalProps {
     isOpen: boolean;
@@ -57,7 +56,7 @@ export const BulkCategoryModal: React.FC<BulkCategoryModalProps> = ({ isOpen, on
                         >
                             <option value="">Select Category...</option>
                             {categories.filter(c => c !== 'ALL').map(cat => (
-                                <option key={cat} value={cat}>{cat.replace(/_/g, ' ')}</option>
+                                <option key={cat} value={cat}>{cat?.replace(/_/g, ' ') || ''}</option>
                             ))}
                         </select>
                     </div>

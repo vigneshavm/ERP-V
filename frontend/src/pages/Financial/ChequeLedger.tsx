@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
-import { formatCurrency } from "@/utils/helpers";
+import { formatCurrency, formatDate} from "@/utils/helpers";
 
 interface ChequeLedgerProps {
     sectorCheques: any[];
@@ -25,7 +25,7 @@ const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStat
                     <tbody className="text-sm font-medium">
                         {sectorCheques.map((cheque: any) => (
                             <tr key={cheque.id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors">
-                                <td className="py-4 pl-4 text-neutral-500 w-32">{new Date(cheque.date).toLocaleDateString()}</td>
+                                <td className="py-4 pl-4 text-neutral-500 w-32">{formatDate(cheque.date)}</td>
                                 <td className="py-4 font-mono text-xs">{cheque.number}</td>
                                 <td className="py-4">
                                     <div className="flex flex-col">

@@ -61,7 +61,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ isOpen, onClose, onSave, edit
         try {
             await onSave(formData);
             onClose();
-        } catch (error) {
+        } catch {
             // Error managed by parent hook
         } finally {
             setIsSubmitting(false);

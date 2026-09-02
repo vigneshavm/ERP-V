@@ -8,28 +8,18 @@ import {
     Plus,
     Filter,
     Search,
-    ChevronRight,
     Edit3,
     Trash2,
-    ShieldCheck,
     Lock,
     Unlock,
-    DollarSign,
     Zap,
-    Scale,
-    PieChart,
-    Building2,
     CheckCircle2,
-    XCircle,
-    Info,
-    MoreVertical,
-    TrendingUp,
     Database,
 } from 'lucide-react';
 
 const ExpenseCategoriesManager: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
-    const { categories, loading, upsertCategory, deleteCategory } = useExpenseCategories();
+    const { categories, upsertCategory, deleteCategory } = useExpenseCategories();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);

@@ -1,26 +1,19 @@
 ﻿import React, { useState } from 'react';
 import {
-    Share2,
     Instagram,
     Facebook,
     Linkedin,
-    TrendingUp,
-    Users,
     Zap,
     Sparkles,
     Calendar,
     BarChart3,
     ArrowRight,
-    Search,
-    Filter,
     MoreHorizontal,
     Plus,
     LayoutDashboard,
     MessageCircle,
     Heart,
-    Eye,
     Globe,
-    Clock,
     Hash
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';

@@ -5,24 +5,18 @@ import {
     Search,
     Filter,
     MoreHorizontal,
-    Send,
     CheckCircle2,
-    Clock,
-    AlertCircle,
     LayoutGrid,
     LayoutList,
     TrendingUp,
-    Users,
     MousePointer2,
     ArrowRight,
     BarChart3
 } from 'lucide-react';
-import { useDispatch } from 'react-redux';
-import { setActiveTab } from '@/redux/slices/uiSlice';
+import { } from 'react-redux';
 import Campaigns from './Campaigns';
 
 const MarketingCampaigns: React.FC = () => {
-    const dispatch = useDispatch();
     const [viewMode, setViewMode] = useState<'manager' | 'builder'>('manager');
 
     const campaigns = [

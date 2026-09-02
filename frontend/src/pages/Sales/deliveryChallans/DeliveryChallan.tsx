@@ -6,26 +6,18 @@ import {
     Truck,
     Plus,
     Trash2,
-    Save,
     ArrowLeft,
-    Clock,
     ShieldCheck,
-    Zap,
     Info,
     Layers,
     Globe,
     RefreshCw,
-    ShoppingBag,
     Tag,
-    IndianRupee,
     Minus,
     Search,
     Calendar,
     Briefcase,
-    CheckCircle2,
-    Package,
     User,
-    ChevronRight,
     MapPin,
     Navigation,
     Anchor,
@@ -71,7 +63,9 @@ const DeliveryChallan = () => {
     const [showCustomerModal, setShowCustomerModal] = useState(false);
     const [showItemModal, setShowItemModal] = useState(false);
     const [showSalesOrderModal, setShowSalesOrderModal] = useState(false);
-    const [formData, setFormData] = useState<ChallanFormData>({
+    // Lazy initializer - the previous object-literal form called Date.now()/new Date() on every
+    // render (an impure call in the render body); () => ({...}) only runs once, on mount.
+    const [formData, setFormData] = useState<ChallanFormData>(() => ({
         challanNo: 'DC-' + Date.now(),
         challanDate: new Date().toISOString().split('T')[0],
         deliveryDate: '',
@@ -82,7 +76,7 @@ const DeliveryChallan = () => {
         driverName: '',
         transportMode: 'road',
         notes: ''
-    });
+    }));
 
     useEffect(() => {
         if (isError) {

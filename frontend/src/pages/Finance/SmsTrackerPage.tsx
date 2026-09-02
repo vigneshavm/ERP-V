@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { MessageSquare, RefreshCw, Layers, History, CheckCircle2, AlertCircle, Plus, Info, Zap } from 'lucide-react';
+import { MessageSquare, RefreshCw, Layers, History, CheckCircle2, AlertCircle, Plus, Zap } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import SmsTransactionCard from '../../components/Finance/SmsTransactionCard';
@@ -25,7 +25,7 @@ const SmsTrackerPage: React.FC = () => {
         try {
             const res = await axios.get('/api/sms-tracker');
             setTransactions(Array.isArray(res.data) ? res.data : []);
-        } catch (err) {
+        } catch {
             toast.error('Failed to synchronize SMS transaction nodes.');
             setTransactions([]);
         } finally {
@@ -53,7 +53,7 @@ const SmsTrackerPage: React.FC = () => {
             await axios.patch(`/api/sms-tracker/${id}/ignore`);
             toast.info('Transaction node ignored.');
             fetchTransactions();
-        } catch (err) {
+        } catch {
             toast.error('Failed to ignore transaction node.');
         }
     };
@@ -66,7 +66,7 @@ const SmsTrackerPage: React.FC = () => {
             setTestSms('');
             setShowTestInput(false);
             fetchTransactions();
-        } catch (err) {
+        } catch {
             toast.error('Capture protocol failed.');
         }
     };
@@ -75,7 +75,7 @@ const SmsTrackerPage: React.FC = () => {
         try {
             await createExpense(data);
             toast.success('Manual expense entry recorded.');
-        } catch (err) {
+        } catch {
             toast.error('Failed to record manual expense.');
         }
     };

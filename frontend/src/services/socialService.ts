@@ -2,7 +2,7 @@ export const SocialService = {
     /**
      * Verifies connection to Social platforms
      */
-    verifyConnection: async (platform: 'META' | 'GOOGLE', credentials: any) => {
+    verifyConnection: async (platform: 'META' | 'GOOGLE', __credentials: any) => {
         console.log(`[Social] Verifying connection for ${platform}`);
         return { success: true, platform, connectedAt: new Date().toISOString() };
     },
@@ -10,7 +10,7 @@ export const SocialService = {
     /**
      * [PART A - MARKETING] Fetches Ad reach and metrics
      */
-    getAdStats: async (platform: 'META' | 'GOOGLE', credentials: any) => {
+    getAdStats: async (__platform: 'META' | 'GOOGLE', __credentials: any) => {
         return {
             reach: 45000,
             impressions: 120000,
@@ -23,7 +23,7 @@ export const SocialService = {
     /**
      * [PART B - ENGAGEMENT] Fetches social reviews/posts
      */
-    getReviews: async (platform: 'META' | 'GOOGLE', credentials: any) => {
+    getReviews: async (__platform: 'META' | 'GOOGLE', __credentials: any) => {
         return [
             { id: 'r1', author: 'Aditi S.', rating: 5, comment: 'Excellent saree collection!', date: '2d ago' },
             { id: 'r2', author: 'Vikram M.', rating: 4, comment: 'Good service, but delivery took time.', date: '3d ago' }
@@ -38,7 +38,7 @@ export const SocialService = {
             if (str.trim().startsWith('{')) return JSON.parse(str);
             const [platform, appId, appSecret] = str.split(':');
             return { platform, appId, appSecret };
-        } catch (e) {
+        } catch {
             return null;
         }
     }

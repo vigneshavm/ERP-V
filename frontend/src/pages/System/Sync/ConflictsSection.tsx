@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { ConflictEntry, SyncStatus } from "../../../types/tenant";
+import { ConflictEntry } from "../../../types/tenant";
 import { CheckCircle2, AlertTriangle, Clock, GitMerge, Edit3 } from 'lucide-react';
 
 interface ConflictsSectionProps {

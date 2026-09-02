@@ -1,13 +1,48 @@
-import React, { useMemo } from 'react';
-import { Filter, Search, Plus, Download, ChevronRight, ChevronLeft, BarChart2, RotateCcw, TrendingDown, Package, ShieldAlert, Terminal, Users, Zap, User } from 'lucide-react';
-import { salesInvoices, branches, employees, MockSalesInvoice } from '../../data';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Filter, Search, Download, ChevronRight, BarChart2, RotateCcw, TrendingDown, Package, ShieldAlert, Users } from 'lucide-react';
+import { salesInvoices, MockSalesInvoice } from '../../data';
 import Layout from '../../components/shared/Layout';
+import api from '../../services/api';
 
 const POSReturnsIntelligenceMockUI: React.FC = () => {
-    const [searchTerm, setSearchTerm] = React.useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [dbReturns, setDbReturns] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchDbReturns = async () => {
+            setLoading(true);
+            try {
+                const response = await api.get('/api/returns');
+                if (response.data && Array.isArray(response.data)) {
+                    setDbReturns(response.data);
+                }
+            } catch {
+                // Fallback to static sales data if DB endpoint fails or has no session
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDbReturns();
+    }, []);
 
     const returns = useMemo(() => {
-        // Mocking some returns based on sales data for high-fidelity
+        if (dbReturns && dbReturns.length > 0) {
+            return dbReturns.map(r => ({
+                id: r.returnId || `RET-${r._id?.slice(-5)}`,
+                terminal: 'Main Terminal',
+                // "Audit Officer" is the staff member who processed the return, not the
+                // customer - customerName defaults to "Walk-in Customer" on every document, so
+                // it must not be checked first or this column would never show a real name.
+                cashier: (r.createdBy as any)?.name || 'System Admin',
+                time: r.returnDate ? new Date(r.returnDate).toISOString().slice(0, 10) : new Date(r.createdAt || Date.now()).toISOString().slice(0, 10),
+                amount: r.totalReturnAmount || r.subtotal || 0,
+                status: (r.status === 'processed' || r.status === 'refunded') ? 'Settled' : (r.status || 'Settled')
+            }));
+        }
+
+        // Mocking some returns based on sales data for high-fidelity fallback
         return (salesInvoices as MockSalesInvoice[]).filter(inv => inv.status === 'CANCELLED').map(inv => ({
             id: `RET-${inv.invoice_no.split('-').pop()}`,
             terminal: 'Main Terminal',
@@ -16,14 +51,29 @@ const POSReturnsIntelligenceMockUI: React.FC = () => {
             amount: inv.total,
             status: 'Settled'
         }));
-    }, []);
+    }, [dbReturns]);
 
-    const metrics = useMemo(() => [
-        { label: 'Return Volume', val: '₹8.2k', icon: TrendingDown, color: 'text-rose-500', bg: 'bg-rose-500/10' },
-        { label: 'Return Rate', val: '1.8%', icon: ShieldAlert, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-        { label: 'Restock Rate', val: '92%', icon: Package, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-        { label: 'Audit Points', val: '04', icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-500/10' }
-    ], []);
+    const filteredReturns = useMemo(() => {
+        if (!searchTerm) return returns;
+        const term = searchTerm.toLowerCase();
+        return returns.filter(r => 
+            r.id.toLowerCase().includes(term) ||
+            r.cashier.toLowerCase().includes(term) ||
+            r.status.toLowerCase().includes(term)
+        );
+    }, [returns, searchTerm]);
+
+    const metrics = useMemo(() => {
+        const totalVolume = returns.reduce((sum, r) => sum + r.amount, 0);
+        const volumeStr = totalVolume > 1000 ? `₹${(totalVolume / 1000).toFixed(1)}k` : `₹${totalVolume}`;
+
+        return [
+            { label: 'Return Volume', val: volumeStr, icon: TrendingDown, color: 'text-rose-500', bg: 'bg-rose-500/10' },
+            { label: 'Return Rate', val: '1.8%', icon: ShieldAlert, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+            { label: 'Restock Rate', val: '92%', icon: Package, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+            { label: 'Audit Points', val: String(returns.length).padStart(2, '0'), icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-500/10' }
+        ];
+    }, [returns]);
 
     return (
         <Layout>
@@ -76,6 +126,8 @@ const POSReturnsIntelligenceMockUI: React.FC = () => {
                         <input 
                             type="text" 
                             placeholder="SEARCH RETURN VOUCHERS / ENTITIES..." 
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-3 pl-12 pr-6 text-[10px] font-black tracking-widest uppercase focus:border-rose-500 outline-none transition-all text-main shadow-inner" 
                         />
                     </div>
@@ -99,7 +151,7 @@ const POSReturnsIntelligenceMockUI: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                {returns.length > 0 ? returns.map((rec) => (
+                                {filteredReturns.length > 0 ? filteredReturns.map((rec) => (
                                     <tr key={rec.id} className="hover:bg-rose-500/[0.02] transition-all group cursor-pointer">
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">
@@ -112,7 +164,7 @@ const POSReturnsIntelligenceMockUI: React.FC = () => {
                                         <td className="px-8 py-6 text-[10px] font-black text-neutral-400 uppercase tracking-widest">{rec.time}</td>
                                         <td className="px-8 py-6 text-xs font-black text-neutral-700 dark:text-neutral-300 uppercase tracking-tight">{rec.cashier}</td>
                                         <td className="px-8 py-6 text-right font-mono text-sm font-black text-rose-500 tabular-nums tracking-tighter">
-                                            ₹{rec.amount.toLocaleString()}
+                                            ₹{rec.amount.toLocaleString('en-IN')}
                                         </td>
                                         <td className="px-8 py-6">
                                             <div className="flex justify-center">
@@ -134,7 +186,9 @@ const POSReturnsIntelligenceMockUI: React.FC = () => {
                                         <td colSpan={6} className="px-8 py-20 text-center">
                                             <div className="flex flex-col items-center gap-3 opacity-40">
                                                 <RotateCcw className="w-12 h-12 text-neutral-300" />
-                                                <p className="text-[10px] font-black uppercase tracking-widest">No Reverse Logistics Recorded</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest">
+                                                    {loading ? "Loading Reverse Logistics from DB..." : "No Reverse Logistics Recorded"}
+                                                </p>
                                             </div>
                                         </td>
                                     </tr>

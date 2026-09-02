@@ -1,10 +1,11 @@
-﻿import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { ArrowLeft, Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, ChevronDown, CheckCircle2, Package, Truck, CreditCard, Zap } from 'lucide-react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
+import { Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, ChevronDown, CheckCircle2, Package, Truck, CreditCard, Zap } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../types/purchase";
 import { usePurchaseItems } from "../../hooks/usePurchaseItems";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import api from "../../services/api";
+import { formatDate } from '../../utils/helpers';
 
 interface Props {
     onBack?: () => void;
@@ -12,12 +13,12 @@ interface Props {
     initialData?: PurchaseOrder | null;
 }
 
-const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async () => { }, initialData }) => {
+const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSave = async () => { }, initialData }) => {
     const { currentBranchId } = useBranchResolver();
     const [isSaving, setIsSaving] = useState(false);
     const [header, setHeader] = useState<Partial<PurchaseOrder>>({
         po_date: new Date().toISOString().split('T')[0],
-        status: 'Draft',
+        status: 'DRAFT',
         notes: '',
         branch_id: currentBranchId || undefined,
         po_number: '',
@@ -53,7 +54,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
 
     // Vendor Search
     const [vendors, setVendors] = useState<any[]>([]);
-    const [vendorSearch, setVendorSearch] = useState('');
+    const [_vendorSearch] = useState('');
 
     // Items Hook
     const { items, setItems, addItem, updateItem, removeItem, totals } = usePurchaseItems([]);
@@ -65,7 +66,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
 
     // Supplier Status
     const [supplierStatus, setSupplierStatus] = useState<any>(null);
-    const [loadingSupplier, setLoadingSupplier] = useState(false);
+    const [_loadingSupplier, setLoadingSupplier] = useState(false);
 
     // Rate History
     const [historyModal, setHistoryModal] = useState<{ show: boolean, item: string, data: any[], loading: boolean }>({ show: false, item: '', data: [], loading: false });
@@ -159,7 +160,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
     };
 
     // Lot Distribution Modal
-    const [lotModal, setLotModal] = useState<{ show: boolean, lotNumber: string, totalCost: number, totalQty: number, items: any[] }>({
+    const [_lotModal, setLotModal] = useState<{ show: boolean, lotNumber: string, totalCost: number, totalQty: number, items: any[] }>({
         show: false, lotNumber: '', totalCost: 0, totalQty: 0, items: []
     });
 
@@ -179,7 +180,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
 
         setIsSaving(true);
         try {
-            const { items: _items, vendor_name, ...sanitizedHeader } = header as any;
+            const { items: _items, ...sanitizedHeader } = header as any;
             await onSave({
                 ...sanitizedHeader,
                 tax_breakdown: taxBreakdown,
@@ -197,7 +198,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
 
         const s = num.toString();
         if (s.length > 9) return 'overflow';
-        let n: any = ('000000000' + s).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+        const n: any = ('000000000' + s).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
         if (!n) return '';
         let str = '';
         str += (Number(n[1]) !== 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
@@ -253,7 +254,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
                                         {historyModal.data.map((h, i) => (
                                             <tr key={i} className="group">
-                                                <td className="py-4 text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter tabular-nums">{new Date(h.date).toLocaleDateString()}</td>
+                                                <td className="py-4 text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter tabular-nums">{formatDate(h.date)}</td>
                                                 <td className="py-4 text-[10px] font-black text-neutral-400 uppercase tracking-widest truncate max-w-[120px]">{h.vendorName}</td>
                                                 <td className="py-4 text-right text-xs font-black text-primary tabular-nums">₹{h.rate}</td>
                                             </tr>
@@ -658,7 +659,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack = () => { }, onSave = async
                         <div className="space-y-4 pt-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <button
-                                    onClick={() => setHeader({ ...header, status: 'Draft' })}
+                                    onClick={() => setHeader({ ...header, status: 'DRAFT' })}
                                     className="py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
                                 >
                                     <FileText className="w-4 h-4" /> Draft

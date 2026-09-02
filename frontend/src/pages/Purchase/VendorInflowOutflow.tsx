@@ -5,14 +5,10 @@ import { RootState } from '../../redux/store';
 import api from '../../services/api';
 import {
     RefreshCw,
-    Users,
     ChevronLeft,
     ChevronRight,
     Calendar,
-    TrendingUp,
-    TrendingDown,
     FileText,
-    DollarSign,
     FileSpreadsheet,
     ArrowUp,
     ArrowDown,
@@ -20,7 +16,6 @@ import {
     Filter
 } from 'lucide-react';
 import Layout from '../../components/shared/Layout';
-import PageHeader from '../../components/shared/Layout/PageHeader';
 import SupplierSubNav from '../People/Suppliers/SupplierSubNav';
 import SupplierStatsCards from '../People/Suppliers/components/SupplierStatsCards';
 import SupplierFilterBar from '../People/Suppliers/components/SupplierFilterBar';

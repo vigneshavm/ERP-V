@@ -1,6 +1,5 @@
 ﻿import { useState, ChangeEvent } from 'react';
 import * as XLSX from 'xlsx';
-import Layout from "@/components/shared/Layout/Layout";
 import api from "@/services/api";
 import { toast } from 'react-toastify';
 
@@ -36,7 +35,7 @@ const BulkImport = () => {
     const [mappingData, setMappingData] = useState<ProcessedRow[]>([]);
     const [showPreview, setShowPreview] = useState(false);
     const [importing, setImporting] = useState(false);
-    const [errors, setErrors] = useState<ImportError[]>([]);
+    const [_errors, setErrors] = useState<ImportError[]>([]);
 
     const validateRow = (row: ProcessedRow, rowIndex: number, allRows: ProcessedRow[]): ValidationResult => {
         const errors: string[] = [];

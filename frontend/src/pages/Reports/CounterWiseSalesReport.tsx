@@ -2,13 +2,13 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
-import { Download, TrendingUp, ArrowUpRight, ArrowDownRight, Store } from 'lucide-react';
+import { Download, TrendingUp, ArrowUpRight, Store } from 'lucide-react';
 
 interface CounterWiseSalesReportProps {
     timeRange: 'TODAY' | 'WEEK' | 'MONTH' | 'CUSTOM';
 }
 
-const CounterWiseSalesReport: React.FC<CounterWiseSalesReportProps> = ({ timeRange }) => {
+const CounterWiseSalesReport: React.FC<CounterWiseSalesReportProps> = ({ timeRange: __timeRange }) => {
     const { salesHistory } = useSelector((state: RootState) => state.pos);
     const { currentSector } = useSelector((state: RootState) => state.auth);
     const { branches } = useSelector((state: RootState) => state.tenant);

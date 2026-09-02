@@ -13,12 +13,10 @@ import {
     Lock,
     Globe,
     Cpu,
-    Network,
     ArrowRight,
     Search,
     Filter,
     MoreHorizontal,
-    Trash2,
     Power,
     Map
 } from 'lucide-react';

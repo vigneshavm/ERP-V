@@ -2,12 +2,10 @@
 import React, { useMemo } from 'react';
 import {
     DollarSign,
-    TrendingUp,
     Calendar,
     ArrowUpRight,
     ArrowDownRight,
     Car,
-    Coffee,
     Home,
     ShoppingBag,
     Heart,
@@ -87,7 +85,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
         }));
 
         // Chart Data (Last 7 days or current month)
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const _daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
         const dailyData = Array.from({ length: 30 }, (_, i) => {
             const date = new Date();
             date.setDate(date.getDate() - (29 - i));
@@ -224,7 +222,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
                     </div>
 
                     <div className="mt-4 space-y-2">
-                        {stats.pieData.slice(0, 3).map((item, idx) => (
+                        {stats.pieData.slice(0, 3).map((item, __idx) => (
                             <div key={item.name} className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: CATEGORY_MAP[item.name]?.color || '#6B7280' }}></div>
@@ -239,7 +237,7 @@ const PremiumExpenseDashboard: React.FC<PremiumExpenseDashboardProps> = ({ expen
 
             {/* Categories Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {stats.topCategories.map((cat, idx) => (
+                {stats.topCategories.map((cat, __idx) => (
                     <motion.div
                         variants={itemVariants}
                         key={cat.name}

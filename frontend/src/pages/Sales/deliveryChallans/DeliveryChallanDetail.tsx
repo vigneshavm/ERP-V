@@ -1,5 +1,5 @@
-﻿import { useEffect, useState, useMemo } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useEffect, useState, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { getDeliveryChallanById, convertToInvoice, reset } from "../../../redux/slices/deliveryChallanSlice";
@@ -7,32 +7,20 @@ import {
     ArrowLeft, 
     Printer, 
     Truck, 
-    ArrowRightCircle, 
     Phone, 
     Mail,
-    FileText,
     CheckCircle2,
-    XCircle,
     Clock,
     Download,
-    Share2,
-    RefreshCw,
-    Calendar,
-    Briefcase,
-    Zap,
     User,
     Layers,
     ChevronRight,
-    MapPin,
     Navigation,
-    Anchor,
-    Plane,
-    Activity,
     Info,
-    ShieldCheck,
     Receipt
 } from 'lucide-react';
 import { RootState } from "../../../redux/store";
+import { formatDate } from '../../../utils/helpers';
 
 const DeliveryChallanDetail = () => {
     const { id } = useParams();
@@ -126,7 +114,7 @@ const DeliveryChallanDetail = () => {
                             </h1>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Protocol Active // Log Date: {new Date(challan.challanDate).toLocaleDateString()}</p>
+                                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Protocol Active // Log Date: {formatDate(challan.challanDate)}</p>
                             </div>
                         </div>
                     </div>
@@ -182,7 +170,7 @@ const DeliveryChallanDetail = () => {
                         </div>
                         <div className="text-right">
                             <p className="text-xs font-black uppercase tracking-widest text-neutral-400">Date of Dispatch</p>
-                            <p className="text-xl font-black">{new Date(challan.challanDate).toLocaleDateString()}</p>
+                            <p className="text-xl font-black">{formatDate(challan.challanDate)}</p>
                         </div>
                     </div>
                 </div>
@@ -225,7 +213,7 @@ const DeliveryChallanDetail = () => {
                                         { label: 'Transport Mode', value: challan.transportMode || 'ROAD', icon: Navigation },
                                         { label: 'Vehicle Node', value: challan.vehicleNo || 'LOCAL', icon: Truck },
                                         { label: 'Carrier/Driver', value: challan.driverName || 'INTERNAL', icon: User },
-                                        { label: 'Expected Node', value: challan.deliveryDate ? new Date(challan.deliveryDate).toLocaleDateString() : 'N/A', icon: Clock },
+                                        { label: 'Expected Node', value: challan.deliveryDate ? formatDate(challan.deliveryDate) : 'N/A', icon: Clock },
                                     ].map((item, i) => (
                                         <div key={i} className="space-y-1">
                                             <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">{item.label}</p>
@@ -240,7 +228,7 @@ const DeliveryChallanDetail = () => {
                         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[40px] overflow-hidden shadow-sm">
                             <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 flex items-center justify-between">
                                 <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Dispatch Manifest</h3>
-                                <span className="px-3 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 rounded-lg text-[9px] font-black uppercase tracking-widest">{challan.items.length} Nodes</span>
+                                <span className="px-3 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 rounded-lg text-[9px] font-black uppercase tracking-widest">{(challan.items || []).length} Nodes</span>
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
@@ -254,7 +242,7 @@ const DeliveryChallanDetail = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                        {challan.items.map((item: any, index: number) => (
+                                        {(challan.items || []).map((item: any, index: number) => (
                                             <tr key={index} className="group hover:bg-amber-500/[0.01] transition-colors">
                                                 <td className="px-8 py-6 text-center text-[10px] font-black text-neutral-400">{(index + 1).toString().padStart(2, '0')}</td>
                                                 <td className="px-8 py-6">
@@ -300,7 +288,7 @@ const DeliveryChallanDetail = () => {
                             <h3 className="text-[10px] font-black opacity-50 uppercase tracking-[0.3em] mb-8">Dispatch Summary</h3>
                             <div className="space-y-4 relative z-10">
                                 {[
-                                    { label: 'Manifest Nodes', value: challan.items.length, color: 'text-white dark:text-neutral-900' },
+                                    { label: 'Manifest Nodes', value: (challan.items || []).length, color: 'text-white dark:text-neutral-900' },
                                     { label: 'Logistics Protocol', value: (challan.transportMode || 'ROAD').toUpperCase(), color: 'text-warning dark:text-amber-600' },
                                 ].map((item, i) => (
                                     <div key={i} className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">

@@ -30,7 +30,7 @@ export const fetchTenantsRaw = async () => {
     }
 };
 
-export const fetchBranchesRaw = async (tenantId: string | null) => {
+export const fetchBranchesRaw = async (__tenantId: string | null) => {
     try {
         // Assuming backend has /api/branches endpoint
         const { data } = await api.get('/api/branches');
@@ -44,7 +44,7 @@ export const fetchBranchesRaw = async (tenantId: string | null) => {
     }
 };
 
-export const fetchEmployeesRaw = async (tenantId: string | null) => {
+export const fetchEmployeesRaw = async (__tenantId: string | null) => {
     try {
         // Assuming backend has /api/users endpoint
         const { data } = await api.get('/api/users');

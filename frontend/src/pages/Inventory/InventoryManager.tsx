@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../redux/store";
 import {
@@ -14,9 +14,12 @@ import {
     duplicateItem,
     toggleItemStatus,
     getStockHistory,
-    getInventoryStats
+    getInventoryStats,
+    getItemCategories,
+    getCategoryCatalog
 } from "../../redux/slices/inventorySlice";
 import ProductModal from "./ProductModal";
+import InventoryVariantSearch from "./InventoryVariantSearch";
 import { BulkCategoryModal, BulkAdjustmentModal } from "./BulkActionModals";
 import { StockHistoryDrawer } from "./StockHistoryPanel";
 import { Product } from "../../types/product";
@@ -46,7 +49,6 @@ import {
     Eye,
     EyeOff,
     History,
-    MoreHorizontal,
     Copy,
     Trash2,
 } from 'lucide-react';
@@ -71,9 +73,16 @@ const MetricCard = ({ title, value, subtext, icon: Icon, color, trend }: any) =>
     </div>
 );
 
+// Matches the backend's definition of "low stock" (getInventoryStats /
+// getLowStockItems both compare AVAILABLE stock — on hand minus reserved —
+// against the limit). The table/metrics used to compare raw stockQty instead,
+// so an item with reserved stock could count toward "Low Stock Alerts" without
+// ever showing as "Critical Low" in the table, or vice versa.
+const isItemLowStock = (item: any) => (item.stockQty - (item.reservedStock || 0)) <= item.lowStockLimit;
+
 const InventoryManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { items, isLoading, agingReport, pagination, stockHistory, inventoryStats } = useSelector((state: RootState) => state.inventory);
+    const { items, isLoading, agingReport, pagination, stockHistory, inventoryStats, categories, categoryCatalog } = useSelector((state: RootState) => state.inventory);
     const { user } = useSelector((state: RootState) => state.auth);
     const tenant_id = user?.tenantId || 'TEN001';
 
@@ -81,7 +90,9 @@ const InventoryManager: React.FC = () => {
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [selectedCategory, setSelectedCategory] = useState('ALL');
+    const [stockFilter, setStockFilter] = useState<'ALL' | 'LOW_STOCK'>('ALL');
     const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+    const [activeView, setActiveView] = useState<'TABLE' | 'VARIANT_SEARCH'>('VARIANT_SEARCH');
 
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -91,7 +102,7 @@ const InventoryManager: React.FC = () => {
     const [showMoreActions, setShowMoreActions] = useState(false);
     const [showCategoryMoveModal, setShowCategoryMoveModal] = useState(false);
     const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
-    const [showImportModal, setShowImportModal] = useState(false);
+    const [_showImportModal, setShowImportModal] = useState(false);
 
     // Row Action States
     const [rowActionDropdown, setRowActionDropdown] = useState<string | null>(null);
@@ -107,9 +118,27 @@ const InventoryManager: React.FC = () => {
     }, [searchTerm]);
 
     useEffect(() => {
-        dispatch(getAllItems({ page, limit: 20, search: debouncedSearch, category: selectedCategory }));
+        dispatch(getAllItems({
+            page,
+            limit: 20,
+            search: debouncedSearch,
+            category: selectedCategory,
+            lowStockOnly: stockFilter === 'LOW_STOCK'
+        }));
         dispatch(getInventoryStats());
-    }, [dispatch, page, debouncedSearch, selectedCategory]);
+    }, [dispatch, page, debouncedSearch, selectedCategory, stockFilter]);
+
+    // Fetch the full distinct category list once (independent of pagination/search)
+    // so the filter dropdown isn't limited to whatever categories happen to be on
+    // the currently loaded page of items.
+    useEffect(() => {
+        dispatch(getItemCategories());
+        // The full Product Category catalog (Category Manager's registered
+        // categories + the tenant's sector master list, e.g. "Textile"/
+        // "Garment") — used for assigning a category on the Register/Edit SKU
+        // form, since a category can exist there before any Item uses it.
+        dispatch(getCategoryCatalog());
+    }, [dispatch]);
 
     const handleOpenAgingReport = () => {
         dispatch(getAgingReport());
@@ -132,10 +161,10 @@ const InventoryManager: React.FC = () => {
     };
 
 
-    const categoryList = useMemo(() => {
-        const cats = new Set(items.map((i: any) => i.category).filter(Boolean));
-        return ['ALL', ...Array.from(cats)];
-    }, [items]);
+    // Sourced from the /distinct-categories endpoint (all of the tenant's items),
+    // not from `items`, which is only the current paginated page — that previously
+    // meant the dropdown could only ever show categories present on page 1.
+    const categoryList = useMemo(() => ['ALL', ...categories], [categories]);
 
     const toggleSelect = (id: string) => {
         const newSet = new Set(selectedItems);
@@ -190,20 +219,20 @@ const InventoryManager: React.FC = () => {
         }
     };
 
-    const handleImportSKUsOpen = () => {
+    const _handleImportSKUsOpen = () => {
         setShowImportModal(true);
     };
 
     const onBulkCategoryConfirm = async (category: string) => {
         await dispatch(bulkUpdateCategory({ ids: Array.from(selectedItems), category }));
         setSelectedItems(new Set());
-        dispatch(getAllItems({ page, limit: 20, search: debouncedSearch, category: selectedCategory }));
+        dispatch(getAllItems({ page, limit: 20, search: debouncedSearch, category: selectedCategory, lowStockOnly: stockFilter === 'LOW_STOCK' }));
     };
 
     const onBulkAdjustmentConfirm = async (adjustment: number, type: 'ADD' | 'SUBTRACT' | 'SET') => {
         await dispatch(bulkAdjustStock({ ids: Array.from(selectedItems), adjustment, type }));
         setSelectedItems(new Set());
-        dispatch(getAllItems({ page, limit: 20, search: debouncedSearch, category: selectedCategory }));
+        dispatch(getAllItems({ page, limit: 20, search: debouncedSearch, category: selectedCategory, lowStockOnly: stockFilter === 'LOW_STOCK' }));
     };
 
     const handleDuplicateItem = async (id: string) => {
@@ -233,7 +262,7 @@ const InventoryManager: React.FC = () => {
         }
         // Fallback to page-level if stats not yet loaded
         const totalItems = items.length;
-        const lowStock = items.filter((i: any) => i.stockQty <= i.lowStockLimit).length;
+        const lowStock = items.filter(isItemLowStock).length;
         const totalValuation = items.reduce((acc, i) => acc + (i.stockQty * (i.costPrice || 0)), 0);
         return { totalItems, lowStock, totalValuation };
     }, [items, inventoryStats]);
@@ -293,7 +322,7 @@ const InventoryManager: React.FC = () => {
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2 italic">Agent Pulse</p>
                         <p className="text-sm font-bold leading-relaxed text-neutral-200">
                             {inventoryMetrics.lowStock > 0 ? (
-                                <>Inventory needs attention. <span className="text-primary underline decoration-2 underline-offset-4 font-black">{items.find((i: any) => i.stockQty <= i.lowStockLimit)?.sku || 'Some SKUs'}</span> is low.</>
+                                <>Inventory needs attention. <span className="text-primary underline decoration-2 underline-offset-4 font-black">{items.find(isItemLowStock)?.sku || 'Some SKUs'}</span> is low.</>
                             ) : (
                                 <>Inventory healthy. <span className="text-success font-black italic">Perfectly balanced.</span></>
                             )}
@@ -301,9 +330,42 @@ const InventoryManager: React.FC = () => {
                     </div>
                 </div>
 
+                {/* View Toggle Tabs */}
+                <div className="flex border-b border-neutral-200 dark:border-neutral-700 gap-6 pt-2">
+                    <button
+                        onClick={() => setActiveView('TABLE')}
+                        className={`pb-3 text-xs font-black uppercase tracking-wider transition-all border-b-2 ${activeView === 'TABLE' ? 'border-primary text-primary' : 'border-transparent text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'}`}
+                    >
+                        All Inventory SKUs
+                    </button>
+                    <button
+                        onClick={() => setActiveView('VARIANT_SEARCH')}
+                        className={`pb-3 text-xs font-black uppercase tracking-wider transition-all border-b-2 ${activeView === 'VARIANT_SEARCH' ? 'border-primary text-primary' : 'border-transparent text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'}`}
+                    >
+                        Variant & Shelf Finder 🔍
+                    </button>
+                </div>
+
+                {activeView === 'VARIANT_SEARCH' && <InventoryVariantSearch embedded={true} />}
+                {activeView === 'TABLE' && (
+                    <div className="space-y-6">
                 {/* Controls Bar */}
                 <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
                     <div className="flex flex-col md:flex-row gap-4 w-full xl:w-auto items-stretch md:items-center">
+                        <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-900/50 p-1 rounded-xl shrink-0">
+                            <button
+                                onClick={() => { setStockFilter('ALL'); setPage(1); }}
+                                className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${stockFilter === 'ALL' ? 'bg-white dark:bg-neutral-800 text-primary shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
+                            >
+                                All Items
+                            </button>
+                            <button
+                                onClick={() => { setStockFilter('LOW_STOCK'); setPage(1); }}
+                                className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 whitespace-nowrap ${stockFilter === 'LOW_STOCK' ? 'bg-white dark:bg-neutral-800 text-rose-600 shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
+                            >
+                                <AlertTriangle className="w-3 h-3" /> Low Stock
+                            </button>
+                        </div>
                         <div className="relative flex-1 xl:w-[450px]">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                             <input
@@ -320,7 +382,7 @@ const InventoryManager: React.FC = () => {
                             onChange={(e) => setSelectedCategory(e.target.value)}
                         >
                             {categoryList.map(cat => (
-                                <option key={cat} value={cat}>{cat.replace(/_/g, ' ')}</option>
+                                <option key={cat} value={cat}>{cat?.replace(/_/g, ' ') || ''}</option>
                             ))}
                         </select>
                     </div>
@@ -419,7 +481,7 @@ const InventoryManager: React.FC = () => {
                                     </tr>
                                 ) : (
                                     items.map((item: any) => {
-                                        const isLowStock = item.stockQty <= item.lowStockLimit;
+                                        const isLowStock = isItemLowStock(item);
                                         const isSelected = selectedItems.has(item._id);
                                         return (
                                             <tr key={item._id} className={`hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-all group ${isSelected ? 'bg-primary/5 dark:bg-primary/10' : ''}`}>
@@ -556,25 +618,9 @@ const InventoryManager: React.FC = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* Automation Advisory */}
-                <div className="bg-neutral-900 dark:bg-neutral-800/50 text-white p-10 rounded-sm border border-white/10 shadow-2xl relative overflow-hidden group">
-                    <TrendingUp className="absolute -bottom-16 -right-16 w-64 h-64 text-primary opacity-5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-1000" />
-                    <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
-                        <div className="flex-1">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/20 border border-primary/30 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.25em] mb-6">
-                                <Zap className="w-4 h-4 fill-current" /> Automation Pipeline Active
-                            </div>
-                            <h4 className="text-3xl font-black mb-4 italic tracking-tight">Streamline your <span className="text-primary underline decoration-4 underline-offset-8">Stock Authority.</span></h4>
-                            <p className="text-sm text-neutral-400 font-bold leading-relaxed italic max-w-3xl">
-                                Enable auto-restocking protocols for items identified as "Critical Velocity" to avoid stock-outs. The agent currently monitors 14 high-volume SKUs for optimal reorder timing.
-                            </p>
-                        </div>
-                        <button className="px-10 py-5 bg-primary text-white rounded-sm font-black text-sm uppercase tracking-[0.25em] shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all">
-                            Enable Auto-Restock
-                        </button>
-                    </div>
                 </div>
+                )}
+
             </div>
 
             <ProductModal
@@ -583,6 +629,7 @@ const InventoryManager: React.FC = () => {
                 onSave={handleSaveProduct}
                 product={editingProduct}
                 isLoading={isLoading}
+                categories={categoryCatalog}
             />
 
             <BulkCategoryModal

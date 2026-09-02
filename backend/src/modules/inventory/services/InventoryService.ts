@@ -5,6 +5,10 @@ import { IItem } from "../../../interfaces/IItem.js";
 import { info } from "../../../config/logger.js";
 import StockLog from "../models/StockLog.js";
 import Item from "../models/Item.js";
+import Brand from "../models/Brand.js";
+import Size from "../models/Size.js";
+import Color from "../models/Color.js";
+import Shelf from "../models/Shelf.js";
 import mongoose from "mongoose";
 
 @injectable()
@@ -55,21 +59,84 @@ export class InventoryService {
         const search = queryParams.search || '';
 
         const query: any = {};
+        // Every filter below that needs its own `$or` (text search, shelf-code-or-bin-location)
+        // is pushed onto this array and combined with `$and` instead of writing directly to
+        // `query.$or`. A plain object can only hold one `$or` key, so when both a product search
+        // AND a shelf filter were active at once, the second `query.$or = [...]` assignment used
+        // to silently overwrite the first -- meaning "search=Shirt&shelf=A-03" actually ignored the
+        // "Shirt" text search entirely and returned every item on shelf A-03 regardless of name.
+        const andConditions: any[] = [];
+
         if (search) {
-            query.$or = [
-                { name: { $regex: search, $options: 'i' } },
-                { sku: { $regex: search, $options: 'i' } }
-            ];
+            andConditions.push({
+                $or: [
+                    { name: { $regex: search, $options: 'i' } },
+                    { sku: { $regex: search, $options: 'i' } }
+                ]
+            });
         }
 
         if (queryParams.category && queryParams.category !== 'ALL') {
-            query.category = queryParams.category;
+            query.category = { $regex: new RegExp(`^${queryParams.category}$`, 'i') };
+        }
+
+        if (queryParams.brand && queryParams.brand !== 'ALL') {
+            query.brand = { $regex: new RegExp(`^${queryParams.brand}$`, 'i') };
+        }
+
+        if (queryParams.size && queryParams.size !== 'ALL') {
+            query.size = queryParams.size;
+        }
+
+        if (queryParams.color && queryParams.color !== 'ALL') {
+            query.color = { $regex: new RegExp(`^${queryParams.color}$`, 'i') };
+        }
+
+        const shelfFilter = queryParams.shelfCode || queryParams.shelf || queryParams.binLocation;
+        if (shelfFilter && shelfFilter !== 'ALL') {
+            andConditions.push({
+                $or: [
+                    { shelfCode: shelfFilter },
+                    { binLocation: shelfFilter }
+                ]
+            });
+        }
+
+        if (queryParams.shelfType && queryParams.shelfType !== 'ALL') {
+            query.shelfType = queryParams.shelfType;
+        }
+
+        // Same "available stock <= limit" definition used by getInventoryStats and
+        // getLowStockItems, so the Items page's "Low Stock" filter, the metrics
+        // card count, and the aging/alerts logic all agree on what counts as low.
+        if (queryParams.lowStockOnly === 'true' || queryParams.lowStockOnly === true) {
+            query.$expr = {
+                $lte: [
+                    { $subtract: ["$stockQty", { $ifNull: ["$reservedStock", 0] }] },
+                    "$lowStockLimit"
+                ]
+            };
+        }
+
+        if (andConditions.length > 0) {
+            query.$and = andConditions;
         }
 
         const [items, total] = await this.inventoryRepository.findWithPagination(tenantId, query, skip, limit);
 
+        // findWithPagination reads via .lean() for performance, which means the
+        // schema's `availableStock` virtual (stockQty - reservedStock) never gets attached --
+        // virtuals are a Mongoose-document feature, lean() returns plain objects. Computing it
+        // explicitly here is what makes a completed sale (which raises reservedStock, or lowers
+        // stockQty once fulfilled) actually show up as reduced "available quantity" to a search
+        // like Inventory Variant Search, instead of the raw on-hand count.
+        const itemsWithAvailability = (items as any[]).map((item) => ({
+            ...item,
+            availableQuantity: Math.max((item.stockQty || 0) - (item.reservedStock || 0), 0)
+        }));
+
         return {
-            items,
+            items: itemsWithAvailability,
             pagination: {
                 page,
                 limit,
@@ -189,52 +256,140 @@ export class InventoryService {
     }
 
     async bulkAdjustStock(ids: string[], adjustment: number, type: 'ADD' | 'SUBTRACT' | 'SET', tenantId: string, user: any): Promise<number> {
-        const itemsToAdjust = await this.inventoryRepository.findByQuery({ _id: { $in: ids }, tenantId });
-        const bulkOps: any[] = [];
-        const stockLogs: any[] = [];
+        if (!Array.isArray(ids) || ids.length === 0) return 0;
 
-        for (const item of itemsToAdjust) {
-            let newQty = item.stockQty;
-            let delta = 0;
+        // Snapshot "before" quantities purely for accurate audit logging below.
+        const before = await this.inventoryRepository.findByQuery({ _id: { $in: ids }, tenantId });
+        const beforeMap = new Map(before.map((item: any) => [item._id.toString(), item.stockQty || 0]));
 
-            if (type === 'ADD') {
-                delta = adjustment;
-                newQty += adjustment;
-            } else if (type === 'SUBTRACT') {
-                delta = -adjustment;
-                newQty -= adjustment;
-            } else if (type === 'SET') {
-                delta = adjustment - item.stockQty;
-                newQty = adjustment;
+        // IMPORTANT: the actual mutation is done as a MongoDB aggregation-pipeline
+        // update, so the read-modify-write of stockQty happens atomically inside
+        // the database, per document. The previous implementation computed the new
+        // quantity in application memory from a stale read and then $set it, which
+        // silently lost concurrent changes (e.g. a POS sale landing in between) and
+        // let SUBTRACT push stockQty below zero. $max clamps SUBTRACT/SET at 0.
+        let pipeline: any[];
+        if (type === 'ADD') {
+            pipeline = [{ $set: { stockQty: { $add: ["$stockQty", adjustment] } } }];
+        } else if (type === 'SUBTRACT') {
+            pipeline = [{ $set: { stockQty: { $max: [0, { $subtract: ["$stockQty", adjustment] }] } } }];
+        } else {
+            // SET
+            pipeline = [{ $set: { stockQty: { $max: [0, adjustment] } } }];
+        }
+
+        const result = await Item.updateMany(
+            { _id: { $in: ids }, tenantId },
+            pipeline
+        );
+
+        if (result.modifiedCount > 0) {
+            const after = await this.inventoryRepository.findByQuery({ _id: { $in: ids }, tenantId });
+            const stockLogs = after
+                .map((item: any) => {
+                    const oldQty = beforeMap.get(item._id.toString()) ?? item.stockQty;
+                    const delta = item.stockQty - oldQty;
+                    if (delta === 0) return null;
+                    return {
+                        itemId: item._id,
+                        tenantId,
+                        type: 'ADJUST',
+                        delta,
+                        finalQty: item.stockQty,
+                        reason: `Bulk adjustment (${type})`,
+                        performedBy: user._id
+                    };
+                })
+                .filter((log): log is NonNullable<typeof log> => log !== null);
+
+            if (stockLogs.length > 0) await StockLog.insertMany(stockLogs);
+        }
+
+        info(`Bulk stock adjustment (${type}: ${adjustment}) by ${user.name}: ${result.modifiedCount} items adjusted`);
+        return result.modifiedCount;
+    }
+
+    async getDistinctCategories(tenantId: string): Promise<string[]> {
+        try {
+            const categories = await Item.distinct('category', { tenantId, category: { $exists: true, $nin: [null, ''] } });
+            if (categories && Array.isArray(categories)) {
+                return categories
+                    .filter((c: any) => typeof c === 'string' && c.trim() !== '')
+                    .sort((a: string, b: string) => a.localeCompare(b));
             }
+        } catch (err: any) {
+            console.warn('MongoDB distinct category query error:', err.message);
+        }
+        // No fabricated category names -- a tenant with no items yet (or a genuine
+        // query failure) sees an empty list, not made-up categories that imply
+        // stock exists when it doesn't.
+        return [];
+    }
 
-            if (delta !== 0) {
-                bulkOps.push({
-                    updateOne: {
-                        filter: { _id: item._id },
-                        update: { $set: { stockQty: newQty } }
-                    }
-                });
-
-                stockLogs.push({
-                    itemId: item._id,
+    // Powers the Inventory Variant Search filter dropdowns (Brand/Size/Color/Shelf).
+    // Sourced entirely from MongoDB -- the global Brand/Size/Color/Shelf catalog
+    // collections (curated reference data, matching the same pattern already used
+    // for BusinessSector/ProductCategory) unioned with whatever values this tenant's
+    // own Items already carry, so a value in active use always shows up even before
+    // anyone has gotten around to adding it to the catalog. Nothing here is a
+    // hardcoded fallback list -- an empty catalog + no matching items returns an
+    // empty array, not fabricated options.
+    async getFilterOptions(tenantId: string): Promise<{
+        brands: string[];
+        sizes: string[];
+        colors: string[];
+        shelves: { shelfCode: string; shelfType: string }[];
+    }> {
+        try {
+            const [catalogBrands, catalogSizes, catalogColors, catalogShelves, itemBrands, itemSizes, itemColors, itemShelfDocs] = await Promise.all([
+                Brand.find({ isActive: true }).select('name').lean(),
+                Size.find({ isActive: true }).select('name').lean(),
+                Color.find({ isActive: true }).select('name').lean(),
+                Shelf.find({ isActive: true }).select('shelfCode shelfType').lean(),
+                Item.distinct('brand', { tenantId, brand: { $exists: true, $nin: [null, ''] } }),
+                Item.distinct('size', { tenantId, size: { $exists: true, $nin: [null, ''] } }),
+                Item.distinct('color', { tenantId, color: { $exists: true, $nin: [null, ''] } }),
+                Item.find({
                     tenantId,
-                    type: 'ADJUST',
-                    delta: delta,
-                    finalQty: newQty,
-                    reason: `Bulk adjustment (${type})`,
-                    performedBy: user._id
-                });
-            }
-        }
+                    $or: [
+                        { shelfCode: { $exists: true, $nin: [null, ''] } },
+                        { binLocation: { $exists: true, $nin: [null, ''] } }
+                    ]
+                }).select('shelfCode binLocation shelfType').lean(),
+            ]);
 
-        if (bulkOps.length > 0) {
-            await Item.bulkWrite(bulkOps);
-            await StockLog.insertMany(stockLogs);
-        }
+            const brandSet = new Set<string>([
+                ...(catalogBrands as any[]).map((b) => b.name),
+                ...(itemBrands as string[]).filter(Boolean)
+            ]);
+            const sizeSet = new Set<string>([
+                ...(catalogSizes as any[]).map((s) => s.name),
+                ...(itemSizes as string[]).filter(Boolean)
+            ]);
+            const colorSet = new Set<string>([
+                ...(catalogColors as any[]).map((c) => c.name),
+                ...(itemColors as string[]).filter(Boolean)
+            ]);
 
-        info(`Bulk stock adjustment (${type}: ${adjustment}) by ${user.name}: ${bulkOps.length} items adjusted`);
-        return bulkOps.length;
+            const shelfMap = new Map<string, string>();
+            (catalogShelves as any[]).forEach((s) => shelfMap.set(s.shelfCode, s.shelfType));
+            (itemShelfDocs as any[]).forEach((it) => {
+                const code = it.shelfCode || it.binLocation;
+                if (code && !shelfMap.has(code)) shelfMap.set(code, it.shelfType || 'FULL');
+            });
+
+            return {
+                brands: Array.from(brandSet).sort((a, b) => a.localeCompare(b)),
+                sizes: Array.from(sizeSet),
+                colors: Array.from(colorSet).sort((a, b) => a.localeCompare(b)),
+                shelves: Array.from(shelfMap.entries())
+                    .map(([shelfCode, shelfType]) => ({ shelfCode, shelfType }))
+                    .sort((a, b) => a.shelfCode.localeCompare(b.shelfCode))
+            };
+        } catch (err: any) {
+            console.warn('Get Filter Options error:', err.message);
+            return { brands: [], sizes: [], colors: [], shelves: [] };
+        }
     }
 
     async importItems(items: any[], tenantId: string, user: any): Promise<any> {
@@ -431,9 +586,10 @@ export class InventoryService {
         quantity: number,
         tenantId: string,
         user: any,
-        reason: string = 'SALES'
+        reason: string = 'SALES',
+        session?: any
     ): Promise<void> {
-        const item: any = await this.inventoryRepository.findById(itemId, tenantId);
+        const item: any = await this.inventoryRepository.findById(itemId, tenantId, session);
         if (!item) throw new AppError("Item not found", 404);
 
         if (item.stockQty < quantity) {
@@ -464,9 +620,9 @@ export class InventoryService {
         await Item.findByIdAndUpdate(itemId, {
             $inc: { stockQty: -quantity },
             $set: { batches: finalBatches }
-        });
+        }).session(session || null);
 
-        await StockLog.create({
+        await StockLog.create([{
             itemId: item._id,
             tenantId,
             type: reason === 'PURCHASE_RETURN' ? 'RETURN' : 'SALES',
@@ -474,7 +630,7 @@ export class InventoryService {
             finalQty: item.stockQty - quantity,
             reason: reason,
             performedBy: user._id
-        });
+        }], { session });
     }
     async updateBatchCost(
         itemId: string,
@@ -512,7 +668,7 @@ export class InventoryService {
                 totalQty += (b.quantity || 0);
             });
 
-            // If there's a discrepancy between batch qty sum and stockQty (due to untracked batches?), 
+            // If there's a discrepancy between batch qty sum and stockQty (due to untracked batches?),
             // we should probably trust the calculated WAC from batches for the *batch tracked* portion.
             // Or simpler: Just Adjust WAC by the diff for the specific batch's *remaining* qty.
 

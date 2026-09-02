@@ -1,18 +1,16 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { } from 'react-router-dom';
 import { 
-    Search, Filter, Plus, Box, AlertTriangle, TrendingUp, 
-    TrendingDown, MoreVertical, Layers, Zap, Package, 
-    ShieldCheck, RefreshCw, IndianRupee, BarChart3, ChevronRight
+    Search, Plus, Box, AlertTriangle, MoreVertical, Layers, Zap, 
+    ShieldCheck, RefreshCw, IndianRupee, BarChart3
 } from 'lucide-react';
 import { inventory, MockProduct } from '../../data';
 import Layout from '../../components/shared/Layout';
 
 const InventoryMockUI: React.FC = () => {
-    const navigate = useNavigate();
 
     const metrics = useMemo(() => {
-        const totalItems = inventory.length;
+        const _totalItems = inventory.length;
         const totalStock = (inventory as MockProduct[]).reduce((sum, item) => sum + item.stock, 0);
         const lowStockCount = (inventory as MockProduct[]).filter(item => item.stock < 15).length;
         const totalValue = (inventory as MockProduct[]).reduce((sum, item) => sum + (item.selling_price * item.stock), 0);

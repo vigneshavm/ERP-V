@@ -6,10 +6,12 @@
   "type": "module",
   "scripts": {
     "start": "node dist/server.js",
-    "dev": "nodemon --watch src --exec tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start:ts": "tsx src/server.ts",
     "seed": "node scripts/seed.js",
+    "seed:sector-categories": "tsx src/scripts/seedSectorCategories.ts",
+    "seed:inventory-filters": "tsx src/scripts/seedInventoryFilters.ts",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch --runInBand",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --runInBand",

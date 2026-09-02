@@ -3,18 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import {
-    RotateCcw, Plus, Search, Filter, ArrowRight, Clock,
-    CheckCircle, AlertCircle, Truck, DollarSign, FileText, ChevronRight,
-    Search as SearchIcon, ArrowUpRight, Activity, Zap, Info, ShieldCheck
+    RotateCcw, Filter, Clock, AlertCircle, Truck, ChevronRight,
+    Search as SearchIcon, ArrowUpRight, Activity, Zap, ShieldCheck
 } from 'lucide-react';
 import api from "../../services/api";
 import { PurchaseReturn, PurchaseReturnStatus } from "../../types/purchase";
-import { toast } from 'react-toastify';
 
 const PurchaseReturns: React.FC = () => {
     const navigate = useNavigate();
     const [returns, setReturns] = useState<PurchaseReturn[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [_isLoading, setIsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
 

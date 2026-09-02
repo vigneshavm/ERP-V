@@ -203,7 +203,6 @@ export const usePermissions = () => {
         }
 
         if (!tenant) {
-            // console.log('CheckModuleAccess Fail: Tenant not found', { userTenantId: user.tenantId, tenantsCount: tenants.length });
             return false;
         }
 
@@ -242,13 +241,6 @@ export const usePermissions = () => {
 
         const effectiveRoleCode = roleCodeRaw as DbRoleCode;
         const allowedViews = rolePermissions[effectiveRoleCode] || [];
-
-        // Debug log for production-grade troubleshooting
-        console.log('Permission Resolver:', {
-            target: view,
-            activeRole: effectiveRoleCode,
-            isGranted: allowedViews.includes(view)
-        });
 
         if (!allowedViews.includes(view)) return false;
 

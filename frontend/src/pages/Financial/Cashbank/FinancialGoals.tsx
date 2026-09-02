@@ -1,21 +1,15 @@
 ﻿import React, { useState } from 'react';
 import {
-    Target,
     Plus,
-    X,
-    ChevronRight,
-    Home,
-    TrendingUp,
     Anchor,
     Palmtree,
-    Car,
-    Edit3
+    Car
 } from 'lucide-react';
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 
 const FinancialGoals: React.FC = () => {
-    const [showAddGoal, setShowAddGoal] = useState(false);
+    const [_showAddGoal, setShowAddGoal] = useState(false);
 
     const goals = [
         {

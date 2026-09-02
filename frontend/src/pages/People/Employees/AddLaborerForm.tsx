@@ -14,14 +14,19 @@ interface AddLaborerFormProps {
     roles: any[];
     onSubmit: (e: React.FormEvent) => void;
     onCancel: () => void;
+    // Reused for editing an existing employee (Staff Management "Edit" action):
+    // same fields, different heading/button copy and submit handler.
+    title?: string;
+    submitLabel?: string;
 }
 
 const AddLaborerForm: React.FC<AddLaborerFormProps> = ({
-    newEmp, setNewEmp, wageType, setWageType, monthlyInput, onMonthlyChange, roles, onSubmit, onCancel
+    newEmp, setNewEmp, wageType, setWageType, monthlyInput, onMonthlyChange, roles, onSubmit, onCancel,
+    title = 'New Laborer Details', submitLabel = 'Save'
 }) => {
     return (
         <Card className="p-3 bg-blue-50 dark:bg-slate-800 border-blue-100 dark:border-slate-700 shadow-md relative z-10">
-            <h4 className="font-bold text-blue-800 dark:text-blue-300 mb-2 text-xs">New Laborer Details</h4>
+            <h4 className="font-bold text-blue-800 dark:text-blue-300 mb-2 text-xs">{title}</h4>
             <form onSubmit={onSubmit} className="space-y-2">
                 <input
                     type="text"
@@ -105,7 +110,7 @@ const AddLaborerForm: React.FC<AddLaborerFormProps> = ({
                 )}
 
                 <div className="flex gap-2 mt-1">
-                    <button type="submit" className="flex-1 bg-blue-600 text-white py-1 rounded text-xs font-medium hover:bg-blue-700">Save</button>
+                    <button type="submit" className="flex-1 bg-blue-600 text-white py-1 rounded text-xs font-medium hover:bg-blue-700">{submitLabel}</button>
                     <button type="button" onClick={onCancel} className="flex-1 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 py-1 rounded text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-600">Cancel</button>
                 </div>
             </form>

@@ -1,50 +1,33 @@
-﻿import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import {
     Building2,
     Users,
     TrendingUp,
     Activity,
     Search,
-    Filter,
     Plus,
     Settings,
     Globe,
     Zap,
-    Shield,
     ChevronRight,
     LayoutDashboard,
     LogIn,
     Pencil,
-    Power,
-    MoreHorizontal,
     Sparkles,
     CheckCircle2,
     AlertTriangle,
-    Clock,
     Database,
     Server,
     Crown,
-    Star,
-    Layers,
     MessageSquare,
     Mail,
-    Smartphone,
-    Share2,
-    ShoppingBag,
     Cpu,
-    Lock,
     Save,
     RefreshCw,
     CheckCircle,
-    X,
     Loader2,
-    Layout,
-    Navigation2,
     ShieldCheck,
-    Settings2,
     ArrowRightCircle,
-    Compass,
-    ArrowRight,
     Paintbrush
 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -52,7 +35,6 @@ import { RootState } from "../../../redux/store";
 import { toggleTenantStatus } from "../../../redux/slices/tenantSlice";
 import { setActiveTab } from "../../../redux/slices/uiSlice";
 import { Tenant } from "../../../types/tenant";
-import { APP_CONFIG } from "../../../config";
 import { useTenantForm } from "../../../hooks/useTenantForm";
 import { BusinessTab } from "./components/BusinessTab";
 import { CompanyTab } from "./components/CompanyTab";
@@ -80,10 +62,10 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
     // Fleet tab state
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'SUSPENDED'>('ALL');
-    const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
+    const [_selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
 
     // Tenant Form (reusing TenantManager functionality)
-    const [isEditPanelOpen, setIsEditPanelOpen] = useState(false);
+    const [_isEditPanelOpen] = useState(false);
     const tenantForm = useTenantForm();
 
     // High-Density Scale State (100-N Tenants)
@@ -579,7 +561,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex -space-x-1.5">
-                                                        {tenant.modules?.slice(0, 4).map((mod, i) => (
+                                                        {tenant.modules?.slice(0, 4).map((mod, __i) => (
                                                             <div key={mod} className="w-6 h-6 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-[8px] font-bold text-slate-600 shadow-sm" title={mod}>
                                                                 {mod.charAt(0)}
                                                             </div>

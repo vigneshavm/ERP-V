@@ -1,15 +1,14 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import { updatePaymentStatus } from '../../redux/slices/paymentOutSlice';
 import api from '../../services/api';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
-import { CheckCircle, XCircle, Clock, Calendar, Search, AlertTriangle, ShieldCheck, Zap, Info, Activity, ArrowUpRight, CheckCircle2, RefreshCcw, Filter } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Calendar, Search, AlertTriangle, ShieldCheck, Zap, Activity, ArrowUpRight, CheckCircle2, RefreshCcw, Filter } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const UnclearedCheques: React.FC = () => {
-    const dispatch = useDispatch<AppDispatch>();
+    const _dispatch = useDispatch<AppDispatch>();
     const [cheques, setCheques] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');

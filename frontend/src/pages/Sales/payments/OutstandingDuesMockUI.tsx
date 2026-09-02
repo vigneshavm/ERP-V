@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Filter, Search, Plus, Download, ChevronRight, BarChart2, AlertCircle, TrendingUp, TrendingDown, Clock, ShieldAlert, AlertTriangle } from 'lucide-react';
+import { Filter, Search, Plus, Download, ChevronRight, BarChart2, TrendingUp, TrendingDown, Clock, ShieldAlert, AlertTriangle } from 'lucide-react';
 import { salesInvoices, MockSalesInvoice } from '../../../data';
 import Layout from '../../../components/shared/Layout';
 

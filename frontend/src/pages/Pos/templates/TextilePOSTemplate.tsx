@@ -1,8 +1,7 @@
 import React from 'react';
-import { ShoppingCart, LayoutGrid, Table as TableIcon, PauseCircle, Monitor, Scissors, Printer, Download } from 'lucide-react';
+import { LayoutGrid, Table as TableIcon, PauseCircle, Scissors, Printer, Download } from 'lucide-react';
 import { POSLogic } from "../../../hooks/usePOSLogic";
 import { POSHeader } from '../POSHeader';
-import { POSSidebar } from '../POSSidebar';
 import { POSProductBrowser } from '../POSProductBrowser';
 import { POSCartGrid } from '../POSCartGrid';
 import { POSCustomerPanel } from '../POSCustomerPanel';
@@ -82,6 +81,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         categories,
         getSubcategories,
         allProductTypes,
+        productTypeDetails,
         lastBill,
         reprintLastBill,
         downloadLastBill,
@@ -205,6 +205,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             onUpdateCartLength={onUpdateCartLength}
                             onOpenCategoryBrowser={() => setIsCategoryBrowserOpen(true)}
                             allProductTypes={allProductTypes}
+                            productTypeDetails={productTypeDetails}
                         />
                     )}
                 </div>

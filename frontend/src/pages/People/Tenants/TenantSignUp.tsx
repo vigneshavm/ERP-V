@@ -21,13 +21,10 @@ import {
     AlertCircle
 } from 'lucide-react';
 import { Sector } from "../../../types/common";
-import { APP_CONFIG } from "../../../config";
 import api from "../../../services/api.js";
-import { securePassword } from "../../../utils/auth";
-import { registrationUtil } from "../../../utils/registrationUtil";
 
 // Use native crypto.randomUUID() for generating UUIDs
-const generateId = () => crypto.randomUUID();
+const _generateId = () => crypto.randomUUID();
 
 interface TenantSignUpProps {
     onComplete: () => void;

@@ -1,9 +1,10 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { X, CheckCircle, Search, Filter } from 'lucide-react';
+import { X, CheckCircle } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../redux/store';
 import { getAllBills } from '../../../redux/slices/billSlice';
 import { Bill } from '../../../redux/slices/billSlice';
+import { formatDate } from '../../../utils/helpers';
 
 interface BillSelectionModalProps {
     isOpen: boolean;
@@ -106,7 +107,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
 
     const totalAllocated = Object.entries(allocations)
         .filter(([id]) => selectedBillIds.has(id))
-        .reduce((sum, [_, val]) => sum + val, 0);
+        .reduce((sum, [___, val]) => sum + val, 0);
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -182,7 +183,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="font-medium text-slate-800 dark:text-slate-200">{bill.billNo}</div>
-                                                <div className="text-xs text-slate-500">{new Date(bill.date).toLocaleDateString()}</div>
+                                                <div className="text-xs text-slate-500">{formatDate(bill.date)}</div>
                                             </td>
                                             <td className="px-4 py-3 text-right text-slate-600">₹{bill.amount?.toLocaleString()}</td>
                                             <td className="px-4 py-3 text-right font-medium text-slate-800 dark:text-slate-200">₹{due.toLocaleString()}</td>

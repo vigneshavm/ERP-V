@@ -1,38 +1,23 @@
 ﻿import React, { useState } from 'react';
 import {
     MessageSquare,
-    Star,
     TrendingUp,
-    Users,
     AlertTriangle,
-    CheckCircle2,
-    BarChart3,
     Sparkles,
-    ShieldCheck,
     Clock,
     Zap,
     Search,
     Filter,
-    Settings,
-    Plus,
     LayoutDashboard,
     Smartphone,
-    Mail,
     Globe,
     ThumbsUp,
-    ThumbsDown,
-    Flag,
     ChevronRight,
     ArrowRight,
-    MoreHorizontal,
     Smile,
-    Frown,
-    Meh,
-    CreditCard,
-    Image as ImageIcon
+    CreditCard
 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { RootState } from '@/redux/store';
 import { setActiveTab } from '@/redux/slices/uiSlice';
 
 const FeedbackEngagement: React.FC = () => {

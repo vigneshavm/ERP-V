@@ -3,8 +3,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Product } from "../../types/product";
 import { CartItem } from "../../types/sales";
 import { Sector } from "../../types/common";
-import { Barcode, Search, ShoppingCart, Trash2, Folder } from 'lucide-react';
-import { productTypes, ProductType } from '../../data/productTypes';
+import { Barcode, ShoppingCart, Trash2, Folder } from 'lucide-react';
 // import { CameraScanner } from '../CameraScanner';
 // import { searchProductsByImage } from "../../../services/GeminiService";
 
@@ -20,6 +19,10 @@ interface POSCartGridProps {
     onUpdateCartLength: (id: string, length: number) => void;
     onOpenCategoryBrowser: () => void;
     allProductTypes: string[];
+    // Name -> {gstRate, defaultUnit} lookup for the sector's Product Type
+    // catalog, sourced from usePOSLogic (GET /api/product-categories) instead
+    // of this component's previous direct import of a static, hardcoded list.
+    productTypeDetails: Record<string, { gstRate?: number; defaultUnit?: string }>;
 }
 
 import { useFuzzySearch } from "../../hooks/useFuzzySearch";
@@ -45,7 +48,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
     skuInputRef,
     cartQtyRefs
 }) => {
-    const qtyInputRef = React.useRef<HTMLInputElement>(null);
+    const _qtyInputRef = React.useRef<HTMLInputElement>(null);
 
     return (
         <tr className="hover:bg-neutral-200/50 dark:hover:bg-neutral-700/30 transition-colors bg-white dark:bg-neutral-800">
@@ -208,15 +211,16 @@ CartItemCard.displayName = 'CartItemCard';
 export const POSCartGrid: React.FC<POSCartGridProps> = ({
     cart,
     products,
-    currentSector,
+    currentSector: __currentSector,
     currentBranch,
-    isProcessing,
+    isProcessing: __isProcessing,
     onAddToCart,
     onRemoveFromCart,
     onUpdateCartQty,
     onUpdateCartLength,
-    onOpenCategoryBrowser,
-    allProductTypes
+    onOpenCategoryBrowser: __onOpenCategoryBrowser,
+    allProductTypes,
+    productTypeDetails
 }) => {
     // Local State
     const [typeQuery, setTypeQuery] = useState('');
@@ -234,14 +238,9 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     // Compute the selected type's unit
     const selectedTypeUnit = useMemo(() => {
         if (!selectedType) return 'Piece';
-        const typeInfo = productTypes.find((pt: ProductType) => pt.name === selectedType);
+        const typeInfo = productTypeDetails[selectedType];
         return typeInfo?.defaultUnit || 'Piece';
-    }, [selectedType]);
-
-    // Matrix Modal State - Removed per user request
-    // const [isMatrixOpen, setIsMatrixOpen] = useState(false);
-    // const [matrixBaseProduct, setMatrixBaseProduct] = useState<Product | null>(null);
-    // const [matrixVariants, setMatrixVariants] = useState<Product[]>([]);
+    }, [selectedType, productTypeDetails]);
 
     // Refs
     const skuInputRef = useRef<HTMLInputElement>(null);
@@ -348,7 +347,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         if (isNaN(price) || price <= 0) return;
 
         // Look up product type details for unit and GST
-        const typeInfo = productTypes.find((pt: ProductType) => pt.name === selectedType);
+        const typeInfo = productTypeDetails[selectedType];
         const defaultUnit = typeInfo?.defaultUnit || 'Piece';
         const gstRate = typeInfo?.gstRate ?? 5;
 
@@ -424,7 +423,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         setTimeout(() => nameInputRef.current?.focus(), 50);
     };
 
-    const handleNameKeyDown = (e: React.KeyboardEvent) => {
+    const _handleNameKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             setSelectedNameIndex(prev => Math.min(prev + 1, nameSuggestions.length - 1));
@@ -468,7 +467,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     };
     */
 
-    const handleBarcodeScan = (code: string) => {
+    const _handleBarcodeScan = (code: string) => {
         const match = products.find(p => p.sku === code || p.barcode === code);
         if (match) {
             handleSelectProduct(match); // Reuse logic to trigger matrix if barcode matches a variant leader

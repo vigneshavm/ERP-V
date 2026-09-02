@@ -11,22 +11,18 @@ import {
     TrendingDown,
     Loader2,
     PlusCircle,
-    Edit2,
     Trash2,
     Pencil,
     XCircle,
     Shield,
     Users,
-    Banknote,
-    CreditCard,
-    ChevronDown
+    Banknote
 } from 'lucide-react';
 import {
     fetchSalaryComponents,
     createSalaryComponent,
     updateSalaryComponent,
     deleteSalaryComponent,
-    fetchSalaryStructure,
     fetchAllSalaryStructures,
     fetchAttendanceSummary,
     processIndividualPayout,
@@ -71,7 +67,7 @@ const AllowanceManager: React.FC = () => {
             try {
                 const res = await api.get('/api/hr/employees');
                 if (res.data.success) setEmployees(res.data.data);
-            } catch (e) {
+            } catch {
                 console.error("Failed to load employees");
             }
         };
@@ -137,7 +133,7 @@ const AllowanceManager: React.FC = () => {
         const isWeekly = payoutFrequency === 'Weekly';
 
         // Use Cash terminology if paymentMode IS Cash, or generic if bankName is provided
-        const paymentLabel = paymentMode === 'CASH' ? 'Cash Payment' : `Payment via ${bankName}`;
+        const _paymentLabel = paymentMode === 'CASH' ? 'Cash Payment' : `Payment via ${bankName}`;
 
         // Directly process payment without confirmation popup
         try {

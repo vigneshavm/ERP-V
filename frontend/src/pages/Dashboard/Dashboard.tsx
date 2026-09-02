@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { } from 'react-router-dom';
 import { RootState, AppDispatch } from "../../redux/store";
 import { setActiveTab } from "../../redux/slices/uiSlice";
 import {
@@ -9,31 +9,22 @@ import {
   getCustomerReport
 } from "../../redux/slices/reportsSlice";
 import { getAllExpenses } from "../../redux/slices/expenseSlice";
-import { fetchEffectiveBalance, fetchCheques } from "../../redux/slices/financeSlice";
 import { getSupplierAnalytics } from "../../redux/slices/supplierSlice";
+import { fetchPurchaseOrders } from "../../redux/slices/purchaseSlice";
+import { getAllCustomers } from "../../redux/slices/customerSlice";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
-import { salesInvoices, purchases, inventory, customers, suppliers, transactions, expenses, business_alerts, floor_alerts, MockSalesInvoice, MockProduct, MockCustomer, MockSupplier, MockPurchase } from '../../data';
-import MetricCard from "../../components/shared/UI/MetricCard";
+import { salesInvoices, purchases, inventory, customers, suppliers, transactions, expenses, business_alerts, floor_alerts, MockSalesInvoice, MockProduct, MockCustomer } from '../../data';
 import Layout from "../../components/shared/Layout";
 import {
   User,
   RotateCcw,
-  ArrowDownLeft,
   ArrowUpRight,
-  Landmark,
-  Zap,
   AlertTriangle,
   TrendingUp,
   TrendingDown,
-  DollarSign,
   Package,
   ShieldAlert,
-  CheckCircle2,
-  ArrowRight,
-  BarChart3,
   Target,
-  PieChart as LucidePieChart,
-  Headphones,
   Box,
   Banknote,
   Clock,
@@ -48,23 +39,23 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
   AreaChart,
   Area,
   PieChart as RechartsPieChart,
   Pie,
   Cell
 } from 'recharts';
-import { Product } from "../../types/product";
-import { Customer } from "../../types/sales";
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-  const { dailyFinanceRecords, bankBalance: balance, loading: financeLoading } = useSelector((state: RootState) => state.finance);
-  const { currentSector, theme } = useSelector((state: RootState) => state.auth);
+  const { dailyFinanceRecords: _dailyFinanceRecords, bankBalance: _balance, loading: _financeLoading } = useSelector((state: RootState) => state.finance);
+  const { currentSector } = useSelector((state: RootState) => state.auth);
   const { branches, getBranchName, currentBranchId } = useBranchResolver();
   const { dashboardStats, stockReport, isLoading: reportsLoading } = useSelector((state: RootState) => state.reports);
+  const reduxPurchaseOrders = useSelector((state: RootState) => (state as any).purchase?.orders || []);
+  const reduxSuppliers = useSelector((state: RootState) => (state as any).supplier?.suppliers || []);
+  const reduxCustomers = useSelector((state: RootState) => (state as any).customer?.customers || []);
+  const reduxExpenses = useSelector((state: RootState) => (state as any).expense?.expenses || []);
 
   const [activeDashboardTab, setActiveDashboardTab] = useState<'OVERVIEW' | 'ALERTS'>('OVERVIEW');
   const [selectedPeriod, setSelectedPeriod] = useState('1W');
@@ -79,6 +70,8 @@ const Dashboard: React.FC = () => {
     dispatch(getCustomerReport());
     dispatch(getAllExpenses());
     dispatch(getSupplierAnalytics());
+    dispatch(fetchPurchaseOrders());
+    dispatch(getAllCustomers());
   };
 
   useEffect(() => {
@@ -87,7 +80,7 @@ const Dashboard: React.FC = () => {
     // Real-Time Pulse: Poll for high-priority updates every 30 seconds
     const interval = setInterval(() => {
       dispatch(getDashboardStats());
-      // Optionally poll other metrics like balance or suppliers if needed for "true" live feel
+      dispatch(fetchPurchaseOrders());
     }, 30000);
 
     return () => clearInterval(interval);
@@ -97,45 +90,51 @@ const Dashboard: React.FC = () => {
     fetchAllData();
   };
 
-  // --- 1. DATA MAPPING (MOCK) ---
-  const totalOutstandingLive = useMemo(() => 
-    (customers as MockCustomer[]).reduce((sum, c) => sum + (c.outstanding_balance || 0), 0),
-    []
+  // --- 1. PRODUCTION & BACKEND DATA MAPPING ---
+  const activeCustomersList = useMemo(() => reduxCustomers.length > 0 ? reduxCustomers : customers, [reduxCustomers, customers]);
+  const activeSuppliersList = useMemo(() => reduxSuppliers.length > 0 ? reduxSuppliers : suppliers, [reduxSuppliers, suppliers]);
+  const activeExpensesList = useMemo(() => reduxExpenses.length > 0 ? reduxExpenses : expenses, [reduxExpenses, expenses]);
+
+  const _totalOutstandingLive = useMemo(() => 
+    activeCustomersList.reduce((sum: number, c: any) => sum + (c.dues || c.outstanding_balance || 0), 0),
+    [activeCustomersList]
   );
 
-  const totalToPay = useMemo(() =>
-    (suppliers as MockSupplier[]).reduce((acc: number, curr: any) => acc + (curr.balance || 0), 0),
-    []
+  const _totalToPay = useMemo(() =>
+    activeSuppliersList.reduce((acc: number, curr: any) => acc + (curr.balance || curr.dues || 0), 0),
+    [activeSuppliersList]
   );
 
-  const totalBalance = useMemo(() => {
+  const _totalBalance = useMemo(() => {
+    if (dashboardStats && dashboardStats.netProfit !== undefined) return dashboardStats.netProfit;
     const income = transactions.filter(t => t.type === 'INCOME').reduce((sum, t) => sum + t.amount, 0);
     const expense = transactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
     return income - expense;
-  }, []);
+  }, [dashboardStats]);
+
   const products = inventory as MockProduct[];
 
-  const totalRevenueLive = useMemo(() => 
-    (salesInvoices as MockSalesInvoice[]).reduce((sum, inv) => sum + inv.total, 0),
-    []
-  );
+  const totalRevenueLive = useMemo(() => {
+    if (dashboardStats && dashboardStats.totalRevenue !== undefined) return dashboardStats.totalRevenue;
+    return (salesInvoices as MockSalesInvoice[]).reduce((sum, inv) => sum + inv.total, 0);
+  }, [dashboardStats]);
 
-  const totalStockValueLive = useMemo(() =>
+  const _totalStockValueLive = useMemo(() =>
     (inventory as MockProduct[]).reduce((acc: number, curr: any) => acc + (curr.selling_price * (curr.stock || 0)), 0),
     [inventory]
   );
 
-  const totalStockQuantity = useMemo(() =>
-    (inventory as MockProduct[]).reduce((acc: number, curr: any) => acc + (curr.stock || 0), 0),
-    [inventory]
-  );
+  const totalStockQuantity = useMemo(() => {
+    if (stockReport && stockReport.totalStockQuantity !== undefined) return stockReport.totalStockQuantity;
+    return (inventory as MockProduct[]).reduce((acc: number, curr: any) => acc + (curr.stock || 0), 0);
+  }, [stockReport, inventory]);
 
-  const totalExpensesLive = useMemo(() =>
-    (expenses as any[]).reduce((sum, exp) => sum + exp.amount, 0),
-    [expenses]
-  );
+  const totalExpensesLive = useMemo(() => {
+    if (dashboardStats && dashboardStats.totalExpenses !== undefined) return dashboardStats.totalExpenses;
+    return (activeExpensesList as any[]).reduce((sum, exp) => sum + exp.amount, 0);
+  }, [dashboardStats, activeExpensesList]);
 
-  const totalCustomersCount = useMemo(() => customers.length, [customers]);
+  const totalCustomersCount = useMemo(() => activeCustomersList.length, [activeCustomersList]);
 
   const chartDataLive = useMemo(() => {
     const today = new Date();
@@ -185,9 +184,24 @@ const Dashboard: React.FC = () => {
     }).replace(',', ' |');
   }, [dashboardStats]);
 
-  // RESTORED: 6-Month Profitability Data Synthesis - LIVE
+  // 6-Month Profitability - prefers the backend's own revenue-vs-expenses aggregation
+  // (GET /api/reports/dashboard-stats -> revenueVsExpenses, tenant-scoped, real Invoice/Expense
+  // data) and only falls back to synthesizing from mock data when that's unavailable (fresh
+  // tenant with no reports yet, or the API call hasn't resolved).
   const profitabilityData = useMemo(() => {
-    // Group invoices and expenses by month
+    if (dashboardStats?.revenueVsExpenses && dashboardStats.revenueVsExpenses.length > 0) {
+      return dashboardStats.revenueVsExpenses.map((entry: { month: string; revenue: number; expenses: number }) => {
+        const [year, monthNum] = entry.month.split('-');
+        const label = new Date(Number(year), Number(monthNum) - 1, 1).toLocaleString('default', { month: 'short' });
+        return {
+          name: label,
+          revenue: Math.round((entry.revenue || 0) / 1000),
+          expenses: Math.round((entry.expenses || 0) / 1000)
+        };
+      });
+    }
+
+    // Fallback: synthesize from mock data (fresh tenant / reports API not yet answered)
     const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
     const dataMap: Record<string, { revenue: number, expenses: number }> = {};
     months.forEach(m => dataMap[m] = { revenue: 0, expenses: 0 });
@@ -207,12 +221,13 @@ const Dashboard: React.FC = () => {
       revenue: Math.round(dataMap[name].revenue / 1000),
       expenses: Math.round(dataMap[name].expenses / 1000)
     }));
-  }, []);
+  }, [dashboardStats, salesInvoices, expenses]);
 
-  // RESTORED: Cost Intelligence - Expenditure Categories Synthesis - LIVE
+  // Cost Intelligence - Expenditure Categories Synthesis - LIVE (falls back to mock on a fresh
+  // tenant with no recorded expenses yet, same pattern as activeCustomersList/activeSuppliersList)
   const costCategoriesData = useMemo(() => {
     const categories: Record<string, number> = {};
-    expenses.forEach((exp: any) => {
+    (activeExpensesList as any[]).forEach((exp: any) => {
       categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
     });
 
@@ -233,7 +248,7 @@ const Dashboard: React.FC = () => {
         color: colors[index % colors.length]
       }))
       .sort((a, b) => b.value - a.value);
-  }, [expenses, totalRevenueLive]);
+  }, [activeExpensesList]);
 
   // NEW: Inventory AI - Smart Stock Prediction Logic
   const stockInsights = useMemo(() => {
@@ -242,8 +257,12 @@ const Dashboard: React.FC = () => {
     return products
       .filter((p: any) => p.stock <= (p.min_stock || 10) * 2)
       .map((p: any) => {
-        // Simulate velocity based on total revenue and product importance
-        const velocity = 1 + (Math.random() * 3); // units/day
+        // Simulate velocity based on total revenue and product importance.
+        // Seeded off the product id/name (instead of Math.random()) so the estimate is stable
+        // across re-renders rather than jittering to a new number every time this recomputes -
+        // Math.random() in a render/useMemo body is also an impure call React flags as unsafe.
+        const seed = String(p.id ?? p._id ?? p.name ?? '').split('').reduce((acc: number, ch: string) => (acc * 31 + ch.charCodeAt(0)) % 1000, 7);
+        const velocity = 1 + ((seed % 300) / 100); // units/day, deterministic per product
         const daysUntilEmpty = Math.max(0, Math.floor(p.stock / velocity));
 
         const refillDate = new Date();
@@ -291,17 +310,53 @@ const Dashboard: React.FC = () => {
   }, [customers]);
 
   const recentTransactions = useMemo(() => {
-    return (purchases as MockPurchase[]).slice(0, 5).map(p => {
-      const supplier = (suppliers as MockSupplier[]).find(s => s.id === p.supplier_id) || suppliers[0];
+    const liveOrdersList = reduxPurchaseOrders && reduxPurchaseOrders.length > 0 ? reduxPurchaseOrders : purchases;
+    const liveSuppliersList = activeSuppliersList.length > 0 ? activeSuppliersList : suppliers;
+
+    return (liveOrdersList as any[]).slice(0, 5).map(p => {
+      // Real Purchase documents from GET /api/purchases carry the vendor as
+      // `vendorId` (populated by the backend to {_id, name, businessName}) --
+      // never as `supplier_id`/`vendor`/`supplier`/`vendorName`, which don't
+      // exist on the real schema and were left over from an earlier/mock
+      // shape. Matching on those non-existent fields always came up empty,
+      // so every row fell through to `liveSuppliersList[0]` -- every
+      // purchase in this widget showed whichever supplier happened to be
+      // first in the list, regardless of who the order was actually placed
+      // with. This is why the same vendor name/phone could show up next to
+      // multiple, unrelated purchase amounts.
+      const vendorRef = p.vendorId ?? p.supplier_id ?? p.vendor ?? p.supplier;
+      const vendorPopulated = vendorRef && typeof vendorRef === 'object' ? vendorRef : null;
+      const vendorId = vendorPopulated ? (vendorPopulated._id || vendorPopulated.id) : vendorRef;
+
+      // Look the vendor up by its real id to get full supplier details
+      // (phone, etc. -- the backend's populate only selects name/businessName).
+      // Fall back to the inline populated name, then an honest "Unknown
+      // Vendor" -- never to an arbitrary supplier -- if the id can't be
+      // resolved (e.g. suppliers haven't loaded yet, or the vendor was
+      // since deleted).
+      const matchedSupplier = vendorId
+        ? liveSuppliersList.find((s: any) => (s._id || s.id) === vendorId)
+        : undefined;
+
+      const vendorName = p.vendorName
+        || matchedSupplier?.businessName || matchedSupplier?.name
+        || vendorPopulated?.businessName || vendorPopulated?.name
+        || "Unknown Vendor";
+      const vendorMobile = matchedSupplier?.phone || matchedSupplier?.mobile || "N/A";
+
+      const rawDate = p.date || p.createdAt;
+      const formattedDate = rawDate ? new Date(rawDate).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10);
+      const amountVal = p.totalAmount !== undefined ? p.totalAmount : (p.total !== undefined ? p.total : 0);
+
       return {
-        vendor: supplier.name,
-        mobile: supplier.phone,
-        amount: `₹${p.total.toLocaleString()}`,
-        status: p.status,
-        date: p.date
+        vendor: vendorName,
+        mobile: vendorMobile,
+        amount: `₹${Number(amountVal).toLocaleString('en-IN')}`,
+        status: p.status || "RECEIVED",
+        date: formattedDate
       };
     });
-  }, [purchases, suppliers]);
+  }, [reduxPurchaseOrders, activeSuppliersList, purchases, suppliers]);
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -350,7 +405,7 @@ const Dashboard: React.FC = () => {
                 <select 
                   className="bg-surface border border-default rounded px-2 py-1 text-xs text-main"
                   value={currentBranchId || ''}
-                  onChange={(e) => console.log('Dispatch branch change', e.target.value)}
+                  onChange={() => {}} // TODO: wire up branch-switch dispatch
                 >
                   <option value="">All Stores (Consolidated)</option>
                   {branches.map((b: any) => (
@@ -639,7 +694,7 @@ const Dashboard: React.FC = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={profitabilityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barGap={8}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--color-border))" opacity={0.2} />
-                  <XAxis dataKey="month" fontSize={10} stroke="rgb(var(--color-text-secondary))" axisLine={false} tickLine={false} fontWeight={900} />
+                  <XAxis dataKey="name" fontSize={10} stroke="rgb(var(--color-text-secondary))" axisLine={false} tickLine={false} fontWeight={900} />
                   <YAxis fontSize={10} stroke="rgb(var(--color-text-secondary))" tickFormatter={val => `₹${(val / 1000).toFixed(0)}k`} axisLine={false} tickLine={false} fontWeight={900} />
                   <Tooltip
                     cursor={{ fill: 'rgb(var(--color-primary))', opacity: 0.1 }}

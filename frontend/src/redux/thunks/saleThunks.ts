@@ -4,10 +4,13 @@ import { calculateLoyaltyPoints } from "../../utils/loyalty";
 import { updateCustomerPoints } from '../slices/posSlice';
 import { recordSale } from '../slices/posSlice';
 import { deductStock } from '../slices/inventorySlice';
-import { APP_CONFIG } from "../../config";
 // import { supabase } from '../../lib/supabase'; // Removed
 import { TransactionType, Sector } from "../../types/common";
 import { addTransaction } from '../slices/financeSlice';
+import api from "../../services/api";
+import { buildPosInvoicePayload } from "../../services/posInvoiceMapper";
+import { db } from "../../services/db";
+import { toast } from "react-toastify";
 
 export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
@@ -39,21 +42,39 @@ export const processSale = (sale: Sale) => async (dispatch: AppDispatch, getStat
     });
 
     // 2. Push to Backend API if Online
+    // This is the endpoint that actually persists the invoice AND reduces stock in the DB
+    // (backend/src/modules/sales/controllers/PosController.ts::createInvoice) — the previous
+    // `/sales-invoice/sync` target didn't exist as a route, so every sale was silently lost
+    // server-side while looking successful on screen (Redux state + printed receipt only).
     if (navigator.onLine) {
-        import("../../services/api").then(module => {
-            const api = module.default;
-            api.post('/sales-invoice/sync', {
-                sale_json: {
-                    ...sale,
-                    tenant_id: user?.tenantId
-                }
-            }).then(({ data }) => {
-                if (data && data.success) {
-                    console.log(`Synced sale atomically via thunk: ${sale.id}`);
-                }
-            }).catch(err => {
-                console.error('Failed to sync sale atomically to Backend:', err);
+        try {
+            const { data } = await api.post('/api/pos/invoice', buildPosInvoicePayload(sale));
+            if (!data?.success) {
+                throw new Error(data?.message || 'Server did not confirm the sale was saved');
+            }
+        } catch (err) {
+            console.error('Failed to sync sale to backend:', err);
+            // Queue for retry via SyncManager.syncOfflineSales() instead of losing the sale.
+            await db.offlineSales.add({
+                ...sale,
+                synced: false,
+                retryCount: 0
             });
+            toast.error(`Sale #${sale.id} printed but did NOT save to the server. It has been queued and will retry automatically.`, {
+                position: 'top-center',
+                autoClose: 6000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
+    } else {
+        // Fully offline — queue immediately, SyncManager picks it up when connectivity returns.
+        await db.offlineSales.add({
+            ...sale,
+            synced: false,
+            retryCount: 0
         });
     }
 

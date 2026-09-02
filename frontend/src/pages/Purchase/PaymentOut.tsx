@@ -2,11 +2,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from "../../components/shared/Layout";
-import PageHeader from "../../components/shared/Layout/PageHeader";
 import {
-    CreditCard, ArrowLeft, Save, Search, DollarSign,
-    Calendar, Building, Tag, FileText, CheckCircle2,
-    Calculator, Info, Download, Send, Percent
+    CreditCard, ArrowLeft, Save, DollarSign, Building, Tag, FileText, CheckCircle2,
+    Calculator, Send
 } from 'lucide-react';
 import api from "../../services/api";
 import { PurchasePayment, PurchasePaymentMethod as PaymentMethod, PaymentBillAllocation, PurchaseBill } from "../../types/purchase";
@@ -73,7 +71,7 @@ const PaymentOut: React.FC = () => {
                     payment_terms: 'Net 30', created_at: '', attachments: [], items: []
                 }
             ]);
-        } catch (err) {
+        } catch {
             toast.error("Failed to fetch outstanding bills");
         }
     };
@@ -133,7 +131,7 @@ const PaymentOut: React.FC = () => {
             // In a real app: await api.post('/api/payments', payload);
             toast.success("Payment recorded successfully");
             navigate('/purchase/payments');
-        } catch (err) {
+        } catch {
             toast.error("Failed to save payment");
         } finally {
             setIsLoading(false);

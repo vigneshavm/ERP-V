@@ -8,11 +8,9 @@ import {
     Clock,
     Save,
     Loader2,
-    Users,
     Search,
     ChevronLeft,
-    ChevronRight,
-    Filter
+    ChevronRight
 } from 'lucide-react';
 import Layout from "../../../components/shared/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
@@ -20,7 +18,7 @@ import api from "../../../services/api.js";
 import { AttendanceStatus } from "../../../types/common";
 
 const DailyAttendanceBoard: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { user: _user } = useSelector((state: RootState) => state.auth);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [employees, setEmployees] = useState<any[]>([]);
     const [attendanceMap, setAttendanceMap] = useState<Record<string, any>>({});
@@ -42,7 +40,7 @@ const DailyAttendanceBoard: React.FC = () => {
             setEmployees(emps);
 
             // Fetch attendance for this date
-            const attRes = await api.get(`/api/attendance/date/${selectedDate}`);
+            const attRes = await api.get('/api/hr/attendance', { params: { date: selectedDate } });
             const attData = attRes.data.data || [];
 
             // Map attendance to employee IDs
@@ -82,7 +80,7 @@ const DailyAttendanceBoard: React.FC = () => {
         setMessage({ text: '', type: '' });
         try {
             const records = Object.entries(attendanceMap)
-                .filter(([_, data]) => data.isDirty)
+                .filter(([___, data]) => data.isDirty)
                 .map(([empId, data]) => ({
                     employeeId: empId,
                     status: data.status,
@@ -94,7 +92,7 @@ const DailyAttendanceBoard: React.FC = () => {
                 return;
             }
 
-            await api.post('/api/attendance/mark', {
+            await api.post('/api/hr/attendance/day', {
                 date: selectedDate,
                 attendance: records
             });

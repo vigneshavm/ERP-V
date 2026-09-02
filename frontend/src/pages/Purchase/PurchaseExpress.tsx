@@ -1,9 +1,8 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
-    Zap, Save, Search, Plus, Trash2, CreditCard, 
-    Truck, User, Calendar, FileText, ShoppingBag,
-    CheckCircle2, Loader2, DollarSign, ArrowRight,
+    Zap, Search, Plus, Trash2, User, Calendar, FileText, ShoppingBag,
+    CheckCircle2, Loader2, ArrowRight,
     Upload, Activity, BarChart3, ShieldCheck
 } from 'lucide-react';
 import { RootState } from "../../redux/store";
@@ -89,10 +88,6 @@ const PurchaseExpress: React.FC = () => {
 
             const { data } = await api.post('/api/purchases', payload);
             toast.success(`Protocol Finalized! #${data.purchase_number || ''}`);
-            
-            if (autoPrint) {
-                console.log("Auto-printing labels for:", validItems);
-            }
             
             resetForm();
         } catch (err: any) {
@@ -328,8 +323,8 @@ const PurchaseExpress: React.FC = () => {
                                                                     updateItem(idx, 'product_id', p.id);
                                                                     updateItem(idx, 'sku', p.sku);
                                                                     updateItem(idx, 'category', p.category);
-                                                                    updateItem(idx, 'rate', p.cost_price || 0);
-                                                                    updateItem(idx, 'tax_percent', p.tax_percent || 0);
+                                                                    updateItem(idx, 'rate', (p as any).costPrice || (p as any).cost_price || 0);
+                                                                    updateItem(idx, 'tax_percent', (p as any).taxRate || (p as any).tax_percent || 0);
                                                                     updateItem(idx, 'unit', p.unit || 'Pcs');
                                                                     setActiveSearchRow(null);
                                                                 }}
@@ -343,7 +338,7 @@ const PurchaseExpress: React.FC = () => {
                                                                     <p className="text-[9px] font-bold text-neutral-400 mt-1 font-mono">{p.sku}</p>
                                                                 </div>
                                                                 <div className="text-right">
-                                                                    <p className="text-[10px] font-black text-primary">₹{p.cost_price}</p>
+                                                                    <p className="text-[10px] font-black text-primary">₹{(p as any).costPrice || (p as any).cost_price || 0}</p>
                                                                     <p className="text-[9px] font-bold text-neutral-400 mt-1 uppercase">Stock: {p.stockQty} {p.unit}</p>
                                                                 </div>
                                                             </div>

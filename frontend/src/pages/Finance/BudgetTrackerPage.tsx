@@ -1,23 +1,13 @@
 ﻿import React, { useState, useEffect } from 'react';
 import {
-    Target,
-    TrendingUp,
-    TrendingDown,
-    AlertCircle,
     PieChart,
     ChevronRight,
     Zap,
-    Scale,
     ShieldCheck,
-    AlertTriangle,
-    Home,
-    Mic,
     Plus,
     Search,
-    Filter,
     Calendar as CalendarIcon,
-    LayoutDashboard,
-    MoreVertical
+    LayoutDashboard
 } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -74,7 +64,7 @@ const BudgetTrackerPage: React.FC = () => {
             setLoading(true);
             const res = await axios.get('/api/expense-report');
             setReport(res.data);
-        } catch (err) {
+        } catch {
             toast.error('Failed to fetch budget report');
         } finally {
             setLoading(false);
@@ -86,7 +76,7 @@ const BudgetTrackerPage: React.FC = () => {
             await createExpense(data);
             toast.success('Expense recorded successfully');
             fetchReport();
-        } catch (err) {
+        } catch {
             toast.error('Failed to record expense');
         }
     };

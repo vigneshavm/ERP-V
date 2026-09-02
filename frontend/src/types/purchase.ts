@@ -1,4 +1,3 @@
-import { Sector, BranchId } from './common';
 
 export interface ScanItem {
     name: string;
@@ -8,24 +7,27 @@ export interface ScanItem {
     productType?: string;
 }
 
-// Re-export specific status types if needed, or define them inline
-// Re-export specific status types if needed, or define them inline
+// Matches backend IPurchase.status exactly (backend/src/modules/purchase/models/Purchase.ts).
+// 'Billed'/'Paid' are NOT real Purchase.status values on the backend - billing/payment state
+// lives on the Bill model, not on the Purchase document - but the UI still uses them as local,
+// display-only labels for the post-GRN part of the lifecycle (see PurchaseOrderDetails' canBill/
+// canPay + handleBillCreated). Keep them here so that local-only usage keeps type-checking, but
+// never send them to PATCH /api/purchases/:id/status - that route validates against the real
+// Mongoose enum and will reject them.
 export type PurchaseOrderStatus =
-    | 'Draft'
-    | 'Pending' // Legacy: equivalent to Pending Approval
-    | 'Pending Approval'
-    | 'Approved'
-    | 'Partial Receipt'
-    | 'Fully Received'
-    | 'Converted' // Legacy: equivalent to Fully Received or Billed
-    | 'Billed'
-    | 'Paid'
-    | 'Cancelled'
-    | 'Rejected'
+    | 'DRAFT'
+    | 'SUBMITTED'
+    | 'APPROVED'
+    | 'SENT_TO_VENDOR'
+    | 'PARTIALLY_RECEIVED'
+    | 'COMPLETED'
+    | 'CANCELLED'
     | 'RECEIVED'
-    | 'COMPLETED';
+    | 'Billed'
+    | 'Paid';
 
-export type GRNStatus = 'Draft' | 'Submitted' | 'Accepted' | 'Rejected' | 'Partial';
+// Matches backend IGRN.status exactly (backend/src/modules/purchase/models/GRN.ts).
+export type GRNStatus = 'INSPECTED' | 'ACCEPTED' | 'REJECTED' | 'PARTIAL';
 export type InspectionStatus = 'Accepted' | 'Rejected' | 'Hold' | 'Partial';
 
 export type ApprovalStatus = 'Draft' | 'Pending Approval' | 'Approved' | 'Rejected';
@@ -70,11 +72,6 @@ export interface PurchaseOrder {
     payment_terms?: string;
     reference_doc?: string;
 
-    // Legacy fields for backward compatibility if needed, or cleanup
-    // vendor: string; // -> vendor_name
-    // date: string; // -> po_date
-    // total: number; // -> total_amount
-    // sector: Sector; // Optional depending on usage
     branch_id?: string; // Optional depending on usage
     delivery_location?: string;
     delivery_address?: string;
@@ -92,6 +89,12 @@ export interface PurchaseOrder {
     vendorId?: string | { _id: string; name?: string; businessName?: string };
     date?: string;
     createdBy?: string | { _id: string; name: string };
+
+    // Set by PurchaseController.updatePOStatus when the lifecycle status transitions to
+    // APPROVED / SENT_TO_VENDOR (see backend/src/modules/purchase/models/Purchase.ts).
+    approvedBy?: string;
+    approvedAt?: string;
+    sentToVendorAt?: string;
 }
 export type Purchase = PurchaseOrder;
 

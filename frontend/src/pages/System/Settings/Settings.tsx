@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Layout from "../../../components/shared/Layout/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
 import { useNavigate } from 'react-router-dom';
@@ -7,12 +7,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { RootState, AppDispatch } from "../../../redux/store";
 import { updateSettings, resetSettings } from "../../../redux/slices/settingsSlice";
-import { updateTenantDetails } from "../../../redux/slices/tenantSlice";
+import { fetchTenantSettings, saveTenantSettings } from "../../../redux/slices/tenantSlice";
 import { updateProfile } from "../../../redux/slices/authSlice";
 import { SettingsState } from "../../../types/settings";
 import { Tenant } from "../../../types/tenant";
 import { TaxMode, AppView } from "../../../types/common";
 import { setStoredTheme } from "../../../utils/theme";
+import api from "../../../services/api";
 import {
     Settings as SettingsIcon,
     Building,
@@ -41,7 +42,7 @@ import ModulesTab from './ModulesTab';
 import PersonalizationTab from './PersonalizationTab';
 import SecurityTab from './SecurityTab';
 import SubscriptionTab from './SubscriptionTab';
-import { GeneralSettings, MISConfig, ModulesConfig, TenantTheme } from './types';
+import { MISConfig, ModulesConfig, TenantTheme } from './types';
 
 const Settings: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +67,7 @@ const Settings: React.FC = () => {
 
     const dispatch = useDispatch<AppDispatch>();
     const { tenants } = useSelector((state: RootState) => state.tenant);
-    const { user, role } = useSelector((state: RootState) => state.auth);
+    const { user, role: _role } = useSelector((state: RootState) => state.auth);
     const settings = useSelector((state: RootState) => state.settings);
 
     const activeTenant = tenants.find(t => t.id === user?.tenantId);
@@ -104,14 +105,66 @@ const Settings: React.FC = () => {
 
     // Modules & Config
     const [modules, setModules] = useState<ModulesConfig>(settings.enabledModules as any || { pos: true, inventory: true, finance: true });
-    const [misConfig, setMisConfig] = useState<MISConfig>((settings as any) || {});
+    const [misConfig] = useState<MISConfig>((settings as any) || {});
     const [isSaved, setIsSaved] = useState(false);
 
-    // Save Settings Handler (Redux)
+    // ---- Load flow: MongoDB -> GET /api/settings -> Redux -> UI ----
+    // On mount, pull the authoritative tenant record from the backend rather
+    // than trusting whatever (possibly stale/mock) data is already sitting in
+    // Redux. fetchTenantSettings's fulfilled reducer merges the DB response
+    // into state.tenants; the effect below then re-hydrates the local form
+    // fields whenever that merge happens (tracked via activeTenant.updatedAt),
+    // which also covers the "save on device A, refresh on device B" case.
+    useEffect(() => {
+        setIsLoading(true);
+        dispatch(fetchTenantSettings())
+            .unwrap()
+            .catch((err: any) => {
+                console.error("Failed to load settings from server", err);
+                toast.error(typeof err === 'string' ? err : "Failed to load settings");
+            })
+            .finally(() => setIsLoading(false));
+         
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (!activeTenant) return;
+        setAppName(activeTenant.name || settings.appName);
+        setBusinessType(activeTenant.businessType || 'Retail');
+        setAddressLine1(activeTenant.companyDetails?.addressLine1 || '');
+        setCity(activeTenant.companyDetails?.city || '');
+        setState(activeTenant.companyDetails?.state || '');
+        setPincode(activeTenant.companyDetails?.pincode || '');
+        setPhone(activeTenant.companyDetails?.phone || '');
+        setEmail(activeTenant.companyDetails?.email || '');
+        setWebsite(activeTenant.companyDetails?.website || '');
+        setPrimaryColor(activeTenant.primaryColor || settings.primaryColor || '#4f46e5');
+        setTenantTheme((activeTenant.theme as TenantTheme) || 'light');
+        setLogoUrl(activeTenant.loginLogoUrl || settings.logoUrl || null);
+        setTaxMode((activeTenant.systemConfig?.pricingMode) || settings.defaultTaxMode || 'EXCLUSIVE');
+        setGstin(activeTenant.taxDetails?.gstin || '');
+        setPan(activeTenant.taxDetails?.pan || '');
+        setBankName(activeTenant.bankingDetails?.bankName || '');
+        setAccNo(activeTenant.bankingDetails?.accountNumber || '');
+        setIfsc(activeTenant.bankingDetails?.ifsc || '');
+        setAccountHolderName(activeTenant.bankingDetails?.accountHolderName || '');
+        // Only re-sync when the tenant record actually changes server-side
+        // (initial load or a completed save) -- not on every keystroke.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTenant?.updatedAt]);
+
+    // ---- Save flow: Validation -> API -> Backend -> MongoDB -> Response -> Redux -> Toast ----
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            // 1. Settings Slice Update
+            // 0. Client-side validation -- fail fast before any network call.
+            if (!appName || !appName.trim()) {
+                toast.error("Business / company name cannot be empty");
+                setIsSaving(false);
+                return;
+            }
+
+            // 1. Settings Slice Update (local UI cache only -- not persisted to DB)
             const settingsPayload: Partial<SettingsState> = {
                 appName,
                 logoUrl: logoUrl || undefined,
@@ -121,13 +174,59 @@ const Settings: React.FC = () => {
                 // rolePermissions: ... // handled in SecurityTab if needed, or separate
             };
 
-            // 2. Tenant Details Update
+            // 1b. Resolve the short Sector code (e.g. 'Textile') that matches
+            // the selected Business Sector display name (e.g. 'Textile &
+            // Garments Retail'). tenant.sector - not businessType - is what
+            // POS template selection and the Inventory Categories page's
+            // sector filter actually key off of, so without this the two
+            // stay out of sync: businessType changes here, sector doesn't,
+            // and sector-mapped categories/templates never update.
+            //
+            // This used to only run when businessType was actually being
+            // *changed* on this save (`businessType !== activeTenant?.businessType`).
+            // That left any tenant whose sector was never backfilled --
+            // created before this resolution logic existed, or who simply
+            // never touched the dropdown since -- permanently stuck with a
+            // blank tenant.sector: every subsequent save looked like "no
+            // change" and skipped the resolution, so nothing ever set it.
+            // Also resolving whenever sector is currently blank (regardless
+            // of whether businessType changed) backfills it on the tenant's
+            // very next save instead of requiring them to re-pick the same
+            // Business Sector value to trigger it.
+            let resolvedSector: string | undefined = activeTenant?.sector;
+            if (businessType && (businessType !== activeTenant?.businessType || !resolvedSector)) {
+                try {
+                    const sectorsRes = await api.get('/api/business-sectors');
+                    const match = (sectorsRes.data?.data || []).find((s: any) => s.name === businessType);
+                    if (match?.shortCode) {
+                        resolvedSector = match.shortCode;
+                    }
+                } catch (err) {
+                    console.warn('Could not resolve sector short code for', businessType, err);
+                }
+            }
+
+            // 2. Tenant Details Update -- this is the real persistence call:
+            // it PUTs to /api/settings, which writes the Tenant document in
+            // MongoDB and returns the saved record. Redux (state.tenants) is
+            // only updated from that server response (see tenantSlice's
+            // saveTenantSettings.fulfilled handler) -- never optimistically --
+            // so Redux never shows a value as "saved" before it actually is.
             const tenantUpdates: Partial<Tenant> = {
                 name: appName,
                 primaryColor,
                 loginLogoUrl: logoUrl || undefined,
                 theme: tenantTheme,
                 businessType,
+                sector: resolvedSector as any,
+                systemConfig: {
+                    isPosEnabled: true,
+                    isInventoryEnabled: true,
+                    isLoyaltyEnabled: true,
+                    isMultiBranch: false,
+                    ...activeTenant?.systemConfig,
+                    pricingMode: taxMode as any
+                },
                 companyDetails: {
                     addressLine1, city, state, pincode, phone, email, website,
                     country: activeTenant?.companyDetails?.country || 'India',
@@ -141,33 +240,33 @@ const Settings: React.FC = () => {
                 bankingDetails: { bankName, accountNumber: accNo, ifsc, accountHolderName },
             };
 
-            if (user?.tenantId) {
-                dispatch(updateTenantDetails({
-                    id: user.tenantId,
-                    updates: tenantUpdates
-                }));
-            }
+            await dispatch(saveTenantSettings(tenantUpdates)).unwrap();
 
             dispatch(updateSettings(settingsPayload));
 
-            // 3. User Profile Update
+            // 3. User Profile Update (already a real, working thunk -- PUT /api/users/:id)
             if (user?.id) {
-                dispatch(updateProfile({
+                await dispatch(updateProfile({
                     theme: userTheme,
                     primaryColor: userColor,
                     loginLogoUrl: userLogo || undefined
-                }));
+                })).unwrap();
                 if (userTheme !== 'system') {
                     setStoredTheme(userTheme);
                 }
             }
 
+            // Toast fires only after every persistence call above has actually
+            // resolved successfully -- never optimistically.
             setIsSaved(true);
             setTimeout(() => setIsSaved(false), 3000);
             toast.success("All settings saved successfully!");
         } catch (error: any) {
+            // Local form state (useState above) is left untouched on failure,
+            // so the user's unsaved edits are never lost.
             console.error("Save error", error);
-            toast.error(error.message || "Failed to save settings");
+            const message = typeof error === 'string' ? error : (error?.message || "Failed to save settings");
+            toast.error(message);
         } finally {
             setIsSaving(false);
         }

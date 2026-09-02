@@ -14,6 +14,11 @@ export interface ICategory {
     description?: string;
     color?: string;
     isActive?: boolean;
+    // True when this name has its own Category document for the tenant (created
+    // via Category Manager or Settings' "Add Selected to My Categories"), as
+    // opposed to only appearing here because an Item already uses it or because
+    // it's part of the sector's shared master list.
+    isRegistered?: boolean;
     riskFlag?: string;
     pricingHealth?: string;
     defaultUnit?: string;

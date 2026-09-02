@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Store from '../models/Store.js';
+import Branch from '../../core/models/Branch.js';
 import Item from '../../inventory/models/Item.js';
 import { error } from '../../../config/logger.js';
 
@@ -37,6 +38,21 @@ export const createStore = async (req: AuthenticatedRequest, res: Response): Pro
             counters: counters || [],
             isActive: true
         });
+
+        // Also sync to Branch collection
+        try {
+            const existingBranch = await Branch.findOne({ tenantId, name });
+            if (!existingBranch) {
+                await Branch.create({
+                    tenantId,
+                    name,
+                    address,
+                    isMain: false
+                });
+            }
+        } catch (e) {
+            // Ignore branch creation error
+        }
 
         res.status(201).json(newStore);
     } catch (err) {

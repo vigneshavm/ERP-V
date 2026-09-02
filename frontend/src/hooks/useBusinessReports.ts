@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 // import { supabase } from '../lib/supabase'; // Removed
@@ -152,7 +152,7 @@ export const useBusinessReports = (type: ReportType, filters: { branch_id?: stri
         setLoading(true);
 
         try {
-            let reportData: BusinessReportData = {
+            const reportData: BusinessReportData = {
                 audit_flags: []
             };
 

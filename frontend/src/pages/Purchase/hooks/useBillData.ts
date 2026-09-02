@@ -1,9 +1,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
-import { PurchaseBill, PurchaseBillItem, PurchaseOrder, GRN, BillStatus } from '../../../types/purchase';
+import { PurchaseBill, PurchaseBillItem, PurchaseOrder, GRN } from '../../../types/purchase';
 
 export const useBillData = (id?: string, grnId?: string, initialData?: PurchaseBill | null) => {
     const [bill, setBill] = useState<Partial<PurchaseBill>>({

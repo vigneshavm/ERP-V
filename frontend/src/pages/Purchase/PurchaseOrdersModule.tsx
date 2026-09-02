@@ -9,13 +9,13 @@ import { setActiveTab } from "../../redux/slices/uiSlice";
 import { RootState } from "../../redux/store";
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
-import { ClipboardList, Clock, CheckCircle, Lock, Plus, Activity, Zap } from 'lucide-react';
+import { ClipboardList, Clock, CheckCircle, Lock, Plus } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const PurchaseOrdersModule: React.FC = () => {
     const { id } = useParams<{ id?: string }>();
     const navigate = useNavigate();
-    const { orders, fetchOrders, fetchOrderDetails, saveOrder, updateStatus, loading, stats } = usePurchaseOrders();
+    const { orders, fetchOrders, fetchOrderDetails, saveOrder, updatePOLifecycleStatus, loading, stats } = usePurchaseOrders();
     const [view, setView] = useState<'LIST' | 'FORM' | 'DETAILS'>('LIST');
     const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder | null>(null);
     const [selectedItems, setSelectedItems] = useState<PurchaseOrderItem[]>([]);
@@ -66,14 +66,33 @@ const PurchaseOrdersModule: React.FC = () => {
         navigate('/purchase/orders');
     };
 
-    const handleApprove = async () => {
+    const _handleApprove = async () => {
         if (selectedOrder) {
             if (confirm('Are you sure you want to approve this order?')) {
-                await updateStatus(selectedOrder.id, 'Approved');
-                const updated = { ...selectedOrder, status: 'Approved' } as PurchaseOrder;
+                await updatePOLifecycleStatus(selectedOrder.id, 'APPROVED');
+                const updated = { ...selectedOrder, status: 'APPROVED' } as PurchaseOrder;
                 setSelectedOrder(updated);
             }
         }
+    };
+
+    // Real lifecycle statuses (submit/approve/reject-to-draft/send-to-vendor) go through the
+    // validated PATCH /:id/status route; anything else (e.g. the local-only 'Billed'/'Paid'
+    // labels) falls back to the legacy PUT. Either way, re-fetch the order afterwards so the
+    // detail view reflects the authoritative backend state (approvedBy/approvedAt/
+    // sentToVendorAt, or - after a GRN is created - the recalculated received quantities).
+    const handleUpdateStatus = async (orderId: string, status: string) => {
+        await updatePOLifecycleStatus(orderId, status as any);
+        const refreshed = await fetchOrderDetails(orderId);
+        if (refreshed) setSelectedOrder(refreshed);
+    };
+
+    // Called after ReceiveGoodsModal successfully creates a real GRN via the backend - just
+    // needs to pull the authoritative PO state (status/received quantities recalculated by
+    // GRNController.createGRN) back into the details view.
+    const handleAfterReceive = async (orderId: string) => {
+        const refreshed = await fetchOrderDetails(orderId);
+        if (refreshed) setSelectedOrder(refreshed);
     };
 
     const handleConvert = (order: PurchaseOrder, items: PurchaseOrderItem[]) => {
@@ -185,9 +204,10 @@ const PurchaseOrdersModule: React.FC = () => {
                         order={selectedOrder}
                         items={selectedItems}
                         onBack={() => navigate('/purchase/orders')}
-                        onApprove={() => updateStatus(selectedOrder.id, 'Approved')}
+                        onApprove={() => updatePOLifecycleStatus(selectedOrder.id, 'APPROVED')}
                         onConvert={handleConvert}
-                        onUpdateStatus={updateStatus}
+                        onUpdateStatus={handleUpdateStatus}
+                        onAfterReceive={handleAfterReceive}
                     />
                 );
             default:

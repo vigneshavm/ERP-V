@@ -6,7 +6,7 @@ import Layout from '../../components/shared/Layout';
 import { 
     Activity, Users, Box, Banknote, 
     ShieldCheck, Clock, ChevronRight, TrendingUp, TrendingDown, 
-    Package, Zap, AlertTriangle 
+    Package, Zap 
 } from 'lucide-react';
 import { salesInvoices, purchases, inventory, customers, suppliers, MockPurchase, MockSupplier } from '../../data';
 

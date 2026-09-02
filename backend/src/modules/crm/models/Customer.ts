@@ -9,17 +9,15 @@ const customerSchema = new Schema<ICustomer>(
         },
         phone: {
             type: String,
-            required: true,
+            required: false,
+            default: "",
+            trim: true
         },
         email: {
             type: String,
             default: "",
             lowercase: true,
-            trim: true,
-            match: [
-                /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-                "Please fill a valid email address",
-            ],
+            trim: true
         },
         address: {
             type: String,
@@ -35,13 +33,11 @@ const customerSchema = new Schema<ICustomer>(
                 ref: "Transaction",
             },
         ],
-        // Referral tracking - which customer referred this one
         referredBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Customer",
             default: null,
         },
-        // Link customer to shop owner
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
@@ -61,12 +57,47 @@ const customerSchema = new Schema<ICustomer>(
             type: String,
             default: "General",
         },
+
+        // Explicit Marketing Consent (BRD §4 & §18)
+        marketingConsent: {
+            optIn: { type: Boolean, default: false },
+            consentDate: { type: Date, default: Date.now },
+            consentSource: {
+                type: String,
+                enum: ['POS_CHECKOUT', 'ONLINE_CHECKOUT', 'MANUAL_OPTIN'],
+                default: 'POS_CHECKOUT'
+            },
+            consentVersion: { type: String, default: 'v1.0' },
+            channels: {
+                sms: { type: Boolean, default: false },
+                email: { type: Boolean, default: false },
+                whatsapp: { type: Boolean, default: false }
+            }
+        },
+
+        // Analytics & RFM Metrics (BRD §5, §12 & §20)
+        totalSpend: { type: Number, default: 0 },
+        totalOrders: { type: Number, default: 0 },
+        averageOrderValue: { type: Number, default: 0 },
+        firstPurchaseDate: { type: Date },
+        lastPurchaseDate: { type: Date },
+        preferredCategories: [{
+            category: { type: String },
+            count: { type: Number, default: 0 },
+            spend: { type: Number, default: 0 }
+        }],
+        segment: {
+            type: String,
+            enum: ['NEW', 'OCCASIONAL', 'REGULAR', 'LOYAL', 'HIGH_VALUE', 'INACTIVE'],
+            default: 'NEW'
+        },
+        lifetimeValue: { type: Number, default: 0 }
     },
     { timestamps: true }
 );
 
-// Compound index to ensure phone is unique per tenant
-customerSchema.index({ phone: 1, tenantId: 1 }, { unique: true });
+// Sparse compound index to allow optional phone numbers without unique collisions
+customerSchema.index({ phone: 1, tenantId: 1 }, { unique: true, sparse: true });
 
 const Customer = mongoose.model<ICustomer>("Customer", customerSchema);
 export default Customer;

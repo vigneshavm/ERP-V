@@ -1,20 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    X, ChevronRight, ChevronLeft, Lock, Key, RefreshCcw,
-    LayoutDashboard, Zap, DollarSign, FileText, ShoppingCart, List, Users, CreditCard,
-    ArrowRight, ArrowDownCircle, Archive, Package, Landmark, Receipt, BarChart, Settings,
-    Wrench, Printer, Upload, Download, FileSpreadsheet, Rocket, Store, Megaphone, Globe,
-    MessageCircle, RefreshCw, Database, PieChart, UserCheck, Truck, Box, AlertTriangle,
-    Layers, Calendar, Briefcase, Building, Save, Palette, LayoutGrid, Shield
+    X, ChevronRight, ChevronLeft, Lock, Key, RefreshCcw
 } from 'lucide-react';
 import { RootState } from "../../../redux/store";
-import { setSidebarOpen, setDesktopCollapsed, setSyncing } from "../../../redux/slices/uiSlice";
+import { setSidebarOpen, setDesktopCollapsed } from "../../../redux/slices/uiSlice";
 import { setBranch } from "../../../redux/slices/authSlice";
 import { useConfig } from "../../../contexts/ConfigProvider";
 import { useBranchResolver } from "../../../hooks/useBranchResolver";
 import { usePermissions } from "../../../hooks/usePermissions";
-import { AppView, ModuleType } from "../../../types/common";
 import NavItem from './NavItem';
 import NavGroup from './NavGroup';
 import { ThemeToggle } from '../../core/Display/ThemeToggle';
@@ -33,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
     const { tenants, branches: branchesFromDB } = useSelector((state: RootState) => state.tenant);
     const { sidebarOpen, desktopCollapsed, activeTab, isSyncing } = useSelector((state: RootState) => state.ui);
     const selectedBranch = useSelector((state: RootState) => state.auth.currentBranch);
-    const { tenantId } = useConfig();
+    const { tenantId, logoUrl } = useConfig();
     const currentTenant = useMemo(() => tenants.find(t => t.id === tenantId), [tenants, tenantId]);
     const { getBranchName } = useBranchResolver();
     const { checkAccess, checkModuleAccess } = usePermissions();
@@ -48,40 +42,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
         );
     };
 
-    const renderMenuItem = (item: MenuItem) => {
-        // Manual Bypass in Render
-        const isBypassUser = user?.email === 'avmvignesh0207@gmail.com';
-
-        if (!isBypassUser && !checkAccess(item.id) && !checkModuleAccess(item.module)) return null;
-
-        // Special handling for Grow Platform separator/header if needed
-        // For now, we just render. We could add a header if item.isGrow is true.
-
-        if (item.children) {
-            return (
-                <NavGroup
-                    key={item.id}
-                    icon={item.icon}
-                    label={item.label}
-                    defaultOpen={isGroupActive(item) || item.isGrow}
-                >
-                    {item.children.map((child: MenuItem) => renderMenuItem(child))}
-                </NavGroup>
-            );
-        }
-
-        return (
-            <NavItem
-                key={item.id}
-                id={item.id}
-                icon={item.icon}
-                label={item.label}
-                path={item.path}
-                isSubItem={false}
-            />
-        );
-    };
-
     // Recursive render with depth tracking
     const renderRecursive = (item: MenuItem, isSub: boolean = false) => {
         // Manual Bypass in Render
@@ -91,16 +51,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
         if (!isBypassUser) {
             const hasRoleAccess = checkAccess(item.id);
             const hasModuleAccess = checkModuleAccess(item.module);
-
-            if (item.id === 'PURCHASE' || item.id === 'DASHBOARD' || item.id === 'FINANCE') {
-                console.log(`Sidebar Debug [${item.id}]:`, {
-                    hasRoleAccess,
-                    hasModuleAccess,
-                    userRole: user?.role,
-                    rolePermissionCheck: checkAccess(item.id),
-                    moduleCheck: checkModuleAccess(item.module)
-                });
-            }
 
             if (!hasRoleAccess) return null;
             if (!hasModuleAccess) return null;
@@ -221,8 +171,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             <div className={`flex items-center ${desktopCollapsed ? 'justify-center' : 'justify-between'} mb-4 mt-2 lg:mt-0 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
                 <div className="flex items-center space-x-2 overflow-hidden">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-success">
-                        {useConfig().logoUrl ? (
-                            <img src={useConfig().logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
+                        {logoUrl ? (
+                            <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
                         ) : (
                             <span className="font-bold text-white">{user?.name?.charAt(0) || currentTenant?.name?.charAt(0) || 'T'}</span>
                         )}

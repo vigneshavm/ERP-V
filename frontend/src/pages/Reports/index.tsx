@@ -1,11 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setActiveTab } from '@/redux/slices/uiSlice';
 import { RootState, AppDispatch } from '@/redux/store';
 import {
     Search,
     ArrowRight,
-    MessageSquarePlus,
     ArrowLeft,
     Download,
     Calendar,
@@ -20,7 +18,7 @@ import BusinessReportsHub from './BusinessReportsHub';
 import { ReportType } from "../../hooks/useBusinessReports";
 
 const ReportsModule: React.FC = () => {
-    const dispatch = useDispatch<AppDispatch>();
+    const _dispatch = useDispatch<AppDispatch>();
     const { user, role } = useSelector((state: RootState) => state.auth);
     const { activeTab: globalActiveTab } = useSelector((state: RootState) => state.ui);
     const [searchQuery, setSearchQuery] = useState('');
@@ -187,7 +185,7 @@ const ReportsModule: React.FC = () => {
         })
         : [];
 
-    const ReportCard = ({ report, categoryId }: { report: ReportItem, categoryId: string, key?: string }) => (
+    const ReportCard = ({ report, categoryId: __categoryId }: { report: ReportItem, categoryId: string, key?: string }) => (
         <div
             className="group relative bg-white dark:bg-neutral-900 rounded-sm p-6 border border-neutral-200 dark:border-neutral-800 hover:border-primary dark:hover:border-primary hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 flex flex-col h-full cursor-pointer animate-in fade-in zoom-in-95"
             onClick={() => setSelectedReportSlug(report.slug)}

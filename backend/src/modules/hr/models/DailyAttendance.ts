@@ -4,9 +4,14 @@ export interface IDailyAttendance extends Document {
     tenantId: mongoose.Types.ObjectId;
     employeeId: mongoose.Types.ObjectId;
     date: Date;
-    status: 'PRESENT' | 'ABSENT' | 'HALF_DAY' | 'ON_LEAVE';
-    checkInTime?: Date;
-    checkOutTime?: Date;
+    // Matches the frontend's AttendanceStatus union (frontend/src/types/common.ts)
+    // so the Staff Management attendance calendar can persist exactly what it shows.
+    status: 'PRESENT' | 'HALF' | 'HALF_DAY' | 'QUARTER' | 'ABSENT' | 'ON_LEAVE';
+    checkInTime?: string;
+    checkOutTime?: string;
+    advanceTaken?: number;
+    // Used by the Daily Attendance Board (per-date, all-employees view).
+    overtimeHours?: number;
     notes?: string;
 }
 
@@ -27,11 +32,21 @@ const dailyAttendanceSchema = new Schema<IDailyAttendance>({
     },
     status: {
         type: String,
-        enum: ['PRESENT', 'ABSENT', 'HALF_DAY', 'ON_LEAVE'],
+        enum: ['PRESENT', 'HALF', 'HALF_DAY', 'QUARTER', 'ABSENT', 'ON_LEAVE'],
         default: 'PRESENT'
     },
-    checkInTime: Date,
-    checkOutTime: Date,
+    // Stored as "HH:MM" strings (matches the calendar's <input type="time"> values)
+    // rather than Date, since these are times-of-day, not timestamps.
+    checkInTime: String,
+    checkOutTime: String,
+    advanceTaken: {
+        type: Number,
+        default: 0
+    },
+    overtimeHours: {
+        type: Number,
+        default: 0
+    },
     notes: String
 }, {
     timestamps: true

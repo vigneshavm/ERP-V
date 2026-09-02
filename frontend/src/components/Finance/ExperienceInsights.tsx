@@ -6,8 +6,7 @@ import {
     XAxis,
     YAxis,
     Tooltip,
-    CartesianGrid,
-    ReferenceLine
+    CartesianGrid
 } from 'recharts';
 import {
     PiggyBank,
@@ -16,7 +15,6 @@ import {
     Utensils,
     CreditCard,
     ArrowRight,
-    CircleHelp,
     Share2
 } from 'lucide-react';
 

@@ -71,7 +71,17 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
         }
 
         const supplier = await Supplier.findById(req.body.p_vendor_id).session(session);
-        const supShortCode = supplier?.shortCode || 'SUP';
+        if (!supplier) {
+            throw new Error("Supplier (Vendor) not found");
+        }
+
+        if (supplier.status === 'inactive') {
+            const err: any = new Error("Cannot create Purchase Order for an inactive vendor");
+            err.statusCode = 400;
+            throw err;
+        }
+
+        const supShortCode = supplier.shortCode || 'SUP';
 
         // Supplier Credit Protocol
         if (status === 'COMPLETED' && supplier) {
@@ -193,18 +203,22 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
             if (product) {
                 purchase.items[i].productName = product.name;
                 if (status === 'COMPLETED' || status === 'RECEIVED') {
-                    // Refactored to use InventoryService for robust Stock Management
                     const { container } = await import('tsyringe');
                     const { InventoryService } = await import('../../inventory/services/InventoryService.js');
                     const inventoryService = container.resolve(InventoryService);
 
+                    const shipping = details.shipping_amount || 0;
+                    const subtotalVal = details.subtotal || 1;
+                    const itemLandedOverhead = shipping > 0 ? (shipping * (item.amount / subtotalVal)) / item.quantity : 0;
+                    const landedRate = Number((item.rate + itemLandedOverhead).toFixed(2));
+
                     await inventoryService.addStock(
                         item.productId.toString(),
                         item.quantity,
-                        item.rate,
+                        landedRate,
                         {
                             batchNumber: (item as any).lotNumber || `${purchaseNumber}-Batch`,
-                            expiryDate: undefined, // Add inputs for this later
+                            expiryDate: undefined,
                             supplierId: purchase.vendorId.toString()
                         },
                         req.user?.tenantId || 'default',
@@ -531,6 +545,35 @@ export const getPurchaseHistory = async (req: AuthenticatedRequest, res: Respons
     }
 };
 
+export const updatePOStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const { status, expectedDeliveryDate } = req.body;
+        const tenantId = req.user?.tenantId;
+
+        const purchase = await Purchase.findOne({ _id: id, tenantId });
+        if (!purchase) {
+            res.status(404).json({ message: "Purchase Order not found" });
+            return;
+        }
+
+        if (status) purchase.status = status;
+        if (expectedDeliveryDate) purchase.expectedDeliveryDate = new Date(expectedDeliveryDate);
+
+        if (status === 'APPROVED') {
+            purchase.approvedBy = req.user?._id as any;
+            purchase.approvedAt = new Date();
+        } else if (status === 'SENT_TO_VENDOR') {
+            purchase.sentToVendorAt = new Date();
+        }
+
+        await purchase.save();
+        res.json({ success: true, message: `PO status updated to ${status}`, purchase });
+    } catch (err: any) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 export default {
     createPurchase,
     getAllPurchases,
@@ -538,5 +581,6 @@ export default {
     updatePurchase,
     deletePurchase,
     getSupplierTotals,
-    getPurchaseHistory
+    getPurchaseHistory,
+    updatePOStatus
 };

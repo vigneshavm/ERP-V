@@ -5,7 +5,7 @@ import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { RootState, AppDispatch } from '../../../redux/store';
 import { fetchPayrollRuns, generatePayrollRun } from '../../../redux/slices/payrollSlice';
-import { PlayCircle, Eye, Printer, Trash2 } from 'lucide-react';
+import { PlayCircle, Eye, Printer } from 'lucide-react';
 import { formatDateISO } from '../../../utils/helpers';
 import api from '../../../services/api';
 

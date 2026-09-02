@@ -1,4 +1,4 @@
-import { EmailConfig, EmailCampaign, EmailEngagementThread, EmailMessage } from "../types/tenant";
+import { EmailConfig, EmailCampaign } from "../types/tenant";
 
 export const EmailService = {
     /**
@@ -27,7 +27,7 @@ export const EmailService = {
     /**
      * [PART B - ENGAGEMENT] Sends a direct 1:1 message to a customer
      */
-    sendEngagementEmail: async (credentials: Record<string, string>, to: string, subject: string, body: string) => {
+    sendEngagementEmail: async (credentials: Record<string, string>, to: string, __subject: string, __body: string) => {
         if (!EmailService.isConfigured(credentials)) throw new Error("SMTP Not Configured");
 
         console.log(`[Engagement] Sending 1:1 email to ${to} via ${credentials.host}`);
@@ -66,7 +66,7 @@ export const EmailService = {
     /**
      * [PART A - MARKETING] Fetches campaign-specific ROI data
      */
-    getMarketingAnalytics: async (config: EmailConfig) => {
+    getMarketingAnalytics: async (__config: EmailConfig) => {
         return {
             totalSubscribers: 12450,
             avgOpenRate: "34.8%",
@@ -79,7 +79,7 @@ export const EmailService = {
     /**
      * [PART B - ENGAGEMENT] Fetches CRM-specific operational data
      */
-    getEngagementAnalytics: async (config: EmailConfig) => {
+    getEngagementAnalytics: async (__config: EmailConfig) => {
         return {
             avgResponseTime: "2h 15m",
             csat: 4.8,
@@ -96,7 +96,7 @@ export const EmailService = {
             if (str.trim().startsWith('{')) return JSON.parse(str);
             const [host, port, user, pass] = str.split(':');
             return { host, port, user, pass };
-        } catch (e) {
+        } catch {
             return null;
         }
     }

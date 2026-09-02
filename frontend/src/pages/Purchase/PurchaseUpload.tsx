@@ -1,8 +1,7 @@
 ﻿import React, { ChangeEvent, useState } from 'react';
 import {
     Upload, Loader2, AlertCircle, LayoutTemplate, CheckCircle2, Zap,
-    FileSpreadsheet, Download, Table, Trash2, Save, FileText, AlertTriangle,
-    ArrowRight
+    FileSpreadsheet, Download, Table, Trash2, Save, FileText, AlertTriangle
 } from 'lucide-react';
 import { BranchId } from "../../types/common";
 import { Tenant } from "../../types/tenant";
@@ -11,8 +10,7 @@ import {
     validatePurchaseData,
     groupPurchases,
     downloadPurchaseTemplate,
-    ValidationResult,
-    RawPurchaseRow
+    ValidationResult
 } from '../../utils/purchaseUpload.utils';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
@@ -46,7 +44,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
     const [isBulkProcessing, setIsBulkProcessing] = useState(false);
     const [bulkResults, setBulkResults] = useState<ValidationResult[]>([]);
     const [stagedPurchases, setStagedPurchases] = useState<any[]>([]);
-    const [bulkError, setBulkError] = useState<string | null>(null);
+    const [_bulkError, setBulkError] = useState<string | null>(null);
 
     const handleBulkFileSelection = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

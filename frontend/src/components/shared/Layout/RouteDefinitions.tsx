@@ -252,6 +252,9 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/finance/goals" element={
                 <Suspense fallback={<div>Loading Goals...</div>}><LazyModules.FinancialGoals /></Suspense>
             } />
+            <Route path="/inventory/search" element={
+                <Suspense fallback={<div>Loading Search...</div>}><LazyModules.InventoryVariantSearch /></Suspense>
+            } />
             <Route path="*" element={renderContent()} />
             <Route path="/people/employees" element={
                 <Navigate to="/people/employees/labor" replace />

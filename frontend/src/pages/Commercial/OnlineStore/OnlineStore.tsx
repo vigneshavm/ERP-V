@@ -5,17 +5,14 @@ import { RootState, AppDispatch } from '../../../redux/store';
 import { addToCart } from '../../../redux/slices/posSlice';
 import { activateEcommerce } from '../../../redux/thunks/tenantThunks';
 import {
-    Search, Filter, Star, Heart, ShoppingCart,
-    Sparkles, Send, X, Bot, RotateCcw, Image as ImageIcon,
-    Grid3X3, List as ListIcon, SlidersHorizontal, ChevronDown,
-    Check, Loader2, Rocket, ArrowRight, CheckCircle2, ShoppingBag
+    Search, Filter, Heart, ShoppingCart,
+    Sparkles, Send, Image as ImageIcon,
+    Check, Rocket, ArrowRight, ShoppingBag
 } from 'lucide-react';
 import { Product } from "../../../types/product";
 import { getProductRecommendations, searchProductsByImage } from "../../../services/geminiService";
-import GrowHero from './components/GrowHero';
 import FeatureMatrix from "./components/FeatureMatrix";
 import PricingTiers from "./components/PricingTiers";
-import { EcommercePlan } from "../../../types/tenant";
 
 // --- Hero / Setup Component Inline (Refactor of GrowHero) ---
 const OnlineStoreSetup: React.FC<{
@@ -98,20 +95,20 @@ const OnlineStore: React.FC = () => {
     };
 
     // --- Storefront State ---
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const [_viewMode] = useState<'grid' | 'list'>('grid');
+    const [_showMobileFilters] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [showAi, setShowAi] = useState(false);
     const [aiQuery, setAiQuery] = useState('');
     const [aiThinking, setAiThinking] = useState(false);
     const [aiResult, setAiResult] = useState<{ text: string, ids: string[] } | null>(null);
     const [visualSearchImage, setVisualSearchImage] = useState<string | null>(null);
-    const [isVisualSearching, setIsVisualSearching] = useState(false);
+    const [_isVisualSearching, setIsVisualSearching] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [priceRange, setPriceRange] = useState<{ min: string, max: string }>({ min: '', max: '' });
+    const [priceRange] = useState<{ min: string, max: string }>({ min: '', max: '' });
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    const [sortBy, setSortBy] = useState<string>('featured');
-    const [inStockOnly, setInStockOnly] = useState(false);
+    const [sortBy] = useState<string>('featured');
+    const [inStockOnly] = useState(false);
 
     // --- Data Preparation ---
     const baseProducts = useMemo(() => {
@@ -160,7 +157,7 @@ const OnlineStore: React.FC = () => {
         }
     };
 
-    const clearAi = () => {
+    const _clearAi = () => {
         setAiResult(null);
         setAiQuery('');
         setVisualSearchImage(null);

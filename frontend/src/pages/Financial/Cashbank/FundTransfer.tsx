@@ -17,7 +17,6 @@ import {
     Clock,
     Info,
     Smartphone,
-    ArrowUpRight,
     Lock,
     Unlock,
 } from 'lucide-react';

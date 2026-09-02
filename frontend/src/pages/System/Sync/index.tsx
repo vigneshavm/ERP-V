@@ -1,13 +1,12 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { RootState } from '@/redux/store';
 import { setActiveTab } from '@/redux/slices/uiSlice';
 import { useDispatch } from 'react-redux';
 import {
     Smartphone, Monitor, Laptop, Tablet, RefreshCw, CheckCircle, AlertCircle, Clock,
-    Settings2, AlertTriangle, HardDrive, Database, QrCode, WifiOff, Loader2, Calendar, Archive, Cloud, XCircle,
-    Cpu, Zap, Activity
+    Settings2, AlertTriangle, HardDrive, Database, QrCode, WifiOff, Loader2, Calendar, Cloud, XCircle,
+    Cpu, Activity
 } from 'lucide-react';
 import { DeviceRegistryEntry, SyncConfig, DeviceStatus, SyncStatus, BackupConfig, BackupStatus, BackupDestination } from "@/types/tenant";
 
@@ -17,6 +16,7 @@ import BackupSection from './BackupSection';
 import SyncSettingsSection from './SyncSettingsSection';
 import ConflictsSection from './ConflictsSection';
 import RestoreSection from './RestoreSection';
+import { formatDate } from '../../../utils/helpers';
 
 type SyncSection = 'device' | 'add' | 'settings' | 'conflicts' | 'backup' | 'restore' | 'devices';
 
@@ -60,8 +60,14 @@ const Sync: React.FC = () => {
         }
     };
 
-    // Mock Data (Ideally these would come from Redux or a Hook)
-    const syncConfig: SyncConfig = {
+    // Mock Data (Ideally these would come from Redux or a Hook).
+    // Wrapped in useMemo so this only recomputes when the tenant changes, rather than generating
+    // fresh "time ago" timestamps on every re-render. useMemo doesn't fully satisfy the
+    // react-hooks/purity rule below (a memo callback still runs during render), but these
+    // Date.now() calls only exist to fabricate realistic-looking relative timestamps for this
+    // placeholder mock data - there's no way to do that without reading the current time somewhere.
+    /* eslint-disable react-hooks/purity -- see comment above */
+    const syncConfig: SyncConfig = useMemo(() => ({
         tenantId: activeTenant?.id || '',
         devices: [
             { id: 'd1', name: 'Desktop – Office', branchId: 'BR-001', userId: 'user_01', platform: 'Windows', osVersion: '10', appVersion: '2.4.1', lastSyncAt: new Date(Date.now() - 2 * 60000).toISOString(), lastOnlineAt: new Date().toISOString(), ipAddress: '192.168.1.10', status: 'ACTIVE', isOnline: true, syncHealth: 98, errorRate: 0, pendingOps: 0 },
@@ -81,7 +87,8 @@ const Sync: React.FC = () => {
         conflicts: [
             { id: 'cf1', ledgerEntryId: 'LE-001', entity: 'Customer', entityId: 'CUST-99', field: 'phone', localValue: '+91-9876543210', remoteValue: '+91-9876543211', occurredAt: new Date(Date.now() - 30 * 60000).toISOString() }
         ]
-    };
+    }), [activeTenant?.id]);
+    /* eslint-enable react-hooks/purity */
 
     const backupConfig: BackupConfig = {
         tenantId: activeTenant?.id || '',
@@ -161,14 +168,17 @@ const Sync: React.FC = () => {
         }
     };
 
+    // Intentional: a "time ago" formatter fundamentally has to read the current time. Called from
+    // JSX during render, so the linter flags it, but there's no impure-free way to express this.
     const formatTimeAgo = (dateStr: string) => {
+        // eslint-disable-next-line react-hooks/purity
         const diff = Date.now() - new Date(dateStr).getTime();
         const mins = Math.floor(diff / 60000);
         if (mins < 1) return 'Just now';
         if (mins < 60) return `${mins} min ago`;
         const hours = Math.floor(mins / 60);
         if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-        return new Date(dateStr).toLocaleDateString();
+        return formatDate(dateStr);
     };
 
     const formatBytes = (bytes: number) => {

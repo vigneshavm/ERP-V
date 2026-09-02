@@ -6,11 +6,9 @@ import {
     AlertTriangle,
     CheckCircle,
     XCircle,
-    Clock,
     Shield,
     Lock,
     Eye,
-    FileText,
     Database,
     HardDrive,
     Cloud,
@@ -19,11 +17,10 @@ import {
     CheckCircle2,
     History,
     Users,
-    Calendar,
     ShieldCheck,
     ShieldAlert
 } from 'lucide-react';
-import { BackupEntry, BackupStatus, BackupDestination } from "../../../types/tenant";
+import { BackupEntry, BackupDestination } from "../../../types/tenant";
 
 interface RestoreLog {
     id: string;

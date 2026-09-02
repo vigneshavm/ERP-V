@@ -5,10 +5,7 @@ import Layout from "../../../components/shared/Layout";
 import {
     Landmark,
     ArrowUpRight,
-    ArrowDownRight,
     Search,
-    AlertCircle,
-    CheckCircle2,
     ShieldCheck,
     History,
     Zap,
@@ -18,6 +15,7 @@ import {
     Info,
     Target,
 } from 'lucide-react';
+import { formatDate } from '../../../utils/helpers';
 
 // --- Types ---
 
@@ -312,7 +310,7 @@ const BankIntelligence: React.FC = () => {
                                                 <h5 className="font-black text-sm">{o.type} Payment</h5>
                                                 <span className="text-[10px] font-bold text-error">₹{(o.amount / 1000).toFixed(0)}k</span>
                                             </div>
-                                            <p className="text-[10px] text-neutral-400 mt-1">Due {new Date(o.due_date).toLocaleDateString()}</p>
+                                            <p className="text-[10px] text-neutral-400 mt-1">Due {formatDate(o.due_date)}</p>
                                         </div>
                                         <button className="opacity-0 group-hover/item:opacity-100 transition-opacity p-2 hover:bg-neutral-50 rounded-lg">
                                             <Zap className="w-4 h-4 text-primary" />

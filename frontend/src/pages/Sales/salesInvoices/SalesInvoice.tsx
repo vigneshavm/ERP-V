@@ -10,7 +10,6 @@ import {
 import Layout from "@/components/shared/Layout/Layout";
 import PageHeader from "@/components/shared/Layout/PageHeader";
 import MetricCard from "@/components/shared/UI/MetricCard";
-import FormInput from "@/components/core/Form/Input";
 import CustomerSelectionModal from "@/components/shared/Modals/CustomerSelectionModal";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Customer, Invoice } from "@/types/sales";
@@ -21,15 +20,12 @@ import {
   Filter,
   Trash2,
   Eye,
-  MoreVertical,
   CheckCircle,
-  Clock,
   AlertCircle,
   XCircle,
-  DollarSign,
-  TrendingUp,
   AlertTriangle
 } from "lucide-react";
+import { formatDate } from '../../../utils/helpers';
 
 const SalesInvoice = () => {
   const navigate = useNavigate();
@@ -330,7 +326,7 @@ const SalesInvoice = () => {
                       </span>
                     </div>
                     <div className="flex justify-between items-center mt-3 text-xs text-secondary opacity-70">
-                      <span>{new Date(invoice.createdAt).toLocaleDateString()}</span>
+                      <span>{formatDate(invoice.createdAt)}</span>
                       <div className="text-sm font-bold text-main">
                         ₹{invoice.totalAmount.toLocaleString()}
                       </div>

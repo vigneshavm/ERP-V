@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { PurchaseState, PurchaseOrder, PurchasePayment } from "../../types/purchase";
+import { PurchaseState, PurchaseOrder } from "../../types/purchase";
 import api from "../../services/api";
 import { RootState } from '../store';
+import { normalizePurchaseOrder, normalizePurchaseOrders } from "../../utils/purchaseNormalize";
 
 const getConfig = (token: string) => ({
     headers: {
@@ -82,7 +83,7 @@ const purchaseSlice = createSlice({
         },
         approveOrder: (state, action: PayloadAction<string>) => {
             const order = state.orders.find((o: PurchaseOrder) => o.id === action.payload);
-            if (order) order.status = 'Approved';
+            if (order) order.status = 'APPROVED';
         },
         updateOrder: (state, action: PayloadAction<{ id: string; updates: Partial<PurchaseOrder> }>) => {
             const index = state.orders.findIndex((o: PurchaseOrder) => o.id === action.payload.id);
@@ -95,7 +96,7 @@ const purchaseSlice = createSlice({
         },
         convertOrder: (state, action: PayloadAction<{ order: PurchaseOrder; items: any[] }>) => {
             const order = state.orders.find((o: PurchaseOrder) => o.id === action.payload.order.id);
-            if (order) order.status = 'Converted';
+            if (order) order.status = 'COMPLETED';
         },
         setOrders: (state, action: PayloadAction<PurchaseOrder[]>) => {
             state.orders = action.payload;
@@ -119,9 +120,9 @@ const purchaseSlice = createSlice({
                 const totalReceived = order.items.reduce((sum, i) => sum + (i.received_quantity || 0), 0);
 
                 if (totalReceived >= totalOrdered) {
-                    order.status = 'Fully Received';
+                    order.status = 'COMPLETED';
                 } else if (totalReceived > 0) {
-                    order.status = 'Partial Receipt';
+                    order.status = 'PARTIALLY_RECEIVED';
                 }
             }
         },
@@ -145,7 +146,7 @@ const purchaseSlice = createSlice({
             })
             .addCase(fetchPurchaseOrders.fulfilled, (state, action) => {
                 state.isProcessing = false;
-                state.orders = action.payload;
+                state.orders = normalizePurchaseOrders(action.payload);
             })
             .addCase(fetchPurchaseOrders.rejected, (state) => {
                 state.isProcessing = false;
@@ -165,7 +166,7 @@ const purchaseSlice = createSlice({
             })
             .addCase(fetchPurchaseById.fulfilled, (state, action) => {
                 state.isProcessing = false;
-                state.selectedOrder = action.payload;
+                state.selectedOrder = normalizePurchaseOrder(action.payload);
             })
             .addCase(fetchPurchaseById.rejected, (state) => {
                 state.isProcessing = false;

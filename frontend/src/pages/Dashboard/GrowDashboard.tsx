@@ -12,7 +12,7 @@ import { WhatsAppService } from "../../services/whatsappService";
 const GrowDashboard: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { lowStockItems } = useSelector((state: RootState) => state.inventory);
-    const { dashboardStats } = useSelector((state: RootState) => state.reports);
+    const { dashboardStats: _dashboardStats } = useSelector((state: RootState) => state.reports);
 
     const [isLoading, setIsLoading] = useState(true);
     const [googleProfile, setGoogleProfile] = useState<GoogleBusinessProfileData | null>(null);

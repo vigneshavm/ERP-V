@@ -2,13 +2,13 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
-import { Download, Tag, TrendingUp, ArrowUpRight, ArrowDownRight, Package } from 'lucide-react';
+import { Tag, TrendingUp, Package } from 'lucide-react';
 
 interface CategoryWiseSalesReportProps {
     timeRange: 'TODAY' | 'WEEK' | 'MONTH' | 'CUSTOM';
 }
 
-const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeRange }) => {
+const CategoryWiseSalesReport: React.FC<CategoryWiseSalesReportProps> = ({ timeRange: __timeRange }) => {
     const { salesHistory } = useSelector((state: RootState) => state.pos);
     const { currentSector } = useSelector((state: RootState) => state.auth);
 

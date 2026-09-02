@@ -2,12 +2,11 @@
 import { useSelector } from 'react-redux';
 import { RootState } from "../../../redux/store";
 import { SystemRole } from "../../../types/common";
-import { Plus, Pencil, Trash2, Users, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
-import { APP_CONFIG } from "../../../config";
+import { Plus, Pencil, Trash2, Users, Loader2, ShieldCheck } from 'lucide-react';
 import api from "../../../services/api.js";
 
-import { securePassword } from "../../../utils/auth";
-import { TenantUser, DbRoleCode, Tenant } from "../../../types/tenant";
+import { Tenant } from "../../../types/tenant";
+import { formatDate } from '../../../utils/helpers';
 
 const StaffManager: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
@@ -41,7 +40,7 @@ const StaffManager: React.FC = () => {
         }
     }, [user?.tenantId]);
 
-    const fetchTenantEmployees = async (tenantId: string) => {
+    const fetchTenantEmployees = async (__tenantId: string) => {
         setIsLoadingEmployees(true);
         try {
             const response = await api.get('/api/hr/employees');
@@ -377,7 +376,7 @@ const StaffManager: React.FC = () => {
                                                 </span>
                                                 <span className="text-slate-300 dark:text-slate-700">|</span>
                                                 <span className="text-slate-500 dark:text-slate-400">
-                                                    Joined: {emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString() : 'N/A'}
+                                                    Joined: {emp.joiningDate ? formatDate(emp.joiningDate) : 'N/A'}
                                                 </span>
                                             </div>
                                         </div>

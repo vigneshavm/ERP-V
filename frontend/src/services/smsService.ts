@@ -1,4 +1,3 @@
-import { SMSConfig } from "../types/tenant";
 
 export const SMSService = {
     /**
@@ -27,7 +26,7 @@ export const SMSService = {
     /**
      * [PART B - ENGAGEMENT] Sends a direct 1:1 SMS
      */
-    sendEngagementSMS: async (credentials: Record<string, string>, to: string, message: string) => {
+    sendEngagementSMS: async (credentials: Record<string, string>, to: string, __message: string) => {
         if (!SMSService.isConfigured(credentials)) throw new Error("SMS Not Configured");
 
         console.log(`[Engagement] Sending 1:1 SMS to ${to} via ${credentials.provider || 'default provider'}`);
@@ -63,7 +62,7 @@ export const SMSService = {
             }
             const [provider, apiKey, senderId] = str.split(':');
             return { provider, apiKey, senderId };
-        } catch (e) {
+        } catch {
             return null;
         }
     }

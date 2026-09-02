@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { BarChart3, Search, Download, TrendingDown, TrendingUp, Package } from 'lucide-react';
+import { BarChart3, Search, Download, TrendingUp } from 'lucide-react';
 
 const STOCK = [
     { sku: 'SKU-001', name: 'Cotton Shirt XL', category: 'Shirts', unit: 'PCS', opening: 120, in: 200, out: 185, closing: 135, value: 189000, reorder: 50 },

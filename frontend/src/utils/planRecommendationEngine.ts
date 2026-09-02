@@ -97,7 +97,7 @@ export function recommendPlan(profile: BusinessProfile): PlanRecommendation {
         const transactionVolume = TRANSACTION_THRESHOLDS[profile.expectedTransactions];
         const avgTransactionValue = 500; // Assumed average
         const monthlyVolume = transactionVolume * avgTransactionValue;
-        const feeImpact = monthlyVolume * (plan.limits.transactionFee / 100);
+        const _feeImpact = monthlyVolume * (plan.limits.transactionFee / 100);
 
         if (profile.expectedTransactions === 'high' || profile.expectedTransactions === 'very_high') {
             if (plan.limits.transactionFee <= 2) {

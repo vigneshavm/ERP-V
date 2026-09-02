@@ -1,16 +1,14 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from "@/services/api";
 import { toast } from 'react-toastify';
 import {
-    ShoppingCart,
     User,
     Plus,
     Trash2,
     Save,
     ArrowLeft,
     Clock,
-    ChevronRight,
     ShieldCheck,
     Zap,
     Info,
@@ -23,14 +21,12 @@ import {
     Minus,
     Search,
     Calendar,
-    Briefcase,
-    CheckCircle2,
     Truck,
     Package
 } from 'lucide-react';
 import CustomerSelectionModal from "@/components/shared/Modals/CustomerSelectionModal";
 import ItemSelectionModal from "@/components/shared/Modals/ItemSelectionModal";
-import type { SalesOrder, SalesOrderItem, Customer } from '@/types/sales';
+import type { SalesOrderItem, Customer } from '@/types/sales';
 
 const SalesOrderPage = () => {
     const navigate = useNavigate();

@@ -33,7 +33,11 @@ export interface IPurchase extends Document {
     totalAmount: number;
     items: IPurchaseItem[];
     notes?: string;
-    status: 'DRAFT' | 'COMPLETED' | 'CANCELLED';
+    expectedDeliveryDate?: Date;
+    approvedBy?: mongoose.Types.ObjectId;
+    approvedAt?: Date;
+    sentToVendorAt?: Date;
+    status: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'SENT_TO_VENDOR' | 'PARTIALLY_RECEIVED' | 'COMPLETED' | 'CANCELLED' | 'RECEIVED';
     createdBy: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
@@ -72,9 +76,13 @@ const purchaseSchema = new Schema({
     totalAmount: { type: Number, required: true, default: 0 },
     items: [purchaseItemSchema],
     notes: { type: String },
+    expectedDeliveryDate: { type: Date },
+    approvedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    approvedAt: { type: Date },
+    sentToVendorAt: { type: Date },
     status: {
         type: String,
-        enum: ['DRAFT', 'COMPLETED', 'CANCELLED', 'RECEIVED'],
+        enum: ['DRAFT', 'SUBMITTED', 'APPROVED', 'SENT_TO_VENDOR', 'PARTIALLY_RECEIVED', 'COMPLETED', 'CANCELLED', 'RECEIVED'],
         default: 'DRAFT'
     },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }

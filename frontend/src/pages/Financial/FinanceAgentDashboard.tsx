@@ -1,14 +1,13 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setActiveTab } from '../../redux/slices/uiSlice';
 import { AppView } from '../../types/common';
 import Layout from "../../components/shared/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import {
-    TrendingUp, TrendingDown, Zap, RefreshCw, AlertTriangle,
-    CheckCircle2, CreditCard, Building2, Landmark, FileText,
+    TrendingUp, Zap, RefreshCw, AlertTriangle, CreditCard, Landmark, FileText,
     ArrowUpRight, ArrowDownRight, Activity, ChevronRight,
-    Clock, CircleDollarSign, BarChart3, Layers, Bot,
+    Clock, BarChart3, Layers, Bot,
     CalendarClock, ShieldCheck, ReceiptText, Banknote, X,
     CircleCheck, CircleAlert, Info, Search, Filter
 } from 'lucide-react';

@@ -12,6 +12,7 @@ import JournalEntry from "../../finance/models/JournalEntry.js";
 import SalaryComponent from "../models/SalaryComponent.js";
 import { AppError } from "../../../utils/AppError.js";
 import { sendEmail } from "../../../utils/emailService.js";
+import { getMonthDateRange } from "../../../utils/dateUtils.js";
 
 @injectable()
 export class PayrollService {
@@ -22,8 +23,7 @@ export class PayrollService {
         session.startTransaction();
 
         try {
-            const periodStart = new Date(year, month, 1);
-            const periodEnd = new Date(year, month + 1, 0);
+            const { startDate: periodStart, endDate: periodEnd } = getMonthDateRange(year, month, true);
 
             // Check if already exists (scoped by branch if provided)
             const query: any = {

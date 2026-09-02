@@ -13,22 +13,14 @@ import {
     Plus,
     Eye,
     EyeOff,
-    ArrowRightLeft,
     Trash2,
-    FileText,
     Building2,
     CreditCard,
     Activity,
     ChevronDown,
     ShieldCheck,
-    Search,
-    ChevronLeft,
-    ChevronRight,
-    Edit3,
-    MoreVertical,
     Home,
     Car,
-    Coffee,
     UtensilsCrossed,
     Wallet
 } from 'lucide-react';
@@ -80,7 +72,7 @@ const BankAccounts: React.FC = () => {
         }));
     };
 
-    const maskAccountNumber = (number: string) => {
+    const _maskAccountNumber = (number: string) => {
         if (number.length <= 4) return number;
         return '•••• •••• ' + number.slice(-4);
     };

@@ -49,7 +49,7 @@ export const POSVariantSelectionModal: React.FC<POSVariantSelectionModalProps> =
 
     const handleBatchAdd = () => {
         const toAdd = (Object.entries(quantities) as [string, number][])
-            .filter(([_, qty]) => qty > 0)
+            .filter(([___, qty]) => qty > 0)
             .map(([id, qty]) => {
                 const product = allVariants.find(p => p.id === id);
                 return product ? { product, qty } : null;

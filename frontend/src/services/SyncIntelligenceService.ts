@@ -1,5 +1,4 @@
-import { DeviceRegistryEntry, SyncLedgerEntry, SyncConflict, SyncIntelligenceConfig } from "../types/tenant";
-import { db } from './db';
+import { DeviceRegistryEntry, SyncLedgerEntry, SyncIntelligenceConfig } from "../types/tenant";
 
 
 export class SyncIntelligenceService {
@@ -98,7 +97,7 @@ export class SyncIntelligenceService {
         // In local DB: await db.syncLedger.add(fullEntry);
     }
 
-    static async getLedger(limit = 50): Promise<SyncLedgerEntry[]> {
+    static async getLedger(__limit = 50): Promise<SyncLedgerEntry[]> {
         return [
             {
                 id: 'LE-X92J1',

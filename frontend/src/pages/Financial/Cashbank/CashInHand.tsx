@@ -28,7 +28,6 @@ import {
     Wallet,
     History,
     X,
-    Activity,
     Zap
 } from 'lucide-react';
 

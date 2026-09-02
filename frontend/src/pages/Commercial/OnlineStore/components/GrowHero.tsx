@@ -1,6 +1,6 @@
 import React from 'react';
-import { Rocket, ArrowRight, ShoppingBag, ShoppingCart } from 'lucide-react';
-import { EcommercePlan } from "../../../../types/tenant"; // Adjust import if needed, assuming types exist
+import { Rocket, ArrowRight, ShoppingBag } from 'lucide-react';
+// Adjust import if needed, assuming types exist
 
 interface GrowHeroProps {
     isLoading: boolean;
@@ -8,7 +8,7 @@ interface GrowHeroProps {
     currentPlan: string;
 }
 
-const GrowHero: React.FC<GrowHeroProps> = ({ isLoading, onActivate, currentPlan }) => {
+const GrowHero: React.FC<GrowHeroProps> = ({ isLoading, onActivate, currentPlan: __currentPlan }) => {
     // This component logic is mostly already inlined in OnlineStore/index.tsx as "OnlineStoreSetup"
     // We will just replicate the UI for structure or usage if needed.
     // However, looking at index.tsx, it renders `OnlineStoreSetup` which seems to BE the hero.

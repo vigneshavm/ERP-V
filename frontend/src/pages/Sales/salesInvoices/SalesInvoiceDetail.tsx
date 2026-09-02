@@ -7,14 +7,12 @@ import PaymentModal from "../../../components/shared/Modals/PaymentModal";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Customer, PopulatedInvoice } from "@/types/sales";
 import {
-    FileText,
     CheckCircle,
     Clock,
     AlertCircle,
     ArrowLeft,
     Printer,
     CreditCard,
-    User,
     Phone,
     Mail,
     MapPin,

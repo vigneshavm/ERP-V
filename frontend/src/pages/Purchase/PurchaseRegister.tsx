@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch } from "../../redux/store";
@@ -8,10 +8,8 @@ import { PurchaseOrder } from "../../types/purchase";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 import {
     Search,
-    Calendar,
     TrendingUp,
     FileText,
-    Download,
     Plus,
     Eye,
     CheckCircle,
@@ -22,8 +20,6 @@ import {
     ChevronRight,
     FileSpreadsheet,
     ArrowUpDown,
-    ArrowUp,
-    ArrowDown,
     CheckSquare,
     Info,
     MoreHorizontal
@@ -45,8 +41,8 @@ const PurchaseRegister: React.FC = () => {
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [vendorFilter, setVendorFilter] = useState('ALL');
-    const [amountMin, setAmountMin] = useState('');
-    const [amountMax, setAmountMax] = useState('');
+    const [amountMin] = useState('');
+    const [amountMax] = useState('');
 
     // View Mode State
     const [viewMode, setViewMode] = useState<'ALL' | 'BILLED' | 'UNBILLED' | 'DRAFT'>('ALL');
@@ -58,7 +54,7 @@ const PurchaseRegister: React.FC = () => {
 
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [itemsPerPage] = useState(10);
 
     // Load Data
     React.useEffect(() => {
@@ -176,7 +172,7 @@ const PurchaseRegister: React.FC = () => {
             case 'UNBILLED':
                 return filteredOrders.filter(o => ['Pending', 'Pending Approval', 'Approved', 'Partial Receipt', 'Fully Received', 'RECEIVED'].includes(o.status));
             case 'DRAFT':
-                return filteredOrders.filter(o => o.status === 'Draft');
+                return filteredOrders.filter(o => o.status === 'DRAFT' || (o.status as string) === 'Draft');
             default:
                 return filteredOrders;
         }
@@ -188,9 +184,17 @@ const PurchaseRegister: React.FC = () => {
         return displayOrders.slice(start, start + itemsPerPage);
     }, [displayOrders, currentPage, itemsPerPage]);
 
-    const totalPurchasesValue = filteredOrders.reduce((acc, o) => acc + ((o as any).totalAmount || (o as any).total_amount || 0), 0);
-    const totalBilledValue = filteredOrders.filter(o => o.status === 'COMPLETED').reduce((acc, o) => acc + ((o as any).totalAmount || (o as any).total_amount || 0), 0);
-    const pendingCount = filteredOrders.filter(o => ['Pending', 'Pending Approval', 'Draft'].includes(o.status)).length;
+    // KPI cards must reflect whatever the table below is actually showing.
+    // These were previously derived from `filteredOrders` (search/vendor/status/
+    // date filters only), which never re-narrowed when the ALL/BILLED/UNBILLED/
+    // DRAFT view tabs did -- so e.g. switching to the "BILLED" tab would show
+    // 12 rows in the table while "Total Nodes" kept displaying the full
+    // unfiltered count. Deriving from `displayOrders` (which already applies
+    // the view-mode filter on top of the other filters) keeps the header
+    // numbers and the table in sync in every tab.
+    const totalPurchasesValue = displayOrders.reduce((acc, o) => acc + ((o as any).totalAmount || (o as any).total_amount || 0), 0);
+    const totalBilledValue = displayOrders.filter(o => o.status === 'COMPLETED').reduce((acc, o) => acc + ((o as any).totalAmount || (o as any).total_amount || 0), 0);
+    const pendingCount = displayOrders.filter(o => ['Pending', 'Pending Approval', 'Draft'].includes(o.status)).length;
 
     const getStatusBadge = (status: string) => {
         const s = status.toUpperCase();
@@ -305,7 +309,7 @@ const PurchaseRegister: React.FC = () => {
                             </div>
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Total Nodes</h3>
                         </div>
-                        <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">{filteredOrders.length}</p>
+                        <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">{displayOrders.length}</p>
                     </div>
                     <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-warning/20 transition-all duration-500">
                         <div className="flex items-center gap-4 mb-4">

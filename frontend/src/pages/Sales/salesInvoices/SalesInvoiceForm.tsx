@@ -6,9 +6,8 @@ import CustomerSelectionModal from "../../../components/shared/Modals/CustomerSe
 import { AppDispatch, RootState } from "../../../redux/store";
 import { 
     Plus, Trash2, Save, User, Calendar, Receipt, Percent, 
-    Truck, FileText, ArrowLeft, Info, ChevronRight, Calculator,
-    ShieldCheck, Zap, Briefcase, Clock, IndianRupee, Layers, 
-    ArrowRight, Globe, CheckCircle2, AlertCircle, RefreshCw
+    Truck, ArrowLeft, Info, Calculator,
+    ShieldCheck, Zap, Clock, Layers, Globe
 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -28,8 +27,10 @@ const SalesInvoiceForm: React.FC = () => {
         (state: RootState) => state.salesInvoice
     );
 
-    // Form State
-    const [formData, setFormData] = useState({
+    // Form State.
+    // Lazy initializer - the previous object-literal form called Date.now()/new Date() on every
+    // render (an impure call in the render body); () => ({...}) only runs once, on mount.
+    const [formData, setFormData] = useState(() => ({
         invoiceNo: `INV-${Date.now().toString().slice(-6)}`,
         invoiceDate: new Date().toISOString().split("T")[0],
         dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
@@ -39,7 +40,7 @@ const SalesInvoiceForm: React.FC = () => {
         shippingCharges: 0,
         notes: "",
         termsAndConditions: "1. Goods once sold will not be taken back.\n2. Interest @18% p.a. will be charged if not paid within due date.",
-    });
+    }));
 
     const [showCustomerModal, setShowCustomerModal] = useState(false);
     const [hasSubmitted, setHasSubmitted] = useState(false);

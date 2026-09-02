@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ChevronDown, LucideIcon } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { RootState } from "../../../redux/store";
 
 interface NavGroupProps {

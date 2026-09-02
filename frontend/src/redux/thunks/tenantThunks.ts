@@ -1,6 +1,5 @@
 import { AppDispatch, RootState } from "../store";
 // import { supabase } from '../../lib/supabase'; // Removed
-import { setAuthLoading, setAuthError, setAuthSuccess } from '../slices/authSlice';
 import { updateTenantEcommerce, updateGoogleBusinessProfile, setEcommerceEnabled } from '../slices/tenantSlice';
 import { GoogleBusinessConfig } from "../../types/tenant";
 

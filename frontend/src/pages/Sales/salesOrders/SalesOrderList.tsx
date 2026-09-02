@@ -16,14 +16,11 @@ import {
     FileCheck,
     AlertTriangle,
     Download,
-    Filter,
     Calendar,
     Briefcase,
     Zap,
     RefreshCw,
-    User,
     Truck,
-    IndianRupee,
     ShieldCheck
 } from 'lucide-react';
 import { SalesOrder } from '../../../types/sales';
@@ -55,7 +52,7 @@ const SalesOrderList = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setOrders(response.data);
-        } catch (error: any) {
+        } catch {
             toast.error('Failed to fetch orders');
         } finally {
             setLoading(false);

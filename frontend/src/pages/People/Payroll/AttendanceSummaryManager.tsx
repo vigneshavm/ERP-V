@@ -1,17 +1,16 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { RootState, AppDispatch } from '../../../redux/store';
 import { fetchAttendanceSummary, saveAttendanceSummary } from '../../../redux/slices/payrollSlice';
-import { Save, Calendar, Filter, Download } from 'lucide-react';
+import { Save, Calendar } from 'lucide-react';
 import api from '../../../services/api';
 
 const AttendanceSummaryManager = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const navigate = useNavigate();
-    const { attendance, success, loading } = useSelector((state: RootState) => state.payroll);
+    const { attendance } = useSelector((state: RootState) => state.payroll);
 
     const [selectedDate, setSelectedDate] = useState({ month: new Date().getMonth(), year: new Date().getFullYear() });
     const [employees, setEmployees] = useState<any[]>([]);
@@ -23,7 +22,7 @@ const AttendanceSummaryManager = () => {
             try {
                 const res = await api.get('/api/hr/employees');
                 if (res.data.success) setEmployees(res.data.data);
-            } catch (e) {
+            } catch {
                 console.error("Failed to load employees");
             }
         };

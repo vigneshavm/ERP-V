@@ -17,7 +17,14 @@ const stockLogSchema = new Schema<IStockLog>(
         },
         type: {
             type: String,
-            enum: ['ADD', 'SUBTRACT', 'SET', 'SALE', 'PURCHASE', 'INIT'],
+            // Every value InventoryService.ts actually writes: 'INIT' (addItem/importItems),
+            // 'PURCHASE' (addStock), 'ADJUST' (bulkAdjustStock/updateItem/updateBatchCost),
+            // 'SALES' and 'RETURN' (reduceStock — the B2C checkout path). The enum previously
+            // only had 'ADD' | 'SUBTRACT' | 'SET' | 'SALE' | 'PURCHASE' | 'INIT', so every
+            // reduceStock() call (i.e. every POS sale) threw a Mongoose ValidationError here and
+            // rolled back the whole invoice transaction. 'ADD'/'SUBTRACT'/'SET'/'SALE' kept for
+            // backward compatibility with any existing StockLog documents using those values.
+            enum: ['ADD', 'SUBTRACT', 'SET', 'SALE', 'SALES', 'PURCHASE', 'INIT', 'ADJUST', 'RETURN'],
             required: true
         },
         delta: {

@@ -1,34 +1,24 @@
-﻿import React, { useMemo } from 'react';
+﻿import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import { useRecurringExpenses } from "../../hooks/useRecurringExpenses";
 import {
-    Calendar,
-    AlertCircle,
-    CheckCircle2,
-    TrendingUp,
     TrendingDown,
-    DollarSign,
     Zap,
     ShieldAlert,
     Clock,
-    Building2,
     ChevronRight,
-    ArrowRightLeft,
-    PieChart,
     Wallet,
     Info,
-    Receipt,
     Target,
     Activity,
-    Lock,
-    Unlock,
     MoreVertical,
     History,
     FileText,
     Settings,
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout";
+import { formatDate } from '../../utils/helpers';
 
 interface AuthState {
     user: any;
@@ -194,7 +184,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                             <div className="text-right">
                                                 <p className={`font-black text-sm ${due.status === 'OVERDUE' ? 'text-error' : 'text-neutral-300'}`}>₹{due.amount.toLocaleString()}</p>
                                                 <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">
-                                                    {due.status === 'OVERDUE' ? 'OVERDUE' : `Due ${new Date(due.next_due_date).toLocaleDateString()}`}
+                                                    {due.status === 'OVERDUE' ? 'OVERDUE' : `Due ${formatDate(due.next_due_date)}`}
                                                 </p>
                                             </div>
                                         </div>

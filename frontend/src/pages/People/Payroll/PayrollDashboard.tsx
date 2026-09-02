@@ -1,11 +1,11 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { RootState, AppDispatch } from '../../../redux/store';
 import { fetchPayrollRuns } from '../../../redux/slices/payrollSlice';
-import { Calendar, DollarSign, Users, FileText, PlayCircle, Clock } from 'lucide-react';
+import { DollarSign, Users, FileText, PlayCircle, Clock } from 'lucide-react';
 import { formatDateISO } from '../../../utils/helpers';
 
 const PayrollInfoCard = ({ title, value, icon: Icon, color }: any) => (
@@ -24,7 +24,7 @@ const PayrollDashboard = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const { runs, loading } = useSelector((state: RootState) => state.payroll);
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { user: _user } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         dispatch(fetchPayrollRuns());

@@ -13,20 +13,11 @@ import {
     ShieldAlert,
     Zap,
     Target,
-    ArrowRight,
     Download,
     Filter,
     Calendar,
-    Building2,
     PieChart,
     Activity,
-    AlertCircle,
-    Truck,
-    Layers,
-    Search,
-    ChevronRight,
-    ExternalLink,
-    ChevronDown,
     Users,
     Briefcase,
     Receipt,
@@ -54,8 +45,8 @@ const BusinessReportsHub: React.FC<BusinessReportsHubProps> = ({ view }) => {
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
     const today = now.toISOString().split('T')[0];
 
-    const [dateRange, setDateRange] = useState({ from: firstDay, to: today });
-    const [branchFilter, setBranchFilter] = useState(currentBranch || 'ALL');
+    const [dateRange] = useState({ from: firstDay, to: today });
+    const [branchFilter] = useState(currentBranch || 'ALL');
 
     const { data, loading } = useBusinessReports(view, { date_range: dateRange, branch_id: branchFilter });
 

@@ -14,7 +14,7 @@ interface ThemeProviderProps {
     children: ReactNode;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     // Initialize theme from localStorage or default to 'light'
     const [theme, setTheme] = useState<Theme>(() => {

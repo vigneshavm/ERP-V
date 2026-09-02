@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "../../redux/store";
 import { getAgingReport } from "../../redux/slices/inventorySlice";
@@ -12,13 +12,9 @@ import {
     Package,
     ArrowRight,
     Search,
-    Filter,
-    Calendar,
     ShieldAlert,
     TrendingUp,
     Info,
-    DollarSign,
-    Box,
     Layers,
     Tag,
 } from 'lucide-react';
@@ -48,7 +44,7 @@ interface AgedProduct {
 }
 
 const AgedStockManager: React.FC = () => {
-    const { agingReport, isLoading } = useSelector((state: RootState) => state.inventory);
+    const { agingReport, isLoading: _isLoading } = useSelector((state: RootState) => state.inventory);
     const { user } = useSelector((state: RootState) => state.auth);
     const tenant_id = user?.tenantId || 'TEN001';
     const dispatch = useDispatch();
@@ -236,7 +232,7 @@ const AgedStockManager: React.FC = () => {
                                                             a.recommendation.type === 'BREAK_EVEN' ? 'bg-warning text-neutral-900 shadow-sm' :
                                                                 'bg-primary/10 text-primary'
                                                             }`}>
-                                                            {a.recommendation.type.replace('_', ' ')}
+                                                            {a.recommendation?.type?.replace('_', ' ') || ''}
                                                         </span>
                                                         <div className="flex items-center gap-1">
                                                             <Tag className="w-3 h-3 text-primary" />

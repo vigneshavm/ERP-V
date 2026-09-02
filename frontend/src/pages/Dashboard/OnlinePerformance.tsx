@@ -2,10 +2,7 @@
 import React from 'react';
 import {
     TrendingUp,
-    Users,
-    ShoppingCart,
     ArrowUpRight,
-    ArrowDownRight,
     Globe,
     Smartphone,
     Monitor,

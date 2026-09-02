@@ -1,10 +1,9 @@
 ﻿import React from 'react';
-import { NavLink, useParams, useLocation } from 'react-router-dom';
-import { Users, Tag, Book, FileText, User, Edit3, ArrowLeft, TrendingUp } from 'lucide-react';
+import { NavLink, useParams } from 'react-router-dom';
+import { Users, Tag, Book, User, Edit3, ArrowLeft, TrendingUp } from 'lucide-react';
 
 const SupplierSubNav: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const location = useLocation();
 
     // Global Module Links
     const globalLinks = [

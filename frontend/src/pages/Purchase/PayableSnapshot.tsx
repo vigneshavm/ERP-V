@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { ArrowLeft, RefreshCw, TrendingUp, TrendingDown, Users, AlertTriangle, ShieldCheck, Activity, ChevronRight, ArrowUpRight } from 'lucide-react';
+import { RefreshCw, TrendingUp, Users, AlertTriangle, ShieldCheck, Activity, ChevronRight, ArrowUpRight } from 'lucide-react';
 import api from '../../services/api';
 import { useBranchResolver } from '../../hooks/useBranchResolver';
 import Layout from "../../components/shared/Layout/Layout";

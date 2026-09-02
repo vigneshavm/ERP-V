@@ -71,6 +71,19 @@ const itemSchema = new Schema<IItem>(
         size: {
             type: String,
         },
+        brand: {
+            type: String,
+            index: true
+        },
+        shelfCode: {
+            type: String,
+            index: true
+        },
+        shelfType: {
+            type: String,
+            enum: ['FULL', 'HALF'],
+            default: 'FULL'
+        },
         washingInstructions: {
             type: String,
         },
@@ -106,6 +119,20 @@ const itemSchema = new Schema<IItem>(
             costPrice: Number, // Cost for this specific batch
             supplierId: { type: Schema.Types.ObjectId, ref: 'Supplier' },
             receivedDate: { type: Date, default: Date.now }
+        }],
+        // Warehouse Location & Bin Partitioning
+        warehouseId: {
+            type: String,
+            default: 'MAIN_WAREHOUSE'
+        },
+        binLocation: {
+            type: String, // e.g. RACK-A-SHELF-02
+            default: 'A-01'
+        },
+        warehouseLevels: [{
+            warehouseId: { type: String, required: true },
+            binLocation: { type: String },
+            qty: { type: Number, default: 0 }
         }],
         storeLevels: [{
             storeId: { type: Schema.Types.ObjectId, ref: 'Store' },

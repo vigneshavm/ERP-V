@@ -99,7 +99,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                 <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">Store Location</label>
                 <select
                     value={currentBranch || ''}
-                    onChange={(e) => console.log('Dispatch branch change:', e.target.value)}
+                    onChange={() => {}} // TODO: wire up branch-switch dispatch
                     className="bg-white dark:bg-neutral-800 border-b-2 border-primary px-3 py-2 rounded-t-lg text-sm font-bold text-neutral-700 dark:text-white outline-none focus:ring-2 ring-primary/20"
                 >
                     <option value="">All Stores</option>

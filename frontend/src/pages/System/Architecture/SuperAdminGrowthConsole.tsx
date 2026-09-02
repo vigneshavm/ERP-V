@@ -1,26 +1,19 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-    Shield, Settings, CheckCircle, AlertTriangle,
-    MessageSquare, Mail, Smartphone, Share2, ShoppingBag,
-    Layers, Cpu, Lock, Save, RefreshCw,
+import { Settings,
+    MessageSquare, Mail, Smartphone, Share2, ShoppingBag, RefreshCw,
     Users
 } from 'lucide-react';
-import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType, TenantGrowthConfig } from "@/types/tenant";
+import { GlobalGrowthConfig, GrowthProvider, GrowthChannelType } from "@/types/tenant";
 import { GrowthIntelligenceService } from "@/services/GrowthIntelligenceService";
-import { WhatsAppService } from "@/services/whatsappService";
-import { EmailService } from "@/services/emailService";
-import { SMSService } from "@/services/smsService";
-import { SocialService } from "@/services/socialService";
-import { StoreService } from "@/services/storeService";
 
 const SuperAdminGrowthConsole: React.FC = () => {
     const navigate = useNavigate();
     const [config, setConfig] = useState<GlobalGrowthConfig | null>(null);
-    const [providers, setProviders] = useState<GrowthProvider[]>([]);
+    const [_providers, setProviders] = useState<GrowthProvider[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState<'architecture' | 'tenants'>('architecture');
+    const [_isSaving, setIsSaving] = useState(false);
+    const [_activeTab] = useState<'architecture' | 'tenants'>('architecture');
     const [tenants, setTenants] = useState<any[]>([]);
 
     useEffect(() => {
@@ -40,7 +33,7 @@ const SuperAdminGrowthConsole: React.FC = () => {
         setIsLoading(false);
     };
 
-    const handleToggleChannel = (channel: GrowthChannelType) => {
+    const _handleToggleChannel = (channel: GrowthChannelType) => {
         if (!config) return;
         const newChannels = config.allowedChannels.includes(channel)
             ? config.allowedChannels.filter((c: any) => c !== channel)
@@ -48,7 +41,7 @@ const SuperAdminGrowthConsole: React.FC = () => {
         setConfig({ ...config, allowedChannels: newChannels });
     };
 
-    const handleToggleProvider = (channel: GrowthChannelType, providerId: string) => {
+    const _handleToggleProvider = (channel: GrowthChannelType, providerId: string) => {
         if (!config) return;
         const currentProviders = config.allowedProviders[channel] || [];
         const newProviders = currentProviders.includes(providerId)
@@ -64,7 +57,7 @@ const SuperAdminGrowthConsole: React.FC = () => {
         });
     };
 
-    const handleSave = async () => {
+    const _handleSave = async () => {
         if (!config) return;
         setIsSaving(true);
         await GrowthIntelligenceService.updateGlobalConfig(config);
@@ -83,7 +76,7 @@ const SuperAdminGrowthConsole: React.FC = () => {
         );
     }
 
-    const channels: { id: GrowthChannelType; label: string; icon: any; color: string }[] = [
+    const _channels: { id: GrowthChannelType; label: string; icon: any; color: string }[] = [
         { id: 'WHATSAPP' as GrowthChannelType, label: 'WhatsApp', icon: MessageSquare, color: 'text-green-500' },
         { id: 'EMAIL' as GrowthChannelType, label: 'Email', icon: Mail, color: 'text-blue-500' },
         { id: 'SMS' as GrowthChannelType, label: 'SMS', icon: Smartphone, color: 'text-primary' },

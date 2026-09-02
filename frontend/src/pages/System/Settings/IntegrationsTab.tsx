@@ -5,7 +5,7 @@ import { WhatsAppService } from "../../../services/whatsappService";
 
 const IntegrationsTab: React.FC = () => {
     const [isVerifying, setIsVerifying] = useState(false);
-    const [integrations, setIntegrations] = useState({
+    const [integrations] = useState({
         whatsapp: { enabled: true, status: 'connected', quality: 'High', phone: '+91 98765 43210' },
         email: { enabled: true, status: 'active', smtp: 'smtp.bizzai.com' },
         sms: { enabled: false, status: 'disconnected' },

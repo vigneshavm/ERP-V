@@ -5,18 +5,17 @@ import Layout from "../../components/shared/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import StatsCard from "../../components/shared/Display/StatsCard";
 import {
-    CreditCard, Plus, Search, Filter, ArrowRight, Clock,
-    CheckCircle, AlertCircle, DollarSign, FileText, ChevronRight,
-    Search as SearchIcon, Calendar, ArrowUpRight, ArrowDownLeft
+    CreditCard, Filter, Clock,
+    CheckCircle, AlertCircle, DollarSign, ChevronRight,
+    Search as SearchIcon, Calendar, ArrowUpRight
 } from 'lucide-react';
 import api from "../../services/api";
 import { PurchasePayment, PurchasePaymentStatus as PaymentStatus } from "../../types/purchase";
-import { toast } from 'react-toastify';
 
 const SupplierPayments: React.FC = () => {
     const navigate = useNavigate();
     const [payments, setPayments] = useState<PurchasePayment[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [_isLoading, setIsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
 

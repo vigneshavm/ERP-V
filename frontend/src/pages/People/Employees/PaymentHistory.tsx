@@ -2,7 +2,7 @@
 import { Wallet, IndianRupee } from 'lucide-react';
 import { Card } from "../../../components/core/Display/Card";
 import { LaborPayment } from "../../../types/hr";
-import { formatCurrency } from "../../../utils/helpers";
+import { formatCurrency, formatDate} from "../../../utils/helpers";
 
 interface PaymentHistoryProps {
     payments: LaborPayment[];
@@ -46,7 +46,7 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({
                                     <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{formatCurrency(p.amount)}</span>
                                 </div>
                                 <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
-                                    {new Date(p.date).toLocaleDateString()} {p.note && `• ${p.note}`}
+                                    {formatDate(p.date)} {p.note && `• ${p.note}`}
                                 </p>
                             </div>
                         </div>

@@ -56,6 +56,24 @@ redisClient.connect().catch((_err: any) => {
 // In-memory fallback store (per-instance only)
 const memoryStore = new Map();
 
+export const clearInMemoryCounters = () => {
+    memoryStore.clear();
+};
+
+export const clearRateLimitKeys = async (pattern: string) => {
+    if (isRedisAvailable) {
+        try {
+            const keys = await redisClient.keys(pattern);
+            if (keys.length > 0) {
+                await redisClient.del(...keys);
+            }
+        } catch (err) {
+            // Ignore Redis errors during test cleanup
+        }
+    }
+    memoryStore.clear();
+};
+
 /**
  * Rate limiting thresholds (enterprise-grade)
  */

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from "../../../services/api";
 import { toast } from 'react-toastify';
@@ -8,7 +8,6 @@ import {
     FileText,
     CheckCircle2,
     XCircle,
-    Clock,
     ArrowLeft,
     Printer,
     AlertTriangle,
@@ -19,20 +18,16 @@ import {
     Receipt,
     LucideIcon,
     Download,
-    Share2,
-    RefreshCw,
-    Calculator,
-    Globe,
+    Info,
+    ChevronRight,
     IndianRupee,
-    ShieldCheck,
     Calendar,
     Briefcase,
-    Zap,
     User,
-    Layers,
     CheckCircle
 } from 'lucide-react';
-import { SalesOrder, SalesOrderItem } from '../../../types/sales';
+import { SalesOrder } from '../../../types/sales';
+import { formatDate } from '../../../utils/helpers';
 
 interface StatusConfig {
     color: string;
@@ -62,7 +57,7 @@ const SalesOrderDetail = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setOrder(response.data);
-        } catch (error: any) {
+        } catch {
             toast.error('Failed to sync order matrix');
             navigate('/sales/orders');
         } finally {
@@ -174,7 +169,7 @@ const SalesOrderDetail = () => {
                             </h1>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="flex h-2 w-2 rounded-full bg-emerald-500"></span>
-                                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Protocol Active // Log Date: {new Date(order.orderDate).toLocaleDateString()}</p>
+                                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Protocol Active // Log Date: {formatDate(order.orderDate)}</p>
                             </div>
                         </div>
                     </div>
@@ -242,8 +237,8 @@ const SalesOrderDetail = () => {
                                 <div className="p-8 grid grid-cols-2 gap-6">
                                     {[
                                         { label: 'Registry ID', value: order.orderNumber, icon: FileText },
-                                        { label: 'Log Date', value: new Date(order.orderDate).toLocaleDateString(), icon: Calendar },
-                                        { label: 'SLA Breach', value: new Date(order.expectedDeliveryDate).toLocaleDateString(), icon: Truck, urgent: order.isOverdue },
+                                        { label: 'Log Date', value: formatDate(order.orderDate), icon: Calendar },
+                                        { label: 'SLA Breach', value: formatDate(order.expectedDeliveryDate), icon: Truck, urgent: order.isOverdue },
                                         { label: 'Node Admin', value: order.createdBy?.name || 'Automated System', icon: User },
                                     ].map((item, i) => (
                                         <div key={i} className="space-y-1">
@@ -356,7 +351,7 @@ const SalesOrderDetail = () => {
                                 {[
                                     { label: 'Sub-Valuation', value: order.subtotal, color: 'text-white dark:text-neutral-900' },
                                     { label: 'Tax Vector', value: order.taxTotal, color: 'text-success dark:text-emerald-600' },
-                                    { label: 'Protocol Discount', value: -order.discountTotal, color: 'text-danger dark:text-rose-600' },
+                                    { label: 'Protocol Discount', value: -(order.discountTotal || 0), color: 'text-danger dark:text-rose-600' },
                                 ].map((item, i) => (
                                     <div key={i} className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
                                         <span>{item.label}</span>

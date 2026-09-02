@@ -1,8 +1,7 @@
-import { Sale, CartItem } from "../types/sales";
-import { Tenant, Branch, TaxDetails } from "../types/tenant";
+import { Sale } from "../types/sales";
+import { Tenant, Branch } from "../types/tenant";
 import {
     ReceiptJSON,
-    ReceiptData,
     ReceiptItem,
     ReceiptOptions
 } from "../types/receipt";

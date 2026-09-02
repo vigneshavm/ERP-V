@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import {
     Receipt, Search, Plus, Trash2, Printer, Mail, MessageCircle,
     Calendar, User, CreditCard, Banknote, Smartphone, Building2,
-    CheckCircle, AlertCircle, ChevronDown, Save, RefreshCw, Wallet
+    CheckCircle, Save, RefreshCw, Wallet
 } from 'lucide-react';
 import { RootState } from "../../../redux/store";
 
@@ -298,7 +298,7 @@ const PaymentInCreator: React.FC = () => {
                             </div>
 
                             <div className="space-y-3">
-                                {paymentMethods.map((pm, idx) => {
+                                {paymentMethods.map((pm, __idx) => {
                                     const config = methodConfig[pm.method];
                                     const Icon = config.icon;
                                     return (

@@ -1,17 +1,12 @@
 ﻿import React from 'react';
 import {
     X,
-    User,
     TrendingUp,
     Star,
     MessageSquare,
-    AlertCircle,
     Crown,
-    ShoppingBag,
     History,
     Smile,
-    Frown,
-    Meh,
     Zap,
     Phone,
     Mail,

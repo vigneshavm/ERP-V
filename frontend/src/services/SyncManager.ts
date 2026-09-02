@@ -3,6 +3,7 @@ import api from './api';
 import { store } from "../redux/store";
 import { setDailyRecordSynced } from "../redux/slices/financeSlice";
 import { SyncIntelligenceService } from './SyncIntelligenceService';
+import { buildPosInvoicePayload } from './posInvoiceMapper';
 
 export class SyncManager {
     private static isSyncingSelection = false;
@@ -21,13 +22,17 @@ export class SyncManager {
 
             for (const sale of pendingSales) {
                 try {
-                    // Optimized: Sync the entire sale and its inventory impact in one atomic transaction
-                    // Replaced Supabase RPC with API call
-                    const { data } = await api.post('/sales-invoice/sync', {
-                        sale_json: sale
-                    });
+                    // Replay through the same transactional endpoint immediate checkout uses
+                    // (backend/src/modules/sales/controllers/PosController.ts::createInvoice) —
+                    // this validates stock, persists the invoice, and reduces stock in one
+                    // Mongo transaction. The old `/sales-invoice/sync` target had no matching
+                    // route, so offline sales replayed here never actually reached the DB.
+                    const { data } = await api.post('/api/pos/invoice', buildPosInvoicePayload(sale));
 
-                    // Assuming API returns success
+                    if (!data?.success) {
+                        throw new Error(data?.message || 'Server did not confirm the sale was saved');
+                    }
+
                     await db.offlineSales.update(sale.localId!, { synced: true });
                     console.log(`Synced sale: ${sale.id}`);
 
@@ -44,7 +49,10 @@ export class SyncManager {
 
                 } catch (err) {
                     console.error(`Failed to sync sale ${sale.id}:`, err);
-                    // Update retry count if needed
+                    // Track retry attempts (OfflineSale has no `error` field, unlike DailyFinanceQueueItem)
+                    await db.offlineSales.update(sale.localId!, {
+                        retryCount: (sale.retryCount || 0) + 1
+                    });
                 }
             }
         } finally {

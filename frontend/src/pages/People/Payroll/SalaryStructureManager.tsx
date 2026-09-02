@@ -1,21 +1,16 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { } from 'react-router-dom';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { RootState, AppDispatch } from '../../../redux/store';
 import { fetchSalaryComponents, fetchSalaryStructure, saveSalaryStructure, createSalaryComponent, bulkUpdateSalaryStructure } from '../../../redux/slices/payrollSlice';
-import { Plus, Save, User, DollarSign, Users } from 'lucide-react';
+import { Plus, Save, User, Users } from 'lucide-react';
 import api from '../../../services/api';
 
 const SalaryStructureManager = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const navigate = useNavigate();
-    const { components, structures, success, loading } = useSelector((state: RootState) => state.payroll);
-    const user = useSelector((state: RootState) => state.auth.user);
-
-    console.log("[SalaryStructureManager] Current User:", user);
-    console.log("[SalaryStructureManager] Components:", components);
+    const { components, structures, loading } = useSelector((state: RootState) => state.payroll);
 
     const [employees, setEmployees] = useState<any[]>([]);
     const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
@@ -32,7 +27,7 @@ const SalaryStructureManager = () => {
             try {
                 const res = await api.get('/api/employees');
                 if (res.data.success) setEmployees(res.data.data);
-            } catch (e) {
+            } catch {
                 console.error("Failed to load employees");
             }
         };

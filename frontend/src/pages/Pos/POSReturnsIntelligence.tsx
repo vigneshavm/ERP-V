@@ -1,6 +1,7 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import api from '../../services/api';
 import {
     RotateCcw,
     Search,
@@ -63,6 +64,35 @@ const REASON_LABELS: Record<ReturnReason, string> = {
     CASHIER_ERROR: 'Cashier Error',
 };
 
+// The backend stores a free-text reason per line item (see the return-creation form's
+// damagedReasons/notDamagedReasons option lists - "Damaged Product", "Quality Issue", "Wrong
+// Item", "Customer Changed Mind", "Duplicate Order", "No Longer Needed", "Expired Product",
+// "Defective Item", "Other"), not this component's ReturnReason enum. Bucket the first item's
+// reason text into the closest category rather than hardcoding one value for every DB record.
+export const mapDbReasonToCategory = (items: any[]): ReturnReason => {
+    const first = Array.isArray(items) && items.length > 0 ? items[0] : null;
+    const text = (first?.reason || '').toLowerCase();
+
+    if (text.includes('damaged') || text.includes('defective')) return 'DAMAGED_ITEM';
+    if (text.includes('quality') || text.includes('expired')) return 'QUALITY_ISSUE';
+    if (text.includes('wrong item')) return 'WRONG_ITEM';
+    if (text.includes('changed mind') || text.includes('duplicate') || text.includes('no longer needed')) return 'CUSTOMER_CHANGED_MIND';
+
+    // "Other" or unrecognized text - fall back on the item's condition, which is always set.
+    return first?.condition === 'damaged' ? 'DAMAGED_ITEM' : 'CUSTOMER_CHANGED_MIND';
+};
+
+// actualRefundMethod (once the refund is processed) falls back to the originally requested
+// refundMethod when it hasn't been resolved yet. Both enums are richer than this component's
+// three display buckets - cheque/card/upi/bank are all real electronic/non-cash settlements and
+// belong in ONLINE, not the CREDIT_NOTE catch-all they were previously falling into.
+export const mapDbRefundMethod = (r: any): POSReturn['refund_method'] => {
+    const method = r.actualRefundMethod || r.refundMethod;
+    if (method === 'cash') return 'CASH';
+    if (method === 'bank_transfer' || method === 'bank' || method === 'upi' || method === 'card' || method === 'cheque') return 'ONLINE';
+    return 'CREDIT_NOTE'; // credit, original_payment (unresolved), or unset
+};
+
 // --- Component ---
 
 const POSReturnsIntelligence: React.FC = () => {
@@ -72,93 +102,126 @@ const POSReturnsIntelligence: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState<'LEDGER' | 'TRENDS'>('LEDGER');
     const [riskFilter, setRiskFilter] = useState<RiskLevel | 'ALL'>('ALL');
+    const [dbReturnsList, setDbReturnsList] = useState<POSReturn[]>([]);
+
+    useEffect(() => {
+        const fetchDbReturns = async () => {
+            try {
+                const response = await api.get('/api/returns');
+                if (response.data && Array.isArray(response.data)) {
+                    const mapped: POSReturn[] = response.data.map((r: any) => ({
+                        id: r.returnId || `RET-${r._id?.slice(-5)}`,
+                        original_bill: (r.invoice as any)?.invoiceNo || 'POS-8821',
+                        date: r.returnDate ? new Date(r.returnDate).toISOString().slice(0, 16).replace('T', ' ') : new Date().toISOString().slice(0, 16).replace('T', ' '),
+                        branch: 'Main Branch',
+                        terminal: 'TERM-01',
+                        cashier: (r.createdBy as any)?.name || 'System Admin',
+                        customer: (r.customer as any)?.name || r.customerName || 'Walk-in',
+                        amount: r.totalReturnAmount || r.subtotal || 0,
+                        refund_method: mapDbRefundMethod(r),
+                        reason: mapDbReasonToCategory(r.items),
+                        risk_level: (r.totalReturnAmount > 5000) ? 'HIGH' : 'LOW',
+                        flags: r.totalReturnAmount > 5000 ? ['HIGH_VALUE_REFUND'] : []
+                    }));
+                    setDbReturnsList(mapped);
+                }
+            } catch {
+                // Fallback
+            }
+        };
+
+        fetchDbReturns();
+    }, []);
 
     // --- Intelligence Engine (static audit data) ---
 
-    const returns: POSReturn[] = useMemo(() => [
-        {
-            id: 'RET-1041',
-            original_bill: 'POS-8821',
-            date: '2026-01-11 09:22',
-            branch: 'Chennai Main',
-            terminal: 'TERM-02',
-            cashier: 'Arun M.',
-            customer: 'Rajesh Kumar',
-            amount: 1850,
-            refund_method: 'CASH',
-            reason: 'CASHIER_ERROR',
-            risk_level: 'CRITICAL',
-            flags: ['NO_MANAGER_APPROVAL', 'CASH_REFUND_ABOVE_₹1000'],
-        },
-        {
-            id: 'RET-1042',
-            original_bill: 'POS-8774',
-            date: '2026-01-11 10:45',
-            branch: 'Coimbatore Store',
-            terminal: 'TERM-01',
-            cashier: 'Suresh K.',
-            amount: 320,
-            refund_method: 'CREDIT_NOTE',
-            reason: 'DAMAGED_ITEM',
-            risk_level: 'LOW',
-            approved_by: 'Manager Ravi',
-            flags: [],
-        },
-        {
-            id: 'RET-1043',
-            original_bill: 'POS-8799',
-            date: '2026-01-11 11:10',
-            branch: 'Chennai Main',
-            terminal: 'TERM-04',
-            cashier: 'Priya R.',
-            customer: 'Anitha S.',
-            amount: 4200,
-            refund_method: 'ONLINE',
-            reason: 'OVERCHARGE',
-            risk_level: 'HIGH',
-            flags: ['HIGH_VALUE_REFUND', 'REPEAT_CUSTOMER_RETURN'],
-        },
-        {
-            id: 'RET-1044',
-            original_bill: 'POS-8803',
-            date: '2026-01-11 13:30',
-            branch: 'Madurai Godown',
-            terminal: 'TERM-01',
-            cashier: 'Vijay S.',
-            amount: 780,
-            refund_method: 'CASH',
-            reason: 'WRONG_ITEM',
-            risk_level: 'MEDIUM',
-            flags: ['MISSING_RECEIPT_SCAN'],
-        },
-        {
-            id: 'RET-1045',
-            original_bill: 'POS-8755',
-            date: '2026-01-11 14:52',
-            branch: 'Chennai Main',
-            terminal: 'TERM-02',
-            cashier: 'Arun M.',
-            amount: 6500,
-            refund_method: 'CASH',
-            reason: 'CUSTOMER_CHANGED_MIND',
-            risk_level: 'CRITICAL',
-            flags: ['CASH_REFUND_ABOVE_₹1000', 'NO_MANAGER_APPROVAL', 'SAME_CASHIER_3_RETURNS_TODAY'],
-        },
-        {
-            id: 'RET-1046',
-            original_bill: 'POS-8812',
-            date: '2026-01-11 16:05',
-            branch: 'Coimbatore Store',
-            terminal: 'TERM-01',
-            cashier: 'Suresh K.',
-            amount: 195,
-            refund_method: 'CREDIT_NOTE',
-            reason: 'QUALITY_ISSUE',
-            risk_level: 'LOW',
-            approved_by: 'Manager Ravi',
-            flags: [],
-        },
-    ], []);
+    const returns: POSReturn[] = useMemo(() => {
+        if (dbReturnsList && dbReturnsList.length > 0) return dbReturnsList;
+        return [
+            {
+                id: 'RET-1041',
+                original_bill: 'POS-8821',
+                date: '2026-01-11 09:22',
+                branch: 'Chennai Main',
+                terminal: 'TERM-02',
+                cashier: 'Arun M.',
+                customer: 'Rajesh Kumar',
+                amount: 1850,
+                refund_method: 'CASH',
+                reason: 'CASHIER_ERROR',
+                risk_level: 'CRITICAL',
+                flags: ['NO_MANAGER_APPROVAL', 'CASH_REFUND_ABOVE_₹1000'],
+            },
+            {
+                id: 'RET-1042',
+                original_bill: 'POS-8774',
+                date: '2026-01-11 10:45',
+                branch: 'Coimbatore Store',
+                terminal: 'TERM-01',
+                cashier: 'Suresh K.',
+                amount: 320,
+                refund_method: 'CREDIT_NOTE',
+                reason: 'DAMAGED_ITEM',
+                risk_level: 'LOW',
+                approved_by: 'Manager Ravi',
+                flags: [],
+            },
+            {
+                id: 'RET-1043',
+                original_bill: 'POS-8799',
+                date: '2026-01-11 11:10',
+                branch: 'Chennai Main',
+                terminal: 'TERM-04',
+                cashier: 'Priya R.',
+                customer: 'Anitha S.',
+                amount: 4200,
+                refund_method: 'ONLINE',
+                reason: 'OVERCHARGE',
+                risk_level: 'HIGH',
+                flags: ['HIGH_VALUE_REFUND', 'REPEAT_CUSTOMER_RETURN'],
+            },
+            {
+                id: 'RET-1044',
+                original_bill: 'POS-8803',
+                date: '2026-01-11 13:30',
+                branch: 'Madurai Godown',
+                terminal: 'TERM-01',
+                cashier: 'Vijay S.',
+                amount: 780,
+                refund_method: 'CASH',
+                reason: 'WRONG_ITEM',
+                risk_level: 'MEDIUM',
+                flags: ['MISSING_RECEIPT_SCAN'],
+            },
+            {
+                id: 'RET-1045',
+                original_bill: 'POS-8755',
+                date: '2026-01-11 14:52',
+                branch: 'Chennai Main',
+                terminal: 'TERM-02',
+                cashier: 'Arun M.',
+                amount: 6500,
+                refund_method: 'CASH',
+                reason: 'CUSTOMER_CHANGED_MIND',
+                risk_level: 'CRITICAL',
+                flags: ['CASH_REFUND_ABOVE_₹1000', 'NO_MANAGER_APPROVAL', 'SAME_CASHIER_3_RETURNS_TODAY'],
+            },
+            {
+                id: 'RET-1046',
+                original_bill: 'POS-8812',
+                date: '2026-01-11 16:05',
+                branch: 'Coimbatore Store',
+                terminal: 'TERM-01',
+                cashier: 'Suresh K.',
+                amount: 195,
+                refund_method: 'CREDIT_NOTE',
+                reason: 'QUALITY_ISSUE',
+                risk_level: 'LOW',
+                approved_by: 'Manager Ravi',
+                flags: [],
+            },
+        ];
+    }, [dbReturnsList]);
 
     const summary = useMemo(() => {
         const total_refunded = returns.reduce((acc, r) => acc + r.amount, 0);
