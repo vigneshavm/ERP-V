@@ -475,14 +475,12 @@ export class PayrollService {
         session.startTransaction();
 
         try {
-            console.log(`[PayrollService] Bulk Update - Finding Component ${componentId} for Tenant ${tenantId}`);
             // Validate Component
             const component = await SalaryComponent.findOne({ _id: componentId, tenantId }).session(session);
             if (!component) {
                 console.error(`[PayrollService] Component not found!`);
                 throw new AppError("Component not found", 404);
             }
-            console.log(`[PayrollService] Component found: ${component.name}`);
 
             // Find All Active Employees
             const employees = await Employee.find({ tenantId, isActive: true }).session(session);

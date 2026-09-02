@@ -203,7 +203,7 @@ describe('QA Validation: Highest-Priority P0 Business Scenarios (P0-001 to P0-02
     });
 
     test('P0-020: Vendor payment updates outstanding balance correctly', () => {
-        let totalAmount = 15000;
+        const totalAmount = 15000;
         let paidAmount = 0;
 
         // Payment of 10,000

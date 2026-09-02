@@ -117,7 +117,7 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
         });
 
         // 4. Transform and Merge
-        let transactions: any[] = [];
+        const transactions: any[] = [];
 
         bills.forEach(b => transactions.push({
             date: b.date,

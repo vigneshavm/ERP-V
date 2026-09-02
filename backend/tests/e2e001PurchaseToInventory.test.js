@@ -85,6 +85,8 @@ function MockPurchase(doc) {
     this._id = doc._id || 'PURCHASE_ID_1';
     this.items = doc.items || [];
     this.save = mockPurchaseInstanceSave;
+    // Test spy: captures the constructed instance for later assertions, not a `this`-binding workaround
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     capturedPurchase = this;
 }
 MockPurchase.findOne = mockPurchaseFindOne;
@@ -97,6 +99,8 @@ function MockGRN(doc) {
     Object.assign(this, doc);
     this._id = doc._id || 'GRN_ID_1';
     this.save = mockGRNInstanceSave;
+    // Test spy: captures the constructed instance for later assertions, not a `this`-binding workaround
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     capturedGRN = this;
 }
 MockGRN.findOne = mockGRNFindOne;

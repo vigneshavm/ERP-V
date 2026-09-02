@@ -30,7 +30,7 @@ const run = async () => {
 
         console.log(`✅ User found: ${user._id}`);
         console.log(`   Name: ${user.name}`);
-        // @ts-ignore
+        // @ts-expect-error -- tenantId isn't declared on the User schema type but is present on stored documents
         console.log(`   TenantId: ${user.tenantId}`);
         console.log(`   Role: ${user.role}`);
 

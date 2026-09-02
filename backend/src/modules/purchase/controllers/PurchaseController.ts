@@ -139,7 +139,7 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
         for (const i of items) {
             let productId = i.product_id;
             let productName = i.product_name || 'Unknown';
-            let catCode = i.category_code || 'CAT';
+            const catCode = i.category_code || 'CAT';
 
             // If it's a new item (no product_id or marked as new)
             if (!productId || productId === 'new') {

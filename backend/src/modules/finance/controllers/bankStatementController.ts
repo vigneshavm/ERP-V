@@ -118,7 +118,7 @@ export const getTransactions = async (req: Request, res: Response) => {
         }
 
         const { status } = req.query;
-        let filter: any = { userId };
+        const filter: any = { userId };
         if (status) {
             filter.status = status;
         }

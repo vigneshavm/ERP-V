@@ -343,7 +343,7 @@ export const getSupplierById = async (req: AuthenticatedRequest, res: Response) 
 
         // Net Balance = (Opening + Invoiced) - (Paid + DebitNotes)
         // Assuming standard payable context
-        let netBalance = (openingBalance + totalInvoiced) - (totalPaid + totalDebitNotes);
+        const netBalance = (openingBalance + totalInvoiced) - (totalPaid + totalDebitNotes);
 
         res.status(200).json({
             success: true,

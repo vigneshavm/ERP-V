@@ -305,15 +305,6 @@ export class AuthController {
             const userAgent = req.headers['user-agent'] || 'unknown';
             const ipAddress = req.ip || req.socket?.remoteAddress || 'unknown';
 
-            // Check for active session on different device
-            // if (user.activeDeviceId && user.activeDeviceId !== existingDeviceId) {
-            //     res.status(409).json({
-            //         message: 'This account is currently active on another device.',
-            //         deviceConflict: true,
-            //     });
-            //     return;
-            // }
-
             // Determine deviceId to use
             let deviceIdToUse: string;
             if (existingDeviceId && user.activeDeviceId === existingDeviceId) {

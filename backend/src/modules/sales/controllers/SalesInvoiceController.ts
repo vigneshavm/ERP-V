@@ -48,8 +48,6 @@ export const getSalesInvoiceSummary = async (req: AuthenticatedRequest, res: Res
 
         // Get actual customer dues (source of truth)
         // Sum all positive dues (customers who owe money)
-        // Get actual customer dues (source of truth)
-        // Sum all positive dues (customers who owe money)
         const customers = await Customer.find({ tenantId: tenantId });
         const outstandingDues = customers.reduce((sum: number, customer: any) => {
             return sum + (customer.dues > 0 ? customer.dues : 0);

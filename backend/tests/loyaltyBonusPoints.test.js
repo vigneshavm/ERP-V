@@ -38,7 +38,7 @@ describe('QA Validation: Loyalty / Bonus Point Test Suite (LOY-001 to LOY-011)',
     });
 
     test('LOY-004 (P0): Refund order -> Points reversed', () => {
-        let points = 250;
+        const points = 250;
         const earnedFromRefundedOrder = 50;
 
         const processRefundReversal = (currentPts, ptsToReverse) => {
@@ -88,7 +88,7 @@ describe('QA Validation: Loyalty / Bonus Point Test Suite (LOY-001 to LOY-011)',
     });
 
     test('LOY-009 (P1): Points expire -> Points marked expired', () => {
-        let currentPoints = 200;
+        const currentPoints = 200;
         const expiredPoints = 50;
 
         const processExpiry = (balance, toExpire) => {

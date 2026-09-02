@@ -61,7 +61,7 @@ const run = async () => {
 
         // 2. Create Default Branch
         console.log("\n🌿 Checking for Default Branch...");
-        let defaultBranch = await db.collection("branches").findOne({ tenantId: tenantId, isMain: true });
+        const defaultBranch = await db.collection("branches").findOne({ tenantId: tenantId, isMain: true });
 
         if (!defaultBranch) {
             console.log("⚠️  Default Branch not found. Creating one...");

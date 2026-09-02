@@ -72,7 +72,7 @@ export const getProductCategories = async (req: Request, res: Response): Promise
     const { sectorId, sectorName } = req.query;
 
     try {
-        let filter: any = { status: 'ACTIVE' };
+        const filter: any = { status: 'ACTIVE' };
 
         if (sectorId) {
             filter.businessSectorId = sectorId;

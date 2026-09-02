@@ -54,8 +54,6 @@ export const extractSupplierFromInvoice = async (req: Request, res: Response) =>
         const response = result;
         let text = response.text || '';
 
-        console.log('Gemini Raw Response:', text);
-
         if (!text || text.trim() === '') {
             throw new Error('Empty response from AI model');
         }
@@ -126,8 +124,6 @@ export const extractSupplierFromText = async (req: Request, res: Response) => {
 
         const response = result;
         let text = response.text || '';
-
-        console.log('Gemini Text Raw Response:', text);
 
         if (!text || text.trim() === '') {
             throw new Error('Empty response from AI model');

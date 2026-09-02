@@ -72,17 +72,17 @@ export const enforceStructuredLogging = () => {
 export const validateLoggingConfiguration = () => {
     const errors: string[] = [];
 
-    // Check if logger utility exists
-    try {
-        require('../utils/logger.js');
-    } catch (err) {
+    // Check if logger utility loaded correctly. This module is ESM ("type": "module"
+    // in package.json), and both dependencies are already statically imported above —
+    // a bare require() here (the original check) throws ReferenceError in ESM and was
+    // always being swallowed by the catch block below, so this validation silently
+    // reported both as "not found" on every run regardless of their real state.
+    if (typeof warn !== 'function') {
         errors.push('Logger utility not found');
     }
 
-    // Check if correlation middleware exists
-    try {
-        require('./correlationMiddleware.js');
-    } catch (err) {
+    // Check if correlation middleware loaded correctly
+    if (typeof correlationMiddleware !== 'function') {
         errors.push('Correlation middleware not found');
     }
 
@@ -110,7 +110,7 @@ export const validateLoggingConfiguration = () => {
  * @param {Function} handler - Job handler function
  * @returns {Function} Wrapped handler with trace context
  */
-export const withTraceContext = (handler: Function) => {
+export const withTraceContext = (handler: (job: any) => any) => {
     return async (job: any) => {
         // Extract correlation ID from job data
         const correlationId = job.data.correlationId || job.id;

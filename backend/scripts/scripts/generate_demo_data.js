@@ -403,7 +403,7 @@ TENANTS.forEach(tenant => {
 
 // Generate daily finance records
 const dateMap = {};
-let curr = new Date(START_DATE);
+const curr = new Date(START_DATE);
 while (curr <= END_DATE) {
     TENANTS.forEach(tenant => {
         const dStr = curr.toISOString().split('T')[0];

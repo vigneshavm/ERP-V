@@ -99,7 +99,7 @@ describe('QA Validation: Dynamic Configuration & Database-Driven Architecture (C
 
     test('CFG-005 (P0): Change reorder level in inventory config -> Low stock alert threshold updated dynamically', async () => {
         const tenantId = 'TENANT_CFG_05';
-        let stockOnHand = 12;
+        const stockOnHand = 12;
 
         // Default reorder level = 10 -> Stock 12 is NOT low
         let reorderLevel = await ConfigService.get(tenantId, 'REORDER_LEVEL', 10);

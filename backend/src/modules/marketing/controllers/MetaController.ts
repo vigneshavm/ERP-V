@@ -97,7 +97,7 @@ export class MetaController {
             }));
 
             const businessesData = await metaService.getWhatsAppBusinessAccounts(accessToken);
-            let whatsappAccounts: any[] = [];
+            const whatsappAccounts: any[] = [];
 
             if (businessesData.data) {
                 businessesData.data.forEach((business: any) => {
@@ -220,9 +220,6 @@ export class MetaController {
         const body = req.body;
 
         if (body.object === 'page' || body.object === 'instagram') {
-            body.entry?.forEach((entry: any) => {
-                console.log("Meta Webhook Event:", JSON.stringify(entry));
-            });
             res.status(200).send('EVENT_RECEIVED');
         } else {
             res.sendStatus(404);

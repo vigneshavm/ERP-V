@@ -125,14 +125,11 @@ export const getAllSalaryStructures = async (req: Request, res: Response) => {
 export const bulkUpdateSalaryStructure = async (req: Request, res: Response) => {
     try {
         const tenantId = (req as any).user.tenantId;
-        const userId = (req as any).user._id;
         const { componentId, amount } = req.body;
 
         if (!componentId || amount === undefined) {
             return res.status(400).json({ success: false, message: "ComponentId and Amount are required" });
         }
-
-        console.log(`[Bulk Update] Request - Tenant: ${tenantId}, User: ${userId}, Component: ${componentId}, Amount: ${amount}`);
 
         const payrollService = container.resolve(PayrollService);
         const result = await payrollService.bulkUpdateStructure(tenantId, componentId, Number(amount));

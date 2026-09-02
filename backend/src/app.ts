@@ -19,26 +19,6 @@ import tenantResolver from "./middlewares/tenantResolver.js";
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.js';
 
-// Routes
-// import healthRoutes from "./routes/healthRoutes.js";
-// import authRoutes from "./routes/authRoutes.js";
-// import userRoutes from "./routes/userRoutes.js";
-// import expenseRoutes from "./routes/expenseRoutes.js";
-// import posRoutes from "./routes/posRoutes.js";
-// import expenseCategoryRoutes from "./routes/expenseCategoryRoutes.js";
-// import recurringExpenseRoutes from "./routes/recurringExpenseRoutes.js";
-// import expenseReportRoutes from "./routes/expenseReportRoutes.js";
-// import returnRoutes from "./routes/returnRoutes.js";
-// import estimateRoutes from "./routes/estimateRoutes.js";
-// import reportRoutes from "./routes/reportRoutes.js";
-// import refreshTokenRoutes from "./routes/refreshTokenRoutes.js";
-// import businessRoutes from "./routes/businessRoutes.js";
-// import shopRoutes from "./routes/shopRoutes.js";
-// import loyaltyRoutes from "./routes/loyaltyRoutes.js"; // Moved to modules
-// import employeeRoutes from "./routes/employeeRoutes.js"; // Moved to modules
-// import purchaseRoutes from "./routes/purchaseRoutes.js"; // Moved to modules
-
-
 dotenv.config();
 
 const app: Express = express();
@@ -120,11 +100,6 @@ app.use(tenantResolver);
 // Swagger Documentation
 // =======================
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// =======================
-// Routes
-// =======================
-// app.use("/api/health", healthRoutes); // Handled by coreRoutes
 
 // Root Route
 app.get("/", (_req, res) => {

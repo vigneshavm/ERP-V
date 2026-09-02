@@ -27,7 +27,7 @@ const debug = async () => {
             // Explicitly logging as string and type
             console.log(`TenantID Value: ${supplier.tenantId}`);
             console.log(`TenantID Type: ${typeof supplier.tenantId}`);
-            // @ts-ignore
+            // @ts-expect-error -- debug-only introspection of the ObjectId's runtime constructor, not part of the declared type
             console.log(`TenantID Constructor: ${supplier.tenantId?.constructor?.name}`);
         } else {
             console.log("No suppliers found.");

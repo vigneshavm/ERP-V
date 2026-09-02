@@ -5,7 +5,7 @@ import { AppError } from "../../../utils/AppError.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 
 export const getAllBranches = asyncHandler(async (req: Request, res: Response) => {
-    // @ts-ignore - tenantId added by middleware
+    // tenantId added by middleware
     const tenantId = (req as any).tenantId;
     if (!tenantId) {
         res.status(200).json([]);
@@ -94,7 +94,6 @@ export const getAllBranches = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const getBranch = asyncHandler(async (req: Request, res: Response) => {
-    // @ts-ignore
     const tenantId = (req as any).tenantId;
     const branch = await Branch.findOne({ _id: req.params.id, tenantId });
     if (!branch) {
@@ -104,7 +103,6 @@ export const getBranch = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const createBranch = asyncHandler(async (req: Request, res: Response) => {
-    // @ts-ignore
     const tenantId = (req as any).tenantId;
 
     // Check if main branch exists if this is trying to be main
@@ -137,7 +135,6 @@ export const createBranch = asyncHandler(async (req: Request, res: Response) => 
 });
 
 export const updateBranch = asyncHandler(async (req: Request, res: Response) => {
-    // @ts-ignore
     const tenantId = (req as any).tenantId;
 
     if (req.body.isMain) {
@@ -168,7 +165,6 @@ export const updateBranch = asyncHandler(async (req: Request, res: Response) => 
 });
 
 export const deleteBranch = asyncHandler(async (req: Request, res: Response) => {
-    // @ts-ignore
     const tenantId = (req as any).tenantId;
     const branch = await Branch.findOneAndDelete({ _id: req.params.id, tenantId });
 
