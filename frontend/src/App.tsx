@@ -8,11 +8,11 @@ import { setActiveTab } from './redux/slices/uiSlice';
 import { APP_CONFIG } from './config';
 
 import AdminLogin from './components/AdminLogin';
-import ResetPassword from './pages/auth/ResetPassword';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import TenantManager from './pages/People/Tenants/TenantManager';
-import TenantSignUp from './pages/People/Tenants/TenantSignUp';
-import { POSCustomerDisplay } from './pages/Pos/POSCustomerDisplay';
+import ResetPassword from './features/auth/pages/ResetPassword';
+import ForgotPassword from './features/auth/pages/ForgotPassword';
+import TenantManager from './features/tenants/TenantManager';
+import TenantSignUp from './features/tenants/TenantSignUp';
+import { POSCustomerDisplay } from './features/pos/POSCustomerDisplay';
 import { ThemeToggle } from './components/core/Display/ThemeToggle';
 
 // Config
@@ -23,7 +23,7 @@ import { Tenant } from './types/tenant';
 import { Routes, Route } from 'react-router-dom';
 
 // NEW: Imported TenantView
-import TenantView from './pages/Views/TenantView';
+import TenantView from './components/shared/Layout/TenantView';
 
 type ViewMode = 'LANDING' | 'ADMIN' | 'TENANT';
 

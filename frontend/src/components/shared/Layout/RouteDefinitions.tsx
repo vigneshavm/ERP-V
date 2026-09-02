@@ -3,10 +3,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { LazyModules } from '../../../services/ModuleRegistry';
 
 // Specific lazy loads that were in TenantView
-const PayableSnapshot = lazy(() => import('../../../pages/Purchase/PayableSnapshot'));
-const UnclearedCheques = lazy(() => import('../../../pages/Purchase/UnclearedCheques'));
-const RateRevisionList = lazy(() => import('../../../pages/Purchase/RateRevisionList'));
-const RateRevisionForm = lazy(() => import('../../../pages/Purchase/RateRevisionForm'));
+const PayableSnapshot = lazy(() => import('../../../features/purchase/PayableSnapshot'));
+const UnclearedCheques = lazy(() => import('../../../features/purchase/UnclearedCheques'));
+const RateRevisionList = lazy(() => import('../../../features/purchase/RateRevisionList'));
+const RateRevisionForm = lazy(() => import('../../../features/purchase/RateRevisionForm'));
 
 interface RouteDefinitionsProps {
     renderContent: () => React.ReactNode;

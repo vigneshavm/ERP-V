@@ -1,5 +1,27 @@
 # CLAUDE.md — React Project AI Coding Guidelines
 
+## Frontend Architecture
+
+`frontend/src` is organized feature-first:
+
+- `features/<domain>/` — one folder per business domain (auth, tenants, customers, employees,
+  payroll, suppliers, purchase, sales, pos, inventory, finance, financial, expenses, marketing,
+  customer-engagement, reports, dashboard, system, business, commercial, online-store). Each
+  contains that domain's pages/components/hooks, preserving whatever internal subfolders
+  (`components/`, `hooks/`, etc.) it already had.
+- `components/shared/` — cross-domain UI (Layout, Modals, Table, core primitives, etc.).
+- `redux/`, `services/`, `types/`, `utils/`, `hooks/`, `contexts/`, `data/`, `config/` — centralized,
+  not duplicated per feature (matches this project's existing store/service architecture).
+- `services/ModuleRegistry.ts` is the single lazy-import map used by the app's `viewMode`-driven
+  router (`ModuleRenderer`/`RouteDefinitions`) — any page relocation must update its entry here.
+
+Dependency direction: `App.tsx` → `features/*` → `components/shared` / `redux` / `services` / `types`
+/ `utils`. A feature should not import from another feature's internals; shared code belongs in the
+centralized folders above, not copied between features.
+
+There is no `pages/` directory anymore — it was migrated into `features/` domain by domain, verified
+with `tsc --noEmit` and ESLint after each move (2026-09-03).
+
 ## Purpose
 
 These rules apply to Claude Code and other AI coding agents working in this repository.

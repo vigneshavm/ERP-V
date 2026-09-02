@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from "../../services/api.js";
 import { RootState } from '../store';
-import { Account, Transaction, CashBankPosition, BankSummary, LedgerData } from "../../pages/Financial/Cashbank/types";
+import { Account, Transaction, CashBankPosition, BankSummary, LedgerData } from "../../features/financial/Cashbank/types";
 
 const API_URL = "/api/cashbank";
 
