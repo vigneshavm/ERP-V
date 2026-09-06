@@ -71,10 +71,22 @@ interface PurchaseItem {
     size?: string;
     washingInstructions?: string;
     washing_instructions?: string;
+
+    // Wholesale/Retail (WR) Billing: bulk/wholesale rate, only shown/edited when this screen is
+    // rendered in WHOLESALE channel (see WRPurchaseEntry.tsx). Kept on every row regardless of
+    // channel so it round-trips if the operator switches -- it's simply not sent when RETAIL.
+    wholesaleRate?: number;
 }
 
+interface PurchaseEntryProps {
+    // Wholesale/Retail (WR) Billing: WRPurchaseEntry.tsx renders this same screen with
+    // channel="WHOLESALE" instead of duplicating its ~1600 lines of item-grid/PDF-import/
+    // design-set logic. Defaults to RETAIL so every existing route (/purchase/new) is unaffected.
+    channel?: 'RETAIL' | 'WHOLESALE';
+}
 
-const PurchaseEntry: React.FC = () => {
+const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => {
+    const isWholesale = channel === 'WHOLESALE';
     const dispatch = useDispatch<any>();
     const { user } = useSelector((state: RootState) => state.auth);
     const _tenantId = user?.tenantId;
@@ -224,7 +236,8 @@ const PurchaseEntry: React.FC = () => {
             discount_amount: 0,
             line_total: 0,
             margin: 0,
-            sellingPrice: 0
+            sellingPrice: 0,
+            wholesaleRate: 0
         }]);
     };
 
@@ -682,7 +695,8 @@ const PurchaseEntry: React.FC = () => {
                     shipping_amount: shippingAmount,
                     round_off: 0,
                     total_amount: grandTotal,
-                    notes
+                    notes,
+                    channel
                 },
                 items: items.filter((i: PurchaseItem) => i.product_id || i.product_name).map((i: PurchaseItem) => ({
                     product_id: i.product_id,
@@ -697,11 +711,13 @@ const PurchaseEntry: React.FC = () => {
                     amount: i.amount,
                     margin: i.margin || 0,
                     selling_price: i.sellingPrice || 0,
+                    wholesale_rate: isWholesale ? (i.wholesaleRate || 0) : undefined,
                     color: i.color,
                     size: i.size,
                     sku: i.sku
                 })),
                 p_vendor_id: supplierId,
+                channel,
                 status, // Pass status to backend
                 receipt_status: receiptStatus,
                 payment_terms: paymentTerms,
@@ -771,7 +787,8 @@ const PurchaseEntry: React.FC = () => {
             discount_amount: 0,
             line_total: 0,
             margin: 0,
-            sellingPrice: 0
+            sellingPrice: 0,
+            wholesaleRate: 0
         }]);
 
         setShippingAmount(0);
@@ -944,8 +961,8 @@ const PurchaseEntry: React.FC = () => {
                 )}
 
                 <PageHeader
-                    title="Purchase Entry"
-                    description="Inventory Management / New Inward"
+                    title={isWholesale ? "Wholesale Purchase Entry" : "Purchase Entry"}
+                    description={isWholesale ? "Wholesale/Retail Billing / Bulk Purchase Intake" : "Inventory Management / New Inward"}
                     actions={
                         <div className="flex items-center gap-2">
                             <button
@@ -1328,6 +1345,7 @@ const PurchaseEntry: React.FC = () => {
                                     <th className="px-6 py-4 font-semibold text-right w-24">Qty</th>
                                     <th className="px-6 py-4 font-semibold text-right w-32">Rate (₹)</th>
                                     <th className="px-6 py-4 font-semibold text-right w-24">Tax %</th>
+                                    {isWholesale && <th className="px-6 py-4 font-semibold text-right w-32">Wholesale Rate (₹)</th>}
                                     <th className="px-6 py-4 font-semibold text-center w-40">Pricing (₹)</th>
                                     <th className="px-6 py-4 font-semibold text-right w-32">Total</th>
                                     <th className="px-4 py-4 w-12 text-center"></th>
@@ -1445,6 +1463,18 @@ const PurchaseEntry: React.FC = () => {
                                                 className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none text-neutral-500"
                                             />
                                         </td>
+                                        {isWholesale && (
+                                            <td className="px-6 py-4">
+                                                <input
+                                                    type="number"
+                                                    value={item.wholesaleRate || 0}
+                                                    onFocus={e => e.target.select()}
+                                                    onChange={e => updateItem(idx, 'wholesaleRate', parseFloat(e.target.value) || 0)}
+                                                    className="w-full text-right bg-violet-50 dark:bg-violet-900/10 border-b border-transparent focus:border-primary outline-none font-medium text-violet-700 dark:text-violet-300 rounded px-1"
+                                                    placeholder="Bulk rate"
+                                                />
+                                            </td>
+                                        )}
                                         <td className="px-6 py-4 text-center">
                                             <div className="flex flex-col gap-1 items-end">
                                                 <div className="flex items-center gap-1 justify-end">
@@ -1508,7 +1538,7 @@ const PurchaseEntry: React.FC = () => {
                                 ))}
                                 {items.length === 0 && (
                                     <tr>
-                                        <td colSpan={8} className="py-12 text-center">
+                                        <td colSpan={isWholesale ? 9 : 8} className="py-12 text-center">
                                             <div className="flex flex-col items-center gap-3">
                                                 <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center text-neutral-400">
                                                     <ShoppingBag className="w-6 h-6" />

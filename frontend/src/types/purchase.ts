@@ -206,6 +206,7 @@ export interface GRN {
     vendorId: string;
     vendorName: string;
     receivedDate: string;
+    warehouseId?: string; // references a MasterEntry of type WAREHOUSE (falls back to the default warehouse server-side if omitted)
     status: GRNStatus;
     notes?: string;
     items: GRNItem[];
@@ -303,6 +304,11 @@ export interface PurchaseReturnItem {
     rate: number;
     tax_percent: number;
     line_total: number;
+    // Carried through from the source GRN line (GRNItem.batchNumber/lotNumber) so a
+    // GRN-scoped return decrements the exact batch the goods came in under, not just
+    // whichever batch happens to be oldest (see backend PurchaseReturnController /
+    // InventoryService.reduceStockFromBatch).
+    batch_number?: string;
 }
 
 export interface PurchaseReturn {

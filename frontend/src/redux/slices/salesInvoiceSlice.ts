@@ -135,6 +135,36 @@ export const markSalesInvoiceAsPaid = createAsyncThunk(
     }
 );
 
+// Correct a completed POS invoice's line quantities/prices/discount (see backend's
+// PosController.editInvoice) -- lives under /api/pos/invoice rather than API_URL since it's
+// the same underlying Invoice document but a POS-specific action, not a sales-invoice CRUD one.
+export const editSalesInvoice = createAsyncThunk(
+    'salesInvoice/edit',
+    async (
+        { id, items, discount, editReason }: {
+            id: string;
+            items: Array<{ item: string; quantity?: number; price?: number; discount?: number }>;
+            discount?: number;
+            editReason?: string;
+        },
+        thunkAPI
+    ) => {
+        try {
+            const state = thunkAPI.getState() as any;
+            const token = state.auth.user?.token;
+            if (!token) return thunkAPI.rejectWithValue("Not authenticated");
+            const response = await api.patch(`/api/pos/invoice/${id}/edit`, { items, discount, editReason }, getConfig(token));
+            return response.data;
+        } catch (error: any) {
+            const message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
 // Create new sales invoice
 export const createSalesInvoice = createAsyncThunk(
     'salesInvoice/create',
@@ -260,6 +290,26 @@ export const salesInvoiceSlice = createSlice({
                 }
             })
             .addCase(markSalesInvoiceAsPaid.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            // Edit sales invoice
+            .addCase(editSalesInvoice.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(editSalesInvoice.fulfilled, (state, action: PayloadAction<{ invoice: Invoice }>) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                const index = state.invoices.findIndex(inv => inv._id === action.payload.invoice._id);
+                if (index !== -1) {
+                    state.invoices[index] = action.payload.invoice;
+                }
+                if (state.invoice && state.invoice._id === action.payload.invoice._id) {
+                    state.invoice = action.payload.invoice;
+                }
+            })
+            .addCase(editSalesInvoice.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

@@ -16,7 +16,7 @@ const SIMPLE_FIELDS = [
 
 // Nested sub-documents that are shallow-merged so a partial update (e.g. only
 // `city` changing) never wipes out sibling keys already saved on the tenant.
-const NESTED_FIELDS = ['companyDetails', 'taxDetails', 'bankingDetails', 'systemConfig'] as const;
+const NESTED_FIELDS = ['companyDetails', 'taxDetails', 'bankingDetails', 'systemConfig', 'misConfig', 'printSettings'] as const;
 
 function toPlainObject(value: any): Record<string, any> {
     if (!value) return {};
@@ -40,6 +40,8 @@ function serializeTenant(tenant: any) {
     const taxDetails = toPlainObject(tenant.taxDetails);
     const bankingDetails = toPlainObject(tenant.bankingDetails);
     const systemConfig = toPlainObject(tenant.systemConfig);
+    const misConfig = toPlainObject(tenant.misConfig);
+    const printSettings = toPlainObject(tenant.printSettings);
 
     return {
         id: tenant._id,
@@ -78,6 +80,13 @@ function serializeTenant(tenant: any) {
         systemConfig: {
             pricingMode: systemConfig.pricingMode ?? tenant.defaultTaxMode ?? "EXCLUSIVE"
         },
+        // Raw, undefaulted -- the frontend (Settings.tsx / MISControlsTab) merges this
+        // over DEFAULT_MIS_CONFIG so a tenant that has never saved MIS Controls still
+        // sees sensible defaults instead of blanks.
+        misConfig,
+        // Raw, undefaulted -- same convention as misConfig; the frontend Print Settings tab
+        // merges this over its own local defaults.
+        printSettings,
         defaultTaxMode: tenant.defaultTaxMode || "",
         enabledModules: enabledModulesToObject(tenant.enabledModules),
         // Legacy flat aliases, retained for any older consumer that still reads them

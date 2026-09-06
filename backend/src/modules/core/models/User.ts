@@ -38,6 +38,11 @@ const userSchema = new Schema<IUser>(
             type: String,
             default: "",
         },
+        language: {
+            type: String,
+            enum: ["en", "ta"],
+            default: "en",
+        },
         sector: {
             type: String,
             default: "",
@@ -89,6 +94,10 @@ const userSchema = new Schema<IUser>(
             type: String,
             enum: ["active", "inactive", "suspended"],
             default: "active",
+        },
+        // Per-user discount permission -- see IUser.ts for the full rationale.
+        maxDiscountPercent: {
+            type: Number,
         },
         lastLogin: {
             type: Date,

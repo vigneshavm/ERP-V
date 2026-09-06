@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Maximize2, Minimize2, Wifi, WifiOff, Plus, X } from 'lucide-react';
+import { Maximize2, Minimize2, Wifi, WifiOff, Plus, X, Languages } from 'lucide-react';
 import { Session } from "../../types/sales";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 interface POSHeaderProps {
     sessions: Session[];
@@ -32,6 +33,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
     currentBranch
 }) => {
     const isOnline = useNetworkStatus();
+    const { language, setLanguage, t } = useLanguage();
 
     const currentBranchData = branches?.find(b => b.id === currentBranch);
     const availableCounters = currentBranchData?.counters || [];
@@ -96,13 +98,13 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
 
             {/* Store / Branch Selector */}
             <div className="hidden lg:flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">Store Location</label>
+                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">{t('storeLocation')}</label>
                 <select
                     value={currentBranch || ''}
                     onChange={() => {}} // TODO: wire up branch-switch dispatch
                     className="bg-white dark:bg-neutral-800 border-b-2 border-primary px-3 py-2 rounded-t-lg text-sm font-bold text-neutral-700 dark:text-white outline-none focus:ring-2 ring-primary/20"
                 >
-                    <option value="">All Stores</option>
+                    <option value="">{t('allStores')}</option>
                     {(branches || []).map((b: any) => (
                         <option key={b.id || b._id} value={b.id || b._id}>
                             {b.name}
@@ -114,7 +116,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
             {/* Counter Selector */}
             {availableCounters.length > 0 && (
                 <div className="hidden lg:flex flex-col gap-1">
-                    <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">Terminal</label>
+                    <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">{t('terminal')}</label>
                     <select
                         value={activeCounterId}
                         onChange={(e) => onSwitchCounter(e.target.value)}
@@ -136,8 +138,17 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                     : 'bg-warning/10 text-warning border-warning/20'
                     }`}>
                     {isOnline ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
-                    {isOnline ? 'Online' : 'Offline'}
+                    {isOnline ? t('online') : t('offline')}
                 </div>
+
+                <button
+                    onClick={() => setLanguage(language === 'en' ? 'ta' : 'en')}
+                    className="hidden sm:flex items-center gap-1.5 px-2.5 py-2.5 bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 hover:text-primary dark:hover:text-primary hover:bg-primary/5 dark:hover:bg-neutral-700 rounded-lg shadow-sm border-b-2 border-transparent transition-all text-xs font-bold"
+                    title={language === 'en' ? 'Switch to Tamil' : 'ஆங்கிலத்திற்கு மாற்று'}
+                >
+                    <Languages className="w-4 h-4" />
+                    {language === 'en' ? 'தமிழ்' : 'EN'}
+                </button>
 
                 <button
                     onClick={onToggleFullScreen}

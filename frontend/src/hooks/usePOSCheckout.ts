@@ -6,10 +6,15 @@ import { incrementCounterBillNumber } from '../redux/slices/tenantSlice';
 import { setTaxMode } from '../redux/slices/posSlice';
 import { Sale, CartItem, Session } from "../types/sales";
 import { Branch, Tenant } from "../types/tenant";
+import { DEFAULT_MIS_CONFIG } from "../types/tenant/mis";
 import { calculateLoyaltyPoints } from "../utils/loyalty";
 import { printSaleReceipt } from "../utils/printService";
 import { db } from "../services/db";
 import { TaxMode } from "../types/common";
+
+// Roles allowed to approve a discount above the tenant's MIS Controls cap. Mirrors
+// backend/src/modules/sales/controllers/PosController.ts's DISCOUNT_APPROVER_ROLES.
+const DISCOUNT_APPROVER_ROLES = ['owner', 'co-owner', 'manager'];
 
 interface UsePOSCheckoutProps {
     cart: CartItem[];
@@ -27,6 +32,7 @@ interface UsePOSCheckoutProps {
     setIsPreOrder: React.Dispatch<React.SetStateAction<boolean>>;
     finalTotal: number;
     redemptionAmount: number;
+    cartSubtotal: number;
     defaultTaxMode: TaxMode;
     onCheckoutSuccess?: (sale: Sale) => void;
 }
@@ -47,6 +53,7 @@ export const usePOSCheckout = ({
     setIsPreOrder,
     finalTotal,
     redemptionAmount,
+    cartSubtotal,
     defaultTaxMode,
     onCheckoutSuccess
 }: UsePOSCheckoutProps) => {
@@ -54,6 +61,38 @@ export const usePOSCheckout = ({
 
     const handleCheckout = useCallback(async () => {
         if (cart.length === 0 || isProcessing) return;
+
+        // --- Discount Policy Enforcement (MIS Controls) ---
+        // Blocks checkout client-side, before the receipt prints, rather than only
+        // relying on the backend rejection -- processSale (redux/thunks/saleThunks.ts)
+        // is optimistic (prints + records locally before the API call resolves), so a
+        // server-side-only rejection would still let an over-cap sale print and queue
+        // for silent retry. Mirrors backend/src/modules/sales/controllers/PosController.ts's
+        // createInvoice check so both sides agree on the same policy.
+        const discountAmount = activeSession.discountAmount || 0;
+        let discountApprovedBy: string | undefined;
+        if (discountAmount > 0) {
+            const effectiveTenantForPolicy = tenants.find(t => t.id === user?.tenantId) || tenants[0];
+            const misConfig = { ...DEFAULT_MIS_CONFIG, ...(effectiveTenantForPolicy?.misConfig || {}) };
+            const discountPercent = cartSubtotal > 0 ? (discountAmount / cartSubtotal) * 100 : 0;
+
+            if (discountPercent > misConfig.maxDiscountPercent) {
+                if (!misConfig.allowDiscountOverride) {
+                    alert(`Discount of ${discountPercent.toFixed(1)}% exceeds the allowed maximum of ${misConfig.maxDiscountPercent}%. Discount override is disabled for this store.`);
+                    return;
+                }
+                if (misConfig.requireApprovalForHighDiscount) {
+                    if (user?.role && DISCOUNT_APPROVER_ROLES.includes(user.role)) {
+                        // Current cashier already holds a manager/owner/co-owner role --
+                        // self-approve rather than prompting for someone else's sign-off.
+                        discountApprovedBy = user.id;
+                    } else {
+                        alert(`Discount of ${discountPercent.toFixed(1)}% exceeds the allowed maximum of ${misConfig.maxDiscountPercent}% and requires manager approval. Please have a manager, co-owner, or owner process this sale.`);
+                        return;
+                    }
+                }
+            }
+        }
 
         setIsProcessing(true);
         const isOnline = navigator.onLine;
@@ -118,7 +157,11 @@ export const usePOSCheckout = ({
             paymentStatus: (['CASH', 'CARD', 'UPI'].includes(activeSession.paymentMethod)) ? 'PAID' : 'PENDING',
             userId: user?.id,
             redeemedPoints: activeSession.redeemedPoints,
-            redemptionAmount: redemptionAmount
+            redemptionAmount: redemptionAmount,
+            discountAmount,
+            discountApprovedBy,
+            isMrpPending: activeSession.isMrpPending || false,
+            mrpPendingNote: activeSession.mrpPendingNote
         };
 
         const currentTenant = effectiveTenant; // Use resolved Tenant
@@ -182,7 +225,7 @@ export const usePOSCheckout = ({
     }, [
         cart, isProcessing, activeSession, activeCounterId, currentBranch,
         currentSector, user, branches, tenants, getBranchName, isPreOrder,
-        finalTotal, redemptionAmount, defaultTaxMode, dispatch, setIsProcessing, setIsPreOrder, onCheckoutSuccess
+        finalTotal, redemptionAmount, cartSubtotal, defaultTaxMode, dispatch, setIsProcessing, setIsPreOrder, onCheckoutSuccess
     ]);
 
     return { handleCheckout };

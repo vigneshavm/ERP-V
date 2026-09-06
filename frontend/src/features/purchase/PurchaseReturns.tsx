@@ -31,7 +31,30 @@ const PurchaseReturns: React.FC = () => {
                     : Array.isArray(raw?.results)
                     ? raw.results
                     : [];
-                setReturns(list);
+                // Backend PurchaseReturn docs are camelCase (returnId/supplier/returnDate/
+                // totalAmount) with no return-level `reason` (it's per-item) -- normalize into
+                // this page's snake_case display shape rather than showing raw/blank fields.
+                setReturns(list.map((r: any) => ({
+                    id: r._id || r.id,
+                    return_number: r.returnId,
+                    return_date: r.returnDate,
+                    vendor_id: r.supplier?._id || r.supplier,
+                    vendor_name: r.supplier?.businessName || 'Unknown Supplier',
+                    grn_id: r.grnId?._id || r.grnId,
+                    grn_number: r.grnId?.grnNumber || (r.grnId ? '' : 'Not GRN-linked'),
+                    po_number: undefined,
+                    reason: r.items?.[0]?.reason || 'Others',
+                    // The backend model has no status/workflow field yet (a return is a single
+                    // atomic action today, not a multi-step lifecycle) -- refundMethod is the
+                    // closest available signal: cash/bank settle immediately, credit/adjust
+                    // leaves a standing debit note against the supplier.
+                    status: (r.refundMethod === 'cash' || r.refundMethod === 'bank_transfer') ? 'Credited' : 'Initiated',
+                    items: r.items || [],
+                    total_amount: r.totalAmount,
+                    tax_amount: r.taxAmount,
+                    attachments: [],
+                    created_at: r.createdAt
+                })));
             } catch (err) {
                 console.error("Failed to fetch returns", err);
                 // Mocking data for aesthetic preview

@@ -2,6 +2,7 @@
 import { Truck } from 'lucide-react';
 import FormField from "../../../components/shared/Form/FormField";
 import { PurchaseOrder } from "../../../types/purchase";
+import { MasterEntry } from "../../../redux/slices/masterDataSlice";
 
 interface GRNGeneralInfoProps {
     poId?: string;
@@ -11,6 +12,9 @@ interface GRNGeneralInfoProps {
     receivedDate?: string;
     onDateChange: (date: string) => void;
     vendorName?: string;
+    warehouses?: MasterEntry[];
+    warehouseId?: string;
+    onWarehouseChange: (warehouseId: string) => void;
 }
 
 const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
@@ -20,7 +24,10 @@ const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
     grnNumber,
     receivedDate,
     onDateChange,
-    vendorName
+    vendorName,
+    warehouses = [],
+    warehouseId,
+    onWarehouseChange
 }) => {
     return (
         <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
@@ -64,6 +71,18 @@ const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
                         className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-500"
                         value={vendorName || ''}
                     />
+                </FormField>
+                <FormField label="Receiving Warehouse">
+                    <select
+                        className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-primary outline-none"
+                        value={warehouseId || ''}
+                        onChange={(e) => onWarehouseChange(e.target.value)}
+                    >
+                        <option value="">Default warehouse</option>
+                        {warehouses.map((w) => (
+                            <option key={w._id} value={w._id}>{w.name}</option>
+                        ))}
+                    </select>
                 </FormField>
             </div>
         </div>

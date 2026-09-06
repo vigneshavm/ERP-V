@@ -126,7 +126,11 @@ export const createGRN = async (req: AuthenticatedRequest, res: Response): Promi
 export const getGRNs = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const tenantId = req.user?.tenantId;
-        const grns = await GRN.find({ tenantId })
+        const query: Record<string, any> = { tenantId };
+        if (req.query.vendorId) query.vendorId = req.query.vendorId;
+        if (req.query.purchaseId) query.purchaseId = req.query.purchaseId;
+
+        const grns = await GRN.find(query)
             .sort({ createdAt: -1 })
             .populate('vendorId', 'businessName shortCode')
             .populate('purchaseId', 'purchaseNumber');

@@ -42,6 +42,9 @@ const itemSchema = new Schema<IItem>(
             type: Number,
             required: true,
         },
+        wholesaleRate: {
+            type: Number,
+        },
         stockQty: {
             type: Number,
             default: 0,
@@ -90,10 +93,35 @@ const itemSchema = new Schema<IItem>(
         categoryCode: {
             type: String,
         },
+        design: {
+            type: String,
+            trim: true,
+            index: true
+        },
+        pattern: {
+            type: String,
+            trim: true,
+        },
+        modelNo: {
+            type: String,
+            trim: true,
+        },
+        fashionName: {
+            type: String,
+            trim: true,
+        },
+        subgroupId: {
+            type: Schema.Types.ObjectId,
+            ref: 'MasterEntry',
+        },
         isActive: {
             type: Boolean,
             default: true,
             index: true
+        },
+        isSerialized: {
+            type: Boolean,
+            default: false,
         },
         addedBy: {
             type: String,

@@ -18,6 +18,8 @@ export interface IUser extends Document {
     phone?: string;
     sector?: string;
     subdomain?: string;
+    // Per-user POS/billing screen language preference (Settings -> Personalization).
+    language?: "en" | "ta";
     // NEW: Multi-tenancy
     tenantId?: Types.ObjectId;
     role: "owner" | "manager" | "staff" | "customer" | "superadmin";
@@ -35,6 +37,13 @@ export interface IUser extends Document {
 
     // Security / Account Status
     status: "active" | "inactive" | "suspended";
+
+    // Per-user discount permission: overrides the tenant's misConfig.maxDiscountPercent for
+    // this specific user when set. Lets an owner grant a trusted cashier a higher (or lower)
+    // discount ceiling than the shop-wide default without changing that default for everyone.
+    // Undefined means "inherit the tenant's cap" -- see PosController.createInvoice.
+    maxDiscountPercent?: number;
+
     lastLogin?: Date | null;
     loginHistory: ILoginHistory[];
     failedLoginAttempts: number;

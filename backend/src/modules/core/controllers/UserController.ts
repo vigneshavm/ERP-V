@@ -25,6 +25,7 @@ interface UserUpdateData {
     shopName?: string;
     gstNumber?: string;
     shopAddress?: string;
+    language?: 'en' | 'ta';
 }
 
 /**
@@ -97,7 +98,7 @@ export const getAllUsers = async (_req: Request, res: Response): Promise<void> =
 export const updateUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const { name, email, phone, shopName, gstNumber, shopAddress, businessCategory, businessType } = req.body;
+        const { name, email, phone, shopName, gstNumber, shopAddress, businessCategory, businessType, language } = req.body;
 
         // Validate that user is updating their own profile
         if (req.user?._id.toString() !== id) {
@@ -126,6 +127,7 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response): Prom
         if (shopName !== undefined) updateData.shopName = shopName;
         if (gstNumber !== undefined) updateData.gstNumber = gstNumber;
         if (shopAddress !== undefined) updateData.shopAddress = shopAddress;
+        if (language !== undefined) updateData.language = language;
 
         const user = await User.findByIdAndUpdate(
             id,
@@ -232,8 +234,58 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response): Prom
     }
 };
 
+// Roles allowed to grant/restrict another user's individual discount ceiling. Mirrors
+// backend/src/modules/sales/controllers/PosController.ts's DISCOUNT_APPROVER_ROLES.
+const DISCOUNT_ADMIN_ROLES = ['owner', 'co-owner', 'manager'];
+
+/**
+ * @desc    Set (or clear) a specific tenant user's individual max-discount ceiling, which
+ *          overrides the tenant-wide misConfig.maxDiscountPercent for that user at POS
+ *          checkout (see PosController.createInvoice). Only an owner/co-owner/manager may
+ *          set this for another user in their own tenant.
+ * @route   PATCH /api/users/:id/discount-limit
+ * @access  Private (owner/co-owner/manager)
+ */
+export const updateUserDiscountLimit = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const requesterRole = req.user?.role;
+        if (!requesterRole || !DISCOUNT_ADMIN_ROLES.includes(requesterRole)) {
+            res.status(403).json({ message: 'Only an owner, co-owner, or manager can set a discount limit.' });
+            return;
+        }
+
+        const { id } = req.params;
+        const { maxDiscountPercent } = req.body;
+
+        let value: number | null = null;
+        if (maxDiscountPercent !== null && maxDiscountPercent !== undefined && maxDiscountPercent !== '') {
+            value = Number(maxDiscountPercent);
+            if (Number.isNaN(value) || value < 0 || value > 100) {
+                res.status(400).json({ message: 'maxDiscountPercent must be a number between 0 and 100 (or null to clear it).' });
+                return;
+            }
+        }
+
+        const user = await User.findOneAndUpdate(
+            { _id: id, tenantId: req.tenantId },
+            { maxDiscountPercent: value },
+            { new: true }
+        ).select('-password');
+
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Discount limit updated', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+    }
+};
+
 export default {
     getAllUsers,
     updateUser,
     deleteUser,
+    updateUserDiscountLimit,
 };

@@ -69,7 +69,43 @@ export interface ITenant extends Document {
     systemConfig?: {
         pricingMode?: string;
     };
+    // Management Information System controls (Settings -> MIS Controls tab).
+    // All optional: an unset field falls back to DEFAULT_MIS_CONFIG at the
+    // enforcement point (see PosController.createInvoice) rather than here,
+    // so this schema doesn't need to duplicate those defaults.
+    misConfig?: {
+        allowNegativeStock?: boolean;
+        allowSaleBelowCost?: boolean;
+        enableCreditSales?: boolean;
+        enableVendorPayables?: boolean;
+        enableCustomerReceivables?: boolean;
+        allowPriceOverride?: boolean;
+        allowDiscountOverride?: boolean;
+        maxDiscountPercent?: number;
+        allowBackdatedBills?: boolean;
+        allowCancelledBillsEdit?: boolean;
+        enableAuditTrail?: boolean;
+        lockFinancialYearAfterClose?: boolean;
+        requireApprovalForHighDiscount?: boolean;
+        requireApprovalForVoidBill?: boolean;
+        requireApprovalForPriceChange?: boolean;
+        autoDeductStockOnInvoice?: boolean;
+        allowManualStockAdjustments?: boolean;
+        enableBatchExpiryTracking?: boolean;
+        enableSerialNumberTracking?: boolean;
+    };
+    // Bill/receipt print layout + GRN numbering behavior (Settings -> Print Settings tab).
+    // All optional, same "unset falls back to a sane default at the point of use" convention
+    // as misConfig above -- covers the Textilesoft systemoption.aspx/purchasesetting.aspx gap.
+    printSettings?: {
+        billHeaderText?: string;
+        billFooterText?: string;
+        grnNumberingMode?: 'AUTO' | 'MANUAL';
+        grnNumberingPrefix?: string;
+        grnNumberingReset?: 'NEVER' | 'YEARLY' | 'MONTHLY';
+    };
     defaultTaxMode?: string;
+    loyaltyPointLabel?: string; // per-tenant naming for the loyalty currency, e.g. "Points" / "Stars" / "Coins"
     enabledModules?: Record<string, boolean>;
     subscriptionPlan: mongoose.Types.ObjectId | ISubscriptionPlan;
     subscriptionStartDate?: Date;
@@ -179,7 +215,36 @@ const tenantSchema = new Schema<ITenant>({
     systemConfig: {
         pricingMode: { type: String }
     },
+    misConfig: {
+        allowNegativeStock: { type: Boolean },
+        allowSaleBelowCost: { type: Boolean },
+        enableCreditSales: { type: Boolean },
+        enableVendorPayables: { type: Boolean },
+        enableCustomerReceivables: { type: Boolean },
+        allowPriceOverride: { type: Boolean },
+        allowDiscountOverride: { type: Boolean },
+        maxDiscountPercent: { type: Number },
+        allowBackdatedBills: { type: Boolean },
+        allowCancelledBillsEdit: { type: Boolean },
+        enableAuditTrail: { type: Boolean },
+        lockFinancialYearAfterClose: { type: Boolean },
+        requireApprovalForHighDiscount: { type: Boolean },
+        requireApprovalForVoidBill: { type: Boolean },
+        requireApprovalForPriceChange: { type: Boolean },
+        autoDeductStockOnInvoice: { type: Boolean },
+        allowManualStockAdjustments: { type: Boolean },
+        enableBatchExpiryTracking: { type: Boolean },
+        enableSerialNumberTracking: { type: Boolean }
+    },
+    printSettings: {
+        billHeaderText: { type: String },
+        billFooterText: { type: String },
+        grnNumberingMode: { type: String, enum: ['AUTO', 'MANUAL'] },
+        grnNumberingPrefix: { type: String },
+        grnNumberingReset: { type: String, enum: ['NEVER', 'YEARLY', 'MONTHLY'] }
+    },
     defaultTaxMode: { type: String },
+    loyaltyPointLabel: { type: String, default: 'Points' },
     enabledModules: { type: Map, of: Boolean },
     subscriptionPlan: {
         type: Schema.Types.ObjectId,

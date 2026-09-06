@@ -37,13 +37,40 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
     const [grns, setGrns] = useState<GRN[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Fetch Return if ID exists
+    // Fetch Return if ID exists (view mode -- there's no update endpoint server-side yet,
+    // so this route is read-only; the Save button is hidden below when `id` is set).
+    // Backend response is camelCase (returnId/supplier/items[].itemId&quantity&tax&amount),
+    // not this form's snake_case shape, so it's normalized here rather than displayed raw.
     useEffect(() => {
         if (id) {
             const fetchReturn = async () => {
                 try {
                     const { data } = await api.get(`/api/purchase-returns/${id}`);
-                    setReturnData(data);
+                    setReturnData({
+                        return_number: data.returnId,
+                        return_date: data.returnDate?.slice(0, 10),
+                        vendor_id: data.supplier?._id || data.supplier,
+                        vendor_name: data.supplier?.businessName || '',
+                        grn_id: data.grnId?._id || data.grnId,
+                        grn_number: data.grnId?.grnNumber || '',
+                        reason: data.items?.[0]?.reason,
+                        status: 'Credited',
+                        total_amount: data.totalAmount,
+                        tax_amount: data.taxAmount,
+                        tracking_number: undefined,
+                        attachments: [],
+                        items: (data.items || []).map((it: any) => ({
+                            id: it.itemId,
+                            product_id: it.itemId,
+                            product_name: it.productName,
+                            grn_quantity: it.quantity,
+                            return_quantity: it.quantity,
+                            rate: it.rate,
+                            tax_percent: it.tax,
+                            line_total: it.amount,
+                            batch_number: it.batchNumber
+                        }))
+                    });
                 } catch (err) {
                     console.error("Failed to fetch return", err);
                 }
@@ -56,7 +83,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
     useEffect(() => {
         const fetchVendors = async () => {
             try {
-                const { data } = await api.get('/suppliers');
+                const { data } = await api.get('/api/suppliers');
                 setVendors(data || []);
             } catch (err) {
                 console.error("Failed to fetch suppliers", err);
@@ -65,18 +92,48 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
         fetchVendors();
     }, []);
 
-    // Fetch GRNs when vendor is selected
+    // Fetch GRNs when vendor is selected. Real endpoint is GET /api/grn (singular), which
+    // wraps its payload as { success, data: GRN[] } -- and each GRN's items carry the
+    // backend's field names (productId/productName/acceptedQty/lotNumber), not this
+    // form's product_id/product_name/grn_quantity/batch_number, so they're normalized here
+    // rather than in the backend response.
     useEffect(() => {
         if (!returnData.vendor_id) return;
         const fetchGRNs = async () => {
             try {
-                const { data } = await api.get(`/api/grns?vendorId=${returnData.vendor_id}`);
-                setGrns(data || []);
+                const { data: body } = await api.get(`/api/grn?vendorId=${returnData.vendor_id}`);
+                const rawGrns = body?.data || [];
+                const normalized = rawGrns.map((g: any) => ({
+                    id: g._id || g.id,
+                    grnNumber: g.grnNumber,
+                    poId: g.purchaseId?._id || g.purchaseId || '',
+                    poNumber: g.purchaseId?.purchaseNumber || '',
+                    vendorId: g.vendorId?._id || g.vendorId || '',
+                    vendorName: g.vendorId?.businessName || '',
+                    receivedDate: g.receivedDate,
+                    warehouseId: g.warehouseId,
+                    status: g.status,
+                    notes: g.notes,
+                    items: (g.items || []).map((it: any) => ({
+                        id: it.productId,
+                        poItemId: '',
+                        productId: it.productId,
+                        productName: it.productName,
+                        acceptedQty: it.acceptedQty,
+                        orderedQty: it.orderedQty,
+                        receivedQty: it.receivedQty,
+                        rejectedQty: it.rejectedQty,
+                        rate: it.rate,
+                        batchNumber: it.lotNumber
+                    })),
+                    created_at: g.createdAt
+                }));
+                setGrns(normalized);
 
                 if (grnId && !returnData.grn_id) {
-                    const targetGrn = (data || []).find((g: any) => g.id === grnId || g._id === grnId);
+                    const targetGrn = normalized.find((g: any) => g.id === grnId);
                     if (targetGrn) {
-                        handleGRNChange(grnId, data);
+                        handleGRNChange(grnId, normalized);
                     }
                 }
             } catch (err) {
@@ -103,7 +160,6 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
         if (grn) {
             const returnItems: PurchaseReturnItem[] = grn.items.map(item => ({
                 id: Math.random().toString(36).substr(2, 9),
-                itemId: item.productId,
                 product_id: item.productId,
                 product_name: item.productName,
                 sku: item.sku,
@@ -111,7 +167,8 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                 return_quantity: 0,
                 rate: 0,
                 tax_percent: 18,
-                line_total: 0
+                line_total: 0,
+                batch_number: (item as any).batchNumber
             }));
 
             setReturnData(prev => ({
@@ -159,6 +216,32 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
 
         setIsLoading(true);
         try {
+            // POST /api/purchase-returns expects a different field shape than this form's
+            // local state (see backend/src/modules/purchase/controllers/PurchaseReturnController.ts
+            // and models/PurchaseReturn.ts) -- map at the boundary rather than renaming this
+            // component's whole state shape. There's no update endpoint server-side yet, so
+            // this always creates a new return; the `id` (view) route never reaches here
+            // because its Save button is hidden below.
+            const itemsToReturn = (returnData.items || []).filter(i => i.return_quantity > 0);
+            const payload = {
+                supplierId: returnData.vendor_id,
+                grnId: returnData.grn_id,
+                returnDate: returnData.return_date,
+                refundMethod: 'credit',
+                notes: returnData.reason === 'Others' ? returnData.other_reason : undefined,
+                items: itemsToReturn.map(i => ({
+                    itemId: i.product_id,
+                    productName: i.product_name,
+                    quantity: i.return_quantity,
+                    rate: i.rate,
+                    tax: i.tax_percent,
+                    amount: i.line_total,
+                    reason: returnData.reason,
+                    batchNumber: i.batch_number
+                }))
+            };
+
+            await api.post('/api/purchase-returns', payload);
             await onSave({
                 ...returnData,
                 total_amount: totals.total,
@@ -166,8 +249,8 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
             });
             toast.success("Purchase Return initiated successfully");
             navigate('/purchase/returns');
-        } catch {
-            toast.error("Failed to save return");
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || "Failed to save return");
         } finally {
             setIsLoading(false);
         }
@@ -196,13 +279,17 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                             >
                                 <ArrowLeft className="w-4 h-4" /> Abort
                             </button>
-                            <button
-                                onClick={handleSave}
-                                disabled={isLoading}
-                                className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
-                            >
-                                <Save className="w-4 h-4" /> {id ? 'Update Node' : 'Initialize Reversal'}
-                            </button>
+                            {/* No update endpoint exists server-side yet -- an existing return
+                                (id present) is view-only, so Save only renders for a new one. */}
+                            {!id && (
+                                <button
+                                    onClick={handleSave}
+                                    disabled={isLoading}
+                                    className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
+                                >
+                                    <Save className="w-4 h-4" /> Initialize Reversal
+                                </button>
+                            )}
                         </div>
                     }
                 />

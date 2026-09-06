@@ -32,6 +32,8 @@ import BrandWiseSalesReport from './BrandWiseSalesReport';
 import CategoryWiseSalesReport from './CategoryWiseSalesReport';
 import CounterWiseSalesReport from './CounterWiseSalesReport';
 import HourlyBillingReport from './HourlyBillingReport';
+import CityWiseStockReport from './CityWiseStockReport';
+import RackWiseStockReport from './RackWiseStockReport';
 
 interface BusinessReportsHubProps {
     view: ReportType;
@@ -138,6 +140,8 @@ const BusinessReportsHub: React.FC<BusinessReportsHubProps> = ({ view }) => {
             {view === 'REPORT_CATEGORY_WISE' && <CategoryWiseSalesReport timeRange="MONTH" />}
             {view === 'REPORT_COUNTER_WISE' && <CounterWiseSalesReport timeRange="MONTH" />}
             {view === 'REPORT_HOURLY_BILLING' && <HourlyBillingReport timeRange="MONTH" />}
+            {view === 'REPORT_CITY_WISE_STOCK' && <CityWiseStockReport />}
+            {view === 'REPORT_RACK_WISE_STOCK' && <RackWiseStockReport />}
 
             {/* Shared Intelligence Rail */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

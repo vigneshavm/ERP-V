@@ -243,6 +243,76 @@ export class InventoryService {
         return stats[0] || { totalItems: 0, totalValuation: 0, lowStockCount: 0 };
     }
 
+    // Groups current stock by the city of the store it's held in (via Item.storeLevels ->
+    // Store.city). Store already has a city field (used for GST/address purposes), so this
+    // reuses existing data rather than introducing a new location dimension.
+    async getStockByCity(tenantId: string): Promise<any[]> {
+        return Item.aggregate([
+            { $match: { tenantId } },
+            { $unwind: { path: "$storeLevels", preserveNullAndEmptyArrays: false } },
+            {
+                $lookup: {
+                    from: "stores",
+                    localField: "storeLevels.storeId",
+                    foreignField: "_id",
+                    as: "store"
+                }
+            },
+            { $unwind: { path: "$store", preserveNullAndEmptyArrays: true } },
+            {
+                $group: {
+                    _id: { $ifNull: ["$store.city", "Unassigned"] },
+                    totalQty: { $sum: "$storeLevels.qty" },
+                    totalValue: { $sum: { $multiply: ["$storeLevels.qty", { $ifNull: ["$costPrice", 0] }] } },
+                    itemCount: { $sum: 1 },
+                    storeIds: { $addToSet: "$store._id" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    city: "$_id",
+                    totalQty: 1,
+                    totalValue: 1,
+                    itemCount: 1,
+                    storeCount: { $size: "$storeIds" }
+                }
+            },
+            { $sort: { totalValue: -1 } }
+        ]);
+    }
+
+    // Groups current stock by physical shelf/rack location, using the item's own shelfCode
+    // (falling back to binLocation) -- both already exist on Item for warehouse bin partitioning.
+    async getStockByRack(tenantId: string): Promise<any[]> {
+        return Item.aggregate([
+            { $match: { tenantId } },
+            {
+                $addFields: {
+                    rackLabel: { $ifNull: ["$shelfCode", { $ifNull: ["$binLocation", "Unassigned"] }] }
+                }
+            },
+            {
+                $group: {
+                    _id: "$rackLabel",
+                    totalQty: { $sum: "$stockQty" },
+                    totalValue: { $sum: { $multiply: ["$stockQty", { $ifNull: ["$costPrice", 0] }] } },
+                    itemCount: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    rack: "$_id",
+                    totalQty: 1,
+                    totalValue: 1,
+                    itemCount: 1
+                }
+            },
+            { $sort: { rack: 1 } }
+        ]);
+    }
+
     async checkStockAlerts(tenantId: string): Promise<any[]> {
         const lowStockItems = await this.getLowStockItems(tenantId);
 
@@ -632,6 +702,122 @@ export class InventoryService {
             performedBy: user._id
         }], { session });
     }
+    /**
+     * Reduce stock from ONE specifically named batch, rather than reduceStock's FIFO sweep
+     * across every batch. For a GRN-wise/lot-wise purchase return, the returned goods came
+     * from a specific goods receipt -- deducting FIFO-oldest-first would silently reduce the
+     * wrong batch (and its cost basis) if other purchases of the same item happened since.
+     */
+    async reduceStockFromBatch(
+        itemId: string,
+        quantity: number,
+        batchNumber: string,
+        tenantId: string,
+        user: any,
+        reason: string = 'PURCHASE_RETURN',
+        session?: any
+    ): Promise<void> {
+        const item: any = await this.inventoryRepository.findById(itemId, tenantId, session);
+        if (!item) throw new AppError("Item not found", 404);
+
+        const batches = [...(item.batches || [])];
+        const batchIndex = batches.findIndex((b: any) => b.batchNumber === batchNumber);
+        if (batchIndex === -1) {
+            throw new AppError(`Batch ${batchNumber} not found on ${item.name}`, 404);
+        }
+        if (batches[batchIndex].quantity < quantity) {
+            throw new AppError(
+                `Cannot return ${quantity} from batch ${batchNumber} -- only ${batches[batchIndex].quantity} remaining in that batch`,
+                400
+            );
+        }
+        if (item.stockQty < quantity) {
+            throw new AppError(`Insufficient stock for ${item.name}. Available: ${item.stockQty}`, 400);
+        }
+
+        batches[batchIndex] = { ...batches[batchIndex], quantity: batches[batchIndex].quantity - quantity };
+        const finalBatches = batches.filter((b: any) => b.quantity > 0);
+
+        await Item.findByIdAndUpdate(itemId, {
+            $inc: { stockQty: -quantity },
+            $set: { batches: finalBatches }
+        }).session(session || null);
+
+        await StockLog.create([{
+            itemId: item._id,
+            tenantId,
+            type: 'RETURN',
+            delta: -quantity,
+            finalQty: item.stockQty - quantity,
+            reason: `${reason}: Batch ${batchNumber}`,
+            performedBy: user._id
+        }], { session });
+    }
+
+    /**
+     * Record stock lost outside the normal sale/purchase-return flow -- damage or unexplained
+     * shrinkage. Distinct StockLog types (DAMAGE/MISSING) so these show up separately from
+     * ordinary ADJUST/SALES entries in stock history and reporting. Mirrors reduceStock's FIFO
+     * batch sweep so batch-level quantities (and therefore cost-basis reporting) stay accurate.
+     */
+    async writeOffStock(
+        itemId: string,
+        quantity: number,
+        cause: 'DAMAGE' | 'MISSING',
+        reason: string,
+        tenantId: string,
+        user: any
+    ): Promise<void> {
+        if (!quantity || quantity <= 0) {
+            throw new AppError("Quantity must be greater than zero", 400);
+        }
+
+        const item: any = await this.inventoryRepository.findById(itemId, tenantId);
+        if (!item) throw new AppError("Item not found", 404);
+
+        if (item.stockQty < quantity) {
+            throw new AppError(`Insufficient stock for ${item.name}. Available: ${item.stockQty}`, 400);
+        }
+
+        // FIFO sweep across batches, same approach as reduceStock, so batch quantities
+        // (and their cost basis) stay in sync with the item's total stockQty.
+        let remainingToDeduct = quantity;
+        const updatedBatches = [...(item.batches || [])].sort((a: any, b: any) =>
+            new Date(a.receivedDate).getTime() - new Date(b.receivedDate).getTime()
+        );
+
+        for (const batch of updatedBatches) {
+            if (remainingToDeduct <= 0) break;
+
+            if (batch.quantity >= remainingToDeduct) {
+                batch.quantity -= remainingToDeduct;
+                remainingToDeduct = 0;
+            } else {
+                remainingToDeduct -= batch.quantity;
+                batch.quantity = 0;
+            }
+        }
+
+        const finalBatches = updatedBatches.filter((b: any) => b.quantity > 0);
+
+        await Item.findByIdAndUpdate(itemId, {
+            $inc: { stockQty: -quantity },
+            $set: { batches: finalBatches }
+        });
+
+        await StockLog.create({
+            itemId: item._id,
+            tenantId,
+            type: cause,
+            delta: -quantity,
+            finalQty: item.stockQty - quantity,
+            reason: reason || (cause === 'DAMAGE' ? 'Stock damaged' : 'Stock missing/shrinkage'),
+            performedBy: user._id
+        });
+
+        info(`Stock write-off (${cause}) by ${user.name}: ${item.name} x${quantity}`);
+    }
+
     async updateBatchCost(
         itemId: string,
         batchNumber: string,

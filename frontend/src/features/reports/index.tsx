@@ -110,6 +110,8 @@ const ReportsModule: React.FC = () => {
         if (slug === 'category-wise-sales') return 'REPORT_CATEGORY_WISE';
         if (slug === 'counter-wise-sales') return 'REPORT_COUNTER_WISE';
         if (slug === 'hourly-billing') return 'REPORT_HOURLY_BILLING';
+        if (slug === 'city-wise-stock') return 'REPORT_CITY_WISE_STOCK';
+        if (slug === 'rack-wise-stock') return 'REPORT_RACK_WISE_STOCK';
         return null;
     };
 
@@ -185,32 +187,56 @@ const ReportsModule: React.FC = () => {
         })
         : [];
 
-    const ReportCard = ({ report, categoryId: __categoryId }: { report: ReportItem, categoryId: string, key?: string }) => (
-        <div
-            className="group relative bg-white dark:bg-neutral-900 rounded-sm p-6 border border-neutral-200 dark:border-neutral-800 hover:border-primary dark:hover:border-primary hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 flex flex-col h-full cursor-pointer animate-in fade-in zoom-in-95"
-            onClick={() => setSelectedReportSlug(report.slug)}
-        >
-            <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-neutral-50 dark:bg-neutral-800 flex items-center justify-center text-neutral-600 dark:text-neutral-300 group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:scale-110">
-                    <report.icon className="w-6 h-6" />
+    // Reports mapped to one of these types are backed by real, live-fetched data (see
+    // BusinessReportsHub.tsx lines rendering BrandWiseSalesReport/CategoryWiseSalesReport/
+    // CounterWiseSalesReport/HourlyBillingReport/CityWiseStockReport/RackWiseStockReport).
+    // Every other report in the catalog -- sales/purchase/inventory/customer/supplier overviews,
+    // P&L, balance sheet, trial balance, day book, tax -- currently renders fabricated numbers
+    // from useBusinessReports.ts (hardcoded objects behind a fake "network delay"), so those get
+    // a visible "Sample data" badge rather than being presented as if they were real figures.
+    const LIVE_DATA_TYPES: ReportType[] = [
+        'REPORT_BRAND_WISE', 'REPORT_CATEGORY_WISE', 'REPORT_COUNTER_WISE',
+        'REPORT_HOURLY_BILLING', 'REPORT_CITY_WISE_STOCK', 'REPORT_RACK_WISE_STOCK'
+    ];
+
+    const ReportCard = ({ report, categoryId: __categoryId }: { report: ReportItem, categoryId: string, key?: string }) => {
+        const mappedType = getMappedReportType(report.slug);
+        const isLive = mappedType !== null && LIVE_DATA_TYPES.includes(mappedType);
+
+        return (
+            <div
+                className="group relative bg-white dark:bg-neutral-900 rounded-sm p-6 border border-neutral-200 dark:border-neutral-800 hover:border-primary dark:hover:border-primary hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 flex flex-col h-full cursor-pointer animate-in fade-in zoom-in-95"
+                onClick={() => setSelectedReportSlug(report.slug)}
+            >
+                <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-neutral-50 dark:bg-neutral-800 flex items-center justify-center text-neutral-600 dark:text-neutral-300 group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:scale-110">
+                        <report.icon className="w-6 h-6" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {!isLive && (
+                            <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400" title="Not yet wired to live data -- shown for preview only">
+                                Sample data
+                            </span>
+                        )}
+                        <div className="opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300">
+                            <ArrowRight className="w-5 h-5 text-primary" />
+                        </div>
+                    </div>
                 </div>
-                <div className="opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300">
-                    <ArrowRight className="w-5 h-5 text-primary" />
+
+                <h3 className="font-bold text-neutral-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+                    {report.name}
+                </h3>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed mb-6 flex-1">
+                    {report.description}
+                </p>
+
+                <div className="pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center text-[10px] font-black uppercase tracking-widest text-primary group-hover:translate-x-1 transition-transform">
+                    View detailed report
                 </div>
             </div>
-
-            <h3 className="font-bold text-neutral-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
-                {report.name}
-            </h3>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed mb-6 flex-1">
-                {report.description}
-            </p>
-
-            <div className="pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center text-[10px] font-black uppercase tracking-widest text-primary group-hover:translate-x-1 transition-transform">
-                View detailed report
-            </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <div className="space-y-8 pb-12">

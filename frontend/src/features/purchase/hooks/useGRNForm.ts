@@ -6,6 +6,7 @@ import { addGRN } from "../../../redux/slices/purchaseSlice";
 import { GRN, GRNItem, GRNStatus, PurchaseOrder } from "../../../types/purchase";
 import { normalizePurchaseOrderItem } from "../../../utils/purchaseNormalize";
 import { createGRN, mapGrnToFrontendGRN } from "../../../services/grnService";
+import { fetchMasterEntries } from "../../../redux/slices/masterDataSlice";
 
 export const useGRNForm = () => {
     const { poId } = useParams<{ poId: string }>();
@@ -26,6 +27,15 @@ export const useGRNForm = () => {
     });
     const [isSaving, setIsSaving] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
+
+    // Warehouse picker for "which location did this shipment arrive at" -- previously the GRN
+    // form never sent warehouseId at all, so every receipt silently defaulted to 'MAIN_WAREHOUSE'
+    // server-side regardless of which warehouse actually received it.
+    useEffect(() => {
+        dispatch(fetchMasterEntries({ type: 'WAREHOUSE' }) as any);
+    }, [dispatch]);
+    const { entriesByType } = useSelector((state: RootState) => state.masterData);
+    const warehouses = entriesByType.WAREHOUSE || [];
 
     // A PO can only be received against once it's actually been sent to the vendor (or is
     // already partially received) - matches PurchaseOrderDetails' canReceive check, so both
@@ -121,6 +131,7 @@ export const useGRNForm = () => {
             const result = await createGRN({
                 purchaseId: grnData.poId as string,
                 notes: grnData.notes,
+                warehouseId: grnData.warehouseId,
                 items: grnData.items
                     .filter(i => i.receivedQty > 0)
                     .map(i => ({
@@ -158,6 +169,7 @@ export const useGRNForm = () => {
         grnData,
         selectedPO,
         availablePOs,
+        warehouses,
         handlePOSelect,
         handleItemChange,
         saveGRN,

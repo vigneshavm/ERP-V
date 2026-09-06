@@ -20,9 +20,12 @@ export interface ReceiptItem {
     mtr?: number; // Meter/Cut Length
     quantity: number;
     amount: number;
+    discount?: number;
 }
 
 export interface ReceiptTotals {
+    subtotal?: number;
+    discount_total?: number;
     net_total: number;
     final_total: number;
     total_quantity: number;

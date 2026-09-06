@@ -19,6 +19,7 @@ export interface ExpenseCategory {
     is_active: boolean;
     gst_eligible: boolean;
     subcategories?: ExpenseSubCategory[];
+    groupId?: string; // references a MasterEntry of type EXPENSE_GROUP (Settings -> Master Data)
 }
 
 interface AuthState {

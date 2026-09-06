@@ -42,6 +42,15 @@ const invoiceSchema = new Schema<IInvoice>(
             type: String,
             required: true,
         },
+        // Wholesale/Retail (WR) Billing -- see IInvoice.ts for the full rationale.
+        saleChannel: {
+            type: String,
+            enum: ['RETAIL', 'WHOLESALE'],
+            default: 'RETAIL',
+        },
+        counterName: {
+            type: String,
+        },
         customer: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Customer",
@@ -171,7 +180,37 @@ const invoiceSchema = new Schema<IInvoice>(
         shippedAt: { type: Date },
         deliveredAt: { type: Date },
         courierName: { type: String },
-        trackingNumber: { type: String }
+        trackingNumber: { type: String },
+        // Invoice Billing: MRP-Pending flag -- see IInvoice.ts for the full rationale.
+        isMrpPending: {
+            type: Boolean,
+            default: false,
+        },
+        mrpPendingNote: {
+            type: String,
+        },
+        mrpFinalizedAt: {
+            type: Date,
+        },
+        mrpFinalizedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+        // POS sale/invoice edit -- see IInvoice.ts for the full rationale.
+        isEdited: {
+            type: Boolean,
+            default: false,
+        },
+        lastEditedAt: {
+            type: Date,
+        },
+        lastEditedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+        lastEditReason: {
+            type: String,
+        },
     },
     { timestamps: true }
 );

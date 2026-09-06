@@ -57,6 +57,14 @@ const customerSchema = new Schema<ICustomer>(
             type: String,
             default: "General",
         },
+        groupId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "MasterEntry",
+        },
+        relationshipTypeId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "MasterEntry",
+        },
 
         // Explicit Marketing Consent (BRD §4 & §18)
         marketingConsent: {

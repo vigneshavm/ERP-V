@@ -1,11 +1,14 @@
 ﻿import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getSalesInvoiceById, reset, clearSalesInvoice, markSalesInvoiceAsPaid } from "@/redux/slices/salesInvoiceSlice";
+import { toast } from 'react-toastify';
+import { getSalesInvoiceById, reset, clearSalesInvoice, markSalesInvoiceAsPaid, editSalesInvoice } from "@/redux/slices/salesInvoiceSlice";
 import Layout from "@/components/shared/Layout/Layout";
 import PaymentModal from "../../../components/shared/Modals/PaymentModal";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Customer, PopulatedInvoice } from "@/types/sales";
+import receiptDataService from "@/services/receiptDataService";
+import { printSaleReceipt } from "@/utils/printService";
 import {
     CheckCircle,
     Clock,
@@ -17,15 +20,40 @@ import {
     Mail,
     MapPin,
     Receipt,
-    BadgeCheck
+    BadgeCheck,
+    Pencil,
+    X
 } from 'lucide-react';
+
+// Editing a completed invoice's line qty/price/discount is sensitive (it reverses/adjusts
+// stock and recomputes totals -- see backend's PosController.editInvoice), so it's restricted
+// to the same roles as discount approval, mirroring usePOSCheckout.ts's DISCOUNT_APPROVER_ROLES.
+const INVOICE_EDIT_ROLES = ['owner', 'co-owner', 'manager'];
+
+interface EditableInvoiceItem {
+    item: string;
+    name?: string;
+    quantity: number;
+    price: number;
+    discount: number;
+}
 
 const SalesInvoiceDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const { invoice, isLoading, isError, message } = useSelector((state: RootState) => state.salesInvoice);
+    const { user } = useSelector((state: RootState) => state.auth);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editItems, setEditItems] = useState<EditableInvoiceItem[]>([]);
+    const [editDiscount, setEditDiscount] = useState(0);
+    const [editReason, setEditReason] = useState('');
+    const [editSubmitting, setEditSubmitting] = useState(false);
+    const [editError, setEditError] = useState('');
+    const [isPrintingReceipt, setIsPrintingReceipt] = useState(false);
+
+    const canEditInvoice = !!(user?.role && INVOICE_EDIT_ROLES.includes(user.role));
 
     useEffect(() => {
         if (id) {
@@ -40,6 +68,30 @@ const SalesInvoiceDetail = () => {
         window.print();
     };
 
+    // Reprints this invoice as a thermal/POS-style customer receipt (distinct from
+    // handlePrint's browser print of this A4 detail page). This is the one production entry
+    // point for receiptDataService.fetchReceiptContext: it re-fetches the invoice by its real
+    // invoiceNo (same GET /api/sales-invoice/invoice/:id this page already loads via
+    // getSalesInvoiceById) plus tenant/branch, then feeds them through the same
+    // generateReceiptJSON/printSaleReceipt pipeline POS checkout uses. POS checkout itself must
+    // keep building Sale/Tenant/Branch from in-memory/redux state -- it prints immediately after
+    // an offline-capable checkout, before any server round trip is guaranteed to have completed,
+    // so an API refetch there would risk printing fallback/dummy data. Here the invoice is
+    // already confirmed to exist server-side (it's on screen), so a fetch is safe.
+    const handlePrintReceipt = async () => {
+        if (!invoice?.invoiceNo || isPrintingReceipt) return;
+        setIsPrintingReceipt(true);
+        try {
+            const { sale, tenant, branch } = await receiptDataService.fetchReceiptContext(invoice.invoiceNo, { strict: true });
+            printSaleReceipt(sale, tenant, branch);
+        } catch (error) {
+            console.error('Failed to print receipt', error);
+            toast.error('Could not print the receipt. Please try again.');
+        } finally {
+            setIsPrintingReceipt(false);
+        }
+    };
+
     const handlePayment = async (paymentData: any) => {
         if (!invoice) return;
         const result = await dispatch(markSalesInvoiceAsPaid({
@@ -52,6 +104,56 @@ const SalesInvoiceDetail = () => {
         if (result.meta.requestStatus === 'fulfilled') {
             setShowPaymentModal(false);
             if (id) dispatch(getSalesInvoiceById(id));
+        }
+    };
+
+    const openEditModal = () => {
+        if (!invoice) return;
+        setEditItems(
+            (invoice.items || []).map((it) => ({
+                item: it.item,
+                name: it.name,
+                quantity: it.quantity,
+                price: it.price,
+                discount: it.discount || 0,
+            }))
+        );
+        setEditDiscount(invoice.discount || 0);
+        setEditReason('');
+        setEditError('');
+        setShowEditModal(true);
+    };
+
+    const updateEditItem = (index: number, field: 'quantity' | 'price' | 'discount', value: number) => {
+        setEditItems((prev) => prev.map((it, i) => (i === index ? { ...it, [field]: value } : it)));
+    };
+
+    const handleSaveEdit = async () => {
+        if (!invoice) return;
+        if (!editReason.trim()) {
+            setEditError('An edit reason is required.');
+            return;
+        }
+        setEditSubmitting(true);
+        setEditError('');
+        const result = await dispatch(editSalesInvoice({
+            id: (invoice._id || invoice.id) as string,
+            items: editItems.map((it) => ({
+                item: it.item,
+                quantity: it.quantity,
+                price: it.price,
+                discount: it.discount,
+            })),
+            discount: editDiscount,
+            editReason: editReason.trim(),
+        }));
+        setEditSubmitting(false);
+
+        if (result.meta.requestStatus === 'fulfilled') {
+            setShowEditModal(false);
+            if (id) dispatch(getSalesInvoiceById(id));
+        } else {
+            setEditError((result.payload as string) || 'Failed to save invoice edits.');
         }
     };
 
@@ -141,6 +243,14 @@ const SalesInvoiceDetail = () => {
                                 >
                                     <Printer className="w-4 h-4" /> Print
                                 </button>
+                                <button
+                                    onClick={handlePrintReceipt}
+                                    disabled={isPrintingReceipt}
+                                    title="Print the customer-facing thermal receipt for this invoice"
+                                    className="px-4 py-2.5 glass-panel/10 backdrop-blur-md border border-white/20 text-white rounded-xl text-sm font-bold hover:glass-panel/20 transition-all flex items-center gap-2 disabled:opacity-50"
+                                >
+                                    <Receipt className="w-4 h-4" /> {isPrintingReceipt ? 'Printing...' : 'Print Receipt'}
+                                </button>
                                 {invoice.paymentStatus !== 'paid' && (
                                     <button
                                         onClick={() => setShowPaymentModal(true)}
@@ -228,8 +338,13 @@ const SalesInvoiceDetail = () => {
 
                         {/* Invoice Info */}
                         <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:shadow-none print:border">
-                            <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
+                            <div className="bg-surface/40 px-6 py-3 border-b border-default/20 flex justify-between items-center">
                                 <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Invoice Details</h2>
+                                {invoice.isEdited && (
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-amber-100 text-amber-800" title={invoice.lastEditReason || ''}>
+                                        Edited
+                                    </span>
+                                )}
                             </div>
                             <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
                                 <div>
@@ -316,11 +431,26 @@ const SalesInvoiceDetail = () => {
                                         <CreditCard className="w-4 h-4" /> Record Payment
                                     </button>
                                 )}
+                                {canEditInvoice && (
+                                    <button
+                                        onClick={openEditModal}
+                                        className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <Pencil className="w-4 h-4" /> Edit Invoice
+                                    </button>
+                                )}
                                 <button
                                     onClick={handlePrint}
                                     className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"
                                 >
                                     <Printer className="w-4 h-4" /> Print Invoice
+                                </button>
+                                <button
+                                    onClick={handlePrintReceipt}
+                                    disabled={isPrintingReceipt}
+                                    className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                                >
+                                    <Receipt className="w-4 h-4" /> {isPrintingReceipt ? 'Printing...' : 'Print Receipt'}
                                 </button>
                                 <button
                                     onClick={() => {
@@ -364,6 +494,122 @@ const SalesInvoiceDetail = () => {
                     totalAmount={invoice.totalAmount}
                     paidAmount={invoice.paidAmount}
                 />
+            )}
+
+            {/* Edit Invoice Modal -- corrects existing lines' qty/price/discount only.
+                Cannot add/remove lines or touch payment fields; see PosController.editInvoice. */}
+            {showEditModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-sm shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="px-6 py-4 border-b border-default/20 flex justify-between items-center sticky top-0 bg-white z-10">
+                            <h2 className="text-lg font-bold text-main">Edit Invoice {invoice.invoiceNo}</h2>
+                            <button onClick={() => setShowEditModal(false)} className="text-secondary opacity-60 hover:opacity-100">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <p className="text-xs text-secondary opacity-70">
+                                Correct quantity, price, or discount on existing lines. Lines cannot be added or removed here,
+                                and stock will be adjusted for any quantity change.
+                            </p>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="border-b border-default/30">
+                                        <tr className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">
+                                            <th className="py-2 pr-2">Item</th>
+                                            <th className="py-2 px-2 text-right w-24">Qty</th>
+                                            <th className="py-2 px-2 text-right w-28">Price</th>
+                                            <th className="py-2 pl-2 text-right w-28">Discount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-default/20">
+                                        {editItems.map((it, index) => (
+                                            <tr key={it.item || index}>
+                                                <td className="py-2 pr-2 font-medium text-main">{it.name || 'Item'}</td>
+                                                <td className="py-2 px-2">
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        value={it.quantity}
+                                                        onChange={(e) => updateEditItem(index, 'quantity', Number(e.target.value))}
+                                                        className="w-full text-right border border-default/40 rounded-md px-2 py-1"
+                                                    />
+                                                </td>
+                                                <td className="py-2 px-2">
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        step="0.01"
+                                                        value={it.price}
+                                                        onChange={(e) => updateEditItem(index, 'price', Number(e.target.value))}
+                                                        className="w-full text-right border border-default/40 rounded-md px-2 py-1"
+                                                    />
+                                                </td>
+                                                <td className="py-2 pl-2">
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        step="0.01"
+                                                        value={it.discount}
+                                                        onChange={(e) => updateEditItem(index, 'discount', Number(e.target.value))}
+                                                        className="w-full text-right border border-default/40 rounded-md px-2 py-1"
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider mb-1 block">
+                                    Bill-level Discount (₹)
+                                </label>
+                                <input
+                                    type="number"
+                                    min={0}
+                                    step="0.01"
+                                    value={editDiscount}
+                                    onChange={(e) => setEditDiscount(Number(e.target.value))}
+                                    className="w-full border border-default/40 rounded-md px-3 py-2"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider mb-1 block">
+                                    Reason for Edit (required)
+                                </label>
+                                <textarea
+                                    value={editReason}
+                                    onChange={(e) => setEditReason(e.target.value)}
+                                    rows={2}
+                                    className="w-full border border-default/40 rounded-md px-3 py-2"
+                                    placeholder="e.g. Corrected quantity per customer request"
+                                />
+                            </div>
+
+                            {editError && (
+                                <p className="text-sm text-red-600">{editError}</p>
+                            )}
+                        </div>
+                        <div className="px-6 py-4 border-t border-default/20 flex justify-end gap-3 sticky bottom-0 bg-white">
+                            <button
+                                onClick={() => setShowEditModal(false)}
+                                className="px-4 py-2 border border-default/40 rounded-xl font-medium text-main opacity-90 hover:bg-surface/40"
+                                disabled={editSubmitting}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSaveEdit}
+                                className="px-4 py-2 bg-primary text-white rounded-xl font-bold hover:opacity-90 disabled:opacity-50"
+                                disabled={editSubmitting}
+                            >
+                                {editSubmitting ? 'Saving...' : 'Save Changes'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </Layout>
     );

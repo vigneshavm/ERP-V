@@ -4,9 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import {
     setActiveCounter,
     setCustomer,
-    setTaxMode, setPaymentMethod, setRedeemedPoints
+    setTaxMode, setPaymentMethod, setRedeemedPoints, setDiscountAmount, setMrpPending
 } from "../redux/slices/posSlice";
+import { DEFAULT_MIS_CONFIG } from "../types/tenant/mis";
 import { lookupOrCreateCustomer } from "../redux/thunks/customerThunks";
+import { fetchMasterEntries } from "../redux/slices/masterDataSlice";
 import { RootState, AppDispatch } from "../redux/store";
 import { Sale, Customer, CartItem } from "../types/sales";
 import { usePOSShortcuts } from './usePOSShortcuts';
@@ -43,6 +45,7 @@ export const usePOSLogic = () => {
     const { tenants, branches } = useSelector((state: RootState) => state.tenant);
     const { items: products } = useSelector((state: RootState) => state.inventory);
     const { customers, activeCounterId } = useSelector((state: RootState) => state.pos);
+    const { entriesByType } = useSelector((state: RootState) => state.masterData);
 
     // -- Composed Hooks --
     const sessionManager = usePOSSession();
@@ -58,6 +61,30 @@ export const usePOSLogic = () => {
     const activeCustomerId = activeSession.customerId;
     const activeCustomer = customers.find(c => c.id === activeCustomerId) || customers[0] || DEFAULT_CUSTOMER;
     const _isBranchAll = currentBranch === 'All';
+
+    // Minimal wholesale/retail billing path: a customer is "wholesale" when their assigned
+    // customer group's name matches "wholesale" (same substring convention CustomerGroups.tsx's
+    // getGroupIcon already uses), rather than adding a separate flag/UI toggle. When active,
+    // cart items use Item.wholesaleRate instead of sellingPrice (see resolveItemPrice below),
+    // and the group's existing meta.discountPercent (set on the Customer Groups screen) can be
+    // applied to the bill with one click via onApplyWholesaleDiscount.
+    useEffect(() => {
+        dispatch(fetchMasterEntries({ type: 'CUSTOMER_GROUP' }) as any);
+    }, [dispatch]);
+
+    const activeCustomerGroup = useMemo(() => {
+        const groupId = (activeCustomer as any).groupId;
+        if (!groupId) return null;
+        return (entriesByType.CUSTOMER_GROUP || []).find(g => g._id === groupId) || null;
+    }, [activeCustomer, entriesByType.CUSTOMER_GROUP]);
+
+    const isWholesaleCustomer = !!activeCustomerGroup && /wholesale/i.test(activeCustomerGroup.name);
+    const wholesaleDiscountPercent = activeCustomerGroup?.meta?.discountPercent || 0;
+
+    const resolveItemPrice = useCallback((item: any) => {
+        if (isWholesaleCustomer && item.wholesaleRate) return item.wholesaleRate;
+        return item.price ?? item.sellingPrice;
+    }, [isWholesaleCustomer]);
 
     const { isFullScreen, setViewMode, mobileTab, setMobileTab, viewMode,
         isProcessing, setIsProcessing, isPreOrder, setIsPreOrder,
@@ -121,10 +148,18 @@ export const usePOSLogic = () => {
         userId: user?.tenantId
     });
 
+    // MIS Controls (Settings -> MIS Controls) discount policy, resolved from the tenant
+    // record the same way loyaltyConfig above is -- falls back to DEFAULT_MIS_CONFIG so a
+    // tenant that's never saved this tab still gets the same defaults Settings shows them.
+    const misConfig = useMemo(() => {
+        const relevantTenant = tenants.find(t => t.id === user?.tenantId);
+        return { ...DEFAULT_MIS_CONFIG, ...(relevantTenant?.misConfig || {}) };
+    }, [tenants, user?.tenantId]);
+
     const { handleCheckout } = usePOSCheckout({
         cart, isProcessing, setIsProcessing, activeSession, activeCounterId: activeCounterId || null,
         currentBranch: currentBranch || '', currentSector: currentSector || '', user: user as any, branches, tenants, getBranchName,
-        isPreOrder, setIsPreOrder, finalTotal, redemptionAmount, defaultTaxMode,
+        isPreOrder, setIsPreOrder, finalTotal, redemptionAmount, cartSubtotal, defaultTaxMode,
         onCheckoutSuccess: (sale) => {
             handleCheckoutSuccess(sale);
         }
@@ -329,12 +364,12 @@ export const usePOSLogic = () => {
                     ...localProduct,
                     id: localProduct.id || localProduct._id || '',
                     qty: 1,
-                    price: localProduct.sellingPrice,
+                    price: resolveItemPrice(localProduct),
                     taxMode: localProduct.taxMode || defaultTaxMode
                 }, isReturnMode);
                 return;
             }
-            
+
             // If not found locally, query the backend
             const res = await api.get(`/inventory/barcode/${barcode}`);
             if (res.data) {
@@ -343,7 +378,7 @@ export const usePOSLogic = () => {
                     ...item,
                     id: item._id || item.id,
                     qty: 1,
-                    price: item.sellingPrice,
+                    price: resolveItemPrice(item),
                     taxMode: item.taxMode || defaultTaxMode
                 }, isReturnMode);
             }
@@ -352,7 +387,7 @@ export const usePOSLogic = () => {
             // Optional: Play an error beep or show toast
             alert(`Product with barcode ${barcode} not found!`);
         }
-    }, [products, addItem, isReturnMode, defaultTaxMode]);
+    }, [products, addItem, isReturnMode, defaultTaxMode, resolveItemPrice]);
 
     useBarcodeScanner({ onScan: handleBarcodeScan });
 
@@ -435,6 +470,10 @@ export const usePOSLogic = () => {
         allBranches,
         products,
         loyaltyConfig,
+        misConfig,
+        discountAmount: activeSession.discountAmount || 0,
+        isMrpPending: activeSession.isMrpPending || false,
+        mrpPendingNote: activeSession.mrpPendingNote || '',
 
         // Actions
         toggleFullScreen,
@@ -451,7 +490,10 @@ export const usePOSLogic = () => {
         switchSession,
         addSession: sessionManager.addNewSession,
         removeSession: sessionManager.removeSessionByIdx,
-        onAddToCart: (item: CartItem) => addItem(item, isReturnMode),
+        onAddToCart: (item: CartItem) => addItem({ ...item, price: resolveItemPrice(item) }, isReturnMode),
+        isWholesaleCustomer,
+        wholesaleDiscountPercent,
+        onApplyWholesaleDiscount: () => dispatch(setDiscountAmount(Math.round(cartSubtotal * wholesaleDiscountPercent) / 100)),
         onRemoveFromCart: removeItem,
         onUpdateCartQty: updateQty,
         onUpdateCartLength: updateLength,
@@ -462,6 +504,8 @@ export const usePOSLogic = () => {
         onSetTaxMode: (mode: TaxMode) => dispatch(setTaxMode(mode)),
         onSetPaymentMethod: (method: PaymentMethod) => dispatch(setPaymentMethod(method)),
         onSetRedeemedPoints: (points: number) => dispatch(setRedeemedPoints(points)),
+        onSetDiscountAmount: (amount: number) => dispatch(setDiscountAmount(amount)),
+        onSetMrpPending: (pending: boolean, note?: string) => dispatch(setMrpPending({ isMrpPending: pending, note })),
         resumeBill: sessionManager.resumeHeldBill,
         discardHeldBill: sessionManager.discardBill,
         onSetActiveCounter: (id: string) => dispatch(setActiveCounter(id)),

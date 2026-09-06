@@ -30,6 +30,7 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'PAYMENT_IN': 'POS',
     'CUSTOMER_CREDITS': 'POS',
     'OUTSTANDING_DUES': 'POS',
+    'MRP_PENDING_INVOICES': 'POS',
     'SALES': 'POS',
 
     // INVENTORY
@@ -39,6 +40,8 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'STOCK_SUMMARY': 'INVENTORY',
     'STOCK_MOVEMENT': 'INVENTORY',
     'LOW_STOCK_ALERTS': 'INVENTORY',
+    'STOCK_WRITEOFF': 'INVENTORY',
+    'STOCK_TRANSFER': 'INVENTORY',
     'UNITS_HSN': 'INVENTORY',
     'WAREHOUSES': 'INVENTORY',
     'BATCH_EXPIRY': 'INVENTORY',
@@ -62,6 +65,7 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'SUPPLIER_LEDGER': 'SUPPLIERS',
     'SUPPLIER_STATEMENTS': 'SUPPLIERS',
     'SUPPLIER_GROUPS': 'SUPPLIERS',
+    'AGENTS': 'SUPPLIERS',
 
     // PURCHASE
     'PURCHASE': 'PURCHASE',
@@ -72,6 +76,7 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'PURCHASE_ORDER_FORM': 'PURCHASE',
     'PURCHASE_ORDER_DETAILS': 'PURCHASE',
     'GOODS_RECEIVED': 'PURCHASE',
+    'GRN_TRANSFER': 'PURCHASE',
     'GRN_FORM': 'PURCHASE',
     'PURCHASE_BILLS': 'PURCHASE',
     'BILL_FORM': 'PURCHASE',
@@ -103,6 +108,8 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'SMS_TRACKER': 'FINANCE',
     'GST_RECONCILIATION': 'FINANCE',
     'JOURNAL_ENTRIES': 'FINANCE',
+    'EMI_PLANS': 'FINANCE',
+    'CARD_TERMINALS': 'FINANCE',
 
     // EXPENSES
     'EXPENSES': 'EXPENSES',
@@ -134,6 +141,7 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'ATTENDANCE_SUMMARY': 'HR',
     'ATTENDANCE_BOARD': 'HR',
     'ALLOWANCE_MANAGER': 'HR',
+    'COMMISSION_MANAGEMENT': 'HR',
 
     // POS Additional
     'DUE_ADJUSTMENT': 'POS',
@@ -173,7 +181,17 @@ const VIEW_TO_MODULE: Partial<Record<AppView, ModuleType>> = {
     'GROW_REPORT_TRAFFIC': 'GROW',
     'GROW_REPORT_CONVERSION': 'GROW',
     'GROW_SUPER_ADMIN_CONSOLE': 'GROW',
-    'GROW_TENANT_CONFIG': 'GROW'
+    'GROW_TENANT_CONFIG': 'GROW',
+
+    // WHOLESALE/RETAIL (WR) BILLING -- sales-side screens ride the POS module gate (same as
+    // SALES_INVOICE), purchase-side rides PURCHASE (same as PURCHASE_ENTRY), reports ride REPORTS.
+    'WR_COUNTER': 'POS',
+    'WR_SALES_ENTRY': 'POS',
+    'WR_SALES_BILL_VIEW': 'POS',
+    'WR_PURCHASE_ENTRY': 'PURCHASE',
+    'WR_PURCHASE_BILL_VIEW': 'PURCHASE',
+    'WR_SALES_REPORT': 'REPORTS',
+    'WR_STOCK_REPORT': 'REPORTS'
 };
 
 export const usePermissions = () => {

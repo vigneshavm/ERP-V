@@ -12,6 +12,7 @@ import { POSTerminalInfo } from '../POSTerminalInfo';
 import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
 import { POSMobileMenu } from '../POSMobileMenu';
 import { Menu, CreditCard } from 'lucide-react';
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 interface POSTemplateProps {
     logic: POSLogic;
@@ -44,6 +45,15 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         hasMultipleBranches,
         products,
         loyaltyConfig,
+        misConfig,
+        discountAmount,
+        onSetDiscountAmount,
+        isWholesaleCustomer,
+        wholesaleDiscountPercent,
+        onApplyWholesaleDiscount,
+        isMrpPending,
+        mrpPendingNote,
+        onSetMrpPending,
         toggleFullScreen,
         setViewMode,
         setMobileTab,
@@ -84,6 +94,8 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         downloadLastBill,
         allBranches: branches
     } = logic;
+
+    const { t } = useLanguage();
 
     return (
         <div
@@ -144,7 +156,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         >
                             <PauseCircle className="w-5 h-5" />
                             <div className="flex flex-col items-start leading-none">
-                                <span className="hidden md:inline font-bold text-sm">Held Bills</span>
+                                <span className="hidden md:inline font-bold text-sm">{t('heldBills')}</span>
                                 <kbd className="text-[9px] opacity-50 font-mono tracking-tighter">F6</kbd>
                             </div>
                             {(heldBills?.length || 0) > 0 && (
@@ -168,13 +180,13 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                     onClick={() => setIsReturnMode(false)}
                                     className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                                 >
-                                    Sale
+                                    {t('sale')}
                                 </button>
                                 <button
                                     onClick={() => setIsReturnMode(true)}
                                     className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-red-50 text-red-600 shadow-sm ring-1 ring-red-100' : 'text-gray-500 hover:text-gray-700'}`}
                                 >
-                                    Return
+                                    {t('return')}
                                 </button>
                             </div>
 
@@ -183,7 +195,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 className={`px-3 py-1 bg-white dark:bg-neutral-700 rounded-md text-xs font-bold flex flex-col items-center gap-0.5 transition-all ${viewMode === 'SCANNER' ? 'text-primary dark:text-primaryShadow shadow-sm' : 'bg-transparent text-neutral-500 hover:text-neutral-700'}`}
                             >
                                 <div className="flex items-center gap-2">
-                                    <TableIcon className="w-3.5 h-3.5" /> Scanner
+                                    <TableIcon className="w-3.5 h-3.5" /> {t('scanner')}
                                 </div>
                                 <kbd className="text-[9px] opacity-40 font-mono tracking-tighter">Alt+V</kbd>
                             </button>
@@ -192,7 +204,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 className={`px-3 py-1 bg-white dark:bg-neutral-800 rounded-md text-xs font-bold flex flex-col items-center gap-0.5 transition-all ${viewMode === 'VISUAL' ? 'text-primary dark:text-primaryShadow shadow-sm' : 'bg-transparent text-neutral-500 hover:text-neutral-700'}`}
                             >
                                 <div className="flex items-center gap-2">
-                                    <LayoutGrid className="w-3.5 h-3.5" /> Visual
+                                    <LayoutGrid className="w-3.5 h-3.5" /> {t('visual')}
                                 </div>
                                 <kbd className="text-[9px] opacity-40 font-mono tracking-tighter">Alt+V</kbd>
                             </button>
@@ -252,6 +264,16 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 hasMultipleBranches={hasMultipleBranches}
                                 isPreOrder={isPreOrder}
                                 loyaltyConfig={loyaltyConfig}
+                                discountAmount={discountAmount}
+                                onSetDiscountAmount={onSetDiscountAmount}
+                                maxDiscountPercent={misConfig.maxDiscountPercent}
+                                allowDiscountOverride={misConfig.allowDiscountOverride}
+                                isWholesaleCustomer={isWholesaleCustomer}
+                                wholesaleDiscountPercent={wholesaleDiscountPercent}
+                                onApplyWholesaleDiscount={onApplyWholesaleDiscount}
+                                isMrpPending={isMrpPending}
+                                mrpPendingNote={mrpPendingNote}
+                                onSetMrpPending={onSetMrpPending}
                                 onSetIsPreOrder={setIsPreOrder}
                                 onCheckout={handleCheckout}
                                 onSetCustomer={onSetCustomer}
@@ -334,6 +356,16 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                     isPreOrder={isPreOrder}
                                     activeCustomer={activeCustomer}
                                     loyaltyConfig={loyaltyConfig}
+                                    discountAmount={discountAmount}
+                                    onSetDiscountAmount={onSetDiscountAmount}
+                                    maxDiscountPercent={misConfig.maxDiscountPercent}
+                                    allowDiscountOverride={misConfig.allowDiscountOverride}
+                                    isWholesaleCustomer={isWholesaleCustomer}
+                                    wholesaleDiscountPercent={wholesaleDiscountPercent}
+                                    onApplyWholesaleDiscount={onApplyWholesaleDiscount}
+                                    isMrpPending={isMrpPending}
+                                    mrpPendingNote={mrpPendingNote}
+                                    onSetMrpPending={onSetMrpPending}
                                     onSetTaxMode={onSetTaxMode}
                                     onSetPaymentMethod={onSetPaymentMethod}
                                     onSetRedeemedPoints={onSetRedeemedPoints}

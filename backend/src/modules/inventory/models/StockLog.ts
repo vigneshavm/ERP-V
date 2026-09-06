@@ -24,7 +24,7 @@ const stockLogSchema = new Schema<IStockLog>(
             // reduceStock() call (i.e. every POS sale) threw a Mongoose ValidationError here and
             // rolled back the whole invoice transaction. 'ADD'/'SUBTRACT'/'SET'/'SALE' kept for
             // backward compatibility with any existing StockLog documents using those values.
-            enum: ['ADD', 'SUBTRACT', 'SET', 'SALE', 'SALES', 'PURCHASE', 'INIT', 'ADJUST', 'RETURN'],
+            enum: ['ADD', 'SUBTRACT', 'SET', 'SALE', 'SALES', 'PURCHASE', 'INIT', 'ADJUST', 'RETURN', 'TRANSFER', 'DAMAGE', 'MISSING'],
             required: true
         },
         delta: {

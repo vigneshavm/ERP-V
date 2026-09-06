@@ -7,6 +7,10 @@ export interface IExpenseCategory extends Document {
     is_cash_allowed: boolean;
     is_active: boolean;
     gst_eligible: boolean;
+    // References a MasterEntry of type EXPENSE_GROUP (Settings -> Master Data), mirroring
+    // Textilesoft's ExpenseGroup+ExpenseNameEntry pairing on top of this existing flat category
+    // list. Optional so existing categories keep working ungrouped until assigned one.
+    groupId?: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
@@ -38,6 +42,10 @@ const expenseCategorySchema = new Schema<IExpenseCategory>(
         gst_eligible: {
             type: Boolean,
             default: false,
+        },
+        groupId: {
+            type: Schema.Types.ObjectId,
+            ref: 'MasterEntry',
         },
         createdBy: {
             type: Schema.Types.ObjectId,

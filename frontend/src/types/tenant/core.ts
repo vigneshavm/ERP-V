@@ -1,6 +1,8 @@
 // Core Tenant Types
 import { Sector, ModuleType, SystemRole } from '../common';
 import { SettingsState } from '../settings';
+import { MISConfig } from './mis';
+import { PrintSettings } from './printSettings';
 
 export enum DbRoleCode {
     OWNER = SystemRole.OWNER,
@@ -149,6 +151,13 @@ export interface Tenant {
     taxDetails?: TaxDetails;
     bankingDetails?: BankingDetails;
     systemConfig?: SystemConfig;
+    // MIS Controls (Settings -> MIS Controls tab), persisted via PUT /api/settings.
+    // Partial -- a tenant that has never saved this tab has some/all fields undefined,
+    // so consumers merge over DEFAULT_MIS_CONFIG rather than assuming full data.
+    misConfig?: Partial<MISConfig>;
+    // Print/GRN-numbering settings (Settings -> Print Settings tab), persisted via
+    // PUT /api/settings. Same partial/merge-over-defaults convention as misConfig above.
+    printSettings?: Partial<PrintSettings>;
     integrations?: Integrations;
     ecommerceConfig?: TenantEcommerceConfig;
     googleBusinessConfig?: any; // To be typed in growth.ts

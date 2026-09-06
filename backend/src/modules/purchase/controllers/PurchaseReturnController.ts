@@ -47,12 +47,19 @@ interface AuthenticatedRequest extends Request {
 import { container } from "tsyringe";
 import { InventoryService } from '../../inventory/services/InventoryService.js';
 import DebitNote from '../models/DebitNote.js';
+import GRN from '../models/GRN.js';
+import SerializedUnit from '../../inventory/models/SerializedUnit.js';
+import Item from '../../inventory/models/Item.js';
+import StockLog from '../../inventory/models/StockLog.js';
+import { SerializedUnitService } from '../../inventory/services/SerializedUnitService.js';
+import { AppError } from '../../../utils/AppError.js';
 
 export const createPurchaseReturn = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const {
             billId,
             supplierId,
+            grnId,
             items,
             refundMethod,
             bankAccount,
@@ -72,6 +79,23 @@ export const createPurchaseReturn = async (req: AuthenticatedRequest, res: Respo
             return;
         }
 
+        // When this return is scoped to a specific GRN, validate it up front and load it once
+        // -- each item's requested return quantity gets checked against that GRN's own
+        // acceptedQty (minus whatever's already been returned against it) below, so a cashier
+        // can't return more of a batch than was actually received.
+        let sourceGrn: any = null;
+        if (grnId) {
+            sourceGrn = await GRN.findOne({ _id: grnId, tenantId });
+            if (!sourceGrn) {
+                res.status(404).json({ message: 'Goods Receipt Note not found' });
+                return;
+            }
+            if (String(sourceGrn.vendorId) !== String(supplierId)) {
+                res.status(400).json({ message: 'This GRN does not belong to the selected supplier' });
+                return;
+            }
+        }
+
         // Calculate totals
         const subtotal = items.reduce((sum: number, item: any) => sum + (item.quantity * item.rate), 0);
         const taxAmount = items.reduce((sum: number, item: any) => sum + (item.quantity * item.rate * item.tax / 100), 0);
@@ -83,15 +107,69 @@ export const createPurchaseReturn = async (req: AuthenticatedRequest, res: Respo
 
         // 1. Adjust Stock (Reduce Inventory)
         const inventoryService = container.resolve(InventoryService);
-        // Map items to bulk adjustment format if needed, but bulkAdjustStock takes IDs.
-        // We need to iterate or call individually. 
-        // Logic: For each returned item, subtract stock.
+        const serializedUnitService = container.resolve(SerializedUnitService);
 
-        // Items must have itemId (enforced by new schema)
-        // Verify items availability or assume frontend sends valid data?
-        // Let's iterate and subtract.
         for (const item of items) {
-            if (item.itemId) {
+            if (!item.itemId) continue;
+
+            if (item.serializedUnitId) {
+                // Barcode-wise return: one specific physical unit, not a batch quantity.
+                const unit = await SerializedUnit.findOne({ _id: item.serializedUnitId, tenantId, itemId: item.itemId });
+                if (!unit) {
+                    throw new AppError(`Serialized unit not found for item ${item.productName}`, 404);
+                }
+                if (unit.status !== 'IN_STOCK') {
+                    throw new AppError(`Unit ${unit.serialNumber} is ${unit.status}, not returnable (already ${unit.status.toLowerCase()})`, 400);
+                }
+                if (sourceGrn && unit.grnId && String(unit.grnId) !== String(grnId)) {
+                    throw new AppError(`Unit ${unit.serialNumber} was not received under this GRN`, 400);
+                }
+
+                await serializedUnitService.updateStatus(item.serializedUnitId, tenantId, 'RETURNED');
+
+                const currentItem: any = await Item.findOne({ _id: item.itemId, tenantId });
+                await Item.findByIdAndUpdate(item.itemId, { $inc: { stockQty: -1 } });
+                await StockLog.create({
+                    itemId: item.itemId,
+                    tenantId,
+                    type: 'RETURN',
+                    delta: -1,
+                    finalQty: (currentItem?.stockQty || 1) - 1,
+                    reason: `PURCHASE_RETURN: Unit ${unit.serialNumber}`,
+                    performedBy: req.user?._id
+                });
+            } else if (sourceGrn && item.batchNumber) {
+                // GRN-wise/lot-wise return: validate against what that GRN actually accepted,
+                // minus anything already returned against this same GRN+item+batch.
+                const grnItem = sourceGrn.items.find((gi: any) =>
+                    String(gi.productId) === String(item.itemId) && (gi.lotNumber || '') === item.batchNumber
+                );
+                if (!grnItem) {
+                    throw new AppError(`Item ${item.productName} / batch ${item.batchNumber} was not received on this GRN`, 400);
+                }
+
+                const priorReturns = await PurchaseReturn.aggregate([
+                    { $match: { grnId: sourceGrn._id } },
+                    { $unwind: '$items' },
+                    { $match: { 'items.itemId': new mongoose.Types.ObjectId(item.itemId), 'items.batchNumber': item.batchNumber } },
+                    { $group: { _id: null, total: { $sum: '$items.quantity' } } }
+                ]);
+                const alreadyReturned = priorReturns[0]?.total || 0;
+                const remaining = grnItem.acceptedQty - alreadyReturned;
+                if (item.quantity > remaining) {
+                    throw new AppError(`Cannot return ${item.quantity} of ${item.productName} (batch ${item.batchNumber}) -- only ${remaining} left returnable from this GRN`, 400);
+                }
+
+                await inventoryService.reduceStockFromBatch(
+                    item.itemId,
+                    item.quantity,
+                    item.batchNumber,
+                    tenantId,
+                    req.user,
+                    'PURCHASE_RETURN'
+                );
+            } else {
+                // Legacy path: a return with no GRN/batch scoping, unchanged from before.
                 await inventoryService.bulkAdjustStock(
                     [item.itemId],
                     item.quantity,
@@ -128,6 +206,7 @@ export const createPurchaseReturn = async (req: AuthenticatedRequest, res: Respo
         const purchaseReturn = await PurchaseReturn.create({
             returnId,
             bill: billId || null,
+            grnId: grnId || null,
             supplier: supplierId,
             debitNoteId: debitNote._id, // Link here
             items,
@@ -233,7 +312,7 @@ export const createPurchaseReturn = async (req: AuthenticatedRequest, res: Respo
         res.status(201).json(purchaseReturn);
     } catch (err) {
         error(`Create Purchase Return error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+        res.status((err as any).statusCode || 500).json({ message: (err as Error).message || 'Server Error' });
     }
 };
 
@@ -253,6 +332,7 @@ export const getAllPurchaseReturns = async (req: AuthenticatedRequest, res: Resp
     try {
         const returns = await PurchaseReturn.find({ createdBy: req.user?._id })
             .populate('supplier', 'businessName')
+            .populate('grnId', 'grnNumber')
             .sort({ createdAt: -1 });
         res.status(200).json(returns);
     } catch (err) {
@@ -289,7 +369,8 @@ export const getPurchaseReturnById = async (req: AuthenticatedRequest, res: Resp
         }
         const pr = await PurchaseReturn.findOne({ _id: req.params.id, createdBy: req.user?._id })
             .populate('supplier', 'businessName')
-            .populate('bill', 'billNo');
+            .populate('bill', 'billNo')
+            .populate('grnId', 'grnNumber');
         if (!pr) {
             res.status(404).json({ message: 'Purchase return not found' });
             return;

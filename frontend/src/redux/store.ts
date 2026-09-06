@@ -18,9 +18,15 @@ import tenantReducer from './slices/tenantSlice';
 import uiReducer from './slices/uiSlice';
 import { settingsReducer } from './slices/settingsSlice';
 import supplierGroupReducer from './slices/supplierGroupSlice';
+import agentReducer from './slices/agentSlice';
 import paymentOutReducer from './slices/paymentOutSlice';
 import journalEntryReducer from './slices/journalEntrySlice';
 import payrollReducer from './slices/payrollSlice';
+import comboOfferReducer from './slices/comboOfferSlice';
+import serializedUnitReducer from './slices/serializedUnitSlice';
+import masterDataReducer from './slices/masterDataSlice';
+import emiPlanReducer from './slices/emiPlanSlice';
+import cardTerminalReducer from './slices/cardTerminalSlice';
 
 export const store = configureStore({
   reducer: {
@@ -43,9 +49,15 @@ export const store = configureStore({
     tenant: tenantReducer,
     ui: uiReducer,
     supplierGroups: supplierGroupReducer,
+    agents: agentReducer,
     paymentOut: paymentOutReducer,
     journalEntry: journalEntryReducer,
     payroll: payrollReducer,
+    comboOffer: comboOfferReducer,
+    serializedUnit: serializedUnitReducer,
+    masterData: masterDataReducer,
+    emiPlans: emiPlanReducer,
+    cardTerminals: cardTerminalReducer,
   },
 });
 

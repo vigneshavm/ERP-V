@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { User, Smartphone, Mail, Send, RotateCcw, Crown, Zap, History, Gift, MessageSquare, Smile } from 'lucide-react';
 import { Customer } from "../../types/sales";
 import Customer360Modal from '../customers/Customer360Modal';
+import { useLanguage } from "../../contexts/LanguageContext";
 
 interface POSCustomerPanelProps {
     activeCustomer: Customer;
@@ -24,6 +25,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
     const phoneInputRef = useRef<HTMLInputElement>(null);
     const nameInputRef = useRef<HTMLInputElement>(null);
     const [is360ModalOpen, setIs360ModalOpen] = useState(false);
+    const { t } = useLanguage();
 
     // Filter Suggestions and Auto-select
     useEffect(() => {
@@ -125,7 +127,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                         <input
                             ref={phoneInputRef}
                             type="text"
-                            placeholder="Identify Customer (Mobile No.)"
+                            placeholder={t('identifyCustomer')}
                             className={`w-full pl-8 pr-2 py-1.5 text-xs bg-neutral-50 dark:bg-neutral-900 border ${activeCustomer.id !== 'c1' ? 'border-success text-success dark:text-success/90 ring-2 ring-success/10' : 'border-primary/30 dark:border-primary/60 animate-pulse-subtle'} rounded focus:outline-none focus:ring-2 focus:ring-primary transition-all`}
                             value={phoneQuery}
                             onChange={e => setPhoneQuery(e.target.value)}
@@ -141,7 +143,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                             <input
                                 ref={nameInputRef}
                                 type="text"
-                                placeholder="Customer Name (Optional)"
+                                placeholder={t('customerNameOptional')}
                                 className="w-full pl-8 pr-2 py-1.5 text-xs bg-primary/5 dark:bg-neutral-900 border border-primary/20 dark:border-primary/40 rounded focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                                 value={nameQuery}
                                 onChange={e => setNameQuery(e.target.value)}

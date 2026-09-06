@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { POSLogic } from "../../hooks/usePOSLogic";
 import { Skeleton } from "../../components/core/Feedback/Skeleton";
+import { LanguageProvider } from "../../contexts/LanguageProvider";
 
 const StandardPOSTemplate = React.lazy(() => import('./templates/StandardPOSTemplate'));
 const TextilePOSTemplate = React.lazy(() => import('./templates/TextilePOSTemplate'));
@@ -31,8 +32,10 @@ export const POSTemplateRegistry: React.FC<POSTemplateRegistryProps> = ({ logic 
     };
 
     return (
-        <React.Suspense fallback={<div className="p-8"><Skeleton className="w-full h-[600px] rounded-sm" /></div>}>
-            {renderTemplate()}
-        </React.Suspense>
+        <LanguageProvider>
+            <React.Suspense fallback={<div className="p-8"><Skeleton className="w-full h-[600px] rounded-sm" /></div>}>
+                {renderTemplate()}
+            </React.Suspense>
+        </LanguageProvider>
     );
 };

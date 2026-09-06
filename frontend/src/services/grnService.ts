@@ -80,6 +80,7 @@ export const mapGrnToFrontendGRN = (
         vendorId: vendorId && typeof vendorId === 'object' ? String(vendorId._id) : String(vendorId || ''),
         vendorName: (vendorId && typeof vendorId === 'object' ? (vendorId.businessName || vendorId.name) : undefined) || fallback.vendorName || '',
         receivedDate: grn.receivedDate || new Date().toISOString(),
+        warehouseId: grn.warehouseId,
         status: grn.status,
         notes: grn.notes,
         items,

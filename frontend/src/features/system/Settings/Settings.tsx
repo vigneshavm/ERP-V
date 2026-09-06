@@ -13,6 +13,7 @@ import { SettingsState } from "../../../types/settings";
 import { Tenant } from "../../../types/tenant/index";
 import { TaxMode, AppView } from "../../../types/common";
 import { setStoredTheme } from "../../../utils/theme";
+import { getStoredLanguage, setStoredLanguage, Language } from "../../../utils/language";
 import api from "../../../services/api";
 import {
     Settings as SettingsIcon,
@@ -28,7 +29,8 @@ import {
     Loader2,
     RotateCcw,
     Save,
-    CheckCircle
+    CheckCircle,
+    Printer
 } from 'lucide-react';
 
 // Import Tabs
@@ -40,9 +42,12 @@ import IntegrationsTab from './IntegrationsTab';
 import MISControlsTab from './MISControlsTab';
 import ModulesTab from './ModulesTab';
 import PersonalizationTab from './PersonalizationTab';
+import PrintSettingsTab from './PrintSettingsTab';
 import SecurityTab from './SecurityTab';
 import SubscriptionTab from './SubscriptionTab';
-import { MISConfig, ModulesConfig, TenantTheme } from './types';
+import { MISConfig, ModulesConfig, TenantTheme, PrintSettings } from './types';
+import { DEFAULT_MIS_CONFIG } from '../../../types/tenant/mis';
+import { DEFAULT_PRINT_SETTINGS } from '../../../types/tenant/printSettings';
 
 const Settings: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +60,7 @@ const Settings: React.FC = () => {
         { id: 'finance', label: 'Finance', icon: CreditCard, desc: 'Taxes, billing & banking' },
         { id: 'modules', label: 'Modules', icon: Puzzle, desc: 'Enable/disable ERP features' },
         { id: 'mis', label: 'MIS Controls', icon: ShieldCheck, desc: 'Management & audit logs' },
+        { id: 'print', label: 'Print Settings', icon: Printer, desc: 'Bill header/footer & GRN numbering' },
         { id: 'integrations', label: 'Integrations', icon: Share2, desc: 'WhatsApp & external APIs' },
         { id: 'security', label: 'Security', icon: Lock, desc: 'Roles & access control' },
         { id: 'personalization', label: 'Personalization', icon: User, desc: 'User-specific preferences' },
@@ -93,6 +99,7 @@ const Settings: React.FC = () => {
     const [userTheme, setUserTheme] = useState<'light' | 'dark' | 'system'>(user?.theme || 'system');
     const [userColor, setUserColor] = useState(user?.primaryColor || '');
     const [userLogo, setUserLogo] = useState(user?.loginLogoUrl || '');
+    const [userLanguage, setUserLanguage] = useState<Language>((user?.language as Language) || getStoredLanguage() || 'en');
 
     // Finance & Tax
     const [taxMode, setTaxMode] = useState<string>((activeTenant?.systemConfig?.pricingMode) || settings.defaultTaxMode || 'EXCLUSIVE');
@@ -105,7 +112,25 @@ const Settings: React.FC = () => {
 
     // Modules & Config
     const [modules, setModules] = useState<ModulesConfig>(settings.enabledModules as any || { pos: true, inventory: true, finance: true });
-    const [misConfig] = useState<MISConfig>((settings as any) || {});
+    // MIS Controls (Settings -> MIS Controls tab). Previously this was a static
+    // `useState` snapshot (no setter) whose displayed values actually came from
+    // `settings` (local-Redux-only, never persisted) via `{ ...misConfig, ...settings }`
+    // in componentProps.mis below -- so toggling a control never round-tripped to the
+    // server. Now `misConfig` is the single source of truth: initialized from the
+    // tenant's persisted `misConfig` (falling back to DEFAULT_MIS_CONFIG for any field
+    // never saved), edited directly via setMisConfig, and included in tenantUpdates on
+    // Save so it actually persists to MongoDB via PUT /api/settings.
+    const [misConfig, setMisConfig] = useState<MISConfig>({
+        ...DEFAULT_MIS_CONFIG,
+        ...(activeTenant?.misConfig || {})
+    } as MISConfig);
+    // Print Settings (Settings -> Print Settings tab) -- same pattern as misConfig above:
+    // initialized from the tenant's persisted printSettings (falling back to
+    // DEFAULT_PRINT_SETTINGS for any field never saved), included in tenantUpdates on Save.
+    const [printSettings, setPrintSettings] = useState<PrintSettings>({
+        ...DEFAULT_PRINT_SETTINGS,
+        ...(activeTenant?.printSettings || {})
+    } as PrintSettings);
     const [isSaved, setIsSaved] = useState(false);
 
     // ---- Load flow: MongoDB -> GET /api/settings -> Redux -> UI ----
@@ -148,6 +173,8 @@ const Settings: React.FC = () => {
         setAccNo(activeTenant.bankingDetails?.accountNumber || '');
         setIfsc(activeTenant.bankingDetails?.ifsc || '');
         setAccountHolderName(activeTenant.bankingDetails?.accountHolderName || '');
+        setMisConfig({ ...DEFAULT_MIS_CONFIG, ...(activeTenant.misConfig || {}) } as MISConfig);
+        setPrintSettings({ ...DEFAULT_PRINT_SETTINGS, ...(activeTenant.printSettings || {}) } as PrintSettings);
         // Only re-sync when the tenant record actually changes server-side
         // (initial load or a completed save) -- not on every keystroke.
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -238,6 +265,8 @@ const Settings: React.FC = () => {
                     isGstEnabled: activeTenant?.taxDetails?.isGstEnabled ?? true
                 },
                 bankingDetails: { bankName, accountNumber: accNo, ifsc, accountHolderName },
+                misConfig,
+                printSettings,
             };
 
             await dispatch(saveTenantSettings(tenantUpdates)).unwrap();
@@ -249,11 +278,16 @@ const Settings: React.FC = () => {
                 await dispatch(updateProfile({
                     theme: userTheme,
                     primaryColor: userColor,
-                    loginLogoUrl: userLogo || undefined
+                    loginLogoUrl: userLogo || undefined,
+                    language: userLanguage
                 })).unwrap();
                 if (userTheme !== 'system') {
                     setStoredTheme(userTheme);
                 }
+                // POS reads this localStorage key directly (see LanguageProvider), so the
+                // billing screen picks up the new language immediately, not just after the
+                // profile round-trip completes.
+                setStoredLanguage(userLanguage);
             }
 
             // Toast fires only after every persistence call above has actually
@@ -305,9 +339,13 @@ const Settings: React.FC = () => {
             },
             modules: { modules, handleModuleToggle: (id: string) => setModules(prev => ({ ...prev, [id]: !prev[id] })) },
             mis: {
-                misConfig: { ...misConfig, ...settings } as unknown as MISConfig,
-                handleMisToggle: (k: string) => dispatch(updateSettings({ [k]: !((settings as any)[k]) })),
-                setMaxDiscountPercent: (v: number) => dispatch(updateSettings({ sales: { ...settings.sales, defaultDiscount: v } }))
+                misConfig,
+                handleMisToggle: (k: string) => setMisConfig(prev => ({ ...prev, [k]: !prev[k] } as MISConfig)),
+                setMaxDiscountPercent: (v: number) => setMisConfig(prev => ({ ...prev, maxDiscountPercent: v }))
+            },
+            print: {
+                printSettings,
+                setPrintSettings: (updater: (prev: PrintSettings) => PrintSettings) => setPrintSettings(updater)
             },
             security: {
                 roles: [], permissions,
@@ -320,7 +358,8 @@ const Settings: React.FC = () => {
             },
             personalization: {
                 userTheme, setUserTheme, userColor, setUserColor,
-                userLogo, handleUserLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => { if (e.target.files && e.target.files[0]) setUserLogo(URL.createObjectURL(e.target.files[0])); }
+                userLogo, handleUserLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => { if (e.target.files && e.target.files[0]) setUserLogo(URL.createObjectURL(e.target.files[0])); },
+                userLanguage, setUserLanguage
             }
         };
 
@@ -340,6 +379,7 @@ const Settings: React.FC = () => {
             case 'finance': return <FinanceTab {...componentProps.finance} />;
             case 'modules': return <ModulesTab {...componentProps.modules} />;
             case 'mis': return <MISControlsTab {...componentProps.mis} />;
+            case 'print': return <PrintSettingsTab {...componentProps.print} />;
             case 'integrations': return <IntegrationsTab />;
             case 'security': return <SecurityTab {...componentProps.security} />;
             case 'personalization': return <PersonalizationTab {...componentProps.personalization} />;

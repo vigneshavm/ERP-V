@@ -37,15 +37,17 @@ export const usePOSTotals = ({ cart, activeSession, tenants, userId }: UsePOSTot
 
         const redValue = currentTenant?.loyaltyConfig?.redemptionValue || 1;
         const redAmt = (activeSession.redeemedPoints || 0) * redValue;
+        const discountAmt = activeSession.discountAmount || 0;
 
         return {
             cartSubtotal: subtotal,
             taxAmount: tax,
             cartTotal: rawTotal,
             redemptionAmount: redAmt,
-            finalTotal: Math.max(0, rawTotal - redAmt)
+            discountAmount: discountAmt,
+            finalTotal: Math.max(0, rawTotal - redAmt - discountAmt)
         };
-    }, [cart, activeSession.taxMode, activeSession.redeemedPoints, tenants, userId]);
+    }, [cart, activeSession.taxMode, activeSession.redeemedPoints, activeSession.discountAmount, tenants, userId]);
 
     return totals;
 };

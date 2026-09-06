@@ -22,6 +22,16 @@ interface POSSidebarProps {
     hasMultipleBranches: boolean;
     isPreOrder: boolean;
     loyaltyConfig?: LoyaltyConfig;
+    discountAmount?: number;
+    onSetDiscountAmount?: (amount: number) => void;
+    maxDiscountPercent?: number;
+    allowDiscountOverride?: boolean;
+    isWholesaleCustomer?: boolean;
+    wholesaleDiscountPercent?: number;
+    onApplyWholesaleDiscount?: () => void;
+    isMrpPending?: boolean;
+    mrpPendingNote?: string;
+    onSetMrpPending?: (pending: boolean, note?: string) => void;
     onSetIsPreOrder: (val: boolean) => void;
     onCheckout: () => void;
     onSetCustomer: (id: string) => void;
@@ -50,6 +60,16 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
     hasMultipleBranches,
     isPreOrder,
     loyaltyConfig,
+    discountAmount,
+    onSetDiscountAmount,
+    maxDiscountPercent,
+    allowDiscountOverride,
+    isWholesaleCustomer,
+    wholesaleDiscountPercent,
+    onApplyWholesaleDiscount,
+    isMrpPending,
+    mrpPendingNote,
+    onSetMrpPending,
     onSetIsPreOrder,
     onCheckout,
     onSetCustomer,
@@ -143,6 +163,16 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
                     isPreOrder={isPreOrder}
                     activeCustomer={activeCustomer}
                     loyaltyConfig={loyaltyConfig}
+                    discountAmount={discountAmount}
+                    onSetDiscountAmount={onSetDiscountAmount}
+                    maxDiscountPercent={maxDiscountPercent}
+                    allowDiscountOverride={allowDiscountOverride}
+                    isWholesaleCustomer={isWholesaleCustomer}
+                    wholesaleDiscountPercent={wholesaleDiscountPercent}
+                    onApplyWholesaleDiscount={onApplyWholesaleDiscount}
+                    isMrpPending={isMrpPending}
+                    mrpPendingNote={mrpPendingNote}
+                    onSetMrpPending={onSetMrpPending}
                     onSetTaxMode={onSetTaxMode}
                     onSetPaymentMethod={onSetPaymentMethod}
                     onSetRedeemedPoints={onSetRedeemedPoints}

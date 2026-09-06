@@ -18,7 +18,9 @@ export type ReportType =
     | 'REPORT_BRAND_WISE'
     | 'REPORT_CATEGORY_WISE'
     | 'REPORT_COUNTER_WISE'
-    | 'REPORT_HOURLY_BILLING';
+    | 'REPORT_HOURLY_BILLING'
+    | 'REPORT_CITY_WISE_STOCK'
+    | 'REPORT_RACK_WISE_STOCK';
 
 export interface BusinessReportData {
     sales?: {

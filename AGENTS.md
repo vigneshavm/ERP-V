@@ -1,5 +1,8 @@
 # AGENTS.md — Repository-Wide Coding Agent Rules
 
+> See also: `ARCHITECTURE.md` (full repo structure) and `CODING_PRINCIPLES.md` (mandatory coding
+> standards) at the repo root — read both before creating or modifying code.
+
 ## Priority
 
 These are repository-wide rules for AI coding agents.

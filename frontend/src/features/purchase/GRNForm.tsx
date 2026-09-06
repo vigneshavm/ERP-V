@@ -12,6 +12,7 @@ const GRNForm: React.FC = () => {
         poId,
         grnData,
         availablePOs,
+        warehouses,
         handlePOSelect,
         handleItemChange,
         saveGRN,
@@ -94,6 +95,9 @@ const GRNForm: React.FC = () => {
                                     receivedDate={grnData.receivedDate}
                                     onDateChange={(date) => setGrnField('receivedDate', date)}
                                     vendorName={grnData.vendorName}
+                                    warehouses={warehouses}
+                                    warehouseId={grnData.warehouseId}
+                                    onWarehouseChange={(id) => setGrnField('warehouseId', id)}
                                 />
                             </div>
                         </div>

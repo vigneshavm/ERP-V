@@ -311,6 +311,28 @@ export class InventoryController {
         }
     };
 
+    public getStockByCity = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as any;
+        try {
+            const report = await this.inventoryService.getStockByCity(authReq.tenantId as string);
+            res.status(200).json(report);
+        } catch (err: any) {
+            error(`Get Stock By City Error: ${err.message}`);
+            res.status(500).json({ message: 'Server Error', error: err.message });
+        }
+    };
+
+    public getStockByRack = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as any;
+        try {
+            const report = await this.inventoryService.getStockByRack(authReq.tenantId as string);
+            res.status(200).json(report);
+        } catch (err: any) {
+            error(`Get Stock By Rack Error: ${err.message}`);
+            res.status(500).json({ message: 'Server Error', error: err.message });
+        }
+    };
+
     // Distinct list of category values actually used across this tenant's items.
     // Used to populate the Items page category filter, which previously only
     // showed categories present on the currently loaded page of results.
@@ -325,6 +347,20 @@ export class InventoryController {
             // error rather than quietly handing back a fabricated category list.
             error(`Get Distinct Categories Error: ${err.message}`);
             res.status(500).json({ message: 'Server Error', error: err.message });
+        }
+    };
+
+    // Records stock lost to damage or unexplained shrinkage -- distinct from a normal
+    // ADJUST/SALES stock movement so it shows up separately in stock history/reporting.
+    public writeOffStock = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as any;
+        try {
+            const { itemId, quantity, cause, reason } = authReq.body;
+            await this.inventoryService.writeOffStock(itemId, Number(quantity), cause, reason, authReq.tenantId as string, authReq.user);
+            res.status(200).json({ message: 'Stock write-off recorded' });
+        } catch (err: any) {
+            error(`Stock Write-Off Error: ${err.message}`);
+            res.status(err.statusCode || 500).json({ message: err.message });
         }
     };
 

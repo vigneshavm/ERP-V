@@ -25,6 +25,7 @@ interface CategoryResponse {
     is_cash_allowed: boolean;
     is_active: boolean;
     gst_eligible: boolean;
+    groupId?: string;
 }
 
 /**
@@ -45,6 +46,7 @@ export const getAllCategories = async (req: AuthenticatedRequest, res: Response)
             is_cash_allowed: cat.is_cash_allowed,
             is_active: cat.is_active,
             gst_eligible: cat.gst_eligible,
+            groupId: cat.groupId ? String(cat.groupId) : undefined,
         }));
 
         res.status(200).json({ categories: transformed });
@@ -60,7 +62,7 @@ export const getAllCategories = async (req: AuthenticatedRequest, res: Response)
  */
 export const createCategory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const { name, monthly_budget, approval_required, is_cash_allowed, is_active, gst_eligible } = req.body;
+        const { name, monthly_budget, approval_required, is_cash_allowed, is_active, gst_eligible, groupId } = req.body;
 
         if (!name) {
             res.status(400).json({ message: 'Category name is required' });
@@ -85,6 +87,7 @@ export const createCategory = async (req: AuthenticatedRequest, res: Response): 
             is_cash_allowed: is_cash_allowed !== false,
             is_active: is_active !== false,
             gst_eligible: gst_eligible || false,
+            groupId: groupId || undefined,
             createdBy: req.user?._id
         });
 
@@ -98,6 +101,7 @@ export const createCategory = async (req: AuthenticatedRequest, res: Response): 
             is_cash_allowed: category.is_cash_allowed,
             is_active: category.is_active,
             gst_eligible: category.gst_eligible,
+            groupId: category.groupId ? String(category.groupId) : undefined,
         });
     } catch (err) {
         error(`Create expense category failed: ${(err as Error).message}`);
@@ -161,6 +165,7 @@ export const updateCategory = async (req: AuthenticatedRequest, res: Response): 
             is_cash_allowed: updatedCategory.is_cash_allowed,
             is_active: updatedCategory.is_active,
             gst_eligible: updatedCategory.gst_eligible,
+            groupId: updatedCategory.groupId ? String(updatedCategory.groupId) : undefined,
         });
     } catch (err) {
         error(`Update expense category failed: ${(err as Error).message}`);

@@ -38,7 +38,10 @@ import {
     Building,
     TrendingUp,
     CreditCard,
-    Search
+    Search,
+    Gift,
+    Fingerprint,
+    Percent
 } from 'lucide-react';
 import { AppView, ModuleType } from '../types/common';
 
@@ -99,6 +102,7 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'PAYMENT_IN', label: 'Receipts', icon: ArrowRight, module: 'POS', path: '/sales/payments' },
             { id: 'CUSTOMER_CREDITS', label: 'Credits', icon: CreditCard, module: 'POS', path: '/sales/credits' },
             { id: 'OUTSTANDING_DUES', label: 'Dues', icon: AlertTriangle, module: 'POS', path: '/sales/dues' },
+            { id: 'MRP_PENDING_INVOICES', label: 'MRP Pending', icon: AlertTriangle, module: 'POS', path: '/sales/mrp-pending' },
         ]
     },
     {
@@ -117,6 +121,7 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'PURCHASE_ORDER_LIST', label: 'Order List', icon: List, module: 'PURCHASE', path: '/purchase/orders/list' },
             { id: 'PURCHASE_ORDER_FORM', label: 'New Order', icon: Plus, module: 'PURCHASE', path: '/purchase/orders/new' },
             { id: 'GOODS_RECEIVED', label: 'GRN', icon: Package, module: 'PURCHASE', path: '/purchase/grn' },
+            { id: 'GRN_TRANSFER', label: 'GRN Transfers', icon: RotateCcw, module: 'PURCHASE', path: '/purchase/grn-transfers' },
             { id: 'PURCHASE_BILLS', label: 'Bills', icon: Receipt, module: 'PURCHASE', path: '/purchase/bills' },
             { id: 'PURCHASE_HISTORY', label: 'History', icon: Clock, module: 'PURCHASE', path: '/purchase/history' },
             { id: 'PURCHASE_RETURN', label: 'Returns', icon: RotateCcw, module: 'PURCHASE', path: '/purchase/returns' },
@@ -131,6 +136,25 @@ export const MENU_ITEMS: MenuItem[] = [
         ]
     },
     {
+        // Wholesale/Retail (WR) Billing: a separate billing track for bulk/wholesale
+        // transactions, parallel to Sales/Billing and Purchasing/GRN rather than a mode within
+        // them (see frontend/src/features/wholesale/*).
+        id: 'WR_COUNTER',
+        label: 'Wholesale/Retail',
+        icon: Store,
+        module: 'POS',
+        path: '/wholesale/counter',
+        children: [
+            { id: 'WR_COUNTER', label: 'Counter Selection', icon: Building, module: 'POS', path: '/wholesale/counter' },
+            { id: 'WR_SALES_ENTRY', label: 'Sales Entry', icon: Plus, module: 'POS', path: '/wholesale/sales/new' },
+            { id: 'WR_SALES_BILL_VIEW', label: 'Sales Bills', icon: FileText, module: 'POS', path: '/wholesale/sales/bills' },
+            { id: 'WR_PURCHASE_ENTRY', label: 'Purchase Entry', icon: Plus, module: 'PURCHASE', path: '/wholesale/purchase/new' },
+            { id: 'WR_PURCHASE_BILL_VIEW', label: 'Purchase Bills', icon: FileText, module: 'PURCHASE', path: '/wholesale/purchase/bills' },
+            { id: 'WR_SALES_REPORT', label: 'Sales Report', icon: BarChart, module: 'REPORTS', path: '/wholesale/reports/sales' },
+            { id: 'WR_STOCK_REPORT', label: 'Stock Report', icon: Package, module: 'REPORTS', path: '/wholesale/reports/stock' },
+        ]
+    },
+    {
         id: 'INVENTORY',
         label: 'Inventory',
         icon: Archive,
@@ -142,6 +166,10 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'ITEM_CATEGORIES', label: 'Categories', icon: Layers, module: 'INVENTORY', path: '/inventory/categories' },
             { id: 'BATCH_EXPIRY', label: 'Batches', icon: Calendar, module: 'INVENTORY', path: '/inventory/batch-expiry' },
             { id: 'BARCODE_GENERATOR', label: 'Barcodes', icon: Barcode, module: 'INVENTORY', path: '/inventory/barcodes' },
+            { id: 'COMBO_OFFERS', label: 'Combo Offers', icon: Gift, module: 'INVENTORY', path: '/inventory/combo-offers' },
+            { id: 'SERIALIZED_UNITS', label: 'Serial / IMEI Tracking', icon: Fingerprint, module: 'INVENTORY', path: '/inventory/serialized-units' },
+            { id: 'STOCK_WRITEOFF', label: 'Damage / Loss', icon: AlertTriangle, module: 'INVENTORY', path: '/inventory/write-off' },
+            { id: 'STOCK_TRANSFER', label: 'Stock Transfer', icon: RotateCcw, module: 'INVENTORY', path: '/inventory/stock-transfer' },
             { id: 'BULK_IMPORT', label: 'Import', icon: Upload, module: 'INVENTORY', path: '/inventory/import' },
             { id: 'REPRINT_QUEUE', label: 'Reprint', icon: Printer, module: 'INVENTORY', path: '/inventory/reprint' },
             { id: 'DATA_EXPORT', label: 'Export', icon: Download, module: 'INVENTORY', path: '/inventory/export' },
@@ -166,6 +194,8 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'SMS_TRACKER', label: 'SMS Tracker', icon: MessageCircle, module: 'FINANCE', path: '/finance/sms-tracker' },
             { id: 'GST_RECONCILIATION', label: 'GST', icon: FileText, module: 'FINANCE', path: '/finance/gst' },
             { id: 'JOURNAL_ENTRIES', label: 'Journal', icon: FileText, module: 'FINANCE', path: '/finance/journal' },
+            { id: 'EMI_PLANS', label: 'EMI Plans', icon: Repeat, module: 'FINANCE', path: '/finance/emi-plans' },
+            { id: 'CARD_TERMINALS', label: 'Card Terminals', icon: CreditCard, module: 'FINANCE', path: '/finance/card-terminals' },
         ]
     },
     {
@@ -216,6 +246,7 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'ALLOWANCE_MANAGER', label: 'Allowances', icon: List, module: 'HR', path: '/people/employees/allowances' },
             { id: 'ATTENDANCE_SUMMARY', label: 'Attendance', icon: Clock, module: 'HR', path: '/people/payroll/attendance' },
             { id: 'ATTENDANCE_BOARD', label: 'Daily Board', icon: ClipboardList, module: 'HR', path: '/people/attendance' },
+            { id: 'COMMISSION_MANAGEMENT', label: 'Commission', icon: Percent, module: 'HR', path: '/people/commission' },
         ]
     },
     {
@@ -233,16 +264,17 @@ export const MENU_ITEMS: MenuItem[] = [
         icon: PieChart,
         module: 'REPORTS',
         children: [
-            // Both previously had no `path` at all, so clicking them set the
-            // sidebar's active-tab highlight but never actually navigated --
-            // dead links. `/reports` itself currently redirects to the
-            // clearly-labeled ReportsMockUI rather than the real report
-            // pages, since the "real"-looking BusinessReportsHub underneath
-            // /reports is still backed by hardcoded placeholder numbers, not
-            // live queries -- pointing here instead avoids presenting fake
-            // figures as if they were real report data.
-            { id: 'REPORTS', label: 'Reports', icon: PieChart, module: 'REPORTS', path: '/reports/mock' },
-            { id: 'REPORT_SALES', label: 'Sales', icon: BarChart, module: 'REPORTS', path: '/reports/mock' },
+            // Both previously pointed at /reports/mock (ReportsMockUI) because the "real"-looking
+            // BusinessReportsHub underneath /reports fabricates its P&L/balance sheet/trial
+            // balance/day book/sales-purchase-overview numbers -- see useBusinessReports.ts,
+            // which literally comments "Simulate network delay" over hardcoded objects. That's
+            // still true. But ReportsModule (the catalog at /reports/insights) also hosts 6
+            // genuinely live-data reports (brand/category/counter/hourly-billing sales, city/rack-
+            // wise stock) that were being hidden behind the mock along with the fake ones, and the
+            // catalog itself now flags every fabricated-data report with a "Sample data" badge so
+            // nobody mistakes one for the real thing. Point the nav here instead.
+            { id: 'REPORTS', label: 'Reports', icon: PieChart, module: 'REPORTS', path: '/reports/insights' },
+            { id: 'REPORT_SALES', label: 'Sales', icon: BarChart, module: 'REPORTS', path: '/reports/insights' },
         ]
     },
     {
@@ -258,6 +290,8 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'TENANT_MANAGEMENT', label: 'Tenants', icon: Building, module: 'MULTI_BRANCH', path: '/settings/tenants' },
             { id: 'TENANT_ARCHITECT', label: 'Architect', icon: Wrench, module: 'MULTI_BRANCH', path: '/settings/architect' },
             { id: 'AUDIT_LOGS', label: 'Audit', icon: Shield, module: 'DASHBOARD', path: '/settings/audit' },
+            { id: 'MASTER_DATA', label: 'Master Data', icon: Database, module: 'DASHBOARD', path: '/settings/master-data' },
+            { id: 'DISCOUNT_PERMISSIONS', label: 'Discount Limits', icon: Percent, module: 'DASHBOARD', path: '/settings/discount-permissions' },
             { id: 'SUPER_ADMIN_CONSOLE', label: 'Admin', icon: Shield, module: 'DASHBOARD', path: '/settings/super-admin' },
         ]
     },

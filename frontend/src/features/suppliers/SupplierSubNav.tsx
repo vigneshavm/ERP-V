@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { NavLink, useParams } from 'react-router-dom';
-import { Users, Tag, Book, User, Edit3, ArrowLeft, TrendingUp } from 'lucide-react';
+import { Users, Tag, Book, User, Edit3, ArrowLeft, TrendingUp, Contact } from 'lucide-react';
 
 const SupplierSubNav: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -9,6 +9,7 @@ const SupplierSubNav: React.FC = () => {
     const globalLinks = [
         { name: 'Directory', path: '/suppliers', icon: Users, end: true },
         { name: 'Groups', path: '/suppliers/groups', icon: Tag },
+        { name: 'Agents', path: '/suppliers/agents', icon: Contact },
         { name: 'Ledger', path: '/suppliers/ledger', icon: Book },
         { name: 'Inflow / Outflow', path: '/suppliers/inflow', icon: TrendingUp },
     ];

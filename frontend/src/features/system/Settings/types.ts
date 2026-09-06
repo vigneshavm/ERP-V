@@ -109,6 +109,21 @@ export interface SecurityTabProps {
     handlePermissionToggle: (roleCode: string, view: AppView) => void;
 }
 
+// Bill/receipt print layout + GRN numbering behavior (Settings -> Print Settings tab).
+// Mirrors the backend's Tenant.printSettings shape (see backend/src/modules/core/models/Tenant.ts).
+export interface PrintSettings {
+    billHeaderText: string;
+    billFooterText: string;
+    grnNumberingMode: 'AUTO' | 'MANUAL';
+    grnNumberingPrefix: string;
+    grnNumberingReset: 'NEVER' | 'YEARLY' | 'MONTHLY';
+}
+
+export interface PrintSettingsTabProps {
+    printSettings: PrintSettings;
+    setPrintSettings: (updater: (prev: PrintSettings) => PrintSettings) => void;
+}
+
 export interface PersonalizationTabProps {
     userTheme: TenantTheme;
     setUserTheme: (theme: TenantTheme) => void;
@@ -116,4 +131,6 @@ export interface PersonalizationTabProps {
     setUserColor: (color: string) => void;
     userLogo: string | null;
     handleUserLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    userLanguage: 'en' | 'ta';
+    setUserLanguage: (language: 'en' | 'ta') => void;
 }

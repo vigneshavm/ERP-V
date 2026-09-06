@@ -41,7 +41,8 @@ const defaultSession: Session = {
     customerId: null,
     taxMode: 'EXCLUSIVE',
     paymentMethod: 'CASH',
-    redeemedPoints: 0
+    redeemedPoints: 0,
+    discountAmount: 0
 };
 
 const initialState: POSState = {
@@ -292,6 +293,17 @@ export const posSlice = createSlice({
             const session = state.sessions[state.activeSessionIndex];
             if (session) session.redeemedPoints = action.payload;
         },
+        setDiscountAmount: (state, action: PayloadAction<number>) => {
+            const session = state.sessions[state.activeSessionIndex];
+            if (session) session.discountAmount = Math.max(0, action.payload);
+        },
+        setMrpPending: (state, action: PayloadAction<{ isMrpPending: boolean; note?: string }>) => {
+            const session = state.sessions[state.activeSessionIndex];
+            if (session) {
+                session.isMrpPending = action.payload.isMrpPending;
+                session.mrpPendingNote = action.payload.isMrpPending ? (action.payload.note ?? session.mrpPendingNote) : undefined;
+            }
+        },
         recordSale: (state, action: PayloadAction<Sale>) => {
             state.salesHistory.unshift(action.payload);
         },
@@ -421,6 +433,7 @@ export const {
     addToCart, removeFromCart, updateCartQty, updateCartLength, clearCart,
     addSession, removeSession, setActiveSession,
     setCustomer, addCustomer, updateCustomerPoints, recordSale, setTaxMode, setPaymentMethod, setRedeemedPoints,
+    setDiscountAmount, setMrpPending,
     holdCurrentBill, resumeBill, discardHeldBill, setCustomersList, setSalesHistory
 } = posSlice.actions;
 

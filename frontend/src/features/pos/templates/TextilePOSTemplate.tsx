@@ -9,6 +9,7 @@ import { POSFooter } from '../POSFooter';
 import { POSHeldBillsModal } from '../POSHeldBillsModal';
 import { POSTerminalInfo } from '../POSTerminalInfo';
 import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 interface POSTemplateProps {
     logic: POSLogic;
@@ -47,6 +48,15 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         hasMultipleBranches,
         products,
         loyaltyConfig,
+        misConfig,
+        discountAmount,
+        onSetDiscountAmount,
+        isWholesaleCustomer,
+        wholesaleDiscountPercent,
+        onApplyWholesaleDiscount,
+        isMrpPending,
+        mrpPendingNote,
+        onSetMrpPending,
         currentBranch,
         activeCounterId,
         onAddToCart,
@@ -87,6 +97,8 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         downloadLastBill,
         allBranches: branches
     } = logic;
+
+    const { t } = useLanguage();
 
     return (
         <div
@@ -155,13 +167,13 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                     onClick={() => setIsReturnMode(false)}
                                     className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                                 >
-                                    Sale
+                                    {t('sale')}
                                 </button>
                                 <button
                                     onClick={() => setIsReturnMode(true)}
                                     className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-red-50 text-red-600 shadow-sm ring-1 ring-red-100' : 'text-gray-500 hover:text-gray-700'}`}
                                 >
-                                    Return
+                                    {t('return')}
                                 </button>
                             </div>
 
@@ -169,13 +181,13 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 onClick={() => setViewMode('SCANNER')}
                                 className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${viewMode === 'SCANNER' ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}
                             >
-                                <TableIcon className="w-3.5 h-3.5 inline mr-1" /> Scanner
+                                <TableIcon className="w-3.5 h-3.5 inline mr-1" /> {t('scanner')}
                             </button>
                             <button
                                 onClick={() => setViewMode('VISUAL')}
                                 className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${viewMode === 'VISUAL' ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}
                             >
-                                <LayoutGrid className="w-3.5 h-3.5 inline mr-1" /> Visual
+                                <LayoutGrid className="w-3.5 h-3.5 inline mr-1" /> {t('visual')}
                             </button>
                         </div>
                     </div>
@@ -282,6 +294,16 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 isPreOrder={isPreOrder}
                                 activeCustomer={activeCustomer}
                                 loyaltyConfig={loyaltyConfig}
+                                discountAmount={discountAmount}
+                                onSetDiscountAmount={onSetDiscountAmount}
+                                maxDiscountPercent={misConfig.maxDiscountPercent}
+                                allowDiscountOverride={misConfig.allowDiscountOverride}
+                                isWholesaleCustomer={isWholesaleCustomer}
+                                wholesaleDiscountPercent={wholesaleDiscountPercent}
+                                onApplyWholesaleDiscount={onApplyWholesaleDiscount}
+                                isMrpPending={isMrpPending}
+                                mrpPendingNote={mrpPendingNote}
+                                onSetMrpPending={onSetMrpPending}
                                 onSetTaxMode={onSetTaxMode}
                                 onSetPaymentMethod={onSetPaymentMethod}
                                 onSetRedeemedPoints={onSetRedeemedPoints}

@@ -12,6 +12,12 @@ export interface IPurchaseItem {
     amount: number;
     margin?: number;
     sellingPrice?: number;
+    // Wholesale/Retail (WR) Billing: bulk/wholesale rate captured at intake time, separate from
+    // `rate` (the landed cost) and `sellingPrice` (retail MRP). Mirrors Item.wholesaleRate's
+    // existing convention (see Item.ts) -- when a new Item is created from this row (see
+    // createPurchase), this value seeds that field so POS's existing wholesale pricing
+    // (usePOSLogic.ts's resolveItemPrice) picks it up automatically.
+    wholesaleRate?: number;
     color?: string;
     size?: string;
     categoryCode?: string;
@@ -33,6 +39,10 @@ export interface IPurchase extends Document {
     totalAmount: number;
     items: IPurchaseItem[];
     notes?: string;
+    // Wholesale/Retail (WR) Billing: which intake track this purchase came through -- see
+    // IInvoice.ts's saleChannel for the sales-side equivalent. WHOLESALE purchases get a
+    // "WRPUR-" purchaseNumber series instead of "PUR-" (see generatePurchaseNumber).
+    channel?: 'RETAIL' | 'WHOLESALE';
     expectedDeliveryDate?: Date;
     approvedBy?: mongoose.Types.ObjectId;
     approvedAt?: Date;
@@ -55,6 +65,7 @@ const purchaseItemSchema = new Schema({
     amount: { type: Number, required: true },
     margin: { type: Number, default: 0 },
     sellingPrice: { type: Number, default: 0 },
+    wholesaleRate: { type: Number },
     color: { type: String },
     size: { type: String },
     categoryCode: { type: String },
@@ -76,6 +87,11 @@ const purchaseSchema = new Schema({
     totalAmount: { type: Number, required: true, default: 0 },
     items: [purchaseItemSchema],
     notes: { type: String },
+    channel: {
+        type: String,
+        enum: ['RETAIL', 'WHOLESALE'],
+        default: 'RETAIL'
+    },
     expectedDeliveryDate: { type: Date },
     approvedBy: { type: Schema.Types.ObjectId, ref: 'User' },
     approvedAt: { type: Date },

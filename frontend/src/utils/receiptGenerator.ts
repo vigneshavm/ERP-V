@@ -38,23 +38,33 @@ export const generateReceiptJSON = (
     // Bill Number - extract numerical part if possible or use full ID
     // Example ID: "A42-206704" -> Bill No: "206704"
     const billNoParts = sale.id.split('-');
-    const billNo = billNoParts.length > 1 ? billNoParts[1] : sale.id;
-    const cashNo = billNoParts[0] || sale.counterId || 'A1';
+    const billNo = billNoParts.length > 1 ? billNoParts.slice(1).join('-') : sale.id;
+    const cashNo = billNoParts.length > 1 ? billNoParts[0] : (sale.counterId || 'A1');
 
     // 3. Items
-    const items: ReceiptItem[] = sale.items.map(item => ({
-        name: item.name,
-        // Rate should probably be price before tax if tax is exclusive, or inclusive. 
-        // The prompt matches specific rate/amount. 
-        // Assuming item.price is the rate.
-        rate: item.price,
-        mtr: item.cutLength || 0,
-        quantity: item.qty,
-        amount: item.price * item.qty
-    }));
+    const items: ReceiptItem[] = sale.items.map(item => {
+        const itemDiscount = item.discount || 0;
+        return {
+            name: item.name,
+            // Rate should probably be price before tax if tax is exclusive, or inclusive. 
+            // The prompt matches specific rate/amount. 
+            // Assuming item.price is the rate.
+            rate: item.price,
+            mtr: item.cutLength || 0,
+            quantity: item.qty,
+            amount: item.price * item.qty,
+            discount: itemDiscount
+        };
+    });
 
     // 4. Totals
     const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+    const itemDiscountsTotal = sale.items.reduce((sum: number, item: any) => sum + ((item.discount || 0) * (item.qty || 1)), 0);
+    const billDiscount = sale.discountAmount || (sale as any).discount || 0;
+    const redemptionDiscount = sale.redemptionAmount || 0;
+    const discountTotal = itemDiscountsTotal + billDiscount + redemptionDiscount;
+    const grossTotal = items.reduce((sum, item) => sum + item.amount, 0);
+    const subtotal = sale.subtotal ?? (discountTotal > 0 ? grossTotal : sale.total);
     const finalTotal = sale.total;
     const netTotal = finalTotal;
 
@@ -64,18 +74,20 @@ export const generateReceiptJSON = (
     const slabMap = new Map<number, GSTSlab>();
 
     for (const cartItem of sale.items) {
-        const gstRate = (cartItem as any).gstRate ?? (cartItem as any).gstPercentage ?? 5;
+        const gstRate = cartItem.gstRate ?? (cartItem as any).gstPercentage ?? 5;
         const lineTotal = (cartItem.price ?? 0) * (cartItem.qty ?? 1);
 
         let taxableValue: number;
+        let taxAmount: number;
         if (sale.taxMode === 'EXCLUSIVE') {
             taxableValue = lineTotal;
+            taxAmount = lineTotal * (gstRate / 100);
         } else {
             // Inclusive — reverse calculate
             taxableValue = lineTotal / (1 + gstRate / 100);
+            taxAmount = lineTotal - taxableValue;
         }
 
-        const taxAmount = lineTotal - taxableValue;
         const cgst = taxAmount / 2;
         const sgst = taxAmount / 2;
 
@@ -118,6 +130,8 @@ export const generateReceiptJSON = (
             },
             items: items,
             totals: {
+                subtotal: +subtotal.toFixed(2),
+                discount_total: +discountTotal.toFixed(2),
                 net_total: netTotal,
                 final_total: finalTotal,
                 total_quantity: totalQuantity

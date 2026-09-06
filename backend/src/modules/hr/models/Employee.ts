@@ -5,6 +5,9 @@ export interface IEmployee extends Document {
     name: string;
     role: string;
     roleId?: string;
+    categoryId?: string | mongoose.Types.ObjectId; // references a MasterEntry of type EMPLOYEE_CATEGORY
+    groupId?: string | mongoose.Types.ObjectId; // references a MasterEntry of type EMPLOYEE_GROUP
+    sectionId?: string | mongoose.Types.ObjectId; // references a MasterEntry of type EMPLOYEE_SECTION
     mobile: string;
     dailyRate: number;
     hourlyRate: number;
@@ -47,6 +50,18 @@ const employeeSchema = new Schema<IEmployee>({
     roleId: {
         type: String,
         default: null
+    },
+    categoryId: {
+        type: Schema.Types.ObjectId,
+        ref: 'MasterEntry'
+    },
+    groupId: {
+        type: Schema.Types.ObjectId,
+        ref: 'MasterEntry'
+    },
+    sectionId: {
+        type: Schema.Types.ObjectId,
+        ref: 'MasterEntry'
     },
     mobile: {
         type: String,

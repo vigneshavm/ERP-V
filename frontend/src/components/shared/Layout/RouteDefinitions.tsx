@@ -28,7 +28,13 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/expenses" element={<Navigate to="/expenses/mock" replace />} />
             <Route path="/customers" element={<Navigate to="/customers/mock" replace />} />
             <Route path="/marketing" element={<Navigate to="/marketing/mock" replace />} />
-            <Route path="/reports" element={<Navigate to="/reports/mock" replace />} />
+            {/* BusinessReportsHub (behind ReportsModule's catalog) still fabricates numbers for
+                most report types -- see the "Sample data" badge in ReportsModule/index.tsx --
+                but the catalog itself, and 6 of its reports (brand/category/counter/hourly-billing
+                sales, city/rack-wise stock), are real and backed by live queries. Route the main
+                Reports landing here instead of straight to ReportsMockUI so that real value isn't
+                hidden behind an admittedly-fake page. */}
+            <Route path="/reports" element={<Navigate to="/reports/insights" replace />} />
             <Route path="/pos/terminal" element={<Navigate to="/pos" replace />} />
             <Route path="/people" element={<Navigate to="/people/employees/labor" replace />} />
             <Route path="/staff" element={<Navigate to="/people/employees/staff" replace />} />
@@ -116,6 +122,9 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             } />
             <Route path="/suppliers/groups" element={
                 <Suspense fallback={<div>Loading...</div>}><LazyModules.SupplierGroups /></Suspense>
+            } />
+            <Route path="/suppliers/agents" element={
+                <Suspense fallback={<div>Loading...</div>}><LazyModules.Agents /></Suspense>
             } />
             <Route path="/suppliers/statements" element={
                 <Suspense fallback={<div>Loading...</div>}><LazyModules.SupplierStatements /></Suspense>
@@ -295,6 +304,9 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/people/payroll/payslip/:id" element={
                 <Suspense fallback={<div>Loading Payslip...</div>}><LazyModules.PayslipView /></Suspense>
             } />
+            <Route path="/people/commission" element={
+                <Suspense fallback={<div>Loading Commission...</div>}><LazyModules.CommissionRules /></Suspense>
+            } />
             <Route path="/finance/gst" element={<Suspense fallback={<div>Loading GST...</div>}><LazyModules.GSTReconciliation /></Suspense>} />
             <Route path="/inventory/reprint" element={<Suspense fallback={<div>Loading Reprint...</div>}><LazyModules.ReprintQueue /></Suspense>} />
             <Route path="/inventory/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.InventoryMockUI /></Suspense>} />
@@ -317,6 +329,7 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/marketing/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.MarketingMockUI /></Suspense>} />
             <Route path="/suppliers/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SuppliersMockUI /></Suspense>} />
             <Route path="/hr/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.HRMockUI /></Suspense>} />
+            <Route path="/reports/insights" element={<Suspense fallback={<div>Loading Reports...</div>}><LazyModules.Reports /></Suspense>} />
             <Route path="/reports/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.ReportsMockUI /></Suspense>} />
             <Route path="/engagement/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.CustomerEngagementMockUI /></Suspense>} />
             <Route path="/settings/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SettingsMockUI /></Suspense>} />

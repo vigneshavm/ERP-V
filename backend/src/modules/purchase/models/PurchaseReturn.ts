@@ -8,12 +8,23 @@ export interface IPurchaseReturnItem {
     tax: number;
     amount: number;
     reason: string;
+    // GRN-wise/lot-wise return: which specific batch this quantity is coming back from
+    // (see GRN.items[].lotNumber). Optional -- a return with no grnId set never has these.
+    batchNumber?: string;
+    // Barcode-wise return: for serialized (IMEI/serial-tracked) items, the specific unit
+    // being returned rather than a batch quantity.
+    serializedUnitId?: mongoose.Types.ObjectId;
 }
 
 export interface IPurchaseReturn extends Document {
     returnId: string;
     bill?: mongoose.Types.ObjectId;
     debitNoteId?: mongoose.Types.ObjectId; // Link to Debit Note
+    // Which goods receipt this return is against -- optional so a supplier-level return with
+    // no specific GRN (e.g. a very old purchase, or a non-stock adjustment) still works, but
+    // when set, item quantities are validated against that GRN's acceptedQty and the actual
+    // batch/serialized stock is decremented instead of a blind bulk subtract.
+    grnId?: mongoose.Types.ObjectId;
     supplier: mongoose.Types.ObjectId;
     returnDate: Date;
     refundMethod: "credit" | "cash" | "bank_transfer" | "adjust_next_bill";
@@ -58,6 +69,13 @@ const purchaseReturnItemSchema = new Schema<IPurchaseReturnItem>({
     reason: {
         type: String,
         required: true,
+    },
+    batchNumber: {
+        type: String,
+    },
+    serializedUnitId: {
+        type: Schema.Types.ObjectId,
+        ref: "SerializedUnit",
     }
 });
 
@@ -74,6 +92,10 @@ const purchaseReturnSchema = new Schema<IPurchaseReturn>(
         debitNoteId: {
             type: Schema.Types.ObjectId,
             ref: "DebitNote",
+        },
+        grnId: {
+            type: Schema.Types.ObjectId,
+            ref: "GRN",
         },
         supplier: {
             type: Schema.Types.ObjectId,
@@ -124,6 +146,7 @@ const purchaseReturnSchema = new Schema<IPurchaseReturn>(
 );
 
 purchaseReturnSchema.index({ returnId: 1, createdBy: 1 }, { unique: true });
+purchaseReturnSchema.index({ grnId: 1 });
 
 const PurchaseReturn = mongoose.model<IPurchaseReturn>("PurchaseReturn", purchaseReturnSchema);
 export default PurchaseReturn;

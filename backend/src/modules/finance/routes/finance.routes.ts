@@ -4,6 +4,7 @@ import cashBankRoutes from './cashBankRoutes.js';
 import dueRoutes from './dueRoutes.js';
 import loyaltyRoutes from './loyaltyRoutes.js';
 import dayEndRoutes from './dayEndRoutes.js';
+import pettyCashRoutes from './pettyCashRoutes.js';
 
 const router = express.Router();
 
@@ -12,6 +13,7 @@ router.use('/cashbank', cashBankRoutes);
 router.use('/due', dueRoutes);
 router.use('/loyalty', loyaltyRoutes);
 router.use('/day-end', dayEndRoutes);
+router.use('/petty-cash', pettyCashRoutes);
 
 // Bank Statement
 import bankStatementRoutes from './bankStatementRoutes.js';

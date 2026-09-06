@@ -75,6 +75,7 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'RETURNED_ITEMS': return <LazyModules.ReturnedItemsManager />;
                     case 'CUSTOMER_CREDITS': return <LazyModules.CustomerCredits />;
                     case 'OUTSTANDING_DUES': return <LazyModules.OutstandingDues />;
+                    case 'MRP_PENDING_INVOICES': return <LazyModules.MrpPendingInvoices />;
 
                     // Purchase
                     case 'PURCHASE': return <LazyModules.Purchase />; 
@@ -86,6 +87,7 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'VENDOR_DETAILS': return <LazyModules.VendorDetails />;
                     case 'VENDOR_FORM': return <LazyModules.VendorForm />;
                     case 'GOODS_RECEIVED': return <LazyModules.GoodsReceived />;
+                    case 'GRN_TRANSFER': return <LazyModules.GRNTransfer />;
                     case 'GRN_FORM': return <LazyModules.GRNForm />;
                     case 'DEBIT_NOTES': return <LazyModules.DebitNotes />;
                     case 'SUPPLIER_PAYMENTS': return <LazyModules.SupplierPayments />;
@@ -105,6 +107,15 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'SUPPLIER_AGEING': return <LazyModules.SupplierAgeing />;
                     case 'VENDOR_INFLOW_OUTFLOW': return <LazyModules.VendorInflowOutflow />;
 
+                    // Wholesale/Retail (WR) Billing
+                    case 'WR_COUNTER': return <LazyModules.WRCounter />;
+                    case 'WR_SALES_ENTRY': return <LazyModules.WRSalesEntry />;
+                    case 'WR_PURCHASE_ENTRY': return <LazyModules.WRPurchaseEntry />;
+                    case 'WR_SALES_BILL_VIEW': return <LazyModules.WRSalesBillView />;
+                    case 'WR_PURCHASE_BILL_VIEW': return <LazyModules.WRPurchaseBillView />;
+                    case 'WR_SALES_REPORT': return <LazyModules.WRSalesReport />;
+                    case 'WR_STOCK_REPORT': return <LazyModules.WRStockReport />;
+
                     // Customers
                     case 'CUSTOMER_LIST': return <LazyModules.CustomerList />;
                     case 'CUSTOMER_LEDGER': return <LazyModules.CustomerLedger />;
@@ -121,6 +132,7 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'SUPPLIER_LEDGER': return <LazyModules.SupplierLedger />;
                     case 'SUPPLIER_STATEMENTS': return <LazyModules.SupplierStatements />;
                     case 'SUPPLIER_GROUPS': return <LazyModules.SupplierGroups />;
+                    case 'AGENTS': return <LazyModules.Agents />;
 
                     // Inventory
                     case 'INVENTORY': return <LazyModules.Inventory />;
@@ -130,9 +142,13 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'STOCK_SUMMARY': return <LazyModules.StockSummary />;
                     case 'STOCK_MOVEMENT': return <LazyModules.StockMovement />;
                     case 'LOW_STOCK_ALERTS': return <LazyModules.LowStockAlerts />;
+                    case 'STOCK_WRITEOFF': return <LazyModules.StockWriteOff />;
+                    case 'STOCK_TRANSFER': return <LazyModules.StockTransfer />;
                     case 'UNITS_HSN': return <LazyModules.UnitsHSNAgent />;
                     case 'WAREHOUSES': return <LazyModules.WarehouseIntelligence />;
                     case 'BATCH_EXPIRY': return <LazyModules.BatchExpiryIntelligence />;
+                    case 'COMBO_OFFERS': return <LazyModules.ComboOffers />;
+                    case 'SERIALIZED_UNITS': return <LazyModules.SerializedUnits />;
 
                     // Finance
                     case 'FINANCE_AGENTS': return <LazyModules.FinanceAgentDashboard />;
@@ -151,6 +167,8 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'JOURNAL_ENTRIES': return <LazyModules.JournalEntries />;
                     case 'JOURNAL_ENTRY_FORM': return <LazyModules.JournalEntryForm />;
                     case 'ACCOUNT_LEDGER': return <LazyModules.AccountLedger />;
+                    case 'EMI_PLANS': return <LazyModules.EMIPlans />;
+                    case 'CARD_TERMINALS': return <LazyModules.CardTerminals />;
 
                     // POS
                     case 'POS': return <LazyModules.POSModule />;
@@ -189,6 +207,8 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'DATA_EXPORT':
                     case 'NUMBER_SERIES': return <LazyModules.Data />;
                     case 'AUDIT_LOGS': return <LazyModules.AuditLogs />;
+                    case 'MASTER_DATA': return <LazyModules.MasterDataManager />;
+                    case 'DISCOUNT_PERMISSIONS': return <LazyModules.DiscountPermissions />;
 
                     // Settings
                     case 'SETTINGS': return <LazyModules.Settings />;

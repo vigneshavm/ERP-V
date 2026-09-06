@@ -82,6 +82,16 @@ const generateReceiptHTML = (sale: Sale, tenant: Tenant, branch: Branch): string
             <div class="dashed-line"></div>
 
             <div class="totals">
+            ${totals.discount_total && totals.discount_total > 0 ? `
+            <div class="total-row">
+                <span>Subtotal</span>
+                <span>${(totals.subtotal ?? (totals.net_total + totals.discount_total)).toFixed(2)}</span>
+            </div>
+            <div class="total-row">
+                <span>Discount</span>
+                <span>-${totals.discount_total.toFixed(2)}</span>
+            </div>
+            ` : ''}
             <div class="total-row">
                 <span>Net Total</span>
                 <span>${totals.net_total.toFixed(2)}</span>

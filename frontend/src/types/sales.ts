@@ -39,6 +39,10 @@ export interface CartItem extends Product {
     price: number;
     cutLength?: number;
     variantId?: string; // Track product variant if applicable
+    // GST rate actually applied to this line at sale time -- distinct from the product's default
+    // gstPercentage (which this normally mirrors, but a line can override it, e.g. an exempted
+    // item). receiptGenerator.ts falls back to gstPercentage when this is unset.
+    gstRate?: number;
 }
 
 export interface Customer {
@@ -51,6 +55,7 @@ export interface Customer {
     dues: number; // Backend uses 'dues' instead of outstanding_balance
     points: number; // Backend uses 'points'
     tier?: string; // 'Silver', 'Gold', etc.
+    groupId?: string; // references a MasterEntry of type CUSTOMER_GROUP
     referrer?: string | Customer;
     owner?: string;
     tenantId: string;
@@ -127,6 +132,13 @@ export interface Invoice {
     customerPhone?: string;
     status?: string;
     sector?: string;
+
+    // Invoice Billing: MRP-Pending flag & POS sale/invoice edit -- see backend's IInvoice.ts.
+    isMrpPending?: boolean;
+    mrpPendingNote?: string;
+    isEdited?: boolean;
+    lastEditedAt?: string;
+    lastEditReason?: string;
 }
 
 export interface PopulatedInvoice extends Omit<Invoice, 'customer'> {
@@ -141,6 +153,7 @@ export interface Sale {
     items: any[]; // Relaxed for compatibility
     total: number;
     totalAmount?: number; // Compatibility with Invoice
+    subtotal?: number;
     customerName?: string;
     customerId?: string;
     customer?: string | Customer; // Compatibility with Invoice
@@ -156,6 +169,18 @@ export interface Sale {
     loyaltyPointsEarned?: number;
     redeemedPoints?: number;
     redemptionAmount?: number;
+    discountAmount?: number;
+    // Id of the manager/owner/co-owner who authorized a discount above the tenant's MIS
+    // Controls cap (only set when misConfig.requireApprovalForHighDiscount applies).
+    discountApprovedBy?: string;
+    // Invoice Billing: MRP-Pending flag -- see types/sales.ts's Session interface and
+    // backend's IInvoice.ts for the full rationale.
+    isMrpPending?: boolean;
+    mrpPendingNote?: string;
+    // Wholesale/Retail (WR) Billing: set by WRSalesEntry.tsx so buildPosInvoicePayload forwards
+    // it to POST /api/pos/invoice -- see backend's IInvoice.ts saleChannel. Every other Sale
+    // producer (POS checkout) leaves this undefined, which createInvoice treats as 'RETAIL'.
+    saleChannel?: 'RETAIL' | 'WHOLESALE';
 }
 
 export interface BillSession {
@@ -177,6 +202,16 @@ export interface Session {
     taxMode: TaxMode;
     paymentMethod: PaymentMethod;
     redeemedPoints?: number;
+    // Bill-level manual discount (currency amount, not %), set via POSFooter's Discount
+    // field. Subject to the tenant's MIS Controls (maxDiscountPercent/allowDiscountOverride/
+    // requireApprovalForHighDiscount) -- enforced in usePOSCheckout before checkout proceeds,
+    // and again server-side in PosController.createInvoice.
+    discountAmount?: number;
+    // Invoice Billing: MRP-Pending flag -- lets a cashier raise this bill at a provisional
+    // price before the final MRP for the stock is confirmed. See backend's IInvoice.ts for the
+    // full rationale. Set via POSFooter, read by usePOSCheckout when building the sale payload.
+    isMrpPending?: boolean;
+    mrpPendingNote?: string;
 }
 
 // Redux State Interface

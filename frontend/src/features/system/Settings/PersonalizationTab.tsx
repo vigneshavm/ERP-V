@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { Palette, Sun, Moon, Shield, Upload, User, Layout as LayoutIcon, Camera } from 'lucide-react';
+import { Palette, Sun, Moon, Shield, Upload, User, Layout as LayoutIcon, Camera, Languages } from 'lucide-react';
 import { PersonalizationTabProps } from './types';
 
 const COLORS = [
@@ -12,7 +12,8 @@ const COLORS = [
 ];
 
 const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
-    userTheme, setUserTheme, userColor, setUserColor, userLogo, handleUserLogoUpload
+    userTheme, setUserTheme, userColor, setUserColor, userLogo, handleUserLogoUpload,
+    userLanguage, setUserLanguage
 }) => {
     return (
         <div className="p-6 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -82,6 +83,34 @@ const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
                             ))}
                         </div>
                     </div>
+                </div>
+            </section>
+
+            {/* POS / Billing Language Section */}
+            <section>
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center">
+                        <Languages className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Billing Screen Language</h3>
+                        <p className="text-xs text-slate-500 font-medium mt-1">Language used for the POS cash-sale / billing screen</p>
+                    </div>
+                </div>
+
+                <div className="flex bg-slate-100 dark:bg-slate-900/50 p-2 rounded-sm border border-slate-200 dark:border-slate-800 w-full max-w-md shadow-inner">
+                    <button
+                        onClick={() => setUserLanguage('en')}
+                        className={`flex-1 flex items-center justify-center gap-3 py-4 text-xs font-black rounded-xl transition-all ${userLanguage === 'en' ? 'bg-white text-primary shadow-xl border border-slate-100' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                    >
+                        ENGLISH
+                    </button>
+                    <button
+                        onClick={() => setUserLanguage('ta')}
+                        className={`flex-1 flex items-center justify-center gap-3 py-4 text-xs font-black rounded-xl transition-all ${userLanguage === 'ta' ? 'bg-white text-primary shadow-xl border border-slate-100' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
+                    >
+                        தமிழ் (TAMIL)
+                    </button>
                 </div>
             </section>
 

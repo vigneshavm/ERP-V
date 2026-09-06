@@ -1,7 +1,8 @@
-﻿import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from "../../redux/store";
+﻿import React, { useState, useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from "../../redux/store";
 import { useExpenseCategories, ExpenseCategory } from "../../hooks/useExpenseCategories";
+import { fetchMasterEntries } from "../../redux/slices/masterDataSlice";
 import Layout from "../../components/shared/Layout/index";
 import {
     Settings,
@@ -20,6 +21,16 @@ import {
 const ExpenseCategoriesManager: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
     const { categories, upsertCategory, deleteCategory } = useExpenseCategories();
+    const dispatch = useDispatch<AppDispatch>();
+    // Expense groups (Textilesoft's ExpenseGroup tier) live in the shared Master Data module --
+    // this flat category list is the "ExpenseNameEntry" tier, now optionally linked to one.
+    const { entriesByType } = useSelector((state: RootState) => state.masterData);
+    const expenseGroups = useMemo(() => entriesByType.EXPENSE_GROUP || [], [entriesByType.EXPENSE_GROUP]);
+    const groupName = (groupId?: string) => expenseGroups.find((g) => g._id === groupId)?.name || '—';
+
+    useEffect(() => {
+        dispatch(fetchMasterEntries({ type: 'EXPENSE_GROUP' }));
+    }, [dispatch]);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,7 +64,8 @@ const ExpenseCategoriesManager: React.FC = () => {
             approval_required: false,
             is_cash_allowed: true,
             is_active: true,
-            gst_eligible: true
+            gst_eligible: true,
+            groupId: ''
         });
         setIsModalOpen(true);
     };
@@ -135,6 +147,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                             <thead className="bg-neutral-50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
                                 <tr>
                                     <th className="p-6">Category Name</th>
+                                    <th className="p-6">Group</th>
                                     <th className="p-6">Monthly Budget</th>
                                     <th className="p-6">Cash Allowed</th>
                                     <th className="p-6">Approval Rules</th>
@@ -155,6 +168,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                                                 </div>
                                             </div>
                                         </td>
+                                        <td className="p-6 text-sm text-neutral-500 font-bold">{groupName(cat.groupId)}</td>
                                         <td className="p-6">
                                             <p className="font-bold text-sm tracking-tight italic">₹{cat.monthly_budget.toLocaleString()}</p>
                                             <p className="text-[9px] text-neutral-400 font-black uppercase tracking-tighter">Per Month Cap</p>
@@ -224,6 +238,20 @@ const ExpenseCategoriesManager: React.FC = () => {
                                             value={editingCategory?.name}
                                             onChange={e => setEditingCategory(prev => prev ? ({ ...prev, name: e.target.value }) : null)}
                                         />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 mb-2 block">Expense Group</label>
+                                        <select
+                                            className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border-none rounded-sm text-sm font-bold focus:ring-2 focus:ring-primary/20"
+                                            value={editingCategory?.groupId || ''}
+                                            onChange={e => setEditingCategory(prev => prev ? ({ ...prev, groupId: e.target.value }) : null)}
+                                        >
+                                            <option value="">Ungrouped</option>
+                                            {expenseGroups.map((g) => <option key={g._id} value={g._id}>{g.name}</option>)}
+                                        </select>
+                                        {expenseGroups.length === 0 && (
+                                            <p className="text-[10px] text-neutral-400 mt-1.5 ml-1">No expense groups yet — add one in Settings → Master Data.</p>
+                                        )}
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 mb-2 block">Monthly Budget Cap (₹)</label>

@@ -144,6 +144,8 @@ app.use("/api/reports", reportRoutes);
 // INVENTORY Module
 import inventoryRoutes from "./modules/inventory/routes/inventory.routes.js";
 app.use("/api/inventory", inventoryRoutes);
+import stockTransferRoutes from "./modules/inventory/routes/stockTransferRoutes.js";
+app.use("/api/stock-transfers", stockTransferRoutes);
 
 
 
@@ -158,6 +160,8 @@ import deliveryChallanRoutes from "./modules/sales/routes/deliveryChallan.routes
 app.use("/api/delivery-challan", deliveryChallanRoutes);
 import posRoutes from "./modules/sales/routes/pos.routes.js";
 app.use("/api/pos", posRoutes);
+import commissionRoutes from "./modules/sales/routes/commissionRoutes.js";
+app.use("/api/commission-rules", commissionRoutes);
 
 // CRM & Analytics Module
 import crmAnalyticsRoutes from "./modules/crm/routes/crmAnalyticsRoutes.js";
@@ -166,15 +170,27 @@ app.use("/api/crm", crmAnalyticsRoutes);
 // PURCHASE Module
 import purchaseModuleRoutes from "./modules/purchase/routes/purchase.routes.js";
 import purchasePaymentRoutes from "./modules/purchase/routes/purchasePaymentRoutes.js";
+import purchaseReturnRoutes from "./modules/purchase/routes/purchaseReturnRoutes.js";
 import grnRoutes from "./modules/purchase/routes/grnRoutes.js";
+import grnTransferRoutes from "./modules/purchase/routes/grnTransferRoutes.js";
 app.use("/api/purchases", purchaseModuleRoutes);
 app.use("/api/purchase-payments", purchasePaymentRoutes);
-app.use("/api/purchase-returns", purchaseModuleRoutes);
+// Was previously mounting the WHOLE purchase.routes.ts aggregator here too, which put
+// purchase.routes.ts's own `router.use('/', purchaseRoutes)` fallback in front of anything
+// return-specific: GET /api/purchase-returns and GET /api/purchase-returns/:id were silently
+// being served by PurchaseController's getAllPurchases/getPurchaseById (Purchase ORDERS, not
+// returns) instead of PurchaseReturnController. Mount the actual return router directly.
+app.use("/api/purchase-returns", purchaseReturnRoutes);
 app.use("/api/grn", grnRoutes);
+app.use("/api/grn-transfers", grnTransferRoutes);
 
 // FINANCE Module
 import financeRoutes from "./modules/finance/routes/finance.routes.js";
 app.use("/api", financeRoutes); // Bills, Cashbank, Due, Loyalty
+import emiPlanRoutes from "./modules/finance/routes/emiPlanRoutes.js";
+app.use("/api/emi-plans", emiPlanRoutes);
+import cardTerminalRoutes from "./modules/finance/routes/cardTerminalRoutes.js";
+app.use("/api/card-terminals", cardTerminalRoutes);
 
 // EXPENSE Module
 import expenseModuleRoutes from "./modules/expense/routes/expense.routes.js";
@@ -195,6 +211,15 @@ app.use("/api/hr", hrRoutes); // Employees
 // MARKETING Module
 import metaRoutes from "./modules/marketing/routes/meta.routes.js";
 app.use("/api/marketing/meta", metaRoutes);
+
+// COMBO OFFERS Module
+import comboRoutes from "./modules/combo/routes/combo.routes.js";
+app.use("/api/combo-offers", comboRoutes);
+
+// MASTER DATA Module (generic simple-master lists: customer groups, employee structure,
+// transaction/cash/payment/booking groups, GST type/group, textile product descriptors)
+import masterDataRoutes from "./modules/masters/routes/masterData.routes.js";
+app.use("/api/masters", masterDataRoutes);
 
 
 // MISC / LEGACY (To be modularized)

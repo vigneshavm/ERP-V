@@ -88,12 +88,14 @@ export const Modules = {
     ReturnedItemsManager: () => import("../features/sales/returns/ReturnedItems"),
     CustomerCredits: () => import("../features/sales/payments/CustomerCreditsMockUI"),
     OutstandingDues: () => import("../features/sales/payments/OutstandingDuesMockUI"),
+    MrpPendingInvoices: () => import("../features/sales/MrpPendingInvoices"),
     SalesModulePlaceholder: () => import("../features/sales/SalesModulePlaceholderMockUI"),
     SalesInvoiceForm: () => import("../features/sales/salesInvoices/SalesInvoiceForm"),
     SalesInvoiceDetail: () => import("../features/sales/salesInvoices/SalesInvoiceDetail"),
     PurchaseOrdersModule: () => import("../features/purchase/PurchaseOrdersModule"),
     PurchaseRegister: () => import("../features/purchase/PurchaseRegister"),
     GoodsReceived: () => import("../features/purchase/GoodsReceived"),
+    GRNTransfer: () => import("../features/purchase/GRNTransfer"),
     GRNForm: () => import("../features/purchase/GRNForm"),
     DebitNotes: () => import("../features/purchase/DebitNotes"),
     SupplierPayments: () => import("../features/purchase/SupplierPayments"),
@@ -126,12 +128,17 @@ export const Modules = {
     SupplierLedger: () => import("../features/suppliers/SupplierLedger"),
     SupplierStatements: () => import("../features/suppliers/SupplierStatements"),
     SupplierGroups: () => import("../features/suppliers/SupplierGroups"),
+    Agents: () => import("../features/suppliers/Agents"),
     SupplierAgeing: () => import("../features/purchase/SupplierAgeing"),
     EditSupplier: () => import("../features/suppliers/EditSupplier"),
     // Was pointing at InventoryMockUI (the same generic demo table used for the
     // old Items page) — the real CategoryManager already existed and is wired
     // to the real /api/inventory/categories endpoint, it just wasn't used here.
     ItemCategories: () => import("../features/inventory/CategoryManager"),
+    ComboOffers: () => import("../features/combo-offers/ComboOfferManager"),
+    SerializedUnits: () => import("../features/inventory/SerializedUnitLookup"),
+    StockWriteOff: () => import("../features/inventory/StockWriteOff"),
+    StockTransfer: () => import("../features/inventory/StockTransfer"),
     StockSummary: () => import("../features/inventory/InventoryMockUI"),
     StockMovement: () => import("../features/inventory/InventoryMockUI"),
     LowStockAlerts: () => import("../features/inventory/InventoryMockUI"),
@@ -141,7 +148,9 @@ export const Modules = {
     FinanceAgentDashboard: () => import("../features/financial/FinanceAgentDashboard"),
     DailyFinanceTracker: () => import("../features/financial/FinanceMockUI"),
     CashBankIntelligence: () => import("../features/financial/Cashbank/CashBankIntelligence"),
-    PettyCashIntelligence: () => import("../features/financial/FinanceMockUI"),
+    PettyCashIntelligence: () => import("../features/financial/Cashbank/PettyCashClose"),
+    MasterDataManager: () => import("../features/system/MasterDataManager"),
+    DiscountPermissions: () => import("../features/system/DiscountPermissions"),
     BankIntelligence: () => import("../features/financial/Cashbank/BankIntelligence"),
     BankReconciliationIntelligence: () => import("../features/financial/Cashbank/BankReconciliation"),
     FundTransferIntelligence: () => import("../features/financial/Cashbank/FundTransfer"),
@@ -155,6 +164,8 @@ export const Modules = {
     AccountLedger: () => import("../features/financial/Cashbank/AccountLedger"),
     BankStatementView: () => import("../features/finance/BankStatementView"),
     SmsTrackerPage: () => import("../features/finance/SmsTrackerPage"),
+    EMIPlans: () => import("../features/finance/EMIPlans"),
+    CardTerminals: () => import("../features/finance/CardTerminals"),
     BudgetTrackerPage: () => import("../features/finance/BudgetTrackerPage"),
     LoanAccounts: () => import("../features/financial/Cashbank/LoanAccounts"),
     FinancialGoals: () => import("../features/financial/Cashbank/FinancialGoals"),
@@ -179,6 +190,7 @@ export const Modules = {
     AttendanceSummaryManager: () => import("../features/payroll/AttendanceSummaryManager"),
     DailyAttendanceBoard: () => import("../features/employees/DailyAttendanceBoard"),
     PayslipView: () => import("../features/payroll/PayslipView"),
+    CommissionRules: () => import("../features/payroll/CommissionRules"),
     // New unregistered real pages
     InventoryManager: () => import("../features/inventory/InventoryManager"),
     InventoryVariantSearch: () => import("../features/inventory/InventoryVariantSearch"),
@@ -189,6 +201,14 @@ export const Modules = {
     Suppliers: () => import("../features/suppliers/Suppliers"),
     PurchaseRegisterMockUI: () => import("../features/purchase/PurchaseRegisterMockUI"),
     PurchaseExpress: () => import("../features/purchase/PurchaseExpress"),
+    // Wholesale/Retail (WR) Billing
+    WRCounter: () => import("../features/wholesale/WRCounterPicker"),
+    WRSalesEntry: () => import("../features/wholesale/WRSalesEntry"),
+    WRPurchaseEntry: () => import("../features/wholesale/WRPurchaseEntry"),
+    WRSalesBillView: () => import("../features/wholesale/WRSalesBillView"),
+    WRPurchaseBillView: () => import("../features/wholesale/WRPurchaseBillView"),
+    WRSalesReport: () => import("../features/wholesale/WRSalesReport"),
+    WRStockReport: () => import("../features/wholesale/WRStockReport"),
 };
 
 /**
@@ -234,10 +254,12 @@ const _lazyPaymentInList = lazy(Modules.PaymentInList);
 const _lazyReturnedItemsManager = lazy(Modules.ReturnedItemsManager);
 const _lazyCustomerCredits = lazy(Modules.CustomerCredits);
 const _lazyOutstandingDues = lazy(Modules.OutstandingDues);
+const _lazyMrpPendingInvoices = lazy(Modules.MrpPendingInvoices);
 const _lazySalesModulePlaceholder = lazy(Modules.SalesModulePlaceholder);
 const _lazySalesInvoiceForm = lazy(Modules.SalesInvoiceForm);
 const _lazySalesInvoiceDetail = lazy(Modules.SalesInvoiceDetail);
 const _lazyGoodsReceived = lazy(Modules.GoodsReceived);
+const _lazyGRNTransfer = lazy(Modules.GRNTransfer);
 const _lazyCustomerMockUI = lazy(Modules.CustomerMockUI);
 const _lazyTransfers = lazy(Modules.Transfers);
 const _lazyFinancialGoals = lazy(Modules.FinancialGoals);
@@ -252,6 +274,7 @@ const _lazyPayrollRuns = lazy(Modules.PayrollRuns);
 const _lazyAttendanceSummaryManager = lazy(Modules.AttendanceSummaryManager);
 const _lazyDailyAttendanceBoard = lazy(Modules.DailyAttendanceBoard);
 const _lazyPayslipView = lazy(Modules.PayslipView);
+const _lazyCommissionRules = lazy(Modules.CommissionRules);
 const _lazyPOSOrdersIntelligence = lazy(Modules.POSOrdersIntelligence);
 const _lazyPOSReturnsIntelligence = lazy(Modules.POSReturnsIntelligence);
 const _lazyShiftManagementIntelligence = lazy(Modules.ShiftManagementIntelligence);
@@ -303,16 +326,22 @@ const _lazyEditCustomer = lazy(Modules.EditCustomer);
 const _lazySupplierLedger = lazy(Modules.SupplierLedger);
 const _lazySupplierStatements = lazy(Modules.SupplierStatements);
 const _lazySupplierGroups = lazy(Modules.SupplierGroups);
+const _lazyAgents = lazy(Modules.Agents);
 const _lazySupplierAgeing = lazy(Modules.SupplierAgeing);
 const _lazyEditSupplier = lazy(Modules.EditSupplier);
 const _lazyFinanceAgentDashboard = lazy(Modules.FinanceAgentDashboard);
 const _lazyCashBankIntelligence = lazy(Modules.CashBankIntelligence);
+const _lazyPettyCashClose = lazy(Modules.PettyCashIntelligence);
+const _lazyMasterDataManager = lazy(Modules.MasterDataManager);
+const _lazyDiscountPermissions = lazy(Modules.DiscountPermissions);
 const _lazyBankIntelligence = lazy(Modules.BankIntelligence);
 const _lazyBankReconciliationIntelligence = lazy(Modules.BankReconciliationIntelligence);
 const _lazyFundTransferIntelligence = lazy(Modules.FundTransferIntelligence);
 const _lazyBankAccounts = lazy(Modules.BankAccounts);
 const _lazyJournalEntries = lazy(Modules.JournalEntries);
 const _lazyJournalEntryForm = lazy(Modules.JournalEntryForm);
+const _lazyEMIPlans = lazy(Modules.EMIPlans);
+const _lazyCardTerminals = lazy(Modules.CardTerminals);
 const _lazyBankSummary = lazy(Modules.BankSummary);
 const _lazyCashInHand = lazy(Modules.CashInHand);
 const _lazyCashBankPosition = lazy(Modules.CashBankPosition);
@@ -343,6 +372,18 @@ const _lazyPOSModule = lazy(Modules.POSModule);
 const _lazySuppliers = lazy(Modules.Suppliers);
 const _lazyPurchaseRegisterMockUI = lazy(Modules.PurchaseRegisterMockUI);
 const _lazyPurchaseExpress = lazy(Modules.PurchaseExpress);
+// Wholesale/Retail (WR) Billing
+const _lazyWRCounter = lazy(Modules.WRCounter);
+const _lazyWRSalesEntry = lazy(Modules.WRSalesEntry);
+const _lazyWRPurchaseEntry = lazy(Modules.WRPurchaseEntry);
+const _lazyWRSalesBillView = lazy(Modules.WRSalesBillView);
+const _lazyWRPurchaseBillView = lazy(Modules.WRPurchaseBillView);
+const _lazyWRSalesReport = lazy(Modules.WRSalesReport);
+const _lazyWRStockReport = lazy(Modules.WRStockReport);
+const _lazyComboOfferManager = lazy(Modules.ComboOffers);
+const _lazySerializedUnitLookup = lazy(Modules.SerializedUnits);
+const _lazyStockWriteOff = lazy(Modules.StockWriteOff);
+const _lazyStockTransfer = lazy(Modules.StockTransfer);
 
 export const LazyModules = {
     Dashboard: _lazyDashboard,
@@ -423,12 +464,14 @@ export const LazyModules = {
     ReturnedItemsManager: _lazyReturnedItemsManager,
     CustomerCredits: _lazyCustomerCredits,
     OutstandingDues: _lazyOutstandingDues,
+    MrpPendingInvoices: _lazyMrpPendingInvoices,
     SalesModulePlaceholder: _lazySalesModulePlaceholder,
     SalesInvoiceForm: _lazySalesInvoiceForm,
     SalesInvoiceDetail: _lazySalesInvoiceDetail,
     PurchaseOrdersModule: _lazyPurchaseOrdersModule,
     PurchaseRegister: _lazyPurchaseRegister,
     GoodsReceived: _lazyGoodsReceived,
+    GRNTransfer: _lazyGRNTransfer,
     GRNForm: _lazyGRNForm,
     DebitNotes: _lazyDebitNotes,
     SupplierPayments: _lazySupplierPayments,
@@ -461,9 +504,14 @@ export const LazyModules = {
     SupplierLedger: _lazySupplierLedger,
     SupplierStatements: _lazySupplierStatements,
     SupplierGroups: _lazySupplierGroups,
+    Agents: _lazyAgents,
     SupplierAgeing: _lazySupplierAgeing,
     EditSupplier: _lazyEditSupplier,
     ItemCategories: _lazyCategoryManager,
+    ComboOffers: _lazyComboOfferManager,
+    SerializedUnits: _lazySerializedUnitLookup,
+    StockWriteOff: _lazyStockWriteOff,
+    StockTransfer: _lazyStockTransfer,
     StockSummary: _lazyInventoryMockUI,
     StockMovement: _lazyInventoryMockUI,
     LowStockAlerts: _lazyInventoryMockUI,
@@ -473,13 +521,17 @@ export const LazyModules = {
     FinanceAgentDashboard: _lazyFinanceAgentDashboard,
     DailyFinanceTracker: _lazyFinanceMockUI,
     CashBankIntelligence: _lazyCashBankIntelligence,
-    PettyCashIntelligence: _lazyFinanceMockUI,
+    PettyCashIntelligence: _lazyPettyCashClose,
+    MasterDataManager: _lazyMasterDataManager,
+    DiscountPermissions: _lazyDiscountPermissions,
     BankIntelligence: _lazyBankIntelligence,
     BankReconciliationIntelligence: _lazyBankReconciliationIntelligence,
     FundTransferIntelligence: _lazyFundTransferIntelligence,
     BankAccounts: _lazyBankAccounts,
     JournalEntries: _lazyJournalEntries,
     JournalEntryForm: _lazyJournalEntryForm,
+    EMIPlans: _lazyEMIPlans,
+    CardTerminals: _lazyCardTerminals,
     BankSummary: _lazyBankSummary,
     Transfers: _lazyTransfers,
     CashInHand: _lazyCashInHand,
@@ -510,6 +562,7 @@ export const LazyModules = {
     AttendanceSummaryManager: _lazyAttendanceSummaryManager,
     DailyAttendanceBoard: _lazyDailyAttendanceBoard,
     PayslipView: _lazyPayslipView,
+    CommissionRules: _lazyCommissionRules,
     // Newly added real pages
     CategoryManager: _lazyCategoryManager,
     InventoryVariantSearch: _lazyInventoryVariantSearch,
@@ -519,6 +572,14 @@ export const LazyModules = {
     Suppliers: _lazySuppliers,
     PurchaseRegisterMockUI: _lazyPurchaseRegisterMockUI,
     PurchaseExpress: _lazyPurchaseExpress,
+    // Wholesale/Retail (WR) Billing
+    WRCounter: _lazyWRCounter,
+    WRSalesEntry: _lazyWRSalesEntry,
+    WRPurchaseEntry: _lazyWRPurchaseEntry,
+    WRSalesBillView: _lazyWRSalesBillView,
+    WRPurchaseBillView: _lazyWRPurchaseBillView,
+    WRSalesReport: _lazyWRSalesReport,
+    WRStockReport: _lazyWRStockReport,
 };
 
 
@@ -542,6 +603,7 @@ export const preloadByViewId = (viewId: string) => {
     else if (viewId.startsWith('PURCHASE') || viewId === 'VENDORS') preloadModule('Purchase');
     else if (viewId.startsWith('SALES') || viewId.startsWith('PAYMENT_IN')) preloadModule('Sales');
     else if (viewId.startsWith('EXPENSE')) preloadModule('Expenses');
+    else if (viewId.startsWith('WR_')) preloadModule('WRCounter');
     else if (viewId === 'SETTINGS') preloadModule('Settings');
     else if (viewId === 'STOREFRONT') preloadModule('Storefront');
 

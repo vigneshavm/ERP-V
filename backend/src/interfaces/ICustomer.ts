@@ -30,6 +30,8 @@ export interface ICustomer extends Document {
     tenantId: string | Types.ObjectId;
     points: number;
     tier: string;
+    groupId?: string | Types.ObjectId; // references a MasterEntry of type CUSTOMER_GROUP
+    relationshipTypeId?: string | Types.ObjectId; // references a MasterEntry of type CUSTOMER_RELATIONSHIP_TYPE
 
     // Enhanced Marketing Consent
     marketingConsent?: IMarketingConsent;

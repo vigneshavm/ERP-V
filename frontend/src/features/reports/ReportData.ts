@@ -17,7 +17,9 @@ import {
     Zap,
     Clock,
     Store,
-    Tag
+    Tag,
+    MapPin,
+    LayoutGrid
 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 
@@ -73,6 +75,8 @@ export const REPORT_CATALOG: ReportCategory[] = [
             { id: 'stock-status', name: 'Stock Status', description: 'Current stock levels and valuation', icon: Layers, slug: 'inventory' },
             { id: 'low-stock', name: 'Low Stock Alert', description: 'Items below reorder point', icon: Zap, slug: 'low-stock' },
             { id: 'dead-stock', name: 'Dead Stock Report', description: 'Non-moving items analysis', icon: Database, slug: 'dead-stock' },
+            { id: 'city-wise-stock', name: 'City-Wise Stock Report', description: 'Current stock position sliced by store city', icon: MapPin, slug: 'city-wise-stock' },
+            { id: 'rack-wise-stock', name: 'Floor/Rack-Wise Stock Report', description: 'Current stock position sliced by shelf/rack location', icon: LayoutGrid, slug: 'rack-wise-stock' },
         ]
     },
     {

@@ -17,10 +17,14 @@ interface AuthenticatedRequest extends Request {
     };
 }
 
-const generatePurchaseNumber = async (_tenantId: string): Promise<string> => {
+// Wholesale/Retail (WR) Billing: `numberPrefix` lets WR purchase intake (channel: 'WHOLESALE')
+// get its own "WRPUR-" series instead of "PUR-", scanned separately -- same convention as
+// PosController.ts's INV-/WR- invoice numbering split. Defaults to 'PUR' so every existing
+// caller is unaffected.
+const generatePurchaseNumber = async (_tenantId: string, numberPrefix: string = 'PUR'): Promise<string> => {
     const today = new Date();
     const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
-    const prefix = `PUR-${dateStr}`;
+    const prefix = `${numberPrefix}-${dateStr}`;
     const lastPurchase = await Purchase.findOne({
         purchaseNumber: new RegExp(`^${prefix}`),
     }).sort({ purchaseNumber: -1 });
@@ -132,7 +136,11 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
             }
         }
 
-        const purchaseNumber = await generatePurchaseNumber(req.user?.tenantId || 'default');
+        // Wholesale/Retail (WR) Billing: channel comes from either the top-level body (WR
+        // Purchase Entry) or details.channel, defaulting to RETAIL so every existing caller
+        // (Purchase Entry, PDF import, PO conversion) is unaffected.
+        const channel: 'RETAIL' | 'WHOLESALE' = (req.body.channel || details?.channel) === 'WHOLESALE' ? 'WHOLESALE' : 'RETAIL';
+        const purchaseNumber = await generatePurchaseNumber(req.user?.tenantId || 'default', channel === 'WHOLESALE' ? 'WRPUR' : 'PUR');
 
         // Process items: Create new inventory items for variants or new designs
         const processedItems = [];
@@ -152,6 +160,10 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
                     categoryCode: catCode,
                     costPrice: i.rate,
                     sellingPrice: i.selling_price || 0,
+                    // Wholesale/Retail (WR) Billing: seed the item's wholesale rate when WR
+                    // Purchase Entry created it, so POS's existing wholesale pricing
+                    // (usePOSLogic.ts's resolveItemPrice) picks it up right away.
+                    wholesaleRate: i.wholesale_rate || undefined,
                     stockQty: 0, // Will be updated below
                     color: i.color,
                     size: i.size,
@@ -173,6 +185,7 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
                 amount: i.amount,
                 margin: i.margin || 0,
                 sellingPrice: i.selling_price || 0,
+                wholesaleRate: i.wholesale_rate || undefined,
                 color: i.color,
                 size: i.size,
                 categoryCode: catCode,
@@ -192,6 +205,7 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
             shippingAmount: details.shipping_amount,
             totalAmount: details.total_amount,
             notes: details.notes,
+            channel,
             status: status || 'DRAFT',
             createdBy: req.user?._id,
             items: processedItems
@@ -384,6 +398,11 @@ export const getAllPurchases = async (req: AuthenticatedRequest, res: Response):
             query.tenantId = req.user.tenantId;
         } else {
             query.createdBy = req.user?._id;
+        }
+        // Wholesale/Retail (WR) Billing: WR Purchase Bill View calls this same endpoint with
+        // ?channel=WHOLESALE instead of a separate list route.
+        if (req.query.channel === 'WHOLESALE' || req.query.channel === 'RETAIL') {
+            query.channel = req.query.channel;
         }
 
         const purchases = await Purchase.find(query)
