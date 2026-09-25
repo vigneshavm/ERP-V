@@ -100,11 +100,11 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
                     id={id}
                     {...registration}
                     {...props}
-                    onCopy={handlePreventAction ? (e) => handlePreventAction(e, 'copying') : undefined}
-                    onPaste={handlePreventAction ? (e) => handlePreventAction(e, 'pasting') : undefined}
-                    onCut={handlePreventAction ? (e) => handlePreventAction(e, 'cutting') : undefined}
-                    onDragStart={handlePreventAction ? (e) => handlePreventAction(e, 'dragging') : undefined}
-                    onDrop={handlePreventAction ? (e) => handlePreventAction(e, 'dropping') : undefined}
+                    onCopy={(e) => handlePreventAction(e, 'copying')}
+                    onPaste={(e) => handlePreventAction(e, 'pasting')}
+                    onCut={(e) => handlePreventAction(e, 'cutting')}
+                    onDragStart={(e) => handlePreventAction(e, 'dragging')}
+                    onDrop={(e) => handlePreventAction(e, 'dropping')}
                     onContextMenu={handleContextMenu}
                     onKeyDown={handleKeyDown}
                     autoComplete="new-password"

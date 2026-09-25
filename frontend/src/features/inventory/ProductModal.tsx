@@ -50,8 +50,19 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
     const warehouses = useMemo(() => entriesByType.WAREHOUSE || [], [entriesByType.WAREHOUSE]);
     const hsnCodes = useMemo(() => entriesByType.PRODUCT_HSN || [], [entriesByType.PRODUCT_HSN]);
 
-    const [isNewCategory, setIsNewCategory] = useState(false);
-    const [formData, setFormData] = useState<Partial<Product>>(EMPTY_PRODUCT);
+    // A product whose category isn't in the known list (e.g. legacy data, or a category the
+    // catalog no longer has) still needs to be editable as free text.
+    const isUnlistedCategory = (p?: Product | null) => !!p?.category && !(categories || []).includes(p.category);
+    const [isNewCategory, setIsNewCategory] = useState(() => isUnlistedCategory(product));
+    const [formData, setFormData] = useState<Partial<Product>>(() => product ? { ...EMPTY_PRODUCT, ...product } : EMPTY_PRODUCT);
+    // Re-initialize when opened or given a different product; adjusted during render (tracking the
+    // previous props) instead of setState in an effect.
+    const [prevProps, setPrevProps] = useState({ product, isOpen });
+    if (prevProps.product !== product || prevProps.isOpen !== isOpen) {
+        setPrevProps({ product, isOpen });
+        setFormData(product ? { ...EMPTY_PRODUCT, ...product } : EMPTY_PRODUCT);
+        setIsNewCategory(isUnlistedCategory(product));
+    }
 
     useEffect(() => {
         if (!isOpen) return;
@@ -62,21 +73,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
             dispatch(fetchMasterEntries({ type: type as any }));
         });
     }, [isOpen, dispatch]);
-
-    useEffect(() => {
-        if (product) {
-            setFormData({
-                ...EMPTY_PRODUCT,
-                ...product
-            });
-            // A product whose category isn't in the known list (e.g. legacy data, or a
-            // category the catalog no longer has) still needs to be editable as free text.
-            setIsNewCategory(!!product.category && !(categories || []).includes(product.category));
-        } else {
-            setFormData(EMPTY_PRODUCT);
-            setIsNewCategory(false);
-        }
-    }, [product, isOpen]);
 
     // Legacy items were created before the Warehouse master existed, so their warehouseId may
     // still be the literal default string ('MAIN_WAREHOUSE') rather than a real MasterEntry _id.

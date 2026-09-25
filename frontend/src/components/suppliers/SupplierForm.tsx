@@ -92,30 +92,33 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
         dispatch(getSupplierGroups());
     }, [mode, supplierId, dispatch, supplier, initialData]);
 
-    useEffect(() => {
-        if (mode === 'edit' && supplier) {
-            setFormData({
-                businessName: supplier.businessName || '',
-                supplierGroup: supplier.supplierGroup || '',
-                contactPersonName: supplier.contactPersonName || '',
-                contactNo: supplier.contactNo || '',
-                email: supplier.email || '',
-                physicalAddress: supplier.physicalAddress || '',
-                state: supplier.state || '',
-                gstNo: supplier.gstNo || '',
-                panNo: supplier.panNo || '',
-                supplierType: supplier.supplierType || 'manufacturer',
-                openingBalance: supplier.openingBalance || 0,
-                balanceType: (supplier.balanceType as any) || 'payable',
-                creditPeriod: supplier.creditPeriod || 30,
-                status: supplier.status || 'active',
-                defaultPaymentMode: supplier.defaultPaymentMode || 'NEFT',
-                isOneTime: !!supplier.isOneTime,
-                bankAccounts: supplier.bankAccounts || [],
-                groupId: (supplier.groupId as any)?._id || supplier.groupId || ''
-            });
-        }
-    }, [supplier, mode]);
+    // Load the fetched supplier into the form once per supplier. Adjusted during render (React's
+    // "storing information from previous renders" pattern) rather than in an effect, so the form
+    // doesn't render a pass with stale values first.
+    const [loadedSupplier, setLoadedSupplier] = useState<typeof supplier>(null);
+    if (mode === 'edit' && supplier && supplier !== loadedSupplier) {
+        setLoadedSupplier(supplier);
+        setFormData({
+            businessName: supplier.businessName || '',
+            supplierGroup: supplier.supplierGroup || '',
+            contactPersonName: supplier.contactPersonName || '',
+            contactNo: supplier.contactNo || '',
+            email: supplier.email || '',
+            physicalAddress: supplier.physicalAddress || '',
+            state: supplier.state || '',
+            gstNo: supplier.gstNo || '',
+            panNo: supplier.panNo || '',
+            supplierType: supplier.supplierType || 'manufacturer',
+            openingBalance: supplier.openingBalance || 0,
+            balanceType: (supplier.balanceType as any) || 'payable',
+            creditPeriod: supplier.creditPeriod || 30,
+            status: supplier.status || 'active',
+            defaultPaymentMode: supplier.defaultPaymentMode || 'NEFT',
+            isOneTime: !!supplier.isOneTime,
+            bankAccounts: supplier.bankAccounts || [],
+            groupId: (supplier.groupId as any)?._id || supplier.groupId || ''
+        });
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;

@@ -23,7 +23,7 @@ interface InvoiceItem {
 const SalesInvoiceForm: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    const { isLoading, isSuccess, isError, message } = useSelector(
+    const { isLoading } = useSelector(
         (state: RootState) => state.salesInvoice
     );
 
@@ -35,7 +35,8 @@ const SalesInvoiceForm: React.FC = () => {
         invoiceDate: new Date().toISOString().split("T")[0],
         dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
         customer: null as any,
-        items: [] as InvoiceItem[],
+        // Start with one empty line to fill in.
+        items: [{ name: "", quantity: 1, rate: 0, tax: 0, amount: 0 }] as InvoiceItem[],
         discount: 0,
         shippingCharges: 0,
         notes: "",
@@ -43,35 +44,11 @@ const SalesInvoiceForm: React.FC = () => {
     }));
 
     const [showCustomerModal, setShowCustomerModal] = useState(false);
-    const [hasSubmitted, setHasSubmitted] = useState(false);
 
     // Reset state on mount
     useEffect(() => {
         dispatch(reset());
     }, [dispatch]);
-
-    // Initialize with one empty item
-    useEffect(() => {
-        if (formData.items.length === 0) {
-            setFormData(prev => ({
-                ...prev,
-                items: [{ name: "", quantity: 1, rate: 0, tax: 0, amount: 0 }]
-            }));
-        }
-    }, []);
-
-    // Handle Success/Error
-    useEffect(() => {
-        if (isSuccess && hasSubmitted) {
-            toast.success("Invoice generated successfully in the system matrix.");
-            dispatch(reset());
-            navigate("/sales/register");
-        }
-        if (isError && hasSubmitted) {
-            toast.error(message || "Failed to finalize invoice");
-            setHasSubmitted(false);
-        }
-    }, [isSuccess, isError, message, dispatch, navigate, hasSubmitted]);
 
     // Calculations
     const calculateItemAmount = (item: InvoiceItem) => {
@@ -115,7 +92,7 @@ const SalesInvoiceForm: React.FC = () => {
         return subtotal + totalTax + Number(formData.shippingCharges) - Number(formData.discount);
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.customer) {
             toast.error("Critical: Customer node must be selected.");
@@ -126,7 +103,6 @@ const SalesInvoiceForm: React.FC = () => {
             return;
         }
 
-        setHasSubmitted(true);
         const payload = {
             ...formData,
             customer: formData.customer._id,
@@ -136,7 +112,16 @@ const SalesInvoiceForm: React.FC = () => {
             status: "unpaid",
         };
 
-        dispatch(createSalesInvoice(payload));
+        // Result of this submission only (not the slice's shared success/error flags).
+        try {
+            await dispatch(createSalesInvoice(payload)).unwrap();
+        } catch (err) {
+            toast.error(typeof err === 'string' ? err : "Failed to finalize invoice");
+            return;
+        }
+        toast.success("Invoice generated successfully in the system matrix.");
+        dispatch(reset());
+        navigate("/sales/register");
     };
 
     return (

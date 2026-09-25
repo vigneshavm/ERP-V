@@ -61,7 +61,7 @@ interface ApiResponse<T> {
     message?: string;
 }
 
-interface CategoriesResponse extends ApiResponse<Category[]> { }
+type CategoriesResponse = ApiResponse<Category[]>;
 
 const CategoryManager: React.FC = () => {
     // Data State

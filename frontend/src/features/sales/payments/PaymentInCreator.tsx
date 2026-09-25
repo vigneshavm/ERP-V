@@ -155,13 +155,8 @@ const PaymentInCreator: React.FC = () => {
     };
 
     // Calculations
-    const totalPayment = useMemo(() =>
-        paymentMethods.reduce((sum, m) => sum + (m.amount || 0), 0)
-        , [paymentMethods]);
-
-    const totalAllocated = useMemo(() =>
-        invoices.reduce((sum, inv) => sum + inv.allocatedAmount, 0)
-        , [invoices]);
+    const totalPayment = paymentMethods.reduce((sum, m) => sum + (m.amount || 0), 0);
+    const totalAllocated = invoices.reduce((sum, inv) => sum + inv.allocatedAmount, 0);
 
     const advanceCreated = Math.max(0, totalPayment - totalAllocated);
     const remainingUnallocated = Math.max(0, totalPayment - totalAllocated);

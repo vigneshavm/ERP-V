@@ -12,7 +12,7 @@ import api from '../../services/api';
 const PayrollRuns = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const { runs, loading, success } = useSelector((state: RootState) => state.payroll);
+    const { runs, loading } = useSelector((state: RootState) => state.payroll);
 
     // Generate Dialog
     const [isGenerateOpen, setIsGenerateOpen] = useState(false);
@@ -22,13 +22,12 @@ const PayrollRuns = () => {
         dispatch(fetchPayrollRuns());
     }, [dispatch]);
 
-    useEffect(() => {
-        if (success) setIsGenerateOpen(false);
-    }, [success]);
-
     const { id } = useParams<{ id: string }>();
-    const [runDetails, setRunDetails] = useState<any>(null);
-    const [payslips, setPayslips] = useState<any[]>([]);
+    // Details are kept with the id they were fetched for, so another run's details are never shown
+    // while a new one loads (and nothing needs clearing when leaving the detail view).
+    const [details, setDetails] = useState<{ id: string; run: any; payslips: any[] } | null>(null);
+    const runDetails = id && details?.id === id ? details.run : null;
+    const payslips = runDetails ? details!.payslips : [];
 
     // Fetch Run Details if ID is present
     useEffect(() => {
@@ -36,21 +35,26 @@ const PayrollRuns = () => {
             const fetchDetails = async () => {
                 try {
                     const response = await api.get(`/api/hr/payroll/runs/${id}`);
-                    setRunDetails(response.data.data.run);
-                    setPayslips(response.data.data.payslips || []);
+                    setDetails({ id, run: response.data.data.run, payslips: response.data.data.payslips || [] });
                 } catch (e) {
                     console.error("Failed to fetch run details", e);
                 }
             };
             fetchDetails();
         } else {
-            setRunDetails(null);
             dispatch(fetchPayrollRuns());
         }
     }, [id, dispatch]);
 
-    const handleGenerate = () => {
-        dispatch(generatePayrollRun(selectedDate));
+    // Close the dialog when this generation succeeds. It used to follow the slice's shared
+    // `success` flag, which saving a salary structure also sets.
+    const handleGenerate = async () => {
+        try {
+            await dispatch(generatePayrollRun(selectedDate)).unwrap();
+            setIsGenerateOpen(false);
+        } catch {
+            // Rejected: keep the dialog open.
+        }
     };
 
     if (id && runDetails) {
@@ -77,7 +81,7 @@ const PayrollRuns = () => {
                                                 await api.put(`/api/hr/payroll/runs/${id}/approve`);
                                                 // Refresh
                                                 const response = await api.get(`/api/hr/payroll/runs/${id}`);
-                                                setRunDetails(response.data.data.run);
+                                                setDetails(prev => prev && { ...prev, run: response.data.data.run });
                                             }
                                         }}
                                         className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
@@ -93,7 +97,7 @@ const PayrollRuns = () => {
                                                 await api.post(`/api/hr/payroll/runs/${id}/pay`, { accountId, paymentMode: 'CASH' });
                                                 // Refresh
                                                 const response = await api.get(`/api/hr/payroll/runs/${id}`);
-                                                setRunDetails(response.data.data.run);
+                                                setDetails(prev => prev && { ...prev, run: response.data.data.run });
                                             }
                                         }}
                                         className="px-4 py-1.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"

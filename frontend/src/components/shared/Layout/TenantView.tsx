@@ -39,12 +39,13 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
+    const userTenantId = user?.tenantId;
     const effectiveTenant = useMemo(() => {
-        if (user?.tenantId) {
-            return tenants.find(t => t.id === user.tenantId) || currentTenant;
+        if (userTenantId) {
+            return tenants.find(t => t.id === userTenantId) || currentTenant;
         }
         return currentTenant;
-    }, [user?.tenantId, tenants, currentTenant]);
+    }, [userTenantId, tenants, currentTenant]);
 
     if (!isLoggedIn) {
         return (

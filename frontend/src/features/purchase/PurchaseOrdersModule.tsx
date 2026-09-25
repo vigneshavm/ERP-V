@@ -23,35 +23,6 @@ const PurchaseOrdersModule: React.FC = () => {
     const dispatch = useDispatch();
     const activeTab = useSelector((state: RootState) => state.ui.activeTab);
 
-    useEffect(() => {
-        if (id) {
-            if (id === 'new') {
-                setView('FORM');
-                setSelectedOrder(null);
-                setSelectedItems([]);
-            } else {
-                handleView(id);
-            }
-            return;
-        }
-
-        if (activeTab === 'PURCHASE_ORDER_FORM') {
-            setView('FORM');
-            setSelectedOrder(null);
-            setSelectedItems([]);
-        } else if (activeTab === 'PURCHASE_ORDER_LIST' || activeTab === 'PURCHASE_ORDER') {
-            setView('LIST');
-        }
-    }, [activeTab, id]);
-
-    useEffect(() => {
-        fetchOrders();
-    }, [fetchOrders]);
-
-    const handleCreate = () => {
-        navigate('/purchase/orders/new');
-    };
-
     const handleView = async (id: string) => {
         const fullDetails = await fetchOrderDetails(id);
         if (fullDetails) {
@@ -59,6 +30,43 @@ const PurchaseOrdersModule: React.FC = () => {
             setSelectedItems(fullDetails.items || []);
             setView('DETAILS');
         }
+    };
+
+
+    // Which view the route or menu tab asks for; applied during render when either changes
+    // (tracking the previous values) instead of setState in an effect.
+    const [prevRoute, setPrevRoute] = useState<{ id?: string; activeTab: string } | null>(null);
+    if (!prevRoute || prevRoute.id !== id || prevRoute.activeTab !== activeTab) {
+        setPrevRoute({ id, activeTab });
+        if (id === 'new' || (!id && activeTab === 'PURCHASE_ORDER_FORM')) {
+            setView('FORM');
+            setSelectedOrder(null);
+            setSelectedItems([]);
+        } else if (!id && (activeTab === 'PURCHASE_ORDER_LIST' || activeTab === 'PURCHASE_ORDER')) {
+            setView('LIST');
+        }
+    }
+
+    // An existing order's id in the route: load its details and show them. The cancelled flag
+    // stops a slow response for a previous id from overwriting the current one.
+    useEffect(() => {
+        if (!id || id === 'new') return;
+        let cancelled = false;
+        fetchOrderDetails(id).then(fullDetails => {
+            if (cancelled || !fullDetails) return;
+            setSelectedOrder(fullDetails);
+            setSelectedItems(fullDetails.items || []);
+            setView('DETAILS');
+        });
+        return () => { cancelled = true; };
+    }, [id, fetchOrderDetails]);
+
+    useEffect(() => {
+        fetchOrders();
+    }, [fetchOrders]);
+
+    const handleCreate = () => {
+        navigate('/purchase/orders/new');
     };
 
     const handleSave = async (order: Partial<PurchaseOrder>, items: PurchaseOrderItem[]) => {

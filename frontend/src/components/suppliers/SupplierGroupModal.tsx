@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { createSupplierGroup, updateSupplierGroup } from '../../redux/slices/supplierGroupSlice';
@@ -15,45 +15,33 @@ interface SupplierGroupModalProps {
     initialData?: any;
 }
 
+const EMPTY_GROUP = {
+    name: '',
+    description: '',
+    color: '#3b82f6',
+    nature: 'Raw Material',
+    region: 'Local',
+    financialCategory: 'Credit',
+    priority: 'Medium',
+    taxType: 'GST',
+    paymentTerms: 30,
+    creditLimit: 0,
+    discountPercent: 0,
+    icon: 'truck'
+};
+
 const SupplierGroupModal: React.FC<SupplierGroupModalProps> = ({ isOpen, onClose, initialData }) => {
     const dispatch = useDispatch<AppDispatch>();
     const { isLoading } = useSelector((state: RootState) => state.supplierGroups);
 
-    const [formData, setFormData] = useState({
-        name: '',
-        description: '',
-        color: '#3b82f6',
-        nature: 'Raw Material',
-        region: 'Local',
-        financialCategory: 'Credit',
-        priority: 'Medium',
-        taxType: 'GST',
-        paymentTerms: 30,
-        creditLimit: 0,
-        discountPercent: 0,
-        icon: 'truck'
-    });
-
-    useEffect(() => {
-        if (initialData) {
-            setFormData(initialData);
-        } else {
-            setFormData({
-                name: '',
-                description: '',
-                color: '#3b82f6',
-                nature: 'Raw Material',
-                region: 'Local',
-                financialCategory: 'Credit',
-                priority: 'Medium',
-                taxType: 'GST',
-                paymentTerms: 30,
-                creditLimit: 0,
-                discountPercent: 0,
-                icon: 'truck'
-            });
-        }
-    }, [initialData, isOpen]);
+    const [formData, setFormData] = useState<typeof EMPTY_GROUP>(() => initialData || EMPTY_GROUP);
+    // Re-initialize when the modal is (re)opened or given a different group; adjusted during
+    // render (tracking the previous props) instead of setState in an effect.
+    const [prevProps, setPrevProps] = useState({ initialData, isOpen });
+    if (prevProps.initialData !== initialData || prevProps.isOpen !== isOpen) {
+        setPrevProps({ initialData, isOpen });
+        setFormData(initialData || EMPTY_GROUP);
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

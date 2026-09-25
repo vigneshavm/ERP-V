@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, CheckCircle, Package, Loader2, AlertTriangle } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../../types/purchase";
 
@@ -29,23 +29,30 @@ const resolveProductId = (item: any): string => {
     return pid || '';
 };
 
-const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, order, onConfirm, isSubmitting = false, error = null }) => {
-    const [items, setItems] = useState<{ productId: string; name: string; ordered: number; received: number; rejected: number }[]>([]);
+interface ReceiveRow { productId: string; name: string; ordered: number; received: number; rejected: number }
 
-    useEffect(() => {
-        if (order && order.items) {
-            setItems(order.items.map((i: PurchaseOrderItem) => {
-                const outstanding = Math.max(0, (i.quantity || 0) - (i.received_quantity || 0));
-                return {
-                    productId: resolveProductId(i),
-                    name: i.product_name,
-                    ordered: outstanding,
-                    received: outstanding, // Default to receiving everything still outstanding
-                    rejected: 0
-                };
-            }));
-        }
-    }, [order]);
+// One row per PO line, defaulting to receiving everything still outstanding.
+const toReceiveRows = (order?: { items?: PurchaseOrderItem[] } | null): ReceiveRow[] =>
+    (order?.items || []).map((i: PurchaseOrderItem) => {
+        const outstanding = Math.max(0, (i.quantity || 0) - (i.received_quantity || 0));
+        return {
+            productId: resolveProductId(i),
+            name: i.product_name,
+            ordered: outstanding,
+            received: outstanding,
+            rejected: 0
+        };
+    });
+
+const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, order, onConfirm, isSubmitting = false, error = null }) => {
+    const [items, setItems] = useState(() => toReceiveRows(order));
+    // Re-initialize when given a different order; adjusted during render (tracking the previous
+    // prop) instead of setState in an effect.
+    const [prevOrder, setPrevOrder] = useState(order);
+    if (order !== prevOrder) {
+        setPrevOrder(order);
+        if (order?.items) setItems(toReceiveRows(order));
+    }
 
     const handleReceivedChange = (idx: number, val: string) => {
         const qty = Math.max(0, parseInt(val) || 0);

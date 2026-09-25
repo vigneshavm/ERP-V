@@ -31,6 +31,17 @@ import {
     Zap
 } from 'lucide-react';
 
+// A blank entry dated today (a function so "today" is when the form is opened or reset).
+const emptyCashEntry = (): Partial<Transaction> => ({
+    date: new Date().toISOString().split('T')[0],
+    description: '',
+    amount: 0,
+    type: 'in',
+    toAccount: '',
+    fromAccount: '',
+    reference: ''
+});
+
 const CashInHand: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -39,17 +50,9 @@ const CashInHand: React.FC = () => {
     const [filterType, setFilterType] = useState<'all' | 'in' | 'out'>('all');
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
 
-    const { transactions, position, accounts, isLoading, isSuccess, isError, message } = useSelector((state: RootState) => state.cashbank);
+    const { transactions, position, accounts, isLoading, isError, message } = useSelector((state: RootState) => state.cashbank);
 
-    const [formData, setFormData] = useState<Partial<Transaction>>({
-        date: new Date().toISOString().split('T')[0],
-        description: '',
-        amount: 0,
-        type: 'in',
-        toAccount: '',
-        fromAccount: '',
-        reference: ''
-    });
+    const [formData, setFormData] = useState<Partial<Transaction>>(emptyCashEntry);
 
     useEffect(() => {
         dispatch(getTransactions('cash'));
@@ -58,31 +61,25 @@ const CashInHand: React.FC = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (isSuccess && showAddTransaction) {
-            toast.success('Capital re-indexed successfully!');
-            setShowAddTransaction(false);
-            setFormData({
-                date: new Date().toISOString().split('T')[0],
-                description: '',
-                amount: 0,
-                type: 'in',
-                toAccount: '',
-                fromAccount: '',
-                reference: ''
-            });
-            dispatch(getTransactions('cash'));
-            dispatch(getCashBankPosition());
-            dispatch(reset());
-        }
         if (isError && message) {
             toast.error(message);
             dispatch(reset());
         }
-    }, [isSuccess, isError, message, dispatch, showAddTransaction]);
+    }, [isError, message, dispatch]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(createCashTransaction(formData));
+        try {
+            await dispatch(createCashTransaction(formData)).unwrap();
+        } catch {
+            return; // Rejected: the isError effect above reports it; keep the form open.
+        }
+        toast.success('Capital re-indexed successfully!');
+        setShowAddTransaction(false);
+        setFormData(emptyCashEntry());
+        dispatch(getTransactions('cash'));
+        dispatch(getCashBankPosition());
+        dispatch(reset());
     };
 
     const filteredTransactions = transactions.filter(t => {

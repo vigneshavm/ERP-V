@@ -25,44 +25,41 @@ import {
     Wallet
 } from 'lucide-react';
 
+const EMPTY_ACCOUNT: Partial<Account> = {
+    bankName: '',
+    accountNumber: '',
+    accountType: 'Savings',
+    branch: '',
+    ifsc: '',
+    openingBalance: 0
+};
+
 const BankAccounts: React.FC = () => {
     const [showAddAccount, setShowAddAccount] = useState(false);
     const [revealedAccounts, setRevealedAccounts] = useState<Record<string, boolean>>({});
-    const [formData, setFormData] = useState<Partial<Account>>({
-        bankName: '',
-        accountNumber: '',
-        accountType: 'Savings',
-        branch: '',
-        ifsc: '',
-        openingBalance: 0
-    });
+    const [formData, setFormData] = useState<Partial<Account>>(EMPTY_ACCOUNT);
 
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const { accounts, isLoading, isSuccess } = useSelector((state: RootState) => state.cashbank);
+    const { accounts, isLoading } = useSelector((state: RootState) => state.cashbank);
 
     useEffect(() => {
         dispatch(getAccounts());
     }, [dispatch]);
 
-    useEffect(() => {
-        if (isSuccess) {
+    // Close and clear the form only when this save succeeds. It used to react to the slice's shared
+    // isSuccess flag, which every cash/bank fetch sets, so a background refresh could wipe the form.
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await dispatch(createAccount(formData)).unwrap();
             setShowAddAccount(false);
-            setFormData({
-                bankName: '',
-                accountNumber: '',
-                accountType: 'Savings',
-                branch: '',
-                ifsc: '',
-                openingBalance: 0
-            });
+            setFormData(EMPTY_ACCOUNT);
+        } catch {
+            // Rejected: keep the form open so it can be corrected.
+        } finally {
             dispatch(reset());
         }
-    }, [isSuccess, dispatch]);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        dispatch(createAccount(formData));
     };
 
     const toggleReveal = (id: string) => {

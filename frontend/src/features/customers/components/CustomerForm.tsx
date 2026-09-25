@@ -13,6 +13,19 @@ interface CustomerFormProps {
     onCancel: () => void;
 }
 
+// Form fields for a customer being edited (or blank for a new one).
+const toCustomerFormData = (initialData?: Partial<Customer>) => ({
+    name: initialData?.name || '',
+    phone: initialData?.phone || '',
+    email: initialData?.email || '',
+    address: initialData?.address || '',
+    referredBy: typeof initialData?.referrer === 'string' ? initialData.referrer : (initialData?.referrer as any)?._id || '',
+});
+
+// The populated referrer object, when the API returned one (a bare id string has no name to show).
+const referrerOf = (initialData?: Partial<Customer>): Customer | null =>
+    initialData?.referrer && typeof initialData.referrer !== 'string' ? initialData.referrer as any : null;
+
 const CustomerForm: React.FC<CustomerFormProps> = ({
     initialData,
     customers,
@@ -22,35 +35,26 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
     submitLabel,
     onCancel
 }) => {
-    const [formData, setFormData] = useState({
-        name: initialData?.name || '',
-        phone: initialData?.phone || '',
-        email: initialData?.email || '',
-        address: initialData?.address || '',
-        referredBy: typeof initialData?.referrer === 'string' ? initialData.referrer : (initialData?.referrer as any)?._id || '',
-    });
+    const [formData, setFormData] = useState(() => toCustomerFormData(initialData));
 
-    const [referralSearch, setReferralSearch] = useState('');
+    const [referralSearch, setReferralSearch] = useState(() => referrerOf(initialData)?.name || '');
     const [showReferralDropdown, setShowReferralDropdown] = useState(false);
-    const [selectedReferrer, setSelectedReferrer] = useState<Customer | null>(null);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
+    const [selectedReferrer, setSelectedReferrer] = useState<Customer | null>(() => referrerOf(initialData));
+    // Re-initialize when given a different customer; adjusted during render (tracking the previous
+    // prop) instead of setState in an effect.
+    const [prevInitialData, setPrevInitialData] = useState(initialData);
+    if (initialData !== prevInitialData) {
+        setPrevInitialData(initialData);
         if (initialData) {
-            setFormData({
-                name: initialData.name || '',
-                phone: initialData.phone || '',
-                email: initialData.email || '',
-                address: initialData.address || '',
-                referredBy: typeof initialData.referrer === 'string' ? initialData.referrer : (initialData.referrer as any)?._id || '',
-            });
-
-            if (initialData.referrer && typeof initialData.referrer !== 'string') {
-                setSelectedReferrer(initialData.referrer as any);
-                setReferralSearch((initialData.referrer as any).name);
+            setFormData(toCustomerFormData(initialData));
+            const referrer = referrerOf(initialData);
+            if (referrer) {
+                setSelectedReferrer(referrer);
+                setReferralSearch(referrer.name);
             }
         }
-    }, [initialData]);
+    }
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

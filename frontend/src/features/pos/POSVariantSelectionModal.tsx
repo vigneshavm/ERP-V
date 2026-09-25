@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Product } from "../../types/product";
 import { X, ShoppingCart } from 'lucide-react';
 
@@ -19,12 +19,13 @@ export const POSVariantSelectionModal: React.FC<POSVariantSelectionModalProps> =
 }) => {
     const [quantities, setQuantities] = useState<Record<string, number>>({});
 
-    // Reset quantities when modal opens with a new product
-    useEffect(() => {
-        if (isOpen) {
-            setQuantities({});
-        }
-    }, [isOpen, baseProduct.id]);
+    // Reset quantities when the modal opens or switches product; adjusted during render (tracking
+    // the previous props) instead of setState in an effect.
+    const [prevOpenFor, setPrevOpenFor] = useState({ isOpen, productId: baseProduct.id });
+    if (prevOpenFor.isOpen !== isOpen || prevOpenFor.productId !== baseProduct.id) {
+        setPrevOpenFor({ isOpen, productId: baseProduct.id });
+        if (isOpen) setQuantities({});
+    }
 
     // Extract unique sizes and colors
     const { uniqueSizes, uniqueColors, matrix } = useMemo(() => {

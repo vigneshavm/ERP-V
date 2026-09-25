@@ -81,8 +81,7 @@ const SalesOrderPage = () => {
 
     const updateItem = (index: number, field: keyof SalesOrderItem, value: any) => {
         const newItems = [...formData.items];
-        // @ts-ignore
-        newItems[index][field] = value;
+        newItems[index] = { ...newItems[index], [field]: value };
         setFormData({ ...formData, items: newItems });
     };
 

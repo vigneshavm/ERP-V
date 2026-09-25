@@ -58,6 +58,8 @@ beforeEach(() => {
     fakeState = {
         purchase: { orders: [makeOrder()] },
         auth: { user: { name: 'Priya' }, currentBranch: 'Main' },
+        // The hook reads the warehouse picker's options from masterData (real store default: {}).
+        masterData: { entriesByType: {} },
     };
 });
 

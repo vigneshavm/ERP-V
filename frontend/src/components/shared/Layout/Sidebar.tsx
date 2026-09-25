@@ -6,7 +6,7 @@ import {
 import { RootState } from "../../../redux/store";
 import { setSidebarOpen, setDesktopCollapsed } from "../../../redux/slices/uiSlice";
 import { setBranch } from "../../../redux/slices/authSlice";
-import { useConfig } from "../../../contexts/ConfigProvider";
+import { useConfig } from "../../../contexts/ConfigContext";
 import { useBranchResolver } from "../../../hooks/useBranchResolver";
 import { usePermissions } from "../../../hooks/usePermissions";
 import NavItem from './NavItem';

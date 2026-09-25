@@ -26,7 +26,6 @@ const StatusButton = ({ currentStatus, targetStatus, label, icon: Icon, colorCla
 );
 
 export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, onClose, onSave, initialData }) => {
-    // @ts-ignore
     const [status, setStatus] = useState<AttendanceStatus>(initialData?.status || 'PRESENT');
     const [inTime, setInTime] = useState(initialData?.inTime || '09:00');
     const [outTime, setOutTime] = useState(initialData?.outTime || '18:00');

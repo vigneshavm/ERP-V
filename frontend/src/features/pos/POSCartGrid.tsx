@@ -1,5 +1,5 @@
 ﻿
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Product } from "../../types/product";
 import { CartItem } from "../../types/sales";
 import { Sector } from "../../types/common";
@@ -36,7 +36,8 @@ interface CartItemRowProps {
     onUpdateCartLength: (id: string, length: number) => void;
     onRemoveFromCart: (id: string) => void;
     skuInputRef: React.RefObject<HTMLInputElement | null>;
-    cartQtyRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement | null }>;
+    /** Records the row's quantity (or meter) input so the grid can focus it; owned by POSCartGrid. */
+    registerQtyInput: (id: string, el: HTMLInputElement | null) => void;
 }
 
 const CartItemRow = React.memo<CartItemRowProps>(({
@@ -46,7 +47,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
     onUpdateCartLength,
     onRemoveFromCart,
     skuInputRef,
-    cartQtyRefs
+    registerQtyInput
 }) => {
     const _qtyInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -77,7 +78,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                 {item.unit === 'Meter' ? (
                     <div className="flex items-center justify-center gap-1 bg-primary/5 dark:bg-primary/20 rounded-lg p-0.5 border border-primary/20 w-fit mx-auto">
                         <input
-                            ref={(el) => { cartQtyRefs.current[item.id] = el; }}
+                            ref={(el) => registerQtyInput(item.id, el)}
                             type="number"
                             value={item.cutLength || 1}
                             onChange={(e) => {
@@ -109,7 +110,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                         tabIndex={-1}
                     >-</button>
                     <input
-                        ref={(el) => { if (item.unit !== 'Meter') cartQtyRefs.current[item.id] = el; }}
+                        ref={(el) => { if (item.unit !== 'Meter') registerQtyInput(item.id, el); }}
                         type="number"
                         value={item.qty}
                         onChange={(e) => {
@@ -248,6 +249,10 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     const nameInputRef = useRef<HTMLInputElement>(null);
     const priceInputRef = useRef<HTMLInputElement>(null);
     const cartQtyRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
+    // Stable, so memoized CartItemRows don't re-render when the grid does.
+    const registerQtyInput = useCallback((id: string, el: HTMLInputElement | null) => {
+        cartQtyRefs.current[id] = el;
+    }, []);
 
     // Filter Products Logic (Base)
     const baseFilteredProducts = useMemo(() => {
@@ -755,7 +760,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                         onUpdateCartLength={onUpdateCartLength}
                                         onRemoveFromCart={onRemoveFromCart}
                                         skuInputRef={skuInputRef}
-                                        cartQtyRefs={cartQtyRefs}
+                                        registerQtyInput={registerQtyInput}
                                     />
                                 ))}
                             </tbody>
@@ -772,7 +777,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                     onUpdateCartLength={onUpdateCartLength}
                                     onRemoveFromCart={onRemoveFromCart}
                                     skuInputRef={skuInputRef}
-                                    cartQtyRefs={cartQtyRefs}
+                                    registerQtyInput={registerQtyInput}
                                 />
                             ))}
                         </div>

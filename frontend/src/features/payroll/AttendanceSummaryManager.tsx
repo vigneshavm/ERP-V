@@ -8,13 +8,46 @@ import { fetchAttendanceSummary, saveAttendanceSummary } from '../../redux/slice
 import { Save, Calendar } from 'lucide-react';
 import api from '../../services/api';
 
+// One editable row per employee: the saved attendance summary for the month if there is one,
+// otherwise a full-month default.
+const buildSummaryRows = (attendance: any[], employees: any[], selectedDate: { month: number; year: number }) => {
+    const initialData: Record<string, any> = {};
+
+    employees.forEach(emp => {
+        const existing = attendance.find((a: any) => {
+            const aId = typeof a.employeeId === 'string' ? a.employeeId : a.employeeId._id;
+            return aId === emp._id;
+        });
+
+        if (existing) {
+            const aId = typeof existing.employeeId === 'string' ? existing.employeeId : existing.employeeId._id;
+            initialData[emp._id] = { ...existing, employeeId: aId, isModified: false };
+        } else {
+            initialData[emp._id] = {
+                employeeId: emp._id,
+                employeeName: emp.name,
+                month: selectedDate.month,
+                year: selectedDate.year,
+                workedDays: new Date(selectedDate.year, selectedDate.month + 1, 0).getDate(), // Default to full month
+                leavesTaken: 0,
+                overtimeHours: 0,
+                holidays: 0,
+                weeklyOffs: 4, // Approx
+                totalDays: new Date(selectedDate.year, selectedDate.month + 1, 0).getDate(),
+                status: 'NEW'
+            };
+        }
+    });
+    return initialData;
+};
+
 const AttendanceSummaryManager = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { attendance } = useSelector((state: RootState) => state.payroll);
 
     const [selectedDate, setSelectedDate] = useState({ month: new Date().getMonth(), year: new Date().getFullYear() });
     const [employees, setEmployees] = useState<any[]>([]);
-    const [summaryData, setSummaryData] = useState<Record<string, any>>({});
+    const [summaryData, setSummaryData] = useState<Record<string, any>>(() => buildSummaryRows(attendance, employees, selectedDate));
 
     // Load available employees
     useEffect(() => {
@@ -34,37 +67,13 @@ const AttendanceSummaryManager = () => {
         dispatch(fetchAttendanceSummary(selectedDate));
     }, [dispatch, selectedDate]);
 
-    // Merge logic: attendance from DB + remaining employees
-    useEffect(() => {
-        const initialData: Record<string, any> = {};
-
-        employees.forEach(emp => {
-            const existing = attendance.find((a: any) => {
-                const aId = typeof a.employeeId === 'string' ? a.employeeId : a.employeeId._id;
-                return aId === emp._id;
-            });
-
-            if (existing) {
-                const aId = typeof existing.employeeId === 'string' ? existing.employeeId : existing.employeeId._id;
-                initialData[emp._id] = { ...existing, employeeId: aId, isModified: false };
-            } else {
-                initialData[emp._id] = {
-                    employeeId: emp._id,
-                    employeeName: emp.name,
-                    month: selectedDate.month,
-                    year: selectedDate.year,
-                    workedDays: new Date(selectedDate.year, selectedDate.month + 1, 0).getDate(), // Default to full month
-                    leavesTaken: 0,
-                    overtimeHours: 0,
-                    holidays: 0,
-                    weeklyOffs: 4, // Approx
-                    totalDays: new Date(selectedDate.year, selectedDate.month + 1, 0).getDate(),
-                    status: 'NEW'
-                };
-            }
-        });
-        setSummaryData(initialData);
-    }, [attendance, employees, selectedDate]);
+    // Rebuild the rows when the month's attendance, the employees or the month change; adjusted
+    // during render (tracking the previous inputs) instead of setState in an effect.
+    const [rowSources, setRowSources] = useState({ attendance, employees, selectedDate });
+    if (rowSources.attendance !== attendance || rowSources.employees !== employees || rowSources.selectedDate !== selectedDate) {
+        setRowSources({ attendance, employees, selectedDate });
+        setSummaryData(buildSummaryRows(attendance, employees, selectedDate));
+    }
 
     const handleUpdate = (empId: string, field: string, value: number) => {
         setSummaryData(prev => ({

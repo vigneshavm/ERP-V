@@ -30,14 +30,15 @@ export const test = base.extend<Fixtures>({
     apiMocks: [[], { option: true }],
     authenticated: [true, { option: true }],
 
-    page: async ({ page, apiMocks, authenticated }, use, testInfo) => {
+    // Playwright's fixture callback; named `provide` because react-hooks treats any `use*` call as a hook.
+    page: async ({ page, apiMocks, authenticated }, provide, testInfo) => {
         await page.setViewportSize({ width: 1280, height: 800 });
         logBrowserDiagnostics(page, testInfo.title);
         await installApiMocks(page, apiMocks);
         if (authenticated) {
             await seedAuthSession(page);
         }
-        await use(page);
+        await provide(page);
     },
 });
 

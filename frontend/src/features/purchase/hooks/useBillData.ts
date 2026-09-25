@@ -55,13 +55,14 @@ export const useBillData = (id?: string, grnId?: string, initialData?: PurchaseB
         }
     }, [id]);
 
-    // Handle Initial Data
-    useEffect(() => {
-        if (initialData) {
-            setBill(initialData);
-            setAttachments(initialData.attachments || []);
-        }
-    }, [initialData]);
+    // Load initialData when it's provided or changes; adjusted during render (tracking the previous
+    // value) instead of setState in an effect.
+    const [loadedInitialData, setLoadedInitialData] = useState<PurchaseBill | null | undefined>(null);
+    if (initialData && initialData !== loadedInitialData) {
+        setLoadedInitialData(initialData);
+        setBill(initialData);
+        setAttachments(initialData.attachments || []);
+    }
 
     const handleVendorChange = useCallback((vendorId: string) => {
         const vendor = vendors.find(v => v.id === vendorId || v._id === vendorId);
@@ -74,45 +75,6 @@ export const useBillData = (id?: string, grnId?: string, initialData?: PurchaseB
             items: []
         }));
     }, [vendors]);
-
-    // Fetch POs and GRNs when vendor is selected
-    useEffect(() => {
-        if (!bill.vendor_id) return;
-
-        // Avoid re-fetching if we already have data for this vendor (opt.)
-        // For now, simplicity: always fetch to get latest
-        const fetchData = async () => {
-            try {
-                const [poRes, grnRes] = await Promise.all([
-                    api.get(`/api/purchases?vendorId=${bill.vendor_id}`),
-                    api.get(`/api/grns?vendorId=${bill.vendor_id}`)
-                ]);
-                const poList = Array.isArray(poRes.data) ? poRes.data : (poRes.data?.data || []);
-                setPos(poList);
-                
-                const fetchedGrns = Array.isArray(grnRes.data) ? grnRes.data : (grnRes.data?.data || []);
-                setGrns(fetchedGrns);
-
-                // Auto-select GRN if provided in URL and not yet set
-                if (grnId && !bill.grn_id) {
-                    const targetGrn = fetchedGrns.find((g: any) => g.id === grnId || g._id === grnId);
-                    if (targetGrn) {
-                        // We need to pass the freshly fetched data to handleGRNChange
-                        // But handleGRNChange is designed to look at state. 
-                        // Let's refactor handleGRNChange to accept data or use what's available.
-                        // Ideally, we just force the state update here directly or call a version of handleGRNChange.
-
-                        // Let's just manually trigger map here to avoid complexity with stale state in closure
-                        mapGrnToBill(targetGrn, poRes.data || []);
-                    }
-                }
-            } catch (err) {
-                console.error("Failed to fetch POs/GRNs", err);
-            }
-        };
-        fetchData();
-    }, [bill.vendor_id, grnId]);
-
 
     const mapGrnToBill = useCallback((grn: any, availablePos: PurchaseOrder[]) => {
         // Map GRN items to Bill items
@@ -155,6 +117,43 @@ export const useBillData = (id?: string, grnId?: string, initialData?: PurchaseB
         }));
     }, []);
 
+    // Fetch POs and GRNs when vendor is selected
+    useEffect(() => {
+        if (!bill.vendor_id) return;
+
+        // Avoid re-fetching if we already have data for this vendor (opt.)
+        // For now, simplicity: always fetch to get latest
+        const fetchData = async () => {
+            try {
+                const [poRes, grnRes] = await Promise.all([
+                    api.get(`/api/purchases?vendorId=${bill.vendor_id}`),
+                    api.get(`/api/grns?vendorId=${bill.vendor_id}`)
+                ]);
+                const poList = Array.isArray(poRes.data) ? poRes.data : (poRes.data?.data || []);
+                setPos(poList);
+                
+                const fetchedGrns = Array.isArray(grnRes.data) ? grnRes.data : (grnRes.data?.data || []);
+                setGrns(fetchedGrns);
+
+                // Auto-select GRN if provided in URL and not yet set
+                if (grnId && !bill.grn_id) {
+                    const targetGrn = fetchedGrns.find((g: any) => g.id === grnId || g._id === grnId);
+                    if (targetGrn) {
+                        // We need to pass the freshly fetched data to handleGRNChange
+                        // But handleGRNChange is designed to look at state. 
+                        // Let's refactor handleGRNChange to accept data or use what's available.
+                        // Ideally, we just force the state update here directly or call a version of handleGRNChange.
+
+                        // Let's just manually trigger map here to avoid complexity with stale state in closure
+                        mapGrnToBill(targetGrn, poRes.data || []);
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to fetch POs/GRNs", err);
+            }
+        };
+        fetchData();
+    }, [bill.vendor_id, grnId]);
 
     const handleGRNChange = useCallback((selectedGrnId: string) => {
         const grn = grns.find(g => g.id === selectedGrnId || (g as any)._id === selectedGrnId);
@@ -162,7 +161,6 @@ export const useBillData = (id?: string, grnId?: string, initialData?: PurchaseB
             mapGrnToBill(grn, pos);
         }
     }, [grns, pos, mapGrnToBill]);
-
 
     const updateItem = useCallback((index: number, field: keyof PurchaseBillItem, value: any) => {
         setBill(prev => {

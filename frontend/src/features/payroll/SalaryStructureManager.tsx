@@ -8,6 +8,16 @@ import { fetchSalaryComponents, fetchSalaryStructure, saveSalaryStructure, creat
 import { Plus, Save, User, Users } from 'lucide-react';
 import api from '../../services/api';
 
+// Component id -> amount for a saved salary structure (empty when there is none yet).
+const toStructureValues = (struct?: { components: any[] }): Record<string, number> => {
+    const values: Record<string, number> = {};
+    struct?.components.forEach((c: any) => {
+        const cId = typeof c.componentId === 'string' ? c.componentId : c.componentId._id;
+        values[cId] = c.amount;
+    });
+    return values;
+};
+
 const SalaryStructureManager = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { components, structures, loading } = useSelector((state: RootState) => state.payroll);
@@ -40,20 +50,15 @@ const SalaryStructureManager = () => {
         }
     }, [selectedEmployeeId, dispatch]);
 
-    useEffect(() => {
-        if (selectedEmployeeId && structures[selectedEmployeeId]) {
-            const struct = structures[selectedEmployeeId];
-            const values: Record<string, number> = {};
-            struct.components.forEach((c: any) => {
-                const cId = typeof c.componentId === 'string' ? c.componentId : c.componentId._id;
-                values[cId] = c.amount;
-            });
-            setStructureValues(values);
-        } else {
-            // Reset or set defaults
-            setStructureValues({});
-        }
-    }, [structures, selectedEmployeeId]);
+    // Load the selected employee's saved structure into the editable values when the employee or
+    // their saved structure changes; adjusted during render (tracking the previous inputs) instead
+    // of setState in an effect.
+    const savedStructure = selectedEmployeeId ? structures[selectedEmployeeId] : undefined;
+    const [loadedFrom, setLoadedFrom] = useState({ selectedEmployeeId, savedStructure });
+    if (loadedFrom.selectedEmployeeId !== selectedEmployeeId || loadedFrom.savedStructure !== savedStructure) {
+        setLoadedFrom({ selectedEmployeeId, savedStructure });
+        setStructureValues(toStructureValues(savedStructure));
+    }
 
     const handleSave = () => {
         if (!selectedEmployeeId) return;

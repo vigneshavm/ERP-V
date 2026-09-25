@@ -1,5 +1,5 @@
 ﻿
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { User, Smartphone, Mail, Send, RotateCcw, Crown, Zap, History, Gift, MessageSquare, Smile } from 'lucide-react';
 import { Customer } from "../../types/sales";
 import Customer360Modal from '../customers/Customer360Modal';
@@ -20,35 +20,30 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
 }) => {
     const [phoneQuery, setPhoneQuery] = useState('');
     const [nameQuery, setNameQuery] = useState('');
-    const [phoneSuggestions, setPhoneSuggestions] = useState<Customer[]>([]);
     const [selectedPhoneIndex, setSelectedPhoneIndex] = useState(-1);
     const phoneInputRef = useRef<HTMLInputElement>(null);
     const nameInputRef = useRef<HTMLInputElement>(null);
     const [is360ModalOpen, setIs360ModalOpen] = useState(false);
     const { t } = useLanguage();
 
-    // Filter Suggestions and Auto-select
-    useEffect(() => {
-        if (phoneQuery) {
-            const matches = customers.filter(c => c.phone.includes(phoneQuery) || c.name.toLowerCase().includes(phoneQuery.toLowerCase())).slice(0, 5);
-            setPhoneSuggestions(matches);
+    // Suggestions are derived from the query (not stored), so clearing the query clears them.
+    const phoneSuggestions = useMemo(() => phoneQuery
+        ? customers.filter(c => c.phone.includes(phoneQuery) || c.name.toLowerCase().includes(phoneQuery.toLowerCase())).slice(0, 5)
+        : [], [phoneQuery, customers]);
 
-            // Auto-select if exact phone match and length is 10 (standard mobile)
-            if (phoneQuery.length === 10) {
-                const exactMatch = customers.find(c => c.phone === phoneQuery);
-                if (exactMatch) {
-                    onSetCustomer(exactMatch.id);
-                    setPhoneQuery('');
-                    setNameQuery('');
-                    setPhoneSuggestions([]);
-                    // Optional: Blur input or move to next step?
-                    phoneInputRef.current?.blur();
-                }
+    // Typing a full 10-digit mobile number that exactly matches a customer selects them.
+    const handlePhoneChange = (value: string) => {
+        setPhoneQuery(value);
+        if (value.length === 10) {
+            const exactMatch = customers.find(c => c.phone === value);
+            if (exactMatch) {
+                onSetCustomer(exactMatch.id);
+                setPhoneQuery('');
+                setNameQuery('');
+                phoneInputRef.current?.blur();
             }
-        } else {
-            setPhoneSuggestions([]);
         }
-    }, [phoneQuery, customers, onSetCustomer]);
+    };
 
     // Keyboard Navigation
     const handlePhoneKeyDown = (e: React.KeyboardEvent) => {
@@ -65,7 +60,6 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                 onSetCustomer(cust.id);
                 setPhoneQuery('');
                 setNameQuery('');
-                setPhoneSuggestions([]);
             } else if (phoneQuery.length >= 10) {
                 // If no suggestion selected, move to name or submit
                 if (nameInputRef.current) {
@@ -74,7 +68,6 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                     onLookupOrCreateCustomer(phoneQuery, nameQuery || undefined);
                     setPhoneQuery('');
                     setNameQuery('');
-                    setPhoneSuggestions([]);
                 }
             }
         }
@@ -87,7 +80,6 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                 onLookupOrCreateCustomer(phoneQuery, nameQuery || undefined);
                 setPhoneQuery('');
                 setNameQuery('');
-                setPhoneSuggestions([]);
                 phoneInputRef.current?.focus();
             }
         } else if (e.key === 'Escape') {
@@ -104,7 +96,6 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 setPhoneQuery('');
-                setPhoneSuggestions([]);
             }
         };
 
@@ -130,7 +121,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                             placeholder={t('identifyCustomer')}
                             className={`w-full pl-8 pr-2 py-1.5 text-xs bg-neutral-50 dark:bg-neutral-900 border ${activeCustomer.id !== 'c1' ? 'border-success text-success dark:text-success/90 ring-2 ring-success/10' : 'border-primary/30 dark:border-primary/60 animate-pulse-subtle'} rounded focus:outline-none focus:ring-2 focus:ring-primary transition-all`}
                             value={phoneQuery}
-                            onChange={e => setPhoneQuery(e.target.value)}
+                            onChange={e => handlePhoneChange(e.target.value)}
                             onKeyDown={handlePhoneKeyDown}
                         />
                         <Smartphone className={`absolute left-2 top-1.5 w-3.5 h-3.5 ${activeCustomer.id !== 'c1' ? 'text-success' : 'text-primary/70'}`} />
@@ -156,7 +147,6 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                                 onLookupOrCreateCustomer(phoneQuery, nameQuery || undefined);
                                 setPhoneQuery('');
                                 setNameQuery('');
-                                setPhoneSuggestions([]);
                             }}
                             className="bg-primary text-white px-3 py-1 text-[10px] font-bold rounded hover:bg-primary/90 transition-colors"
                         >
@@ -175,7 +165,6 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                                     onSetCustomer(cust.id);
                                     setPhoneQuery('');
                                     setNameQuery('');
-                                    setPhoneSuggestions([]);
                                 }}
                                 className={`w-full text-left px-3 py-2.5 text-sm border-b border-neutral-100 dark:border-neutral-700/50 block ${idx === selectedPhoneIndex ? 'bg-primary text-white' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}
                             >

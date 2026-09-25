@@ -39,6 +39,33 @@ import { usePOSSession } from './pos/usePOSSession';
 import { useBarcodeScanner } from './useBarcodeScanner';
 import api from '../services/api';
 
+// ProductCategoryModel stores defaultUnit as the same lowercase short code
+// used elsewhere on Item.unit ('pcs'/'kg'/'l'/'box'/'unit'/'mtr'/'set'),
+// but POSCartGrid's Quick Entry logic was built against productTypes.ts's
+// Title-case unit labels ('Piece'/'Meter'/'Set'/'Kg') -- e.g. it checks
+// `defaultUnit === 'Meter'` to decide whether to show the cut-length field.
+// Translate at the boundary so that existing comparison keeps working.
+const UNIT_LABELS: Record<string, string> = {
+    pcs: 'Piece', mtr: 'Meter', set: 'Set', kg: 'Kg', l: 'Liter', box: 'Box', unit: 'Piece'
+};
+const toUnitLabel = (unit?: string) => {
+    if (!unit) return 'Piece';
+    return UNIT_LABELS[unit.toLowerCase()] || (unit.charAt(0).toUpperCase() + unit.slice(1).toLowerCase());
+};
+
+// Last completed bill stored for a counter, or null (none yet, or unreadable).
+const readLastBill = (counterId?: string | null): Sale | null => {
+    if (!counterId) return null;
+    const stored = localStorage.getItem(`POS_LAST_BILL_${counterId}`);
+    if (!stored) return null;
+    try {
+        return JSON.parse(stored);
+    } catch (e) {
+        console.error("Failed to load last bill", e);
+        return null;
+    }
+};
+
 export const usePOSLogic = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { user, currentSector, currentBranch } = useSelector((state: RootState) => state.auth);
@@ -92,22 +119,15 @@ export const usePOSLogic = () => {
         isMobileMenuOpen, setIsMobileMenuOpen, isReturnMode, setIsReturnMode, posContainerRef, toggleFullScreen
     } = usePOSUIState();
 
-    const [lastBill, setLastBill] = useState<Sale | null>(null);
-
-    useEffect(() => {
-        if (activeCounterId) {
-            const stored = localStorage.getItem(`POS_LAST_BILL_${activeCounterId}`);
-            if (stored) {
-                try {
-                    setLastBill(JSON.parse(stored));
-                } catch (e) {
-                    console.error("Failed to load last bill", e);
-                }
-            } else {
-                setLastBill(null);
-            }
-        }
-    }, [activeCounterId]);
+    // The counter's last completed bill (kept in localStorage per counter so it survives reloads).
+    // Reloaded when the active counter changes; adjusted during render (tracking the previous
+    // counter) instead of setState in an effect.
+    const [lastBill, setLastBill] = useState<Sale | null>(() => readLastBill(activeCounterId));
+    const [lastBillCounterId, setLastBillCounterId] = useState(activeCounterId);
+    if (activeCounterId !== lastBillCounterId) {
+        setLastBillCounterId(activeCounterId);
+        if (activeCounterId) setLastBill(readLastBill(activeCounterId));
+    }
 
     const handleCheckoutSuccess = useCallback((sale: Sale) => {
         setLastBill(sale);
@@ -198,23 +218,6 @@ export const usePOSLogic = () => {
     // tenant has actually added to their own Categories via Category Manager
     // or Settings -> General "Add Selected to My Categories" — the same
     // "registered" set that Settings' checklist shows as "Added".
-    const [dynamicProductTypes, setDynamicProductTypes] = useState<
-        { name: string; gstRate?: number; defaultUnit?: string }[]
-    >([]);
-
-    // ProductCategoryModel stores defaultUnit as the same lowercase short code
-    // used elsewhere on Item.unit ('pcs'/'kg'/'l'/'box'/'unit'/'mtr'/'set'),
-    // but POSCartGrid's Quick Entry logic was built against productTypes.ts's
-    // Title-case unit labels ('Piece'/'Meter'/'Set'/'Kg') -- e.g. it checks
-    // `defaultUnit === 'Meter'` to decide whether to show the cut-length field.
-    // Translate at the boundary so that existing comparison keeps working.
-    const UNIT_LABELS: Record<string, string> = {
-        pcs: 'Piece', mtr: 'Meter', set: 'Set', kg: 'Kg', l: 'Liter', box: 'Box', unit: 'Piece'
-    };
-    const toUnitLabel = (unit?: string) => {
-        if (!unit) return 'Piece';
-        return UNIT_LABELS[unit.toLowerCase()] || (unit.charAt(0).toUpperCase() + unit.slice(1).toLowerCase());
-    };
 
     // Resolution chain, each step a react-query query rather than a plain
     // useEffect + fetch: under React.StrictMode (enabled in main.tsx), a
@@ -268,16 +271,17 @@ export const usePOSLogic = () => {
         enabled: !!resolvedSector,
     });
 
-    useEffect(() => {
+    const dynamicProductTypes = useMemo<
+        { name: string; gstRate?: number; defaultUnit?: string }[]
+    >(() => {
         if (!resolvedSector || !registeredCategoryRows) {
             // No configured Business Sector at all, or the categories query
             // hasn't resolved yet -- leaving the list empty (not fabricating
             // one) is the honest result until Settings -> General has a
             // sector set and the request completes.
-            setDynamicProductTypes([]);
-            return;
+            return [];
         }
-        setDynamicProductTypes(
+        return (
             registeredCategoryRows
                 // Only categories the tenant has actually registered
                 // (Category Manager, or Settings' "Add Selected to My
@@ -313,11 +317,12 @@ export const usePOSLogic = () => {
     }, [products, dynamicProductTypes]);
 
     // --- Computed Branch Logic ---
+    const userTenantId = user?.tenantId;
     const allBranches = useMemo(() => {
-        if (user?.tenantId) {
-            const relevantTenant = tenants.find(t => t.id === user.tenantId);
+        if (userTenantId) {
+            const relevantTenant = tenants.find(t => t.id === userTenantId);
             const tenantBranches = relevantTenant?.locations?.flatMap(l => l.branches) || [];
-            const directBranches = branches.filter(b => b.tenantId === user.tenantId);
+            const directBranches = branches.filter(b => b.tenantId === userTenantId);
             const combined = [...tenantBranches, ...directBranches].filter((b, i, self) =>
                 i === self.findIndex((t) => t.id === b.id)
             );
@@ -330,7 +335,7 @@ export const usePOSLogic = () => {
         }
 
         return [];
-    }, [tenants, branches, user?.tenantId, products]);
+    }, [tenants, branches, userTenantId, products]);
 
     const hasMultipleBranches = allBranches.length > 1;
 

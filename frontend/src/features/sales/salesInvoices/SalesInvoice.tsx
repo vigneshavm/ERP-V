@@ -56,9 +56,13 @@ const SalesInvoice = () => {
     };
   }, [dispatch]);
 
-  useEffect(() => {
+  // Back to page 1 whenever the filters change; adjusted during render (tracking the previous
+  // filters) instead of setState in an effect.
+  const [prevFilters, setPrevFilters] = useState({ searchTerm, statusFilter, selectedCustomer });
+  if (prevFilters.searchTerm !== searchTerm || prevFilters.statusFilter !== statusFilter || prevFilters.selectedCustomer !== selectedCustomer) {
+    setPrevFilters({ searchTerm, statusFilter, selectedCustomer });
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, selectedCustomer]);
+  }
 
   // Shop (SQL) bills number in the hundreds of thousands, so only the newest are loaded up front;
   // typing a bill no / customer / phone asks the server for the matching bills instead.
