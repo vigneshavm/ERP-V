@@ -27,22 +27,34 @@ const SyncIntelligence: React.FC = () => {
     const [devices, setDevices] = useState<DeviceRegistryEntry[]>([]);
     const [ledger, setLedger] = useState<SyncLedgerEntry[]>([]);
     const [anomalies, setAnomalies] = useState<string[]>([]);
+    const [loadError, setLoadError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'DEVICES' | 'LEDGER' | 'BACKUPS'>('DASHBOARD');
 
     useEffect(() => {
+        const loadData = async () => {
+            // The ledger is this device's local log, so it still loads when the device list can't.
+            setLedger(await SyncIntelligenceService.getLedger().catch(() => []));
+            try {
+                const devList = await SyncIntelligenceService.getDevices();
+                setDevices(devList);
+                setAnomalies(await SyncIntelligenceService.detectAnomalies(devList));
+                setLoadError(null);
+            } catch {
+                // Clear the fleet so stale figures aren't shown as current.
+                setDevices([]);
+                setAnomalies([]);
+                setLoadError('Could not load registered devices. Retrying every 5 seconds.');
+            }
+        };
         loadData();
         const interval = setInterval(loadData, 5000);
         return () => clearInterval(interval);
     }, []);
 
-    const loadData = async () => {
-        const devList = await SyncIntelligenceService.getDevices();
-        const ledList = await SyncIntelligenceService.getLedger();
-        const anomalyList = await SyncIntelligenceService.detectAnomalies(devList);
-        setDevices(devList);
-        setLedger(ledList);
-        setAnomalies(anomalyList);
-    };
+    // Mean of the devices' reported sync health; null (shown as "—") when none are registered.
+    const avgSyncHealth = devices.length > 0
+        ? devices.reduce((acc, d) => acc + d.syncHealth, 0) / devices.length
+        : null;
 
     return (
         <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
@@ -78,6 +90,12 @@ const SyncIntelligence: React.FC = () => {
                 </div>
             </div>
 
+            {loadError && (
+                <div role="alert" className="p-6 bg-rose-500/10 border border-danger/30 rounded-[2rem] flex items-center gap-4 text-danger text-sm font-bold">
+                    <AlertTriangle className="w-5 h-5 shrink-0" /> {loadError}
+                </div>
+            )}
+
             {/* Navigation Layer */}
             <div className="flex items-center gap-2 p-2 bg-slate-900 border border-slate-800 rounded-[2rem] w-fit shadow-lg">
                 {(['DASHBOARD', 'DEVICES', 'LEDGER', 'BACKUPS'] as const).map((tab) => (
@@ -97,7 +115,7 @@ const SyncIntelligence: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
                             { label: 'Active Nodes', value: devices.filter(d => d.isOnline).length, total: devices.length, icon: Server, color: 'text-primary' },
-                            { label: 'Sync Health', value: '98.4%', total: 'Target: 99.9%', icon: Activity, color: 'text-success' },
+                            { label: 'Sync Health', value: avgSyncHealth === null ? '—' : `${avgSyncHealth.toFixed(1)}%`, total: 'Average across devices', icon: Activity, color: 'text-success' },
                             { label: 'Pending Ops', value: devices.reduce((acc, d) => acc + d.pendingOps, 0), total: 'Across Fleet', icon: Database, color: 'text-warning' },
                             { label: 'Anomalies', value: anomalies.length, total: 'Last 24h', icon: AlertTriangle, color: 'text-danger' }
                         ].map((stat, idx) => (
@@ -180,7 +198,7 @@ const SyncIntelligence: React.FC = () => {
                                 {anomalies.length === 0 && (
                                     <div className="p-8 text-center bg-slate-800/30 rounded-sm border border-dashed border-slate-700">
                                         <ShieldCheck className="w-8 h-8 text-success mx-auto mb-3" />
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">System architecture stable. All nodes reporting healthy sync states.</p>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">{devices.length === 0 ? 'No registered devices are reporting sync status yet.' : 'No anomalies in the reported device figures.'}</p>
                                     </div>
                                 )}
                             </div>
@@ -279,6 +297,11 @@ const SyncIntelligence: React.FC = () => {
                                         </td>
                                     </tr>
                                 ))}
+                                {devices.length === 0 && (
+                                    <tr>
+                                        <td colSpan={6} className="px-10 py-12 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">No registered devices.</td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -290,10 +313,13 @@ const SyncIntelligence: React.FC = () => {
                     <div className="p-10 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
                         <div>
                             <h3 className="text-2xl font-black italic uppercase tracking-tight text-white">Sync Event Ledger</h3>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Transaction-level audit trail for all nodes</p>
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Sync results recorded on this device</p>
                         </div>
                     </div>
                     <div className="divide-y divide-slate-800">
+                        {ledger.length === 0 && (
+                            <p className="p-10 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">No sync events recorded on this device yet.</p>
+                        )}
                         {ledger.map((entry) => (
                             <div key={entry.id} className="p-8 hover:bg-white/5 transition-all flex items-center justify-between relative group overflow-hidden">
                                 {entry.status === 'CONFLICT' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-rose-500" />}

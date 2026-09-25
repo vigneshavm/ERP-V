@@ -85,6 +85,8 @@ describe('SyncManager.syncOfflineSales', () => {
 
         expect(mockOfflineSalesUpdate).toHaveBeenCalledWith(1, { retryCount: 1 });
         expect(mockOfflineSalesUpdate).not.toHaveBeenCalledWith(1, { synced: true });
+        expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ entityId: 'A01-000123', status: 'FAILED' }));
+        expect(mockLogEvent).not.toHaveBeenCalledWith(expect.objectContaining({ status: 'SYNCED' }));
     });
 
     test('a network/throw error increments retryCount instead of marking synced', async () => {
@@ -94,6 +96,7 @@ describe('SyncManager.syncOfflineSales', () => {
         await SyncManager.syncOfflineSales();
 
         expect(mockOfflineSalesUpdate).toHaveBeenCalledWith(1, { retryCount: 3 });
+        expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ status: 'FAILED', payload: expect.objectContaining({ error: 'Network Error', retryCount: 3 }) }));
     });
 
     test('does nothing when offline', async () => {

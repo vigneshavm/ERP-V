@@ -105,14 +105,6 @@ export interface SyncSettings {
     };
 }
 
-export interface SyncIntelligenceConfig {
-    isEnabled: boolean;
-    retentionDays: number;
-    autoResolveRules: Array<{ field: string; strategy: 'USE_LATEST' | 'USE_REMOTE' | 'USE_LOCAL' }>;
-    anomalyDetectionEnabled: boolean;
-    backupFrequency: 'HOURLY' | 'DAILY' | 'WEEKLY';
-}
-
 export type SyncConfig = {
     tenantId: string;
     devices: DeviceRegistryEntry[];

@@ -47,11 +47,21 @@ export class SyncManager {
                         payload: { total: sale.total, itemsCount: sale.items?.length }
                     });
 
-                } catch (err) {
+                } catch (err: any) {
                     console.error(`Failed to sync sale ${sale.id}:`, err);
                     // Track retry attempts (OfflineSale has no `error` field, unlike DailyFinanceQueueItem)
                     await db.offlineSales.update(sale.localId!, {
                         retryCount: (sale.retryCount || 0) + 1
+                    });
+                    // Failures are logged too, so a sale that keeps failing is visible in the ledger.
+                    await SyncIntelligenceService.logEvent({
+                        deviceId: 'LOCAL_POS',
+                        branchId: sale.branchId || 'UNKNOWN',
+                        eventType: 'SALE',
+                        entityId: sale.id!,
+                        entityType: 'Invoice',
+                        status: 'FAILED',
+                        payload: { error: err?.message, retryCount: (sale.retryCount || 0) + 1 }
                     });
                 }
             }
@@ -142,6 +152,15 @@ export class SyncManager {
                     await db.dailyFinanceQueue.update(item.localId!, {
                         error: err.message,
                         retryCount: (item.retryCount || 0) + 1
+                    });
+                    await SyncIntelligenceService.logEvent({
+                        deviceId: 'LOCAL_POS',
+                        branchId: item.data?.branch_id || 'UNKNOWN',
+                        eventType: item.operation === 'INSERT' ? 'PAYMENT' : 'STOCK_ADJUST',
+                        entityId: item.recordId,
+                        entityType: 'DailyFinance',
+                        status: 'FAILED',
+                        payload: { operation: item.operation, error: err.message, retryCount: (item.retryCount || 0) + 1 }
                     });
                 }
             }
