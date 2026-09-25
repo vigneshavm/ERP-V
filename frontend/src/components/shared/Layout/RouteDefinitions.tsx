@@ -24,23 +24,24 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/sales" element={<Navigate to="/sales/invoices" replace />} />
             <Route path="/purchase" element={<Navigate to="/purchase/register" replace />} />
             <Route path="/inventory" element={<Navigate to="/inventory/products" replace />} />
-            <Route path="/finance" element={<Navigate to="/finance/mock" replace />} />
-            <Route path="/expenses" element={<Navigate to="/expenses/mock" replace />} />
-            <Route path="/customers" element={<Navigate to="/customers/mock" replace />} />
-            <Route path="/marketing" element={<Navigate to="/marketing/mock" replace />} />
-            {/* BusinessReportsHub (behind ReportsModule's catalog) still fabricates numbers for
-                most report types -- see the "Sample data" badge in ReportsModule/index.tsx --
-                but the catalog itself, and 6 of its reports (brand/category/counter/hourly-billing
-                sales, city/rack-wise stock), are real and backed by live queries. Route the main
-                Reports landing here instead of straight to ReportsMockUI so that real value isn't
-                hidden behind an admittedly-fake page. */}
+            {/* Finance lands on the Cash & Bank overview (live cash, bank, loans, cheques, overdue bills). */}
+            <Route path="/finance" element={<Navigate to="/finance/overview" replace />} />
+            <Route path="/expenses" element={<Navigate to="/expenses/tracker" replace />} />
+            {/* "/customers" is the Customers > Directory menu path (CUSTOMER_LIST). Rendered directly
+                 (not via renderContent) because useTabSync resolves
+                 "/customers" to the group id CUSTOMERS, which ModuleRenderer has no case for. */}
+            <Route path="/customers" element={
+                <Suspense fallback={<div>Loading Customers...</div>}><LazyModules.CustomerList /></Suspense>
+            } />
+            <Route path="/marketing" element={<Navigate to="/?tab=GROW_MARKETING" replace />} />
+            {/* Reports landing: the report catalog (every report reads live data). */}
             <Route path="/reports" element={<Navigate to="/reports/insights" replace />} />
             <Route path="/pos/terminal" element={<Navigate to="/pos" replace />} />
             <Route path="/people" element={<Navigate to="/people/employees/labor" replace />} />
             <Route path="/staff" element={<Navigate to="/people/employees/staff" replace />} />
-            <Route path="/grow" element={<Navigate to="/grow/mock" replace />} />
-            <Route path="/system" element={<Navigate to="/system/mock" replace />} />
-            <Route path="/engagement" element={<Navigate to="/engagement/mock" replace />} />
+            <Route path="/grow" element={<Navigate to="/?tab=GROW_DASHBOARD" replace />} />
+            <Route path="/system" element={<Navigate to="/settings" replace />} />
+            <Route path="/engagement" element={<Navigate to="/?tab=GROW_ENGAGEMENT" replace />} />
 
             {/* SALES ROUTES */}
             <Route path="/sales/new" element={
@@ -150,6 +151,12 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/purchase/grn/view/:id" element={
                 <Suspense fallback={<div>Loading GRN Details...</div>}><LazyModules.GRNForm /></Suspense>
             } />
+            {/* Static PO paths must be declared explicitly: otherwise "/purchase/orders/:id" below
+                 swallows them (e.g. "/purchase/orders/list" rendered PurchaseOrdersModule with
+                 id="list" and tried to fetch an order called "list"). Both go through ModuleRenderer,
+                 where useTabSync maps them to PURCHASE_ORDER / PURCHASE_ORDER_LIST -> list view. */}
+            <Route path="/purchase/orders" element={renderContent()} />
+            <Route path="/purchase/orders/list" element={renderContent()} />
             <Route path="/purchase/orders/new" element={
                 <Suspense fallback={<div>Loading Order Form...</div>}><LazyModules.PurchaseOrdersModule /></Suspense>
             } />
@@ -158,9 +165,6 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             } />
             <Route path="/purchase/register" element={
                 <Suspense fallback={<div>Loading Register...</div>}><LazyModules.PurchaseRegister /></Suspense>
-            } />
-            <Route path="/purchase/register/mock" element={
-                <Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.PurchaseRegisterMockUI /></Suspense>
             } />
             <Route path="/purchase/new" element={
                 <Suspense fallback={<div>Loading Purchase Entry...</div>}><LazyModules.PurchaseEntry /></Suspense>
@@ -255,9 +259,10 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/finance/budget-tracker" element={
                 <Suspense fallback={<div>Loading Budget Tracker...</div>}><LazyModules.BudgetTrackerPage /></Suspense>
             } />
-            <Route path="/finance/agents" element={
-                <Suspense fallback={<div>Loading Finance Agents...</div>}><LazyModules.FinanceAgentDashboard /></Suspense>
+            <Route path="/finance/overview" element={
+                <Suspense fallback={<div>Loading Overview...</div>}><LazyModules.FinanceAgentDashboard /></Suspense>
             } />
+            <Route path="/finance/agents" element={<Navigate to="/finance/overview" replace />} />
             <Route path="/finance/goals" element={
                 <Suspense fallback={<div>Loading Goals...</div>}><LazyModules.FinancialGoals /></Suspense>
             } />
@@ -267,12 +272,6 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="*" element={renderContent()} />
             <Route path="/people/employees" element={
                 <Navigate to="/people/employees/labor" replace />
-            } />
-            <Route path="/people/employees/labor/add" element={
-                <Suspense fallback={<div>Loading Form...</div>}><LazyModules.LaborAdd /></Suspense>
-            } />
-            <Route path="/people/employees/labor/view/:id" element={
-                <Suspense fallback={<div>Loading Profile...</div>}><LazyModules.LaborDetail /></Suspense>
             } />
             <Route path="/people/employees/labor/*" element={
                 <Suspense fallback={<div>Loading Staff...</div>}><LazyModules.LaborManager /></Suspense>
@@ -309,33 +308,31 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             } />
             <Route path="/finance/gst" element={<Suspense fallback={<div>Loading GST...</div>}><LazyModules.GSTReconciliation /></Suspense>} />
             <Route path="/inventory/reprint" element={<Suspense fallback={<div>Loading Reprint...</div>}><LazyModules.ReprintQueue /></Suspense>} />
-            <Route path="/inventory/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.InventoryMockUI /></Suspense>} />
-            <Route path="/customers/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.CustomerMockUI /></Suspense>} />
             <Route path="/pos" element={<Suspense fallback={<div>Loading POS Terminal...</div>}><LazyModules.POSModule /></Suspense>} />
-            <Route path="/pos/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.POSMockUI /></Suspense>} />
             <Route path="/pos/orders" element={<Suspense fallback={<div>Loading POS Orders...</div>}><LazyModules.POSOrdersIntelligence /></Suspense>} />
             <Route path="/pos/returns" element={<Suspense fallback={<div>Loading POS Returns...</div>}><LazyModules.POSReturnsIntelligence /></Suspense>} />
             <Route path="/pos/shifts" element={<Suspense fallback={<div>Loading Shift Management...</div>}><LazyModules.ShiftManagementIntelligence /></Suspense>} />
             <Route path="/pos/cash-drawer" element={<Suspense fallback={<div>Loading Cash Drawer...</div>}><LazyModules.CashDrawerIntelligence /></Suspense>} />
-            <Route path="/dashboard/summary" element={<Suspense fallback={<div>Loading Dashboard...</div>}><LazyModules.DashboardMockUI /></Suspense>} />
-            <Route path="/sales/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SalesMockUI /></Suspense>} />
-            <Route path="/purchase/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.PurchaseMockUI /></Suspense>} />
-            <Route path="/finance/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.FinanceMockUI /></Suspense>} />
-            <Route path="/expenses/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.ExpensesMockUI /></Suspense>} />
+            <Route path="/dashboard/summary" element={<Suspense fallback={<div>Loading Dashboard...</div>}><LazyModules.DailyFinanceTracker /></Suspense>} />
             <Route path="/expenses/tracker" element={<Suspense fallback={<div>Loading Expense Intelligence...</div>}><LazyModules.ExpenseIntelligence /></Suspense>} />
             <Route path="/expenses/categories" element={<Suspense fallback={<div>Loading Categories...</div>}><LazyModules.ExpenseCategoriesManager /></Suspense>} />
             <Route path="/expenses/recurring" element={<Suspense fallback={<div>Loading Recurring...</div>}><LazyModules.RecurringExpensesIntelligence /></Suspense>} />
             <Route path="/expenses/reports" element={<Suspense fallback={<div>Loading Reports...</div>}><LazyModules.ExpenseReportsIntelligence /></Suspense>} />
-            <Route path="/marketing/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.MarketingMockUI /></Suspense>} />
-            <Route path="/suppliers/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SuppliersMockUI /></Suspense>} />
-            <Route path="/hr/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.HRMockUI /></Suspense>} />
             <Route path="/reports/insights" element={<Suspense fallback={<div>Loading Reports...</div>}><LazyModules.Reports /></Suspense>} />
-            <Route path="/reports/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.ReportsMockUI /></Suspense>} />
-            <Route path="/engagement/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.CustomerEngagementMockUI /></Suspense>} />
-            <Route path="/settings/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SettingsMockUI /></Suspense>} />
-            <Route path="/grow/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.GrowMockUI /></Suspense>} />
-            <Route path="/system/mock" element={<Suspense fallback={<div>Loading Mock UI...</div>}><LazyModules.SystemMockUI /></Suspense>} />
             <Route path="/settings/audit" element={<Suspense fallback={<div>Loading Audit Logs...</div>}><LazyModules.AuditLogs /></Suspense>} />
+            {/* These System sub-pages each have their own real view driven by ModuleRenderer (via
+                 renderContent -> Redux activeTab, kept in sync with the URL by useTabSync). Without
+                 an explicit route per path here, react-router's "/settings/:tab" fallback below
+                 matches ALL of them (it ranks a static segment like "/settings/sync" the same as any
+                 other single segment) and always renders the General Settings page instead -- the URL
+                 changes but the content silently stays the same. */}
+            <Route path="/settings/sync" element={renderContent()} />
+            <Route path="/settings/restore" element={renderContent()} />
+            <Route path="/settings/tenants" element={renderContent()} />
+            <Route path="/settings/architect" element={renderContent()} />
+            <Route path="/settings/master-data" element={renderContent()} />
+            <Route path="/settings/discount-permissions" element={renderContent()} />
+            <Route path="/settings/super-admin" element={renderContent()} />
             <Route path="/settings" element={<Navigate to="/settings/general" replace />} />
             <Route path="/settings/:tab" element={<Suspense fallback={<div>Loading Settings...</div>}><LazyModules.Settings /></Suspense>} />
             {/* INVENTORY — real pages */}

@@ -7,18 +7,16 @@ export interface DataSourceOptions {
 
 /**
  * Unified Data Access Layer
- * Fetches data from Real Supabase Database
+ * Fetches data from the backend REST API
  */
 export async function getTable<T = any>(tableName: string, options: DataSourceOptions = {}): Promise<T[]> {
     return getDbData(tableName, options);
 }
 
 /**
- * Internal logic for fetching from real Supabase DB
+ * Internal logic: maps a table name to its backend REST endpoint
  */
 import api from './api';
-
-// ... (existing imports, but remove supabase)
 
 const TABLE_TO_ENDPOINT: Record<string, string> = {
     'products': '/api/inventory',

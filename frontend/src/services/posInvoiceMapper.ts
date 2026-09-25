@@ -26,8 +26,15 @@ export const buildPosInvoicePayload = (sale: Sale) => {
             name: (item as any).name,
             quantity,
             price: item.price,
-            // ?? not || — a genuinely 0% GST item must stay 0%, not fall back to a default rate
-            tax: item.gstPercentage ?? 0
+            // gstRate (line-actual rate, normally mirroring the product's stored GST rate) takes
+            // precedence over the older gstPercentage field -- same precedence usePOSTotals.ts and
+            // receiptGenerator.ts use, so the saved invoice's tax matches what was actually charged.
+            // ?? not || throughout — a genuinely 0% GST item must stay 0%, not fall back to a default.
+            // Default is 5%, matching usePOSTotals.ts and receiptGenerator.ts -- previously this
+            // fell back to 0%, which meant an unconfigured line was charged at usePOSTotals' 18%
+            // default but recorded on the invoice at 0%, the same class of mismatch this file was
+            // meant to fix.
+            tax: item.gstRate ?? item.gstPercentage ?? 5
         };
     });
 

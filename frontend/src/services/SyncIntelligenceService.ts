@@ -17,7 +17,7 @@ export class SyncIntelligenceService {
      */
     static async registerDevice(device: Partial<DeviceRegistryEntry>): Promise<void> {
         console.log(`[Sync Intelligence] Registering/Updating device: ${device.id}`);
-        // In a real system, this would persist to Supabase 'device_registry'
+        // In a real system, this would persist to the backend device registry (GET/POST /api/sync/devices)
         // For now, we simulate with local storage logic or just log
     }
 

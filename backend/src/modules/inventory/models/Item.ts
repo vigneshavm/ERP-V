@@ -26,10 +26,15 @@ const itemSchema = new Schema<IItem>(
             trim: true,
             index: true  // For GSTR-1 aggregation queries
         },
+        // No `default` on purpose: unset (undefined) is distinct from an explicit 0%. POS checkout
+        // (usePOSTotals.ts / posInvoiceMapper.ts) treats gstRate as taking precedence over the
+        // product's older gstPercentage field via `??`, so a genuine 0% must stay 0% while an item
+        // nobody has configured a GST rate for yet falls through to the checkout default instead of
+        // silently taxing at 0%. A hard `default: 0` here would make every unconfigured item look
+        // like a deliberate 0%-GST item to that checkout logic.
         gstRate: {
             type: Number,
             enum: [0, 5, 12, 18, 28],
-            default: 0
         },
         category: {
             type: String,

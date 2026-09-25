@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -59,6 +59,15 @@ const SalesInvoice = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, statusFilter, selectedCustomer]);
+
+  // Shop (SQL) bills number in the hundreds of thousands, so only the newest are loaded up front;
+  // typing a bill no / customer / phone asks the server for the matching bills instead.
+  const firstSearch = useRef(true);
+  useEffect(() => {
+    if (firstSearch.current) { firstSearch.current = false; return; }
+    const t = setTimeout(() => { dispatch(getAllSalesInvoices(searchTerm.trim() || undefined)); }, 400);
+    return () => clearTimeout(t);
+  }, [searchTerm, dispatch]);
 
   const handleDelete = async (id: string) => {
     await dispatch(deleteSalesInvoice(id));

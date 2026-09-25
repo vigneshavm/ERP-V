@@ -96,7 +96,7 @@ export const convertMonthlyToDailyWage = (monthlySalary: number | string): numbe
 };
 
 /**
- * Generates the payload for inserting a new laborer into Supabase.
+ * Generates the payload for creating a new laborer via the backend API.
  */
 export const generateLaborerPayload = (params: {
     tenantId: string | null;
@@ -122,7 +122,7 @@ export const generateLaborerPayload = (params: {
 };
 
 /**
- * Maps Supabase response back to the application's Employee type.
+ * Maps a backend user record back to the application's Employee type.
  */
 export const mapDbUserToEmployee = (dbUser: any, fallbackRole: string, currentSector: string): any => {
     return {

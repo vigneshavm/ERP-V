@@ -1,7 +1,4 @@
 ﻿import { useState } from 'react';
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import PageHeader from "@/components/shared/Layout/PageHeader";
 import api from "@/services/api";
 import { toast } from 'react-toastify';
@@ -54,6 +51,7 @@ const DataExport = () => {
             }
 
             if (exportFormat === 'xlsx' || exportFormat === 'csv') {
+                const XLSX = await import('xlsx');
                 const worksheet = XLSX.utils.json_to_sheet(data);
                 const workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, selectedModule.toUpperCase());
@@ -64,6 +62,8 @@ const DataExport = () => {
                     XLSX.writeFile(workbook, `${selectedModule}_export_${new Date().getTime()}.csv`, { bookType: 'csv' });
                 }
             } else if (exportFormat === 'pdf') {
+                const { jsPDF } = await import('jspdf');
+                const { default: autoTable } = await import('jspdf-autotable');
                 const doc = new jsPDF();
                 doc.text(`${selectedModule.toUpperCase()} REPORT`, 14, 15);
                 doc.setFontSize(10);

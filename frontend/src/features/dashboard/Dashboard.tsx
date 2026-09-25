@@ -13,7 +13,6 @@ import { getSupplierAnalytics } from "../../redux/slices/supplierSlice";
 import { fetchPurchaseOrders } from "../../redux/slices/purchaseSlice";
 import { getAllCustomers } from "../../redux/slices/customerSlice";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
-import { salesInvoices, purchases, inventory, customers, suppliers, transactions, expenses, business_alerts, floor_alerts, MockSalesInvoice, MockProduct, MockCustomer } from '../../data/index';
 import Layout from "../../components/shared/Layout/index";
 import {
   User,
@@ -46,6 +45,25 @@ import {
   Cell
 } from 'recharts';
 
+const EMPTY_LIST: any[] = [];
+
+// Percent change badge. Renders nothing when there's no real comparison to show.
+const TrendBadge: React.FC<{ pct: number | null; increaseIsBad?: boolean }> = ({ pct, increaseIsBad = false }) => {
+  if (pct === null || !Number.isFinite(pct)) return null;
+  const up = pct >= 0;
+  const good = up !== increaseIsBad;
+  const Icon = up ? TrendingUp : TrendingDown;
+  return (
+    <div className={`flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-sm border ${good ? 'text-success bg-success/10 border-success/20' : 'text-danger bg-danger/10 border-danger/20'}`}>
+      <Icon className="w-3 h-3" />
+      {up ? '+' : ''}{pct.toFixed(1)}%
+    </div>
+  );
+};
+
+const pctChange = (current: number, previous: number): number | null =>
+  previous > 0 ? ((current - previous) / previous) * 100 : null;
+
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { dailyFinanceRecords: _dailyFinanceRecords, bankBalance: _balance, loading: _financeLoading } = useSelector((state: RootState) => state.finance);
@@ -53,12 +71,17 @@ const Dashboard: React.FC = () => {
   const { branches, getBranchName, currentBranchId } = useBranchResolver();
   const { dashboardStats, stockReport, isLoading: reportsLoading } = useSelector((state: RootState) => state.reports);
   const reduxPurchaseOrders = useSelector((state: RootState) => (state as any).purchase?.orders || []);
-  const reduxSuppliers = useSelector((state: RootState) => (state as any).supplier?.suppliers || []);
-  const reduxCustomers = useSelector((state: RootState) => (state as any).customer?.customers || []);
-  const reduxExpenses = useSelector((state: RootState) => (state as any).expense?.expenses || []);
+  // NOTE: slice keys in the store are `suppliers`, `customers`, `expense`, `inventory` (plural /
+  // exact). These used to read `state.supplier` / `state.customer`, which don't exist, so the
+  // lists were always empty and the dashboard silently fell back to hard-coded mock data.
+  const reduxSuppliers = useSelector((state: RootState) => state.suppliers?.suppliers) ?? EMPTY_LIST;
+  const reduxCustomers = useSelector((state: RootState) => state.customers?.customers) ?? EMPTY_LIST;
+  const reduxExpenses = useSelector((state: RootState) => state.expense?.expenses) ?? EMPTY_LIST;
+  const products = (useSelector((state: RootState) => state.inventory?.items) ?? EMPTY_LIST) as any[];
 
   const [activeDashboardTab, setActiveDashboardTab] = useState<'OVERVIEW' | 'ALERTS'>('OVERVIEW');
   const [selectedPeriod, setSelectedPeriod] = useState('1W');
+  const [mountedAt] = useState(() => Date.now());
 
   // Contextual Header Data
   const branchName = useMemo(() => getBranchName(currentBranchId), [getBranchName, currentBranchId]);
@@ -91,9 +114,9 @@ const Dashboard: React.FC = () => {
   };
 
   // --- 1. PRODUCTION & BACKEND DATA MAPPING ---
-  const activeCustomersList = useMemo(() => reduxCustomers.length > 0 ? reduxCustomers : customers, [reduxCustomers, customers]);
-  const activeSuppliersList = useMemo(() => reduxSuppliers.length > 0 ? reduxSuppliers : suppliers, [reduxSuppliers, suppliers]);
-  const activeExpensesList = useMemo(() => reduxExpenses.length > 0 ? reduxExpenses : expenses, [reduxExpenses, expenses]);
+  const activeCustomersList = reduxCustomers;
+  const activeSuppliersList = reduxSuppliers;
+  const activeExpensesList = reduxExpenses;
 
   const _totalOutstandingLive = useMemo(() => 
     activeCustomersList.reduce((sum: number, c: any) => sum + (c.dues || c.outstanding_balance || 0), 0),
@@ -105,29 +128,19 @@ const Dashboard: React.FC = () => {
     [activeSuppliersList]
   );
 
-  const _totalBalance = useMemo(() => {
-    if (dashboardStats && dashboardStats.netProfit !== undefined) return dashboardStats.netProfit;
-    const income = transactions.filter(t => t.type === 'INCOME').reduce((sum, t) => sum + t.amount, 0);
-    const expense = transactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
-    return income - expense;
-  }, [dashboardStats]);
+  const _totalBalance = dashboardStats?.netProfit ?? 0;
 
-  const products = inventory as MockProduct[];
-
-  const totalRevenueLive = useMemo(() => {
-    if (dashboardStats && dashboardStats.totalRevenue !== undefined) return dashboardStats.totalRevenue;
-    return (salesInvoices as MockSalesInvoice[]).reduce((sum, inv) => sum + inv.total, 0);
-  }, [dashboardStats]);
+  const totalRevenueLive: number = dashboardStats?.totalRevenue ?? 0;
 
   const _totalStockValueLive = useMemo(() =>
-    (inventory as MockProduct[]).reduce((acc: number, curr: any) => acc + (curr.selling_price * (curr.stock || 0)), 0),
-    [inventory]
+    products.reduce((acc: number, curr: any) => acc + ((curr.sellingPrice ?? curr.price ?? 0) * (curr.stockQty ?? curr.stock ?? 0)), 0),
+    [products]
   );
 
   const totalStockQuantity = useMemo(() => {
     if (stockReport && stockReport.totalStockQuantity !== undefined) return stockReport.totalStockQuantity;
-    return (inventory as MockProduct[]).reduce((acc: number, curr: any) => acc + (curr.stock || 0), 0);
-  }, [stockReport, inventory]);
+    return products.reduce((acc: number, curr: any) => acc + (curr.stockQty ?? curr.stock ?? 0), 0);
+  }, [stockReport, products]);
 
   const totalExpensesLive = useMemo(() => {
     if (dashboardStats && dashboardStats.totalExpenses !== undefined) return dashboardStats.totalExpenses;
@@ -136,40 +149,56 @@ const Dashboard: React.FC = () => {
 
   const totalCustomersCount = useMemo(() => activeCustomersList.length, [activeCustomersList]);
 
+  // Real period-over-period changes (null => no badge, never a made-up number)
+  const revenueTrend = useMemo(() => {
+    const daily: { _id: string; totalSales: number }[] = dashboardStats?.dailySales ?? [];
+    const now = mountedAt;
+    const DAY = 1000 * 60 * 60 * 24;
+    let recent = 0;
+    let prior = 0;
+    daily.forEach(d => {
+      const age = (now - new Date(d._id).getTime()) / DAY;
+      if (age <= 15) recent += d.totalSales;
+      else if (age <= 30) prior += d.totalSales;
+    });
+    return pctChange(recent, prior);
+  }, [dashboardStats, mountedAt]);
+
+  const expenseTrend = useMemo(() => {
+    const months: { expenses: number }[] = dashboardStats?.revenueVsExpenses ?? [];
+    if (months.length < 2) return null;
+    return pctChange(months[months.length - 1].expenses, months[months.length - 2].expenses);
+  }, [dashboardStats]);
+
+  const newCustomers30d = useMemo(() => {
+    const cutoff = mountedAt - 30 * 24 * 60 * 60 * 1000;
+    return (activeCustomersList as any[]).filter(c => c.createdAt && new Date(c.createdAt).getTime() >= cutoff).length;
+  }, [activeCustomersList, mountedAt]);
+
   const chartDataLive = useMemo(() => {
+    // Backend /api/reports/dashboard-stats returns per-day totals for the last 30 days.
+    const daily: { _id: string; totalSales: number }[] = dashboardStats?.dailySales ?? [];
     const today = new Date();
     let daysToFetch = 7;
-    if (selectedPeriod === '1M') daysToFetch = 30;
-    if (selectedPeriod === '3M') daysToFetch = 90;
-    if (selectedPeriod === '1Y') daysToFetch = 365;
+    if (selectedPeriod === '1M' || selectedPeriod === '3M' || selectedPeriod === '1Y') daysToFetch = 30;
 
-    const filtered = (salesInvoices as MockSalesInvoice[])
-      .filter(inv => {
-        const diffTime = Math.abs(today.getTime() - new Date(inv.date).getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const filtered = daily
+      .filter(d => {
+        const diffDays = Math.ceil(Math.abs(today.getTime() - new Date(d._id).getTime()) / (1000 * 60 * 60 * 24));
         return diffDays <= daysToFetch;
       })
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      .sort((x, y) => new Date(x._id).getTime() - new Date(y._id).getTime());
 
     const limit = selectedPeriod === '1W' ? 7 : (selectedPeriod === '1M' ? 10 : 12);
-    const result = filtered.slice(-limit);
 
-    return result.map(inv => {
-      const dateObj = new Date(inv.date);
-      let label = "";
-      if (selectedPeriod === '1W') {
-        label = dateObj.toLocaleDateString('default', { weekday: 'short' }).toUpperCase();
-      } else if (selectedPeriod === '1Y') {
-        label = dateObj.toLocaleDateString('default', { month: 'short' }).toUpperCase();
-      } else {
-        label = dateObj.toLocaleDateString('default', { day: 'numeric', month: 'short' });
-      }
-      return {
-        name: label,
-        revenue: inv.total
-      };
+    return filtered.slice(-limit).map(d => {
+      const dateObj = new Date(d._id);
+      const label = selectedPeriod === '1W'
+        ? dateObj.toLocaleDateString('default', { weekday: 'short' }).toUpperCase()
+        : dateObj.toLocaleDateString('default', { day: 'numeric', month: 'short' });
+      return { name: label, revenue: d.totalSales };
     });
-  }, [salesInvoices, selectedPeriod]);
+  }, [dashboardStats, selectedPeriod]);
 
 
   const lastUpdate = useMemo(() => {
@@ -186,8 +215,7 @@ const Dashboard: React.FC = () => {
 
   // 6-Month Profitability - prefers the backend's own revenue-vs-expenses aggregation
   // (GET /api/reports/dashboard-stats -> revenueVsExpenses, tenant-scoped, real Invoice/Expense
-  // data) and only falls back to synthesizing from mock data when that's unavailable (fresh
-  // tenant with no reports yet, or the API call hasn't resolved).
+  // data). Empty until that response arrives.
   const profitabilityData = useMemo(() => {
     if (dashboardStats?.revenueVsExpenses && dashboardStats.revenueVsExpenses.length > 0) {
       return dashboardStats.revenueVsExpenses.map((entry: { month: string; revenue: number; expenses: number }) => {
@@ -201,35 +229,23 @@ const Dashboard: React.FC = () => {
       });
     }
 
-    // Fallback: synthesize from mock data (fresh tenant / reports API not yet answered)
-    const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
-    const dataMap: Record<string, { revenue: number, expenses: number }> = {};
-    months.forEach(m => dataMap[m] = { revenue: 0, expenses: 0 });
+    // No reports yet (fresh tenant, or the API call hasn't resolved): show an empty chart
+    // rather than made-up numbers.
+    return [];
+  }, [dashboardStats]);
 
-    salesInvoices.forEach((inv: any) => {
-      const m = new Date(inv.date).toLocaleString('default', { month: 'short' });
-      if (dataMap[m]) dataMap[m].revenue += inv.total;
-    });
-
-    expenses.forEach((exp: any) => {
-      const m = new Date(exp.date).toLocaleString('default', { month: 'short' });
-      if (dataMap[m]) dataMap[m].expenses += exp.amount;
-    });
-
-    return months.map(name => ({
-      name,
-      revenue: Math.round(dataMap[name].revenue / 1000),
-      expenses: Math.round(dataMap[name].expenses / 1000)
-    }));
-  }, [dashboardStats, salesInvoices, expenses]);
-
-  // Cost Intelligence - Expenditure Categories Synthesis - LIVE (falls back to mock on a fresh
-  // tenant with no recorded expenses yet, same pattern as activeCustomersList/activeSuppliersList)
+  // Cost Intelligence - Expenditure Categories Synthesis - LIVE
   const costCategoriesData = useMemo(() => {
     const categories: Record<string, number> = {};
-    (activeExpensesList as any[]).forEach((exp: any) => {
-      categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
-    });
+    // Shop-DB categories when the backend supplies them (ITEM_DATA_SOURCE=sql + mapped expense table)
+    const sqlCategories: { category: string; amount: number }[] | undefined = dashboardStats?.expenseByCategory;
+    if (Array.isArray(sqlCategories) && sqlCategories.length > 0) {
+      sqlCategories.forEach((c) => { categories[c.category] = (categories[c.category] || 0) + c.amount; });
+    } else {
+      (activeExpensesList as any[]).forEach((exp: any) => {
+        categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
+      });
+    }
 
     const colors = [
       'rgb(var(--color-primary))',
@@ -248,70 +264,51 @@ const Dashboard: React.FC = () => {
         color: colors[index % colors.length]
       }))
       .sort((a, b) => b.value - a.value);
-  }, [activeExpensesList]);
+  }, [activeExpensesList, dashboardStats]);
 
-  // NEW: Inventory AI - Smart Stock Prediction Logic
+  // Low-stock items from live inventory (stock vs. each item's own reorder level)
   const stockInsights = useMemo(() => {
-    if (!products || products.length === 0) return [];
-
-    return products
-      .filter((p: any) => p.stock <= (p.min_stock || 10) * 2)
+    // The stock report carries the low-stock list for the whole catalogue; the loaded inventory page
+    // is only one page of items.
+    const source: any[] = Array.isArray(stockReport?.lowStock) && stockReport.lowStock.length > 0 ? stockReport.lowStock : products;
+    return source
       .map((p: any) => {
-        // Simulate velocity based on total revenue and product importance.
-        // Seeded off the product id/name (instead of Math.random()) so the estimate is stable
-        // across re-renders rather than jittering to a new number every time this recomputes -
-        // Math.random() in a render/useMemo body is also an impure call React flags as unsafe.
-        const seed = String(p.id ?? p._id ?? p.name ?? '').split('').reduce((acc: number, ch: string) => (acc * 31 + ch.charCodeAt(0)) % 1000, 7);
-        const velocity = 1 + ((seed % 300) / 100); // units/day, deterministic per product
-        const daysUntilEmpty = Math.max(0, Math.floor(p.stock / velocity));
-
-        const refillDate = new Date();
-        refillDate.setDate(refillDate.getDate() + daysUntilEmpty);
-
-        return {
-          name: p.name,
-          daysLeft: daysUntilEmpty,
-          refillDate: refillDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          velocity: velocity.toFixed(1),
-          urgency: daysUntilEmpty <= 3 ? 'Critical' : 'Attention'
-        };
+        const stock: number = p.stockQty ?? p.stock ?? 0;
+        const limit: number = p.lowStockLimit || p.min_stock || 0;
+        return { name: p.name, stock, limit };
       })
-      .sort((a, b) => a.daysLeft - b.daysLeft)
+      .filter(p => p.limit > 0 && p.stock <= p.limit)
+      .map(p => ({ ...p, urgency: p.stock <= p.limit / 2 ? 'Critical' : 'Attention' }))
+      .sort((x, y) => (x.stock / x.limit) - (y.stock / y.limit))
       .slice(0, 2);
-  }, [products]);
+  }, [products, stockReport]);
 
-  // NEW: Credit Intelligence - Trust Score & Risk Logic
+  // Top customers by outstanding dues (real `dues` field), with each one's share of total receivables
   const creditInsights = useMemo(() => {
-    if (!customers || customers.length === 0) return [];
-
-    return (customers as MockCustomer[])
-      .filter((c: any) => (c.outstanding_balance || 0) > 0)
-      .map((c: any) => {
-        const outstanding = c.outstanding_balance || 0;
-        // Mocking a trust score based on outstanding vs a hypothetical limit
-        const baseScore = 85;
-        const penalty = Math.min(60, (outstanding / 100000) * 15);
-        const score = Math.max(20, Math.floor(baseScore - penalty));
-
-        let risk: 'Low' | 'Medium' | 'High' = 'Low';
-        if (score < 40) risk = 'High';
-        else if (score < 70) risk = 'Medium';
-
-        return {
-          name: c.name,
-          score,
-          risk,
-          outstanding,
-          status: risk === 'High' ? 'Overdue' : 'Pending'
-        };
-      })
-      .sort((a, b) => a.score - b.score)
-      .slice(0, 2);
-  }, [customers]);
+    const debtors = (activeCustomersList as any[])
+      .map((c: any) => ({ name: c.name, outstanding: c.dues || c.outstanding_balance || 0 }))
+      .filter(c => c.outstanding > 0);
+    const total = debtors.reduce((sum, c) => sum + c.outstanding, 0);
+    return debtors
+      .sort((x, y) => y.outstanding - x.outstanding)
+      .slice(0, 2)
+      .map(c => ({ ...c, share: total > 0 ? Math.round((c.outstanding / total) * 100) : 0 }));
+  }, [activeCustomersList]);
 
   const recentTransactions = useMemo(() => {
-    const liveOrdersList = reduxPurchaseOrders && reduxPurchaseOrders.length > 0 ? reduxPurchaseOrders : purchases;
-    const liveSuppliersList = activeSuppliersList.length > 0 ? activeSuppliersList : suppliers;
+    // Shop-DB purchases (GRNs) when the backend supplies them (ITEM_DATA_SOURCE=sql)
+    const shopPurchases: { id: string; supplier: string; amount: number; date: string; status: string }[] | undefined = dashboardStats?.recentPurchases;
+    if (Array.isArray(shopPurchases) && shopPurchases.length > 0) {
+      return shopPurchases.slice(0, 5).map((p) => ({
+        vendor: p.supplier,
+        mobile: p.id || 'N/A',
+        amount: `₹${Number(p.amount).toLocaleString('en-IN')}`,
+        status: p.status,
+        date: p.date
+      }));
+    }
+    const liveOrdersList = reduxPurchaseOrders ?? [];
+    const liveSuppliersList = activeSuppliersList;
 
     return (liveOrdersList as any[]).slice(0, 5).map(p => {
       // Real Purchase documents from GET /api/purchases carry the vendor as
@@ -356,7 +353,38 @@ const Dashboard: React.FC = () => {
         date: formattedDate
       };
     });
-  }, [reduxPurchaseOrders, activeSuppliersList, purchases, suppliers]);
+  }, [reduxPurchaseOrders, activeSuppliersList, dashboardStats]);
+
+  // Alerts derived from live data (previously hard-coded demo fixtures).
+  const floorAlerts = useMemo(() => {
+    const alerts: { title: string; desc: string; colorClass: string; icon: string }[] = [];
+    const outOfStock = products.filter((p: any) => (p.stockQty ?? p.stock ?? 0) <= 0).length;
+    const lowStock = products.filter((p: any) => {
+      const q = p.stockQty ?? p.stock ?? 0;
+      return q > 0 && q <= (p.lowStockLimit || p.min_stock || 0);
+    }).length;
+    if (outOfStock > 0) alerts.push({ title: 'Out of Stock', desc: `${outOfStock} item${outOfStock > 1 ? 's' : ''} out of stock.`, colorClass: 'text-danger border-danger/30 bg-danger/10', icon: 'Box' });
+    if (lowStock > 0) alerts.push({ title: 'Low Stock', desc: `${lowStock} item${lowStock > 1 ? 's' : ''} at or below reorder level.`, colorClass: 'text-warning border-warning/30 bg-warning/10', icon: 'Box' });
+    const dueCount = (activeCustomersList as any[]).filter((c: any) => (c.dues || c.outstanding_balance || 0) > 0).length;
+    if (dueCount > 0) alerts.push({ title: 'Pending Dues', desc: `${dueCount} customer${dueCount > 1 ? 's have' : ' has'} outstanding dues.`, colorClass: 'text-blue-500 border-blue-500/30 bg-blue-500/10', icon: 'Banknote' });
+    return alerts;
+  }, [products, activeCustomersList]);
+
+  const businessAlerts = useMemo(() => {
+    const alerts: { title: string; subtitle: string; description: string; urgency: string; metric: string; action: string }[] = [];
+    const outstanding: number = dashboardStats?.totalOutstanding ?? 0;
+    if (outstanding > 0) {
+      alerts.push({
+        title: 'Outstanding Receivables',
+        subtitle: 'Collections pending',
+        description: 'Invoiced amount not yet collected across all customers.',
+        urgency: 'FOLLOW UP',
+        metric: `₹${Math.round(outstanding).toLocaleString('en-IN')}`,
+        action: 'Review Dues'
+      });
+    }
+    return alerts;
+  }, [dashboardStats]);
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -449,7 +477,7 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold text-secondary uppercase tracking-[0.2em] opacity-60">Business Overview</h2>
             <div className="flex items-center gap-3 glass-panel px-4 py-2 hover:border-primary/40 transition-all">
-              <span className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-60">Sync: {lastUpdate}</span>
+              <span className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-60">Sync: {lastUpdate}{dashboardStats?.asOf ? ` · Shop data to ${dashboardStats.asOf}` : ''}</span>
               <div className="w-px h-3 bg-default opacity-50" />
               <RotateCcw
                 onClick={handleRefresh}
@@ -471,10 +499,7 @@ const Dashboard: React.FC = () => {
                     </div>
                     <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Revenue Flow</span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] font-black text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-sm">
-                    <TrendingUp className="w-3 h-3" />
-                    +12.4%
-                  </div>
+                  <TrendBadge pct={revenueTrend} />
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-black text-primary opacity-50">₹</span>
@@ -501,10 +526,7 @@ const Dashboard: React.FC = () => {
                     </div>
                     <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Capital Outflow</span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] font-black text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-sm">
-                    <TrendingUp className="w-3 h-3" />
-                    +4.2%
-                  </div>
+                  <TrendBadge pct={expenseTrend} increaseIsBad />
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-black text-danger opacity-50">₹</span>
@@ -513,8 +535,8 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartDataLive}>
-                    <Area type="monotone" dataKey="revenue" stroke="var(--danger)" fill="var(--danger)" strokeWidth={3} dot={false} />
+                  <AreaChart data={profitabilityData}>
+                    <Area type="monotone" dataKey="expenses" stroke="var(--danger)" fill="var(--danger)" strokeWidth={3} dot={false} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -531,21 +553,16 @@ const Dashboard: React.FC = () => {
                     </div>
                     <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Customer Base</span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] font-black text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-sm">
-                    <TrendingUp className="w-3 h-3" />
-                    +8.1%
-                  </div>
+                  {newCustomers30d > 0 && (
+                    <div className="flex items-center gap-1 text-[10px] font-black text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-sm">
+                      <TrendingUp className="w-3 h-3" />
+                      +{newCustomers30d} new (30d)
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-info transition-colors">{totalCustomersCount}</span>
                 </div>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartDataLive}>
-                    <Area type="monotone" dataKey="revenue" stroke="var(--info)" fill="var(--info)" strokeWidth={3} dot={false} />
-                  </AreaChart>
-                </ResponsiveContainer>
               </div>
             </div>
 
@@ -560,21 +577,11 @@ const Dashboard: React.FC = () => {
                     </div>
                     <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Stock Capacity</span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] font-black text-danger bg-danger/10 border border-danger/20 px-2 py-0.5 rounded-sm">
-                    <TrendingDown className="w-3 h-3" />
-                    -2.4%
-                  </div>
+                  
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-warning transition-colors">{totalStockQuantity.toLocaleString()}</span>
                 </div>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartDataLive}>
-                    <Area type="monotone" dataKey="revenue" stroke="var(--warning)" fill="var(--warning)" strokeWidth={3} dot={false} />
-                  </AreaChart>
-                </ResponsiveContainer>
               </div>
             </div>
           </div>
@@ -648,11 +655,11 @@ const Dashboard: React.FC = () => {
                       <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Immediate Tactical Tasks</p>
                   </div>
                   <span className="w-7 h-7 bg-danger/10 text-danger rounded-sm border border-danger/20 flex items-center justify-center text-[11px] font-black animate-pulse">
-                      {floor_alerts.length}
+                      {floorAlerts.length}
                   </span>
               </div>
               <div className="flex-1 space-y-3 relative z-10">
-                  {floor_alerts.map((alert, i) => {
+                  {floorAlerts.map((alert, i) => {
                       const Icon = getIcon(alert.icon);
                       return (
                           <div key={i} className={`p-4 rounded-sm border border-default hover:border-primary/50 transition-all cursor-pointer group/alert flex items-start gap-4 hover:translate-x-1 duration-200`}>
@@ -780,7 +787,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div>
                 <h4 className="text-sm font-black text-main uppercase tracking-tight">Low Stock Warning</h4>
-                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Predicting items about to run out</p>
+                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Items at or below reorder level</p>
               </div>
             </div>
             <div className="space-y-4 relative z-10">
@@ -788,11 +795,11 @@ const Dashboard: React.FC = () => {
                 <div key={idx} className="flex items-center justify-between bg-surface/40 p-4 rounded-sm border border-default/30 hover:border-primary/40 transition-all group/stock">
                   <div>
                     <p className="text-[11px] font-black text-main uppercase tracking-tight mb-1 group-hover/stock:text-primary transition-colors">{item.name}</p>
-                    <p className="text-[9px] text-secondary uppercase font-black opacity-40">Predictive ETA: {item.refillDate}</p>
+                    <p className="text-[9px] text-secondary uppercase font-black opacity-40">Reorder level: {item.limit}</p>
                   </div>
                   <div className="text-right">
                     <p className={`text-[11px] font-black uppercase tracking-widest ${item.urgency === 'Critical' ? 'text-danger animate-pulse' : 'text-primary'}`}>
-                      {item.daysLeft} DAYS LEFT
+                      {item.stock} LEFT
                     </p>
                   </div>
                 </div>
@@ -808,8 +815,8 @@ const Dashboard: React.FC = () => {
                 <User className="w-7 h-7" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-main uppercase tracking-tight">Customer Credit Risk</h4>
-                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Tracking risky udhaar customers</p>
+                <h4 className="text-sm font-black text-main uppercase tracking-tight">Top Outstanding Dues</h4>
+                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Customers owing the most</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 relative z-10">
@@ -817,9 +824,9 @@ const Dashboard: React.FC = () => {
                 <div key={idx} className="p-4 bg-surface/40 rounded-sm border border-default/30 hover:border-accent/40 transition-all">
                   <p className="text-[9px] font-black text-secondary uppercase tracking-[0.2em] mb-4 opacity-50">{item.name}</p>
                   <div className="flex items-end justify-between">
-                    <p className="text-xl font-display font-black text-main tracking-tighter">{item.score}<span className="text-[10px] text-secondary ml-1 opacity-30">/100</span></p>
-                    <span className={`text-[8px] font-black px-2 py-0.5 rounded-sm uppercase tracking-widest border shadow-sm ${item.risk === 'High' ? 'bg-danger/20 border-danger/40 text-danger' : 'bg-success/20 border-success/40 text-success'}`}>
-                      {item.risk} RISK
+                    <p className="text-xl font-display font-black text-main tracking-tighter">₹{Number(item.outstanding).toLocaleString('en-IN')}</p>
+                    <span className="text-[8px] font-black px-2 py-0.5 rounded-sm uppercase tracking-widest border shadow-sm bg-warning/20 border-warning/40 text-warning">
+                      {item.share}% OF DUES
                     </span>
                   </div>
                 </div>
@@ -832,7 +839,7 @@ const Dashboard: React.FC = () => {
         <div className="space-y-6 mt-12">
           <h3 className="text-[11px] font-black text-secondary uppercase tracking-[0.5em] opacity-50 pl-2 mb-4 border-b border-default pb-4">Important Business Alerts</h3>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {business_alerts.map((alert, idx) => (
+            {businessAlerts.map((alert, idx) => (
               <div key={idx} className="card-interactive p-8 grad-error border-l-4 border-l-danger group relative overflow-hidden bg-card/60 backdrop-blur-2xl">
                 <div className="absolute -right-4 -top-4 w-32 h-32 bg-danger/10 rounded-full blur-3xl animate-aura opacity-50" />
                 <div className="flex items-center justify-between mb-6 relative z-10">

@@ -19,8 +19,6 @@ import Layout from '../../components/shared/Layout/index';
 import SupplierSubNav from '../suppliers/SupplierSubNav';
 import SupplierStatsCards from '../suppliers/components/SupplierStatsCards';
 import SupplierFilterBar from '../suppliers/components/SupplierFilterBar';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 interface VendorRow {
     _id: string;
@@ -224,7 +222,9 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
     };
 
     // PDF Export
-    const handleExportPDF = () => {
+    const handleExportPDF = async () => {
+        const { jsPDF } = await import('jspdf');
+        const { default: autoTable } = await import('jspdf-autotable');
         const doc = new jsPDF();
         doc.text('Supplier Inflow / Outflow Report', 14, 15);
         if (dateFrom || dateTo) {

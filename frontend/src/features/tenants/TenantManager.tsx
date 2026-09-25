@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import {
     Building2,
     Users,
@@ -32,7 +32,8 @@ import {
 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
-import { toggleTenantStatus } from "../../redux/slices/tenantSlice";
+import { setTenants, toggleTenantStatus } from "../../redux/slices/tenantSlice";
+import { currentAdminSession, listTenants, setTenantStatus, type AdminTenant } from "../../services/adminTenants";
 import { setActiveTab } from "../../redux/slices/uiSlice";
 import { Tenant } from "../../types/tenant";
 import { useTenantForm } from "../../hooks/useTenantForm";
@@ -52,9 +53,29 @@ interface TenantManagementProps {
 
 type TabType = 'fleet' | 'control';
 
+/** A platform tenant (GET /api/admin/tenants) in the shape the console's table uses. Modules and region aren't
+ * returned by the admin API, so they stay empty rather than being guessed. */
+const toTenant = (t: AdminTenant): Tenant => ({
+    id: t.id, _id: t.id, name: t.name, subdomain: t.slug, businessType: t.businessType,
+    sector: (t.sector || t.businessType || 'RETAIL') as Tenant['sector'], isActive: t.status === 'ACTIVE', modules: [],
+    subscriptionEndDate: t.subscriptionEndDate ?? undefined,
+});
+
 const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
     const dispatch = useDispatch();
     const { tenants } = useSelector((state: RootState) => state.tenant);
+    // Real tenants from the admin API (the list used to be only the signed-in shop's own profile, always "active").
+    const [loadError, setLoadError] = useState('');
+    const [statusError, setStatusError] = useState('');
+    const [busyId, setBusyId] = useState<string | null>(null);
+    useEffect(() => {
+        if (!currentAdminSession()) { setLoadError('Sign in to the administrator console to load tenants.'); return; }
+        let cancelled = false;
+        listTenants()
+            .then(list => { if (!cancelled) { dispatch(setTenants(list.map(toTenant))); setLoadError(''); } })
+            .catch((err: Error) => { if (!cancelled) setLoadError(err.message); });
+        return () => { cancelled = true; };
+    }, [dispatch]);
 
     // Tab state
     const [activeTab, setActiveTabLocal] = useState<TabType>('fleet');
@@ -174,10 +195,19 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
         };
     }, [tenants]);
 
+    // The row changes only after the server saves the new status; a refusal is shown and nothing changes.
     const handleToggleStatus = async (tenant: Tenant) => {
-        // const newStatus = !tenant.isActive;
-        // TODO: Integrate with Backend API
-        dispatch(toggleTenantStatus(tenant.id));
+        if (busyId) return;
+        setBusyId(tenant.id);
+        setStatusError('');
+        try {
+            const saved = await setTenantStatus(tenant.id, tenant.isActive ? 'SUSPENDED' : 'ACTIVE');
+            if ((saved === 'ACTIVE') !== Boolean(tenant.isActive)) dispatch(toggleTenantStatus(tenant.id));
+        } catch (err) {
+            setStatusError(`${tenant.name}: ${(err as Error).message}`);
+        } finally {
+            setBusyId(null);
+        }
     };
 
     // State for full-page view toggle
@@ -382,6 +412,12 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                 </div>
             </div>
 
+            {(loadError || statusError) && (
+                <p role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-200">
+                    {statusError || loadError}
+                </p>
+            )}
+
             {/* Tab Navigation */}
             <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 w-fit">
                 {[
@@ -553,7 +589,9 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                                 <td className="px-6 py-4">
                                                     <button
                                                         onClick={() => handleToggleStatus(tenant)}
-                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${tenant.isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}
+                                                        disabled={busyId === tenant.id}
+                                                        aria-label={`${tenant.isActive ? 'Suspend' : 'Activate'} ${tenant.name}`}
+                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all disabled:opacity-50 ${tenant.isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}
                                                     >
                                                         <div className={`w-1.5 h-1.5 rounded-full ${tenant.isActive ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
                                                         {tenant.isActive ? 'Active' : 'Suspended'}

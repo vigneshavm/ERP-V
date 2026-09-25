@@ -1,7 +1,6 @@
 import { AppDispatch, RootState } from "../store";
 import { db } from '../../services/db';
 import { addDailyRecord, updateDailyRecord, deleteDailyRecord, setDailyRecordSynced } from '../slices/financeSlice';
-// import { supabase } from '../../lib/supabase'; // Removed
 
 import api from "../../services/api.js";
 

@@ -61,7 +61,7 @@ export const useRecurringExpenses = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const response = await api.get('/recurring-expenses', {
+            const response = await api.get('/api/recurring-expenses', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setRecurringExpenses(response.data?.expenses || []);
@@ -94,7 +94,7 @@ export const useRecurringExpenses = () => {
     const createRecurringExpense = async (data: Partial<RecurringExpense>) => {
         try {
             const token = localStorage.getItem('token');
-            await api.post('/recurring-expenses', data, {
+            await api.post('/api/recurring-expenses', data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchRecurringExpenses();
@@ -107,7 +107,7 @@ export const useRecurringExpenses = () => {
     const updateRecurringExpense = async (id: string, data: Partial<RecurringExpense>) => {
         try {
             const token = localStorage.getItem('token');
-            await api.put(`/recurring-expenses/${id}`, data, {
+            await api.put(`/api/recurring-expenses/${id}`, data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchRecurringExpenses();
@@ -120,7 +120,7 @@ export const useRecurringExpenses = () => {
     const deleteRecurringExpense = async (id: string) => {
         try {
             const token = localStorage.getItem('token');
-            await api.delete(`/recurring-expenses/${id}`, {
+            await api.delete(`/api/recurring-expenses/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchRecurringExpenses();

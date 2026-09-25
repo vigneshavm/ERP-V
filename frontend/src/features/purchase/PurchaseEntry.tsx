@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Save, Printer, FileText, Search, Plus, Trash2,
@@ -15,9 +15,7 @@ import { printBarcodeLabels } from "../../utils/labelPrinter";
 import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import { toast } from 'react-toastify';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import inventoryData from '../../mockData/inventoryData.json';
+import { fetchMasterEntries } from '../../redux/slices/masterDataSlice';
 
 interface Supplier {
     _id: string;
@@ -76,6 +74,17 @@ interface PurchaseItem {
     // rendered in WHOLESALE channel (see WRPurchaseEntry.tsx). Kept on every row regardless of
     // channel so it round-trips if the operator switches -- it's simply not sent when RETAIL.
     wholesaleRate?: number;
+
+    // Textile descriptors, mirroring the fields ProductModal.tsx exposes for these same Item
+    // columns (see handleSave/createPurchase). Only relevant -- and only shown -- while this line
+    // is creating a brand-new product (no product_id yet); an already-linked catalog item keeps
+    // its own descriptors, editable via Product Modal instead of here.
+    brand?: string;
+    design?: string;
+    pattern?: string;
+    modelNo?: string;
+    fashionName?: string;
+    shelfCode?: string; // "Rack" -- Item.shelfCode
 }
 
 interface PurchaseEntryProps {
@@ -107,6 +116,23 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
     const [dropdownHighlightIndex, setDropdownHighlightIndex] = useState<number>(-1);
     const [_searchCategoryFilter, setSearchCategoryFilter] = useState<string | null>(null);
     const { items: products } = useSelector((state: RootState) => state.inventory);
+
+    // Textile descriptor pick-lists (Settings -> Master Data), same source ProductModal.tsx reads
+    // for these same Item fields -- so a design/pattern/etc typed here shows up as a suggestion
+    // there too, and vice versa, instead of two disconnected vocabularies.
+    const { entriesByType } = useSelector((state: RootState) => state.masterData);
+    const brandOptions = useMemo(() => entriesByType.PRODUCT_BRAND || [], [entriesByType.PRODUCT_BRAND]);
+    const designOptions = useMemo(() => entriesByType.PRODUCT_DESIGN || [], [entriesByType.PRODUCT_DESIGN]);
+    const patternOptions = useMemo(() => entriesByType.PRODUCT_PATTERN || [], [entriesByType.PRODUCT_PATTERN]);
+    const modelNoOptions = useMemo(() => entriesByType.PRODUCT_MODEL_NO || [], [entriesByType.PRODUCT_MODEL_NO]);
+    const fashionNameOptions = useMemo(() => entriesByType.PRODUCT_FASHION_NAME || [], [entriesByType.PRODUCT_FASHION_NAME]);
+    const rackOptions = useMemo(() => entriesByType.PRODUCT_RACK || [], [entriesByType.PRODUCT_RACK]);
+
+    useEffect(() => {
+        (['PRODUCT_BRAND', 'PRODUCT_DESIGN', 'PRODUCT_PATTERN', 'PRODUCT_MODEL_NO', 'PRODUCT_FASHION_NAME', 'PRODUCT_RACK'] as const).forEach((type) => {
+            dispatch(fetchMasterEntries({ type }));
+        });
+    }, [dispatch]);
 
     const [shippingAmount, setShippingAmount] = useState(0);
     const [discountAmount, setDiscountAmount] = useState(0);
@@ -180,17 +206,12 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                 const { data } = await api.get('/api/inventory/categories', { params: { limit: 100000 } });
                 // The API returns { success: true, data: [...] }
                 const list = data.data || data;
-                let parsedList = Array.isArray(list) ? list : [];
-                
-                // Fallback to mock data if API returns empty
-                if (parsedList.length === 0) {
-                    parsedList = inventoryData.MOCK_CATEGORIES;
-                }
-                
-                setCategories(parsedList);
+                // No sample fallback: a purchase must never be saved against a category that doesn't exist.
+                setCategories(Array.isArray(list) ? list : []);
             } catch (err) {
                 console.error("Failed to fetch categories", err);
-                setCategories(inventoryData.MOCK_CATEGORIES as Category[]);
+                setCategories([]);
+                toast.error('Could not load item categories. Check your connection and reload the page.');
             }
         };
         fetchCategories();
@@ -541,17 +562,76 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
             item.productId = '';
             item.category_name = cat.name;
             item.category_code = cat.shortCode || '';
-            
+
             // Auto-fill product name if left blank
             if (!item.product_name || item.product_name.trim() === '') {
                 item.product_name = cat.name;
                 item.productName = cat.name;
             }
-            
+
             newItems[index] = item;
             return newItems;
         });
         setActiveSearchRow(null);
+    };
+
+    // Existing products (from the real catalog, Redux state.inventory.items) that match what's
+    // currently typed into the active row's search box. Picking one of these -- via
+    // handleProductSelect -- links the line to the real Item so a repeat purchase restocks it
+    // instead of creating a duplicate product (see handleSave/createPurchase: the backend only
+    // creates a new Item when product_id is empty/'new'). Capped to keep the dropdown short.
+    const matchingProducts = useMemo(() => {
+        if (activeSearchRow === null) return [];
+        const query = (items[activeSearchRow]?.product_name || '').toLowerCase().trim();
+        if (!query) return [];
+        return (products || [])
+            .filter((p: any) =>
+                p.name?.toLowerCase().includes(query) || p.sku?.toLowerCase().includes(query)
+            )
+            .slice(0, 8);
+    }, [activeSearchRow, items, products]);
+
+    // Link a purchase line to a real, already-existing catalog item instead of letting it fall
+    // through to "create a new Item" on save. Prefills rate/tax from the product's own record
+    // (only when the operator hasn't already typed a rate) so repeat purchases don't need
+    // re-entering known values, but everything stays editable afterward.
+    const handleProductSelect = (index: number, product: any) => {
+        setItems((prevItems: PurchaseItem[]) => {
+            const newItems = [...prevItems];
+            const item = { ...newItems[index] };
+
+            const pid = product._id || product.id;
+            item.product_id = pid;
+            item.productId = pid;
+            item.product_name = product.name;
+            item.productName = product.name;
+            item.sku = product.sku || '';
+            item.category_name = product.category || item.category_name;
+
+            if (!item.rate) {
+                item.rate = product.costPrice ?? product.cost ?? item.rate ?? 0;
+            }
+            const productTaxRate = product.gstRate ?? product.gstPercentage;
+            if (productTaxRate !== undefined && productTaxRate !== null && !item.tax_percent) {
+                item.tax_percent = productTaxRate;
+                item.taxPercent = productTaxRate;
+            }
+            if (!item.sellingPrice && product.sellingPrice) {
+                item.sellingPrice = product.sellingPrice;
+                item.margin = item.rate > 0 ? ((product.sellingPrice / item.rate) - 1) * 100 : item.margin;
+            }
+
+            // Recalculate the line total with whatever rate/tax ended up in place above.
+            const basic = item.quantity * item.rate;
+            item.taxAmount = (basic * (item.tax_percent || 0)) / 100;
+            item.amount = basic + (item.taxAmount || 0);
+            item.line_total = item.amount;
+
+            newItems[index] = item;
+            return newItems;
+        });
+        setActiveSearchRow(null);
+        setDropdownHighlightIndex(-1);
     };
 
     // Handle Item Change
@@ -594,7 +674,9 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
         return categories.filter(c => c.name.toLowerCase().includes(lower));
     };
 
-    const _generatePDF = (orderData: any) => {
+    const _generatePDF = async (orderData: any) => {
+        const { jsPDF } = await import('jspdf');
+        const { default: autoTable } = await import('jspdf-autotable');
         const doc = new jsPDF();
 
         // Header
@@ -714,7 +796,16 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                     wholesale_rate: isWholesale ? (i.wholesaleRate || 0) : undefined,
                     color: i.color,
                     size: i.size,
-                    sku: i.sku
+                    sku: i.sku,
+                    // Textile descriptors -- only meaningful (and only populated in the UI) for a
+                    // line that's creating a brand-new product; see createPurchase for how these
+                    // seed the new Item.
+                    brand: i.brand,
+                    design: i.design,
+                    pattern: i.pattern,
+                    model_no: i.modelNo,
+                    fashion_name: i.fashionName,
+                    shelf_code: i.shelfCode
                 })),
                 p_vendor_id: supplierId,
                 channel,
@@ -1367,22 +1458,32 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                     setDropdownHighlightIndex(-1);
                                                 }}
                                                 onKeyDown={e => {
-                                                    if (activeSearchRow === idx && categories.length > 0) {
+                                                    const comboLength = matchingProducts.length + categories.length;
+                                                    if (activeSearchRow === idx && comboLength > 0) {
                                                         if (e.key === 'ArrowDown') {
                                                             e.preventDefault();
-                                                            setDropdownHighlightIndex(prev => Math.min(prev + 1, categories.length - 1));
+                                                            setDropdownHighlightIndex(prev => Math.min(prev + 1, comboLength - 1));
                                                         } else if (e.key === 'ArrowUp') {
                                                             e.preventDefault();
                                                             setDropdownHighlightIndex(prev => Math.max(prev - 1, 0));
                                                         } else if (e.key === 'Enter' && dropdownHighlightIndex >= 0) {
                                                             e.preventDefault();
-                                                            handleCategorySelect(idx, categories[dropdownHighlightIndex]);
+                                                            if (dropdownHighlightIndex < matchingProducts.length) {
+                                                                handleProductSelect(idx, matchingProducts[dropdownHighlightIndex]);
+                                                            } else {
+                                                                handleCategorySelect(idx, categories[dropdownHighlightIndex - matchingProducts.length]);
+                                                            }
                                                         }
                                                     }
                                                 }}
                                                 className="w-full bg-transparent border-none outline-none font-medium placeholder:text-neutral-300 focus:placeholder:text-neutral-400 text-neutral-900 dark:text-neutral-100"
                                             />
                                             <div className="text-[10px] text-neutral-400 mt-1 flex gap-2">
+                                                {item.product_id && (
+                                                    <span className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+                                                        In Catalog
+                                                    </span>
+                                                )}
                                                 {item.category_name && (
                                                     <span className="bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-accent px-1.5 py-0.5 rounded border border-violet-200 dark:border-violet-800">
                                                         {item.category_name}
@@ -1393,31 +1494,149 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                 {item.size && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">{item.size}</span>}
                                             </div>
 
-                                            {/* ─── Category Selection Dropdown for New Products ─── */}
+                                            {/* ─── Textile Descriptors for a NEW product ───
+                                                Only shown while this line is going to create a new Item (no product_id
+                                                yet) -- an existing catalog line already has these set on its real Item
+                                                record, editable via Product Modal instead. Free-text + datalist, same
+                                                pattern and same Master Data lists as ProductModal.tsx, so a value typed
+                                                in either place becomes a suggestion in the other. */}
+                                            {!item.product_id && (item.product_name || item.category_name) && (
+                                                <div className="grid grid-cols-3 gap-x-2 gap-y-1.5 mt-2 pt-2 border-t border-dashed border-neutral-200 dark:border-neutral-700 max-w-[360px]">
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            list={`brand-options-${idx}`}
+                                                            placeholder="Brand"
+                                                            value={item.brand || ''}
+                                                            onChange={e => updateItem(idx, 'brand', e.target.value)}
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                        />
+                                                        <datalist id={`brand-options-${idx}`}>
+                                                            {brandOptions.map((b) => <option key={b._id} value={b.name} />)}
+                                                        </datalist>
+                                                    </div>
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            list={`design-options-${idx}`}
+                                                            placeholder="Design"
+                                                            value={item.design || ''}
+                                                            onChange={e => updateItem(idx, 'design', e.target.value)}
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                        />
+                                                        <datalist id={`design-options-${idx}`}>
+                                                            {designOptions.map((d) => <option key={d._id} value={d.name} />)}
+                                                        </datalist>
+                                                    </div>
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            list={`pattern-options-${idx}`}
+                                                            placeholder="Pattern"
+                                                            value={item.pattern || ''}
+                                                            onChange={e => updateItem(idx, 'pattern', e.target.value)}
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                        />
+                                                        <datalist id={`pattern-options-${idx}`}>
+                                                            {patternOptions.map((p) => <option key={p._id} value={p.name} />)}
+                                                        </datalist>
+                                                    </div>
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            list={`modelno-options-${idx}`}
+                                                            placeholder="Model No"
+                                                            value={item.modelNo || ''}
+                                                            onChange={e => updateItem(idx, 'modelNo', e.target.value)}
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                        />
+                                                        <datalist id={`modelno-options-${idx}`}>
+                                                            {modelNoOptions.map((m) => <option key={m._id} value={m.name} />)}
+                                                        </datalist>
+                                                    </div>
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            list={`fashionname-options-${idx}`}
+                                                            placeholder="Fashion Name"
+                                                            value={item.fashionName || ''}
+                                                            onChange={e => updateItem(idx, 'fashionName', e.target.value)}
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                        />
+                                                        <datalist id={`fashionname-options-${idx}`}>
+                                                            {fashionNameOptions.map((f) => <option key={f._id} value={f.name} />)}
+                                                        </datalist>
+                                                    </div>
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            list={`rack-options-${idx}`}
+                                                            placeholder="Rack"
+                                                            value={item.shelfCode || ''}
+                                                            onChange={e => updateItem(idx, 'shelfCode', e.target.value)}
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                        />
+                                                        <datalist id={`rack-options-${idx}`}>
+                                                            {rackOptions.map((r) => <option key={r._id} value={r.name} />)}
+                                                        </datalist>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* ─── Existing-Product / New-Product-Category Dropdown ─── */}
                                             {activeSearchRow === idx && (
-                                                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-neutral-900 rounded-sm shadow-2xl border border-neutral-200 dark:border-neutral-700 z-50 w-[300px] overflow-hidden"
+                                                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-neutral-900 rounded-sm shadow-2xl border border-neutral-200 dark:border-neutral-700 z-50 w-[320px] overflow-hidden"
                                                     onMouseDown={e => {
                                                         e.preventDefault(); // prevent input blur
                                                         e.stopPropagation(); // prevent window click-outside from firing
                                                     }}
                                                 >
-                                                    {/* Search hint */}
-                                                    <div className="px-4 pt-3 pb-2 border-b border-neutral-100 dark:border-neutral-800 flex flex-col gap-1">
+                                                    {/* Existing catalog matches -- picking one links this line to the real Item
+                                                        instead of creating a duplicate on save */}
+                                                    {matchingProducts.length > 0 && (
+                                                        <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">
+                                                            <div className="px-2 pt-1 pb-2 flex items-center gap-2">
+                                                                <Search className="w-3.5 h-3.5 text-emerald-500" />
+                                                                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium uppercase tracking-wider">
+                                                                    Existing Products
+                                                                </span>
+                                                            </div>
+                                                            {matchingProducts.map((prod: any, prodIdx: number) => (
+                                                                <div
+                                                                    key={prod._id || prod.id}
+                                                                    className={`px-3 py-2 cursor-pointer rounded-xl transition-colors flex items-center justify-between group ${dropdownHighlightIndex === prodIdx ? 'bg-emerald-100 dark:bg-emerald-900/40' : 'hover:bg-emerald-50 dark:hover:bg-emerald-900/20'}`}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleProductSelect(idx, prod);
+                                                                    }}
+                                                                >
+                                                                    <div>
+                                                                        <div className="font-semibold text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-emerald-700 dark:group-hover:text-emerald-400">{prod.name}</div>
+                                                                        <div className="text-[10px] text-neutral-400">Stock: {prod.stockQty ?? 0}{prod.sku ? ` · ${prod.sku}` : ''}</div>
+                                                                    </div>
+                                                                    {typeof prod.costPrice === 'number' && (
+                                                                        <div className="text-[10px] text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-md">₹{prod.costPrice}</div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Category list, for classifying a genuinely new product */}
+                                                    <div className="px-4 pt-3 pb-2 flex flex-col gap-1">
                                                         <div className="flex items-center gap-2">
-                                                            <Search className="w-3.5 h-3.5 text-neutral-400" />
+                                                            <Plus className="w-3.5 h-3.5 text-neutral-400" />
                                                             <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
-                                                                Select Category for New Product
+                                                                Or Create New in Category
                                                             </span>
                                                         </div>
                                                     </div>
-
-                                                    {/* Category list */}
                                                     <div className="max-h-56 overflow-y-auto p-2">
                                                         {categories.length > 0 ? (
                                                             categories.map((cat, catIdx) => (
                                                                 <div
                                                                     key={cat.id}
-                                                                    className={`px-3 py-2 cursor-pointer rounded-xl transition-colors flex items-center justify-between group ${dropdownHighlightIndex === catIdx ? 'bg-violet-100 dark:bg-violet-900/40' : 'hover:bg-violet-50 dark:hover:bg-violet-900/20'}`}
+                                                                    className={`px-3 py-2 cursor-pointer rounded-xl transition-colors flex items-center justify-between group ${dropdownHighlightIndex === matchingProducts.length + catIdx ? 'bg-violet-100 dark:bg-violet-900/40' : 'hover:bg-violet-50 dark:hover:bg-violet-900/20'}`}
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         handleCategorySelect(idx, cat);

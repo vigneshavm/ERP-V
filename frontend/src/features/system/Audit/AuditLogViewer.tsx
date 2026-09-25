@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../../components/shared/Layout/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { Filter, Shield, Eye, Calendar, Clock, Database, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -34,7 +34,7 @@ const AuditLogViewer = () => {
             // Clean empty params
             Object.keys(params).forEach(key => !params[key] && delete params[key]);
 
-            const response = await api.get('/api/core/audit-logs', { params });
+            const response = await api.get('/api/audit-logs', { params });
             if (response.data.success) {
                 setLogs(response.data.data);
                 setPagination(response.data.pagination);

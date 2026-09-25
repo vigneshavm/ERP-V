@@ -32,6 +32,7 @@ export type MasterType =
     | 'PRODUCT_COLOR'
     | 'PRODUCT_SIZE'
     | 'PRODUCT_RACK'
+    | 'PRODUCT_HSN'
     | 'UNIT'
     | 'WAREHOUSE';
 

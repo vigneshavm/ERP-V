@@ -17,7 +17,6 @@ import {
     BarChart3
 } from 'lucide-react';
 import api from "../../services/api";
-import * as XLSX from 'xlsx';
 
 interface AgeingBucket {
     "0-30": number;
@@ -80,7 +79,8 @@ const SupplierAgeing: React.FC = () => {
         return t;
     }, [data]);
 
-    const handleExport = () => {
+    const handleExport = async () => {
+        const XLSX = await import('xlsx');
         const exportData = filteredData.map(s => ({
             'Supplier': s.businessName,
             '0-30 Days': s.buckets["0-30"],

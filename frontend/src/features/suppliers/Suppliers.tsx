@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { deleteSupplier, getSupplierAnalytics } from "../../redux/slices/supplierSlice";
@@ -23,7 +23,6 @@ import PageHeader from "../../components/shared/Layout/PageHeader";
 import SupplierSubNav from './SupplierSubNav';
 import SupplierStatsCards from './components/SupplierStatsCards';
 import SupplierFilterBar from './components/SupplierFilterBar';
-import * as XLSX from 'xlsx';
 import { toast } from 'react-toastify';
 import { formatDate } from '../../utils/helpers';
 
@@ -67,7 +66,8 @@ const Suppliers: React.FC = () => {
     }
   };
 
-  const handleExportCSV = () => {
+  const handleExportCSV = async () => {
+    const XLSX = await import('xlsx');
     const dataToExport = suppliers.map(s => ({
       'Business Name': s.businessName,
       'Group': s.supplierGroup || 'N/A',
@@ -103,11 +103,11 @@ const Suppliers: React.FC = () => {
   const filteredSuppliers = useMemo(() => {
     return suppliers.filter(
       (supplier) => {
-        const matchesSearch = supplier.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (supplier.supplierGroup && supplier.supplierGroup.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          supplier.contactPersonName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          supplier.contactNo.includes(searchTerm) ||
-          (supplier.email && supplier.email.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesSearch = (supplier.businessName ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (supplier.supplierGroup ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (supplier.contactPersonName ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (supplier.contactNo ?? '').includes(searchTerm) ||
+          (supplier.email ?? '').toLowerCase().includes(searchTerm.toLowerCase());
 
         if (!matchesSearch) return false;
 

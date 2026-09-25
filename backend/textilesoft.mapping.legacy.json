@@ -1,0 +1,24 @@
+{
+  "_comment": "Alternative using legacy varchar table [PurchaseStock] (same columns as stockdetails/purentrydetails). All numeric columns are varchar here; the adapter parses them. UNVERIFIED which of PurchaseStock/stockdetails holds live balances: tot_qty vs qty/sales_qty must be checked against a Textilesoft stock report.",
+  "source": { "table": "dbo.PurchaseStock" },
+  "columns": {
+    "name": "pname",
+    "sku": "code",
+    "barcode": "barcode",
+    "brand": "brand",
+    "size": "size",
+    "color": "color",
+    "design": "design",
+    "pattern": "patrn",
+    "hsnCode": "hsncode",
+    "gstRate": "gst_per",
+    "shelfCode": "rackno",
+    "modelNo": "model",
+    "fashionName": "fashion",
+    "costPrice": "prate",
+    "sellingPrice": "mrp",
+    "wholesaleRate": "wsamt",
+    "stockQty": "tot_qty"
+  },
+  "defaults": { "unit": "pcs", "lowStockLimit": 5 }
+}

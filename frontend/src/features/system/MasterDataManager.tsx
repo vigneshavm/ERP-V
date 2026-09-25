@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
 import {
@@ -9,12 +9,20 @@ import {
     MasterEntry,
     MasterType,
 } from '@/redux/slices/masterDataSlice';
-import { Database, Plus, Edit, Trash2, X, Loader2, Search } from 'lucide-react';
+import { Database, Plus, Edit, Trash2, X, Loader2, Search, ChevronDown, Check } from 'lucide-react';
+import api from '../../services/api';
 
 interface MetaFieldConfig {
     key: string;
     label: string;
-    type?: 'text' | 'number';
+    type?: 'text' | 'number' | 'multiselect';
+    // 'productCategories' loads its options from GET /api/product-categories?sectorName=<tenant's
+    // business sector>, the same list Settings > General's "Mapped Product Categories" uses -- so
+    // the picker offers exactly the category names the shop already recognizes (e.g. Shirt, Pant,
+    // Lungi, Dhothie), matching what a Product-Wise report groups by. Only meaningful when
+    // type === 'multiselect'. The selected set is still stored as a single comma-separated string
+    // under meta.<key>, so no backend change is needed -- loadCounterCategoryMap() already parses it.
+    optionsSource?: 'productCategories';
 }
 
 interface TypeConfig {
@@ -62,6 +70,17 @@ const TYPE_CONFIGS: TypeConfig[] = [
     { type: 'PRODUCT_GROUP', label: 'Product Group', section: 'Product Descriptors' },
     { type: 'PRODUCT_SUBGROUP', label: 'Product Subgroup', section: 'Product Descriptors', parentType: 'PRODUCT_GROUP' },
     { type: 'UNIT', label: 'Unit', section: 'Product Descriptors' },
+    { type: 'PRODUCT_HSN', label: 'HSN Code', section: 'Product Descriptors', metaFields: [
+        { key: 'gstRate', label: 'GST Rate', type: 'number' },
+    ] },
+    // Maps a named sales-floor counter (e.g. "Counter 1") to the product types sold there (e.g.
+    // Shirt, Pant), for shops that organize the floor by product line rather than by billing till.
+    // Read by the Sales Counter-Wise Sales report (GET /api/reports/shop-sales?dim=salesCounter):
+    // when at least one entry exists it buckets revenue by this mapping instead of the raw
+    // salesman/counter code recorded per bill line; with no entries it falls back to that code.
+    { type: 'SALES_COUNTER', label: 'Sales Counter', section: 'Sales Floor', metaFields: [
+        { key: 'categories', label: 'Product Categories', type: 'multiselect', optionsSource: 'productCategories' },
+    ] },
 ];
 
 const SECTIONS = Array.from(new Set(TYPE_CONFIGS.map((c) => c.section)));
@@ -74,9 +93,128 @@ interface FormState {
 }
 const EMPTY_FORM: FormState = { name: '', description: '', parentId: '', metaValues: {} };
 
+interface MultiSelectFieldProps {
+    options: string[];
+    value: string; // comma-separated, e.g. "Shirt, Pant"
+    onChange: (value: string) => void;
+    loading?: boolean;
+    placeholder?: string;
+}
+
+// Search-and-check dropdown for a metaField of type 'multiselect'. Kept generic (options/value/
+// onChange as plain strings) so it can back any future comma-separated multi-value metaField, not
+// just Sales Counter's Product Categories. Mirrors the picker pattern already used in
+// ProductWiseSalesReport.tsx (search box, Select All / Clear, scrollable checkbox list, Done footer).
+const MultiSelectField: React.FC<MultiSelectFieldProps> = ({ options, value, onChange, loading, placeholder }) => {
+    const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState('');
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const selected = useMemo(() => value.split(',').map((s) => s.trim()).filter(Boolean), [value]);
+    const visible = useMemo(
+        () => options.filter((o) => o.toLowerCase().includes(search.toLowerCase())),
+        [options, search]
+    );
+
+    useEffect(() => {
+        if (!open) return;
+        const handleClick = (e: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
+        };
+        document.addEventListener('mousedown', handleClick);
+        return () => document.removeEventListener('mousedown', handleClick);
+    }, [open]);
+
+    const toggle = (name: string) => {
+        const set = new Set(selected);
+        if (set.has(name)) set.delete(name); else set.add(name);
+        onChange(Array.from(set).join(', '));
+    };
+
+    const label = selected.length === 0
+        ? (placeholder || 'Select…')
+        : selected.length <= 2
+            ? selected.join(', ')
+            : `${selected.length} selected`;
+
+    return (
+        <div className="relative" ref={containerRef}>
+            <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                className="w-full mt-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm flex items-center justify-between gap-2"
+            >
+                <span className={`truncate text-left ${selected.length === 0 ? 'text-neutral-400' : ''}`}>{loading ? 'Loading…' : label}</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-neutral-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+            </button>
+
+            {open && (
+                <div className="absolute left-0 right-0 top-full mt-1 z-20 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-2xl p-3 space-y-2">
+                    <div className="relative">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400" />
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Search categories..."
+                            autoFocus
+                            className="w-full pl-8 pr-2 py-1.5 text-xs bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg outline-none focus:ring-2 focus:ring-primary"
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                        <span>{selected.length} selected</span>
+                        <div className="flex items-center gap-3">
+                            <button type="button" onClick={() => onChange(visible.join(', '))} className="text-primary hover:underline">Select All</button>
+                            <button type="button" onClick={() => onChange('')} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:underline">Clear</button>
+                        </div>
+                    </div>
+
+                    <div className="max-h-48 overflow-y-auto space-y-0.5 -mx-1 px-1">
+                        {options.length === 0 && !loading && (
+                            <p className="text-xs text-neutral-400 text-center py-3">No categories found for this business sector</p>
+                        )}
+                        {options.length > 0 && visible.length === 0 && (
+                            <p className="text-xs text-neutral-400 text-center py-3">No categories match &ldquo;{search}&rdquo;</p>
+                        )}
+                        {visible.map((name) => {
+                            const checked = selected.includes(name);
+                            return (
+                                <label
+                                    key={name}
+                                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800/50 cursor-pointer"
+                                >
+                                    <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${checked ? 'bg-primary border-primary' : 'border-neutral-300 dark:border-neutral-600'}`}>
+                                        {checked && <Check className="w-3 h-3 text-white" />}
+                                    </span>
+                                    <input type="checkbox" checked={checked} onChange={() => toggle(name)} className="sr-only" />
+                                    <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200 truncate">{name}</span>
+                                </label>
+                            );
+                        })}
+                    </div>
+
+                    <div className="flex justify-end pt-1 border-t border-neutral-100 dark:border-neutral-700">
+                        <button
+                            type="button"
+                            onClick={() => setOpen(false)}
+                            className="px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest bg-primary text-white hover:bg-primary/90 transition-all"
+                        >
+                            Done
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const MasterDataManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { entriesByType, isLoading } = useSelector((state: RootState) => state.masterData);
+    const { tenants } = useSelector((state: RootState) => state.tenant);
+    const { user } = useSelector((state: RootState) => state.auth);
+    const businessType = tenants.find((t) => t.id === user?.tenantId)?.businessType;
 
     const [activeType, setActiveType] = useState<TypeConfig>(TYPE_CONFIGS[0]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -84,6 +222,39 @@ const MasterDataManager: React.FC = () => {
     const [editingEntry, setEditingEntry] = useState<MasterEntry | null>(null);
     const [form, setForm] = useState<FormState>(EMPTY_FORM);
     const [saving, setSaving] = useState(false);
+
+    // Options for any 'productCategories'-sourced multiselect metaField (currently just Sales
+    // Counter's "Product Categories"), fetched lazily the first time such a field is on screen --
+    // same GET /api/product-categories?sectorName=<sector> that Settings > General's "Mapped
+    // Product Categories" list uses, so the picker offers exactly this shop's category names.
+    const [productCategoryOptions, setProductCategoryOptions] = useState<string[]>([]);
+    const [loadingCategoryOptions, setLoadingCategoryOptions] = useState(false);
+    const [categoryOptionsFetched, setCategoryOptionsFetched] = useState(false);
+    const needsProductCategories = (activeType.metaFields || []).some(
+        (f) => f.type === 'multiselect' && f.optionsSource === 'productCategories'
+    );
+
+    useEffect(() => {
+        if (!needsProductCategories || !businessType || categoryOptionsFetched) return;
+        let cancelled = false;
+        setLoadingCategoryOptions(true);
+        api.get('/api/product-categories', { params: { sectorName: businessType } })
+            .then((res) => {
+                if (cancelled) return;
+                const rows: Array<{ name: string }> = res.data?.data || [];
+                setProductCategoryOptions(rows.map((r) => r.name).filter(Boolean));
+            })
+            .catch(() => {
+                if (!cancelled) setProductCategoryOptions([]);
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setLoadingCategoryOptions(false);
+                    setCategoryOptionsFetched(true);
+                }
+            });
+        return () => { cancelled = true; };
+    }, [needsProductCategories, businessType, categoryOptionsFetched]);
 
     const entries = useMemo(() => entriesByType[activeType.type] || [], [entriesByType, activeType.type]);
     const parentEntries = useMemo(
@@ -236,7 +407,7 @@ const MasterDataManager: React.FC = () => {
                                         {activeType.parentType && <td className="px-6 py-3 text-neutral-500">{parentName(entry.parentId)}</td>}
                                         {(activeType.metaFields || []).map((f) => (
                                             <td key={f.key} className={`px-6 py-3 ${f.type === 'number' ? 'text-right font-mono' : 'text-neutral-500'}`}>
-                                                {entry.meta?.[f.key] || (f.type === 'number' ? 0 : '—')}{f.type === 'number' && f.key === 'percentage' ? '%' : ''}
+                                                {entry.meta?.[f.key] || (f.type === 'number' ? 0 : '—')}{f.type === 'number' && (f.key === 'percentage' || f.key === 'gstRate') ? '%' : ''}
                                             </td>
                                         ))}
                                         <td className="px-6 py-3 text-right">
@@ -298,12 +469,22 @@ const MasterDataManager: React.FC = () => {
                             {(activeType.metaFields || []).map((f) => (
                                 <div key={f.key}>
                                     <label className="text-xs font-bold text-neutral-500 uppercase">{f.label}</label>
-                                    <input
-                                        type={f.type === 'number' ? 'number' : 'text'}
-                                        value={form.metaValues[f.key] ?? ''}
-                                        onChange={(e) => setForm({ ...form, metaValues: { ...form.metaValues, [f.key]: e.target.value } })}
-                                        className="w-full mt-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm"
-                                    />
+                                    {f.type === 'multiselect' ? (
+                                        <MultiSelectField
+                                            options={f.optionsSource === 'productCategories' ? productCategoryOptions : []}
+                                            value={form.metaValues[f.key] ?? ''}
+                                            onChange={(v) => setForm({ ...form, metaValues: { ...form.metaValues, [f.key]: v } })}
+                                            loading={f.optionsSource === 'productCategories' && loadingCategoryOptions}
+                                            placeholder="Select product categories…"
+                                        />
+                                    ) : (
+                                        <input
+                                            type={f.type === 'number' ? 'number' : 'text'}
+                                            value={form.metaValues[f.key] ?? ''}
+                                            onChange={(e) => setForm({ ...form, metaValues: { ...form.metaValues, [f.key]: e.target.value } })}
+                                            className="w-full mt-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm"
+                                        />
+                                    )}
                                 </div>
                             ))}
                         </div>

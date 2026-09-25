@@ -26,8 +26,6 @@ import {
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 const PurchaseRegister: React.FC = () => {
     const navigate = useNavigate();
@@ -218,7 +216,9 @@ const PurchaseRegister: React.FC = () => {
         navigate(`/purchase/orders/${order._id || (order as any).id}`);
     };
 
-    const handleExportPDF = () => {
+    const handleExportPDF = async () => {
+        const { jsPDF } = await import('jspdf');
+        const { default: autoTable } = await import('jspdf-autotable');
         const doc = new jsPDF();
         doc.text("Purchase Register", 14, 15);
         const tableData = displayOrders.map(o => [

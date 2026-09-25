@@ -69,9 +69,9 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'SALES_RETURN': return <LazyModules.SalesReturn />;
                     case 'PAYMENT_IN': return <LazyModules.PaymentInCreator />;
                     case 'PAYMENT_IN_LIST': return <LazyModules.PaymentInList />;
-                    case 'CHALLAN_LIST': return <LazyModules.SalesModulePlaceholder />;
-                    case 'INVOICE_REGISTER': return <LazyModules.SalesModulePlaceholder />;
-                    case 'ORDER_REGISTER': return <LazyModules.SalesModulePlaceholder />;
+                    case 'CHALLAN_LIST': return <LazyModules.DeliveryChallanRegister />;
+                    case 'INVOICE_REGISTER': return <LazyModules.SalesInvoiceRegister />;
+                    case 'ORDER_REGISTER': return <LazyModules.SalesOrderRegister />;
                     case 'RETURNED_ITEMS': return <LazyModules.ReturnedItemsManager />;
                     case 'CUSTOMER_CREDITS': return <LazyModules.CustomerCredits />;
                     case 'OUTSTANDING_DUES': return <LazyModules.OutstandingDues />;
@@ -212,15 +212,20 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
 
                     // Settings
                     case 'SETTINGS': return <LazyModules.Settings />;
-                    case 'BUSINESS_PROFILE': return <Navigate to="/?tab=GENERAL" replace />;
-                    case 'TAX_CONFIGURATION': return <Navigate to="/?tab=FINANCE" replace />;
-                    case 'INVOICE_SETTINGS': return <Navigate to="/?tab=MIS" replace />;
-                    case 'USERS_ROLES': return <Navigate to="/?tab=SECURITY" replace />;
-                    case 'BRANCH_SETTINGS': return <Navigate to="/?tab=BRANCHES" replace />;
-                    case 'FINANCIAL_YEAR': return <Navigate to="/?tab=FINANCE" replace />;
-                    case 'INTEGRATIONS': return <Navigate to="/?tab=INTEGRATIONS" replace />;
+                    // Settings sub-pages live at /settings/:tab (Settings.tsx reads useParams().tab).
+                    // These used to go to "/?tab=GENERAL" etc., which set activeTab to an unknown key.
+                    case 'BUSINESS_PROFILE': return <Navigate to="/settings/general" replace />;
+                    case 'TAX_CONFIGURATION': return <Navigate to="/settings/finance" replace />;
+                    case 'INVOICE_SETTINGS': return <Navigate to="/settings/mis" replace />;
+                    case 'USERS_ROLES': return <Navigate to="/settings/security" replace />;
+                    case 'BRANCH_SETTINGS': return <Navigate to="/settings/branches" replace />;
+                    case 'FINANCIAL_YEAR': return <Navigate to="/settings/finance" replace />;
+                    case 'INTEGRATIONS': return <Navigate to="/settings/integrations" replace />;
+                    // System › Sync (/settings/sync) and Restore had no case and fell through to the Dashboard.
+                    case 'SYNC_SHARE':
+                    case 'RESTORE':
                     case 'BACKUP_RESTORE': return <LazyModules.Sync />;
-                    case 'THEMES_BRANDING': return <Navigate to="/?tab=BRANDING" replace />;
+                    case 'THEMES_BRANDING': return <Navigate to="/settings/branding" replace />;
 
                     // HR
                     case 'LABOR': return <LazyModules.LaborManager />;
@@ -229,8 +234,10 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                     case 'STOREFRONT': return <LazyModules.Storefront />;
 
                     // Architecture & Admin
+                    case 'TENANT_ARCHITECT':
                     case 'ARCHITECTURE': return <LazyModules.Architecture />;
                     case 'TENANT_MANAGEMENT': return <LazyModules.TenantManagement />;
+                    case 'SUPER_ADMIN_CONSOLE':
                     case 'SUPER_ADMIN': return <LazyModules.SuperAdminGrowthConsole />;
 
                     // Grow Platform

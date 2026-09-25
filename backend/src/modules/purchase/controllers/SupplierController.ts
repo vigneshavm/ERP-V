@@ -4,6 +4,9 @@ import Supplier from '../models/Supplier.js';
 import Purchase from '../models/Purchase.js';
 import PurchaseReturn from '../models/PurchaseReturn.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { isSqlItemSource } from '../../../config/itemDataSource.js';
+import { sqlSupplierList } from '../../../integrations/textilesoft/sqlSuppliers.js';
+import { warn } from '../../../config/logger.js';
 // Removed static imports for Bill, PaymentOut, DebitNote to use dynamic imports in getSupplierLedger
 
 export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Response) => {
@@ -216,6 +219,17 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
             };
         });
 
+        // SQL mode: add suppliers seen in the shop's own purchase entries (an ERP supplier with the same name wins).
+        if (isSqlItemSource() && !supplierId && !branchId) {
+            try {
+                const known = new Set(enrichedStats.map((x: any) => String(x.businessName || '').trim().toLowerCase()));
+                const shop = (await sqlSupplierList()).filter((x) => !known.has(String(x.businessName).trim().toLowerCase()));
+                res.status(200).json({ success: true, data: [...enrichedStats, ...shop] });
+                return;
+            } catch (e) {
+                warn(`[sql-suppliers] shop suppliers unavailable, showing ERP suppliers only - ${(e as Error).message}`);
+            }
+        }
         res.status(200).json({ success: true, data: enrichedStats });
 
     } catch (error: any) {

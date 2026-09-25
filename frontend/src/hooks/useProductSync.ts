@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
-// import { supabase } from '../lib/supabase'; // Removed
 import { setProducts, setCategories, setHydrating } from '../redux/slices/inventorySlice';
 import { Product } from "../types/product";
 import { SyncManager } from "../services/SyncManager";

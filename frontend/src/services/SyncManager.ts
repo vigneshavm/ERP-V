@@ -108,7 +108,7 @@ export class SyncManager {
                 try {
                     const { recordId, operation, data } = item;
 
-                    // Use API instead of Supabase
+                    // Push via backend API
                     // Assuming generic sync endpoint or mapped endpoints
                     const endpoint = '/finance/sync'; // Placeholder
                     await api.post(endpoint, {

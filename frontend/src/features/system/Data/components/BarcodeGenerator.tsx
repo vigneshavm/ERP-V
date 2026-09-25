@@ -2,7 +2,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import JsBarcode from 'jsbarcode';
 import { QRCodeCanvas } from 'qrcode.react';
-import jsPDF from 'jspdf';
 import PageHeader from "@/components/shared/Layout/PageHeader";
 import { getAllItems } from "@/redux/slices/inventorySlice";
 import { Product } from "@/types/product";
@@ -247,13 +246,14 @@ const BarcodeGenerator = () => {
         return nameMatch || skuMatch;
     });
 
-    const handlePrint = () => {
+    const handlePrint = async () => {
         if (!generated && !bulkGenerated) {
             setError('Please generate a barcode first');
             return;
         }
 
         try {
+            const { jsPDF } = await import('jspdf');
             const pdf = new jsPDF({ unit: 'mm', format: formData.paperSize === 'Letter' ? 'letter' : 'a4' });
 
             const getLabelSpec = () => {
@@ -359,13 +359,14 @@ const BarcodeGenerator = () => {
         }
     };
 
-    const handleDownloadPDF = () => {
+    const handleDownloadPDF = async () => {
         if (!generated && !bulkGenerated) {
             setError('Please generate a barcode first');
             return;
         }
 
         try {
+            const { jsPDF } = await import('jspdf');
             const pdf = new jsPDF({ unit: 'mm', format: formData.paperSize === 'Letter' ? 'letter' : 'a4' });
 
             const getLabelSpec = () => {

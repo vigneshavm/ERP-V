@@ -1,6 +1,5 @@
 ﻿import React, { useRef, useState } from 'react';
 import { X, Printer, Download } from 'lucide-react';
-import { jsPDF } from 'jspdf';
 import { toast } from 'react-toastify';
 import { PRINTER_PROFILES, PrinterBrand, generateBatchCommands, printFileExtension } from '@/utils/labelPrinterFormats';
 
@@ -46,7 +45,8 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
         if (onPrintComplete) onPrintComplete();
     };
 
-    const handleDownloadPDF = () => {
+    const handleDownloadPDF = async () => {
+        const { jsPDF } = await import('jspdf');
         const doc = new jsPDF();
         doc.setFontSize(16);
         doc.text("Product Labels", 10, 10);

@@ -1,6 +1,5 @@
 import { AppDispatch, RootState } from "../store";
 import { Customer } from "../../types/sales";
-// import { supabase } from '../../lib/supabase'; // Removed
 import { setCustomer, addCustomer } from '../slices/posSlice';
 import api from "../../services/api.js";
 
@@ -80,7 +79,7 @@ export const lookupOrCreateCustomer = (phone: string, name?: string) => async (d
         console.error('Customer lookup/creation failed:', err);
     }
 
-    // Fallback: Create local-only temp customer if Supabase fails or is disabled
+    // Fallback: Create local-only temp customer if the API lookup/creation fails
     const tempCustomer: Customer = {
         id: `temp-${Date.now()}`,
         name: name || 'Walk-in Customer',

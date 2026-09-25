@@ -1,0 +1,91 @@
+{
+  "_comment": "Textilesoft SSS -> ERP items. One ERP item per barcode (purchase lot) that still has stock. Stock = purchased qty (stockdetails) - sold qty (salsntry, cancelled bills status=1 excluded) - purchase returns (purretrun). dbo.superbill1 is deliberately NOT subtracted: it mostly repeats bills already in salsntry (subtracting it drives ~3,000 lots negative vs ~110 without it). Run `npm run preview:textilesoft` after any change.",
+  "source": {
+    "table": "dbo.stockdetails"
+  },
+  "columns": {
+    "name": "pname",
+    "barcode": "barcode",
+    "hsnCode": "hsncode",
+    "gstRate": "gst_per",
+    "costPrice": "prate",
+    "sellingPrice": "mrp",
+    "brand": "brand",
+    "size": "size",
+    "color": "color",
+    "design": "design",
+    "pattern": "patrn", "shelfCode": "rackno"
+  },
+  "lookups": [
+    {
+      "table": "dbo.newproduct",
+      "key": "code",
+      "sourceKey": "code",
+      "columns": {
+        "category": "group_name",
+        "unit": "unit_de"
+      }
+    }
+  ],
+  "stock": {
+    "table": "dbo.stockdetails",
+    "keyColumn": "barcode",
+    "sourceKeyColumn": "barcode",
+    "qtyColumn": "qty",
+    "movements": [
+      {
+        "table": "dbo.salsntry",
+        "keyColumn": "barcode",
+        "qtyColumn": "qty",
+        "sign": -1,
+        "filters": [
+          {
+            "column": "status",
+            "op": "<>",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "table": "dbo.purretrun",
+        "keyColumn": "barcode",
+        "qtyColumn": "qty",
+        "sign": -1
+      }
+    ],
+    "inStockOnly": true
+  },
+  "defaults": {
+    "unit": "pcs",
+    "lowStockLimit": 2,
+    "uniqueNames": true
+  },
+  "dashboard": {
+    "sales": {
+      "table": "dbo.sales2",
+      "dateColumn": "date",
+      "amountColumn": "tot_netamnt",
+      "filters": [
+        {
+          "column": "status",
+          "op": "<>",
+          "value": "1"
+        }
+      ],
+      "payments": {
+        "Cash": "s_recevied_cashamt",
+        "Card": "s_card_amt",
+        "Credit": "s_credit_amt",
+        "UPI": "s_googlepay"
+      }
+    },
+    "purchases": {
+      "table": "dbo.purgrnentry",
+      "dateColumn": "entry_date",
+      "amountColumn": "totnetamot",
+      "supplierColumn": "suplier_name",
+      "referenceColumn": "grn_no",
+      "orderColumn": "ID"
+    }
+  }
+}

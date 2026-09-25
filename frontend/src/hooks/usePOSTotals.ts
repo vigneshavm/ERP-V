@@ -15,8 +15,14 @@ export const usePOSTotals = ({ cart, activeSession, tenants, userId }: UsePOSTot
         let tax = 0;
 
         cart.forEach(item => {
-            // ?? not || — a genuinely 0%-GST item must stay 0%, not fall back to 18%
-            const gstRate = (item.gstPercentage ?? 18) / 100;
+            // gstRate (the rate actually applied to this line -- normally mirrors the product's
+            // stored GST rate, but a line can override it, e.g. an exemption) takes precedence
+            // over the older gstPercentage field, same precedence receiptGenerator.ts already
+            // uses for the printed receipt. ?? not || throughout — a genuinely 0%-GST item must
+            // stay 0%, not fall back to a default. Default is 5%, matching receiptGenerator.ts
+            // and posInvoiceMapper.ts so an unconfigured line is charged, printed, and recorded
+            // at the same rate.
+            const gstRate = (item.gstRate ?? item.gstPercentage ?? 5) / 100;
             const computedQty = item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty;
             const lineTotal = item.price * computedQty;
 

@@ -106,3 +106,12 @@ bizzai-admin/
 bower_components/
 .lock-wscript
 
+
+# Playwright E2E
+frontend/playwright-report/
+frontend/test-results/
+frontend/blob-report/
+
+
+# Textilesoft discovery output (schema dump of the shop DB)
+backend/textilesoft-discovery/

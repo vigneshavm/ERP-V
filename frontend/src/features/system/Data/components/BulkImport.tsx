@@ -1,5 +1,4 @@
 ﻿import { useState, ChangeEvent } from 'react';
-import * as XLSX from 'xlsx';
 import api from "@/services/api";
 import { toast } from 'react-toastify';
 
@@ -102,6 +101,7 @@ const BulkImport = () => {
         try {
             setSelectedFile(file);
             const fileData = await file.arrayBuffer();
+            const XLSX = await import('xlsx');
             const workbook = XLSX.read(fileData, { type: 'array' });
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
             const data: any[] = XLSX.utils.sheet_to_json(worksheet);
@@ -209,7 +209,8 @@ const BulkImport = () => {
     const errorRowsCount = mappingData.filter(row => row.status === 'error').length;
     const importableRowsCount = validRowsCount + warningRowsCount;
 
-    const downloadSampleFile = () => {
+    const downloadSampleFile = async () => {
+        const XLSX = await import('xlsx');
         const sampleData = [
             {
                 'Name': 'Rice Bag 25kg',

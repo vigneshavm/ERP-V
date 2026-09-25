@@ -33,7 +33,9 @@ const EMPTY_PRODUCT: Partial<Product> = {
     pattern: '',
     modelNo: '',
     fashionName: '',
-    subgroupId: ''
+    subgroupId: '',
+    hsnCode: '',
+    gstRate: 0
 };
 
 const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, product, isLoading, categories }) => {
@@ -46,6 +48,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
     const fashionNameOptions = useMemo(() => entriesByType.PRODUCT_FASHION_NAME || [], [entriesByType.PRODUCT_FASHION_NAME]);
     const subgroups = useMemo(() => entriesByType.PRODUCT_SUBGROUP || [], [entriesByType.PRODUCT_SUBGROUP]);
     const warehouses = useMemo(() => entriesByType.WAREHOUSE || [], [entriesByType.WAREHOUSE]);
+    const hsnCodes = useMemo(() => entriesByType.PRODUCT_HSN || [], [entriesByType.PRODUCT_HSN]);
 
     const [isNewCategory, setIsNewCategory] = useState(false);
     const [formData, setFormData] = useState<Partial<Product>>(EMPTY_PRODUCT);
@@ -55,7 +58,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
         // Pick-list data for the textile descriptor fields below -- seeded with sensible
         // defaults server-side (UNIT) or starts empty until the admin adds entries via
         // Settings -> Master Data (the design/pattern/model no/fashion name/subgroup lists).
-        ['UNIT', 'PRODUCT_DESIGN', 'PRODUCT_PATTERN', 'PRODUCT_MODEL_NO', 'PRODUCT_FASHION_NAME', 'PRODUCT_SUBGROUP', 'WAREHOUSE'].forEach((type) => {
+        ['UNIT', 'PRODUCT_DESIGN', 'PRODUCT_PATTERN', 'PRODUCT_MODEL_NO', 'PRODUCT_FASHION_NAME', 'PRODUCT_SUBGROUP', 'WAREHOUSE', 'PRODUCT_HSN'].forEach((type) => {
             dispatch(fetchMasterEntries({ type: type as any }));
         });
     }, [isOpen, dispatch]);
@@ -99,6 +102,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
             ...prev,
             [name]: type === 'number' ? parseFloat(value) || 0 : value
         }));
+    };
+
+    // Selecting an HSN code auto-fills GST Rate from that code's meta.gstRate (Settings -> Master
+    // Data -> HSN Code), same behavior the backend's masterTypes.ts seed comment describes. GST
+    // Rate stays a normal field afterward -- picking a different HSN code re-fills it, but the
+    // user can still override it by hand (e.g. a code with no gstRate set, or an exception item).
+    const handleHsnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const code = e.target.value;
+        const entry = hsnCodes.find((h) => h.name === code);
+        setFormData(prev => ({
+            ...prev,
+            hsnCode: code,
+            gstRate: entry?.meta?.gstRate ?? prev.gstRate,
+        }));
+    };
+
+    const handleGstRateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setFormData(prev => ({ ...prev, gstRate: parseFloat(e.target.value) || 0 }));
     };
 
     const NEW_CATEGORY_SENTINEL = '__new_category__';
@@ -324,6 +345,34 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                         className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                         placeholder="Zeiss"
                                     />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1.5 block px-1">HSN Code</label>
+                                    <select
+                                        name="hsnCode"
+                                        value={formData.hsnCode || ''}
+                                        onChange={handleHsnChange}
+                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+                                    >
+                                        <option value="">None</option>
+                                        {hsnCodes.map((h) => <option key={h._id} value={h.name}>{h.name}{h.description ? ` — ${h.description}` : ''}</option>)}
+                                    </select>
+                                    {hsnCodes.length === 0 && (
+                                        <p className="text-[10px] text-neutral-400 mt-1 px-1">No HSN codes yet — add one in Settings → Master Data.</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1.5 block px-1">GST Rate</label>
+                                    <select
+                                        name="gstRate"
+                                        value={formData.gstRate ?? 0}
+                                        onChange={handleGstRateChange}
+                                        className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+                                    >
+                                        {[0, 5, 12, 18, 28].map((rate) => <option key={rate} value={rate}>{rate}%</option>)}
+                                    </select>
                                 </div>
                             </div>
                             <div>

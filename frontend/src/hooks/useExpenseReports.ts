@@ -31,7 +31,7 @@ export const useExpenseReports = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            let url = '/expense-reports';
+            let url = '/api/expense-reports';
             if (startDate || endDate) {
                 const params = new URLSearchParams();
                 if (startDate) params.append('startDate', startDate);

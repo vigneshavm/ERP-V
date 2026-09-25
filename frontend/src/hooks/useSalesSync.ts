@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
-// import { supabase } from '../lib/supabase'; // Removed
 import { setCustomersList, setSalesHistory } from "../redux/slices/posSlice";
 import { Sale, Customer } from "../types/sales";
 import { SyncManager } from "../services/SyncManager";

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, lazy, Suspense } from 'react';
 import { Shield, Store, LogOut, ArrowRight } from 'lucide-react';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,12 +7,16 @@ import { setUser, getProfile } from './redux/slices/authSlice';
 import { setActiveTab } from './redux/slices/uiSlice';
 import { APP_CONFIG } from './config';
 
-import AdminLogin from './components/AdminLogin';
-import ResetPassword from './features/auth/pages/ResetPassword';
-import ForgotPassword from './features/auth/pages/ForgotPassword';
-import TenantManager from './features/tenants/TenantManager';
-import TenantSignUp from './features/tenants/TenantSignUp';
-import { POSCustomerDisplay } from './features/pos/POSCustomerDisplay';
+// Rarely-used entry screens are split out of the initial bundle and loaded on demand.
+const AdminLogin = lazy(() => import('./components/AdminLogin'));
+import { clearAdminSession, rememberAdminSession } from './services/adminTenants';
+const ResetPassword = lazy(() => import('./features/auth/pages/ResetPassword'));
+const ForgotPassword = lazy(() => import('./features/auth/pages/ForgotPassword'));
+const TenantManager = lazy(() => import('./features/tenants/TenantManager'));
+const TenantSignUp = lazy(() => import('./features/tenants/TenantSignUp'));
+const POSCustomerDisplay = lazy(() =>
+  import('./features/pos/POSCustomerDisplay').then(m => ({ default: m.POSCustomerDisplay }))
+);
 import { ThemeToggle } from './components/core/Display/ThemeToggle';
 
 // Config
@@ -124,7 +128,7 @@ const AdminView = ({ isAdminAuthenticated, setIsAdminAuthenticated, setViewMode,
   if (!isAdminAuthenticated) {
     return (
       <AdminLogin
-        onLogin={() => setIsAdminAuthenticated(true)}
+        onLogin={(session) => { rememberAdminSession(session); setIsAdminAuthenticated(true); }}
         onCancel={() => setViewMode('LANDING')}
       />
     );
@@ -147,6 +151,7 @@ const AdminView = ({ isAdminAuthenticated, setIsAdminAuthenticated, setViewMode,
               onClick={() => {
                 setViewMode('LANDING');
                 setIsAdminAuthenticated(false);
+                clearAdminSession();
               }}
               className="px-4 py-2 bg-white/5 hover:bg-white/10 text-secondary border border-white/10 rounded-lg flex items-center gap-2 text-sm font-bold transition-all"
             >
@@ -349,12 +354,17 @@ const App: React.FC = () => {
 
   // --- Main Render ---
   if (isCustomerDisplayMode) {
-    return <POSCustomerDisplay />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <POSCustomerDisplay />
+      </Suspense>
+    );
   }
 
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
+      <Suspense fallback={<LoadingScreen />}>
       <Routes>
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -389,6 +399,7 @@ const App: React.FC = () => {
                 />
         } />
       </Routes>
+      </Suspense>
     </>
   );
 };
