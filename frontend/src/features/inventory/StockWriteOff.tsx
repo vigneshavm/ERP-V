@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { AlertTriangle, Search, Package, Loader2, CheckCircle2 } from 'lucide-react';
+import { Search, Package, Loader2, CheckCircle2 } from 'lucide-react';
 import api from '@/services/api';
+import PageHeader from '@/components/shared/Layout/PageHeader';
 
 interface ItemOption {
     _id: string;
@@ -97,13 +98,7 @@ const StockWriteOff: React.FC = () => {
 
     return (
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
-            <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-sm bg-rose-600 flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-white" /></div>
-                <div>
-                    <h1 className="text-2xl font-black text-slate-900 dark:text-white">Damage / Loss Write-Off</h1>
-                    <p className="text-xs text-slate-500">Record stock lost to damage or unexplained shrinkage</p>
-                </div>
-            </div>
+            <PageHeader title="Damage / Loss Write-Off" description="Record stock lost to damage or unexplained shrinkage" />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">

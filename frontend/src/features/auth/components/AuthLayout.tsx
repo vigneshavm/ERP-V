@@ -29,9 +29,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, seco
                 <div className="z-10 mt-10">
                     <div className="flex items-center gap-4 mb-10">
                         <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 rotate-3">
-                            <span className="font-display font-black text-2xl text-white">E</span>
+                            <span className="font-display font-black text-2xl text-[rgb(var(--color-primary-foreground))]">S</span>
                         </div>
-                        <span className="text-2xl font-display font-bold text-main tracking-tight uppercase">ERP Matrix</span>
+                        <span className="text-2xl font-display font-bold text-main tracking-tight">SmartERPAI</span>
                     </div>
 
                     <h1 className="text-5xl font-display font-black text-main leading-[1.1] mb-8 tracking-tighter">

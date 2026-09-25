@@ -10,6 +10,7 @@ import {
 import { setActiveTab } from "../../../redux/slices/uiSlice";
 import { getTable } from "../../../services/dataSource";
 import Layout from "../../../components/shared/Layout/index";
+import { getColorClasses } from "../../../utils/tailwindColorClasses";
 
 // Demo Data Interface
 interface PaymentRecord {
@@ -159,7 +160,7 @@ const PaymentInList: React.FC = () => {
                         ].map((stat, i) => (
                             <div key={i} className="glass-panel border border-default rounded-sm p-6 group hover:border-primary/30 transition-all">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className={`p-3 bg-${stat.color}/10 text-${stat.color} rounded-sm`}>
+                                    <div className={`p-3 ${getColorClasses(stat.color).surface} ${getColorClasses(stat.color).text} rounded-sm`}>
                                         <stat.icon className="w-5 h-5" />
                                     </div>
                                     <span className={`text-[10px] font-black ${stat.trend.includes('+') ? 'text-success bg-success/10' : 'text-primary bg-primary/10'} px-2 py-1 rounded-full`}>

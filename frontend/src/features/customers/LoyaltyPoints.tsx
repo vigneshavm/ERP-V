@@ -13,6 +13,7 @@ import {
     ArrowDownRight,
     Download
 } from 'lucide-react';
+import PageHeader from '../../components/shared/Layout/PageHeader';
 
 interface LoyaltyTransaction {
     id: string;
@@ -110,24 +111,18 @@ const LoyaltyPoints: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-                        <Gift className="w-6 h-6 text-primary" />
-                        Loyalty Points Program
-                    </h2>
-                    <p className="text-neutral-500 text-sm mt-1">Reward customers and build loyalty</p>
-                </div>
-                <div className="flex gap-2">
+            <PageHeader
+                title="Loyalty Points Program"
+                description="Reward customers and build loyalty"
+                actions={<div className="flex gap-2">
                     <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
                         <Download className="w-4 h-4" /> Export
                     </button>
                     <button className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2">
                         <Award className="w-4 h-4" /> Award Bonus Points
                     </button>
-                </div>
-            </div>
+                </div>}
+            />
 
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

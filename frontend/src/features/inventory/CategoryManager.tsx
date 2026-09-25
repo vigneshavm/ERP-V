@@ -426,7 +426,7 @@ const CategoryManager: React.FC = () => {
                                 ].map((col) => (
                                     <th
                                         key={col.id}
-                                        className={`px-6 py-4 cursor-pointer group hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors text-${col.align}`}
+                                        className={`px-6 py-4 cursor-pointer group hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'}`}
                                         onClick={() => handleSort(col.id as keyof Category)}
                                     >
                                         <div className={`flex items-center gap-1 ${col.align === 'right' ? 'justify-end' : col.align === 'center' ? 'justify-center' : 'justify-start'}`}>

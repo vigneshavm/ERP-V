@@ -7,6 +7,7 @@ import api from "../../services/api.js";
 
 import { Tenant } from "../../types/tenant/index";
 import { formatDate } from '../../utils/helpers';
+import PageHeader from '../../components/shared/Layout/PageHeader';
 
 const StaffManager: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
@@ -151,16 +152,14 @@ const StaffManager: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Staff Management</h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Manage users, roles, and terminal assignments.</p>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-slate-900 rounded-lg border border-blue-100 dark:border-slate-800">
+            <PageHeader
+                title="Staff Management"
+                description="Manage users, roles, and terminal assignments."
+                actions={<div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-slate-900 rounded-lg border border-blue-100 dark:border-slate-800">
                     <Users className="w-4 h-4 text-blue-600" />
                     <span className="text-xs font-bold text-blue-700">{tenantEmployees.length} Active Staff</span>
-                </div>
-            </div>
+                </div>}
+            />
 
             <div className="grid lg:grid-cols-3 gap-6">
                 {/* Form Section */}

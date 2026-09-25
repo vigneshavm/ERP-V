@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, Search, Download } from 'lucide-react';
+import { Search, Download } from 'lucide-react';
 import api from '@/services/api';
+import PageHeader from '@/components/shared/Layout/PageHeader';
 
 interface StockRow {
     _id: string;
@@ -76,18 +77,13 @@ const StockSummary: React.FC = () => {
 
     return (
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-sm bg-blue-600 flex items-center justify-center"><BarChart3 className="w-5 h-5 text-white" /></div>
-                    <div>
-                        <h1 className="text-2xl font-black text-slate-900 dark:text-white">Stock Summary</h1>
-                        <p className="text-xs text-slate-500">Current inventory position across all items</p>
-                    </div>
-                </div>
-                <button onClick={exportCsv} disabled={rows.length === 0} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all disabled:opacity-50">
+            <PageHeader
+                title="Stock Summary"
+                description="Current inventory position across all items"
+                actions={<button onClick={exportCsv} disabled={rows.length === 0} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all disabled:opacity-50">
                     <Download className="w-4 h-4" /> Export page
-                </button>
-            </div>
+                </button>}
+            />
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
@@ -116,7 +112,7 @@ const StockSummary: React.FC = () => {
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 dark:bg-slate-900/50">
                             <tr>{['SKU / Barcode', 'Item', 'Category', 'Unit', 'Stock', 'Cost', 'Value', 'Status'].map(h => (
-                                <th key={h} className="px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-400">{h}</th>
+                                <th key={h} className={`px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-400 ${['Stock', 'Cost', 'Value'].includes(h) ? 'text-right' : ''}`}>{h}</th>
                             ))}</tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -131,9 +127,9 @@ const StockSummary: React.FC = () => {
                                         <td className="px-4 py-3"><p className="text-sm font-bold text-slate-900 dark:text-white">{item.name}</p></td>
                                         <td className="px-4 py-3 text-xs text-slate-500">{item.category || '—'}</td>
                                         <td className="px-4 py-3 text-xs text-slate-500">{item.unit || '—'}</td>
-                                        <td className="px-4 py-3 text-sm font-black text-slate-900 dark:text-white">{qty}</td>
-                                        <td className="px-4 py-3 text-xs text-slate-500">₹{(item.costPrice || 0).toLocaleString('en-IN')}</td>
-                                        <td className="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300">₹{(qty * (item.costPrice || 0)).toLocaleString('en-IN')}</td>
+                                        <td className="px-4 py-3 text-right text-sm font-black text-slate-900 dark:text-white">{qty}</td>
+                                        <td className="px-4 py-3 text-right text-xs text-slate-500">₹{(item.costPrice || 0).toLocaleString('en-IN')}</td>
+                                        <td className="px-4 py-3 text-right text-sm font-bold text-slate-700 dark:text-slate-300">₹{(qty * (item.costPrice || 0)).toLocaleString('en-IN')}</td>
                                         <td className="px-4 py-3">
                                             <span className={`px-2 py-1 rounded-lg text-xs font-bold ${isLow ? 'text-red-600 bg-red-50 dark:bg-red-900/20' : 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20'}`}>
                                                 {isLow ? 'Low Stock' : 'OK'}

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from "../../../services/api";
 import Layout from "../../../components/shared/Layout/Layout";
+import { getColorClasses } from "../../../utils/tailwindColorClasses";
 import {
     RotateCcw,
     Plus,
@@ -160,7 +161,7 @@ const ReturnedItems = () => {
                         ].map((stat, i) => (
                             <div key={i} className="glass-panel border border-default rounded-sm p-6 group hover:border-danger/30 transition-all">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className={`p-3 bg-${stat.color}/10 text-${stat.color} rounded-sm`}>
+                                    <div className={`p-3 ${getColorClasses(stat.color).surface} ${getColorClasses(stat.color).text} rounded-sm`}>
                                         <stat.icon className="w-5 h-5" />
                                     </div>
                                     <span className={`text-[10px] font-black text-main bg-app px-2 py-1 rounded-full border border-default`}>

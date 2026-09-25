@@ -17,8 +17,8 @@ const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStat
                             <th className="pb-4 pl-4">Date</th>
                             <th className="pb-4">Cheque No</th>
                             <th className="pb-4">Details</th>
-                            <th className="pb-4">Amount</th>
-                            <th className="pb-4">Status</th>
+                            <th className="pb-4 text-right">Amount</th>
+                            <th className="pb-4 text-center">Status</th>
                             <th className="pb-4 pr-4 text-right">Action</th>
                         </tr>
                     </thead>
@@ -33,8 +33,8 @@ const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStat
                                         <span className="text-[10px] text-neutral-400 uppercase tracking-wider">{cheque.bankName}</span>
                                     </div>
                                 </td>
-                                <td className="py-4 font-black">₹{formatCurrency(cheque.amount)}</td>
-                                <td className="py-4">
+                                <td className="py-4 text-right font-black">₹{formatCurrency(cheque.amount)}</td>
+                                <td className="py-4 text-center">
                                     <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${cheque.status === 'CLEARED' ? 'bg-success/10 text-success' :
                                         cheque.status === 'BOUNCED' ? 'bg-error/10 text-error' :
                                             'bg-warning/10 text-warning'

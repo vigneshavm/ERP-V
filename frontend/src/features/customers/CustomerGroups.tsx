@@ -14,7 +14,6 @@ import {
     FolderPlus,
     Edit,
     Trash2,
-    Tag,
     Percent,
     ChevronDown,
     ChevronUp,
@@ -25,6 +24,7 @@ import {
     X,
     Loader2,
 } from 'lucide-react';
+import PageHeader from '../../components/shared/Layout/PageHeader';
 
 interface GroupFormState {
     name: string;
@@ -133,22 +133,16 @@ const CustomerGroups: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-                        <Tag className="w-6 h-6 text-primary" />
-                        Customer Groups
-                    </h2>
-                    <p className="text-neutral-500 text-sm mt-1">Organize customers into groups with custom pricing and terms</p>
-                </div>
-                <button
+            <PageHeader
+                title="Customer Groups"
+                description="Organize customers into groups with custom pricing and terms"
+                actions={<button
                     onClick={openCreateModal}
                     className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2"
                 >
                     <FolderPlus className="w-4 h-4" /> Create Group
-                </button>
-            </div>
+                </button>}
+            />
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

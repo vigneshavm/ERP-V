@@ -104,7 +104,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                         <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
                             {bills.map((bill: any) => (
                                 <tr key={bill._id} className="group hover:bg-slate-50/50 dark:hover:bg-neutral-800/50 transition-colors">
-                                    <td className="px-6 py-4">
+                                    <td className="table-cell-right">
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-primary dark:text-primary">{bill.bill_number}</span>
                                             <span className="text-[10px] text-neutral-500">{formatDate(bill.date || bill.bill_date)}</span>

@@ -58,8 +58,8 @@ const LandingPage = ({ setViewMode, setCurrentTenant, setIsLoggedIn }: {
     </div>
 
     <div className="max-w-4xl w-full text-center mb-16 relative z-10">
-      <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary/20 rotate-3 animate-fade-in">
-        <span className="font-display font-black text-4xl text-white">E</span>
+      <div className="mb-8 animate-fade-in">
+        <span className="font-display font-black text-4xl tracking-tight text-main">SmartERPAI</span>
       </div>
       <h1 className="text-5xl md:text-6xl font-display font-black text-main mb-6 tracking-tighter animate-slide-down">
         Next-Gen <span className="text-primary">ERP</span> Matrix
@@ -114,7 +114,7 @@ const LandingPage = ({ setViewMode, setCurrentTenant, setIsLoggedIn }: {
       </button>
     </div>
 
-    <p className="mt-20 text-xs text-secondary font-bold tracking-[0.2em] opacity-40 uppercase">© 2026 ERP Matrix Systems // Secure Access Point</p>
+    <p className="mt-20 text-xs text-secondary font-bold tracking-[0.2em] opacity-40 uppercase">© 2026 SmartERPAI // Secure Access Point</p>
   </div>
 );
 
@@ -139,9 +139,9 @@ const AdminView = ({ isAdminAuthenticated, setIsAdminAuthenticated, setViewMode,
       <header className="glass-panel border-b border-default text-main p-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-display font-black shadow-lg shadow-primary/20">A</div>
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-[rgb(var(--color-primary-foreground))] font-display font-black shadow-lg shadow-primary/20">S</div>
             <div>
-              <span className="font-display font-bold text-xl tracking-tight">System Core</span>
+              <span className="font-display font-bold text-xl tracking-tight">SmartERPAI</span>
               <div className="text-[10px] text-primary font-bold tracking-[0.2em] uppercase leading-none mt-0.5">Administrator Console</div>
             </div>
           </div>

@@ -68,7 +68,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
     };
 
     const getStatusBadge = (status: PurchaseOrderStatus) => {
-        const baseClass = "px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5";
+        const baseClass = "px-3 py-1 text-xs font-black uppercase tracking-widest rounded-full flex items-center gap-1.5";
         switch (status) {
             case 'APPROVED':
                 return <span className={`${baseClass} bg-cyan-50 text-cyan-600 dark:bg-cyan-900/20 dark:text-info`}><CheckCircle className="w-3 h-3" /> Approved</span>;
@@ -92,13 +92,13 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
     };
 
     return (
-        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+        <div className="ui-panel overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
             {/* Audit Control Bar */}
             <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 space-y-8">
                 <div className="flex flex-col xl:flex-row gap-8 items-start xl:items-center justify-between">
                     <div className="flex flex-col md:flex-row gap-6 w-full xl:w-auto">
                         <div className="relative flex-1 md:w-80">
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Node Search</label>
+                            <label className="ui-label mb-3 block">Node Search</label>
                             <div className="relative">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                                 <input
@@ -112,7 +112,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                         </div>
                         {selectedOrders.length > 0 && (
                             <div className="flex items-center gap-4 bg-primary/5 text-primary px-6 py-2.5 rounded-sm border border-primary/10 animate-in zoom-in-95 self-end md:self-auto">
-                                <span className="text-[10px] font-black uppercase tracking-widest">{selectedOrders.length} Nodes Active</span>
+                                <span className="text-xs font-black uppercase tracking-widest">{selectedOrders.length} Nodes Active</span>
                                 <div className="h-4 w-px bg-primary/20 mx-2" />
                                 <button className="p-1.5 hover:bg-primary/10 rounded-xl transition-all" title="Bulk Approve"><CheckCircle className="w-4 h-4" /></button>
                                 <button className="p-1.5 hover:bg-rose-100 text-rose-600 rounded-xl transition-all" title="Bulk Cancel"><Trash2 className="w-4 h-4" /></button>
@@ -134,7 +134,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                 {/* Advanced Filter Matrix */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-2">
                     <div>
-                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Operational Status</label>
+                        <label className="ui-label mb-3 block">Operational Status</label>
                         <select
                             value={statusFilter}
                             onChange={e => setStatusFilter(e.target.value)}
@@ -147,7 +147,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                         </select>
                     </div>
                     <div>
-                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
+                        <label className="ui-label mb-3 block">Institutional Vendor</label>
                         <select
                             value={vendorFilter}
                             onChange={e => setVendorFilter(e.target.value)}
@@ -158,20 +158,20 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                         </select>
                     </div>
                     <div className="md:col-span-2">
-                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Fiscal Range</label>
+                        <label className="ui-label mb-3 block">Fiscal Range</label>
                         <div className="flex items-center gap-3">
                             <input
                                 type="date"
                                 value={dateRange.from}
                                 onChange={e => setDateRange({ ...dateRange, from: e.target.value })}
-                                className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                             />
                             <span className="text-neutral-300 font-bold">→</span>
                             <input
                                 type="date"
                                 value={dateRange.to}
                                 onChange={e => setDateRange({ ...dateRange, to: e.target.value })}
-                                className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                             />
                         </div>
                     </div>
@@ -193,13 +193,13 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                     />
                                 </div>
                             </th>
-                            <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('po_date')}>
+                            <th className="px-8 py-5 ui-label cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('po_date')}>
                                 <div className="flex items-center gap-2">Fiscal Date <ArrowUpDown className="w-3 h-3" /></div>
                             </th>
-                            <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('po_number')}>
+                            <th className="px-8 py-5 ui-label cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('po_number')}>
                                 <div className="flex items-center gap-2">Node ID <ArrowUpDown className="w-3 h-3" /></div>
                             </th>
-                            <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('vendor_name')}>
+                            <th className="px-8 py-5 ui-label cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('vendor_name')}>
                                 <div className="flex items-center gap-2">Institutional Vendor <ArrowUpDown className="w-3 h-3" /></div>
                             </th>
                             <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Status</th>

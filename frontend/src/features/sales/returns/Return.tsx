@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 import { toast } from "react-toastify";
 import Layout from "../../../components/shared/Layout/Layout";
+import PageHeader from "../../../components/shared/Layout/PageHeader";
 import {
   RotateCcw,
   FileText,
@@ -350,16 +351,10 @@ const Return = () => {
   return (
     <Layout>
       <div className="space-y-6 animate-fade-in pb-10">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
-              <RotateCcw className="w-6 h-6 text-primary" />
-              Process Return
-            </h1>
-            <p className="text-sm text-secondary opacity-70 mt-1">Create a new customer return and issue credits</p>
-          </div>
-          <div className="flex gap-3">
+        <PageHeader
+          title="Process Return"
+          description="Create a new customer return and issue credits"
+          actions={<div className="flex gap-3">
             {formData.selectedInvoice && (
               <button
                 onClick={clearDraft}
@@ -375,8 +370,8 @@ const Return = () => {
             >
               <Save className="w-4 h-4" /> {loading ? "Processing..." : "Save Return"}
             </button>
-          </div>
-        </div>
+          </div>}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
@@ -494,16 +489,16 @@ const Return = () => {
                           <td className="px-4 py-3 text-main">
                             {item.productName}
                           </td>
-                          <td className="px-4 py-3 text-secondary">
+                          <td className="table-cell-right text-secondary">
                             {item.originalQty}
                           </td>
-                          <td className="px-4 py-3 text-orange-600 dark:text-orange-400 font-medium">
+                          <td className="table-cell-right text-orange-600 dark:text-orange-400 font-medium">
                             {item.alreadyReturned || 0}
                           </td>
-                          <td className="px-4 py-3 text-green-600 dark:text-green-400 font-medium">
+                          <td className="table-cell-right text-green-600 dark:text-green-400 font-medium">
                             {item.remainingQty}
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="table-cell-center">
                             <input
                               type="number"
                               value={item.returnedQty}
@@ -522,7 +517,7 @@ const Return = () => {
                               max={item.remainingQty}
                             />
                           </td>
-                          <td className="px-4 py-3 text-main">
+                          <td className="table-cell-right text-main">
                             ₹{item.rate.toFixed(2)}
                           </td>
                           <td className="px-4 py-3">

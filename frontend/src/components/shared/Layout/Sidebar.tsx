@@ -174,12 +174,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                         {logoUrl ? (
                             <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
                         ) : (
-                            <span className="font-bold text-white">{user?.name?.charAt(0) || currentTenant?.name?.charAt(0) || 'T'}</span>
+                            <span className="font-display font-black text-[rgb(var(--color-primary-foreground))]">S</span>
                         )}
                     </div>
                     {!desktopCollapsed && (
                         <div className="overflow-hidden">
-                            <span className="text-lg font-display font-bold tracking-tight block leading-none truncate text-main">{user?.name || 'User'}</span>
+                            <span className="text-lg font-display font-bold tracking-tight block leading-none truncate text-main">SmartERPAI</span>
                             <span className="text-[10px] text-secondary uppercase font-bold tracking-widest leading-relaxed">{role}</span>
                         </div>
                     )}

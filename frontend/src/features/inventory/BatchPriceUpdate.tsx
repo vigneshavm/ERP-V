@@ -97,7 +97,7 @@ const BatchPriceUpdate: React.FC = () => {
     };
 
     return (
-        <div className="p-6 max-w-4xl mx-auto">
+        <div className="p-6 w-full">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                     <Printer className="w-8 h-8 text-success" />

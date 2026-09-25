@@ -11,6 +11,7 @@ import { Save, Printer, FileText, User, Phone, X,
 } from 'lucide-react';
 import PageHeader from "../../components/shared/Layout/PageHeader.js";
 import { Supplier } from "../../redux/slices/supplierSlice.js";
+import { getColorClasses } from "../../utils/tailwindColorClasses";
 
 interface ReturnItem {
     name: string;
@@ -371,8 +372,8 @@ const PurchaseReturn: React.FC = () => {
                                                     onClick={() => setFormData({ ...formData, refundMethod: method.value, bankAccount: '' })}
                                                     className={`group p-4 border-2 rounded-sm transition-all text-center ${getMethodColorClasses(method.color, isSelected)}`}
                                                 >
-                                                    <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-colors ${isSelected ? `bg-${method.color}-100 dark:bg-${method.color}-900/30` : 'bg-slate-50 dark:bg-neutral-800'}`}>
-                                                        <IconComponent className={`w-6 h-6 transition-colors ${isSelected ? `text-${method.color}-600 dark:text-${method.color}-400` : 'text-slate-400'}`} />
+                                                    <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-colors ${isSelected ? getColorClasses(method.color).surface : 'bg-slate-50 dark:bg-neutral-800'}`}>
+                                                        <IconComponent className={`w-6 h-6 transition-colors ${isSelected ? getColorClasses(method.color).icon : 'text-slate-400'}`} />
                                                     </div>
                                                     <div className={`text-xs font-bold uppercase tracking-wider transition-colors ${isSelected ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>
                                                         {method.label}

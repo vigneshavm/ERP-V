@@ -121,7 +121,7 @@ const PurchaseExpress: React.FC = () => {
 
     return (
         <Layout>
-            <div className="max-w-[1400px] mx-auto pt-8 space-y-10 pb-32 animate-in fade-in duration-700">
+            <div className="w-full pt-8 space-y-10 pb-32 animate-in fade-in duration-700">
                 <PageHeader 
                     title="Express Purchase Intelligence" 
                     description="Institutionalized single-node inwarding for high-velocity environments."

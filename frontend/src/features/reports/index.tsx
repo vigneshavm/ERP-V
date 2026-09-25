@@ -18,6 +18,7 @@ import {
     getReportByAppView,
     getReportsByCategory,
 } from './config/reportRegistry';
+import PageHeader from '@/components/shared/Layout/PageHeader';
 import type { ReportId } from './config/reportRegistry';
 import { ReportPageShell } from './components';
 
@@ -150,16 +151,10 @@ const ReportsModule: React.FC = () => {
 
     return (
         <div className="space-y-8 pb-12">
-            {/* Header Section */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-3xl font-black text-neutral-900 dark:text-white tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-500 dark:from-white dark:to-neutral-400">
-                        Business Intelligence
-                    </h1>
-                    <p className="text-neutral-500 dark:text-neutral-400 mt-2 font-medium">Complete structured catalog of financial & operational analytics.</p>
-                </div>
-
-                {activeTab !== 'custom' && (
+            <PageHeader
+                title="Business Intelligence"
+                description="Complete structured catalog of financial & operational analytics."
+                actions={activeTab !== 'custom' ? (
                     <div className="flex items-center gap-3">
                         <div className="relative group flex-1 lg:w-72">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-primary transition-colors" />
@@ -172,8 +167,8 @@ const ReportsModule: React.FC = () => {
                             />
                         </div>
                     </div>
-                )}
-            </div>
+                ) : null}
+            />
 
             {/* Tab Navigation */}
             <div className="flex flex-wrap gap-2 border-b border-neutral-200 dark:border-neutral-800 pb-px">

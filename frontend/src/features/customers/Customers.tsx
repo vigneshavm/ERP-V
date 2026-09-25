@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { RootState, AppDispatch } from "../../redux/store";
 import { Customer } from './types';
+import { getColorClasses } from '../../utils/tailwindColorClasses';
 
 const Customers = () => {
     const navigate = useNavigate();
@@ -91,27 +92,30 @@ const Customers = () => {
             <div className="space-y-6">
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {stats.map((stat, i) => (
+                    {stats.map((stat, i) => {
+                        const colorClasses = getColorClasses(stat.color);
+                        return (
                         <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform">
-                                <stat.icon className={`w-24 h-24 text-${stat.color}-600`} />
+                                <stat.icon className={`w-24 h-24 ${colorClasses.text}`} />
                             </div>
                             <div className="relative z-10">
-                                <div className={`w-12 h-12 rounded-sm bg-${stat.color}-50 dark:bg-${stat.color}-900/20 flex items-center justify-center mb-4`}>
-                                    <stat.icon className={`w-6 h-6 text-${stat.color}-600 dark:text-${stat.color}-400`} />
+                                <div className={`w-12 h-12 rounded-sm ${colorClasses.surface} flex items-center justify-center mb-4`}>
+                                    <stat.icon className={`w-6 h-6 ${colorClasses.icon}`} />
                                 </div>
                                 <div className="flex items-end justify-between">
                                     <div>
                                         <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
                                         <p className="text-3xl font-black text-slate-800 dark:text-white mt-1">{stat.value}</p>
                                     </div>
-                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg bg-${stat.color}-50 dark:bg-${stat.color}-900/30 text-${stat.color}-600 uppercase tracking-tighter`}>
+                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${colorClasses.surface} ${colorClasses.text} uppercase tracking-tighter`}>
                                         {stat.trend}
                                     </span>
                                 </div>
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Main Content Card */}

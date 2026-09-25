@@ -125,7 +125,7 @@ const SalesInvoiceForm: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-app text-main font-sans overflow-x-hidden flex flex-col transition-colors animate-fade-in relative">
+        <div className="min-h-full bg-app text-main font-sans overflow-x-hidden flex flex-col transition-colors animate-fade-in relative">
             {/* Ambient Background Blobs */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
                 <div className="absolute top-[-15%] left-[5%] w-[55%] h-[55%] bg-warning/10 rounded-full blur-[160px] animate-aura opacity-60" />
@@ -133,7 +133,7 @@ const SalesInvoiceForm: React.FC = () => {
                 <div className="absolute top-[40%] right-[20%] w-[25%] h-[25%] bg-accent/5 rounded-full blur-[100px] animate-aura opacity-40" style={{ animationDelay: '3s' }} />
             </div>
 
-            <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8 space-y-8">
+            <main className="relative z-10 flex-1 flex flex-col w-full py-8 space-y-8">
                 {/* Cyber Header */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div className="relative pl-5">

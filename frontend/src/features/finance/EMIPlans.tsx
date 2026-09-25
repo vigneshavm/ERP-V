@@ -126,10 +126,10 @@ const EMIPlans: React.FC = () => {
                                 <tr>
                                     <th className="px-6 py-3">Customer</th>
                                     <th className="px-6 py-3">Invoice</th>
-                                    <th className="px-6 py-3">Total</th>
-                                    <th className="px-6 py-3">Installments</th>
-                                    <th className="px-6 py-3">Status</th>
-                                    <th className="px-6 py-3">Next Due</th>
+                                    <th className="px-6 py-3 text-right">Total</th>
+                                    <th className="px-6 py-3 text-center">Installments</th>
+                                    <th className="px-6 py-3 text-center">Status</th>
+                                    <th className="px-6 py-3 text-right">Next Due</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
@@ -139,16 +139,16 @@ const EMIPlans: React.FC = () => {
                                         <tr key={plan._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40">
                                             <td className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white">{customerName(plan.customerId)}</td>
                                             <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-300">{invoiceLabel(plan.invoiceId)}</td>
-                                            <td className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white">₹{plan.totalAmount.toLocaleString()}</td>
-                                            <td className="px-6 py-4 text-xs text-neutral-500">
+                                            <td className="px-6 py-4 text-right text-sm font-bold text-neutral-900 dark:text-white">₹{plan.totalAmount.toLocaleString()}</td>
+                                            <td className="px-6 py-4 text-center text-xs text-neutral-500">
                                                 {plan.installments.filter(i => i.status === 'PAID').length} / {plan.installments.length} paid
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-6 py-4 text-center">
                                                 <span className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase ${plan.status === 'COMPLETED' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : plan.status === 'DEFAULTED' ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-indigo-50 border-indigo-100 text-primary'}`}>
                                                     {plan.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-xs text-neutral-500">
+                                            <td className="px-6 py-4 text-right text-xs text-neutral-500">
                                                 {nextPending === -1 ? (
                                                     <span className="text-emerald-600 font-bold flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> All paid</span>
                                                 ) : (

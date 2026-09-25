@@ -16,6 +16,7 @@ import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import api from "../../services/api.js";
 import { AttendanceStatus } from "../../types/common";
+import { getColorClasses } from "../../utils/tailwindColorClasses";
 
 const DailyAttendanceBoard: React.FC = () => {
     const { user: _user } = useSelector((state: RootState) => state.auth);
@@ -238,7 +239,7 @@ const DailyAttendanceBoard: React.FC = () => {
                                                                 key={s.id}
                                                                 onClick={() => handleStatusChange(id, s.id as AttendanceStatus)}
                                                                 className={`flex flex-col items-center gap-1 p-2 rounded-xl border transition-all ${att.status === s.id
-                                                                        ? `bg-${s.color}-50 dark:bg-${s.color}-900/20 border-${s.color}-200 dark:border-${s.color}-800 text-${s.color}-600`
+                                                                    ? getColorClasses(s.color).selected
                                                                         : 'bg-transparent border-transparent text-slate-400 hover:bg-slate-50'
                                                                     }`}
                                                             >

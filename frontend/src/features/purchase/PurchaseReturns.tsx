@@ -220,7 +220,7 @@ const PurchaseReturns: React.FC = () => {
                                         className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all cursor-pointer"
                                         onClick={() => navigate(`/purchase/returns/view/${r.id || (r as any)._id}`)}
                                     >
-                                        <td className="px-8 py-6">
+                                        <td className="table-cell-center">
                                             <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">#{r.return_number}</p>
                                             <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-widest italic">{new Date(r.return_date).toLocaleDateString(undefined, { dateStyle: 'medium' })}</p>
                                         </td>

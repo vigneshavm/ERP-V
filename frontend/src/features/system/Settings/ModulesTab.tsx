@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { ShoppingCart, Package, CreditCard, Users, Truck, BarChart3, ChevronRight, CheckCircle2, Zap, LucideIcon, Briefcase, FileText, History, ClipboardList, Store } from 'lucide-react';
 import { ModulesTabProps } from './types';
+import { getColorClasses } from '../../../utils/tailwindColorClasses';
 
 interface ModuleDef {
     id: string;
@@ -68,7 +69,7 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                             <div>
                                 <div className="flex items-center justify-between mb-6">
                                     <div className={`w-14 h-14 rounded-sm flex items-center justify-center transition-colors shadow-sm ${isEnabled
-                                        ? `bg-${mod.color}-50 dark:bg-${mod.color}-900/20 text-${mod.color}-600 dark:text-${mod.color}-400`
+                                        ? `${getColorClasses(mod.color).surface} ${getColorClasses(mod.color).icon}`
                                         : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
                                         }`}>
                                         <Icon className="w-7 h-7" />

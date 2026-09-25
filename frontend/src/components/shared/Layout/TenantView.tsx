@@ -75,8 +75,8 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 <Sidebar onLogout={onLogout} />
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-hidden w-full bg-app relative">
-                    <div className="h-full w-full overflow-y-auto custom-scrollbar text-main">
+                <main className="flex-1 overflow-hidden w-full bg-app relative p-4 lg:p-8">
+                    <div className="h-full w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar text-main">
                         <PageErrorBoundary resetKey={location.pathname}>
                             <RouteDefinitions renderContent={renderContent} />
                         </PageErrorBoundary>

@@ -30,6 +30,7 @@ import {
 } from "../../redux/slices/payrollSlice";
 import { getAccounts } from '../../redux/slices/cashbankSlice';
 import api from "../../services/api";
+import PageHeader from "../../components/shared/Layout/PageHeader";
 
 const AllowanceManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -160,20 +161,17 @@ const AllowanceManager: React.FC = () => {
 
     return (
         <div className="space-y-10 animate-in fade-in duration-500">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Allowance Management</h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Define earnings and deductions for your staff payroll.</p>
-                </div>
-                <button
+            <PageHeader
+                title="Allowance Management"
+                description="Define earnings and deductions for your staff payroll."
+                actions={<button
                     onClick={handleOpenAdd}
                     className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow-sm transition-all"
                 >
                     <PlusCircle className="w-5 h-5" />
                     Add New Component
-                </button>
-            </div>
+                </button>}
+            />
 
             {/* Tabs */}
             <div className="flex border-b border-slate-200 dark:border-slate-700">
@@ -286,16 +284,16 @@ const AllowanceManager: React.FC = () => {
                                         <tr className="bg-slate-50 dark:bg-slate-900/50">
                                             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Employee</th>
                                             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Worked Days</th>
-                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Prorated Basic</th>}
+                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Prorated Basic</th>}
                                             {earnings.filter(c => selectedBenefitId === 'ALL' || c._id === selectedBenefitId).map(c => (
-                                                <th key={c._id} className="px-6 py-4 text-[10px] font-bold text-success uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                                                <th key={c._id} className="px-6 py-4 text-right text-[10px] font-bold text-success uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                                                     {c.name} {isTeaAllowanceSelected && '(Rate)'}
                                                 </th>
                                             ))}
-                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-blue-50/30 dark:bg-blue-900/10">Selection Total</th>}
-                                            {isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-blue-50/30 dark:bg-blue-900/10">Total Amount</th>}
-                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/50">Total Payout</th>}
-                                            <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Actions</th>
+                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-right text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-blue-50/30 dark:bg-blue-900/10">Selection Total</th>}
+                                            {isTeaAllowanceSelected && <th className="px-6 py-4 text-right text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-blue-50/30 dark:bg-blue-900/10">Total Amount</th>}
+                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-right text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/50">Total Payout</th>}
+                                            <th className="px-6 py-4 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -344,7 +342,7 @@ const AllowanceManager: React.FC = () => {
 
                                             return (
                                                 <tr key={emp._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
-                                                    <td className="px-6 py-4">
+                                                    <td className="px-6 py-4 text-right">
                                                         <div className="font-bold text-slate-800 dark:text-white whitespace-nowrap">{emp.name}</div>
                                                         <div className="text-[10px] font-medium text-slate-500 uppercase flex items-center gap-2 mt-0.5">
                                                             <Shield className="w-2.5 h-2.5" /> {emp.role}
@@ -384,24 +382,24 @@ const AllowanceManager: React.FC = () => {
                                                         }
 
                                                         return (
-                                                            <td key={c._id} className="px-6 py-4 font-mono text-sm text-emerald-600 dark:text-success whitespace-nowrap">
+                                                            <td key={c._id} className="px-6 py-4 text-right font-mono text-sm text-emerald-600 dark:text-success whitespace-nowrap">
                                                                 {amount > 0 ? `₹${Math.round(amount).toLocaleString()}` : '-'}
                                                             </td>
                                                         );
                                                     })}
-                                                    <td className="px-6 py-4 font-bold text-blue-600 dark:text-blue-400 bg-blue-50/30 dark:bg-blue-900/10">
+                                                    <td className="px-6 py-4 text-right font-bold text-blue-600 dark:text-blue-400 bg-blue-50/30 dark:bg-blue-900/10">
                                                         <div className="font-mono">₹{Math.round(isTeaAllowanceSelected ? selectedEarningsSum : selectedEarningsSum + basic).toLocaleString()}</div>
                                                         <div className="text-[9px] text-blue-400 font-medium uppercase mt-0.5 tracking-tighter whitespace-nowrap">
                                                             {isTeaAllowanceSelected ? 'Total Amount' : 'Selection Total'}
                                                         </div>
                                                     </td>
                                                     {!isTeaAllowanceSelected && (
-                                                        <td className="px-6 py-4 font-bold text-slate-800 dark:text-white bg-slate-50/50 dark:bg-slate-900/10">
+                                                        <td className="px-6 py-4 text-right font-bold text-slate-800 dark:text-white bg-slate-50/50 dark:bg-slate-900/10">
                                                             <div className="text-blue-600 dark:text-blue-400">₹{Math.round(totalEarningsSum + basic).toLocaleString()}</div>
                                                             <div className="text-[9px] text-slate-400 font-medium uppercase mt-0.5 tracking-tighter whitespace-nowrap">Gross Estimate</div>
                                                         </td>
                                                     )}
-                                                    <td className="px-6 py-4">
+                                                    <td className="px-6 py-4 text-center">
                                                         <div className="flex items-center gap-2">
                                                             <button
                                                                 onClick={() => handlePayment(emp._id, accounts[0]?.bankName || 'Cash', effectiveWorkedDays)}

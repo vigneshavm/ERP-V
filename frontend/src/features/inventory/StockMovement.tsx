@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowUpDown, Search, TrendingUp, TrendingDown, Download } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, Download } from 'lucide-react';
 import api from '@/services/api';
+import PageHeader from '@/components/shared/Layout/PageHeader';
 
 interface Movement {
     id: string;
@@ -73,18 +74,13 @@ const StockMovement: React.FC = () => {
 
     return (
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-sm bg-indigo-600 flex items-center justify-center"><ArrowUpDown className="w-5 h-5 text-white" /></div>
-                    <div>
-                        <h1 className="text-2xl font-black text-slate-900 dark:text-white">Stock Movement</h1>
-                        <p className="text-xs text-slate-500">All stock in/out transaction log{range ? ` · ${range.from} to ${range.to}` : ''}</p>
-                    </div>
-                </div>
-                <button onClick={exportCsv} disabled={rows.length === 0} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all disabled:opacity-50">
+            <PageHeader
+                title="Stock Movement"
+                description={`All stock in/out transaction log${range ? ` · ${range.from} to ${range.to}` : ''}`}
+                actions={<button onClick={exportCsv} disabled={rows.length === 0} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all disabled:opacity-50">
                     <Download className="w-4 h-4" /> Export page
-                </button>
-            </div>
+                </button>}
+            />
 
             <div className="grid grid-cols-3 gap-4">
                 {[

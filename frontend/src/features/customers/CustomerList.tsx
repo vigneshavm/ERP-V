@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "@/redux/store";
+import PageHeader from "@/components/shared/Layout/PageHeader";
 import {
     Search,
-    Users,
     Phone,
     Mail,
     TrendingUp,
@@ -101,24 +101,18 @@ const CustomerList: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-                        <Users className="w-6 h-6 text-primary" />
-                        Customer List
-                    </h2>
-                    <p className="text-neutral-500 text-sm mt-1">Manage your customer database</p>
-                </div>
-                <div className="flex gap-2">
+            <PageHeader
+                title="Customer List"
+                description="Manage your customer database"
+                actions={<div className="flex gap-2">
                     <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
                         <Download className="w-4 h-4" /> Export
                     </button>
                     <button className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2">
                         <Plus className="w-4 h-4" /> Add Customer
                     </button>
-                </div>
-            </div>
+                </div>}
+            />
 
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

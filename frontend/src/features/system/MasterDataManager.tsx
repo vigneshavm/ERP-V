@@ -9,8 +9,9 @@ import {
     MasterEntry,
     MasterType,
 } from '@/redux/slices/masterDataSlice';
-import { Database, Plus, Edit, Trash2, X, Loader2, Search, ChevronDown, Check } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Loader2, Search, ChevronDown, Check } from 'lucide-react';
 import api from '../../services/api';
+import PageHeader from '../../components/shared/Layout/PageHeader';
 
 interface MetaFieldConfig {
     key: string;
@@ -333,14 +334,10 @@ const MasterDataManager: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-black text-neutral-900 dark:text-white tracking-tight flex items-center gap-2">
-                    <Database className="w-6 h-6 text-primary" /> Master Data
-                </h1>
-                <p className="text-neutral-500 dark:text-neutral-400 mt-1 font-medium text-sm">
-                    Manage the classification lists used across customers, employees, transactions, GST and products.
-                </p>
-            </div>
+            <PageHeader
+                title="Master Data"
+                description="Manage the classification lists used across customers, employees, transactions, GST and products."
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 {/* Type list */}

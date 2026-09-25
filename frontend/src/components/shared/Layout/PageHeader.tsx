@@ -32,7 +32,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
                 <nav className="flex" aria-label="Breadcrumb">
                     <ol className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
                         {breadcrumbs.map((crumb, index) => (
-                            <li key={index} className="flex items-center">
+                            <li key={crumb.link ?? crumb.label} className="flex items-center">
                                 {index > 0 && (
                                     <span className="mx-2 text-neutral-600">/</span>
                                 )}
@@ -51,7 +51,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between border-b border-neutral-200 dark:border-neutral-800 pb-8">
                 <div className="space-y-2">
-                    <h1 className="text-4xl font-display font-black tracking-tight text-neutral-900 dark:text-white leading-none">
+                    <h1 className="page-title text-neutral-900 dark:text-white leading-none">
                         {title}
                     </h1>
                     {description && (

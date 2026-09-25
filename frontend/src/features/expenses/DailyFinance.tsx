@@ -185,7 +185,7 @@ const DailyFinancePage: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+            <div className="space-y-8 animate-in fade-in duration-700 pb-10 w-full">
 
                 {/* Header Section */}
                 <div className="flex items-center justify-between pb-2">

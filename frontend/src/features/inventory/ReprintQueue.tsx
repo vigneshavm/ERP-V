@@ -81,7 +81,7 @@ const ReprintQueue: React.FC = () => {
     })) as any[]; // Cast to any to avoid strict type checks against the complex Product interface for now
 
     return (
-        <div className="p-6 max-w-6xl mx-auto">
+        <div className="p-6 w-full">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">

@@ -109,7 +109,7 @@ const SupplierAgeing: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={handleExport}
-                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
+                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
                             >
                                 <Download className="w-4 h-4" /> Export Node Data
                             </button>
@@ -134,7 +134,7 @@ const SupplierAgeing: React.FC = () => {
                         { label: 'Critical (61-90)', val: totals["61-90"], icon: Activity, color: 'text-orange-500', bg: 'bg-orange-50' },
                         { label: 'In Arrears (90+)', val: totals["90+"], icon: AlertTriangle, color: 'text-danger', bg: 'bg-rose-50' }
                     ].map((card, i) => (
-                        <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
+                        <div key={i} className="ui-panel p-8 group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
                                 <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />
@@ -142,7 +142,7 @@ const SupplierAgeing: React.FC = () => {
                                 <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
                             </div>
                             <div className="relative z-10">
-                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-2">{card.label}</p>
+                                <p className="ui-label leading-none mb-2">{card.label}</p>
                                 <p className="text-2xl font-black text-neutral-900 dark:text-white tracking-tighter uppercase tabular-nums">₹{card.val.toLocaleString()}</p>
                             </div>
                             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
@@ -151,9 +151,9 @@ const SupplierAgeing: React.FC = () => {
                 </div>
 
                 {/* Audit Control Matrix */}
-                <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="ui-panel p-8 flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="relative w-full md:w-[500px]">
-                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Entity Search</label>
+                        <label className="ui-label mb-3 block">Entity Search</label>
                         <div className="relative">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                             <input
@@ -167,7 +167,7 @@ const SupplierAgeing: React.FC = () => {
                     </div>
                     <div className="flex items-end gap-6 w-full md:w-auto">
                         <div className="text-right">
-                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 leading-none">Aggregate Outstanding</p>
+                            <p className="ui-label mb-1 leading-none">Aggregate Outstanding</p>
                             <p className="text-3xl font-black text-rose-600 tabular-nums tracking-tighter">₹{totals.total.toLocaleString()}</p>
                         </div>
                         <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-sm text-neutral-400 hover:text-primary transition-all active:scale-95">
@@ -177,10 +177,10 @@ const SupplierAgeing: React.FC = () => {
                 </div>
 
                 {/* Ageing Matrix Grid */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <div className="ui-panel overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
+                            <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 ui-label border-b border-neutral-100 dark:border-neutral-800">
                                 <tr>
                                     <th className="px-8 py-5">Institutional Supplier</th>
                                     <th className="px-8 py-5 text-right">0-30 Days</th>

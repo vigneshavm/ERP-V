@@ -138,7 +138,7 @@ const SupplierLedger: React.FC = () => {
     if (!effectiveId) {
         return (
             <Layout>
-                <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+                <div className="space-y-8 animate-in fade-in duration-700 pb-10 w-full">
                     <PageHeader
                         title="Supplier Ledger"
                         description="Select a supplier to view their account statement"
@@ -199,7 +199,7 @@ const SupplierLedger: React.FC = () => {
     // ==========================================
     if (loading && !data) return (
         <Layout>
-            <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+            <div className="space-y-8 animate-in fade-in duration-700 pb-10 w-full">
                 <SupplierSubNav />
                 <div className="flex flex-col items-center justify-center py-20">
                     <RefreshCw className="w-8 h-8 text-primary animate-spin mb-4" />
@@ -214,7 +214,7 @@ const SupplierLedger: React.FC = () => {
     // ==========================================
     if (!data) return (
         <Layout>
-            <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+            <div className="space-y-8 animate-in fade-in duration-700 pb-10 w-full">
                 <SupplierSubNav />
                 <div className="flex flex-col items-center justify-center py-20">
                     <FileText className="w-12 h-12 text-slate-200 dark:text-neutral-700 mb-3" />
@@ -229,7 +229,7 @@ const SupplierLedger: React.FC = () => {
     // ==========================================
     return (
         <Layout>
-            <div className="space-y-8 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+            <div className="space-y-8 animate-in fade-in duration-700 pb-10 w-full">
 
                 {/* Header Section — Dashboard style */}
                 <div className="flex items-center justify-between pb-2">

@@ -12,6 +12,7 @@ import {
     ComboOfferInput,
 } from '../../redux/slices/comboOfferSlice';
 import Layout from "../../components/shared/Layout/index";
+import PageHeader from "../../components/shared/Layout/PageHeader";
 import {
     Package2,
     Plus,
@@ -144,22 +145,17 @@ const ComboOfferManager: React.FC = () => {
     return (
         <Layout>
             <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-12">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h2 className="text-2xl font-black flex items-center gap-2 tracking-tight">
-                            <Package2 className="w-6 h-6 text-primary" />
-                            Combo Offers
-                        </h2>
-                        <p className="text-sm text-neutral-500 mt-0.5">Bundle pricing across multiple items, with an auto-generated combo barcode.</p>
-                    </div>
-                    <button
+                <PageHeader
+                    title="Combo Offers"
+                    description="Bundle pricing across multiple items, with an auto-generated combo barcode."
+                    actions={<button
                         onClick={startNew}
                         className="px-6 py-3 bg-primary text-white rounded-sm font-black text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"
                     >
                         <Plus className="w-5 h-5" />
                         <span>New Combo</span>
-                    </button>
-                </div>
+                    </button>}
+                />
 
                 <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-neutral-50 dark:border-neutral-800 flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -181,9 +177,9 @@ const ComboOfferManager: React.FC = () => {
                                 <tr>
                                     <th className="p-6">Combo</th>
                                     <th className="p-6">Items</th>
-                                    <th className="p-6">Regular Price</th>
-                                    <th className="p-6">Offer Price</th>
-                                    <th className="p-6">Discount</th>
+                                    <th className="p-6 text-right">Regular Price</th>
+                                    <th className="p-6 text-right">Offer Price</th>
+                                    <th className="p-6 text-right">Discount</th>
                                     <th className="p-6 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -218,10 +214,10 @@ const ComboOfferManager: React.FC = () => {
                                                 ))}
                                             </div>
                                         </td>
-                                        <td className="p-6"><p className="text-sm font-bold text-neutral-400 line-through">₹{combo.regularPrice.toLocaleString()}</p></td>
-                                        <td className="p-6"><p className="text-sm font-black text-primary">₹{combo.offerPrice.toLocaleString()}</p></td>
-                                        <td className="p-6">
-                                            <span className="px-2.5 py-1 bg-success/10 text-success text-[10px] font-black rounded-lg uppercase tracking-widest flex items-center gap-1 w-fit">
+                                        <td className="p-6 text-right"><p className="text-sm font-bold text-neutral-400 line-through">₹{combo.regularPrice.toLocaleString()}</p></td>
+                                        <td className="p-6 text-right"><p className="text-sm font-black text-primary">₹{combo.offerPrice.toLocaleString()}</p></td>
+                                        <td className="p-6 text-right">
+                                            <span className="ml-auto px-2.5 py-1 bg-success/10 text-success text-[10px] font-black rounded-lg uppercase tracking-widest flex items-center gap-1 w-fit">
                                                 <Percent className="w-3 h-3" />{combo.discountPercent}%
                                             </span>
                                         </td>

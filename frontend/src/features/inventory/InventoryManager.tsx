@@ -18,6 +18,7 @@ import {
     getItemCategories,
     getCategoryCatalog
 } from "../../redux/slices/inventorySlice";
+import { getColorClasses } from "../../utils/tailwindColorClasses";
 import ProductModal from "./ProductModal";
 import InventoryVariantSearch from "./InventoryVariantSearch";
 import { BulkCategoryModal, BulkAdjustmentModal } from "./BulkActionModals";
@@ -55,7 +56,7 @@ import {
 
 const MetricCard = ({ title, value, subtext, icon: Icon, color, trend }: any) => (
     <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group hover:border-primary/50 transition-all">
-        <div className={`absolute top-0 right-0 w-24 h-24 bg-${color}-500/10 rounded-full blur-2xl -mr-12 -mt-12 group-hover:bg-${color}-500/20 transition-all`}></div>
+        <div className={`absolute top-0 right-0 w-24 h-24 ${getColorClasses(color).surface} rounded-full blur-2xl -mr-12 -mt-12 group-hover:opacity-80 transition-all`}></div>
         <div className="flex justify-between items-start relative z-10">
             <div>
                 <p className="text-neutral-500 dark:text-neutral-400 text-[10px] font-black uppercase tracking-widest">{title}</p>

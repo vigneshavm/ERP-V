@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { IndianRupee, CheckCircle2, AlertTriangle, Loader2, CreditCard, Wallet, Ban, History } from 'lucide-react';
+import { IndianRupee, CheckCircle2, AlertTriangle, Loader2, CreditCard, Ban, History } from 'lucide-react';
 import api from '@/services/api';
 import { formatCurrency } from '@/utils/helpers';
+import PageHeader from '@/components/shared/Layout/PageHeader';
+import Button from '@/components/core/Form/Button';
 
 // Denomination-based petty cash close screen -- the counterpart to Textilesoft's
 // "Closingpattycash": the cashier counts physical notes/coins by denomination, and that count is
@@ -118,14 +120,10 @@ const PettyCashClose: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-black text-neutral-900 dark:text-white tracking-tight flex items-center gap-2">
-                    <Wallet className="w-6 h-6 text-primary" /> Petty Cash Close
-                </h1>
-                <p className="text-neutral-500 dark:text-neutral-400 mt-1 font-medium text-sm">
-                    Count the drawer by denomination and reconcile against system-recorded sales.
-                </p>
-            </div>
+            <PageHeader
+                title="Petty Cash Close"
+                description="Count the drawer by denomination and reconcile against system-recorded sales."
+            />
 
             {error && (
                 <div className="p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/20 rounded-lg text-rose-700 dark:text-danger text-sm font-bold">
@@ -219,14 +217,16 @@ const PettyCashClose: React.FC = () => {
                             </div>
                         </div>
 
-                        <button
+                        <Button
+                            type="button"
+                            variant="primary"
                             onClick={handleSave}
                             disabled={saving || countedCash === 0}
-                            className="w-full py-4 bg-neutral-950 dark:bg-primary text-white rounded-xl text-xs font-black uppercase tracking-[0.2em] shadow-xl hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                            className="w-full py-4 rounded-xl text-xs font-black uppercase tracking-[0.2em] shadow-xl"
                         >
                             <CheckCircle2 className="w-5 h-5" />
                             {saving ? 'Saving…' : 'Close Petty Cash & Save'}
-                        </button>
+                        </Button>
                     </div>
 
                     <div className="space-y-6">

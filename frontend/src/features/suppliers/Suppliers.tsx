@@ -135,7 +135,7 @@ const Suppliers: React.FC = () => {
   // Sort indicator
   return (
     <Layout>
-      <div className="space-y-6 animate-in fade-in duration-700 pb-10 max-w-[1600px] mx-auto">
+      <div className="space-y-6 animate-in fade-in duration-700 pb-10 w-full">
 
         {/* Header */}
         <PageHeader

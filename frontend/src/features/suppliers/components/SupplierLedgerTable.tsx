@@ -87,7 +87,7 @@ const SupplierLedgerTable: React.FC<SupplierLedgerTableProps> = ({ data, loading
 
     const renderHeader = (label: string, key: SortKey, align: 'left' | 'right' = 'left') => (
         <th
-            className={`py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[11px] tracking-wider text-${align} whitespace-nowrap cursor-pointer group hover:bg-slate-100 dark:hover:bg-neutral-800 transition-colors select-none`}
+            className={`py-3 px-5 font-bold text-slate-400 dark:text-neutral-500 uppercase text-[11px] tracking-wider ${align === 'right' ? 'text-right' : 'text-left'} whitespace-nowrap cursor-pointer group hover:bg-slate-100 dark:hover:bg-neutral-800 transition-colors select-none`}
             onClick={() => handleSort(key)}
         >
             <div className={`flex items-center gap-1.5 ${align === 'right' ? 'justify-end' : 'justify-start'}`}>

@@ -2,6 +2,7 @@
 import { Shield, Zap, CheckCircle, Smartphone, AlertTriangle, Link as LinkIcon, Globe, MessageSquare, ExternalLink } from 'lucide-react';
 
 import { WhatsAppService } from "../../../services/whatsappService";
+import { getColorClasses } from "../../../utils/tailwindColorClasses";
 
 const IntegrationsTab: React.FC = () => {
     const [isVerifying, setIsVerifying] = useState(false);
@@ -245,7 +246,7 @@ const MailIcon = ({ className }: { className?: string }) => (
 const IntegrationCard = ({ icon, title, provider, status, color }: { icon: React.ReactNode, title: string, provider: string, status: string, color: string }) => (
     <div className="group p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:border-indigo-300 transition-all shadow-sm">
         <div className="flex items-center justify-between mb-4">
-            <div className={`w-12 h-12 rounded-sm bg-${color}-50 dark:bg-${color}-900/20 text-${color}-600 dark:text-${color}-400 flex items-center justify-center`}>
+            <div className={`w-12 h-12 rounded-sm ${getColorClasses(color).surface} ${getColorClasses(color).icon} flex items-center justify-center`}>
                 {icon}
             </div>
             <button className="text-slate-300 hover:text-primary transition-colors">
