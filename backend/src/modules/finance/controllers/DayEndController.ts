@@ -9,11 +9,16 @@ import Supplier from '../../purchase/models/Supplier.js';
 import Bill from '../models/Bill.js';
 import BankAccount from '../models/BankAccount.js';
 import CashbankTransaction from '../models/CashbankTransaction.js';
+import User from '../../core/models/User.js';
 import { info, error as logError } from '../../../config/logger.js';
 
 export const getDayEndSummary = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const tenantId = req.user?.tenantId;
+        if (!tenantId) {
+            res.status(400).json({ message: 'Day end requires a tenant account' });
+            return;
+        }
         const dateStr = req.query.date as string || new Date().toISOString().split('T')[0];
         const startDate = new Date(dateStr);
         startDate.setHours(0, 0, 0, 0);
@@ -24,7 +29,8 @@ export const getDayEndSummary = async (req: AuthenticatedRequest, res: Response)
         // Expected Cash = Opening Cash + Cash Sales - Cash Expenses
 
         // Fetch last reconciliation for Opening Cash
-        const lastReconciliation = await DayEndReconciliation.findOne({ tenantId })
+        // Only earlier days: after a first close today, today's own record must not become its opening.
+        const lastReconciliation = await DayEndReconciliation.findOne({ tenantId, date: { $lt: startDate } })
             .sort({ date: -1 });
         const openingCash = lastReconciliation ? lastReconciliation.physicalCash : 0;
 
@@ -55,13 +61,15 @@ export const getDayEndSummary = async (req: AuthenticatedRequest, res: Response)
         ]);
         const cashSales = cashSalesResult.length > 0 ? cashSalesResult[0].totalCash : 0;
 
-        // Cash Expenses
+        // Cash Expenses. Expense has no tenantId, so scope it to expenses created by this tenant's
+        // users; unscoped, this summed every tenant's cash expenses.
+        const tenantUserIds = await User.find({ tenantId }).distinct('_id');
         const cashExpensesResult = await Expense.aggregate([
             {
                 $match: {
+                    createdBy: { $in: tenantUserIds },
                     date: { $gte: startDate, $lte: endDate },
                     paymentMethod: 'cash'
-                    // Note: Expense model currently uses createdBy, might need tenantId if available
                 }
             },
             {
@@ -128,10 +136,18 @@ export const getDayEndSummary = async (req: AuthenticatedRequest, res: Response)
 export const saveDayEndReconciliation = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const tenantId = req.user?.tenantId;
+        if (!tenantId) {
+            res.status(400).json({ message: 'Day end requires a tenant account' });
+            return;
+        }
         const {
             date, openingCash, cashSales, cashExpenses, expectedCash,
             physicalCash, variance, clearedChequeIds, notes
         } = req.body;
+        // Stored at start of day so a second close on the same day updates that day's record
+        // instead of inserting another one.
+        const dayStart = new Date(date);
+        dayStart.setHours(0, 0, 0, 0);
 
         const session = await mongoose.startSession();
         session.startTransaction();
@@ -139,10 +155,10 @@ export const saveDayEndReconciliation = async (req: AuthenticatedRequest, res: R
         try {
             // 1. Save Reconciliation record
             const recon = await DayEndReconciliation.findOneAndUpdate(
-                { tenantId, date: new Date(date).setHours(0, 0, 0, 0) },
+                { tenantId, date: dayStart },
                 {
                     tenantId,
-                    date: new Date(date),
+                    date: dayStart,
                     openingCash,
                     cashSales,
                     cashExpenses,

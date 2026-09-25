@@ -1,23 +1,19 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { X, Calendar, IndianRupee, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
-import api from "../../../services/api.js";
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from "../../../redux/store";
+import { fetchDayEndSummary, saveDayEndReconciliation } from "../../../redux/slices/financeSlice";
+import { DayEndSummary } from "../../../types/finance";
 import { formatCurrency } from "../../../utils/helpers";
 
 interface DayEndModalProps {
     onClose: () => void;
 }
 
-interface DayEndSummary {
-    openingCash: number;
-    cashSales: number;
-    cashExpenses: number;
-    expectedCash: number;
-    pendingCheques: any[];
-    supplierAlerts: any[];
-}
-
 const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
+    const dispatch = useDispatch<AppDispatch>();
     const [loading, setLoading] = useState(true);
+    const [saveError, setSaveError] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
     const [summary, setSummary] = useState<DayEndSummary | null>(null);
     const [physicalCash, setPhysicalCash] = useState('');
@@ -25,8 +21,11 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
     const [notes, setNotes] = useState('');
 
     useEffect(() => {
-        fetchSummary();
-    }, []);
+        dispatch(fetchDayEndSummary(undefined)).unwrap()
+            .then(setSummary)
+            .catch((error) => console.error('Failed to fetch day end summary:', error))
+            .finally(() => setLoading(false));
+    }, [dispatch]);
 
     useEffect(() => {
         if (summary && physicalCash) {
@@ -34,22 +33,12 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
         }
     }, [physicalCash, summary]);
 
-    const fetchSummary = async () => {
-        try {
-            const response = await api.get('/api/cashbank/day-end/summary');
-            setSummary(response.data);
-        } catch (error) {
-            console.error('Failed to fetch day end summary:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleSave = async () => {
         if (!summary) return;
         setSaving(true);
+        setSaveError(null);
         try {
-            await api.post('/api/cashbank/day-end/save', {
+            await dispatch(saveDayEndReconciliation({
                 date: new Date().toISOString(),
                 openingCash: summary.openingCash,
                 cashSales: summary.cashSales,
@@ -58,10 +47,11 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                 physicalCash: parseFloat(physicalCash) || 0,
                 variance,
                 notes
-            });
+            })).unwrap();
             onClose();
         } catch (error) {
-            console.error('Failed to save day end:', error);
+            // Keep the modal open with the reason; closing silently made a failed save look successful.
+            setSaveError(typeof error === 'string' ? error : 'Failed to save day end reconciliation');
         } finally {
             setSaving(false);
         }
@@ -93,11 +83,11 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-6 bg-success/10 rounded-[2rem] border border-success/20">
                                     <p className="text-[9px] font-black text-success uppercase tracking-widest mb-1">Cash Sales (In)</p>
-                                    <p className="text-2xl font-black italic text-success">₹{formatCurrency(summary.cashSales)}</p>
+                                    <p className="text-2xl font-black italic text-success">{formatCurrency(summary.cashSales)}</p>
                                 </div>
                                 <div className="p-6 bg-error/10 rounded-[2rem] border border-error/20">
                                     <p className="text-[9px] font-black text-error uppercase tracking-widest mb-1">Cash Expenses (Out)</p>
-                                    <p className="text-2xl font-black italic text-error">₹{formatCurrency(summary.cashExpenses)}</p>
+                                    <p className="text-2xl font-black italic text-error">{formatCurrency(summary.cashExpenses)}</p>
                                 </div>
                             </div>
 
@@ -106,7 +96,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                                 <div className="flex items-center justify-between mb-6">
                                     <div>
                                         <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Expected Cash in Drawer</p>
-                                        <p className="text-3xl font-black italic text-primary">₹{formatCurrency(summary.expectedCash)}</p>
+                                        <p className="text-3xl font-black italic text-primary">{formatCurrency(summary.expectedCash)}</p>
                                     </div>
                                     <IndianRupee className="w-12 h-12 text-neutral-200 dark:text-neutral-700" />
                                 </div>
@@ -126,7 +116,7 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                                     <div className={`mt-4 p-4 rounded-xl flex items-center gap-3 ${variance >= 0 ? 'bg-success/10 text-success' : 'bg-error/10 text-error'}`}>
                                         {variance >= 0 ? <CheckCircle2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
                                         <span className="text-sm font-black uppercase tracking-widest">
-                                            Variance: ₹{formatCurrency(Math.abs(variance))} {variance >= 0 ? 'Surplus' : 'Shortage'}
+                                            Variance: {formatCurrency(Math.abs(variance))} {variance >= 0 ? 'Surplus' : 'Shortage'}
                                         </span>
                                     </div>
                                 )}
@@ -137,10 +127,10 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                                 <div className="p-6 bg-warning/10 rounded-[2rem] border border-warning/20">
                                     <p className="text-[9px] font-black text-warning uppercase tracking-widest mb-3">Cheques Pending Clearance Today</p>
                                     <div className="space-y-2">
-                                        {summary.pendingCheques.map((chq: any, idx: number) => (
+                                        {summary.pendingCheques.map((chq, idx) => (
                                             <div key={idx} className="flex items-center justify-between text-xs font-bold text-warning">
                                                 <span>{chq.payee || chq.number}</span>
-                                                <span>₹{formatCurrency(chq.amount)}</span>
+                                                <span>{formatCurrency(chq.amount)}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -158,6 +148,12 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                                     placeholder="Any discrepancies or notes..."
                                 />
                             </div>
+
+                            {saveError && (
+                                <div role="alert" className="p-4 rounded-xl flex items-center gap-3 bg-error/10 text-error text-sm font-bold">
+                                    <AlertTriangle className="w-5 h-5" /> {saveError}
+                                </div>
+                            )}
 
                             {/* Submit */}
                             <button

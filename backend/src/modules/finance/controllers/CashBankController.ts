@@ -391,70 +391,6 @@ export const updateChequeStatus = async (req: AuthenticatedRequest, res: Respons
     }
 };
 
-export const getDayEndSummary = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { date } = req.query;
-        const targetDate = date ? new Date(date as string) : new Date();
-        const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
-        const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
-
-        // 1. Calculate Cash Sales (Cash In)
-        const cashInTransactions = await CashbankTransaction.find({
-            type: 'in',
-            toAccount: 'cash',
-            date: { $gte: startOfDay, $lte: endOfDay },
-            userId: req.user?._id
-        });
-        const cashSales = cashInTransactions.reduce((sum, t) => sum + t.amount, 0);
-
-        // 2. Calculate Cash Expenses (Cash Out)
-        const cashOutTransactions = await CashbankTransaction.find({
-            type: 'out',
-            fromAccount: 'cash',
-            date: { $gte: startOfDay, $lte: endOfDay },
-            userId: req.user?._id
-        });
-        const cashExpenses = cashOutTransactions.reduce((sum, t) => sum + t.amount, 0);
-
-        // 3. Get Pending Cheques for the day
-        const pendingCheques = await Cheque.find({
-            status: 'PENDING',
-            date: { $gte: startOfDay, $lte: endOfDay },
-            userId: req.user?._id
-        });
-
-        // 4. Initial Cash (Opening Balance) - Simplified for now, getting current cash balance
-        // In a real scenario, you'd calculate this from the ledger
-        // For now, assuming current balance reflects "Expected Cash" loosely + sales - expenses
-        // A robust "Opening Cash" requires a DailyClosing model which we can implement later.
-
-        const responseData = {
-            openingCash: 0, // Placeholder
-            cashSales,
-            cashExpenses,
-            expectedCash: cashSales - cashExpenses,
-            pendingCheques,
-            supplierAlerts: [] // Placeholder
-        };
-
-        res.status(200).json(responseData);
-    } catch (err) {
-        error(`Get Day End Summary Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
-export const saveDayEndToDB = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        // In future: Save to a DailyReconciliation model
-        info(`Day End Reconciliation saved by ${req.user?.name} for date ${new Date().toDateString()}`);
-        res.status(200).json({ message: 'Day end reconciliation saved successfully' });
-    } catch (err) {
-        error(`Save Day End Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
 export const getEffectiveBalance = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
@@ -514,15 +450,8 @@ export const getAllTransactions = async (req: AuthenticatedRequest, res: Respons
 
 export const getAllDailyFinance = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        // Assuming we store daily finance records. 
-        // If saveDayEndToDB just logs, then we don't have a model yet?
-        // Line 449 in CashBankController says: // In future: Save to a DailyReconciliation model
-        // So we might not have a model!
-        // But frontend expects data.
-        // Let's return empty array or implementing a basic fetch if model exists.
-        // Checking imports... No DailyFinance model imported.
-        // I will return an empty array for now to fix 404, or mock it.
-        // But the frontend map expects specific fields.
+        // No daily-finance model backs this yet; day-end closings are stored by
+        // DayEndController (/api/day-end) in DayEndReconciliation.
         res.status(200).json([]);
     } catch (err) {
         error(`Get All Daily Finance Error: ${(err as Error).message}`);
@@ -535,7 +464,7 @@ export const getAllDailyFinance = async (_req: AuthenticatedRequest, res: Respon
 const CashBankController = {
     getAccounts, createAccount, updateAccount, deleteAccount, getTransactions, createTransfer, createCashTransaction,
     getAccountLedger, toggleReconciliation, bulkReconcile, getBankSummary, getCashBankPosition, validatePayments,
-    getCheques, createCheque, updateChequeStatus, getEffectiveBalance, getDayEndSummary, saveDayEndToDB,
+    getCheques, createCheque, updateChequeStatus, getEffectiveBalance,
     getAllTransactions, getAllDailyFinance
 };
 

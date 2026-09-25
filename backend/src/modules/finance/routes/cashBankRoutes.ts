@@ -17,8 +17,6 @@ import {
     createCheque,
     updateChequeStatus,
     getEffectiveBalance,
-    getDayEndSummary,
-    saveDayEndToDB,
     getAllTransactions // Import new method
 } from "../controllers/CashBankController.js";
 import { protect } from "../../../middlewares/authMiddleware.js";
@@ -54,9 +52,5 @@ router.get("/summary", protect, getBankSummary);
 router.get("/position", protect, getCashBankPosition);
 router.post("/validate-payments", protect, validatePayments);
 router.get("/accounts/:id/effective-balance", protect, getEffectiveBalance);
-
-// Day End Logic
-router.get("/day-end/summary", protect, getDayEndSummary);
-router.post("/day-end/save", protect, saveDayEndToDB);
 
 export default router;
