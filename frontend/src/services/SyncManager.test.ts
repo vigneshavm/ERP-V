@@ -34,7 +34,7 @@ vi.mock('../redux/slices/financeSlice', () => ({ setDailyRecordSynced: vi.fn() }
 
 const mockLogEvent = vi.fn();
 vi.mock('./SyncIntelligenceService', () => ({
-    SyncIntelligenceService: { logEvent: (...args: any[]) => mockLogEvent(...args) },
+    SyncIntelligenceService: { logEvent: (...args: any[]) => mockLogEvent(...args), getDeviceId: () => 'DEV-TEST' },
 }));
 
 const { SyncManager } = await import('./SyncManager');

@@ -40,7 +40,7 @@ export class SyncManager {
 
                     // Log to Sync Intelligence Ledger
                     await SyncIntelligenceService.logEvent({
-                        deviceId: 'LOCAL_POS', // In real system, get actual device ID
+                        deviceId: SyncIntelligenceService.getDeviceId(),
                         branchId: sale.branchId || 'UNKNOWN',
                         eventType: 'SALE',
                         entityId: sale.id!,
@@ -57,7 +57,7 @@ export class SyncManager {
                     });
                     // Failures are logged too, so a sale that keeps failing is visible in the ledger.
                     await SyncIntelligenceService.logEvent({
-                        deviceId: 'LOCAL_POS',
+                        deviceId: SyncIntelligenceService.getDeviceId(),
                         branchId: sale.branchId || 'UNKNOWN',
                         eventType: 'SALE',
                         entityId: sale.id!,
@@ -131,7 +131,7 @@ export class SyncManager {
 
                     // Log to Sync Intelligence Ledger
                     await SyncIntelligenceService.logEvent({
-                        deviceId: 'LOCAL_POS',
+                        deviceId: SyncIntelligenceService.getDeviceId(),
                         branchId: data.branch_id || 'UNKNOWN',
                         eventType: operation === 'INSERT' ? 'PAYMENT' : 'STOCK_ADJUST',
                         entityId: recordId,
@@ -147,7 +147,7 @@ export class SyncManager {
                         retryCount: (item.retryCount || 0) + 1
                     });
                     await SyncIntelligenceService.logEvent({
-                        deviceId: 'LOCAL_POS',
+                        deviceId: SyncIntelligenceService.getDeviceId(),
                         branchId: item.data?.branch_id || 'UNKNOWN',
                         eventType: item.operation === 'INSERT' ? 'PAYMENT' : 'STOCK_ADJUST',
                         entityId: item.recordId,

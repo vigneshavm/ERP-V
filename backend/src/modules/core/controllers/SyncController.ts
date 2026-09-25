@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
+import mongoose from "mongoose";
 import SyncSettings from "../models/SyncSettings.js";
 import Device from "../models/Device.js";
 import Backup from "../models/Backup.js";
 import Conflict from "../models/Conflict.js";
+import SyncLedgerEvent from "../models/SyncLedgerEvent.js";
 
 export const getSyncConfig = asyncHandler(async (req: Request, res: Response) => {
     const tenantId = (req as any).user?.tenantId; // Assuming middleware populates this
@@ -101,4 +103,79 @@ export const getConflicts = asyncHandler(async (req: Request, res: Response) => 
     const tenantId = (req as any).user?.tenantId;
     const conflicts = await Conflict.find({ tenantId });
     res.json({ success: true, data: conflicts });
+});
+
+const LEDGER_STATUSES = new Set(['SYNCED', 'PENDING', 'CONFLICT', 'FAILED']);
+const MAX_LEDGER_BATCH = 200;
+
+// Keeps only well-formed events; the tenant and reporting user come from the session, not the body.
+export const toLedgerDocs = (events: unknown, tenantId: mongoose.Types.ObjectId, userId?: mongoose.Types.ObjectId) => {
+    if (!Array.isArray(events)) return [];
+    return events
+        .filter((e: any) => e && typeof e.id === 'string' && typeof e.deviceId === 'string'
+            && typeof e.eventType === 'string' && typeof e.entityId === 'string'
+            && typeof e.entityType === 'string' && LEDGER_STATUSES.has(e.status)
+            && !Number.isNaN(Date.parse(e.timestamp)))
+        .slice(0, MAX_LEDGER_BATCH)
+        .map((e: any) => ({
+            tenantId,
+            eventId: e.id,
+            deviceId: e.deviceId,
+            branchId: typeof e.branchId === 'string' ? e.branchId : '',
+            eventType: e.eventType,
+            entityId: e.entityId,
+            entityType: e.entityType,
+            status: e.status,
+            payload: e.payload && typeof e.payload === 'object' ? e.payload : {},
+            hash: typeof e.hash === 'string' ? e.hash : '',
+            timestamp: new Date(e.timestamp),
+            reportedBy: userId
+        }));
+};
+
+// POST /api/sync/ledger { events: [...] } -- devices upload their locally recorded sync events.
+// Idempotent: events already stored (same tenant + event id) are skipped, so a retried upload is safe.
+export const uploadLedgerEvents = asyncHandler(async (req: Request, res: Response) => {
+    const tenantId = (req as any).user?.tenantId;
+    if (!tenantId) {
+        res.status(400).json({ success: false, message: 'Sync ledger requires a tenant account' });
+        return;
+    }
+    const docs = toLedgerDocs(req.body?.events, tenantId, (req as any).user?._id);
+    if (docs.length > 0) {
+        await SyncLedgerEvent.bulkWrite(docs.map(doc => ({
+            updateOne: {
+                filter: { tenantId, eventId: doc.eventId },
+                update: { $setOnInsert: doc },
+                upsert: true
+            }
+        })), { ordered: false });
+    }
+    res.json({ success: true, data: { accepted: docs.map(d => d.eventId) } });
+});
+
+// GET /api/sync/ledger?limit=50 -- the tenant's sync events from all devices, newest first.
+export const getLedgerEvents = asyncHandler(async (req: Request, res: Response) => {
+    const tenantId = (req as any).user?.tenantId;
+    if (!tenantId) {
+        res.status(400).json({ success: false, message: 'Sync ledger requires a tenant account' });
+        return;
+    }
+    const limit = Math.min(Math.max(parseInt(String(req.query.limit), 10) || 50, 1), 500);
+    const events = await SyncLedgerEvent.find({ tenantId }).sort({ timestamp: -1 }).limit(limit).lean();
+    res.json({
+        success: true,
+        data: events.map(e => ({
+            id: e.eventId,
+            deviceId: e.deviceId,
+            branchId: e.branchId,
+            eventType: e.eventType,
+            entityId: e.entityId,
+            entityType: e.entityType,
+            timestamp: e.timestamp.toISOString(),
+            status: e.status,
+            payload: e.payload,
+            hash: e.hash
+        }))
+    });
 });

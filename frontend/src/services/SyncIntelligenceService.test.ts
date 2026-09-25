@@ -1,40 +1,38 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const get = vi.fn();
-vi.mock('./api', () => ({ default: { get: (...a: unknown[]) => get(...a) } }));
+const post = vi.fn();
+vi.mock('./api', () => ({ default: { get: (...a: unknown[]) => get(...a), post: (...a: unknown[]) => post(...a) } }));
 
-const add = vi.fn();
+// In-memory stand-in for the Dexie syncLedger table (filter applies the real predicate).
+let rows: any[] = [];
 const pruneDelete = vi.fn();
-const below = vi.fn(() => ({ delete: pruneDelete }));
-const toArray = vi.fn();
-const limit = vi.fn(() => ({ toArray }));
 vi.mock('./db', () => ({
     db: {
         syncLedger: {
-            add: (...a: unknown[]) => add(...a),
-            where: () => ({ below }),
-            orderBy: () => ({ reverse: () => ({ limit }) }),
+            add: async (row: any) => { if (addFails) throw new Error('QuotaExceeded'); rows.push(row); },
+            filter: (pred: (r: any) => boolean) => ({ limit: () => ({ toArray: async () => rows.filter(pred) }) }),
+            where: (field: string) => field === 'id'
+                ? { anyOf: (ids: string[]) => ({ modify: async (patch: any) => { rows.filter(r => ids.includes(r.id)).forEach(r => Object.assign(r, patch)); } }) }
+                : { below: () => ({ delete: pruneDelete }) },
+            orderBy: () => ({ reverse: () => ({ limit: () => ({ toArray: async () => [...rows].reverse() }) }) }),
         },
     },
 }));
+let addFails = false;
 
 const { SyncIntelligenceService } = await import('./SyncIntelligenceService');
 
-beforeEach(() => { vi.clearAllMocks(); });
+const event = (entityId: string) => ({ deviceId: 'DEV-1', branchId: 'b1', eventType: 'SALE', entityId, entityType: 'Invoice', status: 'FAILED' as const, payload: {} });
 
-describe('SyncIntelligenceService', () => {
+beforeEach(() => { vi.clearAllMocks(); rows = []; addFails = false; });
+
+describe('SyncIntelligenceService devices', () => {
     it('reads registered devices from /api/sync/devices and maps Mongo fields', async () => {
         get.mockResolvedValue({ data: { success: true, data: [{ _id: 'd1', name: 'Counter 1', platform: 'Windows', status: 'ACTIVE', isOnline: true, syncHealth: 90, errorRate: 2, pendingOps: 1, lastSyncAt: '2026-09-25T10:00:00.000Z' }] } });
-
         const devices = await SyncIntelligenceService.getDevices();
-
         expect(get).toHaveBeenCalledWith('/api/sync/devices');
         expect(devices).toEqual([expect.objectContaining({ id: 'd1', name: 'Counter 1', syncHealth: 90, lastSyncAt: '2026-09-25T10:00:00.000Z' })]);
-    });
-
-    it('returns no devices when none are registered, and never invents any', async () => {
-        get.mockResolvedValue({ data: { success: true, data: [] } });
-        expect(await SyncIntelligenceService.getDevices()).toEqual([]);
     });
 
     it('throws when the device list cannot be loaded', async () => {
@@ -42,22 +40,50 @@ describe('SyncIntelligenceService', () => {
         await expect(SyncIntelligenceService.getDevices()).rejects.toThrow('Network Error');
     });
 
-    it('stores logged events in the local ledger and prunes old ones', async () => {
-        await SyncIntelligenceService.logEvent({ deviceId: 'LOCAL_POS', branchId: 'b1', eventType: 'SALE', entityId: 'A01-7', entityType: 'Invoice', status: 'FAILED', payload: {} });
+    it('keeps one stable device id per browser', () => {
+        const id = SyncIntelligenceService.getDeviceId();
+        expect(id).toMatch(/^DEV-[0-9A-F]{8}$/);
+        expect(SyncIntelligenceService.getDeviceId()).toBe(id);
+    });
+});
 
-        expect(add).toHaveBeenCalledWith(expect.objectContaining({ entityId: 'A01-7', status: 'FAILED', id: expect.stringMatching(/^LE-/) }));
-        expect(below).toHaveBeenCalled();
+describe('SyncIntelligenceService ledger', () => {
+    it('records the event locally, uploads it, and marks it uploaded once accepted', async () => {
+        post.mockImplementation(async (_url: string, body: any) => ({ data: { success: true, data: { accepted: body.events.map((e: any) => e.id) } } }));
+        await SyncIntelligenceService.logEvent(event('A01-7'));
+
+        expect(post).toHaveBeenCalledWith('/api/sync/ledger', { events: [expect.objectContaining({ entityId: 'A01-7', status: 'FAILED', id: expect.stringMatching(/^LE-/) })] });
+        expect(post.mock.calls[0][1].events[0].uploaded).toBeUndefined();
+        expect(rows[0].uploaded).toBe(true);
         expect(pruneDelete).toHaveBeenCalled();
     });
 
-    it('does not throw when the local ledger write fails', async () => {
-        add.mockRejectedValue(new Error('QuotaExceeded'));
-        await expect(SyncIntelligenceService.logEvent({ deviceId: 'LOCAL_POS', branchId: 'b1', eventType: 'SALE', entityId: 'x', entityType: 'Invoice', status: 'SYNCED', payload: {} })).resolves.toBeUndefined();
+    it('keeps the event pending when the upload fails, and sends it on the next attempt', async () => {
+        post.mockRejectedValueOnce(new Error('offline'));
+        await SyncIntelligenceService.logEvent(event('A01-8'));
+        expect(rows[0].uploaded).toBe(false);
+
+        post.mockImplementation(async (_url: string, body: any) => ({ data: { success: true, data: { accepted: body.events.map((e: any) => e.id) } } }));
+        await SyncIntelligenceService.uploadPending();
+        expect(rows[0].uploaded).toBe(true);
     });
 
-    it('reads the ledger newest first, limited', async () => {
-        toArray.mockResolvedValue([{ id: 'LE-1' }]);
-        expect(await SyncIntelligenceService.getLedger(10)).toEqual([{ id: 'LE-1' }]);
-        expect(limit).toHaveBeenCalledWith(10);
+    it('never throws when the local write fails', async () => {
+        addFails = true;
+        await expect(SyncIntelligenceService.logEvent(event('x'))).resolves.toBeUndefined();
+        expect(post).not.toHaveBeenCalled();
+    });
+
+    it('reads every device\'s events from the server', async () => {
+        get.mockResolvedValue({ data: { success: true, data: [{ id: 'LE-2', deviceId: 'DEV-2' }] } });
+        const result = await SyncIntelligenceService.getLedger(10);
+        expect(get).toHaveBeenCalledWith('/api/sync/ledger', { params: { limit: 10 } });
+        expect(result).toEqual({ entries: [{ id: 'LE-2', deviceId: 'DEV-2' }], source: 'server' });
+    });
+
+    it('falls back to this device\'s log, labelled as such, when the server is unreachable', async () => {
+        rows = [{ id: 'LE-local', uploaded: true }];
+        get.mockRejectedValue(new Error('Network Error'));
+        expect(await SyncIntelligenceService.getLedger()).toEqual({ entries: [{ id: 'LE-local', uploaded: true }], source: 'device' });
     });
 });

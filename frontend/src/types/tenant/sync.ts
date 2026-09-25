@@ -31,6 +31,8 @@ export interface SyncLedgerEntry {
     status: 'SYNCED' | 'PENDING' | 'CONFLICT' | 'FAILED';
     payload: any;
     hash: string;
+    /** Device-side only: whether this event has been uploaded to POST /api/sync/ledger. */
+    uploaded?: boolean;
 }
 
 export interface SyncConflict {

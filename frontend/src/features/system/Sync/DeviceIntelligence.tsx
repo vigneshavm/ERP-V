@@ -28,12 +28,15 @@ const SyncIntelligence: React.FC = () => {
     const [ledger, setLedger] = useState<SyncLedgerEntry[]>([]);
     const [anomalies, setAnomalies] = useState<string[]>([]);
     const [loadError, setLoadError] = useState<string | null>(null);
+    const [ledgerSource, setLedgerSource] = useState<'server' | 'device'>('server');
     const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'DEVICES' | 'LEDGER' | 'BACKUPS'>('DASHBOARD');
 
     useEffect(() => {
         const loadData = async () => {
-            // The ledger is this device's local log, so it still loads when the device list can't.
-            setLedger(await SyncIntelligenceService.getLedger().catch(() => []));
+            // The ledger falls back to this device's own log, so it still loads when the server can't.
+            const ledgerResult = await SyncIntelligenceService.getLedger().catch(() => ({ entries: [], source: 'device' as const }));
+            setLedger(ledgerResult.entries);
+            setLedgerSource(ledgerResult.source);
             try {
                 const devList = await SyncIntelligenceService.getDevices();
                 setDevices(devList);
@@ -313,12 +316,12 @@ const SyncIntelligence: React.FC = () => {
                     <div className="p-10 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
                         <div>
                             <h3 className="text-2xl font-black italic uppercase tracking-tight text-white">Sync Event Ledger</h3>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Sync results recorded on this device</p>
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">{ledgerSource === 'server' ? 'Sync results from all devices' : 'Server unreachable: showing this device\'s sync results only'}</p>
                         </div>
                     </div>
                     <div className="divide-y divide-slate-800">
                         {ledger.length === 0 && (
-                            <p className="p-10 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">No sync events recorded on this device yet.</p>
+                            <p className="p-10 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">No sync events recorded yet.</p>
                         )}
                         {ledger.map((entry) => (
                             <div key={entry.id} className="p-8 hover:bg-white/5 transition-all flex items-center justify-between relative group overflow-hidden">
