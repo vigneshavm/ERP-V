@@ -14,6 +14,8 @@ import { lazy } from 'react';
 const notConnected = (title: string, detail?: string) => () =>
     import('../components/shared/Layout/notConnected').then(m => ({ default: m.notConnected({ title, detail }) }));
 
+const CAMPAIGNS_DETAIL = 'Engagement and conversion per campaign need sales linked to the campaign that drove them, which the ERP doesn\'t record. WhatsApp campaigns you\'ve created are listed under WhatsApp Marketing.';
+
 export const Modules = {
     Dashboard: () => import("../features/dashboard/Dashboard"),
     Finance: () => import("../features/financial/Journal/JournalEntries"),
@@ -31,20 +33,20 @@ export const Modules = {
     Storefront: notConnected('Online storefront'),
     GrowDashboard: notConnected('Growth dashboard'),
     GrowthHub: () => import("../features/dashboard/GrowthHub"),
-    OnlinePerformance: () => import("../features/dashboard/OnlinePerformance"),
+    OnlinePerformance: notConnected('Online performance', 'Conversion rate, sessions, bounce rate and device mix need a web analytics integration for the online store, which isn\'t connected.'),
     // Growth screens below had hardcoded members, campaigns, reviews and ROI; they now read ERP records, or say
     // plainly that an integration isn't connected.
     MarketingMetrics: () => import("../features/engagement/MarketingMetricsPage"),
-    MarketingCampaigns: () => import("../features/marketing/MarketingCampaigns"),
+    MarketingCampaigns: notConnected('Marketing campaigns', CAMPAIGNS_DETAIL),
     MarketingTemplates: () => import("../features/marketing/MarketingTemplates"),
-    EmailMarketing: () => import("../features/marketing/EmailMarketing"),
+    EmailMarketing: notConnected('Email marketing', 'Subscriber counts, open and click rates need an email provider that records sends; the ERP doesn\'t send or track marketing email yet.'),
     EmailEngagement: () => import("../features/customer-engagement/EmailEngagement"),
     WhatsAppMarketing: () => import("../features/engagement/WhatsAppCampaignsPage"),
-    SocialMediaMarketing: () => import("../features/marketing/SocialMediaMarketing"),
-    MarketingCoupons: () => import("../features/marketing/MarketingCoupons"),
-    MarketingOffers: () => import("../features/marketing/MarketingOffers"),
+    SocialMediaMarketing: notConnected('Social media', 'Reach, followers and post performance need connected Instagram, Facebook or LinkedIn business accounts; the ERP doesn\'t read social media data.'),
+    MarketingCoupons: notConnected('Coupons', 'Redemptions and revenue per coupon need the coupon used to be recorded on each sale; invoices don\'t record coupons yet.'),
+    MarketingOffers: notConnected('Offer performance', 'Sales lift and discount analysis need each sale to record the offer that applied, which invoices don\'t yet. Your combo offers themselves are managed under Inventory → Combo Offers.'),
     OnlineStore: () => import("../features/commercial/OnlineStore/OnlineStore"),
-    Marketing: () => import("../features/marketing/MarketingCampaigns"),
+    Marketing: notConnected('Marketing campaigns', CAMPAIGNS_DETAIL),
     MarketingTools: () => import("../features/business/MarketingTools"),
     GoogleBusiness: notConnected('Google Business Profile', 'Reviews, posts and insights need the Google Business Profile API, which isn\'t connected; the ERP\'s Google sync is not implemented yet.'),
     Sync: notConnected('Sync & backup'),
@@ -56,7 +58,7 @@ export const Modules = {
     SMSMarketing: () => import("../features/marketing/SMSMarketing"),
     WhatsAppEngagement: notConnected('WhatsApp conversations', 'Customer chats need a connected WhatsApp Business account that stores incoming messages; the ERP doesn\'t receive or store WhatsApp messages yet.'),
     LoyaltyEngagement: () => import("../features/engagement/LoyaltyReportPage"),
-    FeedbackEngagement: () => import("../features/customer-engagement/FeedbackEngagement"),
+    FeedbackEngagement: notConnected('Customer feedback', 'Satisfaction scores, detractor rate and resolution times need customer feedback records; the ERP only stores staff feedback about the app.'),
     SuperAdminGrowthConsole: notConnected('Platform admin console'),
     TenantManagement: notConnected('Tenant management'),
     GSTReconciliation: () => import("../features/finance/GST/GSTReconciliation"),
