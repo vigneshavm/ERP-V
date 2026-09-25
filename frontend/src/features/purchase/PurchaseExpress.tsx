@@ -156,7 +156,7 @@ const PurchaseExpress: React.FC = () => {
                     {/* LEFT: FORM SYSTEM */}
                     <div className="xl:col-span-8 space-y-10">
                         {/* Section 1: Entity & Fiscal Context */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
                             <div className="p-10 space-y-10">
                                 <div className="flex items-center gap-6">
                                     <div className="p-4 bg-primary/10 text-primary rounded-[1.5rem]">
@@ -269,7 +269,7 @@ const PurchaseExpress: React.FC = () => {
                         </div>
 
                         {/* Section 2: Product Mutation Vector */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                        <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm">
                             <div className="p-10 space-y-10">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-6">
@@ -386,7 +386,7 @@ const PurchaseExpress: React.FC = () => {
 
                         {/* Additional Intelligence: Notes & Attachments */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                            <div className="bg-white dark:bg-neutral-800 rounded-[3rem] p-10 border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
+                            <div className="bg-white dark:bg-neutral-800 rounded-xl p-10 border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
                                 <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] block">Institutional Remarks</label>
                                 <textarea 
                                     value={notes}
@@ -395,7 +395,7 @@ const PurchaseExpress: React.FC = () => {
                                     className="w-full h-24 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-[2rem] p-6 text-xs font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none"
                                 />
                             </div>
-                            <div className="bg-white dark:bg-neutral-800 rounded-[3rem] p-10 border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6 flex flex-col justify-center items-center group cursor-pointer hover:border-primary/20 transition-all">
+                            <div className="bg-white dark:bg-neutral-800 rounded-xl p-10 border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6 flex flex-col justify-center items-center group cursor-pointer hover:border-primary/20 transition-all">
                                 <div className="p-5 bg-neutral-50 dark:bg-neutral-900 rounded-[2rem] text-neutral-400 group-hover:text-primary transition-all">
                                     <Upload className="w-8 h-8" />
                                 </div>
@@ -409,7 +409,7 @@ const PurchaseExpress: React.FC = () => {
 
                     {/* RIGHT: FISCAL SUMMARY CORE */}
                     <div className="xl:col-span-4 space-y-10">
-                        <div className="bg-neutral-900 dark:bg-neutral-950 p-12 rounded-[4rem] text-white shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)] space-y-12 relative overflow-hidden group">
+                        <div className="bg-neutral-900 dark:bg-neutral-950 p-12 rounded-xl text-white shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)] space-y-12 relative overflow-hidden group">
                             <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-1000">
                                 <Activity className="w-64 h-64" />
                             </div>

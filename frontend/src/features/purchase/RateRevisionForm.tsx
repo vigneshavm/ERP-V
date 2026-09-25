@@ -121,7 +121,7 @@ const RateRevisionForm: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Main Parameters */}
                     <div className="lg:col-span-7 space-y-10">
-                        <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <div className="bg-white dark:bg-neutral-800 p-10 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-10">
                                 <Activity className="w-5 h-5 text-primary" /> Node Specifications
                             </h3>
@@ -264,7 +264,7 @@ const RateRevisionForm: React.FC = () => {
                             </div>
                         )}
                         
-                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4 animate-in slide-in-from-right-10 duration-1000">
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4 animate-in slide-in-from-right-10 duration-1000">
                             <div className="p-3 bg-warning/10 rounded-sm">
                                 <ShieldCheck className="text-warning w-6 h-6" />
                             </div>

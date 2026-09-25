@@ -53,7 +53,7 @@ const OnlineStoreSetup: React.FC<{
                     </div>
 
                     <div className="hidden xl:block w-full max-w-md">
-                        <div className="relative aspect-square bg-[#020617] rounded-[3rem] border border-slate-800 p-8 shadow-inner overflow-hidden">
+                        <div className="relative aspect-square bg-[#020617] rounded-xl border border-slate-800 p-8 shadow-inner overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-br from-[#4F46E5]/20 to-transparent" />
                             <div className="relative h-full flex flex-col justify-center items-center text-center">
                                 <ShoppingBag className="w-24 h-24 text-[#F8FAFC] mb-8" />

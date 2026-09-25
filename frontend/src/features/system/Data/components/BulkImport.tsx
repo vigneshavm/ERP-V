@@ -246,7 +246,7 @@ const BulkImport = () => {
     return (
         <div className="max-w-7xl mx-auto space-y-6">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-main mb-2">Bulk Import Hub</h1>
+                <h1 className="page-title text-main mb-2">Bulk Import Hub</h1>
                 <p className="text-secondary">Import multiple items from CSV or Excel files with auto-validation</p>
             </div>
 

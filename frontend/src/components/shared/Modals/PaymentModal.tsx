@@ -34,7 +34,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div className="ui-modal-backdrop bg-black/60 animate-fade-in">
             <div className="bg-white dark:bg-neutral-800 rounded-sm w-full max-w-md shadow-2xl border dark:border-neutral-700 overflow-hidden flex flex-col">
                 <div className="p-6 border-b dark:border-neutral-700 flex items-center justify-between">
                     <div>
@@ -49,18 +49,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div className="grid grid-cols-2 gap-4 p-4 bg-neutral-50 dark:bg-neutral-900 rounded-xl mb-4 text-sm font-medium">
                         <div>
-                            <p className="text-neutral-400 text-[10px] uppercase font-bold">Total Amount</p>
+                            <p className="text-neutral-400 text-xs uppercase font-bold">Total Amount</p>
                             <p className="text-neutral-900 dark:text-white">₹{totalAmount.toLocaleString()}</p>
                         </div>
                         <div>
-                            <p className="text-neutral-400 text-[10px] uppercase font-bold">Paid So Far</p>
+                            <p className="text-neutral-400 text-xs uppercase font-bold">Paid So Far</p>
                             <p className="text-neutral-900 dark:text-white">₹{paidAmount.toLocaleString()}</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 block">Payment Amount (₹)</label>
+                            <label className="label-sm text-neutral-400 mb-1 block">Payment Amount (₹)</label>
                             <input
                                 name="amount"
                                 type="number"
@@ -73,7 +73,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                         </div>
 
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 block">Payment Date</label>
+                            <label className="label-sm text-neutral-400 mb-1 block">Payment Date</label>
                             <input
                                 name="paymentDate"
                                 type="date"
@@ -84,7 +84,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                         </div>
 
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 block">Method</label>
+                            <label className="label-sm text-neutral-400 mb-1 block">Method</label>
                             <select
                                 name="paymentMethod"
                                 className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-sm font-bold"
@@ -98,7 +98,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                         </div>
 
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 block">Notes</label>
+                            <label className="label-sm text-neutral-400 mb-1 block">Notes</label>
                             <textarea
                                 name="notes"
                                 rows={2}
@@ -112,13 +112,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-3 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded-xl text-[10px] font-black uppercase tracking-widest"
+                            className="flex-1 py-3 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded-xl text-xs font-black uppercase tracking-widest"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+                            className="flex-1 py-3 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20"
                         >
                             Record Payment
                         </button>

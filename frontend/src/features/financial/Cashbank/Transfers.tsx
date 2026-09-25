@@ -160,7 +160,7 @@ const Transfers: React.FC = () => {
             <div className="max-w-6xl mx-auto pb-20">
                 <form onSubmit={handleSubmit} className="space-y-12">
                     {/* Connectivity Neural Map */}
-                    <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 py-12 px-8 bg-slate-50/50 dark:bg-slate-800/20 rounded-[4rem] border border-slate-200 dark:border-slate-800 border-dashed">
+                    <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12 py-12 px-8 bg-slate-50/50 dark:bg-slate-800/20 rounded-xl border border-slate-200 dark:border-slate-800 border-dashed">
                         <AccountPulse account={selectedFrom} label="Source" value={formData.fromAccount} onChange={fromAccount => setFormData(prev => ({ ...prev, fromAccount }))} options={accountOptions} insufficient={insufficientBalance} />
 
                         <div className="flex flex-col items-center gap-4 relative">
@@ -176,7 +176,7 @@ const Transfers: React.FC = () => {
 
                     {/* Execution Parameters */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                        <div className="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[3rem] p-10 shadow-sm space-y-8">
+                        <div className="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-10 shadow-sm space-y-8">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-sm text-primary">
                                     <Activity className="w-6 h-6" />
@@ -225,7 +225,7 @@ const Transfers: React.FC = () => {
 
                         {/* Impact Surveillance */}
                         <div className="lg:col-span-4 space-y-6">
-                            <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden group">
+                            <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-xl p-10 text-white shadow-2xl relative overflow-hidden group">
                                 <Zap className="absolute -top-4 -right-4 w-32 h-32 opacity-10 group-hover:scale-110 transition-transform" />
                                 <div className="relative z-10 space-y-6">
                                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Balance Impact Log</h4>

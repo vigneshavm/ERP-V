@@ -33,7 +33,7 @@ const NavGroup: React.FC<NavGroupProps> = ({
                 >
                     <Icon className="w-4 h-4" />
                 </button>
-                <div className="absolute left-full top-0 ml-2 hidden group-hover:block z-50">
+                <div className="ui-dropdown absolute left-full top-0 ml-2 hidden group-hover:block">
                     <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl p-2 min-w-[180px]">
                         <div className="px-3 py-2 text-[11px] font-bold text-neutral-500 uppercase tracking-wider border-b border-neutral-200 mb-1">
                             {label}

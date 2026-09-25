@@ -62,7 +62,7 @@ const SyncIntelligence: React.FC = () => {
     return (
         <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
             {/* Premium Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-900 p-10 rounded-[3rem] border border-slate-800 shadow-2xl relative overflow-hidden group">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-900 p-10 rounded-xl border border-slate-800 shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full -mr-32 -mt-32 blur-[100px] group-hover:bg-primary/20 transition-all duration-1000" />
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-600/10 rounded-full -ml-32 -mb-32 blur-[80px]" />
 
@@ -133,7 +133,7 @@ const SyncIntelligence: React.FC = () => {
 
                     <div className="grid grid-cols-12 gap-8">
                         {/* Status Heatmap / Map Placeholder */}
-                        <div className="col-span-12 lg:col-span-8 bg-slate-900 rounded-[3rem] p-10 border border-slate-800 shadow-xl relative overflow-hidden">
+                        <div className="col-span-12 lg:col-span-8 bg-slate-900 rounded-xl p-10 border border-slate-800 shadow-xl relative overflow-hidden">
                             <div className="flex items-center justify-between mb-10 relative z-10">
                                 <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-3">
                                     <Map className="w-6 h-6 text-primary" /> Geographic Node Topology
@@ -181,7 +181,7 @@ const SyncIntelligence: React.FC = () => {
                         </div>
 
                         {/* AI Anomaly Panel */}
-                        <div className="col-span-12 lg:col-span-4 bg-slate-900 rounded-[3rem] p-10 border border-slate-800 shadow-xl">
+                        <div className="col-span-12 lg:col-span-4 bg-slate-900 rounded-xl p-10 border border-slate-800 shadow-xl">
                             <div className="flex items-center gap-3 mb-8 text-primary">
                                 <Zap className="w-6 h-6 animate-pulse" />
                                 <h3 className="text-xl font-black italic uppercase tracking-tight text-white">Anomaly Alerts</h3>
@@ -211,7 +211,7 @@ const SyncIntelligence: React.FC = () => {
             )}
 
             {activeTab === 'DEVICES' && (
-                <div className="bg-slate-900 rounded-[3rem] border border-slate-800 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500">
+                <div className="bg-slate-900 rounded-xl border border-slate-800 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500">
                     <div className="p-10 border-b border-slate-800 flex items-center justify-between bg-slate-900/50 backdrop-blur-md">
                         <div>
                             <h3 className="text-2xl font-black italic uppercase tracking-tight text-white">Device Control Panel</h3>
@@ -312,7 +312,7 @@ const SyncIntelligence: React.FC = () => {
             )}
 
             {activeTab === 'LEDGER' && (
-                <div className="bg-slate-900 rounded-[3rem] border border-slate-800 shadow-2xl overflow-hidden animate-in slide-in-from-right-4 duration-500">
+                <div className="bg-slate-900 rounded-xl border border-slate-800 shadow-2xl overflow-hidden animate-in slide-in-from-right-4 duration-500">
                     <div className="p-10 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
                         <div>
                             <h3 className="text-2xl font-black italic uppercase tracking-tight text-white">Sync Event Ledger</h3>
@@ -362,7 +362,7 @@ const SyncIntelligence: React.FC = () => {
             )}
 
             {/* Monetization / Admin Layer Footer */}
-            <div className="bg-gradient-to-r from-indigo-900/20 to-transparent p-10 rounded-[3rem] border border-slate-800/50 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="bg-gradient-to-r from-indigo-900/20 to-transparent p-10 rounded-xl border border-slate-800/50 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div>
                     <h4 className="text-xl font-black text-white italic uppercase tracking-tight mb-2">Synchronization Intelligence <span className="text-primary px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black align-middle ml-2">PREMIUM</span></h4>
                     <p className="text-sm text-slate-400 font-medium">Powering zero-loss retail operations with transaction-level auditing and anomaly detection.</p>

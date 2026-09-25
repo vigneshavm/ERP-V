@@ -116,7 +116,7 @@ const SerializedUnitLookup: React.FC = () => {
         <Layout>
             <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-12">
                 <div>
-                    <h2 className="text-2xl font-black flex items-center gap-2 tracking-tight">
+                    <h2 className="page-title flex items-center gap-2">
                         <Fingerprint className="w-6 h-6 text-primary" />
                         Serial / IMEI Tracking
                     </h2>

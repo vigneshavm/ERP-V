@@ -243,7 +243,7 @@ const SupplierLedger: React.FC = () => {
                             </button>
                         )}
                         <div className="flex flex-col">
-                            <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">{data.supplier.businessName}</h1>
+                            <h1 className="page-title text-slate-800 dark:text-neutral-100">{data.supplier.businessName}</h1>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="px-2 py-0.5 bg-indigo-50 dark:bg-primary/10 text-primary dark:text-primary text-[9px] font-black uppercase rounded-md border border-indigo-100/50 dark:border-primary/20">
                                     Ledger

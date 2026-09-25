@@ -297,7 +297,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Main Workspace */}
                     <div className="lg:col-span-8 space-y-10">
-                        <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <div className="bg-white dark:bg-neutral-800 p-10 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-10">
                                 <Activity className="w-5 h-5 text-primary" /> Institutional Parameters
                             </h3>
@@ -355,7 +355,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                         </div>
 
                         {/* Reversal Ledger Workspace */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
+                        <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
                             <div className="p-10 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
                                 <h3 className="text-sm font-black uppercase tracking-widest">Reversal Node Allocation</h3>
                                 <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest opacity-60">Source: {returnData.grn_number || 'No Node Linked'}</span>
@@ -466,7 +466,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                         </div>
 
                         {/* Lifecycle Control */}
-                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
                                 <Truck className="w-5 h-5" /> Logistics Protocol
                             </h3>
@@ -491,7 +491,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                         </div>
 
                         {/* Narrative Node */}
-                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
                                 <FileText className="w-5 h-5" /> Institutional Narrative
                             </h3>

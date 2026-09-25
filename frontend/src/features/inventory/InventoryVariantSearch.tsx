@@ -157,7 +157,7 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
             {/* Header Title */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-neutral-900 dark:text-white flex items-center gap-3">
+                    <h1 className="page-title text-neutral-900 dark:text-white flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                             <Shirt className="w-6 h-6" />
                         </div>

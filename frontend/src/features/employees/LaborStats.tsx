@@ -25,7 +25,7 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
         <div className="grid grid-cols-1 gap-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 pb-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{selectedLaborer.name}</h1>
+                    <h1 className="page-title text-gray-900">{selectedLaborer.name}</h1>
                     <div className="flex items-center gap-2 mt-1">
                         <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded uppercase tracking-wide">
                             {selectedLaborer.role}

@@ -199,7 +199,7 @@ const ReportsModule: React.FC = () => {
             <div className="min-h-[400px]">
                 {activeTab === 'custom' ? (
                     <div className="animate-in fade-in zoom-in-95 duration-700">
-                        <div className="relative overflow-hidden rounded-[3rem] bg-neutral-900 border border-neutral-800 p-8 lg:p-16 text-white shadow-2xl">
+                        <div className="relative overflow-hidden rounded-xl bg-neutral-900 border border-neutral-800 p-8 lg:p-16 text-white shadow-2xl">
                             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full -mr-64 -mt-64" />
                             <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-600/10 blur-[100px] rounded-full -ml-40 -mb-40" />
 

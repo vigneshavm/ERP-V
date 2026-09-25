@@ -328,7 +328,7 @@ const CategoryManager: React.FC = () => {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+                    <h1 className="page-title text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
                         <Layers className="w-6 h-6 text-primary" />
                         Category Management
                     </h1>

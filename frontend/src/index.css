@@ -414,6 +414,10 @@
     z-index: var(--z-dropdown);
   }
 
+  .ui-sticky {
+    z-index: var(--z-sticky);
+  }
+
   .ui-popover {
     z-index: var(--z-popover);
   }

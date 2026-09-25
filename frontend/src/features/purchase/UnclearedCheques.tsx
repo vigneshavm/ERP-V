@@ -104,7 +104,7 @@ const UnclearedCheques: React.FC = () => {
                 </div>
 
                 {/* Audit Control Matrix */}
-                <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="relative w-full md:w-[500px]">
                         <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Instrument Search</label>
                         <div className="relative">
@@ -130,7 +130,7 @@ const UnclearedCheques: React.FC = () => {
                 </div>
 
                 {/* Instrument Vault Grid */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">

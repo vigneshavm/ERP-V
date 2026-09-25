@@ -61,7 +61,7 @@ const DataManager: React.FC = () => {
         <div className="space-y-8 animate-fade-in">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase underline decoration-indigo-500 decoration-4 underline-offset-8">Data Operations Hub</h1>
+                    <h1 className="page-title text-slate-900 dark:text-white uppercase underline decoration-indigo-500 decoration-4 underline-offset-8">Data Operations Hub</h1>
                     <p className="text-slate-500 mt-2 font-medium">Wings-grade data control, migration, and numbering intelligence.</p>
                 </div>
             </div>

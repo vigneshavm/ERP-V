@@ -24,7 +24,7 @@ export const ReportHeader: React.FC<ReportHeaderProps> = ({ breadcrumb, title, d
         </nav>
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
             <div className="min-w-0">
-                <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{title}</h1>
+                <h1 className="page-title text-slate-900 dark:text-white">{title}</h1>
                 <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">{description}</p>
             </div>
             <div className="shrink-0">

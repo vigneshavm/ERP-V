@@ -19,7 +19,7 @@ const CashBankHero: React.FC<CashBankHeroProps> = ({
     extraActions
 }) => {
     return (
-        <div className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 rounded-[3rem] p-12 mb-8 text-white shadow-2xl relative overflow-hidden group">
+        <div className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 rounded-xl p-12 mb-8 text-white shadow-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-110 transition-transform pointer-events-none">
                 <Icon className="w-64 h-64" />
             </div>

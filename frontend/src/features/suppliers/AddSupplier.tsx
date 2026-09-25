@@ -29,7 +29,7 @@ const AddSupplier: React.FC = () => {
                         >
                             <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-neutral-400" />
                         </button>
-                        <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100">Add Supplier</h1>
+                        <h1 className="page-title text-slate-800 dark:text-neutral-100">Add Supplier</h1>
                     </div>
                 </div>
 

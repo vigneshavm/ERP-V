@@ -323,7 +323,7 @@ const PurchaseRegister: React.FC = () => {
                 </div>
 
                 {/* Audit Workspace Container */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     {/* Control Bar */}
                     <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex flex-col xl:flex-row gap-8">
                         <div className="flex-1 space-y-8">

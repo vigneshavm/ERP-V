@@ -352,7 +352,7 @@ const Cheques: React.FC = () => {
 
                 {/* Instrument Grid */}
                 {filteredCheques.length === 0 ? (
-                    <div className="py-32 bg-white dark:bg-neutral-800 rounded-[3rem] border-2 border-dashed border-neutral-200 dark:border-neutral-700 text-center flex flex-col items-center">
+                    <div className="py-32 bg-white dark:bg-neutral-800 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-700 text-center flex flex-col items-center">
                         <Layers className="w-16 h-16 text-neutral-100 dark:text-neutral-900 mb-6" />
                         <h4 className="text-xl font-black italic text-neutral-400 uppercase tracking-widest">No Instruments located in node</h4>
                         <p className="text-xs font-bold text-neutral-300 mt-2 uppercase tracking-widest italic">Clear filters or register a new transaction pulse</p>
@@ -419,7 +419,7 @@ const Cheques: React.FC = () => {
             {/* --- MODALS --- */}
             {showAddCheque && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-[3rem] shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden relative">
+                    <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden relative">
                         <Activity className="absolute -top-10 -right-10 w-48 h-48 text-primary opacity-5" />
 
                         <div className="p-10">

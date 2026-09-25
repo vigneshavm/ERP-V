@@ -155,7 +155,7 @@ const JournalEntryForm: React.FC = () => {
                     </div>
 
                     {/* Transaction Ledger Table */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+                    <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
                         <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
                             <h3 className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">Transaction Ledger</h3>
                             <div className="flex items-center gap-2 text-[10px] font-black text-neutral-400 uppercase italic">
@@ -239,7 +239,7 @@ const JournalEntryForm: React.FC = () => {
                     </div>
 
                     {/* Finalization Controller */}
-                    <div className={`p-8 rounded-[3rem] border shadow-2xl flex flex-col md:flex-row justify-between items-center gap-8 transition-all duration-500 ${isBalanced ? 'bg-neutral-900 text-white border-neutral-800' : 'bg-rose-50 dark:bg-rose-900/10 border-rose-100 dark:border-rose-900/30 ring-4 ring-rose-500/10'}`}>
+                    <div className={`p-8 rounded-xl border shadow-2xl flex flex-col md:flex-row justify-between items-center gap-8 transition-all duration-500 ${isBalanced ? 'bg-neutral-900 text-white border-neutral-800' : 'bg-rose-50 dark:bg-rose-900/10 border-rose-100 dark:border-rose-900/30 ring-4 ring-rose-500/10'}`}>
                         <div className="flex items-center gap-4">
                             {!isBalanced ? (
                                 <div className="w-12 h-12 bg-danger/20 rounded-sm flex items-center justify-center text-danger animate-pulse">

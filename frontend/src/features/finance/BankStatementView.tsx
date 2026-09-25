@@ -193,7 +193,7 @@ const BankStatementView: React.FC = () => {
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onClick={() => !loading && fileInputRef.current?.click()}
-                    className={`relative border-2 border-dashed rounded-[3rem] p-12 cursor-pointer transition-all duration-700 text-center flex flex-col items-center gap-6 group overflow-hidden ${
+                    className={`relative border-2 border-dashed rounded-xl p-12 cursor-pointer transition-all duration-700 text-center flex flex-col items-center gap-6 group overflow-hidden ${
                         dragging
                             ? 'border-primary bg-primary/5 scale-[1.02] shadow-2xl'
                             : 'border-neutral-200 dark:border-neutral-800 hover:border-primary/40 hover:bg-neutral-50/50 dark:hover:bg-neutral-900/30'
@@ -217,7 +217,7 @@ const BankStatementView: React.FC = () => {
                 </div>
 
                 {/* Transactions Archive */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                         <div className="flex items-center gap-4">
                             <h2 className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">Institutional Records</h2>

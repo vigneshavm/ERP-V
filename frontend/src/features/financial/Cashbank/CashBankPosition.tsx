@@ -102,7 +102,7 @@ const CashBankPosition: React.FC = () => {
                         />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="bg-gradient-to-br from-primary to-indigo-700 p-10 rounded-[3rem] text-white shadow-2xl shadow-primary/20 space-y-10 relative overflow-hidden group border border-white/10">
+                            <div className="bg-gradient-to-br from-primary to-indigo-700 p-10 rounded-xl text-white shadow-2xl shadow-primary/20 space-y-10 relative overflow-hidden group border border-white/10">
                                 <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-1000">
                                     <Wallet className="w-56 h-56" />
                                 </div>
@@ -121,7 +121,7 @@ const CashBankPosition: React.FC = () => {
                                 </button>
                             </div>
 
-                            <div className="bg-neutral-900 dark:bg-neutral-900 p-10 rounded-[3rem] text-white shadow-2xl space-y-10 relative overflow-hidden group border border-neutral-800">
+                            <div className="bg-neutral-900 dark:bg-neutral-900 p-10 rounded-xl text-white shadow-2xl space-y-10 relative overflow-hidden group border border-neutral-800">
                                 <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-125 group-hover:rotate-12 transition-all duration-1000">
                                     <PiggyBank className="w-56 h-56" />
                                 </div>
@@ -144,7 +144,7 @@ const CashBankPosition: React.FC = () => {
 
                     {/* Aggregate Exposure Sidebar */}
                     <div className="col-span-12 lg:col-span-4 space-y-8">
-                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-[3rem] shadow-sm relative overflow-hidden group">
+                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-xl shadow-sm relative overflow-hidden group">
                             <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-700">
                                 <PieChart className="w-48 h-48" />
                             </div>
@@ -182,7 +182,7 @@ const CashBankPosition: React.FC = () => {
                         </div>
 
                         {/* Internal Clearing Execution */}
-                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-[3rem] shadow-sm space-y-8">
+                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-xl shadow-sm space-y-8">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-sm bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-primary shadow-sm">
                                     <ArrowRightLeft className="w-6 h-6" />
@@ -212,7 +212,7 @@ const CashBankPosition: React.FC = () => {
                         </div>
 
                         {/* Fiscal Advisory Stream */}
-                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/5 border border-amber-100 dark:border-amber-900/20 p-10 rounded-[3rem] space-y-6">
+                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/5 border border-amber-100 dark:border-amber-900/20 p-10 rounded-xl space-y-6">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-white dark:bg-neutral-900 rounded-sm text-warning shadow-sm border border-amber-100 dark:border-amber-900/20">
                                     <Zap className="w-6 h-6" />

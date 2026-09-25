@@ -91,7 +91,7 @@ const CustomerDetail = () => {
             <div className="grid grid-cols-12 gap-6">
                 {/* Financial Pulse Sidebar */}
                 <div className="col-span-12 lg:col-span-4 space-y-6">
-                    <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[3rem] text-white shadow-xl shadow-indigo-100 dark:shadow-none space-y-8 relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-xl text-white shadow-xl shadow-indigo-100 dark:shadow-none space-y-8 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-125 transition-transform">
                             <Zap className="w-40 h-40" />
                         </div>
@@ -151,7 +151,7 @@ const CustomerDetail = () => {
                     </div>
 
                     {/* Behavior Analytics / History */}
-                    <div className="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                         <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/20">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center text-violet-600">

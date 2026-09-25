@@ -180,7 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                     {!desktopCollapsed && (
                         <div className="overflow-hidden">
                             <span className="text-lg font-display font-bold tracking-tight block leading-none truncate text-main">SmartERPAI</span>
-                            <span className="text-[10px] text-secondary uppercase font-bold tracking-widest leading-relaxed">{role}</span>
+                            <span className="label-sm text-secondary leading-relaxed">{role}</span>
                         </div>
                     )}
                 </div>
@@ -197,7 +197,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
             {/* Tenant Info & Branch */}
             <div className={`mb-6 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
-                {!desktopCollapsed && <span className="text-[10px] text-secondary uppercase font-bold tracking-[0.2em] opacity-80">{currentTenant?.name}</span>}
+                {!desktopCollapsed && <span className="label-sm text-secondary opacity-80">{currentTenant?.name}</span>}
                 {branchSelector}
             </div>
 
@@ -206,7 +206,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 {/* Main ERP Section */}
                 {!desktopCollapsed && visibleErpItems.length > 0 && (
                     <div className="px-3 pt-4 pb-2">
-                        <h3 className="text-[10px] font-display font-bold text-secondary uppercase tracking-[0.15em] opacity-60">System Core</h3>
+                        <h3 className="overline font-display text-secondary opacity-60">System Core</h3>
                     </div>
                 )}
                 {visibleErpItems.map((item: MenuItem) => renderRecursive(item, false))}
@@ -214,7 +214,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 {/* Growth Platform Section */}
                 {!desktopCollapsed && visibleGrowItems.length > 0 && (
                     <div className="px-3 pt-6 pb-2 border-t border-white/5 mt-4">
-                        <h3 className="text-[10px] font-display font-bold text-secondary uppercase tracking-[0.15em] opacity-60">Growth Matrix</h3>
+                        <h3 className="overline font-display text-secondary opacity-60">Growth Matrix</h3>
                     </div>
                 )}
                 {visibleGrowItems.map((item: MenuItem) => renderRecursive(item, false))}
@@ -227,7 +227,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                     className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-secondary hover:bg-white/5 hover:text-main transition-all group`}
                 >
                     <Lock className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
-                    <span className="font-black text-[11px] uppercase tracking-widest">Terminate Protocol</span>
+                    <span className="label-sm font-black">Terminate Protocol</span>
                 </button>
                 {desktopCollapsed && (
                     <div className="flex flex-col gap-2 w-full px-2">

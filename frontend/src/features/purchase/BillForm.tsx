@@ -209,7 +209,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                         </div>
 
                         {/* Matching Ledger */}
-                        <div className="bg-primary/5 dark:bg-primary/10 p-10 rounded-[3rem] border border-primary/20 shadow-sm relative overflow-hidden group">
+                        <div className="bg-primary/5 dark:bg-primary/10 p-10 rounded-xl border border-primary/20 shadow-sm relative overflow-hidden group">
                             <div className="absolute -top-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-1000">
                                 <ShieldCheck className="w-48 h-48" />
                             </div>
@@ -238,7 +238,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
+                        <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
                             <div className="p-2 pt-10">
                                 <BillItemsTable
                                     items={bill.items || []}
@@ -257,7 +257,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                         />
 
                         {/* Evidence Node */}
-                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 space-y-6">
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-6">
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
                                 <Paperclip className="w-5 h-5" /> Document Evidence
                             </h3>
@@ -288,7 +288,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 space-y-6">
+                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-6">
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
                                 <FileText className="w-5 h-5" /> Institutional Notes
                             </h3>

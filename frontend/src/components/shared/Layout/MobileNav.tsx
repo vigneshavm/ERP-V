@@ -9,7 +9,7 @@ const MobileNav: React.FC = () => {
     const { activeTab } = useSelector((state: RootState) => state.ui);
 
     return (
-        <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-card/80 backdrop-blur-lg border-t border-default z-50 flex justify-around items-center h-16 pb-safe">
+        <nav className="ui-sticky lg:hidden fixed bottom-0 left-0 w-full bg-card/80 backdrop-blur-lg border-t border-default flex justify-around items-center h-16 pb-safe">
             <button
                 onClick={() => dispatch(setActiveTab('DASHBOARD'))}
                 className={`flex flex-col items-center justify-center w-full h-full gap-1 ${activeTab === 'DASHBOARD' ? 'text-primary' : 'text-neutral-400'}`}

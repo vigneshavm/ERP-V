@@ -76,7 +76,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-2xl font-black flex items-center gap-2 tracking-tight">
+                        <h2 className="page-title flex items-center gap-2">
                             <Settings className="w-6 h-6 text-primary" />
                             Expense Categories Master
                         </h2>

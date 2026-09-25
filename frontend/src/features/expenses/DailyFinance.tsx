@@ -191,7 +191,7 @@ const DailyFinancePage: React.FC = () => {
                 <div className="flex items-center justify-between pb-2">
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col">
-                            <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Today's Summary</h1>
+                            <h1 className="page-title text-slate-800 dark:text-neutral-100">Today's Summary</h1>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="px-2 py-0.5 bg-indigo-50 dark:bg-primary/10 text-primary dark:text-primary text-[9px] font-black uppercase rounded-md border border-indigo-100/50 dark:border-primary/20">
                                     {typeof user?.tenantId === 'object' && user?.tenantId !== null ? (user.tenantId as any).name : (user?.tenantId || 'Business')}

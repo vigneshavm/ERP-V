@@ -120,7 +120,7 @@ const SmsTrackerPage: React.FC = () => {
 
                 {/* Manual Capture Console */}
                 {showTestInput && (
-                    <div className="bg-neutral-950 text-white p-8 rounded-[3rem] border border-neutral-800 shadow-2xl animate-in slide-in-from-top-6 duration-700 relative overflow-hidden group">
+                    <div className="bg-neutral-950 text-white p-8 rounded-xl border border-neutral-800 shadow-2xl animate-in slide-in-from-top-6 duration-700 relative overflow-hidden group">
                         <Zap className="absolute -top-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 transition duration-1000" />
                         <div className="relative z-10 space-y-8">
                             <div className="flex items-center gap-4">
@@ -164,7 +164,7 @@ const SmsTrackerPage: React.FC = () => {
 
                 {/* KPI Pulse Node Row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-warning/30 transition-all duration-500">
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-warning/30 transition-all duration-500">
                         <div className="w-16 h-16 bg-warning/10 text-warning rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                             <Layers className="w-8 h-8" />
                         </div>
@@ -175,7 +175,7 @@ const SmsTrackerPage: React.FC = () => {
                             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mt-1 italic">Pending Resolution</div>
                         </div>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-success/30 transition-all duration-500">
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-success/30 transition-all duration-500">
                         <div className="w-16 h-16 bg-success/10 text-success rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                             <CheckCircle2 className="w-8 h-8" />
                         </div>
@@ -186,7 +186,7 @@ const SmsTrackerPage: React.FC = () => {
                             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mt-1 italic">Resolved Nodes</div>
                         </div>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-primary/30 transition-all duration-500">
+                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-primary/30 transition-all duration-500">
                         <div className="w-16 h-16 bg-primary/10 text-primary rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                             <History className="w-8 h-8" />
                         </div>
@@ -255,7 +255,7 @@ const SmsTrackerPage: React.FC = () => {
                 </div>
 
                 {/* Intelligence Advisory Footer */}
-                <div className="bg-neutral-900 dark:bg-neutral-100 p-10 rounded-[3rem] shadow-2xl flex items-center gap-8 group">
+                <div className="bg-neutral-900 dark:bg-neutral-100 p-10 rounded-xl shadow-2xl flex items-center gap-8 group">
                     <div className="w-14 h-14 rounded-sm bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
                         <Zap className="w-7 h-7 text-white" />
                     </div>

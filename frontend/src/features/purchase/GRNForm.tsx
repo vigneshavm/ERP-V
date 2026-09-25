@@ -85,7 +85,7 @@ const GRNForm: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Main Node Workspace */}
                     <div className="lg:col-span-8 space-y-10">
-                        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                        <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                             <div className="p-10">
                                 <GRNGeneralInfo
                                     poId={poId}
@@ -102,7 +102,7 @@ const GRNForm: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
+                        <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
                             <div className="p-2 pt-10">
                                 <GRNItemsTable
                                     items={grnData.items}

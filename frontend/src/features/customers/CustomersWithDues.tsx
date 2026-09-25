@@ -63,7 +63,7 @@ const CustomersWithDues = () => {
                         </svg>
                         Back to All Customers
                     </button>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-[rgb(var(--color-text))] mb-2">
+                    <h1 className="page-title text-gray-900 dark:text-[rgb(var(--color-text))] mb-2">
                         Customers With Outstanding Dues
                     </h1>
                     <p className="text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">

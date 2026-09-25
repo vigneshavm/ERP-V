@@ -77,7 +77,7 @@ const DeliveryChallanDetail = () => {
 
     if (isLoading || !challan) {
         return (
-            <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col items-center justify-center gap-4">
+            <div className="min-h-full bg-app text-main flex flex-col items-center justify-center gap-4">
                 <div className="w-12 h-12 border-4 border-warning/20 border-t-amber-500 rounded-full animate-spin"></div>
                 <p className="text-[10px] font-black text-warning uppercase tracking-[0.2em] animate-pulse">Syncing Dispatch Node...</p>
             </div>

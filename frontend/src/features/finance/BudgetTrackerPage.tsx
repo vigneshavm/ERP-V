@@ -88,7 +88,7 @@ const BudgetTrackerPage: React.FC = () => {
 
                 <div className="space-y-10">
                     {/* Hero KPI Section */}
-                    <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-[3rem] border border-neutral-200 dark:border-neutral-800 p-12 relative overflow-hidden group">
+                    <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-800 p-12 relative overflow-hidden group">
                         <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-8">
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-neutral-500 font-black uppercase tracking-[0.2em] text-[10px] mb-4">

@@ -108,7 +108,7 @@ const BankAccounts: React.FC = () => {
                 />
 
                     {/* Hero Section */}
-                    <div className="relative flex flex-col items-center py-10 bg-neutral-50 dark:bg-neutral-900/50 rounded-[3rem] border border-neutral-200 dark:border-neutral-800">
+                    <div className="relative flex flex-col items-center py-10 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-800">
                         <div className="flex flex-col md:flex-row items-center gap-12 w-full justify-center px-8">
                             <div className="flex flex-col items-center text-center">
                                 <div className="flex flex-col items-start gap-1">

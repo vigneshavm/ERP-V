@@ -9,7 +9,7 @@ interface ChangePasswordModalProps {
 const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div className="ui-modal-backdrop bg-black/50">
             <div className="bg-white p-6 rounded-lg">
                 <h2>Change Password</h2>
                 <p>Feature coming soon...</p>

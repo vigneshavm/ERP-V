@@ -175,7 +175,7 @@ const CustomerLedgerPage: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                    <h2 className="page-title text-neutral-900 dark:text-white flex items-center gap-2">
                         <Book className="w-6 h-6 text-primary" />
                         Customer Ledger
                     </h2>

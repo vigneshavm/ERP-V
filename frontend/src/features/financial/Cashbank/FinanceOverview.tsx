@@ -291,7 +291,7 @@ const FinanceOverviewPage: React.FC = () => {
                 </div>
 
                 {/* Premium Intelligence Advisory */}
-                <div className="bg-neutral-950 text-white p-8 rounded-[3rem] border border-neutral-800 shadow-2xl relative overflow-hidden group">
+                <div className="bg-neutral-950 text-white p-8 rounded-xl border border-neutral-800 shadow-2xl relative overflow-hidden group">
                     <TrendingUp className="absolute -bottom-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 group-hover:rotate-6 transition duration-1000" />
                     <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
                         <div className="flex-1">

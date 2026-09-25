@@ -136,7 +136,7 @@ const SubscriptionTab: React.FC = () => {
                         const Icon = plan.icon;
                         const isCurrent = currentPlanCode === plan.code;
                         return (
-                            <div key={plan.code} className={`group relative p-8 rounded-[3rem] border transition-all duration-500 flex flex-col ${plan.popular
+                            <div key={plan.code} className={`group relative p-8 rounded-xl border transition-all duration-500 flex flex-col ${plan.popular
                                 ? 'bg-white dark:bg-slate-900 border-indigo-200 dark:border-indigo-500 shadow-2xl scale-105 z-10'
                                 : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300'
                                 }`}>

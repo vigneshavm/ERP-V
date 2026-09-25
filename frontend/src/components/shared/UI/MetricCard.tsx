@@ -82,7 +82,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                         <Icon className={compact ? 'w-5 h-5' : 'w-6 h-6'} />
                     </div>
                     <div>
-                        <p className={`text-[9px] font-black uppercase tracking-widest mb-0.5 ${isDark ? 'text-neutral-500' : 'text-secondary opacity-60'
+                        <p className={`micro mb-0.5 ${isDark ? 'text-neutral-500' : 'text-secondary opacity-60'
                             }`}>{title}</p>
                         <h3 className={`${compact ? 'text-xl' : 'metric-value'} font-black tracking-tighter italic ${isDark ? 'text-white' : 'text-main'
                             }`}>{value}</h3>
@@ -106,7 +106,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
             {/* Trend & Subtext Information */}
             {subtext && (
                 <div className={`${compact ? 'mt-1.5' : 'mt-2'} relative z-10`}>
-                    <p className={`text-[9px] font-bold flex items-center gap-1.5 ${trend === 'up' ? 'text-success' :
+                    <p className={`micro flex items-center gap-1.5 ${trend === 'up' ? 'text-success' :
                         trend === 'down' ? 'text-danger' :
                             'text-neutral-400'
                         }`}>

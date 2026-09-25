@@ -294,7 +294,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div className="lg:col-span-8 space-y-8">
                     {/* Items Workspace */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+                    <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
                         <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
                             <h3 className="text-sm font-black uppercase tracking-widest">Allocated SKU Nodes</h3>
                             <span className="px-3 py-1 bg-neutral-50 dark:bg-neutral-900 text-[10px] font-black text-neutral-400 uppercase tracking-widest rounded-full">{items.length} Units</span>
@@ -352,7 +352,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 
                     {/* Narrative Node */}
                     {order.notes && (
-                        <div className="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 p-10 rounded-[3rem] relative overflow-hidden">
+                        <div className="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 p-10 rounded-xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-6 opacity-10">
                                 <FileText className="w-20 h-20 text-warning" />
                             </div>

@@ -183,7 +183,7 @@ const CashInHand: React.FC = () => {
             {/* Execution Terminal */}
             {showAddTransaction && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-                    <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-[3rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-slide-up">
+                    <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-slide-up">
                         <div className="p-8 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
                             <div>
                                 <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Vault Transfer Terminal</h2>
@@ -332,7 +332,7 @@ const CashInHand: React.FC = () => {
                 })}
 
                 {filteredTransactions.length === 0 && (
-                    <div className="py-20 bg-slate-50 dark:bg-slate-800/20 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[3rem] text-center flex flex-col items-center">
+                    <div className="py-20 bg-slate-50 dark:bg-slate-800/20 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-center flex flex-col items-center">
                         <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl flex items-center justify-center text-slate-200 mb-6 font-black text-4xl">
                             ?
                         </div>

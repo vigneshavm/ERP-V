@@ -30,7 +30,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
             {breadcrumbs && (
                 <nav className="flex" aria-label="Breadcrumb">
-                    <ol className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                    <ol className="flex items-center space-x-2 overline text-neutral-400">
                         {breadcrumbs.map((crumb, index) => (
                             <li key={crumb.link ?? crumb.label} className="flex items-center">
                                 {index > 0 && (

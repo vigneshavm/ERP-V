@@ -55,7 +55,7 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-[3rem] shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden relative">
+            <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden relative">
                 <div className="p-10">
                     <div className="flex items-center justify-between mb-10">
                         <div>
