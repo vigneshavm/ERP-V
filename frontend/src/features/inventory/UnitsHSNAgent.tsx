@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
-import { Hash, Search, Plus, Edit, Trash2, Download } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Download } from 'lucide-react';
+import PageHeader from '@/components/shared/Layout/PageHeader';
 
 const UNITS = [
     { id: 'U001', name: 'PCS', fullName: 'Pieces', type: 'Count', hsn: '' },
@@ -23,23 +24,18 @@ const UnitsHSNAgent: React.FC = () => {
 
     return (
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-sm bg-teal-600 flex items-center justify-center"><Hash className="w-5 h-5 text-white" /></div>
-                    <div>
-                        <h1 className="text-2xl font-black text-slate-900 dark:text-white">Units & HSN Agent</h1>
-                        <p className="text-xs text-slate-500">Manage measurement units and GST HSN codes</p>
-                    </div>
-                </div>
-                <div className="flex gap-2">
+            <PageHeader
+                title="Units & HSN Agent"
+                description="Manage measurement units and GST HSN codes."
+                actions={<div className="flex gap-2">
                     <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
                         <Download className="w-4 h-4" /> Export
                     </button>
                     <button className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20">
                         <Plus className="w-4 h-4" /> Add {tab === 'units' ? 'Unit' : 'HSN Code'}
                     </button>
-                </div>
-            </div>
+                </div>}
+            />
 
             <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1 w-fit">
                 {(['units', 'hsn'] as const).map(t => (

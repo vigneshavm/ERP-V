@@ -327,7 +327,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                             />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
+                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Supplier</label>
                             <select
                                 value={header.vendor_id || ''}
                                 onChange={e => setHeader({ ...header, vendor_id: e.target.value })}

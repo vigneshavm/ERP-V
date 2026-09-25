@@ -170,7 +170,7 @@ const PurchaseExpress: React.FC = () => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                     <div className="md:col-span-1 relative group">
-                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Supplier</label>
                                         <div className="relative">
                                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-primary transition-colors" />
                                             <input 

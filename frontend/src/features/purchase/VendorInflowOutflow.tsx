@@ -271,7 +271,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
             {!embedded && (
                 <div className="flex items-center justify-between pb-2">
                     <div className="flex flex-col">
-                        <h1 className="text-xl font-bold text-slate-800 dark:text-neutral-100 tracking-tight">Supplier Inflow / Outflow</h1>
+                        <h1 className="page-title text-slate-800 dark:text-neutral-100">Supplier Inflow / Outflow</h1>
                         <p className="text-sm text-slate-500 dark:text-neutral-400 mt-1">Consolidated view of all supplier purchase inflows and payment outflows</p>
                     </div>
 

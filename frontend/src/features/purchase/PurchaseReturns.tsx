@@ -160,7 +160,7 @@ const PurchaseReturns: React.FC = () => {
                 </div>
 
                 {/* Audit Control Matrix */}
-                <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="ui-panel p-8 flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="relative w-full md:w-[500px]">
                         <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Archive Search</label>
                         <div className="relative">
@@ -197,17 +197,17 @@ const PurchaseReturns: React.FC = () => {
                 </div>
 
                 {/* Reversal Ledger */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+                <div className="ui-panel overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-800">
                                 <tr>
                                     <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Reversal ID</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Institutional Vendor</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Oracle Links</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Incident Vector</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Supplier</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">References</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Reason</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-right">Refund (INR)</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Protocol Status</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Status</th>
                                     <th className="px-8 py-5"></th>
                                 </tr>
                             </thead>
@@ -220,7 +220,7 @@ const PurchaseReturns: React.FC = () => {
                                         className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all cursor-pointer"
                                         onClick={() => navigate(`/purchase/returns/view/${r.id || (r as any)._id}`)}
                                     >
-                                        <td className="table-cell-center">
+                                        <td className="px-8 py-6 text-left">
                                             <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">#{r.return_number}</p>
                                             <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-widest italic">{new Date(r.return_date).toLocaleDateString(undefined, { dateStyle: 'medium' })}</p>
                                         </td>
@@ -241,7 +241,7 @@ const PurchaseReturns: React.FC = () => {
                                         <td className="px-8 py-6 text-right">
                                             <span className="text-sm font-black text-neutral-900 dark:text-white tabular-nums tracking-tight">{formatCurrency(Number(r.total_amount) || Number((r as any).totalAmount) || 0)}</span>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="table-cell-center">
                                             <div className="flex justify-center">
                                                 {getStatusBadge(r.status)}
                                             </div>
@@ -263,7 +263,7 @@ const PurchaseReturns: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <p className="font-black text-sm uppercase tracking-widest">Archive Empty</p>
-                                                    <p className="text-xs font-bold mt-2 italic leading-relaxed">No reversal nodes detected. Initialize returns against verified GRNs to populate ledger.</p>
+                                                    <p className="text-xs font-bold mt-2 italic leading-relaxed">No returns found. Create a return against a verified GRN to populate this list.</p>
                                                 </div>
                                             </div>
                                         </td>

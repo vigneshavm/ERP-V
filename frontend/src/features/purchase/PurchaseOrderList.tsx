@@ -147,7 +147,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                         </select>
                     </div>
                     <div>
-                        <label className="ui-label mb-3 block">Institutional Vendor</label>
+                        <label className="ui-label mb-3 block">Supplier</label>
                         <select
                             value={vendorFilter}
                             onChange={e => setVendorFilter(e.target.value)}
@@ -200,7 +200,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                 <div className="flex items-center gap-2">Node ID <ArrowUpDown className="w-3 h-3" /></div>
                             </th>
                             <th className="px-8 py-5 ui-label cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('vendor_name')}>
-                                <div className="flex items-center gap-2">Institutional Vendor <ArrowUpDown className="w-3 h-3" /></div>
+                                <div className="flex items-center gap-2">Supplier <ArrowUpDown className="w-3 h-3" /></div>
                             </th>
                             <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Status</th>
                             <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Fulfillment</th>

@@ -263,7 +263,7 @@ const BankStatementView: React.FC = () => {
                                     >
                                         Quantum <SortIcon field="amount" />
                                     </th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-right hidden md:table-cell">Residual Balance</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-right hidden md:table-cell">Remaining Balance</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Status</th>
                                 </tr>
                             </thead>

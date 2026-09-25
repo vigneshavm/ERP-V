@@ -104,7 +104,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                         <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
                             {bills.map((bill: any) => (
                                 <tr key={bill._id} className="group hover:bg-slate-50/50 dark:hover:bg-neutral-800/50 transition-colors">
-                                    <td className="table-cell-right">
+                                    <td className="table-cell text-left">
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-primary dark:text-primary">{bill.bill_number}</span>
                                             <span className="text-[10px] text-neutral-500">{formatDate(bill.date || bill.bill_date)}</span>
@@ -139,7 +139,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                     <td className="px-6 py-4 text-secondary">
                                         {bill.dueDate || bill.due_date ? formatDate(bill.dueDate || bill.due_date) : '—'}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="table-cell-right">
                                         <div className="flex items-center justify-end gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => navigate(`/purchase/bills/view/${bill._id || bill.id}`)}

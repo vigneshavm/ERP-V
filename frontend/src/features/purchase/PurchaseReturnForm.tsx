@@ -303,7 +303,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
-                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Supplier</label>
                                     <select
                                         value={returnData.vendor_id || ''}
                                         onChange={(e) => handleVendorChange(e.target.value)}
@@ -326,7 +326,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Incident Vector (Reason)</label>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Reason</label>
                                     <div className="relative">
                                         <select
                                             value={returnData.reason}
@@ -414,7 +414,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                                         </div>
                                                         <div>
                                                             <p className="font-black text-sm uppercase tracking-widest text-center">No Nodes Allocated</p>
-                                                            <p className="text-xs font-bold mt-2 italic leading-relaxed text-center">Select an institutional vendor and linked GRN to initialize reversal nodes.</p>
+                                                            <p className="text-xs font-bold mt-2 italic leading-relaxed text-center">Select a supplier and GRN to create the return.</p>
                                                         </div>
                                                     </div>
                                                 </td>

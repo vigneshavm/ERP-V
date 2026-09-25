@@ -178,8 +178,13 @@
     /* Shared UI geometry and layering */
     --radius-panel: 1rem;
     --radius-control: 0.5rem;
-    --z-modal: 1000;
-    --z-popover: 1100;
+    --z-base: 0;
+    --z-sticky: 20;
+    --z-header: 30;
+    --z-dropdown: 40;
+    --z-popover: 50;
+    --z-modal: 100;
+    --z-toast: 110;
 
     /* Base Colors for Compatibility */
     --primary: rgb(var(--color-primary));
@@ -403,6 +408,18 @@
     padding: 1rem;
     background-color: rgb(0 0 0 / 0.5);
     backdrop-filter: blur(4px);
+  }
+
+  .ui-dropdown {
+    z-index: var(--z-dropdown);
+  }
+
+  .ui-popover {
+    z-index: var(--z-popover);
+  }
+
+  .ui-toast {
+    z-index: var(--z-toast);
   }
 
   .table-cell {

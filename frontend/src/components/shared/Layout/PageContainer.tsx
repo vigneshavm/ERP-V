@@ -7,7 +7,7 @@ interface PageContainerProps {
 }
 
 const PageContainer: React.FC<PageContainerProps> = ({ children, className = '', fullWidth = false }) => (
-    <div className={`${fullWidth ? 'w-full' : 'w-full max-w-7xl mx-auto'} px-4 lg:px-6 ${className}`}>
+    <div className={`${fullWidth ? 'w-full' : 'w-full max-w-7xl mx-auto'} ${className}`}>
         {children}
     </div>
 );

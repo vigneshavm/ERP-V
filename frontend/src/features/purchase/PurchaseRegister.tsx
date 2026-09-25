@@ -336,7 +336,7 @@ const PurchaseRegister: React.FC = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Supplier</label>
                                     <select value={vendorFilter} onChange={e => setVendorFilter(e.target.value)} className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                         <option value="ALL">All Entities</option>
                                         {uniqueVendors.map(v => <option key={v} value={v}>{v}</option>)}
@@ -399,7 +399,7 @@ const PurchaseRegister: React.FC = () => {
                                     </th>
                                     <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('vendor')}>
                                         <div className="flex items-center gap-2">
-                                            Institutional Vendor <ArrowUpDown className="w-3 h-3" />
+                                            Supplier <ArrowUpDown className="w-3 h-3" />
                                         </div>
                                     </th>
                                     <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Payload</th>

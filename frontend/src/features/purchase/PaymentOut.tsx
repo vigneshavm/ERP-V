@@ -137,7 +137,7 @@ const PaymentOut: React.FC = () => {
 
     return (
         <Layout>
-            <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-500 pb-20">
+            <div className="w-full space-y-6 animate-in fade-in duration-500 pb-20">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <button
@@ -147,7 +147,7 @@ const PaymentOut: React.FC = () => {
                             <ArrowLeft className="w-5 h-5" />
                         </button>
                         <div>
-                            <h1 className="text-2xl font-black tracking-tight text-neutral-900 dark:text-white flex items-center gap-2">
+                            <h1 className="page-title text-neutral-900 dark:text-white flex items-center gap-2">
                                 <CreditCard className="w-6 h-6 text-brand-600" />
                                 Record Supplier Payment
                             </h1>

@@ -191,7 +191,7 @@ const Estimate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-white font-sans selection:bg-amber-500/30 overflow-x-hidden flex flex-col transition-colors animate-fade-in relative">
+    <div className="min-h-full bg-app text-main font-sans selection:bg-warning/10 overflow-x-hidden flex flex-col transition-colors animate-fade-in relative">
       {/* Ambient Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />

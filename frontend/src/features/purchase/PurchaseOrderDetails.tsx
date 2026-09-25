@@ -378,7 +378,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                         <Activity className="w-5 h-5 text-primary" />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Institutional Vendor</p>
+                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Supplier</p>
                                         <p className="text-sm font-black text-white uppercase tracking-tighter mt-1">{order.vendor_name}</p>
                                     </div>
                                 </div>
