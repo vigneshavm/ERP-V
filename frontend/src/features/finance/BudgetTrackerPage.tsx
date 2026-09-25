@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState } from 'react';
 import {
     PieChart,
     ChevronRight,
@@ -9,67 +9,24 @@ import {
     Calendar as CalendarIcon,
     LayoutDashboard
 } from 'lucide-react';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import ExpenseForm from '../../components/Finance/ExpenseForm';
 import { useExpenses } from '../../hooks/useExpenses';
+import { useExpenseReports } from '../../hooks/useExpenseReports';
+import { formatCurrency } from '../../utils/formatters';
 import ExpenseCalendar from '../../components/Finance/ExpenseCalendar';
 import ExpenseListItem from '../../components/Finance/ExpenseListItem';
 import ExperienceInsights from '../../components/Finance/ExperienceInsights';
 
-interface MonthlyTrend {
-    month: string;
-    year: number;
-    expense: number;
-    income: number;
-    budget_utilization: number;
-    label: string;
-}
-
-interface CategoryBudget {
-    category: string;
-    amount: number;
-    budget: number;
-    variance: number;
-    variancePercentage: number;
-    percentage: string;
-    type: 'FIXED' | 'VARIABLE';
-    status: 'OVER' | 'UNDER' | 'NONE';
-}
-
-interface ReportData {
-    report_period: string;
-    total_expense: number;
-    by_category: CategoryBudget[];
-    audit_flags: string[];
-    recommendations: string[];
-    monthly_trends: MonthlyTrend[];
-}
-
 const BudgetTrackerPage: React.FC = () => {
-    const [report, setReport] = useState<ReportData | null>(null);
-    const [loading, setLoading] = useState(true);
+    // Same endpoint and hook as Expense Reports; this page used to call /api/expense-report
+    // (singular, no such route) with bare axios, so the report never loaded.
+    const { report, loading, error, refetch: fetchReport } = useExpenseReports();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<'budget' | 'calendar' | 'stats'>('budget');
     const { createExpense, expenses } = useExpenses();
-
-    useEffect(() => {
-        fetchReport();
-    }, []);
-
-    const fetchReport = async () => {
-        try {
-            setLoading(true);
-            const res = await axios.get('/api/expense-report');
-            setReport(res.data);
-        } catch {
-            toast.error('Failed to fetch budget report');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleCreateExpense = async (data: any) => {
         try {
@@ -80,6 +37,17 @@ const BudgetTrackerPage: React.FC = () => {
             toast.error('Failed to record expense');
         }
     };
+
+    if (!loading && error) {
+        return (
+            <Layout>
+                <div role="alert" className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
+                    <p className="text-sm font-black text-error">Could not load the budget report.</p>
+                    <button onClick={() => fetchReport()} className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest">Retry</button>
+                </div>
+            </Layout>
+        );
+    }
 
     if (loading) {
         return (
@@ -165,7 +133,7 @@ const BudgetTrackerPage: React.FC = () => {
                                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">Transaction Ledger</h3>
                                     <div className="flex items-center gap-4 text-success">
                                         <ChevronRight className="w-4 h-4 rotate-180 cursor-pointer" />
-                                        <span className="text-[10px] font-black tracking-widest uppercase">June 2025</span>
+                                        <span className="text-[10px] font-black tracking-widest uppercase">{report?.report_period}</span>
                                         <ChevronRight className="w-4 h-4 cursor-pointer" />
                                     </div>
                                 </div>
@@ -191,21 +159,32 @@ const BudgetTrackerPage: React.FC = () => {
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                             <div className="space-y-4">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Resource Utilization</p>
-                                                <div className="h-2.5 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-emerald-500 w-[75%] rounded-full shadow-lg shadow-emerald-500/20" />
-                                                </div>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Budget Utilization</p>
+                                                {m.budget_utilization !== null && (
+                                                    <div className="h-2.5 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
+                                                        <div
+                                                            className={`h-full rounded-full ${m.budget_utilization > 100 ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                                            style={{ width: `${Math.min(m.budget_utilization, 100)}%` }}
+                                                        />
+                                                    </div>
+                                                )}
                                                 <p className="text-2xl font-black text-neutral-900 dark:text-white tabular-nums">
-                                                    ₹{m.expense.toLocaleString()} 
-                                                    <span className="text-neutral-400 text-sm font-bold ml-2">/ ₹{(m.expense * 1.2).toLocaleString()}</span>
+                                                    {formatCurrency(m.expense, { fractionDigits: 0 })}
+                                                    <span className="text-neutral-400 text-sm font-bold ml-2">/ {m.budget === null ? '—' : formatCurrency(m.budget, { fractionDigits: 0 })}</span>
                                                 </p>
                                             </div>
                                             <div className="flex flex-col justify-center items-end text-right">
                                                 <div className="flex items-center gap-2 text-emerald-600 dark:text-success mb-2">
                                                     <ShieldCheck className="w-5 h-5" />
-                                                    <span className="text-xs font-black uppercase tracking-widest">Operational Safety</span>
+                                                    <span className="text-xs font-black uppercase tracking-widest">Budget Status</span>
                                                 </div>
-                                                <p className="text-[10px] text-neutral-500 font-bold uppercase leading-relaxed max-w-[200px]">You are currently 25% under the allocated fiscal threshold.</p>
+                                                <p className="text-[10px] text-neutral-500 font-bold uppercase leading-relaxed max-w-[200px]">
+                                                    {m.budget_utilization === null
+                                                        ? 'No category budgets are set, so there is nothing to compare against.'
+                                                        : m.budget_utilization <= 100
+                                                            ? `You have used ${m.budget_utilization}% of this month's budget.`
+                                                            : `You are ${m.budget_utilization - 100}% over this month's budget.`}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>

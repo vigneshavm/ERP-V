@@ -29,9 +29,20 @@ interface AuthState {
 const ExpenseReportsIntelligence: React.FC = () => {
     const auth = useSelector((state: RootState & { auth: AuthState }) => state.auth);
     const _user = auth.user;
-    const { report, loading } = useExpenseReports();
+    const { report, loading, error, refetch } = useExpenseReports();
 
     const riskColor = (risk: string) => risk === 'HIGH' ? 'text-error bg-error/10 border-error/20' : 'text-success bg-success/10 border-success/20';
+
+    if (!loading && error) {
+        return (
+            <Layout>
+                <div role="alert" className="flex flex-col items-center justify-center h-96 gap-4 text-center">
+                    <p className="text-sm font-black text-error">Could not load the expense report.</p>
+                    <button onClick={() => refetch()} className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest">Retry</button>
+                </div>
+            </Layout>
+        );
+    }
 
     if (loading || !report) {
         return (
@@ -152,7 +163,10 @@ const ExpenseReportsIntelligence: React.FC = () => {
                                     <Building2 className="w-4 h-4 text-neutral-300" />
                                 </div>
                                 <div className="divide-y divide-neutral-50 dark:divide-neutral-800">
-                                    {report?.by_branch?.map((branch, idx) => (
+                                    {report.by_branch.length === 0 && (
+                                        <p className="p-4 text-[10px] font-black text-neutral-400 uppercase tracking-widest">Expenses aren't recorded by branch, so there is no branch breakdown.</p>
+                                    )}
+                                    {report.by_branch.map((branch, idx) => (
                                         <div key={idx} className="p-4 flex items-center justify-between hover:bg-neutral-50 transition-colors">
                                             <div>
                                                 <p className="text-xs font-black tracking-tight">{branch.branch}</p>

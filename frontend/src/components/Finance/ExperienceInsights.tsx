@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React from 'react';
 import {
     ResponsiveContainer,
     LineChart,
@@ -17,26 +17,29 @@ import {
     ArrowRight,
     Share2
 } from 'lucide-react';
+import { formatCurrency } from '../../utils/formatters';
 
 interface ExperienceInsightsProps {
     data: any;
 }
 
 const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
-    const [excludeInvestment, setExcludeInvestment] = useState(false);
-
-    // Mock calculations based on available data
-    const totalExpense = data?.total_expense || 0;
-    const monthlyTrends = data?.monthly_trends || [];
+    // Averages over the report's monthly trends (last 6 months). Income is null when the backend
+    // couldn't compute it; then income and balance show "—" rather than a made-up figure.
+    const monthlyTrends: { expense: number; income: number | null; label: string }[] = data?.monthly_trends || [];
     const categories = data?.by_category || [];
+    const mean = (values: number[]) => values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : null;
 
-    const avgExpense = totalExpense / (monthlyTrends.length || 1);
-    const avgIncome = monthlyTrends.reduce((acc: number, curr: any) => acc + (curr.income || 0), 0) / (monthlyTrends.length || 1);
-    const avgBalance = avgIncome - avgExpense;
+    const avgExpense = mean(monthlyTrends.map(m => m.expense));
+    const withIncome = monthlyTrends.filter(m => m.income !== null);
+    const avgIncome = withIncome.length > 0 ? mean(withIncome.map(m => m.income as number)) : null;
+    const avgBalance = withIncome.length > 0 ? mean(withIncome.map(m => (m.income as number) - m.expense)) : null;
+    const perMonth = (value: number | null) => value === null ? '—' : `${formatCurrency(value, { fractionDigits: 0 })}/month`;
 
-    const chartData = monthlyTrends.map((m: any) => ({
-        name: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'][new Date(m.year, m.month === 'January' ? 0 : 1).getMonth()], // Simplification for labels
-        balance: m.income - m.expense
+    // Oldest month first, labelled by the backend (e.g. "September 2026").
+    const chartData = [...withIncome].reverse().map(m => ({
+        name: m.label,
+        balance: (m.income as number) - m.expense
     }));
 
     const categoryIcons: Record<string, React.ReactNode> = {
@@ -55,41 +58,27 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
                     <div className="p-2 hover:bg-white/5 rounded-full transition-colors cursor-pointer text-success">
                         <ArrowRight className="w-5 h-5 rotate-180" />
                     </div>
-                    <h2 className="text-xl font-medium text-neutral-300">Year 2024-2025</h2>
+                    <h2 className="text-xl font-medium text-neutral-300">Last 6 months</h2>
                 </div>
                 <div className="p-2 hover:bg-white/5 rounded-full transition-colors cursor-pointer text-neutral-500">
                     <Share2 className="w-5 h-5" />
                 </div>
             </div>
 
-            {/* Toggle */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-neutral-900/50 border border-white/5 rounded-sm">
-                <input
-                    type="checkbox"
-                    id="exclude-investment"
-                    checked={excludeInvestment}
-                    onChange={(e) => setExcludeInvestment(e.target.checked)}
-                    className="w-5 h-5 rounded border-neutral-700 bg-neutral-800 text-success focus:ring-emerald-500 focus:ring-offset-neutral-900"
-                />
-                <label htmlFor="exclude-investment" className="text-sm font-medium text-neutral-400">
-                    Exclude categories of type <span className="text-neutral-200 font-bold">INVESTMENT</span> from data calculations
-                </label>
-            </div>
-
             {/* Hero Insights */}
             <div className="text-center space-y-2 py-4">
-                <p className="text-sm font-medium text-neutral-500">Average monthly balance for the year 2024-2025</p>
-                <h3 className="text-4xl font-bold text-success">₹{Math.round(avgBalance).toLocaleString('en-IN')}/month</h3>
+                <p className="text-sm font-medium text-neutral-500">Average monthly balance (income − expenses), last 6 months</p>
+                <h3 className="text-4xl font-bold text-success">{perMonth(avgBalance)}</h3>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="text-center space-y-1">
                     <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Average monthly expense</p>
-                    <p className="text-xl font-bold text-danger">₹{Math.round(avgExpense).toLocaleString('en-IN')}/month</p>
+                    <p className="text-xl font-bold text-danger">{perMonth(avgExpense)}</p>
                 </div>
                 <div className="text-center space-y-1">
                     <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Average monthly income</p>
-                    <p className="text-xl font-bold text-success">₹{Math.round(avgIncome).toLocaleString('en-IN')}/month</p>
+                    <p className="text-xl font-bold text-success">{perMonth(avgIncome)}</p>
                 </div>
             </div>
 
@@ -97,7 +86,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
             <div className="relative h-[300px] w-full mt-4">
                 <div className="absolute top-0 right-0 flex items-center gap-2 text-[10px] font-bold text-neutral-500">
                     <div className="w-3 h-3 bg-orange-500 rounded-sm" />
-                    Balance/month 2024-2025
+                    Balance per month
                 </div>
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={{ top: 30, right: 10, left: -20, bottom: 20 }}>
@@ -113,7 +102,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
                             axisLine={false}
                             tickLine={false}
                             tick={{ fill: '#737373', fontSize: 12 }}
-                            tickFormatter={(value) => `${value / 1000}L`}
+                            tickFormatter={(value) => `${value / 1000}k`}
                         />
                         <Tooltip
                             contentStyle={{ backgroundColor: '#000', border: '1px solid #333', borderRadius: '12px' }}
@@ -136,7 +125,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
             {/* Distribution Text */}
             <div className="text-center pt-8">
                 <p className="text-sm font-medium text-neutral-400">
-                    The percentage of your income distributed across expense categories and savings
+                    Share of total expenses by category
                 </p>
             </div>
 
