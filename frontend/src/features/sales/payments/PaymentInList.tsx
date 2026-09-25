@@ -86,7 +86,8 @@ const PaymentInList: React.FC = () => {
     const metrics = useMemo(() => {
         const totalValue = payments.reduce((sum, p) => sum + p.amount, 0);
         const creditCount = payments.filter(p => (p.excessAmount || 0) > 0).length;
-        const todayCollections = payments.slice(0, 5).reduce((sum, p) => sum + p.amount, 0); // Mocking today's collections
+        const today = new Date().toDateString();
+        const todayCollections = payments.filter(p => p.date && new Date(p.date).toDateString() === today).reduce((sum, p) => sum + p.amount, 0);
         return {
             totalValue,
             count: payments.length,

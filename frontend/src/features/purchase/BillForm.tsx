@@ -68,17 +68,9 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Attach only. There is no OCR service, so nothing is read from the document
+        // (this used to fill in a random "OCR-1234" bill number and claim it was extracted).
         addAttachment(file.name);
-        toast.info("Processing document with OCR...", { autoClose: 2000 });
-
-        setTimeout(() => {
-            const mockBillNo = `OCR-${Math.floor(Math.random() * 9000) + 1000}`;
-            setBill(prev => ({
-                ...prev,
-                bill_number: prev.bill_number || mockBillNo,
-            }));
-            toast.success("OCR: Extracted Bill Details");
-        }, 2500);
     };
 
     const handleSave = async () => {

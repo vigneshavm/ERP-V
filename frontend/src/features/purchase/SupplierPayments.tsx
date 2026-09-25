@@ -16,12 +16,14 @@ const SupplierPayments: React.FC = () => {
     const navigate = useNavigate();
     const [payments, setPayments] = useState<PurchasePayment[]>([]);
     const [_isLoading, setIsLoading] = useState(false);
+    const [loadError, setLoadError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
 
     useEffect(() => {
         const fetchPayments = async () => {
             setIsLoading(true);
+            setLoadError('');
             try {
                 const response = await api.get('/api/purchase-payments');
                 const raw = response.data;
@@ -38,56 +40,10 @@ const SupplierPayments: React.FC = () => {
                 setPayments(list);
             } catch (err) {
                 console.error("Failed to fetch payments", err);
-                // Mock data for UI development
-                setPayments([
-                    {
-                        id: '1',
-                        payment_number: 'PAY-2024-001',
-                        payment_date: '2024-03-24',
-                        vendor_name: 'Tech Supplies Corp',
-                        vendor_id: 'v1',
-                        method: 'bank_transfer',
-                        status: 'Cleared',
-                        total_amount: 45000,
-                        currency: 'INR',
-                        exchange_rate: 1,
-                        reference_id: 'TXN99823412',
-                        allocations: [],
-                        attachments: [],
-                        created_at: '2024-03-24T10:00:00Z'
-                    },
-                    {
-                        id: '2',
-                        payment_number: 'PAY-2024-002',
-                        payment_date: '2024-03-22',
-                        vendor_name: 'Office Mart',
-                        vendor_id: 'v2',
-                        method: 'cheque',
-                        status: 'Pending',
-                        total_amount: 12500,
-                        currency: 'INR',
-                        exchange_rate: 1,
-                        reference_id: 'CHQ-882190',
-                        allocations: [],
-                        attachments: [],
-                        created_at: '2024-03-22T14:30:00Z'
-                    },
-                    {
-                        id: '3',
-                        payment_number: 'PAY-2024-003',
-                        payment_date: '2024-03-21',
-                        vendor_name: 'Global Logics',
-                        vendor_id: 'v3',
-                        method: 'cash',
-                        status: 'Cleared',
-                        total_amount: 5000,
-                        currency: 'INR',
-                        exchange_rate: 1,
-                        allocations: [],
-                        attachments: [],
-                        created_at: '2024-03-21T09:15:00Z'
-                    }
-                ]);
+                // No sample fallback: show that loading failed rather than payments that don't exist.
+                setPayments([]);
+                const e = err as { response?: { data?: { message?: string } } };
+                setLoadError(e?.response?.data?.message || 'Could not load supplier payments. Check your connection and refresh.');
             } finally {
                 setIsLoading(false);
             }
@@ -169,6 +125,11 @@ const SupplierPayments: React.FC = () => {
                         </button>
                     }
                 />
+                {loadError && (
+                    <div role="alert" className="flex items-center gap-2 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
+                        <AlertCircle className="h-4 w-4 shrink-0" /> {loadError}
+                    </div>
+                )}
 
                 {/* KPI Section */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
-import { Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, ChevronDown, CheckCircle2, Package, Truck, CreditCard, Zap } from 'lucide-react';
+import { Save, Trash2, Plus, Search, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, ChevronDown, CheckCircle2, Package, Truck, CreditCard, Zap } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../types/purchase";
 import { usePurchaseItems } from "../../hooks/usePurchaseItems";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
@@ -29,13 +29,6 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
         approval_status: 'Draft',
         version: 1
     });
-
-    // Templates
-    const [showTemplates, setShowTemplates] = useState(false);
-    const templates = [
-        { name: 'Standard Raw Materials', vendor_id: 'VEND-001', vendor_name: 'Global Supplies', items: [{ product_id: 'P001', product_name: 'Premium Cotton', rate: 120, tax_percent: 5, quantity: 100, line_total: 12600 }] },
-        { name: 'Office Stationery', vendor_id: 'VEND-002', vendor_name: 'Metro Office', items: [{ product_id: 'P002', product_name: 'A4 Paper Reams', rate: 450, tax_percent: 12, quantity: 20, line_total: 10080 }] }
-    ];
 
     const termsTemplates = [
         { name: 'Standard 30 Days', content: 'Standard 30-day payment terms apply. Goods must be delivered in original packaging.' },
@@ -273,12 +266,6 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                 actions={
                     <div className="flex items-center gap-3">
                         <button
-                            onClick={() => setShowTemplates(!showTemplates)}
-                            className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
-                        >
-                            <Copy className="w-4 h-4 text-primary" /> {showTemplates ? 'Cancel Template' : 'Use Template'}
-                        </button>
-                        <button
                             onClick={handleSubmit}
                             disabled={isSaving}
                             className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 disabled:opacity-50"
@@ -293,26 +280,6 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                     { label: initialData ? 'Refactor' : 'New' }
                 ]}
             />
-
-            {/* Template Selector */}
-            {showTemplates && !initialData && (
-                <div className="mx-8 mt-6 p-6 bg-primary/5 border border-primary/10 rounded-[2.5rem] grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-4 duration-500">
-                    {templates.map((t, i) => (
-                        <button
-                            key={i}
-                            onClick={() => {
-                                setHeader(h => ({ ...h, vendor_id: t.vendor_id }));
-                                setItems(t.items as any);
-                                setShowTemplates(false);
-                            }}
-                            className="text-left p-6 bg-white dark:bg-neutral-800 rounded-sm border border-primary/20 hover:border-primary hover:shadow-xl transition-all group"
-                        >
-                            <div className="font-black text-xs text-primary uppercase tracking-widest group-hover:underline">{t.name}</div>
-                            <div className="text-[10px] font-bold text-neutral-400 mt-2 uppercase tracking-widest">{t.items.length} Nodes • {t.vendor_name}</div>
-                        </button>
-                    ))}
-                </div>
-            )}
 
             {/* Supplier Warning Node */}
             {supplierStatus && (supplierStatus.overdueCount > 0 || supplierStatus.isCreditRisk) && (

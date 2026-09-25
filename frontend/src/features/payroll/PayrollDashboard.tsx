@@ -32,9 +32,16 @@ const PayrollDashboard = () => {
 
     const recentRuns = [...runs].sort((a, b) => new Date(b.processedDate || b.createdAt).getTime() - new Date(a.processedDate || a.createdAt).getTime()).slice(0, 5);
 
+    const now = new Date();
+    const fyStart = new Date(now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1, 3, 1);
+
     const stats = {
         lastRun: recentRuns.length > 0 ? formatDateISO(new Date(recentRuns[0].processedDate || recentRuns[0].createdAt)) : 'N/A',
-        totalPaidYTD: '₹0.00', // Placeholder
+        // Paid runs whose period starts in the current financial year (April to March).
+        totalPaidYTD: `₹${runs
+            .filter(r => r.status === 'PAID' && r.periodStart && new Date(r.periodStart) >= fyStart)
+            .reduce((sum, r) => sum + (Number(r.totalAmount) || 0), 0)
+            .toLocaleString('en-IN')}`,
         pendingApprovals: runs.filter(r => r.status === 'DRAFT').length
     };
 
@@ -82,7 +89,7 @@ const PayrollDashboard = () => {
                         color="bg-amber-500"
                     />
                     <PayrollInfoCard
-                        title="Total Paid (YTD)"
+                        title="Total Paid (this FY)"
                         value={stats.totalPaidYTD}
                         icon={DollarSign}
                         color="bg-emerald-500"

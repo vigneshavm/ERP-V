@@ -428,7 +428,7 @@ export const getShopSalesIntelligence = async (req: AuthenticatedRequest, res: R
         const result = await sqlSalesIntelligence(q.from, q.to);
         res.status(200).json(result);
     } catch (err) {
-        warn(`[sql-reports] sales intelligence failed, page falls back to sample data - ${(err as Error).message}`);
+        warn(`[sql-reports] sales intelligence failed, no SQL figures returned - ${(err as Error).message}`);
         res.status(200).json({ source: 'mongo' });
     }
 };

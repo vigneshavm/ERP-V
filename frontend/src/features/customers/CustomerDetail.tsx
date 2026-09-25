@@ -107,7 +107,7 @@ const CustomerDetail = () => {
                             </div>
                             <div className="bg-white/10 p-4 rounded-sm backdrop-blur-md">
                                 <p className="text-[9px] font-black uppercase opacity-60">Credit Limit</p>
-                                <p className="text-sm font-black mt-1">₹5.0L</p>
+                                <p className="text-sm font-black mt-1">{customer.creditLimit ? `₹${customer.creditLimit.toLocaleString('en-IN')}` : 'Not set'}</p>
                             </div>
                         </div>
                     </div>

@@ -34,12 +34,14 @@ interface SupplierAgeing {
 
 const SupplierAgeing: React.FC = () => {
     const navigate = useNavigate();
+    const [loadError, setLoadError] = useState('');
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<SupplierAgeing[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
 
     const fetchAgeing = async () => {
         setLoading(true);
+        setLoadError('');
         try {
             const response = await api.get('/api/purchases/suppliers/ageing-analysis');
             if (response.data.success) {
@@ -47,11 +49,9 @@ const SupplierAgeing: React.FC = () => {
             }
         } catch (error: any) {
             console.error('Fetch Ageing Error:', error);
-            // Mocking for aesthetic preview if API fails
-            setData([
-                { supplierId: 's1', businessName: 'Tech Supplies Corp', buckets: { "0-30": 45000, "31-60": 12000, "61-90": 0, "90+": 0 }, totalDue: 57000 },
-                { supplierId: 's2', businessName: 'Global Logistics', buckets: { "0-30": 15000, "31-60": 25000, "61-90": 10000, "90+": 5000 }, totalDue: 55000 }
-            ]);
+            // No sample fallback: show that loading failed rather than records that don't exist.
+            setData([]);
+            setLoadError((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Could not load supplier ageing. Check your connection and refresh.');
         } finally {
             setLoading(false);
         }
@@ -122,6 +122,9 @@ const SupplierAgeing: React.FC = () => {
                         </div>
                     }
                 />
+                {loadError && (
+                    <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{loadError}</div>
+                )}
 
                 {/* KPI Pulse Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

@@ -11,6 +11,7 @@ import { PurchaseReturn, PurchaseReturnStatus } from "../../types/purchase";
 
 const PurchaseReturns: React.FC = () => {
     const navigate = useNavigate();
+    const [loadError, setLoadError] = useState('');
     const [returns, setReturns] = useState<PurchaseReturn[]>([]);
     const [_isLoading, setIsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -19,6 +20,7 @@ const PurchaseReturns: React.FC = () => {
     useEffect(() => {
         const fetchReturns = async () => {
             setIsLoading(true);
+            setLoadError('');
             try {
                 const response = await api.get('/api/purchase-returns');
                 const raw = response.data;
@@ -57,41 +59,9 @@ const PurchaseReturns: React.FC = () => {
                 })));
             } catch (err) {
                 console.error("Failed to fetch returns", err);
-                // Mocking data for aesthetic preview
-                setReturns([
-                    {
-                        id: '1',
-                        return_number: 'PR-2024-001',
-                        return_date: '2024-03-20',
-                        vendor_name: 'Tech supplies Corp',
-                        vendor_id: 'v1',
-                        grn_number: 'GRN-9982',
-                        grn_id: 'g1',
-                        status: 'Initiated',
-                        reason: 'Defective',
-                        total_amount: 15400,
-                        tax_amount: 2772,
-                        items: [],
-                        attachments: [],
-                        created_at: '2024-03-20T10:00:00Z'
-                    },
-                    {
-                        id: '2',
-                        return_number: 'PR-2024-002',
-                        return_date: '2024-03-18',
-                        vendor_name: 'Office Mart',
-                        vendor_id: 'v2',
-                        grn_number: 'GRN-9941',
-                        grn_id: 'g2',
-                        status: 'Credited',
-                        reason: 'Wrong Item',
-                        total_amount: 3200,
-                        tax_amount: 576,
-                        items: [],
-                        attachments: [],
-                        created_at: '2024-03-18T10:00:00Z'
-                    }
-                ]);
+                // No sample fallback: show that loading failed rather than records that don't exist.
+                setReturns([]);
+                setLoadError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Could not load purchase returns. Check your connection and refresh.');
             } finally {
                 setIsLoading(false);
             }
@@ -161,6 +131,9 @@ const PurchaseReturns: React.FC = () => {
                         </button>
                     }
                 />
+                {loadError && (
+                    <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{loadError}</div>
+                )}
 
                 {/* KPI Pulse Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

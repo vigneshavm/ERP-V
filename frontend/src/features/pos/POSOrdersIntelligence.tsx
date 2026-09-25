@@ -44,8 +44,7 @@ interface BranchHealth {
     cash: number;
     online: number;
     credit: number;
-    stock_anomalies: number;
-    tax_compliance: number; // percentage
+    bills: number;
 }
 
 // --- Component ---
@@ -58,7 +57,7 @@ const POSOrdersIntelligence: React.FC = () => {
     const tenant_id = user?.tenantId || 'TEN001';
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [viewMode, setViewMode] = useState<'OVERVIEW' | 'AUDIT' | 'CUSTOMERS'>('OVERVIEW');
+    const [viewMode, setViewMode] = useState<'OVERVIEW' | 'AUDIT'>('OVERVIEW');
 
     useEffect(() => {
         dispatch(getAllInvoices());
@@ -115,11 +114,21 @@ const POSOrdersIntelligence: React.FC = () => {
     }, [orders]);
 
     const branchSummary: BranchHealth[] = useMemo(() => {
-        // Aggregate by Branch if possible, otherwise use placeholder data
-        return [
-            { branch: 'Main Terminal', sales: healthMetrics.total_sales, cash: healthMetrics.total_sales * 0.4, online: healthMetrics.total_sales * 0.5, credit: healthMetrics.total_sales * 0.1, stock_anomalies: 0, tax_compliance: 100 },
-        ];
-    }, [healthMetrics]);
+        // Totals per branch from the loaded bills, split by how each bill was paid.
+        const byBranch = new Map<string, BranchHealth>();
+        for (const o of orders) {
+            const b = byBranch.get(o.branch) ?? { branch: o.branch, sales: 0, cash: 0, online: 0, credit: 0, bills: 0 };
+            const amount = Number(o.total) || 0;
+            const method = String(o.payment_method || '').toUpperCase();
+            b.sales += amount;
+            b.bills += 1;
+            if (method === 'CASH') b.cash += amount;
+            else if (method === 'DUE' || method === 'CREDIT') b.credit += amount;
+            else b.online += amount;
+            byBranch.set(o.branch, b);
+        }
+        return [...byBranch.values()].sort((a, b) => b.sales - a.sales);
+    }, [orders]);
 
     const liveAlerts = useMemo(() => {
         return orders
@@ -220,14 +229,6 @@ const POSOrdersIntelligence: React.FC = () => {
                         Order Audit Ledger
                         {viewMode === 'AUDIT' && <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-full" />}
                     </button>
-                    <button
-                        onClick={() => setViewMode('CUSTOMERS')}
-                        className={`pb-4 text-[10px] font-black uppercase tracking-[0.3em] transition-all relative ${viewMode === 'CUSTOMERS' ? 'text-primary' : 'text-neutral-400 hover:text-neutral-600'}`}
-                    >
-                        Customer DNA
-                        <span className="ml-3 px-2 py-0.5 bg-primary/20 text-primary text-[8px] rounded-md font-black">VIP Analytics</span>
-                        {viewMode === 'CUSTOMERS' && <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-full" />}
-                    </button>
                 </div>
 
                 {/* Content Area */}
@@ -246,48 +247,22 @@ const POSOrdersIntelligence: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <h4 className="font-black text-xl tracking-tight leading-tight">{b.branch}</h4>
-                                                    <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Active Terminal: 04</span>
+                                                    <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">{b.bills} bills · ₹{Math.round(b.sales).toLocaleString('en-IN')}</span>
                                                 </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${b.tax_compliance >= 95 ? 'bg-success/10 text-success' : 'bg-amber-100 text-amber-600'}`}>
-                                                    {b.tax_compliance}% Tax Parity
-                                                </span>
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4 mb-8">
                                             <div className="p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-sm">
                                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Cash Flow</p>
-                                                <p className="text-xl font-black italic tabular-nums">₹{(b.cash / 1000).toFixed(0)}K</p>
+                                                <p className="text-xl font-black italic tabular-nums">₹{Math.round(b.cash).toLocaleString('en-IN')}</p>
                                             </div>
                                             <div className="p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-sm">
                                                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Online Flow</p>
-                                                <p className="text-xl font-black italic tabular-nums">₹{(b.online / 1000).toFixed(0)}K</p>
+                                                <p className="text-xl font-black italic tabular-nums">₹{Math.round(b.online).toLocaleString('en-IN')}</p>
                                             </div>
                                         </div>
 
-                                        <div className="space-y-4">
-                                            <div className="flex items-center justify-between text-xs font-bold px-1">
-                                                <span className="flex items-center gap-2 text-neutral-400 uppercase tracking-widest text-[9px] font-black">
-                                                    <Package className="w-3.5 h-3.5" /> Stock Integrity
-                                                </span>
-                                                <span className={b.stock_anomalies > 0 ? 'text-error' : 'text-neutral-500'}>
-                                                    {b.stock_anomalies} Anomalies Detected
-                                                </span>
-                                            </div>
-                                            <div className="w-full h-2 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
-                                                <div
-                                                    className={`h-full rounded-full transition-all duration-1000 ${b.stock_anomalies === 0 ? 'bg-success w-[100%]' :
-                                                        b.stock_anomalies < 3 ? 'bg-amber-500 w-[70%]' : 'bg-error w-[40%]'
-                                                        }`}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <button className="w-full mt-8 py-3 bg-neutral-50 dark:bg-neutral-900 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all rounded-sm border border-neutral-100 dark:border-neutral-800">
-                                            View Full Branch Journal
-                                        </button>
                                     </div>
                                 ))}
                             </div>
@@ -400,51 +375,6 @@ const POSOrdersIntelligence: React.FC = () => {
                             </div>
                         )}
 
-                        {viewMode === 'CUSTOMERS' && (
-                            <div className="bg-neutral-950 text-white rounded-[3rem] p-12 border border-neutral-800 shadow-2xl relative overflow-hidden group">
-                                <Users className="absolute -bottom-10 -right-10 w-64 h-64 text-primary opacity-5 rotate-12 group-hover:scale-110 transition-transform duration-1000" />
-                                <div className="relative z-10 max-w-xl">
-                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[10px] font-black uppercase tracking-[0.2em] mb-8 animate-pulse">
-                                        <Target className="w-4 h-4 fill-current" /> High Value Retention Active
-                                    </div>
-                                    <h3 className="text-4xl font-black mb-6 leading-[1.1] tracking-tight">
-                                        Customer <br /> <span className="text-primary italic underline decoration-primary/30">Intelligence Core</span>
-                                    </h3>
-
-                                    <div className="grid grid-cols-2 gap-6 mb-10">
-                                        <div className="p-6 bg-white/5 border border-white/10 rounded-sm backdrop-blur-md">
-                                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-2">Repeat Rate</p>
-                                            <h4 className="text-3xl font-black">42.8%</h4>
-                                            <p className="text-[10px] text-success font-black mt-2">+5% this month</p>
-                                        </div>
-                                        <div className="p-6 bg-white/5 border border-white/10 rounded-sm backdrop-blur-md">
-                                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-2">Dormant Reclaimed</p>
-                                            <h4 className="text-3xl font-black">128</h4>
-                                            <p className="text-[10px] text-primary font-black mt-2">Active campaigns</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4 mb-10">
-                                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-sm border border-white/10 group-hover:bg-white/10 transition-colors pointer-events-none">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-black text-primary">RK</div>
-                                                <div>
-                                                    <p className="text-xs font-black uppercase tracking-tight">Rajesh Kumar</p>
-                                                    <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">VIP • 42 Orders • ₹1.2L LTV</p>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <span className="text-[9px] font-black bg-success/10 text-success px-2 py-0.5 rounded uppercase font-black">Verified</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <button className="w-full py-4 bg-primary text-white rounded-sm font-black text-sm uppercase tracking-[0.1em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
-                                        Generate Retention Strategy <TrendingUp className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </div>
-                        )}
                     </div>
 
                     {/* Right Rail: Strategic Hub */}

@@ -4,135 +4,129 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Layout from "../../components/shared/Layout/index";
 import {
     CreditCard, ArrowLeft, Save, DollarSign, Building, Tag, FileText, CheckCircle2,
-    Calculator, Send
+    Calculator
 } from 'lucide-react';
 import api from "../../services/api";
-import { PurchasePayment, PurchasePaymentMethod as PaymentMethod, PaymentBillAllocation, PurchaseBill } from "../../types/purchase";
 import { toast } from 'react-toastify';
 
+/** A supplier bill still (partly) unpaid, as returned by GET /api/bills. */
+interface OutstandingBill { id: string; billNo: string; date: string; due: string; balance: number }
+interface SupplierOption { id: string; name: string }
+interface BankOption { id: string; name: string }
+interface Allocation { billId: string; billNo: string; amount: number }
+type Mode = 'Bank Transfer' | 'UPI' | 'Cheque' | 'Cash';
+
+const errorText = (err: unknown, fallback: string) => (err as { response?: { data?: { message?: string } } })?.response?.data?.message || fallback;
+const dayOf = (v: unknown) => (v ? String(v).slice(0, 10) : '');
+
+/**
+ * Purchase › Payment Out: records a supplier payment through POST /api/purchase-payments, which saves the payment,
+ * updates each allocated bill's paid amount and records the money leaving cash or the bank. It used to list two
+ * made-up "Mock Vendor" bills and only pretended to save (console.log + a success message).
+ */
 const PaymentOut: React.FC = () => {
     const navigate = useNavigate();
     const { vendorId } = useParams<{ vendorId?: string }>();
     const [isLoading, setIsLoading] = useState(false);
-    const [vendors, setVendors] = useState<any[]>([]);
-    const [outstandingBills, setOutstandingBills] = useState<PurchaseBill[]>([]);
+    const [loadError, setLoadError] = useState('');
+    const [suppliers, setSuppliers] = useState<SupplierOption[]>([]);
+    const [banks, setBanks] = useState<BankOption[]>([]);
+    const [outstandingBills, setOutstandingBills] = useState<OutstandingBill[]>([]);
+    const [billsLoading, setBillsLoading] = useState(false);
 
-    // Form State
-    const [paymentData, setPaymentData] = useState<Partial<PurchasePayment>>({
-        payment_date: new Date().toISOString().split('T')[0],
-        method: 'bank_transfer',
-        status: 'Pending',
-        currency: 'INR',
-        exchange_rate: 1,
-        allocations: [],
-        total_amount: 0,
-        attachments: []
-    });
+    const [supplierId, setSupplierId] = useState(vendorId ?? '');
+    const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split('T')[0]);
+    const [mode, setMode] = useState<Mode>('Bank Transfer');
+    const [bankAccountId, setBankAccountId] = useState('');
+    const [referenceNo, setReferenceNo] = useState('');
+    const [chequeDate, setChequeDate] = useState('');
+    const [notes, setNotes] = useState('');
+    const [allocations, setAllocations] = useState<Allocation[]>([]);
 
     useEffect(() => {
-        const fetchData = async () => {
+        let cancelled = false;
+        (async () => {
             try {
-                const { data: vendorData } = await api.get('/api/vendors');
-                setVendors(vendorData || []);
-
-                if (vendorId) {
-                    const vendor = vendorData.find((v: any) => v.id === vendorId || v._id === vendorId);
-                    if (vendor) {
-                        setPaymentData(prev => ({
-                            ...prev,
-                            vendor_id: vendorId,
-                            vendor_name: vendor.name
-                        }));
-                        fetchBills(vendorId);
-                    }
-                }
+                const [sup, acc] = await Promise.all([api.get('/api/purchases/suppliers'), api.get('/api/cashbank/accounts')]);
+                if (cancelled) return;
+                const supList = Array.isArray(sup.data?.data) ? sup.data.data : Array.isArray(sup.data) ? sup.data : [];
+                setSuppliers(supList.map((v: Record<string, unknown>) => ({ id: String(v._id ?? v.id), name: String(v.businessName ?? v.name ?? 'Supplier') })));
+                const accList = Array.isArray(acc.data) ? acc.data : Array.isArray(acc.data?.data) ? acc.data.data : [];
+                const bankList = accList.filter((a: Record<string, unknown>) => a.accountType !== 'Cash' && a.status !== 'inactive')
+                    .map((a: Record<string, unknown>) => ({ id: String(a._id ?? a.id), name: String(a.bankName ?? 'Bank account') }));
+                setBanks(bankList);
+                if (bankList.length) setBankAccountId(b => b || bankList[0].id);
             } catch (err) {
-                console.error("Failed to fetch vendors", err);
+                if (!cancelled) setLoadError(errorText(err, 'Could not load suppliers and bank accounts. Refresh to try again.'));
             }
-        };
-        fetchData();
-    }, [vendorId]);
+        })();
+        return () => { cancelled = true; };
+    }, []);
 
-    const fetchBills = async (vId: string) => {
-        try {
-            // In a real app: const { data } = await api.get(`/api/bills/outstanding?vendorId=${vId}`);
-            // Mocking outstanding bills
-            setOutstandingBills([
-                {
-                    id: 'b1', bill_number: 'BILL-1001', bill_date: '2024-03-01',
-                    total_amount: 50000, status: 'Approved', due_date: '2024-03-31',
-                    vendor_id: vId, vendor_name: 'Mock Vendor', amount: 50000, tax_breakdown: {} as any,
-                    payment_terms: 'Net 30', created_at: '', attachments: [], items: []
-                },
-                {
-                    id: 'b2', bill_number: 'BILL-1005', bill_date: '2024-03-10',
-                    total_amount: 25000, status: 'Approved', due_date: '2024-04-10',
-                    vendor_id: vId, vendor_name: 'Mock Vendor', amount: 25000, tax_breakdown: {} as any,
-                    payment_terms: 'Net 30', created_at: '', attachments: [], items: []
-                }
-            ]);
-        } catch {
-            toast.error("Failed to fetch outstanding bills");
-        }
+    useEffect(() => {
+        setAllocations([]);
+        setOutstandingBills([]);
+        if (!supplierId) return;
+        let cancelled = false;
+        setBillsLoading(true);
+        api.get('/api/bills', { params: { supplier: supplierId, paymentStatus: 'unpaid,partial' } })
+            .then(res => {
+                if (cancelled) return;
+                const list = Array.isArray(res.data) ? res.data : Array.isArray(res.data?.data) ? res.data.data : [];
+                setOutstandingBills(list
+                    .filter((b: Record<string, unknown>) => b.status !== 'rejected' && b.status !== 'draft')
+                    .map((b: Record<string, unknown>) => ({
+                        id: String(b._id),
+                        billNo: String(b.vendorInvoiceNo || b.billNo || ''),
+                        date: dayOf(b.date),
+                        due: dayOf(b.dueDate),
+                        balance: Math.max(0, Number(b.amount || 0) - Number(b.paidAmount || 0) - Number(b.discountReceived || 0)),
+                    }))
+                    .filter((b: OutstandingBill) => b.balance > 0.5));
+            })
+            .catch(err => { if (!cancelled) toast.error(errorText(err, 'Could not load this supplier\'s bills.')); })
+            .finally(() => { if (!cancelled) setBillsLoading(false); });
+        return () => { cancelled = true; };
+    }, [supplierId]);
+
+    const toggleBillSelection = (bill: OutstandingBill) => {
+        setAllocations(prev => (prev.some(a => a.billId === bill.id)
+            ? prev.filter(a => a.billId !== bill.id)
+            : [...prev, { billId: bill.id, billNo: bill.billNo, amount: bill.balance }]));
     };
 
-    const handleVendorChange = (id: string) => {
-        const vendor = vendors.find(v => v.id === id || v._id === id);
-        if (vendor) {
-            setPaymentData(prev => ({
-                ...prev,
-                vendor_id: id,
-                vendor_name: vendor.name,
-                allocations: []
-            }));
-            fetchBills(id);
-        }
+    const setAllocationAmount = (billId: string, value: string) => {
+        setAllocations(prev => prev.map(a => (a.billId === billId ? { ...a, amount: Number(value) || 0 } : a)));
     };
 
-    const toggleBillSelection = (bill: PurchaseBill) => {
-        const isSelected = paymentData.allocations?.find(a => a.bill_id === bill.id);
-        if (isSelected) {
-            setPaymentData(prev => ({
-                ...prev,
-                allocations: prev.allocations?.filter(a => a.bill_id !== bill.id)
-            }));
-        } else {
-            const newAllocation: PaymentBillAllocation = {
-                bill_id: bill.id,
-                bill_number: bill.bill_number,
-                amount_paid: bill.total_amount, // Default to full payment
-                discount_applied: 0
-            };
-            setPaymentData(prev => ({
-                ...prev,
-                allocations: [...(prev.allocations || []), newAllocation]
-            }));
-        }
-    };
-
-    const updateAllocation = (index: number, field: keyof PaymentBillAllocation, value: any) => {
-        const newAllocations = [...(paymentData.allocations || [])];
-        newAllocations[index] = { ...newAllocations[index], [field]: value };
-        setPaymentData(prev => ({ ...prev, allocations: newAllocations }));
-    };
-
-    const totalToPay = useMemo(() => {
-        return (paymentData.allocations || []).reduce((sum, a) => sum + (Number(a.amount_paid) || 0), 0);
-    }, [paymentData.allocations]);
+    const totalToPay = useMemo(() => allocations.reduce((sum, a) => sum + (Number(a.amount) || 0), 0), [allocations]);
+    const needsBank = mode !== 'Cash';
 
     const handleSave = async () => {
-        if (!paymentData.vendor_id) return toast.warning("Please select a vendor");
-        if ((paymentData.allocations || []).length === 0) return toast.warning("Please select at least one bill to pay");
+        if (!supplierId) return toast.warning('Please select a supplier');
+        if (allocations.length === 0) return toast.warning('Please select at least one bill to pay');
+        const over = allocations.find(a => a.amount > (outstandingBills.find(b => b.id === a.billId)?.balance ?? 0) + 0.5);
+        if (over) return toast.warning(`The amount for bill ${over.billNo} is more than its balance`);
+        if (allocations.some(a => !(a.amount > 0))) return toast.warning('Each selected bill needs an amount above zero');
+        if (needsBank && !bankAccountId) return toast.warning('Pick the bank account the payment is made from');
 
         setIsLoading(true);
         try {
-            const payload = { ...paymentData, total_amount: totalToPay };
-            console.log("Saving Payment:", payload);
-            // In a real app: await api.post('/api/payments', payload);
-            toast.success("Payment recorded successfully");
+            await api.post('/api/purchase-payments', {
+                supplierId,
+                paymentDate,
+                amount: Math.round(totalToPay * 100) / 100,
+                paymentMode: mode,
+                referenceNo: referenceNo || undefined,
+                bankAccountId: needsBank ? bankAccountId : undefined,
+                chequeDate: mode === 'Cheque' && chequeDate ? chequeDate : undefined,
+                allocations: allocations.map(a => ({ billId: a.billId, amount: a.amount, discount: 0 })),
+                notes: notes || undefined,
+            });
+            toast.success('Payment recorded');
             navigate('/purchase/payments');
-        } catch {
-            toast.error("Failed to save payment");
+        } catch (err) {
+            toast.error(errorText(err, 'Failed to save the payment'));
         } finally {
             setIsLoading(false);
         }
@@ -171,6 +165,9 @@ const PaymentOut: React.FC = () => {
                     </div>
                 </div>
 
+                {loadError && (
+                    <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{loadError}</div>
+                )}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left: Basic Info */}
                     <div className="lg:col-span-2 space-y-6">
@@ -183,13 +180,13 @@ const PaymentOut: React.FC = () => {
                                 <div className="space-y-1.5">
                                     <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Supplier</label>
                                     <select
-                                        value={paymentData.vendor_id || ''}
-                                        onChange={(e) => handleVendorChange(e.target.value)}
+                                        value={supplierId}
+                                        onChange={(e) => setSupplierId(e.target.value)}
                                         className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     >
                                         <option value="">Select Supplier</option>
-                                        {vendors.map(v => (
-                                            <option key={v.id || v._id} value={v.id || v._id}>{v.name}</option>
+                                        {suppliers.map(v => (
+                                            <option key={v.id} value={v.id}>{v.name}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -197,32 +194,46 @@ const PaymentOut: React.FC = () => {
                                     <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Payment Date</label>
                                     <input
                                         type="date"
-                                        value={paymentData.payment_date}
-                                        onChange={(e) => setPaymentData(prev => ({ ...prev, payment_date: e.target.value }))}
+                                        value={paymentDate}
+                                        onChange={(e) => setPaymentDate(e.target.value)}
                                         className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Payment Method</label>
                                     <select
-                                        value={paymentData.method}
-                                        onChange={(e) => setPaymentData(prev => ({ ...prev, method: e.target.value as PaymentMethod }))}
+                                        value={mode}
+                                        onChange={(e) => setMode(e.target.value as Mode)}
                                         className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     >
-                                        <option value="bank_transfer">Bank Transfer</option>
-                                        <option value="cheque">Cheque</option>
-                                        <option value="cash">Cash</option>
-                                        <option value="credit_card">Credit Card</option>
-                                        <option value="other">Other</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="UPI">UPI</option>
+                                        <option value="Cheque">Cheque</option>
+                                        <option value="Cash">Cash</option>
                                     </select>
                                 </div>
+                                {needsBank && (
+                                    <div className="space-y-1.5">
+                                        <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Paid From</label>
+                                        <select value={bankAccountId} onChange={(e) => setBankAccountId(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none">
+                                            {banks.length === 0 && <option value="">No bank accounts — add one under Finance › Bank</option>}
+                                            {banks.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                        </select>
+                                    </div>
+                                )}
+                                {mode === 'Cheque' && (
+                                    <div className="space-y-1.5">
+                                        <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Cheque Date</label>
+                                        <input type="date" value={chequeDate} onChange={(e) => setChequeDate(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none" />
+                                    </div>
+                                )}
                                 <div className="space-y-1.5">
                                     <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Reference ID / Cheque #</label>
                                     <div className="relative">
                                         <input
                                             type="text"
-                                            value={paymentData.reference_id || ''}
-                                            onChange={(e) => setPaymentData(prev => ({ ...prev, reference_id: e.target.value }))}
+                                            value={referenceNo}
+                                            onChange={(e) => setReferenceNo(e.target.value)}
                                             placeholder="Enter Transaction Ref"
                                             className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                         />
@@ -256,7 +267,7 @@ const PaymentOut: React.FC = () => {
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                         {outstandingBills.map((bill) => {
-                                            const allocation = paymentData.allocations?.find(a => a.bill_id === bill.id);
+                                            const allocation = allocations.find(a => a.billId === bill.id);
                                             const isSelected = !!allocation;
 
                                             return (
@@ -271,26 +282,23 @@ const PaymentOut: React.FC = () => {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex flex-col">
-                                                            <span className="font-bold text-neutral-900 dark:text-white">{bill.bill_number}</span>
-                                                            <span className="text-[10px] text-neutral-500">{bill.bill_date}</span>
+                                                            <span className="font-bold text-neutral-900 dark:text-white">{bill.billNo || '—'}</span>
+                                                            <span className="text-[10px] text-neutral-500">{bill.date}</span>
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <span className="text-neutral-600 font-medium">{bill.due_date}</span>
+                                                        <span className="text-neutral-600 font-medium">{bill.due || '—'}</span>
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
-                                                        <span className="font-bold">{formatCurrency(bill.total_amount)}</span>
+                                                        <span className="font-bold">{formatCurrency(bill.balance)}</span>
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         {isSelected ? (
                                                             <div className="relative">
                                                                 <input
                                                                     type="number"
-                                                                    value={allocation.amount_paid}
-                                                                    onChange={(e) => {
-                                                                        const idx = paymentData.allocations?.findIndex(a => a.bill_id === bill.id);
-                                                                        if (idx !== undefined && idx !== -1) updateAllocation(idx, 'amount_paid', e.target.value);
-                                                                    }}
+                                                                    value={allocation.amount}
+                                                                    onChange={(e) => setAllocationAmount(bill.id, e.target.value)}
                                                                     className="w-full pl-7 pr-3 py-1.5 bg-white dark:bg-neutral-950 border border-brand-200 dark:border-brand-800 rounded-lg text-sm text-right font-bold focus:ring-2 focus:ring-brand-500/20 outline-none"
                                                                 />
                                                                 <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400 text-[10px] font-bold">₹</span>
@@ -305,7 +313,7 @@ const PaymentOut: React.FC = () => {
                                         {outstandingBills.length === 0 && (
                                             <tr>
                                                 <td colSpan={5} className="px-6 py-12 text-center text-neutral-400">
-                                                    Select a vendor to see outstanding bills.
+                                                    {!supplierId ? 'Select a supplier to see outstanding bills.' : billsLoading ? 'Loading bills…' : 'This supplier has no unpaid bills in the ERP.'}
                                                 </td>
                                             </tr>
                                         )}
@@ -326,11 +334,11 @@ const PaymentOut: React.FC = () => {
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center pb-4 border-b border-brand-500/30">
                                     <span className="text-sm font-medium opacity-80">Total Bills Selected</span>
-                                    <span className="font-bold">{(paymentData.allocations || []).length}</span>
+                                    <span className="font-bold">{allocations.length}</span>
                                 </div>
                                 <div className="flex justify-between items-center pb-4 border-b border-brand-500/30">
                                     <span className="text-sm font-medium opacity-80">Payment Method</span>
-                                    <span className="font-bold">{paymentData.method}</span>
+                                    <span className="font-bold">{mode}</span>
                                 </div>
 
                                 <div className="pt-4 space-y-2">
@@ -338,20 +346,17 @@ const PaymentOut: React.FC = () => {
                                         <span className="text-lg font-bold">Total Payout</span>
                                         <span className="text-2xl font-black">{formatCurrency(totalToPay)}</span>
                                     </div>
-                                    <p className="text-[10px] opacity-60 italic text-right">This amount will be debited from selected bank account.</p>
+                                    <p className="text-[10px] opacity-60 italic text-right">{needsBank ? 'Taken from the selected bank account.' : 'Paid out of cash.'}{mode === 'Cheque' ? ' Cheques stay pending until cleared.' : ''}</p>
                                 </div>
 
                                 <div className="pt-6 space-y-3">
                                     <button
                                         onClick={handleSave}
-                                        className="w-full py-3 bg-white text-brand-600 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-neutral-50 transition-colors"
+                                        disabled={isLoading}
+                                        className="w-full py-3 bg-white text-brand-600 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-neutral-50 transition-colors disabled:opacity-60"
                                     >
                                         <CheckCircle2 className="w-5 h-5" />
                                         Complete Payment
-                                    </button>
-                                    <button className="w-full py-3 bg-brand-700/50 hover:bg-brand-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-colors">
-                                        <Send className="w-4 h-4" />
-                                        Save & Email Advice
                                     </button>
                                 </div>
                             </div>
@@ -364,8 +369,8 @@ const PaymentOut: React.FC = () => {
                                 Private Notes
                             </h3>
                             <textarea
-                                value={paymentData.notes || ''}
-                                onChange={(e) => setPaymentData(prev => ({ ...prev, notes: e.target.value }))}
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
                                 placeholder="Add internal notes about this payment..."
                                 className="w-full h-32 px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20"
                             />

@@ -21,11 +21,9 @@ const RateRevisionList: React.FC = () => {
             }
         } catch (error) {
             console.error(error);
-            // Mocking for aesthetic preview
-            setRevisions([
-                { _id: 'r1', createdAt: '2024-03-20', itemId: { name: 'Premium Circuit Board' }, batchNumber: 'B-8829', supplierId: { businessName: 'Tech Supplies Corp' }, oldRate: 450, newRate: 480, diffAmount: 3000, affectedQty: 100, status: 'PENDING' },
-                { _id: 'r2', createdAt: '2024-03-18', itemId: { name: 'Institutional Chassis' }, batchNumber: 'B-7710', supplierId: { businessName: 'Global Logistics' }, oldRate: 1200, newRate: 1150, diffAmount: -5000, affectedQty: 100, status: 'APPROVED' }
-            ]);
+            // No sample fallback: an empty list plus an error, never made-up revisions.
+            setRevisions([]);
+            toast.error('Could not load rate revisions. Check your connection and refresh.');
         } finally {
             setLoading(false);
         }

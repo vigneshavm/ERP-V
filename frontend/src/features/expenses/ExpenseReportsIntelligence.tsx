@@ -87,9 +87,6 @@ const ExpenseReportsIntelligence: React.FC = () => {
                         </div>
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Gross Burn</p>
                         <h3 className="text-2xl font-black tabular-nums">₹{(report?.total_expense || 0).toLocaleString()}</h3>
-                        <div className="flex items-center gap-1.5 mt-2 text-error font-bold text-[10px] uppercase">
-                            <TrendingUp className="w-3.5 h-3.5" /> +8% vs Prev Period
-                        </div>
                     </div>
 
                     <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">

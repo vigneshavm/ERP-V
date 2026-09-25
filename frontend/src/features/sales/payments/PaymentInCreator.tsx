@@ -1,9 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import api from '../../../services/api';
 import {
-    Receipt, Search, Plus, Trash2, Printer, Mail, MessageCircle,
+    Receipt, Search, Plus, Trash2,
     Calendar, User, CreditCard, Banknote, Smartphone, Building2,
-    CheckCircle, Save, RefreshCw, Wallet
+    CheckCircle, Save, RefreshCw
 } from 'lucide-react';
 import { RootState } from "../../../redux/store";
 
@@ -28,23 +31,14 @@ interface Invoice {
 
 interface PaymentMethod {
     id: string;
-    method: 'CASH' | 'UPI' | 'CARD' | 'BANK' | 'CHEQUE' | 'WALLET';
+    method: 'CASH' | 'UPI' | 'CARD' | 'BANK' | 'CHEQUE';
     amount: number;
     reference: string;
-    depositTo: string;
 }
 
-// Demo data - replaced by Redux state
-// Customers fetched from Redux posSlice
-
-const generateDemoInvoices = (customerId: string): Invoice[] => {
-    if (!customerId || customerId === 'WALKIN') return [];
-    return [
-        { id: 'INV001', invoiceNo: 'INV/2026/0001', date: '2026-01-05', totalAmount: 25000, balanceDue: 25000, allocatedAmount: 0 },
-        { id: 'INV002', invoiceNo: 'INV/2026/0002', date: '2026-01-08', totalAmount: 15000, balanceDue: 10000, allocatedAmount: 0 },
-        { id: 'INV003', invoiceNo: 'INV/2026/0003', date: '2026-01-10', totalAmount: 18000, balanceDue: 10000, allocatedAmount: 0 },
-    ];
-};
+/** Method keys → the values POST /api/payment-in accepts. */
+const API_METHOD: Record<PaymentMethod['method'], string> = { CASH: 'cash', UPI: 'upi', CARD: 'card', BANK: 'bank_transfer', CHEQUE: 'cheque' };
+const errorText = (err: unknown, fallback: string) => (err as { response?: { data?: { message?: string } } })?.response?.data?.message || fallback;
 
 const methodConfig = {
     CASH: { label: 'Cash', icon: Banknote, color: 'text-green-600' },
@@ -52,32 +46,43 @@ const methodConfig = {
     CARD: { label: 'Card', icon: CreditCard, color: 'text-info' },
     BANK: { label: 'Bank Transfer', icon: Building2, color: 'text-primary' },
     CHEQUE: { label: 'Cheque', icon: Receipt, color: 'text-amber-600' },
-    WALLET: { label: 'Wallet', icon: Wallet, color: 'text-pink-600' },
 };
 
-const depositOptions = ['Cash Counter', 'HDFC Bank - 1234', 'ICICI Bank - 5678', 'Petty Cash'];
-
+/**
+ * Sales › Receipts › New: records a customer payment through POST /api/payment-in, against the customer's real
+ * unpaid invoices. It used to offer three made-up invoices, fake deposit accounts ("HDFC Bank - 1234"), and a
+ * Save button that did nothing.
+ */
 const PaymentInCreator: React.FC = () => {
-    // Generate receipt number
-    const generateReceiptNo = () => `RCP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(5, '0')}`;
-
+    const navigate = useNavigate();
     const { user } = useSelector((state: RootState) => state.auth);
-    const { customers: posCustomers } = useSelector((state: RootState) => state.pos);
+    const [availableCustomers, setAvailableCustomers] = useState<Customer[]>([]);
+    const [banks, setBanks] = useState<{ id: string; name: string }[]>([]);
+    const [depositAccount, setDepositAccount] = useState('cash');
+    const [loadError, setLoadError] = useState('');
+    const [invoicesLoading, setInvoicesLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
 
-    // Filter customers by tenant
-    const availableCustomers: Customer[] = useMemo(() => {
-        return posCustomers.map((c: any) => ({
-            id: c.id,
-            name: c.name,
-            phone: c.phone || '',
-            email: c.email,
-            outstandingBalance: c.outstandingBalance || c.outstanding_balance || 0,
-            advanceBalance: c.advanceBalance || 0
-        }));
-    }, [posCustomers]);
+    useEffect(() => {
+        let cancelled = false;
+        Promise.all([api.get('/api/customers'), api.get('/api/cashbank/accounts')])
+            .then(([cus, acc]) => {
+                if (cancelled) return;
+                const list = Array.isArray(cus.data) ? cus.data : Array.isArray(cus.data?.data) ? cus.data.data : [];
+                setAvailableCustomers(list.map((c: Record<string, unknown>) => {
+                    const dues = Number(c.dues) || 0;
+                    return { id: String(c._id ?? c.id), name: String(c.name ?? ''), phone: String(c.phone ?? ''), email: c.email ? String(c.email) : undefined,
+                        outstandingBalance: Math.max(0, dues), advanceBalance: Math.max(0, -dues) };
+                }));
+                const accList = Array.isArray(acc.data) ? acc.data : Array.isArray(acc.data?.data) ? acc.data.data : [];
+                setBanks(accList.filter((a: Record<string, unknown>) => a.accountType !== 'Cash' && a.status !== 'inactive')
+                    .map((a: Record<string, unknown>) => ({ id: String(a._id ?? a.id), name: String(a.bankName ?? 'Bank account') })));
+            })
+            .catch(err => { if (!cancelled) setLoadError(errorText(err, 'Could not load customers and bank accounts. Refresh to try again.')); });
+        return () => { cancelled = true; };
+    }, []);
 
     // State
-    const [receiptNo] = useState(generateReceiptNo);
     const [receiptDate, setReceiptDate] = useState(new Date().toISOString().split('T')[0]);
 
     const [customer, setCustomer] = useState<Customer | null>(null);
@@ -85,7 +90,7 @@ const PaymentInCreator: React.FC = () => {
     const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
 
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-        { id: 'PM1', method: 'CASH', amount: 0, reference: '', depositTo: 'Cash Counter' }
+        { id: 'PM1', method: 'CASH', amount: 0, reference: '' }
     ]);
 
     const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -103,9 +108,20 @@ const PaymentInCreator: React.FC = () => {
     // Select customer
     const selectCustomer = (c: Customer) => {
         setCustomer(c);
-        setInvoices(generateDemoInvoices(c.id));
+        setInvoices([]);
         setShowCustomerDropdown(false);
         setCustomerSearch('');
+        setInvoicesLoading(true);
+        api.get(`/api/payment-in/customer/${c.id}/invoices`)
+            .then(res => {
+                const list = Array.isArray(res.data) ? res.data : [];
+                setInvoices(list.map((inv: Record<string, unknown>) => ({
+                    id: String(inv._id), invoiceNo: String(inv.invoiceNo ?? ''), date: String(inv.date ?? '').slice(0, 10),
+                    totalAmount: Number(inv.total) || 0, balanceDue: Math.max(0, Number(inv.balance) || 0), allocatedAmount: 0,
+                })).filter((inv: Invoice) => inv.balanceDue > 0));
+            })
+            .catch(err => toast.error(errorText(err, 'Could not load this customer\'s invoices.')))
+            .finally(() => setInvoicesLoading(false));
     };
 
     // Payment methods
@@ -114,8 +130,7 @@ const PaymentInCreator: React.FC = () => {
             id: `PM${Date.now()}`,
             method: 'CASH',
             amount: 0,
-            reference: '',
-            depositTo: 'Cash Counter'
+            reference: ''
         }]);
         setIsCustomerLocked(true);
     };
@@ -169,8 +184,32 @@ const PaymentInCreator: React.FC = () => {
     const handleClear = () => {
         setCustomer(null);
         setInvoices([]);
-        setPaymentMethods([{ id: 'PM1', method: 'CASH', amount: 0, reference: '', depositTo: 'Cash Counter' }]);
+        setPaymentMethods([{ id: 'PM1', method: 'CASH', amount: 0, reference: '' }]);
         setIsCustomerLocked(false);
+    };
+
+    const handleSave = async () => {
+        if (!customer) return toast.warning('Select a customer');
+        const lines = paymentMethods.filter(m => m.amount > 0);
+        if (!lines.length) return toast.warning('Enter the amount received');
+        if (totalAllocated > totalPayment + 0.005) return toast.warning('More is allocated to invoices than was received');
+        const refs = lines.filter(m => m.reference.trim()).map(m => `${methodConfig[m.method].label} ref: ${m.reference.trim()}`);
+        setSaving(true);
+        try {
+            await api.post('/api/payment-in', {
+                customerId: customer.id,
+                paymentMethods: lines.map(m => ({ method: API_METHOD[m.method], amount: m.amount, bankAccount: m.method !== 'CASH' && depositAccount !== 'cash' ? depositAccount : undefined })),
+                allocatedInvoices: invoices.filter(i => i.allocatedAmount > 0).map(i => ({ invoice: i.id, allocatedAmount: i.allocatedAmount })),
+                depositAccount,
+                notes: refs.join('; '),
+            });
+            toast.success('Receipt saved');
+            navigate('/sales/payments');
+        } catch (err) {
+            toast.error(errorText(err, 'Could not save the receipt'));
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
@@ -181,7 +220,7 @@ const PaymentInCreator: React.FC = () => {
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <Receipt className="w-5 h-5 text-green-600" />
-                            <span className="font-bold text-lg">{receiptNo}</span>
+                            <span className="font-bold text-lg">Receipt</span>
                         </div>
                         <span className="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                             New Receipt
@@ -205,6 +244,9 @@ const PaymentInCreator: React.FC = () => {
             </div>
 
             <div className="flex-1 overflow-auto p-4">
+                {loadError && (
+                    <div role="alert" className="mb-4 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{loadError}</div>
+                )}
                 <div className="grid lg:grid-cols-2 gap-4">
                     {/* Left Column */}
                     <div className="space-y-4">
@@ -318,25 +360,14 @@ const PaymentInCreator: React.FC = () => {
                                                     className="input text-right"
                                                 />
                                             </div>
-                                            <div className="col-span-3">
+                                            <div className="col-span-5">
                                                 <input
                                                     type="text"
-                                                    placeholder="Reference"
+                                                    placeholder="Reference (UTR, cheque no.)"
                                                     value={pm.reference}
                                                     onChange={e => updatePaymentMethod(pm.id, 'reference', e.target.value)}
                                                     className="input text-sm"
                                                 />
-                                            </div>
-                                            <div className="col-span-2">
-                                                <select
-                                                    value={pm.depositTo}
-                                                    onChange={e => updatePaymentMethod(pm.id, 'depositTo', e.target.value)}
-                                                    className="select text-sm"
-                                                >
-                                                    {depositOptions.map(opt => (
-                                                        <option key={opt} value={opt}>{opt}</option>
-                                                    ))}
-                                                </select>
                                             </div>
                                             <div className="col-span-1 text-center">
                                                 {paymentMethods.length > 1 && (
@@ -349,6 +380,14 @@ const PaymentInCreator: React.FC = () => {
                                     );
                                 })}
                             </div>
+
+                            <label className="mt-3 flex items-center justify-between gap-3 text-sm">
+                                <span className="font-medium">Deposit to</span>
+                                <select value={depositAccount} onChange={e => setDepositAccount(e.target.value)} className="select text-sm w-56">
+                                    <option value="cash">Cash</option>
+                                    {banks.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                </select>
+                            </label>
 
                             <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg flex justify-between items-center">
                                 <span className="font-bold text-green-700 dark:text-green-400">Total Payment</span>
@@ -378,6 +417,8 @@ const PaymentInCreator: React.FC = () => {
                                     <User className="w-12 h-12 mx-auto mb-3 opacity-50" />
                                     <p>Select a customer to see open invoices</p>
                                 </div>
+                            ) : invoicesLoading ? (
+                                <div className="text-center py-12 text-secondary opacity-50"><p>Loading invoices…</p></div>
                             ) : invoices.length === 0 ? (
                                 <div className="text-center py-12 text-secondary opacity-50">
                                     <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50 text-green-500" />
@@ -457,17 +498,8 @@ const PaymentInCreator: React.FC = () => {
                     </button>
                 </div>
                 <div className="flex gap-2">
-                    <button className="btn btn-secondary">
-                        <Printer className="w-4 h-4" /> Print Receipt
-                    </button>
-                    <button className="btn btn-secondary">
-                        <MessageCircle className="w-4 h-4" /> WhatsApp
-                    </button>
-                    <button className="btn btn-secondary">
-                        <Mail className="w-4 h-4" /> Email
-                    </button>
-                    <button className="btn btn-primary" disabled={totalPayment === 0}>
-                        <Save className="w-4 h-4" /> Save Payment
+                    <button className="btn btn-primary" disabled={totalPayment === 0 || !customer || saving} onClick={handleSave}>
+                        <Save className="w-4 h-4" /> {saving ? 'Saving…' : 'Save Payment'}
                     </button>
                 </div>
             </div>

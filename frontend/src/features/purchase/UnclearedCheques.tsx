@@ -9,12 +9,14 @@ import { toast } from 'react-toastify';
 
 const UnclearedCheques: React.FC = () => {
     const _dispatch = useDispatch<AppDispatch>();
+    const [loadError, setLoadError] = useState('');
     const [cheques, setCheques] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
     const fetchCheques = async () => {
         setLoading(true);
+        setLoadError('');
         try {
             const { data } = await api.get('/api/purchase-payments');
             if (data && data.success) {
@@ -25,11 +27,9 @@ const UnclearedCheques: React.FC = () => {
             }
         } catch (err) {
             console.error("Failed to fetch cheques", err);
-            // Mocking for aesthetic preview
-            setCheques([
-                { _id: 'c1', paymentNo: 'PY-1001', referenceNo: 'CHQ-998101', amount: 45000, chequeDate: '2024-03-25', paymentDate: '2024-03-20', supplierId: { businessName: 'Tech Supplies Corp' }, bankName: 'HDFC Bank', status: 'pending' },
-                { _id: 'c2', paymentNo: 'PY-1005', referenceNo: 'CHQ-998105', amount: 12500, chequeDate: new Date().toISOString().split('T')[0], paymentDate: '2024-03-22', supplierId: { businessName: 'Global Logistics' }, bankName: 'ICICI Bank', status: 'pending' }
-            ]);
+            // No sample fallback: show that loading failed rather than records that don't exist.
+            setCheques([]);
+            setLoadError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Could not load pending cheques. Check your connection and refresh.');
         } finally {
             setLoading(false);
         }
@@ -75,6 +75,9 @@ const UnclearedCheques: React.FC = () => {
                         </button>
                     }
                 />
+                {loadError && (
+                    <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{loadError}</div>
+                )}
 
                 {/* KPI Pulse Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
