@@ -2,10 +2,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../redux/store";
 import {
-    addDailyRecord,
-    updateDailyRecord,
-    deleteDailyRecord
-} from "../../redux/slices/financeSlice";
+    saveDailyFinanceRecord,
+    updateDailyFinanceRecord,
+    deleteDailyFinanceRecord
+} from "../../redux/thunks/financeThunks";
 import { SyncManager } from "../../services/SyncManager";
 import Layout from "../../components/shared/Layout/index";
 import { Plus, CheckCircle2, History,
@@ -81,10 +81,10 @@ const DailyFinancePage: React.FC = () => {
         };
 
         if (editingId) {
-            dispatch(updateDailyRecord(payload));
+            dispatch(updateDailyFinanceRecord(payload));
             setEditingId(null);
         } else {
-            dispatch(addDailyRecord(payload));
+            dispatch(saveDailyFinanceRecord(payload));
         }
 
         setCash(""); setOnline(""); setExp(""); setDrawerCash(""); setNotes("");
@@ -109,7 +109,7 @@ const DailyFinancePage: React.FC = () => {
 
     const handleDelete = (id: string) => {
         if (window.confirm("Delete this financial record?")) {
-            dispatch(deleteDailyRecord(id));
+            dispatch(deleteDailyFinanceRecord(id));
             setStatusMsg({ type: 'success', text: 'Record deleted.' });
             setTimeout(() => setStatusMsg(null), 3000);
         }

@@ -2,7 +2,7 @@ import { AppDispatch, RootState } from "../store";
 import { db } from '../../services/db';
 import { addDailyRecord, updateDailyRecord, deleteDailyRecord, setDailyRecordSynced } from '../slices/financeSlice';
 
-import api from "../../services/api.js";
+import { sendDailyFinanceChange } from "../../services/dailyFinanceApi";
 
 export const saveDailyFinanceRecord = (record: any) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
@@ -37,12 +37,9 @@ export const saveDailyFinanceRecord = (record: any) => async (dispatch: AppDispa
         // 3. Immediate Sync
         if (navigator.onLine) {
             try {
-                const { data } = await api.post('/daily-finance', apiData);
-                if (data && data.success) {
-                    await db.dailyFinanceQueue.where({ recordId: record.id, operation: 'INSERT' }).modify({ synced: true });
-                    dispatch(setDailyRecordSynced({ id: record.id, synced: true }));
-                    console.log('Daily finance record synced immediately');
-                }
+                await sendDailyFinanceChange('INSERT', record.id, apiData);
+                await db.dailyFinanceQueue.where({ recordId: record.id, operation: 'INSERT' }).modify({ synced: true });
+                dispatch(setDailyRecordSynced({ id: record.id, synced: true }));
             } catch (error) {
                 console.error('Immediate sync failed:', error);
             }
@@ -85,13 +82,9 @@ export const updateDailyFinanceRecord = (record: any) => async (dispatch: AppDis
         // 3. Immediate Sync
         if (navigator.onLine) {
             try {
-                // Assuming backend supports PUT /daily-finance/:id
-                const { data } = await api.put(`/daily-finance/${record.id}`, apiData);
-                if (data && data.success) {
-                    await db.dailyFinanceQueue.where({ recordId: record.id, operation: 'UPDATE' }).modify({ synced: true });
-                    dispatch(setDailyRecordSynced({ id: record.id, synced: true }));
-                    console.log('Daily finance update synced immediately');
-                }
+                await sendDailyFinanceChange('UPDATE', record.id, apiData);
+                await db.dailyFinanceQueue.where({ recordId: record.id, operation: 'UPDATE' }).modify({ synced: true });
+                dispatch(setDailyRecordSynced({ id: record.id, synced: true }));
             } catch (error) {
                 console.error('Immediate update sync failed:', error);
             }
@@ -123,11 +116,8 @@ export const deleteDailyFinanceRecord = (id: string) => async (dispatch: AppDisp
         // 3. Immediate Sync
         if (navigator.onLine) {
             try {
-                const { data } = await api.delete(`/daily-finance/${id}`);
-                if (data && data.success) {
-                    await db.dailyFinanceQueue.where({ recordId: id, operation: 'DELETE' }).modify({ synced: true });
-                    console.log('Daily finance deletion synced immediately');
-                }
+                await sendDailyFinanceChange('DELETE', id, {});
+                await db.dailyFinanceQueue.where({ recordId: id, operation: 'DELETE' }).modify({ synced: true });
             } catch (error) {
                 console.error('Immediate delete sync failed:', error);
             }

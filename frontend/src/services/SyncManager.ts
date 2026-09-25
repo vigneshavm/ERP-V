@@ -3,6 +3,7 @@ import api from './api';
 import { store } from "../redux/store";
 import { setDailyRecordSynced } from "../redux/slices/financeSlice";
 import { SyncIntelligenceService } from './SyncIntelligenceService';
+import { sendDailyFinanceChange } from './dailyFinanceApi';
 import { buildPosInvoicePayload } from './posInvoiceMapper';
 
 export class SyncManager {
@@ -15,9 +16,10 @@ export class SyncManager {
         this.isSyncing = true;
 
         try {
+            // Filter, not where('synced'): `synced` is stored as a boolean, and IndexedDB can't
+            // index booleans, so an index lookup never matched and queued sales were never sent.
             const pendingSales = await db.offlineSales
-                .where('synced')
-                .equals(0) // false
+                .filter(sale => !sale.synced)
                 .toArray();
 
             for (const sale of pendingSales) {
@@ -109,24 +111,15 @@ export class SyncManager {
         this.isSyncingDF = true;
 
         try {
+            // Primary-key order, so a record's INSERT replays before its UPDATE/DELETE.
             const pending = await db.dailyFinanceQueue
-                .where('synced')
-                .equals(0)
+                .filter(item => !item.synced)
                 .toArray();
 
             for (const item of pending) {
                 try {
                     const { recordId, operation, data } = item;
-
-                    // Push via backend API
-                    // Assuming generic sync endpoint or mapped endpoints
-                    const endpoint = '/finance/sync'; // Placeholder
-                    await api.post(endpoint, {
-                        recordId,
-                        operation,
-                        data,
-                        tenant_id: data.tenant_id
-                    });
+                    await sendDailyFinanceChange(operation, recordId, data);
 
                     await db.dailyFinanceQueue.update(item.localId!, { synced: true });
                     console.log(`Synced ${operation} for ${recordId}`);

@@ -448,24 +448,13 @@ export const getAllTransactions = async (req: AuthenticatedRequest, res: Respons
     }
 };
 
-export const getAllDailyFinance = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        // No daily-finance model backs this yet; day-end closings are stored by
-        // DayEndController (/api/day-end) in DayEndReconciliation.
-        res.status(200).json([]);
-    } catch (err) {
-        error(`Get All Daily Finance Error: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
 // Redundant stub removed
 
 const CashBankController = {
     getAccounts, createAccount, updateAccount, deleteAccount, getTransactions, createTransfer, createCashTransaction,
     getAccountLedger, toggleReconciliation, bulkReconcile, getBankSummary, getCashBankPosition, validatePayments,
     getCheques, createCheque, updateChequeStatus, getEffectiveBalance,
-    getAllTransactions, getAllDailyFinance
+    getAllTransactions
 };
 
 export default CashBankController;

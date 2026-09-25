@@ -23,10 +23,10 @@ router.use('/bank-statement', bankStatementRoutes);
 import loanRoutes from './loanRoutes.js';
 router.use('/loans', loanRoutes);
 
-// Daily Finance (Sync)
-import { getAllDailyFinance } from '../controllers/CashBankController.js';
+// Daily Finance entries (Daily Finance screen + offline queue replay)
+import dailyFinanceRoutes from './dailyFinanceRoutes.js';
 import { protect } from "../../../middlewares/authMiddleware.js";
-router.get('/daily-finance', protect, getAllDailyFinance);
+router.use('/daily-finance', dailyFinanceRoutes);
 
 // Mount Journal Entry routes
 import journalEntryRoutes from './journalEntryRoutes.js';
