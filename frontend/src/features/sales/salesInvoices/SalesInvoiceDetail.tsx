@@ -82,7 +82,7 @@ const SalesInvoiceDetail = () => {
         if (!invoice?.invoiceNo || isPrintingReceipt) return;
         setIsPrintingReceipt(true);
         try {
-            const { sale, tenant, branch } = await receiptDataService.fetchReceiptContext(invoice.invoiceNo, { strict: true });
+            const { sale, tenant, branch } = await receiptDataService.fetchReceiptContext(invoice.invoiceNo);
             printSaleReceipt(sale, tenant, branch);
         } catch (error) {
             console.error('Failed to print receipt', error);
