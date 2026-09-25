@@ -49,6 +49,10 @@ async function getDbData(tableName: string, options: DataSourceOptions): Promise
         if (data && data.success && Array.isArray(data.data)) {
             return data.data;
         }
+        // Paginated list endpoints (e.g. GET /api/inventory -> { items, pagination })
+        if (data && Array.isArray(data.items)) {
+            return data.items;
+        }
         // Handle direct array response or other formats
         return Array.isArray(data) ? data : (data.data || []);
     } catch (error) {

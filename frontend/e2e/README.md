@@ -34,7 +34,9 @@ seeded database. The new specs follow the same convention, factored into `fixtur
   `test.use({ apiMocks: [...] })` layers extra mocks in front of the generic fallback in
   `helpers/mocks.ts`, which returns an empty 200 for anything not explicitly handled (set
   `DEBUG_E2E_MOCKS=1` to log which URLs hit that fallback — the fastest way to find what a new
-  test needs to mock).
+  test needs to mock). With two or more mocks, wrap the list:
+  `test.use({ apiMocks: [[mockA, mockB], { scope: 'test' }] })` — Playwright reads a bare
+  two-element array as `[value, options]`, which silently drops all but the first mock.
 
 To test against a **real backend** instead: skip the `apiMocks`/session-seeding fixture for that
 spec, do a real login (see the "real backend" note inline in `auth.spec.ts` if you add one), and

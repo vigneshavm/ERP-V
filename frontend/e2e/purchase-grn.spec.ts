@@ -71,7 +71,9 @@ const catalogMock: ApiMock = {
 };
 
 test.describe('Purchase Entry', () => {
-    test.use({ apiMocks: [suppliersMock, catalogMock] });
+    // Wrapped as [value, options]: Playwright reads a bare array given to test.use as that pair,
+    // which turned this list into the single object suppliersMock ("extraMocks is not iterable").
+    test.use({ apiMocks: [[suppliersMock, catalogMock], { scope: 'test' }] });
 
     test('blocks saving a purchase with no supplier selected', async ({ page }) => {
         await gotoAsAuthenticatedUser(page, '/purchase/new');

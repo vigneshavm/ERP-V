@@ -37,7 +37,8 @@ export const useProductSync = (tenantId: string | undefined) => {
         isFetched: isFetchedProducts,
     } = useQuery({
         queryKey: ['products', tenantId],
-        queryFn: () => getTable('products', { filters: { tenant_id: tenantId } }),
+        // The POS needs the whole catalogue; GET /api/inventory pages at 20 items by default.
+        queryFn: () => getTable('products', { filters: { tenant_id: tenantId, limit: 100000 } }),
         enabled: !!tenantId,
     });
 
@@ -68,7 +69,8 @@ export const useProductSync = (tenantId: string | undefined) => {
     useEffect(() => {
         if (!prodData) return;
         const mappedProducts = prodData.map((p: any) => ({
-            id: p.id,
+            // The list endpoint reads with .lean(), so documents carry _id but not the `id` virtual.
+            id: p.id ?? p._id,
             sku: p.sku,
             name: p.name,
             nameTamil: p.nameTamil || p.pNameTamil || p.name_tamil,
@@ -84,7 +86,10 @@ export const useProductSync = (tenantId: string | undefined) => {
             barcode: p.barcode,
             brand: p.brand,
             hsnCode: p.hsnCode || p.hsn_code,
-            gstPercentage: p.gstPercentage || p.gst_percentage || p.gst_rate || 18,
+            // Item.gstRate is what checkout reads first (gstRate ?? gstPercentage ?? default). An
+            // unset rate stays unset so checkout's default applies; it used to be forced to 18%.
+            gstRate: p.gstRate,
+            gstPercentage: p.gstPercentage ?? p.gst_percentage ?? p.gst_rate,
             unit: p.unit || 'Piece',
             tenantId: p.tenantId || p.tenant_id,
             image: p.image,

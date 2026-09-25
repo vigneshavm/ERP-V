@@ -347,7 +347,8 @@ const payrollSlice = createSlice({
             })
             .addCase(fetchAllSalaryStructures.fulfilled, (state, action: PayloadAction<SalaryStructure[]>) => {
                 const newStructures: Record<string, SalaryStructure> = {};
-                action.payload.forEach(s => {
+                // Guard: a response without the list must not throw inside the reducer.
+                (Array.isArray(action.payload) ? action.payload : []).forEach(s => {
                     newStructures[s.employeeId] = s;
                 });
                 state.structures = newStructures;

@@ -39,7 +39,9 @@ test.describe('POS checkout', () => {
     test.use({ apiMocks: [inventoryMock] });
 
     async function addTestProductToCart(page: import('@playwright/test').Page) {
-        // Default POS search is barcode-scan mode; switch to manual mode to search by name.
+        // The POS opens in Scanner view (barcode + quick entry). The product browser, with its
+        // search-by-name manual mode, is the Visual view; switch to it, then to manual lookup.
+        await page.getByRole('button', { name: /^Visual/ }).click();
         await page.getByTitle('Manual Lookup Mode (F2)').click();
         const searchInput = page.getByPlaceholder('Manual Mode: Type Name or Pattern...');
         await searchInput.fill(TEST_PRODUCT.name);
@@ -53,8 +55,10 @@ test.describe('POS checkout', () => {
         await gotoAsAuthenticatedUser(page, '/pos');
         await addTestProductToCart(page);
 
-        await expect(page.locator('table tbody')).toContainText(TEST_PRODUCT.name);
-        await expect(page.locator('table tbody')).toContainText(TEST_PRODUCT.sku);
+        // In the Visual view the cart is the sidebar list, not the Scanner view's table.
+        const cart = page.getByRole('region', { name: 'Cart' });
+        await expect(cart).toContainText(TEST_PRODUCT.name);
+        await expect(cart).toContainText(TEST_PRODUCT.sku);
     });
 
     test('"Finalize Bill" is disabled with an empty cart', async ({ page }) => {

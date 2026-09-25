@@ -8,9 +8,8 @@ import AuthInput from '../components/AuthInput';
 import { useRegisterForm } from '../hooks/useRegisterForm';
 
 const Register: React.FC = () => {
-    const { form, onSubmit, isLoading } = useRegisterForm();
+    const { form, onSubmit, isLoading, isError, message } = useRegisterForm();
     const { register, formState: { errors } } = form;
-    const { isError, message, validationError } = form as any;
 
     return (
         <AuthLayout
@@ -20,15 +19,15 @@ const Register: React.FC = () => {
             description="Join thousands of retailers using our platform to scale their logic. Professional tools for professional growth."
         >
             {/* Error Alert */}
-            {(isError || validationError) && (
+            {isError && (
                 <AuthAlert
                     type="error"
                     title="Registration Error"
-                    message={validationError || message}
+                    message={message}
                 />
             )}
 
-            <form className="mt-8 space-y-6" onSubmit={onSubmit}>
+            <form className="mt-8 space-y-6" onSubmit={onSubmit} noValidate>
                 <div className="space-y-6">
                     {/* Name & Email Group */}
                     <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">

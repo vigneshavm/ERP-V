@@ -9,7 +9,9 @@ import {
 
 type Fixtures = {
     /** Extra `ApiMock`s layered on top of the core set, checked before it. Override per-test
-     *  or per-describe-block with `test.use({ apiMocks: [...] })`. */
+     *  or per-describe-block with `test.use({ apiMocks: [...] })`. With two or more mocks, wrap the
+     *  list as `[[a, b], { scope: 'test' }]`: Playwright reads a bare two-element array as
+     *  `[value, options]`. */
     apiMocks: ApiMock[];
     /** Whether `page` should already have an authenticated session seeded before the first
      *  navigation. Defaults to true; set `test.use({ authenticated: false })` for specs that

@@ -94,7 +94,7 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
             </div>
 
             {/* Cart List (Scrollable) */}
-            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+            <div role="region" aria-label="Cart" className="flex-1 overflow-y-auto p-2 space-y-2">
                 {cart.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-neutral-400">
                         <p className="text-sm">Cart is empty</p>

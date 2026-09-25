@@ -7,9 +7,8 @@ import AuthInput from '../components/AuthInput';
 import { useForgotPasswordForm } from '../hooks/useForgotPasswordForm';
 
 const ForgotPassword: React.FC = () => {
-    const { form, onSubmit, isLoading } = useForgotPasswordForm();
+    const { form, onSubmit, isLoading, isError, isSuccess, message } = useForgotPasswordForm();
     const { register, formState: { errors } } = form;
-    const { isError, isSuccess, message } = form as any;
 
     return (
         <AuthLayout
@@ -27,7 +26,7 @@ const ForgotPassword: React.FC = () => {
                 />
             )}
 
-            <form className="mt-8 space-y-6" onSubmit={onSubmit}>
+            <form className="mt-8 space-y-6" onSubmit={onSubmit} noValidate>
                 <AuthInput
                     id="email"
                     label="Registered Identity (Email)"

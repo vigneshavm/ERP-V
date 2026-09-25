@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { RootState } from "../../../redux/store";
 import { ConfigProvider } from "../../../contexts/ConfigProvider";
@@ -11,6 +12,7 @@ import { setSidebarOpen } from "../../../redux/slices/uiSlice";
 import MobileNav from './MobileNav';
 import ModuleRenderer from './ModuleRenderer';
 import RouteDefinitions from './RouteDefinitions';
+import PageErrorBoundary from './PageErrorBoundary';
 import GlobalModals from './GlobalModals';
 import { useTabSync } from '../../../hooks/useTabSync';
 
@@ -47,6 +49,8 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
         return currentTenant;
     }, [userTenantId, tenants, currentTenant]);
 
+    const location = useLocation();
+
     if (!isLoggedIn) {
         return (
             <ConfigProvider tenant={effectiveTenant}>
@@ -73,7 +77,9 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 {/* Main Content */}
                 <main className="flex-1 overflow-hidden w-full bg-app relative">
                     <div className="h-full w-full overflow-y-auto custom-scrollbar text-main">
-                        <RouteDefinitions renderContent={renderContent} />
+                        <PageErrorBoundary resetKey={location.pathname}>
+                            <RouteDefinitions renderContent={renderContent} />
+                        </PageErrorBoundary>
                     </div>
                 </main>
 

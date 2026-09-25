@@ -79,6 +79,15 @@ function coreMocks(): ApiMock[] {
             respond: (route) => json(route, [DEMO_TENANT]),
         },
         {
+            // The logged-in shop's tenant record is built from its business profile
+            // (hooks/tenantQueries.ts fetchTenantsRaw), not from /api/tenants.
+            match: (url) => url.includes('/api/business/profile'),
+            respond: (route) => json(route, {
+                success: true,
+                data: { _id: DEMO_TENANT_ID, businessName: DEMO_TENANT.name, phone: '9000000000', email: 'shop@example.com', address: '1 Market Street' },
+            }),
+        },
+        {
             match: (url) => url.includes('/api/settings'),
             respond: (route) => json(route, { data: { sector: 'Retail' } }),
         },

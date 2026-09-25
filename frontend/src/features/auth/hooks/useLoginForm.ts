@@ -6,7 +6,7 @@ import { useAuthActions } from './useAuthActions';
 import { useEffect } from 'react';
 
 export const useLoginForm = () => {
-    const { dispatch, isLoading, reset } = useAuthActions();
+    const { dispatch, isLoading, isError, isSuccess, message, deviceConflict, reset } = useAuthActions();
 
     const form = useForm<LoginInput>({
         resolver: zodResolver(loginSchema),
@@ -31,5 +31,11 @@ export const useLoginForm = () => {
         form,
         onSubmit: form.handleSubmit(onSubmit),
         isLoading,
+        // Outcome of the auth request, for the page's error/success alerts.
+        isError,
+        isSuccess,
+        message,
+        deviceConflict,
+        reset,
     };
 };

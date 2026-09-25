@@ -14,9 +14,8 @@ const ResetPassword: React.FC = () => {
     const email = params.get('email') || '';
     const token = params.get('token') || '';
 
-    const { form, onSubmit, isLoading } = useResetPasswordForm(email, token);
+    const { form, onSubmit, isLoading, isError, isSuccess, message } = useResetPasswordForm(email, token);
     const { register, formState: { errors } } = form;
-    const { isError, isSuccess, message, validationError } = form as any;
 
     useEffect(() => {
         if (isSuccess) {
@@ -52,15 +51,15 @@ const ResetPassword: React.FC = () => {
             description="Create a strong, unique security key to protect your enterprise workspace and professional data."
         >
             {/* Alerts: Validation / Error / Success */}
-            {(validationError || isError || isSuccess) && (
+            {(isError || isSuccess) && (
                 <AuthAlert
                     type={isSuccess ? 'success' : 'error'}
                     title={isSuccess ? 'Frequency Updated' : 'Reset Error'}
-                    message={validationError || message || 'Security key successfully updated! Redirecting to secure login...'}
+                    message={message || 'Security key successfully updated! Redirecting to secure login...'}
                 />
             )}
 
-            <form className="mt-8 space-y-6" onSubmit={onSubmit}>
+            <form className="mt-8 space-y-6" onSubmit={onSubmit} noValidate>
                 <div className="space-y-5">
                     <SecurePasswordInput
                         id="password"

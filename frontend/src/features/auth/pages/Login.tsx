@@ -13,9 +13,8 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
-    const { form, onSubmit, isLoading } = useLoginForm();
+    const { form, onSubmit, isLoading, isError, message, deviceConflict, reset } = useLoginForm();
     const { register, formState: { errors }, watch } = form;
-    const { isError, message, deviceConflict, reset } = form as any; // Hook exposes these via useAuthActions
 
     return (
         <AuthLayout
@@ -35,7 +34,7 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
                 />
             )}
 
-            <form className="mt-8 space-y-6" onSubmit={onSubmit}>
+            <form className="mt-8 space-y-6" onSubmit={onSubmit} noValidate>
                 <div className="space-y-5">
                     <AuthInput
                         id="email"
