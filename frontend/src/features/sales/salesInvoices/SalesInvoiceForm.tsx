@@ -490,7 +490,7 @@ const SalesInvoiceForm: React.FC = () => {
                             </button>
                         </div>
 
-                        {/* Security Badge */}
+                        {/* Security Badge */}
                     </div>
                 </form>
             </main>

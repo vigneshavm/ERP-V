@@ -206,7 +206,7 @@ const SalesOrderPage = () => {
                         <div className="flex items-center gap-3">
                             <h1 className="page-title text-slate-900 dark:text-white">
                                 Order <span className="text-warning">Initialization</span>
-                            </h1>
+                            </h1>
                         </div>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 flex items-center gap-2">
                             <Globe className="w-3 h-3" /> Sales order
