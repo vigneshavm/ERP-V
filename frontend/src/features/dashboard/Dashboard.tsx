@@ -414,7 +414,7 @@ const Dashboard: React.FC = () => {
                 <Target className="w-8 h-8 text-primary" />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-5xl font-display font-black text-main tracking-tighter uppercase mb-1 drop-shadow-sm">Shop Owner Dashboard</h1>
+                <h1 className="page-title text-main uppercase mb-1 drop-shadow-sm">Shop Owner Dashboard</h1>
                 <div className="flex items-center gap-3">
                   <span className="px-3 py-1 bg-primary/20 text-primary text-[10px] font-black uppercase rounded-sm border border-primary/30 tracking-[0.2em]">
                     {sectorName}

@@ -385,7 +385,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                         <div className="flex items-center gap-2 mb-1">
                             <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-primary text-xs font-bold uppercase tracking-wider rounded">Super Admin</span>
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        <h1 className="page-title text-slate-900 dark:text-white">
                             Tenant Operation Center
                         </h1>
                         <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">

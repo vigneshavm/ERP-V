@@ -106,7 +106,7 @@ const DeliveryChallanDetail = () => {
                         </button>
                         <div className="relative">
                             <div className="absolute -left-4 top-0 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
-                            <h1 className="text-3xl font-display font-black tracking-tighter text-neutral-900 dark:text-white flex items-center gap-3">
+                            <h1 className="page-title text-neutral-900 dark:text-white flex items-center gap-3">
                                 {challan.challanNumber}
                                 <span className={`px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-xs font-bold uppercase tracking-widest`}>
                                     {challan.status === 'Converted' ? 'Fiscal Finalized' : 'Dispatch Protocol'}

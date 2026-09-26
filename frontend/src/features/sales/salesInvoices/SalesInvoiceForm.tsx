@@ -138,7 +138,7 @@ const SalesInvoiceForm: React.FC = () => {
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div className="relative pl-5">
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning rounded-full shadow-[0_0_15px_rgba(var(--color-warning),0.5)]" />
-                        <h1 className="text-3xl font-display font-black tracking-tighter text-main flex items-center gap-3">
+                        <h1 className="page-title text-main flex items-center gap-3">
                             New <span className="text-warning">Invoice</span>
                             <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-sm text-xs font-bold uppercase tracking-widest">
                                 Sales Entry

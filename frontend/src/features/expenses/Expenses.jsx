@@ -135,7 +135,7 @@ const Expenses = () => {
                         <Receipt className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">Expenses</h1>
+                        <h1 className="page-title text-slate-900">Expenses</h1>
                         <p className="text-slate-500 text-sm">Track and manage business expenses</p>
                     </div>
                 </div>
