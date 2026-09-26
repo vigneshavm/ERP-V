@@ -207,12 +207,9 @@ const SalesOrderPage = () => {
                             <h1 className="page-title text-slate-900 dark:text-white">
                                 Order <span className="text-warning">Initialization</span>
                             </h1>
-                            <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-[10px] font-black uppercase tracking-widest">
-                                Protocol v4.0
-                            </span>
                         </div>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 flex items-center gap-2">
-                            <Globe className="w-3 h-3" /> Global Logistics Node // Operational Mode: Manual
+                            <Globe className="w-3 h-3" /> Sales order
                         </p>
                     </div>
                 </div>
@@ -275,7 +272,7 @@ const SalesOrderPage = () => {
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="bg-slate-50 dark:bg-slate-950/50">
-                                            <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-16 text-center">Node</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-16 text-center">No.</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800">Product Specification</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-32 text-right">Qty</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-40 text-right">Rate</th>
@@ -385,7 +382,7 @@ const SalesOrderPage = () => {
                     <div className="space-y-8">
                         {/* Customer Entity Mapping */}
                         <div>
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Entity Mapping</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Customer</h3>
                             {formData.customer ? (
                                 <div className="bg-white dark:bg-slate-900 border-2 border-warning/20 rounded-sm p-6 shadow-xl shadow-amber-500/5 relative overflow-hidden group">
                                     <div className="absolute top-0 right-0 w-16 h-16 bg-warning/5 rounded-bl-[40px]" />
@@ -421,7 +418,7 @@ const SalesOrderPage = () => {
                                     <div className="w-16 h-16 rounded-sm bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 group-hover:bg-warning/90 group-hover:text-white transition-all shadow-inner">
                                         <Search className="w-8 h-8" />
                                     </div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-warning transition-colors">Scan for Customer Entity</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-warning transition-colors">Search customer</p>
                                 </button>
                             )}
                         </div>
@@ -431,7 +428,7 @@ const SalesOrderPage = () => {
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Parameters</h3>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Protocol Date</label>
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Date</label>
                                     <div className="relative">
                                         <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warning" />
                                         <input
@@ -467,7 +464,7 @@ const SalesOrderPage = () => {
                                     <span className="font-mono">₹{totals.subtotal.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
-                                    <span>Tax Vector</span>
+                                    <span>Tax</span>
                                     <span className="font-mono text-success dark:text-success">₹{totals.tax.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">

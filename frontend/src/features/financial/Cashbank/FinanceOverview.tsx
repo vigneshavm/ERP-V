@@ -191,7 +191,7 @@ const FinanceOverviewPage: React.FC = () => {
                         <Zap className="absolute -top-4 -right-4 w-20 h-20 text-primary opacity-20 group-hover:scale-125 transition duration-1000" />
                         <div className="relative z-10">
                             <div className="inline-flex items-center gap-2 px-2 py-0.5 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[9px] font-black uppercase tracking-[0.2em] mb-2">
-                                <Zap className="w-3 h-3 fill-current" /> Agent Protocol
+                                <Zap className="w-3 h-3 fill-current" /> Suggestions
                             </div>
                             <p className="text-xs font-bold leading-relaxed italic pr-4">
                                 "Margin is <span className="text-primary underline decoration-2 underline-offset-4">stable</span>. AI recommends optimizing vendor credit terms for Q1."
@@ -281,7 +281,7 @@ const FinanceOverviewPage: React.FC = () => {
                             <div className="px-8 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Oracle Sync Active</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live</span>
                                 </div>
                                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
                                     Last Audit: {new Date().toLocaleTimeString()}

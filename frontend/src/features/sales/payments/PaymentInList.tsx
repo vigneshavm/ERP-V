@@ -127,7 +127,7 @@ const PaymentInList: React.FC = () => {
                         <div className="relative pl-5">
                             <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--color-primary),0.5)]" />
                             <h1 className="page-title text-main flex items-center gap-3">
-                                Payment <span className="text-primary">Intelligence</span>
+                                Payment <span className="text-primary">Insights</span>
                                 <span className="px-3 py-1 bg-success/10 border border-success/20 text-success rounded-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
                                     <ArrowUpRight className="w-3 h-3" /> Collections
                                 </span>

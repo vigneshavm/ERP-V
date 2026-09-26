@@ -114,7 +114,7 @@ const CashInHand: React.FC = () => {
                             onClick={() => { setFormData({ ...formData, type: 'out', fromAccount: 'cash', toAccount: '' }); setShowAddTransaction(true); }}
                             className="px-6 py-2.5 bg-danger text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-rose-100 dark:shadow-none hover:bg-danger/90 transition-all flex items-center gap-2"
                         >
-                            <Minus className="w-4 h-4" /> Capital Outflow
+                            <Minus className="w-4 h-4" /> Expenses
                         </button>
                     </div>
                 }
@@ -186,7 +186,7 @@ const CashInHand: React.FC = () => {
                     <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-slide-up">
                         <div className="p-8 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
                             <div>
-                                <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Vault Transfer Terminal</h2>
+                                <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Transfer money</h2>
                                 <p className="text-xs font-medium text-slate-400">Recording manual {formData.type === 'in' ? 'Inflow' : 'Outflow'} protocol</p>
                             </div>
                             <button type="button" onClick={() => setShowAddTransaction(false)} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all">
@@ -286,7 +286,7 @@ const CashInHand: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">New Vault Index</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">New balance</p>
                                         <p className="text-xl font-black text-primary">₹{(formData.type === 'in' ? (position?.cashInHand || 0) + (formData.amount || 0) : (position?.cashInHand || 0) - (formData.amount || 0)).toLocaleString('en-IN')}</p>
                                     </div>
                                 </div>

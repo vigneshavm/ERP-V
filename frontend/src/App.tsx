@@ -41,7 +41,7 @@ const LoadingScreen = () => (
       <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
       <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>
     </div>
-    <p className="mt-6 text-secondary font-black text-[10px] uppercase tracking-[0.3em] animate-pulse">Initializing Neural Link</p>
+    <p className="mt-6 text-secondary font-black text-[10px] uppercase tracking-[0.3em] animate-pulse">Loading…</p>
   </div>
 );
 
@@ -82,7 +82,7 @@ const LandingPage = ({ setViewMode, setCurrentTenant, setIsLoggedIn }: {
         <h2 className="text-2xl font-display font-bold text-main mb-2">Platform Control</h2>
         <p className="text-muted mb-6">Manage global infrastructure, tenants, and system-level parameters.</p>
         <div className="flex items-center text-primary font-bold text-sm tracking-widest uppercase">
-          Initialize Access <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
+          Open admin console <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
         </div>
       </button>
 
@@ -109,7 +109,7 @@ const LandingPage = ({ setViewMode, setCurrentTenant, setIsLoggedIn }: {
         <h2 className="text-2xl font-display font-bold text-main mb-2">Tenant Interface</h2>
         <p className="text-muted mb-6">Launch specialized retail operations, POS terminals, and analytics.</p>
         <div className="flex items-center text-secondary font-bold text-sm tracking-widest uppercase">
-          Authenticate Unit <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
+          Sign in to your shop <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
         </div>
       </button>
     </div>
@@ -156,7 +156,7 @@ const AdminView = ({ isAdminAuthenticated, setIsAdminAuthenticated, setViewMode,
               className="px-4 py-2 bg-white/5 hover:bg-white/10 text-secondary border border-white/10 rounded-lg flex items-center gap-2 text-sm font-bold transition-all"
             >
               <LogOut className="w-4 h-4" />
-              Terminate Session
+              Sign out
             </button>
           </div>
         </div>

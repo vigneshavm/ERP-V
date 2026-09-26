@@ -118,7 +118,7 @@ const SalesOrderDetail = () => {
         return (
             <div className="min-h-full bg-app text-main flex flex-col items-center justify-center gap-4">
                 <div className="w-12 h-12 border-4 border-warning/20 border-t-amber-500 rounded-full animate-spin"></div>
-                <p className="text-[10px] font-black text-warning uppercase tracking-[0.2em] animate-pulse">Syncing Order Node...</p>
+                <p className="text-[10px] font-black text-warning uppercase tracking-[0.2em] animate-pulse">Loading…</p>
             </div>
         );
     }
@@ -127,7 +127,7 @@ const SalesOrderDetail = () => {
         return (
             <div className="min-h-full bg-app text-main flex flex-col items-center justify-center gap-4">
                 <AlertTriangle className="w-16 h-16 text-danger opacity-20" />
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest text-center">Node Not Found // Protocol Error</p>
+                <p className="text-xs font-black text-slate-400 uppercase tracking-widest text-center">Order not found</p>
                 <button onClick={() => navigate('/sales/orders')} className="mt-4 px-6 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20">
                     Return to Registry
                 </button>
@@ -195,7 +195,7 @@ const SalesOrderDetail = () => {
                                 disabled={actionLoading}
                                 className="px-6 py-3 bg-white dark:bg-slate-900 border border-danger/30 text-danger rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-danger/90 hover:text-white transition-all shadow-sm"
                             >
-                                <XCircle className="w-4 h-4 inline-block mr-2" /> Abort Protocol
+                                <XCircle className="w-4 h-4 inline-block mr-2" /> Cancel order
                             </button>
                         )}
                     </div>
@@ -231,7 +231,7 @@ const SalesOrderDetail = () => {
                             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[40px] overflow-hidden shadow-sm">
                                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
                                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <Briefcase className="w-4 h-4 text-warning" /> Protocol Meta
+                                        <Briefcase className="w-4 h-4 text-warning" /> Details
                                     </h3>
                                 </div>
                                 <div className="p-8 grid grid-cols-2 gap-6">
@@ -253,7 +253,7 @@ const SalesOrderDetail = () => {
                             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[40px] overflow-hidden shadow-sm">
                                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
                                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <User className="w-4 h-4 text-warning" /> Entity Mapping
+                                        <User className="w-4 h-4 text-warning" /> Customer
                                     </h3>
                                 </div>
                                 <div className="p-8 flex items-center gap-6">
@@ -281,7 +281,7 @@ const SalesOrderDetail = () => {
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="bg-slate-50/50 dark:bg-slate-950/50">
-                                            <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-16 text-center">Node</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-16 text-center">No.</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800">Product Specification</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 text-right">Qty</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 text-right">Fulfillment</th>

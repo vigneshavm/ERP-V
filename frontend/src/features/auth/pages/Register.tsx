@@ -123,7 +123,7 @@ const Register: React.FC = () => {
                         {isLoading ? (
                             <div className="w-5 h-5 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" />
                         ) : (
-                            <>Initialize Enterprise <ArrowRight className="w-4 h-4" /></>
+                            <>Create account <ArrowRight className="w-4 h-4" /></>
                         )}
                     </button>
                 </div>

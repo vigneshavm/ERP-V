@@ -107,7 +107,7 @@ const CashBankPosition: React.FC = () => {
                                     <Wallet className="w-56 h-56" />
                                 </div>
                                 <div className="relative z-10">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Physical Vault Node</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Cash in hand</p>
                                     <h2 className="text-5xl font-black mt-3 tracking-tighter tabular-nums">₹{(position?.cashInHand || 0).toLocaleString('en-IN')}</h2>
                                     <p className="text-xs font-bold text-white/80 mt-4 flex items-center gap-2 italic">
                                         <ArrowDownLeft className="w-4 h-4 text-success" /> Immediate physical liquidity
@@ -117,7 +117,7 @@ const CashBankPosition: React.FC = () => {
                                     onClick={() => navigate('/cashbank/cash-in-hand')} 
                                     className="relative z-10 bg-white/10 hover:bg-white/20 px-8 py-3.5 rounded-sm backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/20 active:scale-95"
                                 >
-                                    Enter Vault Terminal
+                                    Open cash register
                                 </button>
                             </div>
 
@@ -126,7 +126,7 @@ const CashBankPosition: React.FC = () => {
                                     <PiggyBank className="w-56 h-56" />
                                 </div>
                                 <div className="relative z-10">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Digital Treasury Node</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Bank accounts</p>
                                     <h2 className="text-5xl font-black mt-3 tracking-tighter tabular-nums">₹{(position?.totalBankBalance || 0).toLocaleString('en-IN')}</h2>
                                     <p className="text-xs font-bold text-slate-400 mt-4 flex items-center gap-2 italic">
                                         <ArrowUpRight className="w-4 h-4 text-primary" /> Mapping {position?.breakdown.bank.accounts} active accounts
@@ -187,7 +187,7 @@ const CashBankPosition: React.FC = () => {
                                 <div className="w-12 h-12 rounded-sm bg-primary-soft dark:bg-primary-soft flex items-center justify-center text-primary shadow-sm">
                                     <ArrowRightLeft className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter">Node Management</h3>
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter">Manage accounts</h3>
                             </div>
                             <div className="grid grid-cols-1 gap-4">
                                 <QuickAction

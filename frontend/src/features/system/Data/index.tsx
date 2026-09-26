@@ -15,7 +15,7 @@ type DataTab = 'export' | 'import' | 'labels' | 'series';
 const TabLoading = () => (
     <div className="min-h-[400px] flex flex-col items-center justify-center text-slate-400 gap-4">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <p className="text-xs font-black uppercase tracking-widest">Loading Intelligence Layer...</p>
+        <p className="text-xs font-black uppercase tracking-widest">Loading…</p>
     </div>
 );
 

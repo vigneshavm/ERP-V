@@ -82,7 +82,7 @@ const RateRevisionList: React.FC = () => {
                             onClick={() => navigate('/purchase/rate-revisions/new')}
                             className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-3 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
                         >
-                            <Plus size={16} /> Initialize Revision Node
+                            <Plus size={16} /> New rate revision
                         </button>
                     }
                 />
@@ -114,7 +114,7 @@ const RateRevisionList: React.FC = () => {
                 {/* Audit Control Matrix */}
                 <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="relative w-full md:w-[500px]">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Node Search</label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Search</label>
                         <div className="relative">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
@@ -128,7 +128,7 @@ const RateRevisionList: React.FC = () => {
                     </div>
                     <div className="flex items-end gap-6 w-full md:w-auto">
                         <div className="text-right">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Net Node Impact</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Net impact</p>
                             <p className={`text-3xl font-black tabular-nums tracking-tighter ${stats.totalImpact > 0 ? 'text-danger' : 'text-success'}`}>
                                 {stats.totalImpact > 0 ? '+' : '-'}₹{Math.abs(stats.totalImpact).toLocaleString()}
                             </p>
@@ -145,9 +145,9 @@ const RateRevisionList: React.FC = () => {
                         <table className="w-full text-left">
                             <thead className="bg-slate-50/50 dark:bg-slate-900/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                                 <tr>
-                                    <th className="px-8 py-5">Node Entry Date</th>
-                                    <th className="px-8 py-5">Institutional Item & Batch</th>
-                                    <th className="px-8 py-5">Supplier Entity</th>
+                                    <th className="px-8 py-5">Entry date</th>
+                                    <th className="px-8 py-5">Item & batch</th>
+                                    <th className="px-8 py-5">Supplier</th>
                                     <th className="px-8 py-5 text-center">Rate Delta</th>
                                     <th className="px-8 py-5 text-right">Fiscal Impact</th>
                                     <th className="px-8 py-5 text-center">Status</th>
@@ -156,7 +156,7 @@ const RateRevisionList: React.FC = () => {
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {loading ? (
-                                    <tr><td colSpan={7} className="px-8 py-24 text-center opacity-40 animate-pulse">Synchronizing Rate Matrix...</td></tr>
+                                    <tr><td colSpan={7} className="px-8 py-24 text-center opacity-40 animate-pulse">Loading…</td></tr>
                                 ) : filteredRevisions.length === 0 ? (
                                     <tr>
                                         <td colSpan={7} className="px-8 py-32 text-center">
@@ -165,7 +165,7 @@ const RateRevisionList: React.FC = () => {
                                                     <Info className="w-10 h-10" />
                                                 </div>
                                                 <div>
-                                                    <p className="font-black text-sm uppercase tracking-widest text-center">Revision Vault Empty</p>
+                                                    <p className="font-black text-sm uppercase tracking-widest text-center">No rate revisions yet</p>
                                                     <p className="text-xs font-bold mt-2 italic leading-relaxed text-center">Initialize rate revision nodes to manage retrospective price adjustments.</p>
                                                 </div>
                                             </div>

@@ -266,7 +266,7 @@ const CommissionRules: React.FC = () => {
                                     <th className="px-6 py-3">Name</th>
                                     <th className="px-6 py-3">Employee</th>
                                     <th className="px-6 py-3">Applies To</th>
-                                    <th className="px-6 py-3">Rate</th>
+                                    <th className="text-right px-6 py-3">Rate</th>
                                     <th className="px-6 py-3">Status</th>
                                     <th className="px-6 py-3 text-right">Actions</th>
                                 </tr>
@@ -277,7 +277,7 @@ const CommissionRules: React.FC = () => {
                                         <td className="px-6 py-4 font-medium">{rule.name}</td>
                                         <td className="px-6 py-4 text-slate-500">{displayName(rule.employeeId, 'name') || 'All employees'}</td>
                                         <td className="px-6 py-4 text-slate-500">{scopeLabel(rule)}</td>
-                                        <td className="px-6 py-4 font-bold">
+                                        <td className="text-right tabular-nums px-6 py-4 font-bold">
                                             {rule.rateType === 'PERCENT' ? `${rule.rateValue}%` : `₹${rule.rateValue}`}
                                         </td>
                                         <td className="px-6 py-4">

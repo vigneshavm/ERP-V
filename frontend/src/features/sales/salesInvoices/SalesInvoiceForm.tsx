@@ -227,7 +227,7 @@ const SalesInvoiceForm: React.FC = () => {
                                         <Zap className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Inventory Matrix</h3>
+                                        <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Items</h3>
                                         <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Process line-item valuations</p>
                                     </div>
                                 </div>
@@ -358,7 +358,7 @@ const SalesInvoiceForm: React.FC = () => {
                         {/* Customer Selection Card */}
                         <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 p-8 shadow-sm relative group">
                             <div className="flex justify-between items-center mb-8">
-                                <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">B2B Entity Path</h3>
+                                <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Business customer</h3>
                                 {!formData.customer && (
                                     <span className="flex h-2.5 w-2.5 rounded-full bg-danger animate-ping"></span>
                                 )}
@@ -377,7 +377,7 @@ const SalesInvoiceForm: React.FC = () => {
                                     </div>
                                     <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 space-y-3">
                                         <div className="flex justify-between text-[11px] font-bold">
-                                            <span className="text-slate-400 uppercase tracking-widest">Protocol</span>
+                                            <span className="text-slate-400 uppercase tracking-widest">Status</span>
                                             <span className="text-slate-900 dark:text-white">{formData.customer.phone || 'Standard'}</span>
                                         </div>
                                         <div className="flex justify-between text-[11px] font-bold">
@@ -390,7 +390,7 @@ const SalesInvoiceForm: React.FC = () => {
                                         onClick={() => setShowCustomerModal(true)}
                                         className="w-full mt-6 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest hover:border-warning transition-all shadow-sm"
                                     >
-                                        Switch Entity
+                                        Change customer
                                     </button>
                                 </div>
                             ) : (
@@ -402,7 +402,7 @@ const SalesInvoiceForm: React.FC = () => {
                                     <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-sm flex items-center justify-center group-hover/btn:scale-110 transition-all shadow-inner">
                                         <Plus className="w-8 h-8 opacity-40 group-hover/btn:opacity-100" />
                                     </div>
-                                    <span className="font-black text-[10px] uppercase tracking-[0.2em]">Map Customer Node</span>
+                                    <span className="font-black text-[10px] uppercase tracking-[0.2em]">Select customer</span>
                                 </button>
                             )}
                         </div>
@@ -491,10 +491,6 @@ const SalesInvoiceForm: React.FC = () => {
                         </div>
 
                         {/* Security Badge */}
-                        <div className="flex items-center justify-center gap-4 py-4 px-6 bg-slate-100 dark:bg-slate-900/50 rounded-sm border border-slate-200 dark:border-slate-800">
-                            <ShieldCheck className="w-5 h-5 text-success" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Secured via Ledger Protocol v4.0</span>
-                        </div>
                     </div>
                 </form>
             </main>

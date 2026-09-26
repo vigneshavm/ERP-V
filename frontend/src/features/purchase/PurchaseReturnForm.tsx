@@ -287,7 +287,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                     disabled={isLoading}
                                     className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
                                 >
-                                    <Save className="w-4 h-4" /> Initialize Reversal
+                                    <Save className="w-4 h-4" /> New return
                                 </button>
                             )}
                         </div>
@@ -299,7 +299,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                     <div className="lg:col-span-8 space-y-10">
                         <div className="bg-white dark:bg-slate-800 p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3 mb-10">
-                                <Activity className="w-5 h-5 text-primary" /> Institutional Parameters
+                                <Activity className="w-5 h-5 text-primary" /> Return details
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
@@ -314,7 +314,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Linked GRN Node</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Linked GRN</label>
                                     <select
                                         value={returnData.grn_id || ''}
                                         onChange={(e) => handleGRNChange(e.target.value)}
@@ -357,7 +357,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                         {/* Reversal Ledger Workspace */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
                             <div className="p-10 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                                <h3 className="text-sm font-black uppercase tracking-widest">Reversal Node Allocation</h3>
+                                <h3 className="text-sm font-black uppercase tracking-widest">Return items</h3>
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest ">Source: {returnData.grn_number || 'No Node Linked'}</span>
                             </div>
                             <div className="overflow-x-auto">
@@ -366,9 +366,9 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                         <tr>
                                             <th className="px-8 py-5">Product SKU</th>
                                             <th className="px-8 py-5 text-center">GRN Intake</th>
-                                            <th className="px-8 py-5 text-center w-40">Reversal Qty</th>
+                                            <th className="px-8 py-5 text-center w-40">Return qty</th>
                                             <th className="px-8 py-5 text-right">Unit Rate</th>
-                                            <th className="px-8 py-5 text-right">Node Credit</th>
+                                            <th className="px-8 py-5 text-right">Credit</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -433,7 +433,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                             <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-1000">
                                 <Zap className="w-48 h-48" />
                             </div>
-                            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] relative z-10">Refund Protocol</h3>
+                            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] relative z-10">Refund method</h3>
                             
                             <div className="space-y-6 relative z-10">
                                 <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -441,18 +441,18 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                     <span className="tabular-nums">₹{totals.subtotal.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                    <span>Tax Reversal (18%)</span>
+                                    <span>Tax reversed (18%)</span>
                                     <span className="tabular-nums">₹{totals.tax.toFixed(2)}</span>
                                 </div>
                                 <div className="h-px bg-white/5 w-full my-6"></div>
                                 <div>
-                                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">Total Debit Quantum</p>
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">Total debit</p>
                                     <p className="text-5xl font-black tracking-tighter text-white tabular-nums">₹{totals.total.toFixed(2)}</p>
                                 </div>
                                 <div className="p-6 bg-white/5 rounded-[2rem] border border-white/5 animate-pulse">
                                     <div className="flex items-center gap-3">
                                         <div className="w-2 h-2 rounded-full bg-primary" />
-                                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Awaiting Institutional Credit</span>
+                                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Awaiting supplier credit</span>
                                     </div>
                                 </div>
                             </div>
@@ -468,17 +468,17 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                         {/* Lifecycle Control */}
                         <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3">
-                                <Truck className="w-5 h-5" /> Logistics Protocol
+                                <Truck className="w-5 h-5" /> Transport
                             </h3>
                             <div className="space-y-6">
                                 <div>
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Protocol State</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Status</label>
                                     <div className="px-5 py-2.5 bg-primary/5 text-primary border border-primary/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-center">
                                         {returnData.status}
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Transit Node ID (Tracking)</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Tracking No.</label>
                                     <input
                                         type="text"
                                         value={returnData.tracking_number || ''}
@@ -493,7 +493,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                         {/* Narrative Node */}
                         <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3">
-                                <FileText className="w-5 h-5" /> Institutional Narrative
+                                <FileText className="w-5 h-5" /> Notes
                             </h3>
                             <textarea
                                 className="w-full px-6 py-5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none h-40"

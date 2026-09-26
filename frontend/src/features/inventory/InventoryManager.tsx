@@ -84,8 +84,6 @@ const isItemLowStock = (item: any) => (item.stockQty - (item.reservedStock || 0)
 const InventoryManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { items, isLoading, agingReport, pagination, stockHistory, inventoryStats, categories, categoryCatalog } = useSelector((state: RootState) => state.inventory);
-    const { user } = useSelector((state: RootState) => state.auth);
-    const tenant_id = user?.tenantId || 'TEN001';
 
     const [showAgingModal, setShowAgingModal] = useState(false);
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -272,8 +270,8 @@ const InventoryManager: React.FC = () => {
         <Layout>
             <div className="space-y-6 pt-8 text-main pb-16">
                 <PageHeader
-                    title="Inventory Core Manager"
-                    description={`Central stock authority and metadata control for ${tenant_id}`}
+                    title="Inventory"
+                    description="Products, stock levels and prices for your shop"
                     actions={
                         <div className="flex gap-2">
                             <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:border-primary/50 transition-all uppercase tracking-widest text-main shadow-sm">
@@ -320,7 +318,7 @@ const InventoryManager: React.FC = () => {
                     />
                     <div className="bg-slate-900 text-white p-6 rounded-xl shadow-xl relative overflow-hidden group border border-white/5">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition duration-700 stroke-[3]" />
-                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2 italic">Agent Pulse</p>
+                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2 italic">Suggestions</p>
                         <p className="text-sm font-bold leading-relaxed text-slate-200">
                             {inventoryMetrics.lowStock > 0 ? (
                                 <>Inventory needs attention. <span className="text-primary underline decoration-2 underline-offset-4 font-black">{items.find(isItemLowStock)?.sku || 'Some SKUs'}</span> is low.</>
@@ -460,7 +458,7 @@ const InventoryManager: React.FC = () => {
                                     </th>
                                     <th className="px-6 py-5">Product Master</th>
                                     <th className="px-6 py-5">Classification</th>
-                                    <th className="px-6 py-5">Stock Node</th>
+                                    <th className="px-6 py-5">Stock</th>
                                     <th className="px-6 py-5 text-right">Pricing</th>
                                     <th className="px-6 py-5">Status</th>
                                     <th className="px-6 py-5 w-10"></th>

@@ -218,7 +218,7 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
                 <Suspense fallback={<div>Loading Payment Form...</div>}><LazyModules.PaymentOut /></Suspense>
             } />
             <Route path="/purchase/cheques-vault" element={
-                <Suspense fallback={<div>Loading Vault...</div>}><UnclearedCheques /></Suspense>
+                <Suspense fallback={<div>Loading…</div>}><UnclearedCheques /></Suspense>
             } />
             <Route path="/purchase/rate-revisions" element={
                 <Suspense fallback={<div>Loading Revisions...</div>}><RateRevisionList /></Suspense>
@@ -314,7 +314,7 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({ renderContent }) =>
             <Route path="/pos/shifts" element={<Suspense fallback={<div>Loading Shift Management...</div>}><LazyModules.ShiftManagementIntelligence /></Suspense>} />
             <Route path="/pos/cash-drawer" element={<Suspense fallback={<div>Loading Cash Drawer...</div>}><LazyModules.CashDrawerIntelligence /></Suspense>} />
             <Route path="/dashboard/summary" element={<Suspense fallback={<div>Loading Dashboard...</div>}><LazyModules.DailyFinanceTracker /></Suspense>} />
-            <Route path="/expenses/tracker" element={<Suspense fallback={<div>Loading Expense Intelligence...</div>}><LazyModules.ExpenseIntelligence /></Suspense>} />
+            <Route path="/expenses/tracker" element={<Suspense fallback={<div>Loading expenses…</div>}><LazyModules.ExpenseIntelligence /></Suspense>} />
             <Route path="/expenses/categories" element={<Suspense fallback={<div>Loading Categories...</div>}><LazyModules.ExpenseCategoriesManager /></Suspense>} />
             <Route path="/expenses/recurring" element={<Suspense fallback={<div>Loading Recurring...</div>}><LazyModules.RecurringExpensesIntelligence /></Suspense>} />
             <Route path="/expenses/reports" element={<Suspense fallback={<div>Loading Reports...</div>}><LazyModules.ExpenseReportsIntelligence /></Suspense>} />

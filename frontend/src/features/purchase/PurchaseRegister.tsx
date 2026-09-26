@@ -314,7 +314,7 @@ const PurchaseRegister: React.FC = () => {
                         <div className="flex-1 space-y-8">
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 <div className="md:col-span-1">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Node Context Search</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Search</label>
                                     <div className="relative">
                                         <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                         <input type="text" placeholder="Search PO # or Vendor..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
@@ -374,7 +374,7 @@ const PurchaseRegister: React.FC = () => {
                                 <tr>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('number')}>
                                         <div className="flex items-center gap-2">
-                                            Node ID <ArrowUpDown className="w-3 h-3" />
+                                            PO No. <ArrowUpDown className="w-3 h-3" />
                                         </div>
                                     </th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('date')}>
@@ -390,10 +390,10 @@ const PurchaseRegister: React.FC = () => {
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Payload</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('amount')}>
                                         <div className="flex items-center justify-end gap-2">
-                                            Quantum (INR) <ArrowUpDown className="w-3 h-3" />
+                                            Amount (₹) <ArrowUpDown className="w-3 h-3" />
                                         </div>
                                     </th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Node Status</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
                                 </tr>
                             </thead>

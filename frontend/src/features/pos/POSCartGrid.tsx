@@ -69,7 +69,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                     </div>
                 )}
             </td>
-            <td className="py-1.5 px-2 text-center font-mono text-slate-600 hidden sm:table-cell text-xs">
+            <td className="text-right tabular-nums py-1.5 px-2  font-mono text-slate-600 hidden sm:table-cell text-xs">
                 ₹{item.price.toFixed(2)}
             </td>
 
@@ -743,7 +743,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                 <tr>
                                     <th className="py-2 px-2 w-12 text-center hidden md:table-cell">#</th>
                                     <th className="py-2 px-2">Item Details</th>
-                                    <th className="py-2 px-2 w-32 text-center hidden sm:table-cell">Unit Price</th>
+                                    <th className="py-2 px-2 w-32 text-right hidden sm:table-cell">Unit Price</th>
                                     <th className="py-2 px-2 w-28 text-center text-primary">Meters</th>
                                     <th className="py-2 px-2 w-28 text-center">Quantity</th>
                                     <th className="py-2 px-2 w-32 text-right">Total</th>

@@ -91,7 +91,7 @@ test.describe('Authentication', () => {
 
         await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
         // Wait for the logout control itself: the first `aside, nav` in the DOM can be a hidden one.
-        const logout = page.getByTitle('Logout').or(page.getByText('Terminate Protocol')).first();
+        const logout = page.getByTitle('Logout').or(page.getByText('Sign out')).first();
         await logout.waitFor({ state: 'visible', timeout: 15000 });
         await logout.click();
 

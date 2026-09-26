@@ -202,10 +202,10 @@ const Cheques: React.FC = () => {
                     <div>
                         <h2 className="text-3xl font-black flex items-center gap-2 tracking-tight uppercase">
                             <Receipt className="w-8 h-8 text-primary" />
-                            Instrument Clearing Console
+                            Cheque clearing
                         </h2>
                         <p className="text-sm text-slate-500 mt-1 font-medium flex items-center gap-2">
-                            Authority Node: <span className="px-2 py-0.5 bg-primary/10 text-primary rounded-md font-bold italic">{currentSector}</span>
+                            Approved by: <span className="px-2 py-0.5 bg-primary/10 text-primary rounded-md font-bold italic">{currentSector}</span>
                         </p>
                     </div>
                     <div className="flex gap-3">
@@ -240,7 +240,7 @@ const Cheques: React.FC = () => {
                             onClick={() => setShowAddCheque(true)}
                             className="px-5 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-[0.2em]"
                         >
-                            <Plus className="w-4 h-4 fill-current" /> Register Instrument
+                            <Plus className="w-4 h-4 fill-current" /> Add cheque
                         </button>
                     </div>
                 </div>
@@ -278,7 +278,7 @@ const Cheques: React.FC = () => {
                         </h3>
                         <div className="flex items-center gap-1.5 mt-2">
                             <FileCheck className="w-4 h-4 text-success" />
-                            <span className="text-[10px] font-black text-success uppercase">Commited to Vault</span>
+                            <span className="text-[10px] font-black text-success uppercase">Cleared</span>
                         </div>
                     </div>
 
@@ -384,11 +384,11 @@ const Cheques: React.FC = () => {
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Instrument #</p>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Cheque No.</p>
                                                 <p className="text-xs font-black font-mono tracking-tighter italic">{c.number}</p>
                                             </div>
                                             <div>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Entity Bank</p>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Bank</p>
                                                 <p className="text-xs font-black italic tracking-tighter truncate uppercase">{c.bankName}</p>
                                             </div>
                                         </div>
@@ -396,7 +396,7 @@ const Cheques: React.FC = () => {
 
                                     <div className="pt-6 border-t border-slate-100 dark:border-slate-700 flex items-end justify-between">
                                         <div>
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Commitment Value</p>
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Amount</p>
                                             <p className="text-2xl font-black italic tracking-tighter text-main tabular-nums">
                                                 ₹{formatCurrency(c.amount)}
                                             </p>
@@ -422,7 +422,7 @@ const Cheques: React.FC = () => {
                         <div className="p-10">
                             <div className="flex items-center justify-between mb-10">
                                 <div>
-                                    <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Register Instrument</h3>
+                                    <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Add cheque</h3>
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Securing asset node in {currentSector} zone</p>
                                 </div>
                                 <button onClick={() => setShowAddCheque(false)} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-full text-slate-400 hover:text-error transition">
@@ -433,7 +433,7 @@ const Cheques: React.FC = () => {
                             <form onSubmit={handleRegister} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Instrument ID</label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Cheque No.</label>
                                         <input
                                             type="text"
                                             required
@@ -490,7 +490,7 @@ const Cheques: React.FC = () => {
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Pulse Direction</label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Direction</label>
                                         <div className="flex bg-slate-50 dark:bg-slate-900 p-1 rounded-sm border border-slate-100 dark:border-slate-700">
                                             <button
                                                 type="button"
@@ -512,7 +512,7 @@ const Cheques: React.FC = () => {
 
                                 <button type="submit" className="w-full py-5 mt-6 bg-slate-950 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-slate-900 transition-all flex items-center justify-center gap-4 border border-slate-700">
                                     <ShieldCheck className="w-5 h-5 text-primary" />
-                                    Authorize Instrument Deployment
+                                    Save cheque
                                 </button>
                             </form>
                         </div>
@@ -526,7 +526,7 @@ const Cheques: React.FC = () => {
                         <div className="p-10 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/10">
                             <div>
                                 <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">{selectedCheque.number}</h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">Authority Node Audit</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">Approval history</p>
                             </div>
                             <button onClick={() => setShowDetails(false)} className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-slate-400 hover:text-error transition shadow-sm">
                                 <X size={20} />
@@ -535,7 +535,7 @@ const Cheques: React.FC = () => {
 
                         <div className="p-10 text-center">
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-primary text-[9px] font-black uppercase tracking-[0.2em] mb-6 italic">
-                                <Zap className="w-3.5 h-3.5 fill-current" /> Instrument Value Extraction
+                                <Zap className="w-3.5 h-3.5 fill-current" /> Cheque amount
                             </div>
                             <h2 className={`text-6xl font-black italic tracking-tighter mb-4 text-main tabular-nums`}>
                                 ₹{formatCurrency(selectedCheque.amount)}
@@ -544,11 +544,11 @@ const Cheques: React.FC = () => {
 
                             <div className="grid grid-cols-2 gap-4 mb-12">
                                 <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 text-left">
-                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Status Protocol</p>
+                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</p>
                                     <p className="text-xs font-black italic text-slate-900 dark:text-white uppercase">{selectedCheque.status}</p>
                                 </div>
                                 <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 text-left">
-                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Entity Direction</p>
+                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Direction</p>
                                     <p className="text-xs font-black italic uppercase text-main">{selectedCheque.type === 'RECEIVED' ? '↓ In · to collect' : '↑ Out · to pay'}</p>
                                 </div>
                             </div>
@@ -559,7 +559,7 @@ const Cheques: React.FC = () => {
                                         onClick={() => handleUpdateStatus(selectedCheque.id, 'CLEARED')}
                                         className="flex-1 py-5 bg-success text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-success/20 hover:scale-105 transition-all flex items-center justify-center gap-2"
                                     >
-                                        <CheckCircle2 className="w-5 h-5 fill-current" /> Commit to Vault
+                                        <CheckCircle2 className="w-5 h-5 fill-current" /> Mark cleared
                                     </button>
                                     <button
                                         onClick={() => handleUpdateStatus(selectedCheque.id, 'BOUNCED')}
@@ -580,7 +580,7 @@ const Cheques: React.FC = () => {
                         <div className="p-10 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between">
                             <div>
                                 <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Bulk Payment Stream</h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">Dynamic Balance Validation Protocol</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">Balance check</p>
                             </div>
                             <button onClick={() => setShowBulkPaymentModal(false)} className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-slate-400 hover:text-error transition">
                                 <X size={20} />
@@ -611,7 +611,7 @@ const Cheques: React.FC = () => {
                                         <tr className="bg-slate-100/50 dark:bg-slate-800/50">
                                             <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Select</th>
                                             <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Supplier/Ref</th>
-                                            <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Pending</th>
+                                            <th className="text-right px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Pending</th>
                                             <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Pay Amount</th>
                                             <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Balance Feedback</th>
                                         </tr>
@@ -635,7 +635,7 @@ const Cheques: React.FC = () => {
                                                     <p className="text-[10px] font-black italic uppercase text-slate-800 dark:text-slate-200">{inv.supplier}</p>
                                                     <p className="text-[9px] font-bold text-slate-400 uppercase">{inv.invoiceNo}</p>
                                                 </td>
-                                                <td className="px-6 py-4">
+                                                <td className="text-right tabular-nums px-6 py-4">
                                                     <p className="text-[10px] font-black italic text-slate-500">₹{formatCurrency(inv.due)}</p>
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -659,7 +659,7 @@ const Cheques: React.FC = () => {
                                                         </span>
                                                     ) : inv.status === 'approved' ? (
                                                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-success/10 text-success text-[8px] font-black uppercase tracking-widest rounded-full">
-                                                            <CheckCircle2 size={10} /> Funds Verified
+                                                            <CheckCircle2 size={10} /> Verified
                                                         </span>
                                                     ) : (
                                                         <span className="text-[8px] font-black text-slate-300 uppercase italic tracking-widest">Awaiting Verification</span>

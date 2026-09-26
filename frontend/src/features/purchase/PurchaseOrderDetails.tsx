@@ -115,7 +115,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             <div className="flex justify-center items-center py-40">
                 <div className="flex flex-col items-center gap-6">
                     <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Decompressing Node Intel...</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Loading…</p>
                 </div>
             </div>
         );
@@ -127,7 +127,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                 <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-sm flex items-center justify-center mx-auto mb-6">
                     <Info className="w-10 h-10 text-slate-400" />
                 </div>
-                <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Node Not Found</h3>
+                <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Not found</h3>
                 <p className="text-xs font-bold text-slate-500 mt-2 italic leading-relaxed">The requested procurement node does not exist in the institutional archive.</p>
                 <button onClick={handleBack} className="mt-8 text-primary font-black uppercase tracking-widest text-[10px] hover:underline">Return to Register</button>
             </div>
@@ -186,7 +186,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                             onClick={() => onUpdateStatus?.(order.id, 'SUBMITTED')}
                             className="px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
                         >
-                            <Zap className="w-4 h-4" /> Submit Protocol
+                            <Zap className="w-4 h-4" /> Submit
                         </button>
                     )}
 
@@ -196,13 +196,13 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                 onClick={() => onUpdateStatus?.(order.id, 'DRAFT')}
                                 className="px-6 py-3 bg-danger-soft text-danger dark:bg-danger-soft rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-danger-soft transition-all active:scale-95 flex items-center gap-2"
                             >
-                                <XCircle className="w-4 h-4" /> Reject Node
+                                <XCircle className="w-4 h-4" /> Reject
                             </button>
                             <button
                                 onClick={() => onUpdateStatus?.(order.id, 'APPROVED')}
                                 className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-success/90 transition hover:scale-105 active:scale-95"
                             >
-                                <CheckCircle2 className="w-4 h-4" /> Authorize Node
+                                <CheckCircle2 className="w-4 h-4" /> Approve
                             </button>
                         </div>
                     )}
@@ -221,7 +221,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                             onClick={() => setShowReceiveModal(true)}
                             className="px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:bg-primary transition hover:scale-105 active:scale-95"
                         >
-                            <FileOutput className="w-4 h-4" /> Initialize Receipt
+                            <FileOutput className="w-4 h-4" /> Receive goods
                         </button>
                     )}
 
@@ -302,11 +302,11 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                             <table className="w-full text-left">
                                 <thead className="bg-slate-50/50 dark:bg-slate-900/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                                     <tr>
-                                        <th className="px-8 py-5">Product Node</th>
+                                        <th className="px-8 py-5">Product</th>
                                         <th className="px-8 py-5 text-center">Fulfillment</th>
                                         <th className="px-8 py-5 text-right">Unit Rate</th>
                                         <th className="px-8 py-5 text-center">Fiscal Tax</th>
-                                        <th className="px-8 py-5 text-right">Node Total</th>
+                                        <th className="px-8 py-5 text-right">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -322,7 +322,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                             <tr key={idx} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all">
                                                 <td className="px-8 py-6">
                                                     <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">{productName}</p>
-                                                    <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest italic">Institutional SKU</p>
+                                                    <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest italic">SKU</p>
                                                 </td>
                                                 <td className="px-8 py-6 text-center">
                                                     <div className="flex flex-col items-center gap-1.5">
@@ -355,7 +355,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                             <div className="absolute top-0 right-0 p-6 opacity-10">
                                 <FileText className="w-20 h-20 text-warning" />
                             </div>
-                            <h4 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest mb-4">Protocol Narrative</h4>
+                            <h4 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest mb-4">Notes</h4>
                             <p className="text-xs font-bold text-warning dark:text-warning italic leading-relaxed pl-6 border-l-2 border-warning/30">
                                 {order.notes}
                             </p>
@@ -408,7 +408,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                             <div className="p-3 bg-primary/10 rounded-sm text-primary">
                                 <ShieldCheck className="w-6 h-6" />
                             </div>
-                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Protocol Validator</h4>
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Checks</h4>
                         </div>
                         <p className="text-[10px] text-slate-500 font-bold leading-relaxed italic border-l-2 border-primary/20 pl-4">
                             All procurement parameters have been synchronized with the institutional supply-chain ledger. Audit integrity is currently verified.

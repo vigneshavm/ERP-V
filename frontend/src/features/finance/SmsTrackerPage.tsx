@@ -128,14 +128,14 @@ const SmsTrackerPage: React.FC = () => {
                                     <MessageSquare className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-black uppercase tracking-[0.2em]">Manual SMS Capture Protocol</h3>
+                                    <h3 className="text-sm font-black uppercase tracking-[0.2em]">Add SMS manually</h3>
                                     <p className="text-[10px] text-slate-400 font-bold italic mt-1">Directly inject transaction strings for intelligence processing.</p>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 <div className="md:col-span-1">
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Institutional Sender</label>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Sender</label>
                                     <input
                                         type="text"
                                         value={testSender}
@@ -156,7 +156,7 @@ const SmsTrackerPage: React.FC = () => {
                             </div>
                             <div className="flex justify-end gap-4">
                                 <button onClick={() => setShowTestInput(false)} className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Abort Capture</button>
-                                <button onClick={handleTestSubmit} className="px-8 py-2.5 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Execute Capture Node</button>
+                                <button onClick={handleTestSubmit} className="px-8 py-2.5 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Save SMS</button>
                             </div>
                         </div>
                     </div>
@@ -172,7 +172,7 @@ const SmsTrackerPage: React.FC = () => {
                             <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
                                 {transactions.filter((t: any) => t.status === 'pending').length}
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Pending Resolution</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Pending</div>
                         </div>
                     </div>
                     <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6 group hover:border-success/30 transition-all duration-500">
@@ -260,7 +260,7 @@ const SmsTrackerPage: React.FC = () => {
                         <Zap className="w-7 h-7 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-xs font-black text-white dark:text-slate-900 uppercase tracking-widest italic">SMS Extraction Intelligence Pulse Active</p>
+                        <p className="text-xs font-black text-white dark:text-slate-900 uppercase tracking-widest italic">Reading bank SMS</p>
                         <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold mt-2 italic leading-relaxed">
                             Command Engine: <span className="text-primary underline underline-offset-4 decoration-2">sms-intel-v1</span> · 
                             Status: monitoring inbound institutional banking nodes 24/7

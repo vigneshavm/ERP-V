@@ -196,7 +196,7 @@ const BudgetTrackerPage: React.FC = () => {
                                 <div className="bg-slate-950 text-white rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden group">
                                     <Zap className="absolute -top-6 -right-6 w-24 h-24 text-success opacity-10 group-hover:scale-125 transition duration-1000" />
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-success mb-6 flex items-center gap-2">
-                                        <Zap className="w-4 h-4 fill-emerald-500" /> Oracle Insights
+                                        <Zap className="w-4 h-4 fill-emerald-500" /> Insights
                                     </p>
                                     <div className="space-y-6">
                                         {report?.audit_flags.slice(0, 3).map((flag, i) => (
@@ -209,7 +209,7 @@ const BudgetTrackerPage: React.FC = () => {
                                 </div>
 
                                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-10 shadow-sm">
-                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-10">Sector Breakdown</h3>
+                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-10">By category</h3>
                                     <div className="space-y-8">
                                         {report?.by_category.slice(0, 5).map((cat, i) => (
                                             <div key={i} className="space-y-3 group">

@@ -163,7 +163,7 @@ const PurchaseExpress: React.FC = () => {
                                         <User className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Step 01 / Entity Context</h3>
+                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Step 1 / Supplier</h3>
                                         <p className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Supplier Identification</p>
                                     </div>
                                 </div>
@@ -224,12 +224,12 @@ const PurchaseExpress: React.FC = () => {
                                                         ))
                                                     ) : (
                                                         <div className="px-8 py-10 text-center space-y-3">
-                                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">No Institutional Entity Found</p>
+                                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">No supplier found</p>
                                                             <button 
                                                                 onClick={() => window.open('/suppliers', '_blank')}
                                                                 className="text-xs font-black text-primary uppercase tracking-widest hover:underline"
                                                             >
-                                                                Initialize New Vendor
+                                                                Add supplier
                                                             </button>
                                                         </div>
                                                     )}
@@ -277,7 +277,7 @@ const PurchaseExpress: React.FC = () => {
                                             <ShoppingBag className="w-6 h-6" />
                                         </div>
                                         <div>
-                                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Step 02 / Node Mutation</h3>
+                                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Step 2 / Items</h3>
                                             <p className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Payload Definition</p>
                                         </div>
                                     </div>
@@ -285,18 +285,18 @@ const PurchaseExpress: React.FC = () => {
                                         onClick={() => setItems([...items, { id: Math.random().toString(36).substr(2, 9), product_name: '', quantity: 1, rate: 0, tax_percent: 0, discount_amount: 0, line_total: 0, unit: 'Pcs' }])}
                                         className="px-6 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-[1.2rem] text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-primary/5 hover:text-primary transition-all shadow-sm active:scale-95"
                                     >
-                                        <Plus className="w-4 h-4" /> Add Item Node
+                                        <Plus className="w-4 h-4" /> Add item
                                     </button>
                                 </div>
 
                                 <div className="space-y-6">
                                     {/* Table Header */}
                                     <div className="px-6 grid grid-cols-12 gap-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                                        <div className="col-span-4">Product Intelligence / Description</div>
+                                        <div className="col-span-4">Product / description</div>
                                         <div className="col-span-2">Category</div>
-                                        <div className="col-span-2 text-center">Quantum (Qty)</div>
+                                        <div className="col-span-2 text-center">Qty</div>
                                         <div className="col-span-2 text-right">Unit Rate (₹)</div>
-                                        <div className="col-span-1 text-right">Total Vector</div>
+                                        <div className="col-span-1 text-right">Total</div>
                                         <div className="col-span-1"></div>
                                     </div>
 
@@ -387,7 +387,7 @@ const PurchaseExpress: React.FC = () => {
                         {/* Additional Intelligence: Notes & Attachments */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <div className="bg-white dark:bg-slate-800 rounded-xl p-10 border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">Institutional Remarks</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">Remarks</label>
                                 <textarea 
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
@@ -424,7 +424,7 @@ const PurchaseExpress: React.FC = () => {
 
                                 <div className="space-y-6">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Base Quantum</span>
+                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Subtotal</span>
                                         <span className="text-sm font-black tabular-nums tracking-tighter">₹{totals.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
@@ -443,7 +443,7 @@ const PurchaseExpress: React.FC = () => {
                                     )}
                                     <div className="h-px bg-white/5 my-8" />
                                     <div className="flex flex-col gap-2">
-                                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Total Node Liability</span>
+                                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Total payable</span>
                                         <span className="text-6xl font-black tabular-nums tracking-tighter drop-shadow-2xl">₹{totals.total.toLocaleString(undefined, { minimumFractionDigits: 0 })}</span>
                                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2">{items.filter(i => i.product_name).length} Active Item Nodes</p>
                                     </div>
@@ -485,7 +485,7 @@ const PurchaseExpress: React.FC = () => {
                                 <div className="p-3 bg-white dark:bg-slate-900 rounded-sm text-success shadow-sm border border-success/20">
                                     <Activity className="w-6 h-6" />
                                 </div>
-                                <h4 className="text-[10px] font-black text-success dark:text-success uppercase tracking-widest leading-none">System Intelligence</h4>
+                                <h4 className="text-[10px] font-black text-success dark:text-success uppercase tracking-widest leading-none">Suggestions</h4>
                             </div>
                             <p className="text-[11px] text-success dark:text-success font-bold leading-relaxed italic border-l-2 border-success/30 pl-4">
                                 {supplierId ? `Inwarding stock from ${supplierName}. Financial ledger and inventory buckets will be mutated on commit.` : "Standing by for entity selection and payload definition. High-velocity mode active."}

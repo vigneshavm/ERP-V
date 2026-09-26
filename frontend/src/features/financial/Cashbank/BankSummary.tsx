@@ -104,7 +104,7 @@ const BankSummary: React.FC = () => {
                             Treasury Command Center <ChevronRight className="w-4 h-4" />
                         </button>
                         <button onClick={() => navigate('/cashbank/cash-in-hand')} className="px-6 py-4 bg-white/10 hover:bg-white/20 rounded-sm border border-white/20 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between">
-                            Vault Surveillance <ChevronRight className="w-4 h-4" />
+                            Account overview <ChevronRight className="w-4 h-4" />
                         </button>
                     </>
                 }
@@ -115,7 +115,7 @@ const BankSummary: React.FC = () => {
                 <div className="mb-8">
                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                         <PieChart className="w-4 h-4" />
-                        Portfolio Allocation by Instrument Type
+                        Balance by account type
                     </h3>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         {['Savings', 'Current', 'Overdraft', 'Loan'].map((type) => {

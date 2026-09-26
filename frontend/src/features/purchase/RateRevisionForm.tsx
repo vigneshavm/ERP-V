@@ -123,18 +123,18 @@ const RateRevisionForm: React.FC = () => {
                     <div className="lg:col-span-7 space-y-10">
                         <div className="bg-white dark:bg-slate-800 p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3 mb-10">
-                                <Activity className="w-5 h-5 text-primary" /> Node Specifications
+                                <Activity className="w-5 h-5 text-primary" /> Item details
                             </h3>
                             
                             <div className="space-y-8">
                                 <div>
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Institutional Supplier</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Supplier</label>
                                     <select
                                         value={supplierId}
                                         onChange={e => setSupplierId(e.target.value)}
                                         className="w-full px-6 py-3.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
                                     >
-                                        <option value="">Select Entity...</option>
+                                        <option value="">Select supplier…</option>
                                         {suppliers.map(s => (
                                             <option key={s._id} value={s._id}>{s.businessName}</option>
                                         ))}
@@ -143,7 +143,7 @@ const RateRevisionForm: React.FC = () => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div>
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Item Oracle</label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Item</label>
                                         <select
                                             value={itemId}
                                             onChange={e => {
@@ -161,7 +161,7 @@ const RateRevisionForm: React.FC = () => {
 
                                     {itemId && (
                                         <div className="animate-in slide-in-from-right-4 duration-500">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Target Batch Node</label>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Batch</label>
                                             <select
                                                 value={batchNumber}
                                                 onChange={e => setBatchNumber(e.target.value)}
@@ -213,13 +213,13 @@ const RateRevisionForm: React.FC = () => {
                                             <p className="text-2xl font-black tabular-nums tracking-tighter">₹{oldRate.toLocaleString()}</p>
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">In-Stock Quantum</p>
+                                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">In stock</p>
                                             <p className="text-2xl font-black tabular-nums tracking-tighter text-slate-400">{affectedQty} Units</p>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest mb-3 block">Adjusted Rate Protocol</label>
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest mb-3 block">New rate</label>
                                         <div className="relative group/input">
                                             <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-primary/40 group-focus-within/input:text-primary transition-colors">₹</span>
                                             <input
@@ -269,7 +269,7 @@ const RateRevisionForm: React.FC = () => {
                                 <ShieldCheck className="text-warning w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-warning uppercase tracking-widest mb-1">Authorization Protocol</p>
+                                <p className="text-[10px] font-black text-warning uppercase tracking-widest mb-1">Approval</p>
                                 <p className="text-[10px] font-bold text-slate-400 leading-relaxed italic">
                                     Retrospective adjustments require institutional sign-off before inventory basis is recalibrated.
                                 </p>

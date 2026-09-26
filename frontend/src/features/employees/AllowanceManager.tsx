@@ -449,7 +449,7 @@ const AllowanceManager: React.FC = () => {
                                                 }, 0);
 
                                                 return (
-                                                    <td key={c._id} className="px-6 py-4 text-success dark:text-success font-mono">
+                                                    <td key={c._id} className="text-right tabular-nums px-6 py-4 text-main font-mono">
                                                         ₹{Math.round(total).toLocaleString()}
                                                     </td>
                                                 );

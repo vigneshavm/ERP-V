@@ -206,7 +206,7 @@ const Estimate = () => {
             <h1 className="page-title text-slate-900 dark:text-white flex items-center gap-3">
               Proforma <span className="text-warning">Architect</span>
               <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-xs font-bold uppercase tracking-widest">
-                Valuation Node
+                Estimate
               </span>
             </h1>
             <div className="flex items-center gap-2 mt-1">
@@ -233,7 +233,7 @@ const Estimate = () => {
                   <User className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">B2B Entity Mapping</h3>
+                  <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Business customer</h3>
                   <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Assign proforma recipient node</p>
                 </div>
               </div>
@@ -268,7 +268,7 @@ const Estimate = () => {
                   <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-sm flex items-center justify-center group-hover:scale-110 transition-all shadow-inner">
                     <Plus className="w-8 h-8 opacity-40 group-hover:opacity-100" />
                   </div>
-                  <span className="font-black text-[10px] uppercase tracking-[0.2em]">Initialize Customer Path</span>
+                  <span className="font-black text-[10px] uppercase tracking-[0.2em]">Select customer</span>
                 </button>
               )}
             </div>
@@ -331,7 +331,7 @@ const Estimate = () => {
               <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-900 dark:bg-black rounded-t-[32px]">
                 <div className="flex items-center gap-3">
                   <ShoppingBag className="w-5 h-5 text-warning" />
-                  <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">Cart Matrix</h3>
+                  <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">Items</h3>
                 </div>
                 <span className="px-2 py-1 bg-warning text-slate-900 rounded-md text-[10px] font-black">{cart.length}</span>
               </div>
@@ -340,7 +340,7 @@ const Estimate = () => {
                 {cart.length === 0 ? (
                   <div className="py-20 flex flex-col items-center gap-4 text-slate-400">
                     <Layers className="w-12 h-12 opacity-20" />
-                    <p className="text-[10px] font-black uppercase tracking-widest">Protocol Matrix Empty</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest">No items yet</p>
                   </div>
                 ) : (
                   cart.map((item) => (
@@ -385,7 +385,7 @@ const Estimate = () => {
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                      <Info className="w-3.5 h-3.5 text-warning" /> Matrix Notes
+                      <Info className="w-3.5 h-3.5 text-warning" /> Notes
                     </label>
                     <textarea
                       value={notes}
@@ -415,7 +415,7 @@ const Estimate = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <button onClick={handleClear} className="py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
-                    Purge Matrix
+                    Clear items
                   </button>
                   <button onClick={handleSaveEstimate} disabled={isLoading || cart.length === 0} className="py-4 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50">
                     {isLoading ? "Syncing..." : "Finalize Protocol"}
@@ -433,7 +433,7 @@ const Estimate = () => {
           <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md" onClick={() => setShowCustomerSelect(false)}></div>
           <div className="relative bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col h-[80vh]">
             <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-950/50">
-              <h3 className="text-xl font-display font-black tracking-tighter text-slate-900 dark:text-white uppercase">Initialize Entity Path</h3>
+              <h3 className="text-xl font-display font-black tracking-tighter text-slate-900 dark:text-white uppercase">Select customer</h3>
               <button onClick={() => setShowCustomerSelect(false)} className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-sm hover:text-danger transition-all">
                 <X className="w-5 h-5" />
               </button>

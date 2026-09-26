@@ -214,7 +214,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 {/* Growth Platform Section */}
                 {!desktopCollapsed && visibleGrowItems.length > 0 && (
                     <div className="px-3 pt-6 pb-2 border-t border-white/5 mt-4">
-                        <h3 className="overline font-display text-muted ">Growth Matrix</h3>
+                        <h3 className="overline font-display text-muted ">Growth</h3>
                     </div>
                 )}
                 {visibleGrowItems.map((item: MenuItem) => renderRecursive(item, false))}
@@ -227,7 +227,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                     className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-secondary hover:bg-white/5 hover:text-main transition-all group`}
                 >
                     <Lock className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
-                    <span className="label-sm font-black">Terminate Protocol</span>
+                    <span className="label-sm font-black">Sign out</span>
                 </button>
                 {desktopCollapsed && (
                     <div className="flex flex-col gap-2 w-full px-2">

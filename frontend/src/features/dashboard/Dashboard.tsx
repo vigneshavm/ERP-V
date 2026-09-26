@@ -498,7 +498,7 @@ const Dashboard: React.FC = () => {
                     <div className="w-10 h-10 rounded-sm bg-primary/20 flex items-center justify-center text-primary border border-primary/30 group-hover:glow-primary transition-all">
                       <TrendingUp className="w-5 h-5" />
                     </div>
-                    <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Revenue Flow</span>
+                    <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Revenue</span>
                   </div>
                   <TrendBadge pct={revenueTrend} />
                 </div>
@@ -525,7 +525,7 @@ const Dashboard: React.FC = () => {
                     <div className="w-10 h-10 rounded-sm bg-danger/20 flex items-center justify-center text-danger border border-danger/30 group-hover:glow-error transition-all">
                       <ArrowUpRight className="w-5 h-5" />
                     </div>
-                    <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Capital Outflow</span>
+                    <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Expenses</span>
                   </div>
                   <TrendBadge pct={expenseTrend} increaseIsBad />
                 </div>
@@ -599,7 +599,7 @@ const Dashboard: React.FC = () => {
                     <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--color-primary),0.5)]" />
                     Sales Performance
                   </h3>
-                  <p className="text-[11px] text-muted font-black uppercase tracking-[0.3em] mt-1">Institutional Performance Over Time</p>
+                  <p className="text-[11px] text-muted font-black uppercase tracking-[0.3em] mt-1">Performance over time</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {['1W', '1M', '3M', '1Y'].map(p => (
@@ -651,9 +651,9 @@ const Dashboard: React.FC = () => {
                   <div>
                       <h3 className="text-2xl font-display font-black text-main tracking-tighter uppercase flex items-center gap-4 italic">
                           <div className="w-2 h-8 bg-danger rounded-full shadow-[0_0_15px_rgba(var(--color-error),0.5)]" />
-                          Floor Alerts
+                          Alerts
                       </h3>
-                      <p className="text-[11px] text-muted font-black uppercase tracking-[0.3em] mt-1">Immediate Tactical Tasks</p>
+                      <p className="text-[11px] text-muted font-black uppercase tracking-[0.3em] mt-1">Things to do today</p>
                   </div>
                   <span className="w-7 h-7 bg-danger/10 text-danger rounded-sm border border-danger/20 flex items-center justify-center text-[11px] font-black animate-pulse">
                       {floorAlerts.length}
@@ -888,10 +888,10 @@ const Dashboard: React.FC = () => {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-default">
-                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted ">Vendor Node</th>
-                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted ">Identity Node</th>
+                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted ">Supplier</th>
+                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted ">Customer</th>
                             <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted ">Throughput</th>
-                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted text-center">Protocol State</th>
+                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted text-center">Status</th>
                             <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted text-right">Timestamp</th>
                         </tr>
                     </thead>

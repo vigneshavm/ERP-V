@@ -87,7 +87,7 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                         <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">Label Printer</p>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div className="sm:col-span-1">
-                                <label className="text-[10px] font-bold text-slate-400 uppercase">Brand / Protocol</label>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase">Brand</label>
                                 <select
                                     value={printerBrand}
                                     onChange={(e) => setPrinterBrand(e.target.value as PrinterBrand)}

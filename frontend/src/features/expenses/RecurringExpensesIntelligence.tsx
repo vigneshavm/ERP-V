@@ -105,7 +105,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
 
                     <div className="bg-slate-900 text-white p-6 rounded-[2rem] shadow-xl border border-slate-800 relative group overflow-hidden">
                         <Zap className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700" />
-                        <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 italic">Agent Intelligence</p>
+                        <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 italic">Suggestions</p>
                         <h3 className="text-xs font-black italic leading-tight text-slate-300">
                             {intelligence.upcomingDues.some(d => d.status === 'OVERDUE')
                                 ? "Critical: Overdue payments detected in Chennai. Prioritize settlement."
@@ -151,7 +151,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                         <div className="flex items-center gap-2">
                                             <div className="text-right mr-2">
                                                 <p className="font-black text-sm">₹{branch.total_monthly_fixed_cost.toLocaleString()}</p>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Monthly Commitment</p>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Monthly total</p>
                                             </div>
                                             <button className="p-2 text-slate-400 hover:text-primary transition-colors">
                                                 <MoreVertical className="w-5 h-5" />

@@ -259,7 +259,7 @@ const BulkImport = () => {
                         </svg>
                     </div>
                     <div className="flex-1">
-                        <h3 className="text-primary dark:text-primary font-semibold mb-2 uppercase tracking-widest text-xs">Ingestion Protocol</h3>
+                        <h3 className="text-primary dark:text-primary font-semibold mb-2 uppercase tracking-widest text-xs">Import rules</h3>
                         <ul className="text-secondary text-[11px] font-bold space-y-1 uppercase tracking-tight">
                             <li>• Required headers: Name, Cost Price, Selling Price, Category</li>
                             <li>• Optional headers: SKU, Stock Quantity, Unit</li>
@@ -337,7 +337,7 @@ const BulkImport = () => {
                                     <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Name</th>
                                     <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">SKU</th>
                                     <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</th>
-                                    <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Price</th>
+                                    <th className="text-right px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Price</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs font-bold">
@@ -350,7 +350,7 @@ const BulkImport = () => {
                                         <td className="px-6 py-3 text-slate-700 dark:text-slate-300 uppercase truncate max-w-[150px]">{row.name}</td>
                                         <td className="px-6 py-3 text-slate-500 font-mono tracking-tighter">{row.sku}</td>
                                         <td className="px-6 py-3 text-slate-500">{row.category}</td>
-                                        <td className="px-6 py-3 text-slate-900 dark:text-white">₹{row.sellingPrice}</td>
+                                        <td className="text-right tabular-nums px-6 py-3 text-slate-900 dark:text-white">₹{row.sellingPrice}</td>
                                     </tr>
                                 ))}
                             </tbody>

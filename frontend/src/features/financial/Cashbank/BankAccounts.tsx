@@ -102,7 +102,7 @@ const BankAccounts: React.FC = () => {
                             onClick={() => setShowAddAccount(true)}
                             className="px-6 py-3 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/25 flex items-center gap-2 hover:bg-primary/90 transition-all uppercase tracking-widest"
                         >
-                            <Plus className="w-5 h-5" /> Initialize New Unit
+                            <Plus className="w-5 h-5" /> Add bank account
                         </button>
                     }
                 />
@@ -216,7 +216,7 @@ const BankAccounts: React.FC = () => {
                             <div className="w-12 h-12 bg-white/5 rounded-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <Plus className="w-6 h-6 text-success" />
                             </div>
-                            <h4 className="text-sm font-black uppercase tracking-widest text-slate-500">Initialize New Unit</h4>
+                            <h4 className="text-sm font-black uppercase tracking-widest text-slate-500">Add bank account</h4>
                         </div>
                     </div>
                 {/* Floating Action Button (Alternative Add Account) */}

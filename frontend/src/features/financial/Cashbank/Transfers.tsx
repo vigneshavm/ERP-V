@@ -271,7 +271,7 @@ const Transfers: React.FC = () => {
                                     <Info className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-warning dark:text-warning uppercase tracking-widest leading-none mb-2">Clearing Protocol</p>
+                                    <p className="text-[10px] font-black text-warning dark:text-warning uppercase tracking-widest leading-none mb-2">Clearing</p>
                                     <p className="text-[10px] font-medium text-warning dark:text-warning leading-relaxed italic">Verify all institutional parameters before execution. Internal clearing is final and will reflect immediately in global liquidity surveillance.</p>
                                 </div>
                             </div>

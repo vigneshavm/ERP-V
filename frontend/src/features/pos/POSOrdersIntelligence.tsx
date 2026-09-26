@@ -161,7 +161,7 @@ const POSOrdersIntelligence: React.FC = () => {
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Branch Insights</span>
                         </div>
                         <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none flex items-center gap-3">
-                            POS Intelligence <Zap className="w-8 h-8 text-primary animate-pulse" />
+                            POS orders <Zap className="w-8 h-8 text-primary animate-pulse" />
                         </h2>
                         <p className="text-sm text-slate-500 mt-2 font-medium flex items-center gap-2 italic">
                             Real-time sales auditing and stock impact tracking for <span className="text-primary font-bold">{tenant_id}</span>

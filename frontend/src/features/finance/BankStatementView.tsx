@@ -220,7 +220,7 @@ const BankStatementView: React.FC = () => {
                 <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                         <div className="flex items-center gap-4">
-                            <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Institutional Records</h2>
+                            <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Bank records</h2>
                             {!fetching && transactions.length > 0 && (
                                 <span className="px-3 py-1 bg-slate-100 dark:bg-slate-900 text-[10px] font-black text-slate-400 rounded-full">
                                     {displayed.length} NODES
@@ -261,7 +261,7 @@ const BankStatementView: React.FC = () => {
                                         className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right cursor-pointer hover:text-primary transition-colors"
                                         onClick={() => toggleSort('amount')}
                                     >
-                                        Quantum <SortIcon field="amount" />
+                                        Amount <SortIcon field="amount" />
                                     </th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right hidden md:table-cell">Remaining Balance</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
@@ -287,7 +287,7 @@ const BankStatementView: React.FC = () => {
                                                     <Info className="w-10 h-10" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-black uppercase tracking-widest">Vault Empty</p>
+                                                    <p className="text-sm font-black uppercase tracking-widest">No records yet</p>
                                                     <p className="text-xs font-bold mt-2 italic leading-relaxed">Gemini AI is ready. Upload a bank statement to begin extraction protocols.</p>
                                                 </div>
                                             </div>
@@ -352,7 +352,7 @@ const BankStatementView: React.FC = () => {
                                 <span>DEBITS: <span className="text-danger">₹{displayed.filter(t => t.type === 'debit').reduce((s, t) => s + t.amount, 0).toLocaleString('en-IN')}</span></span>
                             </div>
                             <button className="flex items-center gap-2 hover:text-primary transition-colors italic">
-                                <Download className="w-3.5 h-3.5" /> Generate Intelligence Report
+                                <Download className="w-3.5 h-3.5" /> Generate report
                             </button>
                         </div>
                     )}

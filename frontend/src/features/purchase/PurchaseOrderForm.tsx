@@ -303,7 +303,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                     {/* Primary Params Group */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div className="md:col-span-1">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Node Protocol #</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">PO No.</label>
                             <div className="px-5 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black text-slate-500 font-mono tracking-tighter ">
                                 {header.po_number}
                             </div>
@@ -369,7 +369,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                             />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Ref Oracle ID</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Reference No.</label>
                             <input
                                 type="text"
                                 value={header.reference_number || ''}
@@ -428,7 +428,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                         <th className="px-8 py-5 w-24 text-center">Unit</th>
                                         <th className="px-8 py-5 w-32 text-right">Rate</th>
                                         <th className="px-8 py-5 w-20 text-center">Tax %</th>
-                                        <th className="px-8 py-5 w-32 text-right">Node Total</th>
+                                        <th className="px-8 py-5 w-32 text-right">Total</th>
                                         <th className="px-8 py-5 w-16 text-center">Info</th>
                                         <th className="px-8 py-5 w-16 text-center">Del</th>
                                     </tr>
@@ -513,7 +513,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                         <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 space-y-6">
                             <div className="flex items-center gap-3">
                                 <FileText className="w-5 h-5 text-slate-400" />
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Institutional Narrative (Notes)</h4>
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notes</h4>
                             </div>
                             <textarea
                                 value={header.notes || ''}
@@ -561,7 +561,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                 </div>
                             ))}
                             <label className="flex items-center gap-3 px-6 py-2.5 bg-white dark:bg-slate-800 border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-sm text-[10px] font-black uppercase tracking-widest text-slate-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all shadow-sm">
-                                <Plus className="w-4 h-4" /> Upload Node Intel
+                                <Plus className="w-4 h-4" /> Upload file
                                 <input type="file" multiple className="hidden" onChange={handleFileUpload} />
                             </label>
                         </div>
@@ -581,13 +581,13 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                     <span className="text-slate-900 dark:text-white tabular-nums">₹{totals.subtotal.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-xs font-black text-slate-400 uppercase tracking-widest">
-                                    <span>Institutional Discount</span>
+                                    <span>Discount</span>
                                     <span className="text-success tabular-nums">-₹{totals.discount.toLocaleString()}</span>
                                 </div>
                                 
                                 <div className="pt-6 border-t border-slate-100 dark:border-slate-700 space-y-4">
                                     <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest italic ">
-                                        <span>Tax Protocol</span>
+                                        <span>Tax</span>
                                         <span>{taxBreakdown.igst > 0 ? 'IGST (Inter-State)' : 'CGST+SGST (Intra)'}</span>
                                     </div>
                                     {taxBreakdown.cgst > 0 && (
@@ -612,7 +612,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
 
                                 <div className="pt-10 border-t border-slate-100 dark:border-slate-700">
                                     <div className="flex justify-between items-end mb-8">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Quantum</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total</p>
                                         <h3 className="text-4xl font-black text-primary tracking-tighter tabular-nums">₹{totals.total.toLocaleString()}</h3>
                                     </div>
                                     <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-700">
@@ -648,7 +648,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                         className="w-5 h-5 rounded-lg border-primary/20 text-primary focus:ring-primary/20 cursor-pointer"
                                     />
                                     <label htmlFor="billLater" className="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest cursor-pointer">
-                                        Immediate Receipt Node
+                                        Receive now
                                     </label>
                                 </div>
 
@@ -661,7 +661,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                         onChange={e => setHeader({ ...header, payment_method: e.target.value } as any)}
                                         className="w-full bg-white dark:bg-slate-800 border border-primary/10 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none"
                                     >
-                                        <option value="Credit">Institutional Credit</option>
+                                        <option value="Credit">Credit</option>
                                         <option value="Cash">Cash Transaction</option>
                                         <option value="UPI">Digital (UPI/Bank)</option>
                                     </select>
@@ -682,7 +682,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                     <div className="bg-warning-soft dark:bg-warning-soft p-8 rounded-xl border border-warning-line dark:border-warning/20">
                         <div className="flex items-center gap-3 mb-4">
                             <Zap className="w-5 h-5 text-warning animate-pulse" />
-                            <h5 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest">Protocol Optimizer</h5>
+                            <h5 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest">Suggestions</h5>
                         </div>
                         <p className="text-[10px] text-warning dark:text-warning font-bold italic leading-relaxed pl-4 border-l-2 border-warning/30">
                             Ensure all SKU nodes are verified against supplier quotations to prevent institutional fiscal discrepancies.

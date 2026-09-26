@@ -214,7 +214,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                 <ShieldCheck className="w-48 h-48" />
                             </div>
                             <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-3 mb-8">
-                                <ShieldCheck className="w-6 h-6" /> Three-Way Matching Protocol
+                                <ShieldCheck className="w-6 h-6" /> PO / GRN / bill match
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
                                 <div>
@@ -225,7 +225,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                         disabled={!bill.vendor_id}
                                         className="w-full px-6 py-3.5 bg-white dark:bg-slate-800 border border-primary/20 rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30"
                                     >
-                                        <option value="">Select Receipt Node...</option>
+                                        <option value="">Select GRN…</option>
                                         {Array.isArray(grns) && grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({formatDate(g.receivedDate)})</option>)}
                                     </select>
                                 </div>
@@ -275,7 +275,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                 <div className="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-sm flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform border border-slate-100 dark:border-slate-700">
                                     <Plus className="w-8 h-8 text-slate-300 group-hover:text-primary" />
                                 </div>
-                                <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-relaxed">Upload Invoice Node<br/><span className="text-primary/60 opacity-60">Supports Intel Extraction</span></p>
+                                <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-relaxed">Upload bill<br/><span className="text-primary/60 opacity-60">Supports Intel Extraction</span></p>
                             </div>
                             <div className="flex flex-wrap gap-3">
                                 {attachments.map((at, i) => (
@@ -290,7 +290,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
 
                         <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 space-y-6">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3">
-                                <FileText className="w-5 h-5" /> Institutional Notes
+                                <FileText className="w-5 h-5" /> Notes
                             </h3>
                             <textarea
                                 value={bill.notes || ''}

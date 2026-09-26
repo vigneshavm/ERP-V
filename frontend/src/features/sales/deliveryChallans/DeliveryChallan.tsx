@@ -221,14 +221,14 @@ const DeliveryChallan = () => {
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="page-title text-slate-900 dark:text-white">
-                                Dispatch <span className="text-warning">Protocol</span>
+                                Dispatch <span className="text-warning">Status</span>
                             </h1>
                             <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-[10px] font-black uppercase tracking-widest">
                                 Logistics v4.0
                             </span>
                         </div>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 flex items-center gap-2">
-                            <Globe className="w-3 h-3" /> Global Fulfillment Node // Operational Mode: Dispatch
+                            <Globe className="w-3 h-3" /> Delivery challan
                         </p>
                     </div>
                 </div>
@@ -297,7 +297,7 @@ const DeliveryChallan = () => {
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="bg-slate-50 dark:bg-slate-950/50">
-                                            <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-16 text-center">Node</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-16 text-center">No.</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800">Product Specification</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-32 text-right">Available</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-40 text-right">Dispatch Qty</th>
@@ -310,7 +310,7 @@ const DeliveryChallan = () => {
                                                 <td colSpan={5} className="px-8 py-20 text-center">
                                                     <div className="flex flex-col items-center gap-4 opacity-20 grayscale">
                                                         <Truck className="w-16 h-16 text-warning" />
-                                                        <p className="text-xs font-black uppercase tracking-widest text-slate-400">Manifest Empty // Sync Entity or Items</p>
+                                                        <p className="text-xs font-black uppercase tracking-widest text-slate-400">No items yet. Pick a customer and add items.</p>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -391,7 +391,7 @@ const DeliveryChallan = () => {
                     <div className="space-y-8">
                         {/* Customer Entity Mapping */}
                         <div>
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Entity Mapping</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Customer</h3>
                             {formData.customer ? (
                                 <div className="bg-white dark:bg-slate-900 border-2 border-warning/20 rounded-sm p-6 shadow-xl shadow-amber-500/5 relative overflow-hidden group transition-all hover:scale-[1.02]">
                                     <div className="absolute top-0 right-0 w-16 h-16 bg-warning/5 rounded-bl-[40px]" />
@@ -412,7 +412,7 @@ const DeliveryChallan = () => {
                                     </div>
                                     <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                                            <MapPin className="w-3 h-3 text-warning" /> SLA: Local Node Dispatch
+                                            <MapPin className="w-3 h-3 text-warning" /> Local dispatch
                                         </div>
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
                                             <Tag className="w-3 h-3 text-warning" /> Ph: {formData.customer.phone}
@@ -426,7 +426,7 @@ const DeliveryChallan = () => {
                                         className="w-full bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-sm p-6 flex flex-col items-center gap-3 hover:border-warning/50 transition-all group shadow-sm"
                                     >
                                         <Search className="w-6 h-6 text-slate-300 group-hover:text-warning transition-colors" />
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-warning transition-colors">Map Customer Entity</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-warning transition-colors">Select customer</p>
                                     </button>
                                     <div className="flex items-center gap-2 px-4 py-2 opacity-30">
                                         <div className="h-px flex-1 bg-slate-300 dark:bg-slate-700" />
@@ -446,10 +446,10 @@ const DeliveryChallan = () => {
 
                         {/* Transport Parameters */}
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[32px] p-6 space-y-6 shadow-sm">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Logistics Matrix</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Dispatch details</h3>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Transport Vector</label>
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Transport</label>
                                     <div className="grid grid-cols-5 gap-2">
                                         {[
                                             { id: 'road', icon: Truck },
@@ -470,7 +470,7 @@ const DeliveryChallan = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Vehicle Node ID</label>
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Vehicle No.</label>
                                     <div className="relative">
                                         <Navigation className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warning" />
                                         <input
@@ -503,11 +503,11 @@ const DeliveryChallan = () => {
                             <h3 className="text-[10px] font-black opacity-50 uppercase tracking-[0.3em] mb-8">Dispatch Valuation</h3>
                             <div className="space-y-6 relative z-10">
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
-                                    <span>Matrix Nodes</span>
+                                    <span>Items</span>
                                     <span className="font-mono">{metrics.totalItems} Units</span>
                                 </div>
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
-                                    <span>Logistics Protocol</span>
+                                    <span>Transport</span>
                                     <span className="font-mono text-success dark:text-success">{formData.transportMode.toUpperCase()}</span>
                                 </div>
                                 <div className="pt-6 border-t border-white/10 dark:border-slate-200">

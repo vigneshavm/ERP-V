@@ -67,7 +67,7 @@ const GRNForm: React.FC = () => {
                             <Truck className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Transit Node</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Transport</p>
                             <p className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase tabular-nums">In-Bound</p>
                         </div>
                     </div>
@@ -76,7 +76,7 @@ const GRNForm: React.FC = () => {
                             <CheckCircle className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">QA Protocol</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Quality check</p>
                             <p className="text-xl font-black text-success dark:text-success tracking-tighter uppercase tabular-nums">Active</p>
                         </div>
                     </div>

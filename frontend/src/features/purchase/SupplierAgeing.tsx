@@ -111,7 +111,7 @@ const SupplierAgeing: React.FC = () => {
                                 onClick={handleExport}
                                 className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95"
                             >
-                                <Download className="w-4 h-4" /> Export Node Data
+                                <Download className="w-4 h-4" /> Export
                             </button>
                             <button
                                 onClick={fetchAgeing}
@@ -153,7 +153,7 @@ const SupplierAgeing: React.FC = () => {
                 {/* Audit Control Matrix */}
                 <div className="ui-panel p-8 flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="relative w-full md:w-[500px]">
-                        <label className="ui-label mb-3 block">Entity Search</label>
+                        <label className="ui-label mb-3 block">Search suppliers</label>
                         <div className="relative">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
@@ -182,12 +182,12 @@ const SupplierAgeing: React.FC = () => {
                         <table className="w-full text-left">
                             <thead className="bg-slate-50/50 dark:bg-slate-900/50 ui-label border-b border-slate-100 dark:border-slate-800">
                                 <tr>
-                                    <th className="px-8 py-5">Institutional Supplier</th>
+                                    <th className="px-8 py-5">Supplier</th>
                                     <th className="px-8 py-5 text-right">0-30 Days</th>
                                     <th className="px-8 py-5 text-right">31-60 Days</th>
                                     <th className="px-8 py-5 text-right">61-90 Days</th>
                                     <th className="px-8 py-5 text-right">90+ Arrears</th>
-                                    <th className="px-8 py-5 text-right">Total Node Quantum</th>
+                                    <th className="px-8 py-5 text-right">Total</th>
                                     <th className="px-8 py-5 text-center">Actions</th>
                                 </tr>
                             </thead>

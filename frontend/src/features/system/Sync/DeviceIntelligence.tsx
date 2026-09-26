@@ -73,7 +73,7 @@ const SyncIntelligence: React.FC = () => {
                         </div>
                         <div>
                             <h1 className="text-4xl font-black text-white tracking-tight leading-none italic uppercase">
-                                Sync <span className="text-primary">Intelligence</span>
+                                Sync <span className="text-primary">Insights</span>
                             </h1>
                             <p className="text-slate-400 font-bold mt-2 uppercase tracking-[0.2em] text-[10px]">The Nervous System of Retail Reliability</p>
                         </div>
@@ -83,7 +83,7 @@ const SyncIntelligence: React.FC = () => {
                 <div className="flex items-center gap-4 relative z-10">
                     <div className="flex flex-col items-end mr-4">
                         <span className="text-[10px] font-black text-success uppercase tracking-widest flex items-center gap-1.5">
-                            <span className="w-2 h-2 bg-success rounded-full animate-pulse" /> Live Pulse Active
+                            <span className="w-2 h-2 bg-success rounded-full animate-pulse" /> Live
                         </span>
                         <span className="text-xs text-slate-500 font-medium">Auto-refreshing every 5s</span>
                     </div>
@@ -136,7 +136,7 @@ const SyncIntelligence: React.FC = () => {
                         <div className="col-span-12 lg:col-span-8 bg-slate-900 rounded-xl p-10 border border-slate-800 shadow-xl relative overflow-hidden">
                             <div className="flex items-center justify-between mb-10 relative z-10">
                                 <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-3">
-                                    <Map className="w-6 h-6 text-primary" /> Geographic Node Topology
+                                    <Map className="w-6 h-6 text-primary" /> Devices by branch
                                 </h3>
                                 <div className="flex items-center gap-4">
                                     <span className="flex items-center gap-1.5 text-[10px] font-black text-success uppercase tracking-widest"><span className="w-2 h-2 bg-success rounded-full" /> Healthy</span>
@@ -230,9 +230,9 @@ const SyncIntelligence: React.FC = () => {
                         <table className="w-full text-left">
                             <thead className="bg-slate-950/50 border-b border-slate-800">
                                 <tr>
-                                    <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Node Identifier</th>
+                                    <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Device</th>
                                     <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Branch</th>
-                                    <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Last Pulse</th>
+                                    <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Last seen</th>
                                     <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Queue</th>
                                     <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Reliability</th>
                                     <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-right">Actions</th>
@@ -274,7 +274,7 @@ const SyncIntelligence: React.FC = () => {
                                         <td className="px-6 py-8 text-center text-white font-black">
                                             {device.pendingOps}
                                         </td>
-                                        <td className="px-6 py-8">
+                                        <td className="text-center px-6 py-8">
                                             <div className="flex flex-col items-center gap-2">
                                                 <div className="w-24 h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
                                                     <div
@@ -364,7 +364,7 @@ const SyncIntelligence: React.FC = () => {
             {/* Monetization / Admin Layer Footer */}
             <div className="bg-gradient-to-r from-indigo-900/20 to-transparent p-10 rounded-xl border border-slate-800/50 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div>
-                    <h4 className="text-xl font-black text-white italic uppercase tracking-tight mb-2">Synchronization Intelligence <span className="text-primary px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black align-middle ml-2">PREMIUM</span></h4>
+                    <h4 className="text-xl font-black text-white italic uppercase tracking-tight mb-2">Device sync <span className="text-primary px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black align-middle ml-2">PREMIUM</span></h4>
                     <p className="text-sm text-slate-400 font-medium">Powering zero-loss retail operations with transaction-level auditing and anomaly detection.</p>
                 </div>
                 <div className="flex gap-4">

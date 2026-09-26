@@ -114,7 +114,7 @@ const PurchaseReturns: React.FC = () => {
                             onClick={() => navigate('/purchase/returns/new')}
                             className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition hover:scale-105 active:scale-95 flex items-center gap-3"
                         >
-                            <RotateCcw className="w-4 h-4" /> Initiate Reversal Node
+                            <RotateCcw className="w-4 h-4" /> New return
                         </button>
                     }
                 />
@@ -189,7 +189,7 @@ const PurchaseReturns: React.FC = () => {
                         <table className="w-full text-left">
                             <thead className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
                                 <tr>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Reversal ID</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Return No.</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Supplier</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">References</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Reason</th>

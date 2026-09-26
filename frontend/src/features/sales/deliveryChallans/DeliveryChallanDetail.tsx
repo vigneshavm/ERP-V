@@ -79,7 +79,7 @@ const DeliveryChallanDetail = () => {
         return (
             <div className="min-h-full bg-app text-main flex flex-col items-center justify-center gap-4">
                 <div className="w-12 h-12 border-4 border-warning/20 border-t-amber-500 rounded-full animate-spin"></div>
-                <p className="text-[10px] font-black text-warning uppercase tracking-[0.2em] animate-pulse">Syncing Dispatch Node...</p>
+                <p className="text-[10px] font-black text-warning uppercase tracking-[0.2em] animate-pulse">Loading…</p>
             </div>
         );
     }
@@ -184,7 +184,7 @@ const DeliveryChallanDetail = () => {
                             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[40px] overflow-hidden shadow-sm">
                                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
                                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <User className="w-4 h-4 text-warning" /> Consignee Entity
+                                        <User className="w-4 h-4 text-warning" /> Consignee
                                     </h3>
                                 </div>
                                 <div className="p-8 flex items-center gap-6">
@@ -205,7 +205,7 @@ const DeliveryChallanDetail = () => {
                             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[40px] overflow-hidden shadow-sm">
                                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
                                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <Truck className="w-4 h-4 text-warning" /> Logistics Matrix
+                                        <Truck className="w-4 h-4 text-warning" /> Dispatch details
                                     </h3>
                                 </div>
                                 <div className="p-8 grid grid-cols-2 gap-6">
@@ -234,10 +234,10 @@ const DeliveryChallanDetail = () => {
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="bg-slate-50/50 dark:bg-slate-950/50">
-                                            <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-16 text-center">Node</th>
+                                            <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 w-16 text-center">No.</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800">Product Specification</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800 text-center">Quantity</th>
-                                            <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800">Unit</th>
+                                            <th className="text-center px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800">Unit</th>
                                             <th className="px-8 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-200 dark:border-slate-800">Directives</th>
                                         </tr>
                                     </thead>
@@ -336,7 +336,7 @@ const DeliveryChallanDetail = () => {
                                 <div className="flex gap-4">
                                     <div className="w-1 bg-success rounded-full" />
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Protocol Created</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Created</p>
                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">{new Date(challan.createdAt).toLocaleString()}</p>
                                     </div>
                                 </div>
@@ -364,7 +364,7 @@ const DeliveryChallanDetail = () => {
                             <div className="w-20 h-20 bg-success/10 text-success rounded-sm flex items-center justify-center mx-auto mb-6">
                                 <Receipt className="w-10 h-10" />
                             </div>
-                            <h3 className="text-2xl font-display font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Transition Protocol?</h3>
+                            <h3 className="text-2xl font-display font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Change status?</h3>
                             <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-8 leading-relaxed">
                                 Transition this dispatch protocol to a Fiscal Invoice? This will lock the logistical matrix and initiate billing.
                             </p>

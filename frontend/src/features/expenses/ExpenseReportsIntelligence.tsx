@@ -49,7 +49,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
             <div className="flex items-center justify-center h-96">
                 <div className="flex flex-col items-center gap-4">
                     <Activity className="w-12 h-12 text-primary animate-pulse" />
-                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Compiling Financial Intelligence...</p>
+                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Preparing report…</p>
                 </div>
             </div>
         );
@@ -63,7 +63,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
                     <div>
                         <h2 className="page-title flex items-center gap-2">
                             <BarChart3 className="w-6 h-6 text-primary" />
-                            Expense Reports Intelligence
+                            Expense reports
                         </h2>
                         <p className="text-sm text-slate-500 mt-0.5">
                             Auditable insights for <span className="font-black text-primary">{report?.report_period || 'Current Period'}</span>

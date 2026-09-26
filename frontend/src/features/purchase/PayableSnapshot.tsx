@@ -144,7 +144,7 @@ const PayableSnapshot: React.FC = () => {
                                                 onClick={() => navigate('/purchase/payments/add', { state: { vendorId: sup.supplierId || sup._id } })}
                                                 className="w-full mt-3 py-2 bg-white text-black text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
                                             >
-                                                Initialize Settlement <ArrowUpRight className="w-3 h-3" />
+                                                Pay now <ArrowUpRight className="w-3 h-3" />
                                             </button>
                                         </div>
                                     ))}
@@ -152,7 +152,7 @@ const PayableSnapshot: React.FC = () => {
                                     {topOverdueSuppliers.length === 0 && (
                                         <div className="py-12 text-center opacity-30">
                                             <ShieldCheck className="w-12 h-12 mx-auto mb-4" />
-                                            <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">Institutional Integrity Intact<br/>No Critical Overdue Detected</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">No overdue payables<br/>No Critical Overdue Detected</p>
                                         </div>
                                     )}
                                 </div>
@@ -173,7 +173,7 @@ const PayableSnapshot: React.FC = () => {
                                 <div className="p-3 bg-white dark:bg-slate-900 rounded-sm text-warning shadow-sm border border-warning-line dark:border-warning/20">
                                     <TrendingUp className="w-6 h-6" />
                                 </div>
-                                <h4 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest leading-none">Institutional Advisory</h4>
+                                <h4 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest leading-none">Advice</h4>
                             </div>
                             <div className="space-y-4">
                                 {totalOverdue > 0 ? (

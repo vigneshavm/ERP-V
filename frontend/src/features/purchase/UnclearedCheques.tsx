@@ -106,7 +106,7 @@ const UnclearedCheques: React.FC = () => {
                 {/* Audit Control Matrix */}
                 <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="relative w-full md:w-[500px]">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Instrument Search</label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Search cheques</label>
                         <div className="relative">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
@@ -120,7 +120,7 @@ const UnclearedCheques: React.FC = () => {
                     </div>
                     <div className="flex items-end gap-6 w-full md:w-auto">
                         <div className="text-right">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Vault Aggregate</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Total</p>
                             <p className="text-3xl font-black text-warning tabular-nums tracking-tighter">₹{totalPending.toLocaleString()}</p>
                         </div>
                         <button className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-sm text-slate-400 hover:text-primary transition-all active:scale-95">
@@ -135,10 +135,10 @@ const UnclearedCheques: React.FC = () => {
                         <table className="w-full text-left">
                             <thead className="bg-slate-50/50 dark:bg-slate-900/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                                 <tr>
-                                    <th className="px-8 py-5">Node Entry Date</th>
+                                    <th className="px-8 py-5">Entry date</th>
                                     <th className="px-8 py-5">Fiscal Maturity (Due)</th>
-                                    <th className="px-8 py-5">Institutional Payee & Bank</th>
-                                    <th className="px-8 py-5 text-right">Node Quantum (INR)</th>
+                                    <th className="px-8 py-5">Payee & bank</th>
+                                    <th className="px-8 py-5 text-right">Amount (₹)</th>
                                     <th className="px-8 py-5 text-center">Clearance Controls</th>
                                 </tr>
                             </thead>
@@ -148,7 +148,7 @@ const UnclearedCheques: React.FC = () => {
                                         <td colSpan={5} className="px-8 py-24 text-center">
                                             <div className="flex flex-col items-center gap-6 opacity-30 animate-pulse">
                                                 <ShieldCheck className="w-12 h-12" />
-                                                <p className="text-[10px] font-black uppercase tracking-widest">Synchronizing Vault Matrix...</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest">Loading…</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -160,7 +160,7 @@ const UnclearedCheques: React.FC = () => {
                                                     <CheckCircle2 className="w-10 h-10" />
                                                 </div>
                                                 <div>
-                                                    <p className="font-black text-sm uppercase tracking-widest text-center">Vault Fully Reconciled</p>
+                                                    <p className="font-black text-sm uppercase tracking-widest text-center">All cheques cleared</p>
                                                     <p className="text-xs font-bold mt-2 italic leading-relaxed text-center">No uncleared instruments detected in the institutional vault.</p>
                                                 </div>
                                             </div>
@@ -186,7 +186,7 @@ const UnclearedCheques: React.FC = () => {
                                                         </span>
                                                     </div>
                                                     {!isDue && <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1 italic">Maturity in {daysToClear} Days</p>}
-                                                    {isDue && <p className="text-[9px] font-black text-danger uppercase tracking-widest mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Overdue Node</p>}
+                                                    {isDue && <p className="text-[9px] font-black text-danger uppercase tracking-widest mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Overdue</p>}
                                                 </td>
                                                 <td className="px-8 py-6">
                                                     <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter truncate max-w-[200px]">{cheque.supplierId?.businessName || 'Unknown Entity'}</p>

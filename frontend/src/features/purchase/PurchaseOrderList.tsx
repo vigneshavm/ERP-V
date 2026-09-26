@@ -80,7 +80,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                 <div className="flex flex-col xl:flex-row gap-8 items-start xl:items-center justify-between">
                     <div className="flex flex-col md:flex-row gap-6 w-full xl:w-auto">
                         <div className="relative flex-1 md:w-80">
-                            <label className="ui-label mb-3 block">Node Search</label>
+                            <label className="ui-label mb-3 block">Search</label>
                             <div className="relative">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input
@@ -179,7 +179,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                 <div className="flex items-center gap-2">Fiscal Date <ArrowUpDown className="w-3 h-3" /></div>
                             </th>
                             <th className="px-8 py-5 ui-label cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('po_number')}>
-                                <div className="flex items-center gap-2">Node ID <ArrowUpDown className="w-3 h-3" /></div>
+                                <div className="flex items-center gap-2">PO No. <ArrowUpDown className="w-3 h-3" /></div>
                             </th>
                             <th className="px-8 py-5 ui-label cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('vendor_name')}>
                                 <div className="flex items-center gap-2">Supplier <ArrowUpDown className="w-3 h-3" /></div>
@@ -187,7 +187,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                             <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                             <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Fulfillment</th>
                             <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('total_amount')}>
-                                <div className="flex items-center justify-end gap-2">Quantum (INR) <ArrowUpDown className="w-3 h-3" /></div>
+                                <div className="flex items-center justify-end gap-2">Amount (₹) <ArrowUpDown className="w-3 h-3" /></div>
                             </th>
                             <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
                         </tr>

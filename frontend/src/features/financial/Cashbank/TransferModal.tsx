@@ -53,7 +53,7 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Source Node (From)</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">From account</label>
                             <select
                                 required
                                 value={formData.fromAccount}
@@ -76,7 +76,7 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Destination Node (To)</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">To account</label>
                             <select
                                 required
                                 value={formData.toAccount}

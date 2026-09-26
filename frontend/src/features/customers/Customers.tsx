@@ -149,7 +149,7 @@ const Customers = () => {
                             <thead>
                                 <tr className="bg-slate-50/80 dark:bg-slate-800/50 text-[10px] uppercase tracking-[0.15em] font-black text-slate-400">
                                     <th className="px-8 py-5">Strategic Partner</th>
-                                    <th className="px-8 py-5">Communication Node</th>
+                                    <th className="px-8 py-5">Contact</th>
                                     <th className="px-8 py-5">Collection Risk</th>
                                     <th className="px-8 py-5">Operational Status</th>
                                     <th className="px-8 py-5 text-right">Terminal Actions</th>
@@ -267,7 +267,7 @@ const Customers = () => {
                             <Trash2 className="w-8 h-8 text-danger" />
                         </div>
                         <div>
-                            <p className="text-lg font-black text-slate-800 dark:text-white leading-tight">Terminate Partner Link?</p>
+                            <p className="text-lg font-black text-slate-800 dark:text-white leading-tight">Remove this customer?</p>
                             <p className="text-xs text-slate-500 font-medium mt-2 leading-relaxed">
                                 Terminating this consumer record will archive all associated marketplace behaviors. Historical transaction integrity will be preserved for auditing.
                             </p>

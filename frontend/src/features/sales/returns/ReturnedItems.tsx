@@ -131,7 +131,7 @@ const ReturnedItems = () => {
                             <h1 className="page-title text-main flex items-center gap-3">
                                 Sales <span className="text-danger">Returns</span>
                                 <span className="px-3 py-1 bg-danger/10 border border-danger/20 text-danger rounded-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                    <RotateCcw className="w-3 h-3" /> Ledger Reversal
+                                    <RotateCcw className="w-3 h-3" /> Returned
                                 </span>
                             </h1>
                             <div className="flex items-center gap-2 mt-1">

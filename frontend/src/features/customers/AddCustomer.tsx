@@ -72,7 +72,7 @@ const AddCustomer = () => {
                         <Info className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                        <p className="text-xs font-black text-primary dark:text-primary uppercase tracking-widest leading-none mt-1">Onboarding Protocol</p>
+                        <p className="text-xs font-black text-primary dark:text-primary uppercase tracking-widest leading-none mt-1">New customer</p>
                         <p className="text-[11px] text-primary dark:text-primary font-medium mt-2 leading-relaxed italic">All consumer records are multi-indexed by phone number and email to prevent marketplace duplication. Ensure accuracy of contact nodes for logistics integrity.</p>
                     </div>
                 </div>

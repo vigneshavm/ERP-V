@@ -111,7 +111,7 @@ const PayrollDashboard = () => {
                                 <tr className="text-xs text-slate-500 border-b border-slate-100 bg-slate-50/50">
                                     <th className="px-6 py-3 font-medium">Month/Year</th>
                                     <th className="px-6 py-3 font-medium">Run Date</th>
-                                    <th className="px-6 py-3 font-medium">Total Payout</th>
+                                    <th className="text-right px-6 py-3 font-medium">Total Payout</th>
                                     <th className="px-6 py-3 font-medium">Status</th>
                                     <th className="px-6 py-3 font-medium text-right">Actions</th>
                                 </tr>
@@ -125,7 +125,7 @@ const PayrollDashboard = () => {
                                         <td className="px-6 py-4 text-sm text-slate-500">
                                             {run.processedDate || run.createdAt ? formatDateISO(new Date(run.processedDate || run.createdAt)) : 'N/A'}
                                         </td>
-                                        <td className="px-6 py-4 text-sm font-medium text-slate-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
+                                        <td className="text-right tabular-nums px-6 py-4 text-sm font-medium text-slate-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">
                                             <StatusBadge status={run.status} />
                                         </td>

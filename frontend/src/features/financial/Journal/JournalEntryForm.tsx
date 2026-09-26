@@ -167,7 +167,7 @@ const JournalEntryForm: React.FC = () => {
                             {/* Column Headers */}
                             <div className="hidden md:grid grid-cols-12 gap-6 px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                 <div className="col-span-3">Account Code</div>
-                                <div className="col-span-3">Entity Description</div>
+                                <div className="col-span-3">Description</div>
                                 <div className="col-span-2 text-right">Debit (INR)</div>
                                 <div className="col-span-2 text-right">Credit (INR)</div>
                                 <div className="col-span-2"></div>
@@ -233,7 +233,7 @@ const JournalEntryForm: React.FC = () => {
                                 <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20">
                                     <Plus className="w-3.5 h-3.5" />
                                 </div>
-                                Append Ledger Node
+                                Add line
                             </button>
                         </div>
                     </div>

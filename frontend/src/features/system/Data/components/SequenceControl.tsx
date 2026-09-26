@@ -91,7 +91,7 @@ const SequenceControl: React.FC = () => {
                 <div className="space-y-6">
                     <div className="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
                         <ShieldCheck className="absolute -top-10 -right-10 w-40 h-40 opacity-5 group-hover:rotate-12 transition-all duration-1000" />
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-6 italic">Sequence Intelligence</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-6 italic">Number series</h4>
 
                         <ul className="space-y-4">
                             <li className="flex gap-3">
@@ -109,7 +109,7 @@ const SequenceControl: React.FC = () => {
                         </ul>
 
                         <div className="mt-8 pt-6 border-t border-white/10 space-y-4">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Validation Protocol</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Checks</p>
                             {[
                                 { label: 'Zero-Gap Check', status: 'PASS' },
                                 { label: 'Branch Isolation', status: 'ACTIVE' },

@@ -361,7 +361,7 @@ const SupplierDetail: React.FC = () => {
                   <span className="text-xs font-black text-primary">{supplier.contactNo}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email Node</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email</span>
                   <span className="text-xs font-black text-slate-600 dark:text-slate-300 truncate max-w-[150px]">{supplier.email || 'N/A'}</span>
                 </div>
               </div>
@@ -376,7 +376,7 @@ const SupplierDetail: React.FC = () => {
                   <Package className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-800 dark:text-white leading-none tracking-tight">Catalog Intelligence</h3>
+                  <h3 className="text-lg font-black text-slate-800 dark:text-white leading-none tracking-tight">Catalogue</h3>
                   <p className="text-[11px] font-bold text-slate-400 uppercase mt-1 tracking-wider">Items regularly sourced</p>
                 </div>
               </div>
