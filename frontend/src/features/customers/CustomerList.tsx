@@ -12,7 +12,8 @@ import {
     Eye,
     Edit,
     Star,
-    ShoppingBag
+    ShoppingBag,
+    Users
 } from 'lucide-react';
 import Customer360Modal from './Customer360Modal';
 import { formatDate } from '../../utils/helpers';

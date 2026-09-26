@@ -23,6 +23,7 @@ import {
     Star,
     X,
     Loader2,
+    Tag,
 } from 'lucide-react';
 import PageHeader from '../../components/shared/Layout/PageHeader';
 
