@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const PurchaseRegister: React.FC = () => {
     const navigate = useNavigate();
@@ -194,23 +195,7 @@ const PurchaseRegister: React.FC = () => {
     const totalBilledValue = displayOrders.filter(o => o.status === 'COMPLETED').reduce((acc, o) => acc + ((o as any).totalAmount || (o as any).total_amount || 0), 0);
     const pendingCount = displayOrders.filter(o => ['Pending', 'Pending Approval', 'Draft'].includes(o.status)).length;
 
-    const getStatusBadge = (status: string) => {
-        const s = status.toUpperCase();
-        switch (s) {
-            case 'APPROVED':
-            case 'COMPLETED':
-                return <span className="px-3 py-1 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><CheckCircle className="w-3 h-3" /> {status === 'COMPLETED' ? 'Completed' : 'Approved'}</span>;
-            case 'PENDING':
-            case 'PENDING APPROVAL':
-            case 'DRAFT':
-                return <span className="px-3 py-1 bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><Clock className="w-3 h-3" /> {s === 'DRAFT' ? 'Draft' : 'Pending'}</span>;
-            case 'REJECTED':
-            case 'CANCELLED':
-                return <span className="px-3 py-1 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><XCircle className="w-3 h-3" /> {status}</span>;
-            default:
-                return <span className="px-3 py-1 bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 text-[10px] font-black uppercase tracking-widest rounded-full">{status}</span>;
-        }
-    };
+    const getStatusBadge = (status: string) => <StatusBadge status={status} />;
 
     const handleView = (order: PurchaseOrder) => {
         navigate(`/purchase/orders/${order._id || (order as any).id}`);

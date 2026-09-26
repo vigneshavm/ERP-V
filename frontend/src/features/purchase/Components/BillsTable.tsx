@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FileText, Eye, CreditCard, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { Bill } from '../../../redux/slices/billSlice';
 import { formatDate } from '../../../utils/helpers';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 interface Props {
     bills: Bill[];
@@ -15,61 +16,10 @@ const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
 
 const getStatusBadge = (status: string) => {
+    // A "received" bill is waiting to be paid, so it needs attention.
     const s = status?.toLowerCase();
-    switch (s) {
-        case 'paid':
-            return (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wider">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    Paid
-                </span>
-            );
-        case 'matched':
-        case 'approved':
-            return (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 uppercase tracking-wider">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    {status}
-                </span>
-            );
-        case 'partial':
-        case 'received':
-            return (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider">
-                    <Clock className="w-3.5 h-3.5" />
-                    {status}
-                </span>
-            );
-        case 'disputed':
-        case 'rejected':
-            return (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 uppercase tracking-wider">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    {status}
-                </span>
-            );
-        case 'hold':
-            return (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 uppercase tracking-wider">
-                    <Clock className="w-3.5 h-3.5" />
-                    Hold
-                </span>
-            );
-        case 'unpaid':
-            // Should theoretically not happen with correct data, but kept for safety fallback
-            return (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 uppercase tracking-wider">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    Unpaid
-                </span>
-            );
-        default:
-            return (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-slate-50 text-slate-700 border border-slate-200 uppercase tracking-wider">
-                    {status || 'Unknown'}
-                </span>
-            );
-    }
+    if (s === 'received') return <StatusBadge status={status} label="Awaiting payment" tone="warning" />;
+    return <StatusBadge status={status || 'DRAFT'} />;
 };
 
 const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete }) => {

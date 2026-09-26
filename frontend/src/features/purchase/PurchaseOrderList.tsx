@@ -1,6 +1,7 @@
 ﻿import React, { useState, useMemo } from 'react';
 import { Search, FileText, CheckCircle, Clock, AlertCircle, Lock, MoreHorizontal, Trash2, Printer, Download, Eye, FileSpreadsheet, Info, ArrowUpDown, Activity } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderStatus, PurchaseOrderItem } from "../../hooks/usePurchaseOrders";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 interface PurchaseOrderListProps {
     orders?: PurchaseOrder[];
@@ -68,27 +69,8 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
     };
 
     const getStatusBadge = (status: PurchaseOrderStatus) => {
-        const baseClass = "px-3 py-1 text-xs font-black uppercase tracking-widest rounded-full flex items-center gap-1.5";
-        switch (status) {
-            case 'APPROVED':
-                return <span className={`${baseClass} bg-cyan-50 text-cyan-600 dark:bg-cyan-900/20 dark:text-info`}><CheckCircle className="w-3 h-3" /> Approved</span>;
-            case 'SENT_TO_VENDOR':
-                return <span className={`${baseClass} bg-sky-50 text-sky-600 dark:bg-sky-900/20 dark:text-info`}><Activity className="w-3 h-3" /> Sent to Vendor</span>;
-            case 'COMPLETED':
-            case 'RECEIVED':
-            case 'Paid':
-                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success`}><Lock className="w-3 h-3" /> {status}</span>;
-            case 'PARTIALLY_RECEIVED':
-                return <span className={`${baseClass} bg-indigo-50 text-primary dark:bg-indigo-900/20 dark:text-primary`}><Activity className="w-3 h-3" /> Partial</span>;
-            case 'Billed':
-                return <span className={`${baseClass} bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-accent`}><FileText className="w-3 h-3" /> Billed</span>;
-            case 'SUBMITTED':
-                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning`}><Clock className="w-3 h-3" /> Pending</span>;
-            case 'CANCELLED':
-                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger`}><AlertCircle className="w-3 h-3" /> Cancelled</span>;
-            default:
-                return <span className={`${baseClass} bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400`}>{status}</span>;
-        }
+        const labels: Record<string, string> = { SUBMITTED: 'Pending approval', PARTIALLY_RECEIVED: 'Part received', SENT_TO_VENDOR: 'Sent to supplier' };
+        return <StatusBadge status={status} label={labels[status]} />;
     };
 
     return (

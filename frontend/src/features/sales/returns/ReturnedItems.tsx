@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from "../../../services/api";
 import Layout from "../../../components/shared/Layout/Layout";
-import { getColorClasses } from "../../../utils/tailwindColorClasses";
+import { getColorClasses } from "../../../utils/tailwindColorClasses";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 import {
     RotateCcw,
     Plus,
@@ -272,13 +273,7 @@ const ReturnedItems = () => {
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <div className="flex items-center justify-center">
-                                                        <span className={`px-3 py-1 rounded-sm text-[9px] font-black uppercase tracking-widest border ${
-                                                            rec.status === 'processed' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 
-                                                            rec.status === 'pending' ? 'bg-amber-100 text-amber-800 border-amber-200' : 
-                                                            'bg-blue-100 text-blue-800 border-blue-200'
-                                                        }`}>
-                                                            {rec.status}
-                                                        </span>
+                                                        <StatusBadge status={rec.status} />
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-5 text-right">

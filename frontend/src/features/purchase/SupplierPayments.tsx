@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import api from "../../services/api";
 import { PurchasePayment, PurchasePaymentStatus as PaymentStatus } from "../../types/purchase";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const SupplierPayments: React.FC = () => {
     const navigate = useNavigate();
@@ -51,20 +52,7 @@ const SupplierPayments: React.FC = () => {
         fetchPayments();
     }, []);
 
-    const getStatusBadge = (status: PaymentStatus) => {
-        switch (status) {
-            case 'Cleared':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase tracking-wider flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Cleared</span>;
-            case 'Pending':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-100 uppercase tracking-wider flex items-center gap-1"><Clock className="w-3 h-3" /> Pending</span>;
-            case 'Failed':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-50 text-red-600 border border-red-100 uppercase tracking-wider flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Failed</span>;
-            case 'Reversed':
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-500 border border-neutral-200 uppercase tracking-wider">Reversed</span>;
-            default:
-                return <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-neutral-50 text-neutral-400 uppercase tracking-wider">{status}</span>;
-        }
-    };
+    const getStatusBadge = (status: PaymentStatus) => <StatusBadge status={status} />;
 
     const formatPaymentMethod = (method: PurchasePayment['method']) => {
         switch (method) {

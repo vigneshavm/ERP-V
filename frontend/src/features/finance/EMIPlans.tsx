@@ -8,7 +8,8 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { getEMIPlans, createEMIPlan, recordInstallmentPayment, EMIPlan } from "../../redux/slices/emiPlanSlice";
 import { getAllCustomers } from "../../redux/slices/customerSlice";
 import { getAllSalesInvoices } from "../../redux/slices/salesInvoiceSlice";
-import { formatDate } from '../../utils/helpers';
+import { formatDate } from '../../utils/helpers';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 // Textilesoft's "EMIMasterEntry" -- installment plans against a sale, tracked separately from
 // the normal credit-sale ledger (Customer.dues) since each installment has its own due
@@ -144,9 +145,7 @@ const EMIPlans: React.FC = () => {
                                                 {plan.installments.filter(i => i.status === 'PAID').length} / {plan.installments.length} paid
                                             </td>
                                             <td className="px-6 py-4 text-center">
-                                                <span className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase ${plan.status === 'COMPLETED' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : plan.status === 'DEFAULTED' ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-indigo-50 border-indigo-100 text-primary'}`}>
-                                                    {plan.status}
-                                                </span>
+                                                <StatusBadge status={plan.status} />
                                             </td>
                                             <td className="px-6 py-4 text-right text-xs text-neutral-500">
                                                 {nextPending === -1 ? (

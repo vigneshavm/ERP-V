@@ -1,6 +1,7 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
 import { formatCurrency, formatDate} from "@/utils/helpers";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 interface ChequeLedgerProps {
     sectorCheques: any[];
@@ -35,12 +36,7 @@ const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStat
                                 </td>
                                 <td className="py-4 text-right font-black">₹{formatCurrency(cheque.amount)}</td>
                                 <td className="py-4 text-center">
-                                    <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${cheque.status === 'CLEARED' ? 'bg-success/10 text-success' :
-                                        cheque.status === 'BOUNCED' ? 'bg-error/10 text-error' :
-                                            'bg-warning/10 text-warning'
-                                        }`}>
-                                        {cheque.status}
-                                    </span>
+                                    <StatusBadge status={cheque.status} />
                                 </td>
                                 <td className="py-4 pr-4 text-right">
                                     {cheque.status === 'PENDING' && (

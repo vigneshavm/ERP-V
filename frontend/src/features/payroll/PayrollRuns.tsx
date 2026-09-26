@@ -7,7 +7,8 @@ import { RootState, AppDispatch } from '../../redux/store';
 import { fetchPayrollRuns, generatePayrollRun } from '../../redux/slices/payrollSlice';
 import { PlayCircle, Eye, Printer } from 'lucide-react';
 import { formatDateISO } from '../../utils/helpers';
-import api from '../../services/api';
+import api from '../../services/api';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const PayrollRuns = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -127,9 +128,7 @@ const PayrollRuns = () => {
                                         <td className="px-6 py-3 text-sm text-gray-500">{p.employeeId?.role || 'Staff'}</td>
                                         <td className="px-6 py-3 text-right font-medium text-gray-900">₹{p.netPay.toLocaleString()}</td>
                                         <td className="px-6 py-3">
-                                            <span className={`text-xs px-2 py-0.5 rounded-full ${p.paymentStatus === 'PAID' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                                {p.paymentStatus}
-                                            </span>
+                                            <StatusBadge status={p.paymentStatus} />
                                         </td>
                                         <td className="px-6 py-3 text-right">
                                             <button
@@ -246,12 +245,7 @@ const PayrollRuns = () => {
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                                                ${run.status === 'PAID' ? 'bg-green-100 text-green-800' :
-                                                    run.status === 'APPROVED' ? 'bg-blue-100 text-blue-800' :
-                                                        'bg-yellow-100 text-yellow-800'}`}>
-                                                {run.status.toLowerCase()}
-                                            </span>
+                                            <StatusBadge status={run.status} />
                                         </td>
                                         <td className="px-6 py-4 flex justify-end gap-3 text-gray-400">
                                             <button

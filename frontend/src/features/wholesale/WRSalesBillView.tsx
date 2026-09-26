@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Loader2, FileText } from 'lucide-react';
 import api from '../../services/api';
 import Layout from '../../components/shared/Layout/index';
-import PageHeader from '../../components/shared/Layout/PageHeader';
+import PageHeader from '../../components/shared/Layout/PageHeader';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 interface WRInvoiceRow {
     _id: string;
@@ -69,13 +70,7 @@ const WRSalesBillView: React.FC = () => {
                                         <td className="px-6 py-4 text-right font-semibold">₹{inv.totalAmount?.toFixed(2)}</td>
                                         <td className="px-6 py-4 text-right text-emerald-600">₹{inv.paidAmount?.toFixed(2)}</td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                                                inv.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-700' :
-                                                inv.paymentStatus === 'partial' ? 'bg-amber-100 text-amber-700' :
-                                                'bg-red-100 text-red-700'
-                                            }`}>
-                                                {inv.paymentStatus}
-                                            </span>
+                                            <StatusBadge status={inv.paymentStatus} />
                                         </td>
                                     </tr>
                                 ))}

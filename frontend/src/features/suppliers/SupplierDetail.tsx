@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 
 import SupplierSubNav from './SupplierSubNav';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const SupplierDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -296,9 +297,7 @@ const SupplierDetail: React.FC = () => {
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h2 className="text-2xl font-black text-slate-800 dark:text-white leading-none tracking-tight">{supplier.businessName}</h2>
-                  <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${supplier.status === 'active' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200'}`}>
-                    {supplier.status}
-                  </span>
+                  <StatusBadge status={supplier.status} />
                 </div>
                 <div className="grid grid-cols-2 gap-y-4 gap-x-8 mt-6">
                   <div className="space-y-1">

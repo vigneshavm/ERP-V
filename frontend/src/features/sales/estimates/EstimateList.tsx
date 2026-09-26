@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Layout from '../../../components/shared/Layout/index';
 import { Estimate } from '../../../types/sales';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const PAGE_SIZE = 10;
 
@@ -67,15 +68,6 @@ const EstimateList = () => {
         return { total, value, accepted, conversion };
     }, [estimates]);
 
-    const getStatusStyle = (status: string) => {
-        switch (status?.toLowerCase()) {
-            case 'accepted': return 'text-success bg-success/10 border-success/30';
-            case 'sent':     return 'text-warning bg-warning/10 border-warning/30';
-            case 'rejected': return 'text-danger bg-danger/10 border-danger/30';
-            case 'draft':    return 'text-secondary bg-surface border-default';
-            default:         return 'text-secondary bg-surface border-default';
-        }
-    };
 
     const handleSort = (field: typeof sortField) => {
         if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
@@ -317,9 +309,7 @@ const EstimateList = () => {
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <div className="flex justify-center">
-                                                        <span className={`px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border ${getStatusStyle(est.status)}`}>
-                                                            {est.status}
-                                                        </span>
+                                                        <StatusBadge status={est.status} />
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-5">

@@ -78,10 +78,10 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
                     </div>
 
                     <div className="flex gap-2">
-                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="PRESENT" label="Full Day" icon={CheckCircle2} colorClass="bg-emerald-50 border-emerald-500 text-emerald-600" />
-                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="HALF" label="Half Day" icon={AlertCircle} colorClass="bg-amber-50 border-amber-500 text-amber-600" />
-                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="QUARTER" label="Quarter" icon={PieChart} colorClass="bg-purple-50 border-purple-500 text-purple-600" />
-                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="ABSENT" label="Absent" icon={XCircle} colorClass="bg-rose-50 border-rose-500 text-rose-600" />
+                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="PRESENT" label="Full Day" icon={CheckCircle2} colorClass="bg-success-soft border-success text-success" />
+                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="HALF" label="Half Day" icon={AlertCircle} colorClass="bg-warning-soft border-warning text-warning" />
+                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="QUARTER" label="Quarter" icon={PieChart} colorClass="bg-warning-soft border-warning text-warning" />
+                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="ABSENT" label="Absent" icon={XCircle} colorClass="bg-danger-soft border-danger text-danger" />
                     </div>
 
                     {status !== 'ABSENT' && (

@@ -26,6 +26,7 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { formatDate } from '../../../utils/helpers';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const SalesInvoice = () => {
   const navigate = useNavigate();
@@ -104,18 +105,6 @@ const SalesInvoice = () => {
   const endIndex = startIndex + itemsPerPage;
   const paginatedInvoices = filteredInvoices.slice(startIndex, endIndex);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "paid":
-        return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-success border-emerald-200 dark:border-emerald-800";
-      case "partial":
-        return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-warning border-amber-200 dark:border-amber-800";
-      case "unpaid":
-        return "bg-danger/10 text-danger dark:bg-rose-900/30 dark:text-danger border-rose-200 dark:border-rose-800";
-      default:
-        return "bg-neutral-100 text-main dark:bg-neutral-800 dark:text-secondary opacity-50 border-neutral-200 dark:border-neutral-700";
-    }
-  };
 
   // Get metrics from backend summary (source of truth)
   const totalInvoices = summary?.totalInvoices || 0;
@@ -293,10 +282,7 @@ const SalesInvoice = () => {
                           ₹{invoice.paidAmount.toLocaleString()}
                         </td>
                         <td className="px-6 py-4 text-center">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
-                                ${getStatusColor(invoice.paymentStatus)}`}>
-                            {invoice.paymentStatus}
-                          </span>
+                          <StatusBadge status={invoice.paymentStatus} />
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2">
@@ -333,10 +319,7 @@ const SalesInvoice = () => {
                           {isCustomer(invoice.customer) ? invoice.customer.name : "Walk-in Customer"}
                         </div>
                       </div>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
-                                ${getStatusColor(invoice.paymentStatus)}`}>
-                        {invoice.paymentStatus}
-                      </span>
+                      <StatusBadge status={invoice.paymentStatus} />
                     </div>
                     <div className="flex justify-between items-center mt-3 text-xs text-secondary opacity-70">
                       <span>{formatDate(invoice.createdAt)}</span>

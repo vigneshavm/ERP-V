@@ -13,41 +13,50 @@ interface MetricCardProps {
     compact?: boolean;
 }
 
-const colorClasses: Record<string, {
-    glow: string;
-    icon: string;
-    progress: string;
-}> = {
-    primary: {
+type MetricTone = 'brand' | 'success' | 'danger' | 'warning' | 'info' | 'neutral';
+
+// Tiles take their colour from the shared tokens in index.css. Older colour
+// names are kept as aliases so existing callers keep working.
+const toneClasses: Record<MetricTone, { glow: string; icon: string; progress: string }> = {
+    brand: {
         glow: 'bg-primary/10',
-        icon: 'bg-primary/10 dark:bg-primary/20 text-primary group-hover:bg-primary/20',
+        icon: 'bg-primary-soft text-primary',
         progress: 'bg-primary'
     },
-    blue: {
-        glow: 'bg-blue-500/10',
-        icon: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 group-hover:bg-blue-500/10',
-        progress: 'bg-blue-500'
+    success: {
+        glow: 'bg-success/10',
+        icon: 'bg-success-soft text-success',
+        progress: 'bg-success'
     },
-    indigo: {
-        glow: 'bg-indigo-500/10',
-        icon: 'bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 group-hover:bg-indigo-500/10',
-        progress: 'bg-indigo-500'
+    danger: {
+        glow: 'bg-danger/10',
+        icon: 'bg-danger-soft text-danger',
+        progress: 'bg-danger'
     },
-    emerald: {
-        glow: 'bg-emerald-500/10',
-        icon: 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 group-hover:bg-emerald-500/10',
-        progress: 'bg-emerald-500'
+    warning: {
+        glow: 'bg-warning/10',
+        icon: 'bg-warning-soft text-warning',
+        progress: 'bg-warning'
     },
-    rose: {
-        glow: 'bg-rose-500/10',
-        icon: 'bg-rose-100 dark:bg-rose-900/20 text-rose-600 group-hover:bg-rose-500/10',
-        progress: 'bg-rose-500'
+    info: {
+        glow: 'bg-info/10',
+        icon: 'bg-info-soft text-info',
+        progress: 'bg-info'
     },
-    slate: {
-        glow: 'bg-slate-500/10',
-        icon: 'bg-slate-100 dark:bg-slate-900/20 text-slate-600 group-hover:bg-slate-500/10',
-        progress: 'bg-slate-500'
+    neutral: {
+        glow: 'bg-secondary/10',
+        icon: 'bg-input text-secondary',
+        progress: 'bg-secondary'
     }
+};
+
+const colorAlias: Record<string, MetricTone> = {
+    primary: 'brand', brand: 'brand', indigo: 'brand', blue: 'brand', violet: 'brand', purple: 'brand',
+    success: 'success', emerald: 'success', green: 'success',
+    danger: 'danger', rose: 'danger', red: 'danger',
+    warning: 'warning', amber: 'warning', orange: 'warning', yellow: 'warning',
+    info: 'info', sky: 'info', cyan: 'info', teal: 'info',
+    neutral: 'neutral', slate: 'neutral', gray: 'neutral'
 };
 
 const MetricCard: React.FC<MetricCardProps> = ({
@@ -62,7 +71,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
     compact = false
 }) => {
     const isDark = variant === 'dark';
-    const classes = colorClasses[color] || colorClasses.primary;
+    const classes = toneClasses[colorAlias[color] ?? 'brand'];
 
     return (
         <div className={`${isDark
@@ -108,7 +117,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                 <div className={`${compact ? 'mt-1.5' : 'mt-2'} relative z-10`}>
                     <p className={`micro flex items-center gap-1.5 ${trend === 'up' ? 'text-success' :
                         trend === 'down' ? 'text-danger' :
-                            'text-neutral-400'
+                            'text-muted'
                         }`}>
                         {trend === 'up' && <TrendingUp size={10} strokeWidth={3} />}
                         {trend === 'down' && <TrendingDown size={10} strokeWidth={3} />}

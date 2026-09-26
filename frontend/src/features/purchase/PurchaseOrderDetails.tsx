@@ -10,6 +10,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AppDispatch } from '../../redux/store';
 import { fetchPurchaseById, addGRN } from '../../redux/slices/purchaseSlice';
 import { createGRN, mapGrnToFrontendGRN } from '../../services/grnService';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 interface Props {
     order?: PurchaseOrder;
@@ -169,9 +170,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                             <h2 className="text-3xl font-black tracking-tighter text-neutral-900 dark:text-white uppercase">
                                 #{order.po_number}
                             </h2>
-                            <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full ${order.status === 'CANCELLED' ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/20' : 'bg-primary/10 text-primary'}`}>
-                                {order.status}
-                            </span>
+                            <StatusBadge status={order.status} />
                         </div>
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-1 italic">Node initialized on {order.created_at ? new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A'}</p>
                     </div>

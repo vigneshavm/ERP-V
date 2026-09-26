@@ -133,7 +133,7 @@ const CashBankOverview: React.FC = () => {
                                 {data.cheques.rows.slice(0, 6).map(c => (
                                     <li key={c.id} className="flex items-center justify-between gap-3 py-2">
                                         <span className="min-w-0 truncate">{c.type === 'RECEIVED' ? 'From' : 'To'} {c.payee} <span className="text-slate-400">· {dateText(c.date)}{c.date < data.today ? ' · past date' : ''}</span></span>
-                                        <span className={`font-bold tabular-nums ${c.type === 'RECEIVED' ? 'text-emerald-600' : 'text-rose-600'}`}>{rupees0(c.amount)}</span>
+                                        <span className="font-bold tabular-nums text-main"><span className="text-secondary" aria-label={c.type === 'RECEIVED' ? 'In' : 'Out'}>{c.type === 'RECEIVED' ? '↓ ' : '↑ '}</span>{rupees0(c.amount)}</span>
                                     </li>
                                 ))}
                             </ul>

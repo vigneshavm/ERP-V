@@ -3,6 +3,7 @@ import { Truck, CheckCircle, AlertTriangle, Clock, Eye, Receipt, ClipboardCheck 
 import { GoodsReceivedNote } from '../hooks/useGRNData';
 import { useBranchResolver } from "../../../hooks/useBranchResolver";
 import { formatDate } from '../../../utils/helpers';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 interface GRNTableProps {
     records: GoodsReceivedNote[];
@@ -13,24 +14,7 @@ interface GRNTableProps {
 const GRNTable: React.FC<GRNTableProps> = ({ records, onView, onCreateBill }) => {
     const { getBranchName } = useBranchResolver();
 
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case 'COMPLETE':
-                return <span className="px-2 py-1 bg-success/10 text-success text-xs font-bold rounded-full flex items-center gap-1">
-                    <CheckCircle className="w-3 h-3" /> Complete
-                </span>;
-            case 'PARTIAL':
-                return <span className="px-2 py-1 bg-warning/10 text-warning text-xs font-bold rounded-full flex items-center gap-1">
-                    <AlertTriangle className="w-3 h-3" /> Partial
-                </span>;
-            case 'PENDING':
-                return <span className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 text-xs font-bold rounded-full flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> Pending
-                </span>;
-            default:
-                return null;
-        }
-    };
+    const getStatusBadge = (status: string) => (status ? <StatusBadge status={status} /> : null);
 
     return (
         <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">

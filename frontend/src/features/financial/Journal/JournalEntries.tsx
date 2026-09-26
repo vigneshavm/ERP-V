@@ -6,6 +6,7 @@ import Layout from '../../../components/shared/Layout/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { Plus, Search, Filter, Calendar as CalendarIcon, FileText, ChevronRight, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const JournalEntries: React.FC = () => {
     const dispatch = useDispatch<any>();
@@ -134,12 +135,7 @@ const JournalEntries: React.FC = () => {
                                                     <span className="text-xs font-black text-neutral-900 dark:text-white tabular-nums">{totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                                                 </td>
                                                 <td className="px-8 py-6 whitespace-nowrap text-center">
-                                                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${entry.status === 'POSTED'
-                                                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success'
-                                                        : 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning'
-                                                        }`}>
-                                                        {entry.status}
-                                                    </span>
+                                                    <StatusBadge status={entry.status} />
                                                 </td>
                                                 <td className="px-8 py-6 whitespace-nowrap text-right">
                                                     <button className="p-2 text-neutral-300 hover:text-primary transition-all group-hover:translate-x-1">

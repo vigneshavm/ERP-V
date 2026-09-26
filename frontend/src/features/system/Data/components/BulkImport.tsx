@@ -1,6 +1,7 @@
 ﻿import { useState, ChangeEvent } from 'react';
 import api from "@/services/api";
 import { toast } from 'react-toastify';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 interface ProcessedRow {
     row: number;
@@ -344,12 +345,7 @@ const BulkImport = () => {
                                     <tr key={row.row} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
                                         <td className="px-6 py-3 text-slate-400">{row.row}</td>
                                         <td className="px-6 py-3">
-                                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter ${row.status === 'valid' ? 'bg-emerald-50 text-emerald-600' :
-                                                    row.status === 'warning' ? 'bg-amber-50 text-amber-600' :
-                                                        'bg-rose-50 text-rose-600'
-                                                }`}>
-                                                {row.status}
-                                            </span>
+                                            <StatusBadge status={row.status} />
                                         </td>
                                         <td className="px-6 py-3 text-slate-700 dark:text-slate-300 uppercase truncate max-w-[150px]">{row.name}</td>
                                         <td className="px-6 py-3 text-slate-500 font-mono tracking-tighter">{row.sku}</td>

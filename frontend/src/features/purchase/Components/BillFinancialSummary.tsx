@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Clock } from 'lucide-react';
-import { TaxBreakdown, BillStatus } from "../../../types/purchase";
+import { TaxBreakdown, BillStatus } from "../../../types/purchase";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 interface FinancialTotals {
     subtotal: number;
@@ -56,9 +57,7 @@ const BillFinancialSummary: React.FC<BillFinancialSummaryProps> = ({ totals, sta
                     </div>
                     <div className="text-right">
                         <span className="block text-[10px] font-bold text-neutral-500 uppercase mb-1">Status</span>
-                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${status === 'Paid' ? 'bg-success/20 text-success' : 'bg-brand-500/20 text-brand-500'}`}>
-                            {status}
-                        </span>
+                        <StatusBadge status={status} />
                     </div>
                 </div>
                 <div className="mt-8 pt-6 border-t border-neutral-800">

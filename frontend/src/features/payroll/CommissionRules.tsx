@@ -5,7 +5,8 @@ import { Percent, Plus, Trash2, Search, X } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import api from "../../services/api";
-import { RootState } from "../../redux/store";
+import { RootState } from "../../redux/store";
+import { TONE_CLASSES } from '@/utils/statusTone';
 
 // Textilesoft's commission subsystem (salesman commission, product/PCS/range-wise commission,
 // floor/section commission reporting) had no counterpart anywhere in this codebase before this
@@ -282,7 +283,9 @@ const CommissionRules: React.FC = () => {
                                         <td className="px-6 py-4">
                                             <button
                                                 onClick={() => toggleStatus(rule)}
-                                                className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase ${rule.status === 'active' ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-neutral-100 border-neutral-200 text-neutral-500'}`}
+                                                title={rule.status === 'active' ? 'Click to switch off' : 'Click to switch on'}
+                                                aria-pressed={rule.status === 'active'}
+                                                className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase transition-colors hover:border-current focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${rule.status === 'active' ? TONE_CLASSES.success : 'bg-transparent border-default text-secondary hover:text-main'}`}
                                             >
                                                 {rule.status}
                                             </button>

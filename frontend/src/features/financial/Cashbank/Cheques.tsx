@@ -30,6 +30,7 @@ import { formatCurrency } from "../../../utils/helpers";
 import TransferModal from './TransferModal';
 import DayEndModal from './DayEndModal';
 import ClearingParameters from './ClearingParameters';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const Cheques: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -369,15 +370,10 @@ const Cheques: React.FC = () => {
 
                                 <div className="relative z-10">
                                     <div className="flex items-start justify-between mb-8">
-                                        <div className={`p-4 rounded-sm ${c.type === 'RECEIVED' ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'}`}>
+                                        <div className={`p-4 rounded-sm bg-input text-secondary`}>
                                             {c.type === 'RECEIVED' ? <ArrowDownLeft className="w-6 h-6" /> : <ArrowUpRight className="w-6 h-6" />}
                                         </div>
-                                        <span className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border ${c.status === 'PENDING' ? 'bg-warning/10 text-warning border-warning/20' :
-                                            c.status === 'CLEARED' ? 'bg-success/10 text-success border-success/20' :
-                                                'bg-error/10 text-error border-error/20'
-                                            }`}>
-                                            {c.status}
-                                        </span>
+                                        <StatusBadge status={c.status} />
                                     </div>
 
                                     <div className="space-y-4 mb-8">
@@ -401,9 +397,10 @@ const Cheques: React.FC = () => {
                                     <div className="pt-6 border-t border-neutral-100 dark:border-neutral-700 flex items-end justify-between">
                                         <div>
                                             <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Commitment Value</p>
-                                            <p className={`text-2xl font-black italic tracking-tighter ${c.type === 'RECEIVED' ? 'text-success' : 'text-primary'}`}>
+                                            <p className="text-2xl font-black italic tracking-tighter text-main tabular-nums">
                                                 ₹{formatCurrency(c.amount)}
                                             </p>
+                                            <p className="mt-1 text-xs font-semibold text-secondary">{c.type === 'RECEIVED' ? '↓ In · to collect' : '↑ Out · to pay'}</p>
                                         </div>
                                         <div className="text-[9px] font-black text-neutral-300 uppercase italic">
                                             {new Date(c.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })}
@@ -498,14 +495,14 @@ const Cheques: React.FC = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => setFormData({ ...formData, type: 'RECEIVED' })}
-                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'RECEIVED' ? 'bg-success text-white shadow-lg shadow-success/20' : 'text-neutral-400'}`}
+                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'RECEIVED' ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' : 'text-neutral-400'}`}
                                             >
                                                 Received
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => setFormData({ ...formData, type: 'ISSUED' })}
-                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'ISSUED' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-neutral-400'}`}
+                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'ISSUED' ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' : 'text-neutral-400'}`}
                                             >
                                                 Issued
                                             </button>
@@ -540,7 +537,7 @@ const Cheques: React.FC = () => {
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-primary text-[9px] font-black uppercase tracking-[0.2em] mb-6 italic">
                                 <Zap className="w-3.5 h-3.5 fill-current" /> Instrument Value Extraction
                             </div>
-                            <h2 className={`text-6xl font-black italic tracking-tighter mb-4 ${selectedCheque.type === 'RECEIVED' ? 'text-success' : 'text-primary'}`}>
+                            <h2 className={`text-6xl font-black italic tracking-tighter mb-4 text-main tabular-nums`}>
                                 ₹{formatCurrency(selectedCheque.amount)}
                             </h2>
                             <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest italic mb-10">Commitment to {selectedCheque.payee}</p>
@@ -552,7 +549,7 @@ const Cheques: React.FC = () => {
                                 </div>
                                 <div className="p-6 bg-neutral-50 dark:bg-neutral-900 rounded-[2rem] border border-neutral-100 dark:border-neutral-800 text-left">
                                     <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Entity Direction</p>
-                                    <p className={`text-xs font-black italic uppercase ${selectedCheque.type === 'RECEIVED' ? 'text-success' : 'text-primary'}`}>{selectedCheque.type}</p>
+                                    <p className="text-xs font-black italic uppercase text-main">{selectedCheque.type === 'RECEIVED' ? '↓ In · to collect' : '↑ Out · to pay'}</p>
                                 </div>
                             </div>
 

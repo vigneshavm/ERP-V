@@ -21,6 +21,17 @@
   --color-input: rgb(var(--color-input));
   --color-sidebar: rgb(var(--color-sidebar));
   --color-default: rgb(var(--color-border));
+  --color-primary-foreground: rgb(var(--color-primary-foreground));
+  --color-primary-soft: rgb(var(--color-primary-soft));
+  --color-success-soft: rgb(var(--color-success-soft));
+  --color-success-line: rgb(var(--color-success-line));
+  --color-warning-soft: rgb(var(--color-warning-soft));
+  --color-warning-line: rgb(var(--color-warning-line));
+  --color-danger-soft: rgb(var(--color-error-soft));
+  --color-danger-line: rgb(var(--color-error-line));
+  --color-danger-foreground: rgb(var(--color-error-foreground));
+  --color-info-soft: rgb(var(--color-info-soft));
+  --color-info-line: rgb(var(--color-info-line));
   /* brand-* is used by the Purchase bills / payments screens but was never
      defined, so e.g. bg-brand-600 buttons had no background. Alias to indigo,
      which matches --color-primary. */
@@ -151,20 +162,32 @@
     --color-border: 226 232 240; /* slate-200 */
     --color-border-light: 241 245 249;
 
-    /* Primary Accent - Cyber Indigo */
-    --color-primary: 99 102 241;
-    --color-primary-hover: 79 70 229;
+    /* Brand (indigo) - actions, links, selected, focus. Never a status. */
+    --color-primary: 79 70 229;          /* #4F46E5 */
+    --color-primary-hover: 67 56 202;    /* #4338CA */
     --color-primary-foreground: 255 255 255;
+    --color-primary-soft: 238 242 255;   /* #EEF2FF */
 
-    /* Secondary Accent - Emerald Precision */
-    --color-secondary: 16 185 129;
+    /* Secondary = neutral. tailwind.config maps text-secondary to this
+       variable, so it must match --color-text-secondary. */
+    --color-secondary: 71 85 105;        /* #475569 */
 
-    /* Semantic Colors */
-    --color-error: 244 63 94;
-    --color-success: 16 185 129;
-    --color-warning: 245 158 11;
-    --color-info: 56 189 248;
-    --color-accent: 139 92 246;
+    /* Status colours - text-grade (>= 4.5:1 on white), each with a soft
+       fill and a line for badges. See utils/statusTone.ts for meanings. */
+    --color-success: 4 120 87;           /* #047857 paid, received, in stock */
+    --color-success-soft: 236 253 245;
+    --color-success-line: 167 243 208;
+    --color-warning: 180 83 9;           /* #B45309 part paid, low stock */
+    --color-warning-soft: 255 251 235;
+    --color-warning-line: 253 230 138;
+    --color-error: 190 18 60;            /* #BE123C overdue, out of stock */
+    --color-error-soft: 255 241 242;
+    --color-error-line: 254 205 211;
+    --color-error-foreground: 255 255 255;
+    --color-info: 3 105 161;             /* #0369A1 in transit, syncing */
+    --color-info-soft: 240 249 255;
+    --color-info-line: 186 230 253;
+    --color-accent: 124 58 237;          /* #7C3AED loyalty / offers only */
 
     /* Glow Tokens - Subtle for Light Mode */
     --glow-primary: 0 4px 12px rgb(var(--color-primary) / 0.15);
@@ -208,26 +231,37 @@
 
     /* Text - High-Contrast Cyber */
     --color-text: 230 237 243;
-    --color-text-secondary: 139 148 158;
-    --color-text-muted: 110 118 129;
+    --color-text-secondary: 163 174 187; /* #A3AEBB */
+    --color-text-muted: 138 148 163;     /* #8A94A3, was 4.0:1 */
     --color-placeholder: 72 82 92;
 
     /* Borders - Industrial */
     --color-border: 48 54 61;
     --color-border-light: 33 38 45;
 
-    /* Primary Accent - Neon Indigo/Emerald (Emerald looks more 'cyber') */
-    --color-primary: 52 211 153; /* emerald-400 */
-    --color-primary-hover: 16 185 129;
-    --color-primary-foreground: 5 7 10;
+    /* Brand stays indigo in dark mode (was emerald, same as "Paid") */
+    --color-primary: 129 140 248;        /* #818CF8 */
+    --color-primary-hover: 165 180 252;  /* #A5B4FC */
+    --color-primary-foreground: 11 15 20;
+    --color-primary-soft: 30 31 75;
 
-    /* Secondary Accent */
-    --color-secondary: 245 158 11;
+    --color-secondary: 163 174 187;      /* neutral, matches text-secondary */
 
-    /* Semantic Overrides */
-    --color-error: 251 113 133;
+    /* Status colours */
     --color-success: 52 211 153;
+    --color-success-soft: 11 42 34;
+    --color-success-line: 17 94 71;
     --color-warning: 251 191 36;
+    --color-warning-soft: 46 33 6;
+    --color-warning-line: 107 74 12;
+    --color-error: 251 113 133;
+    --color-error-soft: 51 18 27;
+    --color-error-line: 122 34 54;
+    --color-error-foreground: 11 15 20;
+    --color-info: 56 189 248;
+    --color-info-soft: 10 37 54;
+    --color-info-line: 18 80 122;
+    --color-accent: 167 139 250;
 
     /* Glow Tokens - Intense for Dark Mode */
     --glow-primary: 0 0 20px rgb(var(--color-primary) / 0.3);

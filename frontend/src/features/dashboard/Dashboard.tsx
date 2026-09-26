@@ -13,7 +13,8 @@ import { getSupplierAnalytics } from "../../redux/slices/supplierSlice";
 import { fetchPurchaseOrders } from "../../redux/slices/purchaseSlice";
 import { getAllCustomers } from "../../redux/slices/customerSlice";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
-import Layout from "../../components/shared/Layout/index";
+import Layout from "../../components/shared/Layout/index";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 import {
   User,
   RotateCcw,
@@ -903,9 +904,7 @@ const Dashboard: React.FC = () => {
                                 <td className="py-4 px-4 text-[10px] font-black text-secondary uppercase tracking-widest">{txn.mobile}</td>
                                 <td className="py-4 px-4 text-sm font-black text-main tabular-nums">{txn.amount}</td>
                                 <td className="py-4 px-4 text-center">
-                                    <span className={`px-3 py-1 rounded-sm text-[9px] font-black uppercase tracking-widest border ${txn.status === 'RECEIVED' ? 'bg-success/10 border-success/30 text-success' : 'bg-warning/10 border-warning/30 text-warning'}`}>
-                                        {txn.status}
-                                    </span>
+                                    <StatusBadge status={txn.status} />
                                 </td>
                                 <td className="py-4 px-4 text-[10px] font-black text-secondary text-right uppercase tracking-widest">{txn.date}</td>
                             </tr>

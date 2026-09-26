@@ -18,7 +18,8 @@ import {
 import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import SupplierSubNav from './SupplierSubNav';
-import AgentModal from "../../components/suppliers/AgentModal";
+import AgentModal from "../../components/suppliers/AgentModal";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const Agents: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -177,9 +178,7 @@ const Agents: React.FC = () => {
                                                 <span className="text-sm font-bold text-emerald-600">{agent.commissionPercent || 0}%</span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase ${agent.status === 'active' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-slate-50 border-slate-100 text-slate-500'}`}>
-                                                    {agent.status}
-                                                </span>
+                                                <StatusBadge status={agent.status} />
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right" onClick={(e) => e.stopPropagation()}>
                                                 <div className="relative">

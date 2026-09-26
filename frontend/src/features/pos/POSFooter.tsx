@@ -127,7 +127,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                                 }
                                 onSetRedeemedPoints(activeCustomer.points);
                             }}
-                            className="px-2 py-1.5 text-[10px] font-bold bg-secondary text-white rounded hover:bg-secondary/90 transition-colors"
+                            className="px-2 py-1.5 text-[10px] font-bold bg-primary text-primary-foreground rounded hover:bg-primary-hover transition-colors"
                         >
                             {t('max')}
                         </button>
@@ -151,7 +151,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                                 <button
                                     key={mode}
                                     onClick={() => onSetTaxMode(mode)}
-                                    className={`flex-1 text-[10px] py-1.5 rounded-md font-bold transition-all ${taxMode === mode ? 'bg-secondary text-white shadow' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'}`}
+                                    className={`flex-1 text-[10px] py-1.5 rounded-md font-bold transition-all ${taxMode === mode ? 'bg-primary text-primary-foreground shadow' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'}`}
                                 >
                                     {mode === 'EXCLUSIVE' ? t('plusTax') : t('inclusive')}
                                 </button>

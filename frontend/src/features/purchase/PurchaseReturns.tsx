@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import api from "../../services/api";
 import { PurchaseReturn, PurchaseReturnStatus } from "../../types/purchase";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const PurchaseReturns: React.FC = () => {
     const navigate = useNavigate();
@@ -69,21 +70,7 @@ const PurchaseReturns: React.FC = () => {
         fetchReturns();
     }, []);
 
-    const getStatusBadge = (status: PurchaseReturnStatus) => {
-        const baseClass = "px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5";
-        switch (status) {
-            case 'Initiated':
-                return <span className={`${baseClass} bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400`}><Activity className="w-3 h-3" /> Initiated</span>;
-            case 'In-Transit':
-                return <span className={`${baseClass} bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning`}><Truck className="w-3 h-3" /> In-Transit</span>;
-            case 'Credited':
-                return <span className={`${baseClass} bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success`}><ShieldCheck className="w-3 h-3" /> Credited</span>;
-            case 'Cancelled':
-                return <span className={`${baseClass} bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger`}><AlertCircle className="w-3 h-3" /> Cancelled</span>;
-            default:
-                return <span className={`${baseClass} bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400`}>{status}</span>;
-        }
-    };
+    const getStatusBadge = (status: PurchaseReturnStatus) => <StatusBadge status={status} />;
 
     const filteredReturns = useMemo(() => {
         return returns.filter(r => {

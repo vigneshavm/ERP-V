@@ -7,6 +7,7 @@ import { RootState, AppDispatch } from '../../redux/store';
 import { fetchPayrollRuns } from '../../redux/slices/payrollSlice';
 import { DollarSign, Users, FileText, PlayCircle, Clock } from 'lucide-react';
 import { formatDateISO } from '../../utils/helpers';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const PayrollInfoCard = ({ title, value, icon: Icon, color }: any) => (
     <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
@@ -126,12 +127,7 @@ const PayrollDashboard = () => {
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                                                ${run.status === 'PAID' ? 'bg-green-100 text-green-800' :
-                                                    run.status === 'APPROVED' ? 'bg-blue-100 text-blue-800' :
-                                                        'bg-yellow-100 text-yellow-800'}`}>
-                                                {run.status.toLowerCase()}
-                                            </span>
+                                            <StatusBadge status={run.status} />
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <button
