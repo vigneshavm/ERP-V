@@ -1,4 +1,3 @@
-import * as XLSX from 'xlsx';
 
 export interface RawPurchaseRow {
     'Invoice No'?: string;
@@ -43,8 +42,9 @@ export const PURCHASE_TEMPLATE_COLUMNS = [
 export const parsePurchaseFile = (file: File): Promise<RawPurchaseRow[]> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
             try {
+                const XLSX = await import('xlsx');
                 const data = new Uint8Array(e.target?.result as ArrayBuffer);
                 const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheetName = workbook.SheetNames[0];
@@ -148,7 +148,8 @@ export const groupPurchases = (validatedRows: ValidationResult[]) => {
 /**
  * Generates a template Excel file.
  */
-export const downloadPurchaseTemplate = () => {
+export const downloadPurchaseTemplate = async () => {
+    const XLSX = await import('xlsx');
     const data = [
         PURCHASE_TEMPLATE_COLUMNS,
         ['INV-001', '2024-02-05', 'Acme Corp', 'VEN-101', 'Widget A', 'WGT-A-01', 10, 100, 18, 50, 'Monthly supply', 'Main Branch']

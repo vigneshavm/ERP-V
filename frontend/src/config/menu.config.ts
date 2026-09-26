@@ -88,10 +88,7 @@ export const MENU_ITEMS: MenuItem[] = [
         module: 'POS',
         path: '/sales',
         children: [
-            // '/sales/register' has no matching <Route> and silently fell through the
-            // catch-all + ModuleRenderer's SALES_REGISTER case to SalesMockUI. Point it at
-            // '/sales/invoices' instead -- the real, DB-backed SalesInvoice/SalesInvoiceRegister
-            // page that '/sales' itself already redirects to as the module's primary landing route
+            // '/sales/invoices' is the DB-backed invoice register that '/sales' also lands on
             // (mirroring Purchase's '/purchase' -> '/purchase/register' pattern).
             { id: 'SALES_REGISTER', label: 'Register', icon: FileText, module: 'POS', path: '/sales/invoices' },
             { id: 'SALES_INVOICE', label: 'Invoice', icon: Plus, module: 'POS', path: '/sales/new' },
@@ -113,7 +110,6 @@ export const MENU_ITEMS: MenuItem[] = [
         path: '/purchase',
         children: [
             { id: 'PURCHASE_REGISTER', label: 'Register', icon: FileText, module: 'PURCHASE', path: '/purchase/register' },
-            { id: 'PURCHASE_REGISTER_MOCK', label: 'Register (Mock)', icon: FileText, module: 'PURCHASE', path: '/purchase/register/mock' },
             { id: 'VENDORS', label: 'Vendors', icon: Users, module: 'PURCHASE', path: '/suppliers' },
             { id: 'PURCHASE_ENTRY', label: 'New Entry', icon: Plus, module: 'PURCHASE', path: '/purchase/new' },
             { id: 'PURCHASE_EXPRESS', label: 'Express Purchase (Small Biz)', icon: Zap, module: 'PURCHASE', path: '/purchase/express' },
@@ -164,6 +160,7 @@ export const MENU_ITEMS: MenuItem[] = [
             { id: 'INVENTORY_ITEMS', label: 'Items', icon: Package, module: 'INVENTORY', path: '/inventory/items' },
             { id: 'INVENTORY_SEARCH', label: 'Variant Search', icon: Search, module: 'INVENTORY', path: '/inventory/search' },
             { id: 'ITEM_CATEGORIES', label: 'Categories', icon: Layers, module: 'INVENTORY', path: '/inventory/categories' },
+            { id: 'AGED_STOCK', label: 'Aged Stock', icon: Clock, module: 'INVENTORY', path: '/inventory/aged-stock' },
             { id: 'BATCH_EXPIRY', label: 'Batches', icon: Calendar, module: 'INVENTORY', path: '/inventory/batch-expiry' },
             { id: 'BARCODE_GENERATOR', label: 'Barcodes', icon: Barcode, module: 'INVENTORY', path: '/inventory/barcodes' },
             { id: 'COMBO_OFFERS', label: 'Combo Offers', icon: Gift, module: 'INVENTORY', path: '/inventory/combo-offers' },
@@ -182,6 +179,7 @@ export const MENU_ITEMS: MenuItem[] = [
         module: 'FINANCE',
         path: '/finance',
         children: [
+            { id: 'FINANCE_AGENTS', label: 'Overview', icon: Landmark, module: 'FINANCE', path: '/finance/overview' },
             { id: 'CASH_ACCOUNTS', label: 'Cash', icon: DollarSign, module: 'FINANCE', path: '/finance/cash' },
             { id: 'BANK_ACCOUNTS', label: 'Bank', icon: Landmark, module: 'FINANCE', path: '/cashbank/accounts' },
             { id: 'PETTY_CASH', label: 'Petty Cash', icon: List, module: 'FINANCE', path: '/finance/petty-cash' },
@@ -264,15 +262,7 @@ export const MENU_ITEMS: MenuItem[] = [
         icon: PieChart,
         module: 'REPORTS',
         children: [
-            // Both previously pointed at /reports/mock (ReportsMockUI) because the "real"-looking
-            // BusinessReportsHub underneath /reports fabricates its P&L/balance sheet/trial
-            // balance/day book/sales-purchase-overview numbers -- see useBusinessReports.ts,
-            // which literally comments "Simulate network delay" over hardcoded objects. That's
-            // still true. But ReportsModule (the catalog at /reports/insights) also hosts 6
-            // genuinely live-data reports (brand/category/counter/hourly-billing sales, city/rack-
-            // wise stock) that were being hidden behind the mock along with the fake ones, and the
-            // catalog itself now flags every fabricated-data report with a "Sample data" badge so
-            // nobody mistakes one for the real thing. Point the nav here instead.
+            // The report catalog: every report is a ReportPageShell over a report API (no sample data).
             { id: 'REPORTS', label: 'Reports', icon: PieChart, module: 'REPORTS', path: '/reports/insights' },
             { id: 'REPORT_SALES', label: 'Sales', icon: BarChart, module: 'REPORTS', path: '/reports/insights' },
         ]

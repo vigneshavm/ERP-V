@@ -31,6 +31,8 @@ export interface SyncLedgerEntry {
     status: 'SYNCED' | 'PENDING' | 'CONFLICT' | 'FAILED';
     payload: any;
     hash: string;
+    /** Device-side only: whether this event has been uploaded to POST /api/sync/ledger. */
+    uploaded?: boolean;
 }
 
 export interface SyncConflict {
@@ -103,14 +105,6 @@ export interface SyncSettings {
         finance: boolean;
         [key: string]: boolean;
     };
-}
-
-export interface SyncIntelligenceConfig {
-    isEnabled: boolean;
-    retentionDays: number;
-    autoResolveRules: Array<{ field: string; strategy: 'USE_LATEST' | 'USE_REMOTE' | 'USE_LOCAL' }>;
-    anomalyDetectionEnabled: boolean;
-    backupFrequency: 'HOURLY' | 'DAILY' | 'WEEKLY';
 }
 
 export type SyncConfig = {

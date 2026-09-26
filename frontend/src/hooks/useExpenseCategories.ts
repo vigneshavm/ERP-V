@@ -40,7 +40,7 @@ export const useExpenseCategories = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const response = await api.get('/expense-categories', {
+            const response = await api.get('/api/expense-categories', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = response.data;
@@ -71,11 +71,11 @@ export const useExpenseCategories = () => {
         try {
             const token = localStorage.getItem('token');
             if (category.id) {
-                await api.put(`/expense-categories/${category.id}`, category, {
+                await api.put(`/api/expense-categories/${category.id}`, category, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             } else {
-                await api.post('/expense-categories', category, {
+                await api.post('/api/expense-categories', category, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             }
@@ -89,7 +89,7 @@ export const useExpenseCategories = () => {
     const deleteCategory = async (id: string) => {
         try {
             const token = localStorage.getItem('token');
-            await api.delete(`/expense-categories/${id}`, {
+            await api.delete(`/api/expense-categories/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchCategories();

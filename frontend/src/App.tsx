@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, lazy, Suspense } from 'react';
 import { Shield, Store, LogOut, ArrowRight } from 'lucide-react';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,12 +7,16 @@ import { setUser, getProfile } from './redux/slices/authSlice';
 import { setActiveTab } from './redux/slices/uiSlice';
 import { APP_CONFIG } from './config';
 
-import AdminLogin from './components/AdminLogin';
-import ResetPassword from './features/auth/pages/ResetPassword';
-import ForgotPassword from './features/auth/pages/ForgotPassword';
-import TenantManager from './features/tenants/TenantManager';
-import TenantSignUp from './features/tenants/TenantSignUp';
-import { POSCustomerDisplay } from './features/pos/POSCustomerDisplay';
+// Rarely-used entry screens are split out of the initial bundle and loaded on demand.
+const AdminLogin = lazy(() => import('./components/AdminLogin'));
+import { clearAdminSession, rememberAdminSession } from './services/adminTenants';
+const ResetPassword = lazy(() => import('./features/auth/pages/ResetPassword'));
+const ForgotPassword = lazy(() => import('./features/auth/pages/ForgotPassword'));
+const TenantManager = lazy(() => import('./features/tenants/TenantManager'));
+const TenantSignUp = lazy(() => import('./features/tenants/TenantSignUp'));
+const POSCustomerDisplay = lazy(() =>
+  import('./features/pos/POSCustomerDisplay').then(m => ({ default: m.POSCustomerDisplay }))
+);
 import { ThemeToggle } from './components/core/Display/ThemeToggle';
 
 // Config
@@ -37,7 +41,7 @@ const LoadingScreen = () => (
       <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
       <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>
     </div>
-    <p className="mt-6 text-secondary font-black text-[10px] uppercase tracking-[0.3em] animate-pulse">Initializing Neural Link</p>
+    <p className="mt-6 text-secondary font-black text-[10px] uppercase tracking-[0.3em] animate-pulse">Loading…</p>
   </div>
 );
 
@@ -54,8 +58,8 @@ const LandingPage = ({ setViewMode, setCurrentTenant, setIsLoggedIn }: {
     </div>
 
     <div className="max-w-4xl w-full text-center mb-16 relative z-10">
-      <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary/20 rotate-3 animate-fade-in">
-        <span className="font-display font-black text-4xl text-white">E</span>
+      <div className="mb-8 animate-fade-in">
+        <span className="font-display font-black text-4xl tracking-tight text-main">SmartERPAI</span>
       </div>
       <h1 className="text-5xl md:text-6xl font-display font-black text-main mb-6 tracking-tighter animate-slide-down">
         Next-Gen <span className="text-primary">ERP</span> Matrix
@@ -76,9 +80,9 @@ const LandingPage = ({ setViewMode, setCurrentTenant, setIsLoggedIn }: {
           <Shield className="w-7 h-7" />
         </div>
         <h2 className="text-2xl font-display font-bold text-main mb-2">Platform Control</h2>
-        <p className="text-secondary opacity-70 mb-6">Manage global infrastructure, tenants, and system-level parameters.</p>
+        <p className="text-muted mb-6">Manage global infrastructure, tenants, and system-level parameters.</p>
         <div className="flex items-center text-primary font-bold text-sm tracking-widest uppercase">
-          Initialize Access <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
+          Open admin console <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
         </div>
       </button>
 
@@ -103,14 +107,14 @@ const LandingPage = ({ setViewMode, setCurrentTenant, setIsLoggedIn }: {
           <Store className="w-7 h-7" />
         </div>
         <h2 className="text-2xl font-display font-bold text-main mb-2">Tenant Interface</h2>
-        <p className="text-secondary opacity-70 mb-6">Launch specialized retail operations, POS terminals, and analytics.</p>
+        <p className="text-muted mb-6">Launch specialized retail operations, POS terminals, and analytics.</p>
         <div className="flex items-center text-secondary font-bold text-sm tracking-widest uppercase">
-          Authenticate Unit <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
+          Sign in to your shop <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
         </div>
       </button>
     </div>
 
-    <p className="mt-20 text-xs text-secondary font-bold tracking-[0.2em] opacity-40 uppercase">© 2026 ERP Matrix Systems // Secure Access Point</p>
+    <p className="mt-20 text-xs text-muted font-bold tracking-[0.2em] uppercase">© 2026 SmartERPAI // Secure Access Point</p>
   </div>
 );
 
@@ -124,7 +128,7 @@ const AdminView = ({ isAdminAuthenticated, setIsAdminAuthenticated, setViewMode,
   if (!isAdminAuthenticated) {
     return (
       <AdminLogin
-        onLogin={() => setIsAdminAuthenticated(true)}
+        onLogin={(session) => { rememberAdminSession(session); setIsAdminAuthenticated(true); }}
         onCancel={() => setViewMode('LANDING')}
       />
     );
@@ -135,9 +139,9 @@ const AdminView = ({ isAdminAuthenticated, setIsAdminAuthenticated, setViewMode,
       <header className="glass-panel border-b border-default text-main p-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-display font-black shadow-lg shadow-primary/20">A</div>
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-[rgb(var(--color-primary-foreground))] font-display font-black shadow-lg shadow-primary/20">S</div>
             <div>
-              <span className="font-display font-bold text-xl tracking-tight">System Core</span>
+              <span className="font-display font-bold text-xl tracking-tight">SmartERPAI</span>
               <div className="text-[10px] text-primary font-bold tracking-[0.2em] uppercase leading-none mt-0.5">Administrator Console</div>
             </div>
           </div>
@@ -147,11 +151,12 @@ const AdminView = ({ isAdminAuthenticated, setIsAdminAuthenticated, setViewMode,
               onClick={() => {
                 setViewMode('LANDING');
                 setIsAdminAuthenticated(false);
+                clearAdminSession();
               }}
               className="px-4 py-2 bg-white/5 hover:bg-white/10 text-secondary border border-white/10 rounded-lg flex items-center gap-2 text-sm font-bold transition-all"
             >
               <LogOut className="w-4 h-4" />
-              Terminate Session
+              Sign out
             </button>
           </div>
         </div>
@@ -349,12 +354,17 @@ const App: React.FC = () => {
 
   // --- Main Render ---
   if (isCustomerDisplayMode) {
-    return <POSCustomerDisplay />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <POSCustomerDisplay />
+      </Suspense>
+    );
   }
 
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
+      <Suspense fallback={<LoadingScreen />}>
       <Routes>
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -389,6 +399,7 @@ const App: React.FC = () => {
                 />
         } />
       </Routes>
+      </Suspense>
     </>
   );
 };

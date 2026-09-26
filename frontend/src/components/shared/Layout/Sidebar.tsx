@@ -6,7 +6,7 @@ import {
 import { RootState } from "../../../redux/store";
 import { setSidebarOpen, setDesktopCollapsed } from "../../../redux/slices/uiSlice";
 import { setBranch } from "../../../redux/slices/authSlice";
-import { useConfig } from "../../../contexts/ConfigProvider";
+import { useConfig } from "../../../contexts/ConfigContext";
 import { useBranchResolver } from "../../../hooks/useBranchResolver";
 import { usePermissions } from "../../../hooks/usePermissions";
 import NavItem from './NavItem';
@@ -125,7 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                         </select>
                     </div>
                 ) : (
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-1">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
                         <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
                         {getBranchName(selectedBranch)}
                         {isSyncing && (
@@ -174,17 +174,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                         {logoUrl ? (
                             <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
                         ) : (
-                            <span className="font-bold text-white">{user?.name?.charAt(0) || currentTenant?.name?.charAt(0) || 'T'}</span>
+                            <span className="font-display font-black text-[rgb(var(--color-primary-foreground))]">S</span>
                         )}
                     </div>
                     {!desktopCollapsed && (
                         <div className="overflow-hidden">
-                            <span className="text-lg font-display font-bold tracking-tight block leading-none truncate text-main">{user?.name || 'User'}</span>
-                            <span className="text-[10px] text-secondary uppercase font-bold tracking-widest leading-relaxed">{role}</span>
+                            <span className="text-lg font-display font-bold tracking-tight block leading-none truncate text-main">SmartERPAI</span>
+                            <span className="label-sm text-secondary leading-relaxed">{role}</span>
                         </div>
                     )}
                 </div>
-                <button onClick={() => dispatch(setSidebarOpen(false))} className="lg:hidden text-neutral-400">
+                <button onClick={() => dispatch(setSidebarOpen(false))} className="lg:hidden text-slate-400">
                     <X className="w-6 h-6" />
                 </button>
                 <button
@@ -197,7 +197,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
             {/* Tenant Info & Branch */}
             <div className={`mb-6 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
-                {!desktopCollapsed && <span className="text-[10px] text-secondary uppercase font-bold tracking-[0.2em] opacity-80">{currentTenant?.name}</span>}
+                {!desktopCollapsed && <span className="label-sm text-muted ">{currentTenant?.name}</span>}
                 {branchSelector}
             </div>
 
@@ -206,7 +206,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 {/* Main ERP Section */}
                 {!desktopCollapsed && visibleErpItems.length > 0 && (
                     <div className="px-3 pt-4 pb-2">
-                        <h3 className="text-[10px] font-display font-bold text-secondary uppercase tracking-[0.15em] opacity-60">System Core</h3>
+                        <h3 className="overline font-display text-muted ">System Core</h3>
                     </div>
                 )}
                 {visibleErpItems.map((item: MenuItem) => renderRecursive(item, false))}
@@ -214,20 +214,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 {/* Growth Platform Section */}
                 {!desktopCollapsed && visibleGrowItems.length > 0 && (
                     <div className="px-3 pt-6 pb-2 border-t border-white/5 mt-4">
-                        <h3 className="text-[10px] font-display font-bold text-secondary uppercase tracking-[0.15em] opacity-60">Growth Matrix</h3>
+                        <h3 className="overline font-display text-muted ">Growth</h3>
                     </div>
                 )}
                 {visibleGrowItems.map((item: MenuItem) => renderRecursive(item, false))}
             </nav>
 
             {/* Footer / User Controls */}
-            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-2 space-y-2">
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-2">
                 <button
                     onClick={onLogout}
                     className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-secondary hover:bg-white/5 hover:text-main transition-all group`}
                 >
                     <Lock className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
-                    <span className="font-black text-[11px] uppercase tracking-widest">Terminate Protocol</span>
+                    <span className="label-sm font-black">Sign out</span>
                 </button>
                 {desktopCollapsed && (
                     <div className="flex flex-col gap-2 w-full px-2">
@@ -242,13 +242,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             </div>
             {/* Theme Toggle - Desktop Footer */}
             {!desktopCollapsed && (
-                <div className="pt-2 px-4 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
-                    <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Appearance</span>
+                <div className="pt-2 px-4 pb-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Appearance</span>
                     <ThemeToggle />
                 </div>
             )}
             {desktopCollapsed && (
-                <div className="pt-2 px-2 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-center">
+                <div className="pt-2 px-2 pb-2 border-t border-slate-200 dark:border-slate-800 flex justify-center">
                     <ThemeToggle />
                 </div>
             )}

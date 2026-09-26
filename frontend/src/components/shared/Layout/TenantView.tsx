@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { RootState } from "../../../redux/store";
 import { ConfigProvider } from "../../../contexts/ConfigProvider";
@@ -11,6 +12,7 @@ import { setSidebarOpen } from "../../../redux/slices/uiSlice";
 import MobileNav from './MobileNav';
 import ModuleRenderer from './ModuleRenderer';
 import RouteDefinitions from './RouteDefinitions';
+import PageErrorBoundary from './PageErrorBoundary';
 import GlobalModals from './GlobalModals';
 import { useTabSync } from '../../../hooks/useTabSync';
 
@@ -39,12 +41,15 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
 
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
+    const userTenantId = user?.tenantId;
     const effectiveTenant = useMemo(() => {
-        if (user?.tenantId) {
-            return tenants.find(t => t.id === user.tenantId) || currentTenant;
+        if (userTenantId) {
+            return tenants.find(t => t.id === userTenantId) || currentTenant;
         }
         return currentTenant;
-    }, [user?.tenantId, tenants, currentTenant]);
+    }, [userTenantId, tenants, currentTenant]);
+
+    const location = useLocation();
 
     if (!isLoggedIn) {
         return (
@@ -70,9 +75,11 @@ const TenantView: React.FC<TenantViewProps> = ({ currentTenant, isLoggedIn, onLo
                 <Sidebar onLogout={onLogout} />
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-hidden w-full bg-app relative">
-                    <div className="h-full w-full overflow-y-auto custom-scrollbar text-main">
-                        <RouteDefinitions renderContent={renderContent} />
+                <main className="flex-1 overflow-hidden w-full bg-app relative p-4 lg:p-8">
+                    <div className="h-full w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar text-main pb-20 lg:pb-0">
+                        <PageErrorBoundary resetKey={location.pathname}>
+                            <RouteDefinitions renderContent={renderContent} />
+                        </PageErrorBoundary>
                     </div>
                 </main>
 

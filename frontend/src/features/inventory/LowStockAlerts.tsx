@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AlertTriangle, ShoppingCart, Bell, Download } from 'lucide-react';
 import api from '@/services/api';
+import PageHeader from '@/components/shared/Layout/PageHeader';
 
 interface LowStockItem {
     _id: string;
@@ -13,8 +14,8 @@ interface LowStockItem {
 }
 
 const STATUS: Record<string, string> = {
-    Critical: 'text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800',
-    Warning: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800',
+    Critical: 'text-danger bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger-line',
+    Warning: 'text-warning bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning-line',
 };
 
 // Backed by GET /api/inventory/low-stock -> InventoryService.getLowStockItems, the same
@@ -58,23 +59,18 @@ const LowStockAlerts: React.FC = () => {
     }
 
     if (error) {
-        return <div className="p-6 bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/20 rounded-lg text-rose-700 dark:text-danger">{error}</div>;
+        return <div className="p-6 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger/20 rounded-lg text-danger dark:text-danger">{error}</div>;
     }
 
     return (
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-sm bg-red-600 flex items-center justify-center"><Bell className="w-5 h-5 text-white" /></div>
-                    <div>
-                        <h1 className="text-2xl font-black text-slate-900 dark:text-white">Low Stock Alerts</h1>
-                        <p className="text-xs text-slate-500">Items below reorder level — action needed</p>
-                    </div>
-                </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+            <PageHeader
+                title="Low Stock Alerts"
+                description="Items below reorder level, requiring action."
+                actions={<button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
                     <Download className="w-4 h-4" /> Export
-                </button>
-            </div>
+                </button>}
+            />
 
             <div className="grid grid-cols-3 gap-4">
                 {[
@@ -101,7 +97,7 @@ const LowStockAlerts: React.FC = () => {
                         <div key={item._id} className={`bg-white dark:bg-slate-800 rounded-sm p-5 ${STATUS[item.status]}`}>
                             <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-3">
-                                    <AlertTriangle className={`w-5 h-5 ${item.status === 'Critical' ? 'text-red-500' : 'text-warning'}`} />
+                                    <AlertTriangle className={`w-5 h-5 ${item.status === 'Critical' ? 'text-danger' : 'text-warning'}`} />
                                     <div>
                                         <p className="font-black text-slate-900 dark:text-white">{item.name}</p>
                                         <p className="text-xs text-slate-400">{item.sku || '—'} · {item.category || 'Uncategorized'}</p>
@@ -122,7 +118,7 @@ const LowStockAlerts: React.FC = () => {
                                     <span>Current: {item.available} / Reorder at: {item.reorder}</span>
                                 </div>
                                 <div className="h-2 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden">
-                                    <div className={`h-full rounded-full transition-all ${item.status === 'Critical' ? 'bg-red-500' : 'bg-amber-500'}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+                                    <div className={`h-full rounded-full transition-all ${item.status === 'Critical' ? 'bg-danger' : 'bg-warning'}`} style={{ width: `${Math.min(pct, 100)}%` }} />
                                 </div>
                             </div>
                         </div>

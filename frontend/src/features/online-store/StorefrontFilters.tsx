@@ -42,7 +42,7 @@ export const StorefrontFilters: React.FC<StorefrontFiltersProps> = ({
                 <div className="space-y-2">
                     {availableCategories.map(cat => (
                         <label key={cat} className="flex items-center gap-3 cursor-pointer group">
-                            <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedCategories.includes(cat) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'}`}>
+                            <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedCategories.includes(cat) ? 'bg-primary border-primary' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'}`}>
                                 {selectedCategories.includes(cat) && <Check className="w-3.5 h-3.5 text-white" />}
                             </div>
                             <input type="checkbox" className="hidden" onChange={() => toggleCategory(cat)} checked={selectedCategories.includes(cat)} />
@@ -75,7 +75,7 @@ export const StorefrontFilters: React.FC<StorefrontFiltersProps> = ({
 
             <div className="mb-8">
                 <label className="flex items-center gap-3 cursor-pointer">
-                    <div className={`w-10 h-5 rounded-full p-0.5 transition-colors ${inStockOnly ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                    <div className={`w-10 h-5 rounded-full p-0.5 transition-colors ${inStockOnly ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-700'}`}>
                         <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${inStockOnly ? 'translate-x-5' : 'translate-x-0'}`}></div>
                     </div>
                     <input type="checkbox" className="hidden" checked={inStockOnly} onChange={() => setInStockOnly(!inStockOnly)} />
@@ -85,7 +85,7 @@ export const StorefrontFilters: React.FC<StorefrontFiltersProps> = ({
 
             <button
                 onClick={resetFilters}
-                className="w-full py-2 text-sm text-slate-500 hover:text-red-500 font-medium transition-colors border border-dashed border-slate-300 dark:border-slate-700 rounded-lg hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-900/10"
+                className="w-full py-2 text-sm text-slate-500 hover:text-danger font-medium transition-colors border border-dashed border-slate-300 dark:border-slate-700 rounded-lg hover:border-danger-line hover:bg-danger-soft dark:hover:bg-danger-soft"
             >
                 Reset Filters
             </button>

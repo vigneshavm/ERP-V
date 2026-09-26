@@ -69,17 +69,19 @@ export const useFinanceSync = (tenantId: string | undefined) => {
 
     useEffect(() => {
         if (!rawDF) return;
+        // Shape returned by GET /api/daily-finance (DailyFinanceController); all of it is on the server.
         const mappedDF = rawDF.map((df: any) => ({
             id: df.id,
             date: df.date,
-            cashSales: df.cash_sales,
-            onlineSales: df.online_sales,
-            totalSales: df.total_sales,
+            cashSales: df.cashSales,
+            onlineSales: df.onlineSales,
+            totalSales: df.totalSales,
             expenses: df.expenses,
-            cashInDrawer: df.cash_in_drawer,
+            cashInDrawer: df.cashInDrawer,
             notes: df.notes,
-            timestamp: df.timestamp,
-            tenantId: df.tenant_id
+            timestamp: df.updatedAt,
+            tenantId: df.tenantId,
+            synced: true
         }));
         dispatch(setDailyRecords(mappedDF));
     }, [rawDF, dispatch]);

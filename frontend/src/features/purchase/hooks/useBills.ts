@@ -16,7 +16,6 @@ export const useBills = () => {
     const [showForm, setShowForm] = useState(false);
     const [editingBill, setEditingBill] = useState<Bill | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-    const [_bankAccounts, setBankAccounts] = useState<any[]>([]);
     const [paymentModal, setPaymentModal] = useState<{ isOpen: boolean; bill: Bill | null }>({
         isOpen: false,
         bill: null
@@ -25,27 +24,10 @@ export const useBills = () => {
     useEffect(() => {
         dispatch(getAllBills({}));
         dispatch(getAllSuppliers());
-        fetchBankAccounts();
         return () => {
             dispatch(reset());
         };
     }, [dispatch]);
-
-    const fetchBankAccounts = async () => {
-        try {
-            const userDataString = localStorage.getItem('user');
-            if (!userDataString) return;
-            const userData = JSON.parse(userDataString);
-            const token = userData?.token;
-            const response = await api.get(
-                `/api/cashbank/accounts`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            setBankAccounts(response.data);
-        } catch (error) {
-            console.error('Error fetching bank accounts:', error);
-        }
-    };
 
     const handleMarkAsPaid = useCallback((bill: Bill) => {
         setPaymentModal({

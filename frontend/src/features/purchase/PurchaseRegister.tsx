@@ -26,8 +26,7 @@ import {
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const PurchaseRegister: React.FC = () => {
     const navigate = useNavigate();
@@ -196,29 +195,15 @@ const PurchaseRegister: React.FC = () => {
     const totalBilledValue = displayOrders.filter(o => o.status === 'COMPLETED').reduce((acc, o) => acc + ((o as any).totalAmount || (o as any).total_amount || 0), 0);
     const pendingCount = displayOrders.filter(o => ['Pending', 'Pending Approval', 'Draft'].includes(o.status)).length;
 
-    const getStatusBadge = (status: string) => {
-        const s = status.toUpperCase();
-        switch (s) {
-            case 'APPROVED':
-            case 'COMPLETED':
-                return <span className="px-3 py-1 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><CheckCircle className="w-3 h-3" /> {status === 'COMPLETED' ? 'Completed' : 'Approved'}</span>;
-            case 'PENDING':
-            case 'PENDING APPROVAL':
-            case 'DRAFT':
-                return <span className="px-3 py-1 bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><Clock className="w-3 h-3" /> {s === 'DRAFT' ? 'Draft' : 'Pending'}</span>;
-            case 'REJECTED':
-            case 'CANCELLED':
-                return <span className="px-3 py-1 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5"><XCircle className="w-3 h-3" /> {status}</span>;
-            default:
-                return <span className="px-3 py-1 bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 text-[10px] font-black uppercase tracking-widest rounded-full">{status}</span>;
-        }
-    };
+    const getStatusBadge = (status: string) => <StatusBadge status={status} />;
 
     const handleView = (order: PurchaseOrder) => {
         navigate(`/purchase/orders/${order._id || (order as any).id}`);
     };
 
-    const handleExportPDF = () => {
+    const handleExportPDF = async () => {
+        const { jsPDF } = await import('jspdf');
+        const { default: autoTable } = await import('jspdf-autotable');
         const doc = new jsPDF();
         doc.text("Purchase Register", 14, 15);
         const tableData = displayOrders.map(o => [
@@ -263,13 +248,13 @@ const PurchaseRegister: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex gap-3">
-                            <button onClick={handleRefresh} disabled={isRefreshing || isProcessing} className="p-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-neutral-50 shadow-sm transition active:scale-95">
+                            <button onClick={handleRefresh} disabled={isRefreshing || isProcessing} className="p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 shadow-sm transition active:scale-95">
                                 <RefreshCw className={`w-4 h-4 ${(isRefreshing || isProcessing) ? 'animate-spin' : ''}`} />
                             </button>
-                            <button onClick={handleExportCSV} className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                            <button onClick={handleExportCSV} className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
                                 <FileSpreadsheet className="w-4 h-4 text-success" /> Excel
                             </button>
-                            <button onClick={handleExportPDF} className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                            <button onClick={handleExportPDF} className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
                                 <FileText className="w-4 h-4 text-danger" /> PDF
                             </button>
                             <button
@@ -284,67 +269,67 @@ const PurchaseRegister: React.FC = () => {
 
                 {/* KPI Pulse Node Row */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500">
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="p-3 bg-primary/10 text-primary rounded-sm group-hover:scale-110 transition-transform">
                                 <TrendingUp className="w-6 h-6" />
                             </div>
-                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Total Value</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Value</h3>
                         </div>
-                        <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">₹{totalPurchasesValue.toLocaleString()}</p>
+                        <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">₹{totalPurchasesValue.toLocaleString()}</p>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-success/20 transition-all duration-500">
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-success/20 transition-all duration-500">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-emerald-50 text-success dark:bg-emerald-900/20 rounded-sm group-hover:scale-110 transition-transform">
+                            <div className="p-3 bg-success-soft text-success dark:bg-success-soft rounded-sm group-hover:scale-110 transition-transform">
                                 <CheckSquare className="w-6 h-6" />
                             </div>
-                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Billed Volume</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Billed Volume</h3>
                         </div>
-                        <p className="text-3xl font-black text-emerald-600 dark:text-success tracking-tighter tabular-nums">₹{totalBilledValue.toLocaleString()}</p>
+                        <p className="text-3xl font-black text-success dark:text-success tracking-tighter tabular-nums">₹{totalBilledValue.toLocaleString()}</p>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-neutral-400/20 transition-all duration-500">
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-slate-400/20 transition-all duration-500">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 rounded-sm group-hover:scale-110 transition-transform">
+                            <div className="p-3 bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 rounded-sm group-hover:scale-110 transition-transform">
                                 <FileText className="w-6 h-6" />
                             </div>
-                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Total Nodes</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Nodes</h3>
                         </div>
-                        <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">{displayOrders.length}</p>
+                        <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">{displayOrders.length}</p>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-warning/20 transition-all duration-500">
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-warning/20 transition-all duration-500">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-amber-50 text-warning dark:bg-amber-900/20 rounded-sm group-hover:scale-110 transition-transform">
+                            <div className="p-3 bg-warning-soft text-warning dark:bg-warning-soft rounded-sm group-hover:scale-110 transition-transform">
                                 <Clock className="w-6 h-6" />
                             </div>
-                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Pending Res</h3>
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Pending Res</h3>
                         </div>
-                        <p className="text-3xl font-black text-amber-600 dark:text-warning tracking-tighter tabular-nums">{pendingCount}</p>
+                        <p className="text-3xl font-black text-warning dark:text-warning tracking-tighter tabular-nums">{pendingCount}</p>
                     </div>
                 </div>
 
                 {/* Audit Workspace Container */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     {/* Control Bar */}
-                    <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex flex-col xl:flex-row gap-8">
+                    <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col xl:flex-row gap-8">
                         <div className="flex-1 space-y-8">
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 <div className="md:col-span-1">
-                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Node Context Search</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Search</label>
                                     <div className="relative">
-                                        <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
-                                        <input type="text" placeholder="Search PO # or Vendor..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
+                                        <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                        <input type="text" placeholder="Search PO # or Vendor..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
-                                    <select value={vendorFilter} onChange={e => setVendorFilter(e.target.value)} className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Supplier</label>
+                                    <select value={vendorFilter} onChange={e => setVendorFilter(e.target.value)} className="w-full px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                         <option value="ALL">All Entities</option>
                                         {uniqueVendors.map(v => <option key={v} value={v}>{v}</option>)}
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Operational Status</label>
-                                    <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Operational Status</label>
+                                    <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                         <option value="ALL">All Status</option>
                                         <option value="COMPLETED">Completed</option>
                                         <option value="Approved">Approved</option>
@@ -355,25 +340,25 @@ const PurchaseRegister: React.FC = () => {
                                 </div>
                                 <div className="flex gap-3">
                                     <div className="flex-1">
-                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Fiscal Range</label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Fiscal Range</label>
                                         <div className="flex items-center gap-2">
-                                            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
-                                            <span className="text-neutral-300 font-bold">→</span>
-                                            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
+                                            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
+                                            <span className="text-slate-300 font-bold">→</span>
+                                            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-sm border border-neutral-100 dark:border-neutral-800 self-start">
+                            <div className="flex items-center gap-2 p-1.5 bg-slate-50 dark:bg-slate-900 rounded-sm border border-slate-100 dark:border-slate-800 self-start">
                                 {(['ALL', 'BILLED', 'UNBILLED', 'DRAFT'] as const).map(mode => (
                                     <button
                                         key={mode}
                                         onClick={() => setViewMode(mode)}
                                         className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                                             viewMode === mode
-                                                ? 'bg-white dark:bg-neutral-800 text-primary shadow-sm ring-1 ring-neutral-200 dark:ring-neutral-700'
-                                                : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'
+                                                ? 'bg-white dark:bg-slate-800 text-primary shadow-sm ring-1 ring-slate-200 dark:ring-slate-700'
+                                                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                                         }`}
                                     >
                                         {mode} Nodes
@@ -385,39 +370,39 @@ const PurchaseRegister: React.FC = () => {
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-800">
+                            <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
                                 <tr>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('number')}>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('number')}>
                                         <div className="flex items-center gap-2">
-                                            Node ID <ArrowUpDown className="w-3 h-3" />
+                                            PO No. <ArrowUpDown className="w-3 h-3" />
                                         </div>
                                     </th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('date')}>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('date')}>
                                         <div className="flex items-center gap-2">
                                             Fiscal Date <ArrowUpDown className="w-3 h-3" />
                                         </div>
                                     </th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('vendor')}>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('vendor')}>
                                         <div className="flex items-center gap-2">
-                                            Institutional Vendor <ArrowUpDown className="w-3 h-3" />
+                                            Supplier <ArrowUpDown className="w-3 h-3" />
                                         </div>
                                     </th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Payload</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-right cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('amount')}>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Payload</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right cursor-pointer hover:text-primary transition-colors" onClick={() => handleSort('amount')}>
                                         <div className="flex items-center justify-end gap-2">
-                                            Quantum (INR) <ArrowUpDown className="w-3 h-3" />
+                                            Amount (₹) <ArrowUpDown className="w-3 h-3" />
                                         </div>
                                     </th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Node Status</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center">Actions</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {paginatedOrders.length === 0 ? (
                                     <tr>
                                         <td colSpan={7} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center gap-6 max-w-sm mx-auto opacity-40">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-slate-100 dark:bg-slate-900 rounded-sm flex items-center justify-center">
                                                     <Info className="w-10 h-10" />
                                                 </div>
                                                 <div>
@@ -437,7 +422,7 @@ const PurchaseRegister: React.FC = () => {
                                         }
 
                                         return (
-                                            <tr key={order._id || (order as any).id} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all cursor-default">
+                                            <tr key={order._id || (order as any).id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all cursor-default">
                                                 <td className="px-8 py-6 whitespace-nowrap">
                                                     <span className="text-xs font-black text-primary font-mono tracking-tighter uppercase group-hover:underline">
                                                         #{(order as any).purchaseNumber || (order as any).po_number || 'N/A'}
@@ -445,24 +430,24 @@ const PurchaseRegister: React.FC = () => {
                                                 </td>
                                                 <td className="px-8 py-6 whitespace-nowrap">
                                                     <div className="flex flex-col">
-                                                        <span className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">
+                                                        <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">
                                                             {new Date((order as any).date || (order as any).po_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                         </span>
-                                                        <span className="text-[10px] font-black text-neutral-400 mt-0.5 font-mono uppercase tracking-widest">
+                                                        <span className="text-[10px] font-black text-slate-400 mt-0.5 font-mono uppercase tracking-widest">
                                                             {new Date((order as any).createdAt || (order as any).created_at || (order as any).date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         </span>
                                                     </div>
                                                 </td>
                                                 <td className="px-8 py-6">
-                                                    <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter truncate max-w-[200px]">{vName}</p>
-                                                    <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-widest italic">{getBranchName((order as any).branchId)}</p>
+                                                    <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter truncate max-w-[200px]">{vName}</p>
+                                                    <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest italic">{getBranchName((order as any).branchId)}</p>
                                                 </td>
                                                 <td className="px-8 py-6 text-center">
-                                                    <span className="text-[10px] font-black text-neutral-500 bg-neutral-100 dark:bg-neutral-900 px-3 py-1 rounded-full uppercase tracking-widest">
+                                                    <span className="text-[10px] font-black text-slate-500 bg-slate-100 dark:bg-slate-900 px-3 py-1 rounded-full uppercase tracking-widest">
                                                         {order.items.length} Units
                                                     </span>
                                                 </td>
-                                                <td className="px-8 py-6 text-right whitespace-nowrap text-sm font-black tabular-nums text-neutral-900 dark:text-white">
+                                                <td className="px-8 py-6 text-right whitespace-nowrap text-sm font-black tabular-nums text-slate-900 dark:text-white">
                                                     ₹{((order as any).totalAmount || (order as any).total_amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                                 </td>
                                                 <td className="px-8 py-6">
@@ -472,10 +457,10 @@ const PurchaseRegister: React.FC = () => {
                                                 </td>
                                                 <td className="px-8 py-6 text-center">
                                                     <div className="flex items-center justify-center gap-2">
-                                                        <button onClick={() => handleView(order)} className="p-2.5 text-neutral-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all active:scale-95">
+                                                        <button onClick={() => handleView(order)} className="p-2.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all active:scale-95">
                                                             <Eye className="w-4 h-4" />
                                                         </button>
-                                                        <button className="p-2.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-xl transition-all">
+                                                        <button className="p-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-xl transition-all">
                                                             <MoreHorizontal className="w-4 h-4" />
                                                         </button>
                                                     </div>
@@ -489,26 +474,26 @@ const PurchaseRegister: React.FC = () => {
                     </div>
 
                     {/* Pagination Node Controller */}
-                    <div className="px-8 py-6 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex flex-col sm:flex-row items-center justify-between gap-6">
-                        <div className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
-                            Auditing nodes <span className="text-neutral-900 dark:text-white">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-neutral-900 dark:text-white">{Math.min(currentPage * itemsPerPage, displayOrders.length)}</span> of <span className="text-neutral-900 dark:text-white">{displayOrders.length}</span> institutional records
+                    <div className="px-8 py-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col sm:flex-row items-center justify-between gap-6">
+                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Auditing nodes <span className="text-slate-900 dark:text-white">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-slate-900 dark:text-white">{Math.min(currentPage * itemsPerPage, displayOrders.length)}</span> of <span className="text-slate-900 dark:text-white">{displayOrders.length}</span> institutional records
                         </div>
 
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="p-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-white dark:hover:bg-neutral-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                className="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-white dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </button>
-                            <div className="px-6 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-[0.2em]">
-                                Page {currentPage} <span className="text-neutral-300 mx-2">/</span> {totalPages || 1}
+                            <div className="px-6 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-[0.2em]">
+                                Page {currentPage} <span className="text-slate-300 mx-2">/</span> {totalPages || 1}
                             </div>
                             <button
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 disabled={currentPage === totalPages}
-                                className="p-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-white dark:hover:bg-neutral-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                className="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-white dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                             >
                                 <ChevronRight className="w-4 h-4" />
                             </button>

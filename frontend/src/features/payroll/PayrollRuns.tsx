@@ -7,12 +7,13 @@ import { RootState, AppDispatch } from '../../redux/store';
 import { fetchPayrollRuns, generatePayrollRun } from '../../redux/slices/payrollSlice';
 import { PlayCircle, Eye, Printer } from 'lucide-react';
 import { formatDateISO } from '../../utils/helpers';
-import api from '../../services/api';
+import api from '../../services/api';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const PayrollRuns = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const { runs, loading, success } = useSelector((state: RootState) => state.payroll);
+    const { runs, loading } = useSelector((state: RootState) => state.payroll);
 
     // Generate Dialog
     const [isGenerateOpen, setIsGenerateOpen] = useState(false);
@@ -22,13 +23,12 @@ const PayrollRuns = () => {
         dispatch(fetchPayrollRuns());
     }, [dispatch]);
 
-    useEffect(() => {
-        if (success) setIsGenerateOpen(false);
-    }, [success]);
-
     const { id } = useParams<{ id: string }>();
-    const [runDetails, setRunDetails] = useState<any>(null);
-    const [payslips, setPayslips] = useState<any[]>([]);
+    // Details are kept with the id they were fetched for, so another run's details are never shown
+    // while a new one loads (and nothing needs clearing when leaving the detail view).
+    const [details, setDetails] = useState<{ id: string; run: any; payslips: any[] } | null>(null);
+    const runDetails = id && details?.id === id ? details.run : null;
+    const payslips = runDetails ? details!.payslips : [];
 
     // Fetch Run Details if ID is present
     useEffect(() => {
@@ -36,21 +36,26 @@ const PayrollRuns = () => {
             const fetchDetails = async () => {
                 try {
                     const response = await api.get(`/api/hr/payroll/runs/${id}`);
-                    setRunDetails(response.data.data.run);
-                    setPayslips(response.data.data.payslips || []);
+                    setDetails({ id, run: response.data.data.run, payslips: response.data.data.payslips || [] });
                 } catch (e) {
                     console.error("Failed to fetch run details", e);
                 }
             };
             fetchDetails();
         } else {
-            setRunDetails(null);
             dispatch(fetchPayrollRuns());
         }
     }, [id, dispatch]);
 
-    const handleGenerate = () => {
-        dispatch(generatePayrollRun(selectedDate));
+    // Close the dialog when this generation succeeds. It used to follow the slice's shared
+    // `success` flag, which saving a salary structure also sets.
+    const handleGenerate = async () => {
+        try {
+            await dispatch(generatePayrollRun(selectedDate)).unwrap();
+            setIsGenerateOpen(false);
+        } catch {
+            // Rejected: keep the dialog open.
+        }
     };
 
     if (id && runDetails) {
@@ -66,9 +71,9 @@ const PayrollRuns = () => {
                             { label: 'Details' }
                         ]}
                     />
-                    <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                            <h3 className="font-bold text-gray-700">Employee Payslips ({payslips.length})</h3>
+                    <div className="mt-6 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                            <h3 className="font-bold text-slate-700">Employee Payslips ({payslips.length})</h3>
                             <div className="flex gap-2">
                                 {runDetails.status === 'DRAFT' && (
                                     <button
@@ -77,10 +82,10 @@ const PayrollRuns = () => {
                                                 await api.put(`/api/hr/payroll/runs/${id}/approve`);
                                                 // Refresh
                                                 const response = await api.get(`/api/hr/payroll/runs/${id}`);
-                                                setRunDetails(response.data.data.run);
+                                                setDetails(prev => prev && { ...prev, run: response.data.data.run });
                                             }
                                         }}
-                                        className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+                                        className="px-4 py-1.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-hover"
                                     >
                                         Approve Run
                                     </button>
@@ -93,22 +98,22 @@ const PayrollRuns = () => {
                                                 await api.post(`/api/hr/payroll/runs/${id}/pay`, { accountId, paymentMode: 'CASH' });
                                                 // Refresh
                                                 const response = await api.get(`/api/hr/payroll/runs/${id}`);
-                                                setRunDetails(response.data.data.run);
+                                                setDetails(prev => prev && { ...prev, run: response.data.data.run });
                                             }
                                         }}
-                                        className="px-4 py-1.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
+                                        className="px-4 py-1.5 bg-success text-white rounded-lg text-sm font-medium hover:bg-success/90"
                                     >
                                         Mark as Paid
                                     </button>
                                 )}
-                                <button className="p-2 text-gray-400 hover:text-gray-600">
+                                <button className="p-2 text-slate-400 hover:text-slate-600">
                                     <Printer size={18} />
                                 </button>
                             </div>
                         </div>
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="text-xs text-gray-500 border-b border-gray-100 bg-gray-50/50">
+                                <tr className="text-xs text-slate-500 border-b border-slate-100 bg-slate-50/50">
                                     <th className="px-6 py-3 font-medium">Employee</th>
                                     <th className="px-6 py-3 font-medium">Role</th>
                                     <th className="px-6 py-3 font-medium text-right">Net Pay</th>
@@ -118,14 +123,12 @@ const PayrollRuns = () => {
                             </thead>
                             <tbody>
                                 {payslips.map(p => (
-                                    <tr key={p._id} className="border-b border-gray-50 hover:bg-gray-50/50">
-                                        <td className="px-6 py-3 font-medium text-gray-900">{p.employeeId?.name || 'Unknown'}</td>
-                                        <td className="px-6 py-3 text-sm text-gray-500">{p.employeeId?.role || 'Staff'}</td>
-                                        <td className="px-6 py-3 text-right font-medium text-gray-900">₹{p.netPay.toLocaleString()}</td>
+                                    <tr key={p._id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                                        <td className="px-6 py-3 font-medium text-slate-900">{p.employeeId?.name || 'Unknown'}</td>
+                                        <td className="px-6 py-3 text-sm text-slate-500">{p.employeeId?.role || 'Staff'}</td>
+                                        <td className="px-6 py-3 text-right font-medium text-slate-900">₹{p.netPay.toLocaleString()}</td>
                                         <td className="px-6 py-3">
-                                            <span className={`text-xs px-2 py-0.5 rounded-full ${p.paymentStatus === 'PAID' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                                {p.paymentStatus}
-                                            </span>
+                                            <StatusBadge status={p.paymentStatus} />
                                         </td>
                                         <td className="px-6 py-3 text-right">
                                             <button
@@ -158,7 +161,7 @@ const PayrollRuns = () => {
                     actions={
                         <button
                             onClick={() => setIsGenerateOpen(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors shadow-sm"
                         >
                             <PlayCircle size={18} />
                             Generate New Payroll
@@ -169,14 +172,14 @@ const PayrollRuns = () => {
                 {isGenerateOpen && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in">
                         <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 m-4">
-                            <h3 className="text-xl font-bold text-gray-900 mb-4">Run Payroll</h3>
-                            <p className="text-sm text-gray-500 mb-6">Select the period for which you want to generate the payroll. This will calculate salaries based on attendance and structure.</p>
+                            <h3 className="text-xl font-bold text-slate-900 mb-4">Run Payroll</h3>
+                            <p className="text-sm text-slate-500 mb-6">Select the period for which you want to generate the payroll. This will calculate salaries based on attendance and structure.</p>
 
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div>
-                                    <label className="text-sm font-medium text-gray-700 block mb-1">Month</label>
+                                    <label className="text-sm font-medium text-slate-700 block mb-1">Month</label>
                                     <select
-                                        className="w-full p-2 border rounded-lg bg-gray-50"
+                                        className="w-full p-2 border rounded-lg bg-slate-50"
                                         value={selectedDate.month}
                                         onChange={(e) => setSelectedDate({ ...selectedDate, month: parseInt(e.target.value) })}
                                     >
@@ -186,10 +189,10 @@ const PayrollRuns = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-gray-700 block mb-1">Year</label>
+                                    <label className="text-sm font-medium text-slate-700 block mb-1">Year</label>
                                     <input
                                         type="number"
-                                        className="w-full p-2 border rounded-lg bg-gray-50"
+                                        className="w-full p-2 border rounded-lg bg-slate-50"
                                         value={selectedDate.year}
                                         onChange={(e) => setSelectedDate({ ...selectedDate, year: parseInt(e.target.value) })}
                                     />
@@ -199,14 +202,14 @@ const PayrollRuns = () => {
                             <div className="flex justify-end gap-3">
                                 <button
                                     onClick={() => setIsGenerateOpen(false)}
-                                    className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                                    className="px-4 py-2 text-slate-600 hover:text-slate-900"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleGenerate}
                                     disabled={loading}
-                                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50"
                                 >
                                     {loading ? 'Processing...' : 'Run Payroll'}
                                 </button>
@@ -215,11 +218,11 @@ const PayrollRuns = () => {
                     </div>
                 )}
 
-                <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="mt-6 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                     {runs.length > 0 ? (
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="text-xs text-gray-500 border-b border-gray-100 bg-gray-50/50">
+                                <tr className="text-xs text-slate-500 border-b border-slate-100 bg-slate-50/50">
                                     <th className="px-6 py-4 font-medium">Period</th>
                                     <th className="px-6 py-4 font-medium">Run Date</th>
                                     <th className="px-6 py-4 font-medium">Total Payout</th>
@@ -229,27 +232,22 @@ const PayrollRuns = () => {
                             </thead>
                             <tbody>
                                 {runs.map((run) => (
-                                    <tr key={run._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                    <tr key={run._id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                                        <td className="px-6 py-4 text-sm font-medium text-slate-900">
                                             <div>
-                                                <div className="text-sm font-medium text-gray-900">
+                                                <div className="text-sm font-medium text-slate-900">
                                                     {run.periodStart ? new Date(run.periodStart).toLocaleString('default', { month: 'long', year: 'numeric' }) : 'N/A'}
                                                 </div>
-                                                <div className="text-xs text-gray-500">
+                                                <div className="text-xs text-slate-500">
                                                     Run Date: {run.processedDate || run.createdAt ? formatDateISO(new Date(run.processedDate || run.createdAt)) : 'N/A'}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
+                                        <td className="px-6 py-4 text-sm font-medium text-slate-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                                                ${run.status === 'PAID' ? 'bg-green-100 text-green-800' :
-                                                    run.status === 'APPROVED' ? 'bg-blue-100 text-blue-800' :
-                                                        'bg-yellow-100 text-yellow-800'}`}>
-                                                {run.status.toLowerCase()}
-                                            </span>
+                                            <StatusBadge status={run.status} />
                                         </td>
-                                        <td className="px-6 py-4 flex justify-end gap-3 text-gray-400">
+                                        <td className="px-6 py-4 flex justify-end gap-3 text-slate-400">
                                             <button
                                                 title="View Details"
                                                 onClick={() => navigate(`/people/payroll/run/${run._id}`)}
@@ -257,7 +255,7 @@ const PayrollRuns = () => {
                                             >
                                                 <Eye size={18} />
                                             </button>
-                                            <button className="hover:text-gray-600 transition-colors" title="Print Reports">
+                                            <button className="hover:text-slate-600 transition-colors" title="Print Reports">
                                                 <Printer size={18} />
                                             </button>
                                         </td>
@@ -266,7 +264,7 @@ const PayrollRuns = () => {
                             </tbody>
                         </table>
                     ) : (
-                        <div className="p-12 text-center text-gray-500">
+                        <div className="p-12 text-center text-slate-500">
                             No payroll runs found. Click "Generate" to start.
                         </div>
                     )}

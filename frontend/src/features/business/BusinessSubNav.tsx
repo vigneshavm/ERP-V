@@ -50,13 +50,13 @@ const BusinessSubNav: React.FC = () => {
                                 key={item.path}
                                 to={item.path}
                                 className={`group flex flex-col items-center px-4 py-3 rounded-xl transition-all relative min-w-[120px] ${isActive
-                                    ? 'bg-indigo-50/50'
+                                    ? 'bg-primary/50'
                                     : 'hover:bg-slate-50'
                                     }`}
                             >
                                 <div className={`p-2 rounded-lg mb-1 transition-colors ${isActive
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
-                                    : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-primary'
+                                    ? 'bg-primary text-white shadow-lg shadow-indigo-200'
+                                    : 'bg-slate-100 text-slate-500 group-hover:bg-primary-soft group-hover:text-primary'
                                     }`}>
                                     <Icon size={18} />
                                 </div>
@@ -65,7 +65,7 @@ const BusinessSubNav: React.FC = () => {
                                     {item.name}
                                 </span>
                                 {isActive && (
-                                    <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-indigo-600 rounded-full" />
+                                    <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-primary rounded-full" />
                                 )}
                             </NavLink>
                         );

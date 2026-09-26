@@ -123,8 +123,9 @@ const initialSettingsState: SettingsState = {
             // Wholesale/Retail (WR) Billing
             'WR_COUNTER', 'WR_SALES_ENTRY', 'WR_PURCHASE_ENTRY', 'WR_SALES_BILL_VIEW', 'WR_PURCHASE_BILL_VIEW', 'WR_SALES_REPORT', 'WR_STOCK_REPORT',
 
-            // Settings (read-only access)
-            'SETTINGS', 'BUSINESS_PROFILE', 'AUDIT_LOGS', 'DISCOUNT_PERMISSIONS',
+            // Settings (read-only access, plus Master Data so a co-owner can maintain product/sales
+            // taxonomy lists like Sales Counter mapping without needing the Owner login)
+            'SETTINGS', 'BUSINESS_PROFILE', 'AUDIT_LOGS', 'DISCOUNT_PERMISSIONS', 'MASTER_DATA',
         ],
         [DbRoleCode.ADMIN]: [
             // Main Groups

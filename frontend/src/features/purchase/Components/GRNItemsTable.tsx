@@ -23,19 +23,19 @@ const GRNItemsTable: React.FC<GRNItemsTableProps> = ({
     };
 
     return (
-        <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center">
+        <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                 <h3 className="text-lg font-bold flex items-center gap-2">
                     <Package className="w-5 h-5 text-primary" /> Item Inspection
                 </h3>
-                <div className="text-xs font-medium text-neutral-500 p-2 bg-neutral-50 dark:bg-neutral-900 rounded-lg">
+                <div className="text-xs font-medium text-slate-500 p-2 bg-slate-50 dark:bg-slate-900 rounded-lg">
                     {items?.length || 0} Items linked to {poNumber || 'PO'}
                 </div>
             </div>
 
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                    <thead className="bg-neutral-50 dark:bg-neutral-900 text-neutral-500 uppercase text-[10px] font-bold tracking-wider">
+                    <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
                         <tr>
                             <th className="px-6 py-4">Product Details</th>
                             <th className="px-4 py-4 text-center">Ordered</th>
@@ -45,10 +45,10 @@ const GRNItemsTable: React.FC<GRNItemsTableProps> = ({
                             <th className="px-6 py-4">Batch / Serial</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                         {!items || items.length === 0 ? (
                             <tr>
-                                <td colSpan={6} className="px-6 py-12 text-center text-neutral-400">
+                                <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
                                     <div className="flex flex-col items-center gap-2">
                                         <Search className="w-8 h-8 opacity-20" />
                                         <p>Select a Purchase Order to load items</p>
@@ -57,18 +57,18 @@ const GRNItemsTable: React.FC<GRNItemsTableProps> = ({
                             </tr>
                         ) : (
                             items.map((item, idx) => (
-                                <tr key={item.id} className="hover:bg-neutral-50/50 dark:hover:bg-neutral-700/30 transition-colors">
+                                <tr key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors">
                                     <td className="px-6 py-4">
-                                        <p className="font-bold text-neutral-900 dark:text-white mb-0.5">{item.productName}</p>
-                                        <p className="text-xs text-neutral-500 font-mono">{item.sku}</p>
+                                        <p className="font-bold text-slate-900 dark:text-white mb-0.5">{item.productName}</p>
+                                        <p className="text-xs text-slate-500 font-mono">{item.sku}</p>
                                     </td>
-                                    <td className="px-4 py-4 text-center font-bold text-neutral-400">
+                                    <td className="px-4 py-4 text-center font-bold text-slate-400">
                                         {item.orderedQty}
                                     </td>
                                     <td className="px-4 py-4">
                                         <input
                                             type="number"
-                                            className="w-20 mx-auto px-2 py-1.5 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-center font-bold focus:ring-1 focus:ring-primary outline-none"
+                                            className="w-20 mx-auto px-2 py-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-center font-bold focus:ring-1 focus:ring-primary outline-none"
                                             value={item.receivedQty}
                                             onChange={e => onItemChange(idx, 'receivedQty', parseInt(e.target.value) || 0)}
                                         />
@@ -84,7 +84,7 @@ const GRNItemsTable: React.FC<GRNItemsTableProps> = ({
                                     <td className="px-4 py-4 text-center">
                                         <div className="flex flex-col items-center gap-1">
                                             {getStatusIcon(item.inspectionStatus)}
-                                            <span className="text-[10px] font-bold uppercase text-neutral-400">{item.inspectionStatus}</span>
+                                            <span className="text-[10px] font-bold uppercase text-slate-400">{item.inspectionStatus}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -92,14 +92,14 @@ const GRNItemsTable: React.FC<GRNItemsTableProps> = ({
                                             <input
                                                 type="text"
                                                 placeholder="Batch #"
-                                                className="w-full px-3 py-1.5 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs outline-none"
+                                                className="w-full px-3 py-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none"
                                                 value={item.batchNumber || ''}
                                                 onChange={e => onItemChange(idx, 'batchNumber', e.target.value)}
                                             />
                                             <input
                                                 type="text"
                                                 placeholder="Expiry Date"
-                                                className="w-full px-3 py-1.5 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs outline-none"
+                                                className="w-full px-3 py-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none"
                                                 onFocus={(e) => e.target.type = 'date'}
                                                 onBlur={(e) => e.target.type = 'text'}
                                                 value={item.expiryDate || ''}

@@ -173,18 +173,18 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             <Monitor className="w-5 h-5" />
                         </button>
 
-                        <div className="bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg flex gap-1 ml-2">
+                        <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex gap-1 ml-2">
                             {/* Sale / Return Toggle */}
-                            <div className="flex bg-gray-200 p-0.5 rounded-lg mr-2">
+                            <div className="flex bg-slate-200 p-0.5 rounded-lg mr-2">
                                 <button
                                     onClick={() => setIsReturnMode(false)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-success shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                                 >
                                     {t('sale')}
                                 </button>
                                 <button
                                     onClick={() => setIsReturnMode(true)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-red-50 text-red-600 shadow-sm ring-1 ring-red-100' : 'text-gray-500 hover:text-gray-700'}`}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-danger-soft text-danger shadow-sm ring-1 ring-red-100' : 'text-slate-500 hover:text-slate-700'}`}
                                 >
                                     {t('return')}
                                 </button>
@@ -192,7 +192,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
 
                             <button
                                 onClick={() => setViewMode('SCANNER')}
-                                className={`px-3 py-1 bg-white dark:bg-neutral-700 rounded-md text-xs font-bold flex flex-col items-center gap-0.5 transition-all ${viewMode === 'SCANNER' ? 'text-primary dark:text-primaryShadow shadow-sm' : 'bg-transparent text-neutral-500 hover:text-neutral-700'}`}
+                                className={`px-3 py-1 bg-white dark:bg-slate-700 rounded-md text-xs font-bold flex flex-col items-center gap-0.5 transition-all ${viewMode === 'SCANNER' ? 'text-primary dark:text-primaryShadow shadow-sm' : 'bg-transparent text-slate-500 hover:text-slate-700'}`}
                             >
                                 <div className="flex items-center gap-2">
                                     <TableIcon className="w-3.5 h-3.5" /> {t('scanner')}
@@ -201,7 +201,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             </button>
                             <button
                                 onClick={() => setViewMode('VISUAL')}
-                                className={`px-3 py-1 bg-white dark:bg-neutral-800 rounded-md text-xs font-bold flex flex-col items-center gap-0.5 transition-all ${viewMode === 'VISUAL' ? 'text-primary dark:text-primaryShadow shadow-sm' : 'bg-transparent text-neutral-500 hover:text-neutral-700'}`}
+                                className={`px-3 py-1 bg-white dark:bg-slate-800 rounded-md text-xs font-bold flex flex-col items-center gap-0.5 transition-all ${viewMode === 'VISUAL' ? 'text-primary dark:text-primaryShadow shadow-sm' : 'bg-transparent text-slate-500 hover:text-slate-700'}`}
                             >
                                 <div className="flex items-center gap-2">
                                     <LayoutGrid className="w-3.5 h-3.5" /> {t('visual')}
@@ -307,18 +307,18 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 <div className="shrink-0 px-2 pb-1 bg-surface/50">
                                     <div className="bg-card border border-default rounded-sm p-2 shadow-sm">
                                         <div className="flex justify-between items-center mb-1">
-                                            <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">Last Bill</span>
+                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Last Bill</span>
                                             <div className="flex gap-1">
                                                 <button
                                                     onClick={downloadLastBill}
-                                                    className="text-neutral-400 hover:text-primary p-0.5 transition-colors"
+                                                    className="text-slate-400 hover:text-primary p-0.5 transition-colors"
                                                     title="Download PDF"
                                                 >
                                                     <Download className="w-3.5 h-3.5" />
                                                 </button>
                                                 <button
                                                     onClick={reprintLastBill}
-                                                    className="text-neutral-400 hover:text-primary p-0.5 transition-colors"
+                                                    className="text-slate-400 hover:text-primary p-0.5 transition-colors"
                                                     title="Reprint Last Bill"
                                                 >
                                                     <Printer className="w-3.5 h-3.5" />
@@ -329,9 +329,9 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                             <span className="text-xl font-black text-primary tracking-tight leading-none mb-1">
                                                 ₹{lastBill.total.toFixed(2)}
                                             </span>
-                                            <div className="flex items-center gap-1.5 text-[10px] text-neutral-400 leading-none">
-                                                <span className="font-medium text-neutral-600 dark:text-neutral-300">#{lastBill.id.split('-').pop()}</span>
-                                                <div className="w-0.5 h-0.5 rounded-full bg-neutral-300" />
+                                            <div className="flex items-center gap-1.5 text-[10px] text-slate-400 leading-none">
+                                                <span className="font-medium text-slate-600 dark:text-slate-300">#{lastBill.id.split('-').pop()}</span>
+                                                <div className="w-0.5 h-0.5 rounded-full bg-slate-300" />
                                                 <span>{new Date(lastBill.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).toLowerCase()}</span>
                                             </div>
                                         </div>
@@ -379,19 +379,19 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
             </div>
 
             {/* Mobile Tab Nav */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 pb-safe z-50">
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pb-safe z-50">
                 <div className="flex justify-around items-center h-16 px-2">
                     <button
                         onClick={() => setMobileTab('MAIN')}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${mobileTab === 'MAIN' ? 'text-primary' : 'text-neutral-500 dark:text-neutral-400'}`}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${mobileTab === 'MAIN' ? 'text-primary' : 'text-slate-500 dark:text-slate-400'}`}
                     >
                         <LayoutGrid className="w-6 h-6" />
                         <span className="text-[10px] font-medium">{viewMode === 'SCANNER' ? 'Scanner' : 'Products'}</span>
                     </button>
-                    <div className="w-px h-8 bg-neutral-200 dark:bg-neutral-800" />
+                    <div className="w-px h-8 bg-slate-200 dark:bg-slate-800" />
                     <button
                         onClick={() => setMobileTab('CART')}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${mobileTab === 'CART' ? 'text-primary' : 'text-neutral-500 dark:text-neutral-400'}`}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 ${mobileTab === 'CART' ? 'text-primary' : 'text-slate-500 dark:text-slate-400'}`}
                     >
                         <div className="relative">
                             <ShoppingCart className="w-6 h-6" />
@@ -403,7 +403,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         </div>
                         <span className="text-[10px] font-medium">Cart</span>
                     </button>
-                    <div className="w-px h-8 bg-neutral-200 dark:bg-neutral-800" />
+                    <div className="w-px h-8 bg-slate-200 dark:bg-slate-800" />
                     <button
                         onClick={() => {
                             if (cart.length === 0) {
@@ -418,10 +418,10 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         <CreditCard className="w-6 h-6" />
                         <span className="text-[10px] font-medium">Settlement</span>
                     </button>
-                    <div className="w-px h-8 bg-neutral-200 dark:bg-neutral-800" />
+                    <div className="w-px h-8 bg-slate-200 dark:bg-slate-800" />
                     <button
                         onClick={() => setIsMobileMenuOpen(true)}
-                        className={`flex flex-col items-center justify-center w-full h-full gap-1 text-neutral-500 dark:text-neutral-400`}
+                        className={`flex flex-col items-center justify-center w-full h-full gap-1 text-slate-500 dark:text-slate-400`}
                     >
                         <Menu className="w-6 h-6" />
                         <span className="text-[10px] font-medium">Menu</span>

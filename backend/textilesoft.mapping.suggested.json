@@ -1,0 +1,20 @@
+{
+  "_comment": "Derived from the schema inside SRISYSSSS_2026_1_3_11_46.BAK (db SSS). Uses the typed [Barcode] table (one row per barcode, has qty + rates). UNVERIFIED: column meanings are inferred from names; confirm with `npm run discover:textilesoft -- --sample dbo.Barcode` and compare BarBQty to a stock report in Textilesoft before syncing.",
+  "source": { "table": "dbo.Barcode" },
+  "columns": {
+    "name": "BarPName",
+    "sku": "BarPCodeStr",
+    "barcode": "Barcode",
+    "brand": "BarBrand",
+    "size": "BarSize",
+    "color": "BarColor",
+    "design": "BarDesignNo",
+    "pattern": "BarPattern",
+    "unit": "BarUnit",
+    "costPrice": "BarPurRate",
+    "sellingPrice": "BarMRP",
+    "wholesaleRate": "BarWRate",
+    "stockQty": "BarBQty"
+  },
+  "defaults": { "unit": "pcs", "lowStockLimit": 5 }
+}

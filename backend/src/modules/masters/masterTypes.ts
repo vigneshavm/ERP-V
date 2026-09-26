@@ -27,8 +27,10 @@ export const MASTER_TYPES = [
     'PRODUCT_COLOR',
     'PRODUCT_SIZE',
     'PRODUCT_RACK',
+    'PRODUCT_HSN',
     'UNIT',
     'WAREHOUSE',
+    'SALES_COUNTER',
 ] as const;
 
 export type MasterType = typeof MASTER_TYPES[number];
@@ -69,5 +71,17 @@ export const DEFAULT_SEEDS: Partial<Record<MasterType, Array<{ name: string; des
     // one real warehouse lines up with what items already point at.
     WAREHOUSE: [
         { name: 'Main Warehouse', meta: { code: 'MAIN_WAREHOUSE' } },
+    ],
+    // HSN code catalog -- name is the HSN code itself (unique per tenant per type, matching the
+    // MasterEntry index), description is the tariff description, meta.gstRate is the GST% that
+    // ProductModal.tsx auto-fills onto Item.gstRate when a code is picked. Seeded with the same
+    // textile-relevant codes the old (dead, hardcoded) UnitsHSNAgent.tsx mock displayed, so a
+    // fresh tenant's catalog isn't empty on day one.
+    PRODUCT_HSN: [
+        { name: '5208', description: 'Woven fabrics of cotton', meta: { gstRate: 5 } },
+        { name: '5515', description: 'Woven fabrics of synthetic staple fibres', meta: { gstRate: 12 } },
+        { name: '6109', description: 'T-shirts, singlets and other vests', meta: { gstRate: 12 } },
+        { name: '6204', description: "Women's suits, ensembles, jackets", meta: { gstRate: 12 } },
+        { name: '6211', description: 'Track suits, ski suits and swimwear', meta: { gstRate: 5 } },
     ],
 };

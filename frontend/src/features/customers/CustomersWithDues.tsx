@@ -46,7 +46,7 @@ const CustomersWithDues = () => {
                 <div className="mb-8">
                     <button
                         onClick={() => navigate("/customers")}
-                        className="flex items-center text-gray-600 dark:text-[rgb(var(--color-text-secondary))] hover:text-gray-900 dark:hover:text-[rgb(var(--color-text))] mb-4 font-medium"
+                        className="flex items-center text-slate-600 dark:text-[rgb(var(--color-text-secondary))] hover:text-slate-900 dark:hover:text-[rgb(var(--color-text))] mb-4 font-medium"
                     >
                         <svg
                             className="w-5 h-5 mr-2"
@@ -63,18 +63,18 @@ const CustomersWithDues = () => {
                         </svg>
                         Back to All Customers
                     </button>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-[rgb(var(--color-text))] mb-2">
+                    <h1 className="page-title text-slate-900 dark:text-[rgb(var(--color-text))] mb-2">
                         Customers With Outstanding Dues
                     </h1>
-                    <p className="text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
+                    <p className="text-slate-600 dark:text-[rgb(var(--color-text-secondary))]">
                         Manage customers with pending payments
                     </p>
                 </div>
 
                 {/* Error Message */}
                 {isError && (
-                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                        <p className="text-red-600 dark:text-red-400 text-sm">{message}</p>
+                    <div className="mb-6 p-4 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger-line rounded-lg">
+                        <p className="text-danger dark:text-danger text-sm">{message}</p>
                     </div>
                 )}
 
@@ -86,10 +86,10 @@ const CustomersWithDues = () => {
                             placeholder="Search by name, phone, or email..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[rgb(var(--color-border))] bg-white dark:bg-[rgb(var(--color-input))] text-gray-900 dark:text-[rgb(var(--color-text))] placeholder:text-gray-400 dark:placeholder:text-[rgb(var(--color-placeholder))] rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent font-medium"
+                            className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-[rgb(var(--color-border))] bg-white dark:bg-[rgb(var(--color-input))] text-slate-900 dark:text-[rgb(var(--color-text))] placeholder:text-slate-400 dark:placeholder:text-[rgb(var(--color-placeholder))] rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent font-medium"
                         />
                         <svg
-                            className="absolute left-3 top-2.5 w-5 h-5 text-gray-400 dark:text-[rgb(var(--color-text-muted))]"
+                            className="absolute left-3 top-2.5 w-5 h-5 text-slate-400 dark:text-[rgb(var(--color-text-muted))]"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -108,13 +108,13 @@ const CustomersWithDues = () => {
                 <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-xl shadow-lg p-6 mb-6 text-white">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-red-100 text-sm font-medium mb-1">
+                            <p className="text-danger text-sm font-medium mb-1">
                                 Total Outstanding Dues
                             </p>
                             <p className="text-4xl font-bold">
                                 ₹{totalOutstandingDues.toFixed(2)}
                             </p>
-                            <p className="text-red-100 text-sm mt-2">
+                            <p className="text-danger text-sm mt-2">
                                 From {customersWithDues.length} customer
                                 {customersWithDues.length !== 1 ? "s" : ""}
                             </p>
@@ -141,12 +141,12 @@ const CustomersWithDues = () => {
                 <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-xl shadow-sm dark:shadow-lg border dark:border-[rgb(var(--color-border))] overflow-hidden">
                     {isLoading ? (
                         <div className="flex justify-center items-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-[rgb(var(--color-primary))]"></div>
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary dark:border-[rgb(var(--color-primary))]"></div>
                         </div>
                     ) : filteredCustomers.length === 0 ? (
                         <div className="text-center py-12">
                             <svg
-                                className="w-16 h-16 text-gray-400 dark:text-[rgb(var(--color-text-muted))] mx-auto mb-4"
+                                className="w-16 h-16 text-slate-400 dark:text-[rgb(var(--color-text-muted))] mx-auto mb-4"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -158,72 +158,72 @@ const CustomersWithDues = () => {
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                                 />
                             </svg>
-                            <p className="text-gray-500 dark:text-[rgb(var(--color-text-secondary))] text-lg">
+                            <p className="text-slate-500 dark:text-[rgb(var(--color-text-secondary))] text-lg">
                                 {searchTerm
                                     ? "No customers found matching your search"
                                     : "No customers with outstanding dues"}
                             </p>
-                            <p className="text-gray-400 dark:text-[rgb(var(--color-text-muted))] text-sm mt-2">
+                            <p className="text-slate-400 dark:text-[rgb(var(--color-text-muted))] text-sm mt-2">
                                 {!searchTerm && "All customers have cleared their dues!"}
                             </p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gray-50 dark:bg-[rgb(var(--color-table-header))] border-b border-gray-200 dark:border-[rgb(var(--color-border))]">
+                                <thead className="bg-slate-50 dark:bg-[rgb(var(--color-table-header))] border-b border-slate-200 dark:border-[rgb(var(--color-border))]">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                                             Customer
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                                             Contact
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                                             Address
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                                             Outstanding Dues
                                         </th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
                                             Actions
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white dark:bg-[rgb(var(--color-table-row))] divide-y divide-gray-200 dark:divide-[rgb(var(--color-border))]">
+                                <tbody className="bg-white dark:bg-[rgb(var(--color-table-row))] divide-y divide-slate-200 dark:divide-[rgb(var(--color-border))]">
                                     {filteredCustomers.map((customer) => (
                                         <tr
                                             key={customer._id}
-                                            className="hover:bg-gray-50 dark:hover:bg-[rgb(var(--color-input))]"
+                                            className="hover:bg-slate-50 dark:hover:bg-[rgb(var(--color-input))]"
                                         >
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">
-                                                    <div className="w-10 h-10 bg-indigo-600 dark:bg-[rgb(var(--color-primary))] rounded-full flex items-center justify-center">
+                                                    <div className="w-10 h-10 bg-primary dark:bg-[rgb(var(--color-primary))] rounded-full flex items-center justify-center">
                                                         <span className="text-white font-bold">
                                                             {customer.name.charAt(0).toUpperCase()}
                                                         </span>
                                                     </div>
                                                     <div className="ml-4">
-                                                        <div className="text-sm font-medium text-gray-900 dark:text-[rgb(var(--color-text))]">
+                                                        <div className="text-sm font-medium text-slate-900 dark:text-[rgb(var(--color-text))]">
                                                             {customer.name}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="text-sm text-gray-900 dark:text-[rgb(var(--color-text))]">
+                                                <div className="text-sm text-slate-900 dark:text-[rgb(var(--color-text))]">
                                                     {customer.phone}
                                                 </div>
-                                                <div className="text-sm text-gray-500 dark:text-[rgb(var(--color-text-secondary))]">
+                                                <div className="text-sm text-slate-500 dark:text-[rgb(var(--color-text-secondary))]">
                                                     {customer.email || "No email"}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="text-sm text-gray-900 dark:text-[rgb(var(--color-text))]">
+                                                <div className="text-sm text-slate-900 dark:text-[rgb(var(--color-text))]">
                                                     {customer.address || "No address"}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-danger-soft text-danger">
                                                     ₹{(customer.dues || 0).toFixed(2)}
                                                 </span>
                                             </td>
@@ -231,7 +231,7 @@ const CustomersWithDues = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => navigate(`/customers/${customer._id}`)}
-                                                    className="text-primary dark:text-[rgb(var(--color-primary))] hover:text-indigo-900 dark:hover:text-[rgb(var(--color-primary-hover))] mr-4 font-medium"
+                                                    className="text-primary dark:text-[rgb(var(--color-primary))] hover:text-primary dark:hover:text-[rgb(var(--color-primary-hover))] mr-4 font-medium"
                                                 >
                                                     View
                                                 </button>
@@ -240,7 +240,7 @@ const CustomersWithDues = () => {
                                                     onClick={() =>
                                                         navigate(`/customers/adjust-due/${customer._id}`)
                                                     }
-                                                    className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-500 font-medium"
+                                                    className="text-success dark:text-success hover:text-success dark:hover:text-success font-medium"
                                                 >
                                                     Adjust Due
                                                 </button>

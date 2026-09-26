@@ -22,6 +22,15 @@ export interface IPurchaseItem {
     size?: string;
     categoryCode?: string;
     lotNumber?: string;
+    // Textile descriptors captured at intake time for a genuinely new product (see
+    // PurchaseController.createPurchase) -- mirrors the same Item.* fields ProductModal.tsx
+    // manages, so a new product created via Purchase Entry starts with them set instead of blank.
+    brand?: string;
+    design?: string;
+    pattern?: string;
+    modelNo?: string;
+    fashionName?: string;
+    shelfCode?: string;
 }
 
 export interface IPurchase extends Document {
@@ -69,7 +78,13 @@ const purchaseItemSchema = new Schema({
     color: { type: String },
     size: { type: String },
     categoryCode: { type: String },
-    lotNumber: { type: String }
+    lotNumber: { type: String },
+    brand: { type: String },
+    design: { type: String },
+    pattern: { type: String },
+    modelNo: { type: String },
+    fashionName: { type: String },
+    shelfCode: { type: String }
 }, { _id: false });
 
 const purchaseSchema = new Schema({

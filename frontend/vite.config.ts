@@ -41,7 +41,33 @@ export default defineConfig(({ mode }) => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
         workbox: {
-          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024  // 5 MB
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,  // 5 MB
+          // Only precache the app shell. Precaching all ~200 lazy route chunks (~6 MB) made
+          // every first visit download the whole app in the background and compete with the
+          // page's own requests. Route chunks are cached on first use instead (see below).
+          globPatterns: [
+            'index.html',
+            'assets/index-*.{js,css}',
+            'assets/vendor-*.js',
+            '*.{ico,png,svg,webmanifest}',
+          ],
+          navigateFallbackDenylist: [/^\/api\//],
+          runtimeCaching: [
+            {
+              // Content-hashed, immutable lazy chunks
+              urlPattern: ({ url }) => url.pathname.startsWith('/assets/'),
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'erp-assets',
+                expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              },
+            },
+            {
+              urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
+              handler: 'StaleWhileRevalidate',
+              options: { cacheName: 'erp-fonts' },
+            },
+          ],
         },
         manifest: {
           name: 'Enterprise ERP',
@@ -90,7 +116,9 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: {
             'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-viz': ['recharts', 'framer-motion'],
+            // 'vendor-viz' (recharts + framer-motion, ~540 KB) intentionally NOT forced into a
+            // manual chunk: as one it was modulepreloaded on every page load, including login.
+            // Left to Rollup, it is only fetched with the dashboard/report routes that use it.
             'vendor-ui': ['lucide-react'],
             'vendor-data': ['@reduxjs/toolkit', 'react-redux'],
           }

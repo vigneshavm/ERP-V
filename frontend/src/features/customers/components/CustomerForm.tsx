@@ -13,6 +13,19 @@ interface CustomerFormProps {
     onCancel: () => void;
 }
 
+// Form fields for a customer being edited (or blank for a new one).
+const toCustomerFormData = (initialData?: Partial<Customer>) => ({
+    name: initialData?.name || '',
+    phone: initialData?.phone || '',
+    email: initialData?.email || '',
+    address: initialData?.address || '',
+    referredBy: typeof initialData?.referrer === 'string' ? initialData.referrer : (initialData?.referrer as any)?._id || '',
+});
+
+// The populated referrer object, when the API returned one (a bare id string has no name to show).
+const referrerOf = (initialData?: Partial<Customer>): Customer | null =>
+    initialData?.referrer && typeof initialData.referrer !== 'string' ? initialData.referrer as any : null;
+
 const CustomerForm: React.FC<CustomerFormProps> = ({
     initialData,
     customers,
@@ -22,35 +35,26 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
     submitLabel,
     onCancel
 }) => {
-    const [formData, setFormData] = useState({
-        name: initialData?.name || '',
-        phone: initialData?.phone || '',
-        email: initialData?.email || '',
-        address: initialData?.address || '',
-        referredBy: typeof initialData?.referrer === 'string' ? initialData.referrer : (initialData?.referrer as any)?._id || '',
-    });
+    const [formData, setFormData] = useState(() => toCustomerFormData(initialData));
 
-    const [referralSearch, setReferralSearch] = useState('');
+    const [referralSearch, setReferralSearch] = useState(() => referrerOf(initialData)?.name || '');
     const [showReferralDropdown, setShowReferralDropdown] = useState(false);
-    const [selectedReferrer, setSelectedReferrer] = useState<Customer | null>(null);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
+    const [selectedReferrer, setSelectedReferrer] = useState<Customer | null>(() => referrerOf(initialData));
+    // Re-initialize when given a different customer; adjusted during render (tracking the previous
+    // prop) instead of setState in an effect.
+    const [prevInitialData, setPrevInitialData] = useState(initialData);
+    if (initialData !== prevInitialData) {
+        setPrevInitialData(initialData);
         if (initialData) {
-            setFormData({
-                name: initialData.name || '',
-                phone: initialData.phone || '',
-                email: initialData.email || '',
-                address: initialData.address || '',
-                referredBy: typeof initialData.referrer === 'string' ? initialData.referrer : (initialData.referrer as any)?._id || '',
-            });
-
-            if (initialData.referrer && typeof initialData.referrer !== 'string') {
-                setSelectedReferrer(initialData.referrer as any);
-                setReferralSearch((initialData.referrer as any).name);
+            setFormData(toCustomerFormData(initialData));
+            const referrer = referrerOf(initialData);
+            if (referrer) {
+                setSelectedReferrer(referrer);
+                setReferralSearch(referrer.name);
             }
         }
-    }, [initialData]);
+    }
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -100,7 +104,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             value={formData.name}
                             onChange={onChange}
                             required
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
+                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm text-[rgb(var(--color-text))]"
                             placeholder="Full Commercial Name"
                         />
                     </InputWrapper>
@@ -118,7 +122,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             onChange={onChange}
                             required
                             pattern="[0-9]{10}"
-                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'phone' ? 'border-rose-500 focus:border-rose-500' : 'border-slate-100 dark:border-slate-800 focus:border-indigo-500'}`}
+                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'phone' ? 'border-danger focus:border-primary' : 'border-slate-100 dark:border-slate-800 focus:border-primary'}`}
                             placeholder="10-Digit Primary Line"
                         />
                     </InputWrapper>
@@ -133,7 +137,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             name="email"
                             value={formData.email}
                             onChange={onChange}
-                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'email' ? 'border-rose-500 focus:border-rose-500' : 'border-slate-100 dark:border-slate-800 focus:border-indigo-500'}`}
+                            className={`w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-sm text-[rgb(var(--color-text))] ${duplicateField === 'email' ? 'border-danger focus:border-primary' : 'border-slate-100 dark:border-slate-800 focus:border-primary'}`}
                             placeholder="Official Digital Correspondence"
                         />
                     </InputWrapper>
@@ -141,13 +145,13 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                     <InputWrapper label="Network Referral" icon={Briefcase}>
                         <div className="relative" ref={dropdownRef}>
                             {selectedReferrer ? (
-                                <div className="w-full px-5 py-3.5 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/30 rounded-sm flex items-center justify-between group">
+                                <div className="w-full px-5 py-3.5 bg-success-soft dark:bg-success-soft border border-success-line dark:border-success/30 rounded-sm flex items-center justify-between group">
                                     <div>
-                                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-tighter leading-none mb-1">Referrer Selected</p>
-                                        <p className="text-sm font-bold text-emerald-700 dark:text-success">{selectedReferrer.name}</p>
+                                        <p className="text-[10px] font-black text-success uppercase tracking-tighter leading-none mb-1">Referrer Selected</p>
+                                        <p className="text-sm font-bold text-success dark:text-success">{selectedReferrer.name}</p>
                                     </div>
-                                    <button type="button" onClick={handleClearReferrer} className="p-2 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-xl transition-all">
-                                        <X className="w-4 h-4 text-emerald-600" />
+                                    <button type="button" onClick={handleClearReferrer} className="p-2 hover:bg-success-soft dark:hover:bg-success-soft rounded-xl transition-all">
+                                        <X className="w-4 h-4 text-success" />
                                     </button>
                                 </div>
                             ) : (
@@ -160,7 +164,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                                             setReferralSearch(e.target.value);
                                             setShowReferralDropdown(true);
                                         }}
-                                        className="w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm text-[rgb(var(--color-text))]"
+                                        className="w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm text-[rgb(var(--color-text))]"
                                         placeholder="Search existing partners..."
                                     />
                                     {showReferralDropdown && referralSearch.length > 0 && (
@@ -200,7 +204,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                             value={formData.address}
                             onChange={onChange}
                             rows={3}
-                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm leading-relaxed text-[rgb(var(--color-text))]"
+                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm leading-relaxed text-[rgb(var(--color-text))]"
                             placeholder="Warehouse Access Point / Billing Logistics Center"
                         />
                     </InputWrapper>
@@ -218,7 +222,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-10 py-4 bg-indigo-600 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-wait"
+                    className="px-10 py-4 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-primary-hover active:scale-95 transition-all disabled:opacity-50 disabled:cursor-wait"
                 >
                     {isLoading ? 'Synchronizing Pipeline...' : submitLabel}
                 </button>

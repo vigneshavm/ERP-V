@@ -33,17 +33,17 @@ const BankSummary: React.FC = () => {
     }, [dispatch]);
 
     const typeConfig: TypeConfig = {
-        'Savings': { icon: Wallet, color: 'from-blue-500 to-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-600' },
-        'Current': { icon: Banknote, color: 'from-emerald-500 to-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20', text: 'text-emerald-600' },
-        'Overdraft': { icon: AlertTriangle, color: 'from-amber-500 to-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20', text: 'text-amber-600' },
-        'Loan': { icon: Landmark, color: 'from-rose-500 to-rose-600', bg: 'bg-rose-50 dark:bg-rose-900/20', text: 'text-rose-600' }
+        'Savings': { icon: Wallet, color: 'from-blue-500 to-blue-600', bg: 'bg-primary-soft dark:bg-primary-soft', text: 'text-primary' },
+        'Current': { icon: Banknote, color: 'from-emerald-500 to-emerald-600', bg: 'bg-success-soft dark:bg-success-soft', text: 'text-success' },
+        'Overdraft': { icon: AlertTriangle, color: 'from-amber-500 to-amber-600', bg: 'bg-warning-soft dark:bg-warning-soft', text: 'text-warning' },
+        'Loan': { icon: Landmark, color: 'from-rose-500 to-rose-600', bg: 'bg-danger-soft dark:bg-danger-soft', text: 'text-danger' }
     };
 
     if (loading) {
         return (
             <Layout>
                 <div className="flex flex-col justify-center items-center h-64 gap-4">
-                    <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                    <div className="w-16 h-16 border-4 border-primary/30 border-t-indigo-600 rounded-full animate-spin"></div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Indexing Financial Data</p>
                 </div>
             </Layout>
@@ -70,7 +70,7 @@ const BankSummary: React.FC = () => {
                         </button>
                         <button
                             onClick={() => navigate('/cashbank/bank-accounts')}
-                            className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-indigo-700 transition-all flex items-center gap-2"
+                            className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-primary-hover transition-all flex items-center gap-2"
                         >
                             <Settings className="w-4 h-4" /> Manage Units
                         </button>
@@ -92,7 +92,7 @@ const BankSummary: React.FC = () => {
                             <TrendingUp className="w-4 h-4 text-success" />
                             Avg: ₹{accountCount > 0 ? (totalBalance / accountCount).toLocaleString('en-IN', { maximumFractionDigits: 0 }) : 0}
                         </div>
-                        <div className="px-4 py-2 bg-success/20 rounded-sm backdrop-blur-md border border-success/30 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-emerald-300">
+                        <div className="px-4 py-2 bg-success/20 rounded-sm backdrop-blur-md border border-success/30 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-success">
                             <CheckCircle2 className="w-4 h-4" />
                             Financial Health: Optimal
                         </div>
@@ -104,7 +104,7 @@ const BankSummary: React.FC = () => {
                             Treasury Command Center <ChevronRight className="w-4 h-4" />
                         </button>
                         <button onClick={() => navigate('/cashbank/cash-in-hand')} className="px-6 py-4 bg-white/10 hover:bg-white/20 rounded-sm border border-white/20 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between">
-                            Vault Surveillance <ChevronRight className="w-4 h-4" />
+                            Account overview <ChevronRight className="w-4 h-4" />
                         </button>
                     </>
                 }
@@ -115,7 +115,7 @@ const BankSummary: React.FC = () => {
                 <div className="mb-8">
                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                         <PieChart className="w-4 h-4" />
-                        Portfolio Allocation by Instrument Type
+                        Balance by account type
                     </h3>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         {['Savings', 'Current', 'Overdraft', 'Loan'].map((type) => {
@@ -165,7 +165,7 @@ const BankSummary: React.FC = () => {
                 </div>
 
                 {accounts.length === 0 ? (
-                    <div className="py-20 bg-slate-50 dark:bg-slate-800/20 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[3rem] text-center flex flex-col items-center">
+                    <div className="py-20 bg-slate-50 dark:bg-slate-800/20 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-center flex flex-col items-center">
                         <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl flex items-center justify-center text-slate-200 mb-6">
                             <Building2 className="w-10 h-10" />
                         </div>
@@ -173,7 +173,7 @@ const BankSummary: React.FC = () => {
                         <p className="text-xs font-medium text-slate-400 mt-2 mb-6">Initialize your banking portfolio by adding your first institution.</p>
                         <button
                             onClick={() => navigate('/cashbank/bank-accounts')}
-                            className="px-8 py-3 bg-indigo-600 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-indigo-700 transition-all"
+                            className="px-8 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-primary-hover transition-all"
                         >
                             Add First Institution
                         </button>
@@ -186,7 +186,7 @@ const BankSummary: React.FC = () => {
                             const isPositive = (account.currentBalance || 0) >= 0;
 
                             return (
-                                <div key={account._id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 transition-all hover:shadow-xl hover:border-indigo-100 dark:hover:border-indigo-900 group">
+                                <div key={account._id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 transition-all hover:shadow-xl hover:border-primary/30 dark:hover:border-primary/30 group">
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center gap-4">
                                             <div className="w-14 h-14 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-sm flex items-center justify-center text-xl font-black text-slate-600 dark:text-slate-300 group-hover:scale-110 transition-transform">
@@ -205,13 +205,13 @@ const BankSummary: React.FC = () => {
                                     <div className="flex items-end justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                                         <div>
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Current Balance</p>
-                                            <p className={`text-xl font-black ${isPositive ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                            <p className={`text-xl font-black ${isPositive ? 'text-success' : 'text-danger'}`}>
                                                 ₹{(account.currentBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                             </p>
                                         </div>
                                         <button
                                             onClick={() => navigate(`/cashbank/ledger/${account._id}`)}
-                                            className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-primary rounded-xl text-[9px] font-black text-slate-500 uppercase tracking-widest transition-all flex items-center gap-1.5"
+                                            className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-primary-soft dark:hover:bg-primary-soft hover:text-primary rounded-xl text-[9px] font-black text-slate-500 uppercase tracking-widest transition-all flex items-center gap-1.5"
                                         >
                                             <FileText className="w-3.5 h-3.5" /> Ledger
                                         </button>

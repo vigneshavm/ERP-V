@@ -207,34 +207,34 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                         <Store className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-black text-neutral-900 dark:text-white leading-none">Business Identity</h3>
-                        <p className="text-[10px] text-neutral-500 font-bold mt-1 uppercase tracking-widest">Core details about your organization</p>
+                        <h3 className="text-lg font-black text-slate-900 dark:text-white leading-none">Business Identity</h3>
+                        <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-widest">Core details about your organization</p>
                     </div>
                 </div>
 
-                <div className="bg-neutral-50/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6 space-y-6">
+                <div className="bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-sm p-6 space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-1.5">
-                            <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">Official App / Business Name</label>
+                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Official App / Business Name</label>
                             <input
                                 type="text"
                                 value={appName}
                                 onChange={e => setAppName(e.target.value)}
-                                className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm"
+                                className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm"
                                 placeholder="e.g. Acme Enterprise"
                             />
                         </div>
 
                         {/* DB-Driven Business Sector Select */}
                         <div className="space-y-1.5">
-                            <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1 flex items-center justify-between">
+                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1 flex items-center justify-between">
                                 <span>Business Sector</span>
                                 {isLoadingSectors && <Loader2 className="w-3 h-3 animate-spin text-primary" />}
                             </label>
                             <select
                                 value={businessType}
                                 onChange={e => setBusinessType(e.target.value)}
-                                className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm"
+                                className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm"
                             >
                                 {sectors.map(sec => (
                                     <option key={sec._id || sec.name} value={sec.name}>
@@ -249,11 +249,11 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                         pick the ones relevant to their shop and copy them into their own
                         Category list (Category Manager / the Register SKU dropdown) instead
                         of getting all of them by default. */}
-                    <div className="pt-4 border-t border-neutral-200/80 dark:border-neutral-800/80">
+                    <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800/80">
                         <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
                             <div className="flex items-center gap-2">
                                 <Layers className="w-4 h-4 text-primary" />
-                                <h4 className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-wider">
+                                <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
                                     Mapped Product Categories ({categories.length})
                                 </h4>
                                 {(isLoadingCategories || isLoadingRegistered) && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary ml-1" />}
@@ -286,11 +286,11 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                         </div>
 
                         {addCategoriesResult && (
-                            <p className="text-xs font-bold mb-3 text-emerald-600 dark:text-emerald-400">
+                            <p className="text-xs font-bold mb-3 text-success dark:text-success">
                                 {addCategoriesResult.added > 0 && `${addCategoriesResult.added} added to your Categories`}
                                 {addCategoriesResult.existed > 0 && `${addCategoriesResult.added > 0 ? ' · ' : ''}${addCategoriesResult.existed} already in your Categories`}
                                 {addCategoriesResult.failed > 0 && (
-                                    <span className="text-rose-600 dark:text-rose-400">{(addCategoriesResult.added > 0 || addCategoriesResult.existed > 0) ? ' · ' : ''}{addCategoriesResult.failed} failed</span>
+                                    <span className="text-danger dark:text-danger">{(addCategoriesResult.added > 0 || addCategoriesResult.existed > 0) ? ' · ' : ''}{addCategoriesResult.failed} failed</span>
                                 )}
                             </p>
                         )}
@@ -310,11 +310,11 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                                             <div
                                                 key={cat._id || cat.name}
                                                 title="Already in your Categories"
-                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-900/10"
+                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-success-line dark:border-success/40 bg-success-soft dark:bg-success-soft"
                                             >
-                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                                                <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">{cat.name}</span>
-                                                <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Added</span>
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
+                                                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{cat.name}</span>
+                                                <span className="text-[9px] font-black text-success dark:text-success uppercase tracking-widest">Added</span>
                                             </div>
                                         );
                                     }
@@ -328,15 +328,15 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                                             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg shadow-xs border transition-all text-left ${
                                                 isSelected
                                                     ? 'bg-primary/10 border-primary'
-                                                    : 'bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 hover:border-primary/40'
+                                                    : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-primary/40'
                                             }`}
                                         >
-                                            <span className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center shrink-0 ${isSelected ? 'bg-primary border-primary' : 'border-neutral-300 dark:border-neutral-600'}`}>
+                                            <span className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center shrink-0 ${isSelected ? 'bg-primary border-primary' : 'border-slate-300 dark:border-slate-600'}`}>
                                                 {isSelected && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
                                             </span>
-                                            <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">{cat.name}</span>
+                                            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{cat.name}</span>
                                             {cat.description && (
-                                                <span className="text-[10px] text-neutral-400 font-medium">({cat.description})</span>
+                                                <span className="text-[10px] text-slate-400 font-medium">({cat.description})</span>
                                             )}
                                             {typeof cat.gstRate === 'number' && (
                                                 <span className="text-[9px] font-bold text-primary bg-primary/10 rounded px-1.5 py-0.5">
@@ -344,7 +344,7 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                                                 </span>
                                             )}
                                             {cat.defaultUnit && (
-                                                <span className="text-[9px] font-bold text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 rounded px-1.5 py-0.5">
+                                                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">
                                                     {cat.defaultUnit}
                                                 </span>
                                             )}
@@ -353,7 +353,7 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                                 })}
                             </div>
                         ) : (
-                            <p className="text-xs text-neutral-400 italic">No product categories mapped for this sector.</p>
+                            <p className="text-xs text-slate-400 italic">No product categories mapped for this sector.</p>
                         )}
                     </div>
                 </div>
@@ -366,29 +366,29 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                         <MapPin className="w-5 h-5 text-success" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-black text-neutral-900 dark:text-white leading-none">Registered Address</h3>
-                        <p className="text-[10px] text-neutral-500 font-bold mt-1 uppercase tracking-widest">Primary location for official records</p>
+                        <h3 className="text-lg font-black text-slate-900 dark:text-white leading-none">Registered Address</h3>
+                        <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-widest">Primary location for official records</p>
                     </div>
                 </div>
 
-                <div className="bg-neutral-50/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6">
+                <div className="bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-sm p-6">
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="md:col-span-2 space-y-1.5">
-                            <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">Street / Building Address</label>
-                            <input type="text" value={addressLine1} onChange={e => setAddressLine1(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
+                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Street / Building Address</label>
+                            <input type="text" value={addressLine1} onChange={e => setAddressLine1(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
                         </div>
                         <div className="space-y-1.5">
-                            <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">City</label>
-                            <input type="text" value={city} onChange={e => setCity(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
+                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">City</label>
+                            <input type="text" value={city} onChange={e => setCity(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
                         </div>
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-1.5">
-                                <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">State</label>
-                                <input type="text" value={state} onChange={e => setState(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
+                                <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">State</label>
+                                <input type="text" value={state} onChange={e => setState(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">Pincode</label>
-                                <input type="text" value={pincode} onChange={e => setPincode(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
+                                <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Pincode</label>
+                                <input type="text" value={pincode} onChange={e => setPincode(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
                             </div>
                         </div>
                     </div>
@@ -402,24 +402,24 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                         <Phone className="w-5 h-5 text-warning" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-black text-neutral-900 dark:text-white leading-none">Contact Information</h3>
-                        <p className="text-[10px] text-neutral-500 font-bold mt-1 uppercase tracking-widest">Official communication channels</p>
+                        <h3 className="text-lg font-black text-slate-900 dark:text-white leading-none">Contact Information</h3>
+                        <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-widest">Official communication channels</p>
                     </div>
                 </div>
 
-                <div className="bg-neutral-50/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6">
+                <div className="bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-sm p-6">
                     <div className="grid md:grid-cols-3 gap-6">
                         <div className="space-y-1.5">
-                            <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">Phone</label>
-                            <input type="text" value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
+                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Phone</label>
+                            <input type="text" value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
                         </div>
                         <div className="space-y-1.5">
-                            <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">Email</label>
-                            <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
+                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Email</label>
+                            <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
                         </div>
                         <div className="space-y-1.5">
-                            <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1">Website</label>
-                            <input type="text" value={website} onChange={e => setWebsite(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
+                            <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Website</label>
+                            <input type="text" value={website} onChange={e => setWebsite(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white transition-all font-bold shadow-sm" />
                         </div>
                     </div>
                 </div>

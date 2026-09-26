@@ -26,7 +26,6 @@ const StatusButton = ({ currentStatus, targetStatus, label, icon: Icon, colorCla
 );
 
 export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, onClose, onSave, initialData }) => {
-    // @ts-ignore
     const [status, setStatus] = useState<AttendanceStatus>(initialData?.status || 'PRESENT');
     const [inTime, setInTime] = useState(initialData?.inTime || '09:00');
     const [outTime, setOutTime] = useState(initialData?.outTime || '18:00');
@@ -79,10 +78,10 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
                     </div>
 
                     <div className="flex gap-2">
-                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="PRESENT" label="Full Day" icon={CheckCircle2} colorClass="bg-emerald-50 border-emerald-500 text-emerald-600" />
-                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="HALF" label="Half Day" icon={AlertCircle} colorClass="bg-amber-50 border-amber-500 text-amber-600" />
-                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="QUARTER" label="Quarter" icon={PieChart} colorClass="bg-purple-50 border-purple-500 text-purple-600" />
-                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="ABSENT" label="Absent" icon={XCircle} colorClass="bg-rose-50 border-rose-500 text-rose-600" />
+                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="PRESENT" label="Full Day" icon={CheckCircle2} colorClass="bg-success-soft border-success text-success" />
+                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="HALF" label="Half Day" icon={AlertCircle} colorClass="bg-warning-soft border-warning text-warning" />
+                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="QUARTER" label="Quarter" icon={PieChart} colorClass="bg-warning-soft border-warning text-warning" />
+                        <StatusButton currentStatus={status} onClick={setStatus} targetStatus="ABSENT" label="Absent" icon={XCircle} colorClass="bg-danger-soft border-danger text-danger" />
                     </div>
 
                     {status !== 'ABSENT' && (
@@ -113,7 +112,7 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
                     {initialData ? (
                         <button
                             onClick={handleClear}
-                            className="px-4 py-2 flex items-center gap-2 text-rose-600 dark:text-danger hover:bg-rose-100 dark:hover:bg-rose-900/30 rounded-lg font-bold transition-colors"
+                            className="px-4 py-2 flex items-center gap-2 text-danger dark:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg font-bold transition-colors"
                         >
                             <Trash2 size={16} /> Clear
                         </button>
@@ -129,7 +128,7 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
                         </button>
                         <button
                             onClick={handleSave}
-                            className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-500/30 transition-all"
+                            className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold shadow-lg shadow-indigo-500/30 transition-all"
                         >
                             Save Entry
                         </button>

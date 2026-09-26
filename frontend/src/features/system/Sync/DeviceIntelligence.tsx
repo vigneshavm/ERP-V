@@ -27,38 +27,53 @@ const SyncIntelligence: React.FC = () => {
     const [devices, setDevices] = useState<DeviceRegistryEntry[]>([]);
     const [ledger, setLedger] = useState<SyncLedgerEntry[]>([]);
     const [anomalies, setAnomalies] = useState<string[]>([]);
+    const [loadError, setLoadError] = useState<string | null>(null);
+    const [ledgerSource, setLedgerSource] = useState<'server' | 'device'>('server');
     const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'DEVICES' | 'LEDGER' | 'BACKUPS'>('DASHBOARD');
 
     useEffect(() => {
+        const loadData = async () => {
+            // The ledger falls back to this device's own log, so it still loads when the server can't.
+            const ledgerResult = await SyncIntelligenceService.getLedger().catch(() => ({ entries: [], source: 'device' as const }));
+            setLedger(ledgerResult.entries);
+            setLedgerSource(ledgerResult.source);
+            try {
+                const devList = await SyncIntelligenceService.getDevices();
+                setDevices(devList);
+                setAnomalies(await SyncIntelligenceService.detectAnomalies(devList));
+                setLoadError(null);
+            } catch {
+                // Clear the fleet so stale figures aren't shown as current.
+                setDevices([]);
+                setAnomalies([]);
+                setLoadError('Could not load registered devices. Retrying every 5 seconds.');
+            }
+        };
         loadData();
         const interval = setInterval(loadData, 5000);
         return () => clearInterval(interval);
     }, []);
 
-    const loadData = async () => {
-        const devList = await SyncIntelligenceService.getDevices();
-        const ledList = await SyncIntelligenceService.getLedger();
-        const anomalyList = await SyncIntelligenceService.detectAnomalies(devList);
-        setDevices(devList);
-        setLedger(ledList);
-        setAnomalies(anomalyList);
-    };
+    // Mean of the devices' reported sync health; null (shown as "—") when none are registered.
+    const avgSyncHealth = devices.length > 0
+        ? devices.reduce((acc, d) => acc + d.syncHealth, 0) / devices.length
+        : null;
 
     return (
-        <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+        <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
             {/* Premium Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-900 p-10 rounded-[3rem] border border-slate-800 shadow-2xl relative overflow-hidden group">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-900 p-10 rounded-xl border border-slate-800 shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full -mr-32 -mt-32 blur-[100px] group-hover:bg-primary/20 transition-all duration-1000" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-600/10 rounded-full -ml-32 -mb-32 blur-[80px]" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-success/10 rounded-full -ml-32 -mb-32 blur-[80px]" />
 
                 <div className="relative z-10">
                     <div className="flex items-center gap-4 mb-3">
-                        <div className="w-14 h-14 bg-indigo-600 rounded-sm flex items-center justify-center text-white shadow-xl shadow-indigo-600/20 border border-primary/30">
+                        <div className="w-14 h-14 bg-primary rounded-sm flex items-center justify-center text-white shadow-xl shadow-indigo-600/20 border border-primary/30">
                             <Cpu className="w-8 h-8" />
                         </div>
                         <div>
                             <h1 className="text-4xl font-black text-white tracking-tight leading-none italic uppercase">
-                                Sync <span className="text-primary">Intelligence</span>
+                                Sync <span className="text-primary">Insights</span>
                             </h1>
                             <p className="text-slate-400 font-bold mt-2 uppercase tracking-[0.2em] text-[10px]">The Nervous System of Retail Reliability</p>
                         </div>
@@ -68,15 +83,21 @@ const SyncIntelligence: React.FC = () => {
                 <div className="flex items-center gap-4 relative z-10">
                     <div className="flex flex-col items-end mr-4">
                         <span className="text-[10px] font-black text-success uppercase tracking-widest flex items-center gap-1.5">
-                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" /> Live Pulse Active
+                            <span className="w-2 h-2 bg-success rounded-full animate-pulse" /> Live
                         </span>
                         <span className="text-xs text-slate-500 font-medium">Auto-refreshing every 5s</span>
                     </div>
-                    <button className="flex items-center gap-3 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95">
+                    <button className="flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95">
                         <ShieldCheck className="w-4 h-4" /> Global Force Resync
                     </button>
                 </div>
             </div>
+
+            {loadError && (
+                <div role="alert" className="p-6 bg-danger/10 border border-danger/30 rounded-[2rem] flex items-center gap-4 text-danger text-sm font-bold">
+                    <AlertTriangle className="w-5 h-5 shrink-0" /> {loadError}
+                </div>
+            )}
 
             {/* Navigation Layer */}
             <div className="flex items-center gap-2 p-2 bg-slate-900 border border-slate-800 rounded-[2rem] w-fit shadow-lg">
@@ -84,7 +105,7 @@ const SyncIntelligence: React.FC = () => {
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`px-10 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-500 hover:text-white'}`}
+                        className={`px-10 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-primary text-white shadow-lg shadow-indigo-600/20' : 'text-slate-500 hover:text-white'}`}
                     >
                         {tab}
                     </button>
@@ -97,7 +118,7 @@ const SyncIntelligence: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
                             { label: 'Active Nodes', value: devices.filter(d => d.isOnline).length, total: devices.length, icon: Server, color: 'text-primary' },
-                            { label: 'Sync Health', value: '98.4%', total: 'Target: 99.9%', icon: Activity, color: 'text-success' },
+                            { label: 'Sync Health', value: avgSyncHealth === null ? '—' : `${avgSyncHealth.toFixed(1)}%`, total: 'Average across devices', icon: Activity, color: 'text-success' },
                             { label: 'Pending Ops', value: devices.reduce((acc, d) => acc + d.pendingOps, 0), total: 'Across Fleet', icon: Database, color: 'text-warning' },
                             { label: 'Anomalies', value: anomalies.length, total: 'Last 24h', icon: AlertTriangle, color: 'text-danger' }
                         ].map((stat, idx) => (
@@ -112,15 +133,15 @@ const SyncIntelligence: React.FC = () => {
 
                     <div className="grid grid-cols-12 gap-8">
                         {/* Status Heatmap / Map Placeholder */}
-                        <div className="col-span-12 lg:col-span-8 bg-slate-900 rounded-[3rem] p-10 border border-slate-800 shadow-xl relative overflow-hidden">
+                        <div className="col-span-12 lg:col-span-8 bg-slate-900 rounded-xl p-10 border border-slate-800 shadow-xl relative overflow-hidden">
                             <div className="flex items-center justify-between mb-10 relative z-10">
                                 <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-3">
-                                    <Map className="w-6 h-6 text-primary" /> Geographic Node Topology
+                                    <Map className="w-6 h-6 text-primary" /> Devices by branch
                                 </h3>
                                 <div className="flex items-center gap-4">
-                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-success uppercase tracking-widest"><span className="w-2 h-2 bg-emerald-500 rounded-full" /> Healthy</span>
-                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-warning uppercase tracking-widest"><span className="w-2 h-2 bg-amber-500 rounded-full" /> Lagging</span>
-                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-danger uppercase tracking-widest"><span className="w-2 h-2 bg-rose-500 rounded-full" /> Disconnected</span>
+                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-success uppercase tracking-widest"><span className="w-2 h-2 bg-success rounded-full" /> Healthy</span>
+                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-warning uppercase tracking-widest"><span className="w-2 h-2 bg-warning rounded-full" /> Lagging</span>
+                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-danger uppercase tracking-widest"><span className="w-2 h-2 bg-danger rounded-full" /> Disconnected</span>
                                 </div>
                             </div>
 
@@ -131,26 +152,26 @@ const SyncIntelligence: React.FC = () => {
                                 </div>
                                 <div className="z-10 flex items-center gap-12">
                                     <div className="flex flex-col items-center gap-4">
-                                        <div className="w-20 h-20 rounded-full bg-primary/20 border-2 border-indigo-500 flex items-center justify-center text-primary animate-pulse">
+                                        <div className="w-20 h-20 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-primary animate-pulse">
                                             <Globe className="w-10 h-10" />
                                         </div>
                                         <span className="text-[10px] font-black text-primary uppercase">Cloud HUB</span>
                                     </div>
                                     <div className="w-32 h-[2px] bg-gradient-to-r from-indigo-500 to-emerald-500 relative">
-                                        <div className="absolute top-1/2 left-0 w-2 h-2 bg-emerald-400 rounded-full -translate-y-1/2 animate-ping" style={{ left: '20%' }} />
-                                        <div className="absolute top-1/2 left-0 w-2 h-2 bg-emerald-400 rounded-full -translate-y-1/2 animate-ping" style={{ left: '60%' }} />
+                                        <div className="absolute top-1/2 left-0 w-2 h-2 bg-success rounded-full -translate-y-1/2 animate-ping" style={{ left: '20%' }} />
+                                        <div className="absolute top-1/2 left-0 w-2 h-2 bg-success rounded-full -translate-y-1/2 animate-ping" style={{ left: '60%' }} />
                                     </div>
                                     <div className="flex flex-col items-center gap-4">
-                                        <div className="w-20 h-20 rounded-full bg-emerald-600/20 border-2 border-emerald-500 flex items-center justify-center text-success">
+                                        <div className="w-20 h-20 rounded-full bg-success/20 border-2 border-success flex items-center justify-center text-success">
                                             <Server className="w-10 h-10" />
                                         </div>
                                         <span className="text-[10px] font-black text-success uppercase">Branch Server</span>
                                     </div>
                                     <div className="w-32 h-[2px] bg-gradient-to-r from-emerald-500 to-rose-500 relative">
-                                        <div className="absolute top-1/2 left-0 w-2 h-2 bg-rose-400 rounded-full -translate-y-1/2" style={{ left: '40%' }} />
+                                        <div className="absolute top-1/2 left-0 w-2 h-2 bg-danger rounded-full -translate-y-1/2" style={{ left: '40%' }} />
                                     </div>
                                     <div className="flex flex-col items-center gap-4">
-                                        <div className="w-20 h-20 rounded-full bg-rose-600/20 border-2 border-rose-500 flex items-center justify-center text-danger">
+                                        <div className="w-20 h-20 rounded-full bg-danger/20 border-2 border-danger flex items-center justify-center text-danger">
                                             <Monitor className="w-10 h-10" />
                                         </div>
                                         <span className="text-[10px] font-black text-danger uppercase">POS Terminals</span>
@@ -160,18 +181,18 @@ const SyncIntelligence: React.FC = () => {
                         </div>
 
                         {/* AI Anomaly Panel */}
-                        <div className="col-span-12 lg:col-span-4 bg-slate-900 rounded-[3rem] p-10 border border-slate-800 shadow-xl">
+                        <div className="col-span-12 lg:col-span-4 bg-slate-900 rounded-xl p-10 border border-slate-800 shadow-xl">
                             <div className="flex items-center gap-3 mb-8 text-primary">
                                 <Zap className="w-6 h-6 animate-pulse" />
                                 <h3 className="text-xl font-black italic uppercase tracking-tight text-white">Anomaly Alerts</h3>
                             </div>
                             <div className="space-y-4">
                                 {anomalies.map((alert, i) => (
-                                    <div key={i} className="p-4 bg-rose-500/5 border border-danger/20 rounded-sm flex items-start gap-4 animate-in slide-in-from-right-4 duration-300">
+                                    <div key={i} className="p-4 bg-danger/5 border border-danger/20 rounded-sm flex items-start gap-4 animate-in slide-in-from-right-4 duration-300">
                                         <AlertTriangle className="w-5 h-5 text-danger shrink-0 mt-0.5" />
                                         <div>
                                             <p className="text-xs font-bold text-white leading-tight mb-2 uppercase italic tracking-tight">{alert}</p>
-                                            <button className="text-[9px] font-black text-primary uppercase tracking-widest hover:text-indigo-300 transition-colors">
+                                            <button className="text-[9px] font-black text-primary uppercase tracking-widest hover:text-primary transition-colors">
                                                 Resolve Now →
                                             </button>
                                         </div>
@@ -180,7 +201,7 @@ const SyncIntelligence: React.FC = () => {
                                 {anomalies.length === 0 && (
                                     <div className="p-8 text-center bg-slate-800/30 rounded-sm border border-dashed border-slate-700">
                                         <ShieldCheck className="w-8 h-8 text-success mx-auto mb-3" />
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">System architecture stable. All nodes reporting healthy sync states.</p>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">{devices.length === 0 ? 'No registered devices are reporting sync status yet.' : 'No anomalies in the reported device figures.'}</p>
                                     </div>
                                 )}
                             </div>
@@ -190,7 +211,7 @@ const SyncIntelligence: React.FC = () => {
             )}
 
             {activeTab === 'DEVICES' && (
-                <div className="bg-slate-900 rounded-[3rem] border border-slate-800 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500">
+                <div className="bg-slate-900 rounded-xl border border-slate-800 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500">
                     <div className="p-10 border-b border-slate-800 flex items-center justify-between bg-slate-900/50 backdrop-blur-md">
                         <div>
                             <h3 className="text-2xl font-black italic uppercase tracking-tight text-white">Device Control Panel</h3>
@@ -199,7 +220,7 @@ const SyncIntelligence: React.FC = () => {
                         <div className="flex items-center gap-4">
                             <div className="relative">
                                 <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-                                <input type="text" placeholder="Search devices..." className="pl-12 pr-6 py-4 bg-slate-950 border border-slate-800 rounded-sm text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-indigo-500 transition-all w-72" />
+                                <input type="text" placeholder="Search devices..." className="pl-12 pr-6 py-4 bg-slate-950 border border-slate-800 rounded-sm text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-primary transition-all w-72" />
                             </div>
                             <button className="p-4 bg-slate-950 border border-slate-800 rounded-sm text-slate-400 hover:text-white transition-all"><Filter className="w-5 h-5" /></button>
                         </div>
@@ -209,9 +230,9 @@ const SyncIntelligence: React.FC = () => {
                         <table className="w-full text-left">
                             <thead className="bg-slate-950/50 border-b border-slate-800">
                                 <tr>
-                                    <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Node Identifier</th>
+                                    <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Device</th>
                                     <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Branch</th>
-                                    <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Last Pulse</th>
+                                    <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Last seen</th>
                                     <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Queue</th>
                                     <th className="px-6 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Reliability</th>
                                     <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-right">Actions</th>
@@ -245,7 +266,7 @@ const SyncIntelligence: React.FC = () => {
                                                 <span className={`text-xs font-black ${device.isOnline ? 'text-success' : 'text-slate-500'}`}>
                                                     {new Date(device.lastSyncAt).toLocaleTimeString()}
                                                 </span>
-                                                <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${device.isOnline ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${device.isOnline ? 'text-success' : 'text-danger'}`}>
                                                     {device.isOnline ? 'Active Sync' : 'Interrupted'}
                                                 </span>
                                             </div>
@@ -253,11 +274,11 @@ const SyncIntelligence: React.FC = () => {
                                         <td className="px-6 py-8 text-center text-white font-black">
                                             {device.pendingOps}
                                         </td>
-                                        <td className="px-6 py-8">
+                                        <td className="text-center px-6 py-8">
                                             <div className="flex flex-col items-center gap-2">
                                                 <div className="w-24 h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
                                                     <div
-                                                        className={`h-full transition-all duration-1000 ${device.syncHealth > 80 ? 'bg-emerald-500' : device.syncHealth > 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
+                                                        className={`h-full transition-all duration-1000 ${device.syncHealth > 80 ? 'bg-success' : device.syncHealth > 50 ? 'bg-warning' : 'bg-danger'}`}
                                                         style={{ width: `${device.syncHealth}%` }}
                                                     />
                                                 </div>
@@ -266,10 +287,10 @@ const SyncIntelligence: React.FC = () => {
                                         </td>
                                         <td className="px-10 py-8 text-right">
                                             <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
-                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-primary hover:border-indigo-400/30 transition-all shadow-sm" title="Force Resync">
+                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-primary hover:border-primary/30 transition-all shadow-sm" title="Force Resync">
                                                     <RefreshCcw className="w-4 h-4" />
                                                 </button>
-                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-danger hover:border-rose-400/30 transition-all shadow-sm" title="Freeze Device">
+                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-danger hover:border-danger/30 transition-all shadow-sm" title="Freeze Device">
                                                     <Power className="w-4 h-4" />
                                                 </button>
                                                 <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-white transition-all shadow-sm" title="Manage Diagnostics">
@@ -279,6 +300,11 @@ const SyncIntelligence: React.FC = () => {
                                         </td>
                                     </tr>
                                 ))}
+                                {devices.length === 0 && (
+                                    <tr>
+                                        <td colSpan={6} className="px-10 py-12 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">No registered devices.</td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -286,17 +312,20 @@ const SyncIntelligence: React.FC = () => {
             )}
 
             {activeTab === 'LEDGER' && (
-                <div className="bg-slate-900 rounded-[3rem] border border-slate-800 shadow-2xl overflow-hidden animate-in slide-in-from-right-4 duration-500">
+                <div className="bg-slate-900 rounded-xl border border-slate-800 shadow-2xl overflow-hidden animate-in slide-in-from-right-4 duration-500">
                     <div className="p-10 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
                         <div>
                             <h3 className="text-2xl font-black italic uppercase tracking-tight text-white">Sync Event Ledger</h3>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Transaction-level audit trail for all nodes</p>
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">{ledgerSource === 'server' ? 'Sync results from all devices' : 'Server unreachable: showing this device\'s sync results only'}</p>
                         </div>
                     </div>
                     <div className="divide-y divide-slate-800">
+                        {ledger.length === 0 && (
+                            <p className="p-10 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">No sync events recorded yet.</p>
+                        )}
                         {ledger.map((entry) => (
                             <div key={entry.id} className="p-8 hover:bg-white/5 transition-all flex items-center justify-between relative group overflow-hidden">
-                                {entry.status === 'CONFLICT' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-rose-500" />}
+                                {entry.status === 'CONFLICT' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-danger" />}
                                 <div className="flex items-center gap-8">
                                     <div className="flex flex-col items-center gap-1">
                                         <div className={`w-14 h-14 rounded-sm flex items-center justify-center font-black text-xs ${entry.status === 'SYNCED' ? 'bg-success/10 text-success border border-success/20' : entry.status === 'CONFLICT' ? 'bg-danger/10 text-danger border border-danger/20' : 'bg-slate-500/10 text-slate-400 border border-slate-500/20'}`}>
@@ -333,16 +362,16 @@ const SyncIntelligence: React.FC = () => {
             )}
 
             {/* Monetization / Admin Layer Footer */}
-            <div className="bg-gradient-to-r from-indigo-900/20 to-transparent p-10 rounded-[3rem] border border-slate-800/50 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="bg-gradient-to-r from-indigo-900/20 to-transparent p-10 rounded-xl border border-slate-800/50 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div>
-                    <h4 className="text-xl font-black text-white italic uppercase tracking-tight mb-2">Synchronization Intelligence <span className="text-primary px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black align-middle ml-2">PREMIUM</span></h4>
+                    <h4 className="text-xl font-black text-white italic uppercase tracking-tight mb-2">Device sync <span className="text-primary px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black align-middle ml-2">PREMIUM</span></h4>
                     <p className="text-sm text-slate-400 font-medium">Powering zero-loss retail operations with transaction-level auditing and anomaly detection.</p>
                 </div>
                 <div className="flex gap-4">
                     <button className="px-8 py-4 bg-slate-950 border border-slate-800 rounded-sm text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-white transition-all shadow-xl">
                         View Audit Log
                     </button>
-                    <button className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl transition-all shadow-indigo-600/20">
+                    <button className="px-8 py-4 bg-primary hover:bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl transition-all shadow-indigo-600/20">
                         Configuration Console
                     </button>
                 </div>

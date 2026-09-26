@@ -19,8 +19,8 @@ const BillsStats: React.FC<Props> = ({ billsCount, totalAmount, paidAmount, outs
                 title="Total Bills"
                 value={billsCount}
                 icon={<FileText className="w-full h-full" />}
-                iconBgColor="bg-blue-100"
-                iconColor="text-blue-600"
+                iconBgColor="bg-primary-soft"
+                iconColor="text-primary"
             />
             <StatsCard
                 title="Total Amount"
@@ -33,8 +33,8 @@ const BillsStats: React.FC<Props> = ({ billsCount, totalAmount, paidAmount, outs
                 title="Amount Paid"
                 value={formatCurrency(paidAmount)}
                 icon={<CheckCircle className="w-full h-full" />}
-                iconBgColor="bg-emerald-100"
-                iconColor="text-emerald-600"
+                iconBgColor="bg-success-soft"
+                iconColor="text-success"
                 trend="Settled"
                 trendUp={true}
             />
@@ -42,8 +42,8 @@ const BillsStats: React.FC<Props> = ({ billsCount, totalAmount, paidAmount, outs
                 title="Outstanding"
                 value={formatCurrency(outstandingAmount)}
                 icon={<AlertCircle className="w-full h-full" />}
-                iconBgColor="bg-red-100"
-                iconColor="text-red-600"
+                iconBgColor="bg-danger-soft"
+                iconColor="text-danger"
                 trend="To be paid"
                 trendUp={false}
             />

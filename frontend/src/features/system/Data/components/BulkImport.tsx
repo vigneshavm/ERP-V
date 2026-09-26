@@ -1,7 +1,7 @@
 ﻿import { useState, ChangeEvent } from 'react';
-import * as XLSX from 'xlsx';
 import api from "@/services/api";
 import { toast } from 'react-toastify';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 interface ProcessedRow {
     row: number;
@@ -102,6 +102,7 @@ const BulkImport = () => {
         try {
             setSelectedFile(file);
             const fileData = await file.arrayBuffer();
+            const XLSX = await import('xlsx');
             const workbook = XLSX.read(fileData, { type: 'array' });
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
             const data: any[] = XLSX.utils.sheet_to_json(worksheet);
@@ -209,7 +210,8 @@ const BulkImport = () => {
     const errorRowsCount = mappingData.filter(row => row.status === 'error').length;
     const importableRowsCount = validRowsCount + warningRowsCount;
 
-    const downloadSampleFile = () => {
+    const downloadSampleFile = async () => {
+        const XLSX = await import('xlsx');
         const sampleData = [
             {
                 'Name': 'Rice Bag 25kg',
@@ -245,19 +247,19 @@ const BulkImport = () => {
     return (
         <div className="max-w-7xl mx-auto space-y-6">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-main mb-2">Bulk Import Hub</h1>
+                <h1 className="page-title text-main mb-2">Bulk Import Hub</h1>
                 <p className="text-secondary">Import multiple items from CSV or Excel files with auto-validation</p>
             </div>
 
-            <div className="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-200 dark:border-indigo-900/20 rounded-xl p-6 mb-6">
+            <div className="bg-primary-soft dark:bg-primary-soft border border-primary/30 dark:border-primary/20 rounded-xl p-6 mb-6">
                 <div className="flex items-start">
-                    <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg mr-4 text-primary">
+                    <div className="p-2 bg-primary-soft dark:bg-primary-soft rounded-lg mr-4 text-primary">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                     <div className="flex-1">
-                        <h3 className="text-indigo-900 dark:text-indigo-200 font-semibold mb-2 uppercase tracking-widest text-xs">Ingestion Protocol</h3>
+                        <h3 className="text-primary dark:text-primary font-semibold mb-2 uppercase tracking-widest text-xs">Import rules</h3>
                         <ul className="text-secondary text-[11px] font-bold space-y-1 uppercase tracking-tight">
                             <li>• Required headers: Name, Cost Price, Selling Price, Category</li>
                             <li>• Optional headers: SKU, Stock Quantity, Unit</li>
@@ -274,13 +276,13 @@ const BulkImport = () => {
                     <button
                         type="button"
                         onClick={downloadSampleFile}
-                        className="flex items-center space-x-2 px-4 py-2 text-primary border border-indigo-100 dark:border-slate-800 rounded-lg hover:bg-slate-50 transition-all text-[10px] font-black uppercase tracking-widest"
+                        className="flex items-center space-x-2 px-4 py-2 text-primary border border-primary/30 dark:border-slate-800 rounded-lg hover:bg-slate-50 transition-all text-[10px] font-black uppercase tracking-widest"
                     >
                         <span>Download Sample</span>
                     </button>
                 </div>
 
-                <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-12 text-center hover:border-indigo-500 transition-all group cursor-pointer" onClick={() => (document.getElementById('file-upload') as HTMLInputElement).click()}>
+                <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-12 text-center hover:border-primary transition-all group cursor-pointer" onClick={() => (document.getElementById('file-upload') as HTMLInputElement).click()}>
                     <input
                         type="file"
                         accept=".csv,.xlsx,.xls"
@@ -288,7 +290,7 @@ const BulkImport = () => {
                         className="hidden"
                         id="file-upload"
                     />
-                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-indigo-50 transition-colors">
+                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-primary-soft transition-colors">
                         <svg className="w-8 h-8 text-slate-400 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
@@ -335,7 +337,7 @@ const BulkImport = () => {
                                     <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Name</th>
                                     <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">SKU</th>
                                     <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</th>
-                                    <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Price</th>
+                                    <th className="text-right px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Price</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs font-bold">
@@ -343,17 +345,12 @@ const BulkImport = () => {
                                     <tr key={row.row} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
                                         <td className="px-6 py-3 text-slate-400">{row.row}</td>
                                         <td className="px-6 py-3">
-                                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter ${row.status === 'valid' ? 'bg-emerald-50 text-emerald-600' :
-                                                    row.status === 'warning' ? 'bg-amber-50 text-amber-600' :
-                                                        'bg-rose-50 text-rose-600'
-                                                }`}>
-                                                {row.status}
-                                            </span>
+                                            <StatusBadge status={row.status} />
                                         </td>
                                         <td className="px-6 py-3 text-slate-700 dark:text-slate-300 uppercase truncate max-w-[150px]">{row.name}</td>
                                         <td className="px-6 py-3 text-slate-500 font-mono tracking-tighter">{row.sku}</td>
                                         <td className="px-6 py-3 text-slate-500">{row.category}</td>
-                                        <td className="px-6 py-3 text-slate-900 dark:text-white">₹{row.sellingPrice}</td>
+                                        <td className="text-right tabular-nums px-6 py-3 text-slate-900 dark:text-white">₹{row.sellingPrice}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -382,7 +379,7 @@ const BulkImport = () => {
                     <button
                         onClick={handleImport}
                         disabled={importableRowsCount === 0 || importing}
-                        className="flex-[2] py-4 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 active:scale-95 transition-all disabled:opacity-50"
+                        className="flex-[2] py-4 bg-primary text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 active:scale-95 transition-all disabled:opacity-50"
                     >
                         {importing ? 'Syncing...' : `Commit ${importableRowsCount} Records`}
                     </button>

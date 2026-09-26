@@ -51,7 +51,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                                 title={`Switch to ${session.label} (Alt+${index + 1})`}
                                 className={`flex flex-col items-center justify-center p-2 rounded-t-lg font-bold transition-all border-b-2 gap-1 pr-8 ${activeSessionIndex === index
                                     ? 'bg-primary text-white border-primary shadow-sm'
-                                    : 'bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 border-transparent hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                                    : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700'
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
@@ -59,7 +59,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                                     {totalQty > 0 && (
                                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${activeSessionIndex === index
                                             ? 'bg-white/20 text-white'
-                                            : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300'
+                                            : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                                             }`}>
                                             {totalQty}
                                         </span>
@@ -75,7 +75,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                                     }}
                                     className={`absolute top-1 right-1 p-0.5 rounded-md transition-colors ${activeSessionIndex === index
                                         ? 'text-primary hover:bg-white/10 hover:text-white'
-                                        : 'text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-error'
+                                        : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-error'
                                         }`}
                                     title="Close Tab"
                                 >
@@ -88,7 +88,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                 {sessions.length < 4 && (
                     <button
                         onClick={onAddSession}
-                        className="p-3 bg-white dark:bg-neutral-800 text-neutral-400 hover:text-primary dark:hover:text-primary hover:bg-neutral-50 dark:hover:bg-neutral-700 rounded-t-lg transition-all border-b-2 border-transparent self-end"
+                        className="p-3 bg-white dark:bg-slate-800 text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700 rounded-t-lg transition-all border-b-2 border-transparent self-end"
                         title="Add New Billing Tab"
                     >
                         <Plus className="w-4 h-4" />
@@ -98,11 +98,11 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
 
             {/* Store / Branch Selector */}
             <div className="hidden lg:flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">{t('storeLocation')}</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">{t('storeLocation')}</label>
                 <select
                     value={currentBranch || ''}
                     onChange={() => {}} // TODO: wire up branch-switch dispatch
-                    className="bg-white dark:bg-neutral-800 border-b-2 border-primary px-3 py-2 rounded-t-lg text-sm font-bold text-neutral-700 dark:text-white outline-none focus:ring-2 ring-primary/20"
+                    className="bg-white dark:bg-slate-800 border-b-2 border-primary px-3 py-2 rounded-t-lg text-sm font-bold text-slate-700 dark:text-white outline-none focus:ring-2 ring-primary/20"
                 >
                     <option value="">{t('allStores')}</option>
                     {(branches || []).map((b: any) => (
@@ -116,11 +116,11 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
             {/* Counter Selector */}
             {availableCounters.length > 0 && (
                 <div className="hidden lg:flex flex-col gap-1">
-                    <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">{t('terminal')}</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">{t('terminal')}</label>
                     <select
                         value={activeCounterId}
                         onChange={(e) => onSwitchCounter(e.target.value)}
-                        className="bg-white dark:bg-neutral-800 border-b-2 border-primary px-3 py-2 rounded-t-lg text-sm font-bold text-neutral-700 dark:text-white outline-none focus:ring-2 ring-primary/20"
+                        className="bg-white dark:bg-slate-800 border-b-2 border-primary px-3 py-2 rounded-t-lg text-sm font-bold text-slate-700 dark:text-white outline-none focus:ring-2 ring-primary/20"
                     >
                         {availableCounters.map((c: any) => (
                             <option key={c.id} value={c.id}>
@@ -143,7 +143,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
 
                 <button
                     onClick={() => setLanguage(language === 'en' ? 'ta' : 'en')}
-                    className="hidden sm:flex items-center gap-1.5 px-2.5 py-2.5 bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 hover:text-primary dark:hover:text-primary hover:bg-primary/5 dark:hover:bg-neutral-700 rounded-lg shadow-sm border-b-2 border-transparent transition-all text-xs font-bold"
+                    className="hidden sm:flex items-center gap-1.5 px-2.5 py-2.5 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-primary/5 dark:hover:bg-slate-700 rounded-lg shadow-sm border-b-2 border-transparent transition-all text-xs font-bold"
                     title={language === 'en' ? 'Switch to Tamil' : 'ஆங்கிலத்திற்கு மாற்று'}
                 >
                     <Languages className="w-4 h-4" />
@@ -152,7 +152,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
 
                 <button
                     onClick={onToggleFullScreen}
-                    className="hidden sm:block p-2.5 bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 hover:text-primary dark:hover:text-primary hover:bg-primary/5 dark:hover:bg-neutral-700 rounded-lg shadow-sm border-b-2 border-transparent transition-all"
+                    className="hidden sm:block p-2.5 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-primary/5 dark:hover:bg-slate-700 rounded-lg shadow-sm border-b-2 border-transparent transition-all"
                     title={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
                 >
                     {isFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}

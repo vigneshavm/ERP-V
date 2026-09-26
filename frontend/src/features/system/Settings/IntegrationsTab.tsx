@@ -2,6 +2,7 @@
 import { Shield, Zap, CheckCircle, Smartphone, AlertTriangle, Link as LinkIcon, Globe, MessageSquare, ExternalLink } from 'lucide-react';
 
 import { WhatsAppService } from "../../../services/whatsappService";
+import { getColorClasses } from "../../../utils/tailwindColorClasses";
 
 const IntegrationsTab: React.FC = () => {
     const [isVerifying, setIsVerifying] = useState(false);
@@ -40,7 +41,7 @@ const IntegrationsTab: React.FC = () => {
                     <div key={key} className="p-5 rounded-sm bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{key}</span>
-                            <div className={`w-2 h-2 rounded-full ${data.enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                            <div className={`w-2 h-2 rounded-full ${data.enabled ? 'bg-success animate-pulse' : 'bg-slate-300'}`} />
                         </div>
                         <p className={`text-sm font-black capitalize ${data.enabled ? 'text-slate-800 dark:text-white' : 'text-slate-400'}`}>
                             {data.status}
@@ -53,15 +54,15 @@ const IntegrationsTab: React.FC = () => {
             <section>
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
-                            <MessageSquare className="w-5 h-5 text-green-600 dark:text-green-400" />
+                        <div className="w-10 h-10 rounded-xl bg-success-soft dark:bg-success-soft flex items-center justify-center">
+                            <MessageSquare className="w-5 h-5 text-success dark:text-success" />
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">WhatsApp Business API</h3>
                             <p className="text-xs text-slate-500 font-medium mt-1">Official Meta cloud integration for automation</p>
                         </div>
                     </div>
-                    <div className="px-4 py-1.5 bg-green-500 text-white rounded-full text-[10px] font-black tracking-widest flex items-center gap-2 shadow-lg shadow-green-200 dark:shadow-none">
+                    <div className="px-4 py-1.5 bg-success text-white rounded-full text-[10px] font-black tracking-widest flex items-center gap-2 shadow-lg shadow-green-200 dark:shadow-none">
                         <CheckCircle className="w-3.5 h-3.5" /> CONNECTED
                     </div>
                 </div>
@@ -71,11 +72,11 @@ const IntegrationsTab: React.FC = () => {
                         <div className="lg:col-span-1 space-y-8">
                             {/* Configuration Form */}
                             <div className="space-y-4">
-                                <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-sm flex items-start gap-4 mb-6">
-                                    <Smartphone className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                                <div className="p-4 bg-success-soft dark:bg-success-soft border border-success-line dark:border-success-line rounded-sm flex items-start gap-4 mb-6">
+                                    <Smartphone className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
                                     <div>
-                                        <p className="text-xs font-bold text-emerald-800 dark:text-emerald-200">WhatsApp Cloud API (Sandbox)</p>
-                                        <p className="text-[10px] text-emerald-600 dark:text-success mt-1 font-medium">
+                                        <p className="text-xs font-bold text-success dark:text-success">WhatsApp Cloud API (Sandbox)</p>
+                                        <p className="text-[10px] text-success dark:text-success mt-1 font-medium">
                                             Setup credentials from <span className="font-bold underline">Meta for Developers</span>.
                                         </p>
                                     </div>
@@ -115,13 +116,13 @@ const IntegrationsTab: React.FC = () => {
                                 <button
                                     onClick={handleTestConnection}
                                     disabled={isVerifying}
-                                    className="flex items-center justify-center gap-2 w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[1.25rem] text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-200 dark:shadow-none active:scale-95 disabled:opacity-50"
+                                    className="flex items-center justify-center gap-2 w-full py-4 bg-primary hover:bg-primary-hover text-white rounded-[1.25rem] text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-200 dark:shadow-none active:scale-95 disabled:opacity-50"
                                 >
                                     {isVerifying ? (
                                         'VERIFYING...'
                                     ) : testStatus === 'SUCCESS' ? (
                                         <>
-                                            <CheckCircle className="w-4 h-4 text-emerald-300" /> CONNECTION VERIFIED
+                                            <CheckCircle className="w-4 h-4 text-success" /> CONNECTION VERIFIED
                                         </>
                                     ) : (
                                         <>
@@ -131,7 +132,7 @@ const IntegrationsTab: React.FC = () => {
                                 </button>
 
                                 {testStatus === 'ERROR' && (
-                                    <p className="text-xs text-red-500 font-bold flex items-center justify-center gap-1">
+                                    <p className="text-xs text-danger font-bold flex items-center justify-center gap-1">
                                         <AlertTriangle className="w-3 h-3" /> Connection failed. Check your token.
                                     </p>
                                 )}
@@ -167,14 +168,14 @@ const IntegrationsTab: React.FC = () => {
                                         <p className="text-xs font-bold text-slate-600 dark:text-slate-300">Auto-send Invoices</p>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" className="sr-only peer" defaultChecked />
-                                            <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                                            <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-success"></div>
                                         </label>
                                     </div>
                                     <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-sm border border-slate-100 dark:border-slate-800">
                                         <p className="text-xs font-bold text-slate-600 dark:text-slate-300">Payment Reminders</p>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" className="sr-only peer" defaultChecked />
-                                            <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                                            <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-success"></div>
                                         </label>
                                     </div>
                                 </div>
@@ -182,7 +183,7 @@ const IntegrationsTab: React.FC = () => {
 
                             <div className="space-y-3">
                                 <h5 className="flex items-center gap-2 text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider">
-                                    <Shield className="w-4 h-4 text-blue-500" /> Security & Logs
+                                    <Shield className="w-4 h-4 text-primary" /> Security & Logs
                                 </h5>
                                 <div className="p-6 bg-slate-900 text-slate-300 rounded-[1.5rem] font-mono text-[10px] space-y-2 border border-slate-800">
                                     <p className="text-success">[info] Webhook connected: ID_2943</p>
@@ -199,8 +200,8 @@ const IntegrationsTab: React.FC = () => {
             {/* Other Integrations Section */}
             <section>
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                        <LinkIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <div className="w-10 h-10 rounded-xl bg-primary-soft dark:bg-primary-soft flex items-center justify-center">
+                        <LinkIcon className="w-5 h-5 text-primary dark:text-primary" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">External Ecosystem</h3>
@@ -243,9 +244,9 @@ const MailIcon = ({ className }: { className?: string }) => (
 );
 
 const IntegrationCard = ({ icon, title, provider, status, color }: { icon: React.ReactNode, title: string, provider: string, status: string, color: string }) => (
-    <div className="group p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:border-indigo-300 transition-all shadow-sm">
+    <div className="group p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:border-primary/30 transition-all shadow-sm">
         <div className="flex items-center justify-between mb-4">
-            <div className={`w-12 h-12 rounded-sm bg-${color}-50 dark:bg-${color}-900/20 text-${color}-600 dark:text-${color}-400 flex items-center justify-center`}>
+            <div className={`w-12 h-12 rounded-sm ${getColorClasses(color).surface} ${getColorClasses(color).icon} flex items-center justify-center`}>
                 {icon}
             </div>
             <button className="text-slate-300 hover:text-primary transition-colors">
@@ -254,7 +255,7 @@ const IntegrationCard = ({ icon, title, provider, status, color }: { icon: React
         </div>
         <h4 className="text-sm font-black text-slate-800 dark:text-white leading-none">{title}</h4>
         <p className="text-[10px] text-slate-400 font-bold mt-1 mb-4">{provider}</p>
-        <div className={`inline-flex px-3 py-1 rounded-full text-[9px] font-black tracking-widest ${status === 'LIVE' || status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+        <div className={`inline-flex px-3 py-1 rounded-full text-[9px] font-black tracking-widest ${status === 'LIVE' || status === 'ACTIVE' ? 'bg-success-soft text-success' : 'bg-slate-100 text-slate-400'}`}>
             {status}
         </div>
     </div>

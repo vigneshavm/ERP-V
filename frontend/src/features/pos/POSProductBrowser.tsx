@@ -15,16 +15,16 @@ const ProductCard = React.memo<ProductCardProps>(({ product, onAddToCart }) => {
         <button
             onClick={() => onAddToCart(product)}
             disabled={product.stockQty <= 0}
-            className={`text-left group relative flex flex-col bg-white dark:bg-neutral-800 rounded-xl border transition-all duration-200 ${product.stockQty <= 0
-                ? 'opacity-50 border-neutral-200 dark:border-neutral-700 cursor-not-allowed'
-                : 'border-neutral-200 dark:border-neutral-700 hover:border-primary dark:hover:border-primary hover:shadow-md'
+            className={`text-left group relative flex flex-col bg-white dark:bg-slate-800 rounded-xl border transition-all duration-200 ${product.stockQty <= 0
+                ? 'opacity-50 border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                : 'border-slate-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary hover:shadow-md'
                 }`}
         >
-            <div className="h-28 w-full bg-neutral-100 dark:bg-neutral-700/50 rounded-t-xl overflow-hidden relative">
+            <div className="h-28 w-full bg-slate-100 dark:bg-slate-700/50 rounded-t-xl overflow-hidden relative">
                 {product.image ? (
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-300 dark:text-neutral-600">
+                    <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
                         <Package className="w-8 h-8" />
                     </div>
                 )}
@@ -36,10 +36,10 @@ const ProductCard = React.memo<ProductCardProps>(({ product, onAddToCart }) => {
             </div>
 
             <div className="p-3 flex flex-col flex-1">
-                <h3 className="font-bold text-neutral-800 dark:text-neutral-200 text-sm line-clamp-1 mb-0.5">{product.name}</h3>
-                {product.nameTamil && <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-1 mb-1">{product.nameTamil}</p>}
+                <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm line-clamp-1 mb-0.5">{product.name}</h3>
+                {product.nameTamil && <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mb-1">{product.nameTamil}</p>}
                 <div className="mt-auto flex justify-between items-end">
-                    <span className="text-xs text-neutral-500 font-mono">{product.sku}</span>
+                    <span className="text-xs text-slate-500 font-mono">{product.sku}</span>
                     <span className="font-bold text-primary">₹{product.sellingPrice}</span>
                 </div>
             </div>
@@ -174,24 +174,24 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
     }, []);
 
     return (
-        <div className="flex flex-col h-full bg-neutral-50 dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 relative">
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 relative">
             {/* Search & Filter Header */}
-            <div className="p-4 space-y-4 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+            <div className="p-4 space-y-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
                 {/* Search Bar */}
                 <div className="relative flex gap-2">
                     <div className="relative flex-1">
-                        <Search className={`absolute left-3 top-2.5 w-5 h-5 ${isManualMode ? 'text-primary' : 'text-neutral-400'}`} />
+                        <Search className={`absolute left-3 top-2.5 w-5 h-5 ${isManualMode ? 'text-primary' : 'text-slate-400'}`} />
                         <input
                             ref={searchInputRef}
                             type="text"
                             placeholder={isManualMode ? "Manual Mode: Type Name or Pattern..." : "Scan Barcode (or Ctrl+F)"}
-                            className={`w-full pl-10 pr-14 py-2 bg-neutral-100 dark:bg-neutral-700 border rounded-lg text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 focus:ring-2 focus:ring-primary transition-all font-medium ${isManualMode ? 'border-primary/50 bg-primary/5' : 'border-none'}`}
+                            className={`w-full pl-10 pr-14 py-2 bg-slate-100 dark:bg-slate-700 border rounded-lg text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary transition-all font-medium ${isManualMode ? 'border-primary/50 bg-primary/5' : 'border-none'}`}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={handleScanKeyDown}
                             autoFocus
                         />
-                        <kbd className="absolute right-2 top-2 text-[9px] bg-neutral-200 dark:bg-neutral-600 px-1 py-0.5 rounded text-neutral-500 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-500 font-mono">Ctrl+F</kbd>
+                        <kbd className="absolute right-2 top-2 text-[9px] bg-slate-200 dark:bg-slate-600 px-1 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-500 font-mono">Ctrl+F</kbd>
                     </div>
                     <button
                         onClick={() => {
@@ -202,7 +202,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                         }}
                         className={`p-2 rounded-lg border transition-all ${isManualMode
                             ? 'bg-primary text-white border-primary shadow-lg shadow-primary/30'
-                            : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700'
                             }`}
                         title="Manual Lookup Mode (F2)"
                     >
@@ -222,7 +222,7 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                             }}
                             className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${selectedCategory === cat
                                 ? 'bg-primary text-white shadow-md shadow-primary/20'
-                                : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
+                                : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
                                 }`}
                         >
                             {cat}
@@ -232,14 +232,14 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
 
                 {/* Subcategories (Conditional) */}
                 {selectedCategory !== 'All' && subcategories.length > 1 && (
-                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide border-t border-neutral-100 dark:border-neutral-700/50 pt-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide border-t border-slate-100 dark:border-slate-700/50 pt-2 animate-in fade-in slide-in-from-top-1 duration-200">
                         {subcategories.map(sub => (
                             <button
                                 key={sub}
                                 onClick={() => setSelectedSubcategory(sub)}
                                 className={`px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition-colors ${selectedSubcategory === sub
-                                    ? 'bg-neutral-800 dark:bg-neutral-200 text-white dark:text-neutral-900 shadow-sm'
-                                    : 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                                    ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 shadow-sm'
+                                    : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
                                     }`}
                             >
                                 {sub}
@@ -263,14 +263,14 @@ export const POSProductBrowser: React.FC<POSProductBrowserProps> = ({ products, 
                     {filteredProducts.length > pageSize && (
                         <button
                             onClick={() => setPageSize(prev => prev + 20)}
-                            className="col-span-full py-4 text-primary font-bold hover:bg-primary/5 dark:hover:bg-neutral-700 rounded-xl transition-colors border-2 border-dashed border-neutral-200 dark:border-neutral-700"
+                            className="col-span-full py-4 text-primary font-bold hover:bg-primary/5 dark:hover:bg-slate-700 rounded-xl transition-colors border-2 border-dashed border-slate-200 dark:border-slate-700"
                         >
                             Load More (+20)
                         </button>
                     )}
 
                     {filteredProducts.length === 0 && (
-                        <div className="col-span-full flex flex-col items-center justify-center py-12 text-neutral-400">
+                        <div className="col-span-full flex flex-col items-center justify-center py-12 text-slate-400">
                             <Package className="w-12 h-12 mb-3 opacity-50" />
                             <p className="text-sm font-medium">No products found</p>
                         </div>

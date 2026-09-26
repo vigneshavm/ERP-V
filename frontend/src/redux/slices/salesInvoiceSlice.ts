@@ -54,12 +54,12 @@ export const getSalesInvoiceSummary = createAsyncThunk(
 // Get all sales invoices
 export const getAllSalesInvoices = createAsyncThunk(
     'salesInvoice/getAll',
-    async (_, thunkAPI) => {
+    async (search: string | undefined, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
-            const response = await api.get(`${API_URL}/invoices`, getConfig(token));
+            const response = await api.get(`${API_URL}/invoices`, { ...getConfig(token), params: search ? { search } : undefined });
             return response.data;
         } catch (error: any) {
             const message =

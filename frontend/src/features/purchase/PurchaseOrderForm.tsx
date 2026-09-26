@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
-import { Save, Trash2, Plus, Search, Copy, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, ChevronDown, CheckCircle2, Package, Truck, CreditCard, Zap } from 'lucide-react';
+import { Save, Trash2, Plus, Search, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, ChevronDown, CheckCircle2, Package, Truck, CreditCard, Zap } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../types/purchase";
 import { usePurchaseItems } from "../../hooks/usePurchaseItems";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
@@ -29,13 +29,6 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
         approval_status: 'Draft',
         version: 1
     });
-
-    // Templates
-    const [showTemplates, setShowTemplates] = useState(false);
-    const templates = [
-        { name: 'Standard Raw Materials', vendor_id: 'VEND-001', vendor_name: 'Global Supplies', items: [{ product_id: 'P001', product_name: 'Premium Cotton', rate: 120, tax_percent: 5, quantity: 100, line_total: 12600 }] },
-        { name: 'Office Stationery', vendor_id: 'VEND-002', vendor_name: 'Metro Office', items: [{ product_id: 'P002', product_name: 'A4 Paper Reams', rate: 450, tax_percent: 12, quantity: 20, line_total: 10080 }] }
-    ];
 
     const termsTemplates = [
         { name: 'Standard 30 Days', content: 'Standard 30-day payment terms apply. Goods must be delivered in original packaging.' },
@@ -221,16 +214,16 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
     const amountInWords = useMemo(() => numberToWords(Math.round(totals.total)), [totals.total]);
 
     return (
-        <div className="flex flex-col h-screen bg-neutral-50 dark:bg-neutral-900">
+        <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-900">
             {/* History Modal */}
             {historyModal.show && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden border border-neutral-200 dark:border-neutral-700 animate-in zoom-in-95 duration-300">
-                        <div className="p-8 border-b border-neutral-100 dark:border-neutral-700 flex items-center justify-between">
+                    <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700 animate-in zoom-in-95 duration-300">
+                        <div className="p-8 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
                             <h3 className="text-sm font-black flex items-center gap-3 uppercase tracking-widest">
                                 <History className="w-5 h-5 text-primary" /> Price History: <span className="text-primary">{historyModal.item}</span>
                             </h3>
-                            <button onClick={() => setHistoryModal(prev => ({ ...prev, show: false }))} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-xl transition-all">
+                            <button onClick={() => setHistoryModal(prev => ({ ...prev, show: false }))} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all">
                                 <X className="w-4 h-4" />
                             </button>
                         </div>
@@ -244,18 +237,18 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                 </div>
                             ) : (
                                 <table className="w-full text-left">
-                                    <thead className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                                    <thead className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                         <tr>
                                             <th className="pb-4">Fiscal Date</th>
                                             <th className="pb-4">Vendor</th>
                                             <th className="pb-4 text-right">Rate</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                                         {historyModal.data.map((h, i) => (
                                             <tr key={i} className="group">
-                                                <td className="py-4 text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter tabular-nums">{formatDate(h.date)}</td>
-                                                <td className="py-4 text-[10px] font-black text-neutral-400 uppercase tracking-widest truncate max-w-[120px]">{h.vendorName}</td>
+                                                <td className="py-4 text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter tabular-nums">{formatDate(h.date)}</td>
+                                                <td className="py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[120px]">{h.vendorName}</td>
                                                 <td className="py-4 text-right text-xs font-black text-primary tabular-nums">₹{h.rate}</td>
                                             </tr>
                                         ))}
@@ -273,12 +266,6 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                 actions={
                     <div className="flex items-center gap-3">
                         <button
-                            onClick={() => setShowTemplates(!showTemplates)}
-                            className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
-                        >
-                            <Copy className="w-4 h-4 text-primary" /> {showTemplates ? 'Cancel Template' : 'Use Template'}
-                        </button>
-                        <button
                             onClick={handleSubmit}
                             disabled={isSaving}
                             className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 disabled:opacity-50"
@@ -294,35 +281,15 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                 ]}
             />
 
-            {/* Template Selector */}
-            {showTemplates && !initialData && (
-                <div className="mx-8 mt-6 p-6 bg-primary/5 border border-primary/10 rounded-[2.5rem] grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-4 duration-500">
-                    {templates.map((t, i) => (
-                        <button
-                            key={i}
-                            onClick={() => {
-                                setHeader(h => ({ ...h, vendor_id: t.vendor_id }));
-                                setItems(t.items as any);
-                                setShowTemplates(false);
-                            }}
-                            className="text-left p-6 bg-white dark:bg-neutral-800 rounded-sm border border-primary/20 hover:border-primary hover:shadow-xl transition-all group"
-                        >
-                            <div className="font-black text-xs text-primary uppercase tracking-widest group-hover:underline">{t.name}</div>
-                            <div className="text-[10px] font-bold text-neutral-400 mt-2 uppercase tracking-widest">{t.items.length} Nodes • {t.vendor_name}</div>
-                        </button>
-                    ))}
-                </div>
-            )}
-
             {/* Supplier Warning Node */}
             {supplierStatus && (supplierStatus.overdueCount > 0 || supplierStatus.isCreditRisk) && (
-                <div className="mx-8 mt-6 p-6 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/30 rounded-[2.5rem] flex items-center gap-6 animate-in slide-in-from-top-4 duration-500">
-                    <div className="p-4 bg-rose-500 text-white rounded-sm shadow-lg shadow-rose-500/20">
+                <div className="mx-8 mt-6 p-6 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger/30 rounded-[2.5rem] flex items-center gap-6 animate-in slide-in-from-top-4 duration-500">
+                    <div className="p-4 bg-danger text-white rounded-sm shadow-lg shadow-rose-500/20">
                         <AlertTriangle className="w-6 h-6" />
                     </div>
                     <div>
-                        <h4 className="text-[10px] font-black text-rose-800 dark:text-danger uppercase tracking-widest">Supplier Risk Surveillance</h4>
-                        <p className="text-xs font-bold text-rose-700 dark:text-rose-300 mt-1 italic leading-relaxed">
+                        <h4 className="text-[10px] font-black text-danger dark:text-danger uppercase tracking-widest">Supplier Risk Surveillance</h4>
+                        <p className="text-xs font-bold text-danger dark:text-danger mt-1 italic leading-relaxed">
                             {supplierStatus.overdueCount > 0 && `Institutional overdue detected: ${supplierStatus.overdueCount} bills totaling ₹${supplierStatus.overdueAmount?.toFixed(2)}.`}
                             {supplierStatus.isCreditRisk && ` Credit utilization threshold breached (${supplierStatus.creditUtilization?.toFixed(1)}%).`}
                         </p>
@@ -336,35 +303,35 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                     {/* Primary Params Group */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div className="md:col-span-1">
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Node Protocol #</label>
-                            <div className="px-5 py-3 bg-neutral-100 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black text-neutral-500 font-mono tracking-tighter opacity-70">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">PO No.</label>
+                            <div className="px-5 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black text-slate-500 font-mono tracking-tighter ">
                                 {header.po_number}
                             </div>
                         </div>
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Fiscal Date</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Fiscal Date</label>
                             <input
                                 type="date"
                                 value={header.po_date}
                                 onChange={e => setHeader({ ...header, po_date: e.target.value })}
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">ETA Constraint</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">ETA Constraint</label>
                             <input
                                 type="date"
                                 value={header.expected_delivery || ''}
                                 onChange={e => setHeader({ ...header, expected_delivery: e.target.value })}
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Institutional Vendor</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Supplier</label>
                             <select
                                 value={header.vendor_id || ''}
                                 onChange={e => setHeader({ ...header, vendor_id: e.target.value })}
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             >
                                 <option value="">Select entity...</option>
                                 {Array.isArray(vendors) && vendors.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
@@ -375,75 +342,75 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                     {/* Logistics Group */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Supply Hub</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Supply Hub</label>
                             <div className="relative">
-                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <select
                                     value={header.delivery_location}
                                     onChange={e => setHeader({ ...header, delivery_location: e.target.value })}
-                                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none"
+                                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none"
                                 >
                                     <option value="Main Warehouse">Main Warehouse</option>
                                     <option value="Production Unit A">Production Unit A</option>
                                     <option value="Retail Outlet - Center">Retail Outlet - Center</option>
                                     <option value="Third-party Logistics (3PL)">Third-party Logistics (3PL)</option>
                                 </select>
-                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                             </div>
                         </div>
                         <div className="md:col-span-2">
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Coordinate Precision (Address)</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Coordinate Precision (Address)</label>
                             <input
                                 type="text"
                                 value={header.delivery_address || ''}
                                 onChange={e => setHeader({ ...header, delivery_address: e.target.value })}
                                 placeholder="Plot, Sector, Landmark..."
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Ref Oracle ID</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Reference No.</label>
                             <input
                                 type="text"
                                 value={header.reference_number || ''}
                                 onChange={e => setHeader({ ...header, reference_number: e.target.value })}
                                 placeholder="e.g. QUO-2024-X"
-                                className="w-full px-5 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
 
                     {/* Inventory Node Table */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
-                        <div className="p-8 border-b border-neutral-100 dark:border-neutral-700 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                        <div className="p-8 border-b border-slate-100 dark:border-slate-700 flex flex-col md:flex-row items-center justify-between gap-6">
                             <div className="flex items-center gap-4">
                                 <h3 className="text-sm font-black uppercase tracking-widest">Inventory Nodes</h3>
                                 <button
                                     onClick={handleAddLot}
-                                    className="px-4 py-1.5 bg-indigo-50 text-primary dark:bg-indigo-900/20 dark:text-primary text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 hover:bg-indigo-100 transition-all"
+                                    className="px-4 py-1.5 bg-primary-soft text-primary dark:bg-primary-soft dark:text-primary text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 hover:bg-primary-soft transition-all"
                                 >
                                     <Plus className="w-3.5 h-3.5" /> Bulk Lot
                                 </button>
                             </div>
                             <div className="relative w-full md:w-80">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input
                                     type="text"
                                     placeholder="Add SKU node..."
                                     value={productSearch}
                                     onChange={e => { setProductSearch(e.target.value); setShowProductDropdown(true); }}
-                                    className="w-full pl-12 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                    className="w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                 />
                                 {showProductDropdown && products.length > 0 && (
-                                    <div className="absolute top-full mt-3 w-full bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-sm shadow-2xl z-[55] overflow-hidden animate-in fade-in slide-in-from-top-2">
+                                    <div className="absolute top-full mt-3 w-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-sm shadow-2xl z-[55] overflow-hidden animate-in fade-in slide-in-from-top-2">
                                         {products.map(p => (
                                             <button
                                                 key={p.id}
                                                 onClick={() => handleAddItem(p)}
-                                                className="w-full text-left px-6 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-700 border-b border-neutral-50 dark:border-neutral-700 last:border-none transition-colors"
+                                                className="w-full text-left px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-700 border-b border-slate-50 dark:border-slate-700 last:border-none transition-colors"
                                             >
-                                                <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{p.name}</p>
-                                                <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-widest">Vault Stock: {p.stock || 0} {p.unit || 'pcs'}</p>
+                                                <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">{p.name}</p>
+                                                <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest">Vault Stock: {p.stock || 0} {p.unit || 'pcs'}</p>
                                             </button>
                                         ))}
                                     </div>
@@ -453,7 +420,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
 
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-neutral-50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-700">
+                                <thead className="bg-slate-50 dark:bg-slate-900/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                                     <tr>
                                         <th className="px-8 py-5">Product SKU</th>
                                         <th className="px-8 py-5 w-24">Lot #</th>
@@ -461,23 +428,23 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                         <th className="px-8 py-5 w-24 text-center">Unit</th>
                                         <th className="px-8 py-5 w-32 text-right">Rate</th>
                                         <th className="px-8 py-5 w-20 text-center">Tax %</th>
-                                        <th className="px-8 py-5 w-32 text-right">Node Total</th>
+                                        <th className="px-8 py-5 w-32 text-right">Total</th>
                                         <th className="px-8 py-5 w-16 text-center">Info</th>
                                         <th className="px-8 py-5 w-16 text-center">Del</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                                     {items.map((item, idx) => (
-                                        <tr key={idx} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all">
+                                        <tr key={idx} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all">
                                             <td className="px-8 py-5">
-                                                <span className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{item.product_name}</span>
+                                                <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">{item.product_name}</span>
                                             </td>
                                             <td className="px-8 py-5">
                                                 <input
                                                     type="text"
                                                     value={item.lot_number || ''}
                                                     onChange={e => updateItem(idx, 'lot_number', e.target.value)}
-                                                    className="w-20 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-black uppercase tracking-widest focus:ring-1 focus:ring-primary/20 outline-none"
+                                                    className="w-20 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-black uppercase tracking-widest focus:ring-1 focus:ring-primary/20 outline-none"
                                                     placeholder="LOT-X"
                                                 />
                                             </td>
@@ -486,7 +453,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                                     type="number"
                                                     value={item.quantity}
                                                     onChange={e => updateItem(idx, 'quantity', parseFloat(e.target.value) || 0)}
-                                                    className="w-full bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-3 py-1.5 text-xs font-black text-center tabular-nums focus:ring-1 focus:ring-primary/20 outline-none"
+                                                    className="w-full bg-slate-50 dark:bg-slate-900 border border-transparent rounded-lg px-3 py-1.5 text-xs font-black text-center tabular-nums focus:ring-1 focus:ring-primary/20 outline-none"
                                                 />
                                             </td>
                                             <td className="px-8 py-5">
@@ -494,7 +461,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                                     type="text"
                                                     value={item.unit || 'pcs'}
                                                     onChange={e => updateItem(idx, 'unit', e.target.value)}
-                                                    className="w-full bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-center focus:ring-1 focus:ring-primary/20 outline-none"
+                                                    className="w-full bg-slate-50 dark:bg-slate-900 border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-center focus:ring-1 focus:ring-primary/20 outline-none"
                                                 />
                                             </td>
                                             <td className="px-8 py-5">
@@ -502,7 +469,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                                     type="number"
                                                     value={item.rate}
                                                     onChange={e => updateItem(idx, 'rate', parseFloat(e.target.value) || 0)}
-                                                    className="w-full bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-3 py-1.5 text-xs font-black text-right tabular-nums focus:ring-1 focus:ring-primary/20 outline-none"
+                                                    className="w-full bg-slate-50 dark:bg-slate-900 border border-transparent rounded-lg px-3 py-1.5 text-xs font-black text-right tabular-nums focus:ring-1 focus:ring-primary/20 outline-none"
                                                 />
                                             </td>
                                             <td className="px-8 py-5">
@@ -510,19 +477,19 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                                     type="number"
                                                     value={item.tax_percent}
                                                     onChange={e => updateItem(idx, 'tax_percent', parseFloat(e.target.value) || 0)}
-                                                    className="w-full bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-black text-center tabular-nums focus:ring-1 focus:ring-primary/20 outline-none"
+                                                    className="w-full bg-slate-50 dark:bg-slate-900 border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-black text-center tabular-nums focus:ring-1 focus:ring-primary/20 outline-none"
                                                 />
                                             </td>
-                                            <td className="px-8 py-5 text-right font-black text-xs text-neutral-900 dark:text-white tabular-nums">
+                                            <td className="px-8 py-5 text-right font-black text-xs text-slate-900 dark:text-white tabular-nums">
                                                 ₹{item.line_total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                             </td>
                                             <td className="px-8 py-5 text-center">
-                                                <button onClick={() => handleShowHistory(item.product_id || '', item.product_name)} className="p-2 text-neutral-300 hover:text-primary hover:bg-primary/5 rounded-xl transition-all">
+                                                <button onClick={() => handleShowHistory(item.product_id || '', item.product_name)} className="p-2 text-slate-300 hover:text-primary hover:bg-primary/5 rounded-xl transition-all">
                                                     <History className="w-4 h-4" />
                                                 </button>
                                             </td>
                                             <td className="px-8 py-5 text-center">
-                                                <button onClick={() => removeItem(idx)} className="p-2 text-neutral-300 hover:text-danger hover:bg-rose-50 rounded-xl transition-all">
+                                                <button onClick={() => removeItem(idx)} className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft rounded-xl transition-all">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </td>
@@ -543,23 +510,23 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
 
                     {/* Operational Intelligence Group */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 space-y-6">
+                        <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 space-y-6">
                             <div className="flex items-center gap-3">
-                                <FileText className="w-5 h-5 text-neutral-400" />
-                                <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Institutional Narrative (Notes)</h4>
+                                <FileText className="w-5 h-5 text-slate-400" />
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notes</h4>
                             </div>
                             <textarea
                                 value={header.notes || ''}
                                 onChange={e => setHeader({ ...header, notes: e.target.value })}
-                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
                                 placeholder="Internal protocol instructions, quality constraints, audit remarks..."
                             />
                         </div>
-                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 space-y-6">
+                        <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 space-y-6">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <ShieldCheck className="w-5 h-5 text-success" />
-                                    <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Governance Clauses (T&C)</h4>
+                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Governance Clauses (T&C)</h4>
                                 </div>
                                 <select
                                     onChange={e => setHeader({ ...header, terms_and_conditions: e.target.value })}
@@ -572,29 +539,29 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                             <textarea
                                 value={header.terms_and_conditions || ''}
                                 onChange={e => setHeader({ ...header, terms_and_conditions: e.target.value })}
-                                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all resize-none"
+                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all resize-none"
                                 placeholder="Mandatory procurement clauses, liability limitations, payment constraints..."
                             />
                         </div>
                     </div>
 
                     {/* Evidence Attachment Row */}
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700">
-                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-6 block flex items-center gap-3">
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 block flex items-center gap-3">
                             <Paperclip className="w-5 h-5" /> Audit Evidence (Quotations, Specs)
                         </label>
                         <div className="flex flex-wrap gap-4">
                             {attachments.map((file, i) => (
-                                <div key={i} className="flex items-center gap-3 px-5 py-2.5 bg-neutral-50 dark:bg-neutral-900 rounded-sm text-[10px] font-black uppercase tracking-widest border border-neutral-100 dark:border-neutral-700 group transition-all hover:border-primary/20">
-                                    <FileText className="w-4 h-4 text-neutral-400" />
+                                <div key={i} className="flex items-center gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 rounded-sm text-[10px] font-black uppercase tracking-widest border border-slate-100 dark:border-slate-700 group transition-all hover:border-primary/20">
+                                    <FileText className="w-4 h-4 text-slate-400" />
                                     <span className="max-w-[150px] truncate">{file}</span>
-                                    <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="text-neutral-300 hover:text-danger transition-colors">
+                                    <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="text-slate-300 hover:text-danger transition-colors">
                                         <X className="w-4 h-4" />
                                     </button>
                                 </div>
                             ))}
-                            <label className="flex items-center gap-3 px-6 py-2.5 bg-white dark:bg-neutral-800 border-2 border-dashed border-neutral-100 dark:border-neutral-700 rounded-sm text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all shadow-sm">
-                                <Plus className="w-4 h-4" /> Upload Node Intel
+                            <label className="flex items-center gap-3 px-6 py-2.5 bg-white dark:bg-slate-800 border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-sm text-[10px] font-black uppercase tracking-widest text-slate-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all shadow-sm">
+                                <Plus className="w-4 h-4" /> Upload file
                                 <input type="file" multiple className="hidden" onChange={handleFileUpload} />
                             </label>
                         </div>
@@ -603,54 +570,54 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
 
                 {/* Fiscal Summary Sidebar */}
                 <div className="w-full md:w-96 space-y-8">
-                    <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3.5rem] border border-neutral-200 dark:border-neutral-700 shadow-2xl space-y-8 relative overflow-hidden">
+                    <div className="bg-white dark:bg-slate-800 p-10 rounded-[3.5rem] border border-slate-200 dark:border-slate-700 shadow-2xl space-y-8 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
                         
                         <div>
-                            <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-10">Fiscal Aggregate</h4>
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-10">Fiscal Aggregate</h4>
                             <div className="space-y-6">
-                                <div className="flex justify-between items-center text-xs font-black text-neutral-400 uppercase tracking-widest">
+                                <div className="flex justify-between items-center text-xs font-black text-slate-400 uppercase tracking-widest">
                                     <span>Subtotal</span>
-                                    <span className="text-neutral-900 dark:text-white tabular-nums">₹{totals.subtotal.toLocaleString()}</span>
+                                    <span className="text-slate-900 dark:text-white tabular-nums">₹{totals.subtotal.toLocaleString()}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-xs font-black text-neutral-400 uppercase tracking-widest">
-                                    <span>Institutional Discount</span>
+                                <div className="flex justify-between items-center text-xs font-black text-slate-400 uppercase tracking-widest">
+                                    <span>Discount</span>
                                     <span className="text-success tabular-nums">-₹{totals.discount.toLocaleString()}</span>
                                 </div>
                                 
-                                <div className="pt-6 border-t border-neutral-100 dark:border-neutral-700 space-y-4">
-                                    <div className="flex justify-between items-center text-[10px] font-black text-neutral-400 uppercase tracking-widest italic opacity-60">
-                                        <span>Tax Protocol</span>
+                                <div className="pt-6 border-t border-slate-100 dark:border-slate-700 space-y-4">
+                                    <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest italic ">
+                                        <span>Tax</span>
                                         <span>{taxBreakdown.igst > 0 ? 'IGST (Inter-State)' : 'CGST+SGST (Intra)'}</span>
                                     </div>
                                     {taxBreakdown.cgst > 0 && (
                                         <>
-                                            <div className="flex justify-between items-center text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                                            <div className="flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                                 <span>Central GST (50%)</span>
                                                 <span className="tabular-nums">₹{taxBreakdown.cgst.toLocaleString()}</span>
                                             </div>
-                                            <div className="flex justify-between items-center text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                                            <div className="flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                                 <span>State GST (50%)</span>
                                                 <span className="tabular-nums">₹{taxBreakdown.sgst.toLocaleString()}</span>
                                             </div>
                                         </>
                                     )}
                                     {taxBreakdown.igst > 0 && (
-                                        <div className="flex justify-between items-center text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                                        <div className="flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                             <span>Integrated GST</span>
                                             <span className="tabular-nums">₹{taxBreakdown.igst.toLocaleString()}</span>
                                         </div>
                                     )}
                                 </div>
 
-                                <div className="pt-10 border-t border-neutral-100 dark:border-neutral-700">
+                                <div className="pt-10 border-t border-slate-100 dark:border-slate-700">
                                     <div className="flex justify-between items-end mb-8">
-                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Total Quantum</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total</p>
                                         <h3 className="text-4xl font-black text-primary tracking-tighter tabular-nums">₹{totals.total.toLocaleString()}</h3>
                                     </div>
-                                    <div className="p-6 bg-neutral-50 dark:bg-neutral-900 rounded-[2rem] border border-neutral-100 dark:border-neutral-700">
+                                    <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-700">
                                         <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-2">Lexical Amount</p>
-                                        <p className="text-[11px] font-black text-neutral-600 dark:text-neutral-400 italic leading-relaxed tracking-tight">{amountInWords}</p>
+                                        <p className="text-[11px] font-black text-slate-600 dark:text-slate-400 italic leading-relaxed tracking-tight">{amountInWords}</p>
                                     </div>
                                 </div>
                             </div>
@@ -660,12 +627,12 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                             <div className="grid grid-cols-2 gap-4">
                                 <button
                                     onClick={() => setHeader({ ...header, status: 'DRAFT' })}
-                                    className="py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    className="py-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2"
                                 >
                                     <FileText className="w-4 h-4" /> Draft
                                 </button>
                                 <button
-                                    className="py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    className="py-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2"
                                 >
                                     <Truck className="w-4 h-4" /> Dispatch
                                 </button>
@@ -680,8 +647,8 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                         onChange={e => setHeader({ ...header, status: e.target.checked ? 'RECEIVED' : 'COMPLETED' })}
                                         className="w-5 h-5 rounded-lg border-primary/20 text-primary focus:ring-primary/20 cursor-pointer"
                                     />
-                                    <label htmlFor="billLater" className="text-[10px] font-black text-neutral-600 dark:text-neutral-400 uppercase tracking-widest cursor-pointer">
-                                        Immediate Receipt Node
+                                    <label htmlFor="billLater" className="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest cursor-pointer">
+                                        Receive now
                                     </label>
                                 </div>
 
@@ -692,9 +659,9 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                     <select
                                         value={(header as any).payment_method || 'Credit'}
                                         onChange={e => setHeader({ ...header, payment_method: e.target.value } as any)}
-                                        className="w-full bg-white dark:bg-neutral-800 border border-primary/10 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none"
+                                        className="w-full bg-white dark:bg-slate-800 border border-primary/10 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none"
                                     >
-                                        <option value="Credit">Institutional Credit</option>
+                                        <option value="Credit">Credit</option>
                                         <option value="Cash">Cash Transaction</option>
                                         <option value="UPI">Digital (UPI/Bank)</option>
                                     </select>
@@ -712,12 +679,12 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                         </div>
                     </div>
                     
-                    <div className="bg-amber-50 dark:bg-amber-900/10 p-8 rounded-[3rem] border border-amber-100 dark:border-amber-900/20">
+                    <div className="bg-warning-soft dark:bg-warning-soft p-8 rounded-xl border border-warning-line dark:border-warning/20">
                         <div className="flex items-center gap-3 mb-4">
                             <Zap className="w-5 h-5 text-warning animate-pulse" />
-                            <h5 className="text-[10px] font-black text-amber-900/60 dark:text-warning uppercase tracking-widest">Protocol Optimizer</h5>
+                            <h5 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest">Suggestions</h5>
                         </div>
-                        <p className="text-[10px] text-amber-800 dark:text-warning font-bold italic leading-relaxed pl-4 border-l-2 border-warning/30">
+                        <p className="text-[10px] text-warning dark:text-warning font-bold italic leading-relaxed pl-4 border-l-2 border-warning/30">
                             Ensure all SKU nodes are verified against supplier quotations to prevent institutional fiscal discrepancies.
                         </p>
                     </div>

@@ -82,11 +82,11 @@ const BranchSettingsTab: React.FC = () => {
                                 placeholder="Branch Name" 
                                 className="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 dark:bg-slate-900 dark:border-slate-700 dark:text-white"
                             />
-                            <button onClick={handleCreateBranch} className="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-bold">Save</button>
+                            <button onClick={handleCreateBranch} className="bg-primary text-white px-3 py-2 rounded-lg text-sm font-bold">Save</button>
                             <button onClick={() => setIsCreating(false)} className="bg-slate-200 dark:bg-slate-800 dark:text-slate-300 px-3 py-2 rounded-lg text-sm font-bold">Cancel</button>
                         </div>
                     ) : (
-                        <button onClick={() => setIsCreating(true)} className="w-full px-4 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-500/20">
+                        <button onClick={() => setIsCreating(true)} className="w-full px-4 py-3 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary-hover transition-all shadow-md shadow-indigo-500/20">
                             <Plus className="w-4 h-4" /> Add New Branch
                         </button>
                     )}
@@ -100,12 +100,12 @@ const BranchSettingsTab: React.FC = () => {
                                 key={br._id}
                                 onClick={() => setSelectedBranchId(br._id)}
                                 className={`w-full group relative p-4 rounded-sm transition-all duration-300 text-left border ${isActive
-                                    ? 'bg-white dark:bg-slate-800 border-indigo-200 dark:border-indigo-500 shadow-xl shadow-indigo-100/50 dark:shadow-none translate-x-1'
+                                    ? 'bg-white dark:bg-slate-800 border-primary/30 dark:border-primary shadow-xl shadow-indigo-100/50 dark:shadow-none translate-x-1'
                                     : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300'
                                     }`}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${isActive ? 'bg-indigo-600 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'}`}>
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${isActive ? 'bg-primary text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'}`}>
                                         <Building className="w-5 h-5" />
                                     </div>
                                     <div className="min-w-0 flex-1">
@@ -114,7 +114,7 @@ const BranchSettingsTab: React.FC = () => {
                                             <MapPin className="w-3 h-3" /> {br.city}
                                         </p>
                                     </div>
-                                    {isActive && <div className="w-1.5 h-6 bg-indigo-600 rounded-full absolute -right-0.5" />}
+                                    {isActive && <div className="w-1.5 h-6 bg-primary rounded-full absolute -right-0.5" />}
                                 </div>
                             </button>
                         );
@@ -134,7 +134,7 @@ const BranchSettingsTab: React.FC = () => {
                             </div>
                             <div className="p-5 rounded-sm bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800">
                                 <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Active Status</p>
-                                <div className="flex items-center gap-1.5 text-emerald-600">
+                                <div className="flex items-center gap-1.5 text-success">
                                     <CheckCircle2 className="w-4 h-4" />
                                     <span className="text-sm font-bold">Operational</span>
                                 </div>
@@ -152,7 +152,7 @@ const BranchSettingsTab: React.FC = () => {
                                 <button 
                                     onClick={() => handleSaveBranch(selectedBranch)}
                                     disabled={isSaving}
-                                    className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-500/20 disabled:opacity-50"
+                                    className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-primary-hover transition-all shadow-md shadow-indigo-500/20 disabled:opacity-50"
                                 >
                                     <Save className="w-3.5 h-3.5" />
                                     {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Changes'}
@@ -205,9 +205,9 @@ const BranchSettingsTab: React.FC = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {(selectedBranch?.counters || []).map((c: Counter) => (
-                                    <div key={c.id} className="group flex items-center justify-between p-5 bg-white dark:bg-slate-800/50 rounded-sm border border-slate-100 dark:border-slate-800 hover:border-indigo-200 transition-all shadow-sm">
+                                    <div key={c.id} className="group flex items-center justify-between p-5 bg-white dark:bg-slate-800/50 rounded-sm border border-slate-100 dark:border-slate-800 hover:border-primary/30 transition-all shadow-sm">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-primary transition-colors">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-400 group-hover:bg-primary-soft group-hover:text-primary transition-colors">
                                                 <Settings2 className="w-5 h-5" />
                                             </div>
                                             <div>
@@ -219,7 +219,7 @@ const BranchSettingsTab: React.FC = () => {
                                             <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 transition-colors">
                                                 <Settings2 className="w-4 h-4" />
                                             </button>
-                                            <button className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-red-500 transition-colors">
+                                            <button className="p-2 hover:bg-danger-soft dark:hover:bg-danger-soft rounded-xl text-danger transition-colors">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>

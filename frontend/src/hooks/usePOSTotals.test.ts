@@ -27,14 +27,14 @@ describe('usePOSTotals', () => {
         expect(result.current.cartTotal).toBe(400);
     });
 
-    test('an item with no gstPercentage set at all still defaults to 18% (only 0 is special-cased)', () => {
+    test('an item with no gstPercentage set at all still defaults to 5% (only 0 is special-cased)', () => {
         const { result } = renderHook(() => usePOSTotals({
             cart: [cartItem({ price: 100, qty: 1 })], // gstPercentage omitted -> undefined
             activeSession: session({ taxMode: 'EXCLUSIVE' }),
             tenants: [],
         }));
 
-        expect(result.current.taxAmount).toBeCloseTo(18);
+        expect(result.current.taxAmount).toBeCloseTo(5);
     });
 
     test('EXCLUSIVE tax mode adds tax on top of the listed price', () => {
@@ -69,6 +69,36 @@ describe('usePOSTotals', () => {
         }));
 
         expect(result.current.cartSubtotal).toBe(150); // 50/metre * 3 metres
+    });
+
+    test('gstRate takes precedence over gstPercentage when both are set on a line', () => {
+        const { result } = renderHook(() => usePOSTotals({
+            cart: [cartItem({ price: 100, qty: 1, gstRate: 5, gstPercentage: 18 })],
+            activeSession: session({ taxMode: 'EXCLUSIVE' }),
+            tenants: [],
+        }));
+
+        expect(result.current.taxAmount).toBeCloseTo(5);
+    });
+
+    test('a line-level gstRate of 0 stays 0% even if the product default gstPercentage is nonzero', () => {
+        const { result } = renderHook(() => usePOSTotals({
+            cart: [cartItem({ price: 100, qty: 1, gstRate: 0, gstPercentage: 18 })],
+            activeSession: session({ taxMode: 'EXCLUSIVE' }),
+            tenants: [],
+        }));
+
+        expect(result.current.taxAmount).toBe(0);
+    });
+
+    test('falls back to gstPercentage when gstRate is not set on the line', () => {
+        const { result } = renderHook(() => usePOSTotals({
+            cart: [cartItem({ price: 100, qty: 1, gstPercentage: 12 })], // gstRate omitted
+            activeSession: session({ taxMode: 'EXCLUSIVE' }),
+            tenants: [],
+        }));
+
+        expect(result.current.taxAmount).toBeCloseTo(12);
     });
 
     test('redeemed loyalty points reduce the final total but never below zero', () => {

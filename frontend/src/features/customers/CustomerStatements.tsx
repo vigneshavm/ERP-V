@@ -131,33 +131,33 @@ const CustomerStatements: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
                 <div>
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <FileText className="w-6 h-6 text-primary" />
                         Customer Statements
                     </h2>
-                    <p className="text-neutral-500 text-sm mt-1">Generate and send account statements to customers</p>
+                    <p className="text-slate-500 text-sm mt-1">Generate and send account statements to customers</p>
                 </div>
             </div>
 
             {/* Statement Generator */}
-            <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl border border-neutral-200 dark:border-neutral-700 print:hidden">
-                <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Generate Statement</h3>
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 print:hidden">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Generate Statement</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="md:col-span-2">
-                        <label className="text-xs text-neutral-500 font-bold uppercase mb-1 block">Select Customer</label>
+                        <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Select Customer</label>
                         <div className="relative">
                             <input
                                 type="text"
                                 placeholder="Search customer..."
-                                className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm mb-2"
+                                className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm mb-2"
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
-                            <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
+                            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                         </div>
                         <select
-                            className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                             value={selectedCustomerId}
                             onChange={e => setSelectedCustomerId(e.target.value)}
                             size={5}
@@ -169,28 +169,28 @@ const CustomerStatements: React.FC = () => {
                     </div>
 
                     <div>
-                        <label className="text-xs text-neutral-500 font-bold uppercase mb-1 block">Period From</label>
+                        <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Period From</label>
                         <div className="relative">
                             <input
                                 type="date"
-                                className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                                className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                                 value={periodFrom}
                                 onChange={e => setPeriodFrom(e.target.value)}
                             />
-                            <Calendar className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
+                            <Calendar className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                         </div>
                     </div>
 
                     <div>
-                        <label className="text-xs text-neutral-500 font-bold uppercase mb-1 block">Period To</label>
+                        <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Period To</label>
                         <div className="relative">
                             <input
                                 type="date"
-                                className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                                className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                                 value={periodTo}
                                 onChange={e => setPeriodTo(e.target.value)}
                             />
-                            <Calendar className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
+                            <Calendar className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                         </div>
                     </div>
                 </div>
@@ -206,13 +206,13 @@ const CustomerStatements: React.FC = () => {
                     <button
                         onClick={handlePrint}
                         disabled={!statementData}
-                        className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-sm font-bold hover:bg-neutral-300 dark:hover:bg-neutral-600 disabled:opacity-50 flex items-center gap-2"
+                        className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-50 flex items-center gap-2"
                     >
                         <Printer className="w-4 h-4" /> Print
                     </button>
                     <button
                         disabled={!statementData}
-                        className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-sm font-bold hover:bg-neutral-300 dark:hover:bg-neutral-600 disabled:opacity-50 flex items-center gap-2"
+                        className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-50 flex items-center gap-2"
                     >
                         <Download className="w-4 h-4" /> Download PDF
                     </button>
@@ -227,19 +227,19 @@ const CustomerStatements: React.FC = () => {
 
             {/* Statement Preview */}
             {statementData && (showPreview || true) && (
-                <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 print:border-0 print:p-0">
+                <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 print:border-0 print:p-0">
                     {/* Statement Header */}
                     <div className="border-b-2 border-primary pb-4 mb-6 print:border-black">
                         <div className="flex justify-between items-start">
                             <div>
-                                <h1 className="text-2xl font-bold text-neutral-900 dark:text-white print:text-black">{businessName}</h1>
-                                <p className="text-neutral-500 text-sm print:text-gray-600">Account Statement</p>
+                                <h1 className="text-2xl font-bold text-slate-900 dark:text-white print:text-black">{businessName}</h1>
+                                <p className="text-slate-500 text-sm print:text-slate-600">Account Statement</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm text-neutral-600 dark:text-neutral-400 print:text-gray-600">
+                                <p className="text-sm text-slate-600 dark:text-slate-400 print:text-slate-600">
                                     Statement Date: {formatDate(new Date())}
                                 </p>
-                                <p className="text-sm text-neutral-600 dark:text-neutral-400 print:text-gray-600">
+                                <p className="text-sm text-slate-600 dark:text-slate-400 print:text-slate-600">
                                     Period: {formatDate(statementData.periodFrom)} - {formatDate(statementData.periodTo)}
                                 </p>
                             </div>
@@ -248,33 +248,33 @@ const CustomerStatements: React.FC = () => {
 
                     {/* Customer Details */}
                     <div className="grid grid-cols-2 gap-8 mb-6">
-                        <div className="bg-neutral-50 dark:bg-neutral-700/50 p-4 rounded-lg print:bg-gray-100">
-                            <h3 className="text-xs font-bold text-neutral-500 uppercase mb-2">Bill To</h3>
-                            <p className="font-bold text-neutral-900 dark:text-white print:text-black">{statementData.customerName}</p>
+                        <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg print:bg-slate-100">
+                            <h3 className="text-xs font-bold text-slate-500 uppercase mb-2">Bill To</h3>
+                            <p className="font-bold text-slate-900 dark:text-white print:text-black">{statementData.customerName}</p>
                             {statementData.phone && (
-                                <p className="text-sm text-neutral-600 dark:text-neutral-400 flex items-center gap-1">
+                                <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-1">
                                     <Phone className="w-3 h-3" /> {statementData.phone}
                                 </p>
                             )}
                             {statementData.email && (
-                                <p className="text-sm text-neutral-600 dark:text-neutral-400 flex items-center gap-1">
+                                <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-1">
                                     <Mail className="w-3 h-3" /> {statementData.email}
                                 </p>
                             )}
                         </div>
-                        <div className="bg-neutral-50 dark:bg-neutral-700/50 p-4 rounded-lg print:bg-gray-100">
-                            <h3 className="text-xs font-bold text-neutral-500 uppercase mb-2">Account Summary</h3>
+                        <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg print:bg-slate-100">
+                            <h3 className="text-xs font-bold text-slate-500 uppercase mb-2">Account Summary</h3>
                             <div className="space-y-1">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-neutral-600 dark:text-neutral-400">Opening Balance:</span>
+                                    <span className="text-slate-600 dark:text-slate-400">Opening Balance:</span>
                                     <span className="font-medium">₹{statementData.openingBalance.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-neutral-600 dark:text-neutral-400">Total Invoices:</span>
+                                    <span className="text-slate-600 dark:text-slate-400">Total Invoices:</span>
                                     <span className="font-medium text-error">₹{statementData.transactions.filter(t => t.debit > 0).reduce((a, t) => a + t.debit, 0).toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-neutral-600 dark:text-neutral-400">Total Payments:</span>
+                                    <span className="text-slate-600 dark:text-slate-400">Total Payments:</span>
                                     <span className="font-medium text-success">₹{statementData.transactions.filter(t => t.credit > 0).reduce((a, t) => a + t.credit, 0).toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between text-sm font-bold border-t pt-1 mt-1">
@@ -290,41 +290,41 @@ const CustomerStatements: React.FC = () => {
                     {/* Transactions Table */}
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="bg-neutral-100 dark:bg-neutral-900 print:bg-gray-200">
-                                <th className="p-3 text-left border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Date</th>
-                                <th className="p-3 text-left border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Reference</th>
-                                <th className="p-3 text-left border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Description</th>
-                                <th className="p-3 text-right border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Debit</th>
-                                <th className="p-3 text-right border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Credit</th>
-                                <th className="p-3 text-right border border-neutral-200 dark:border-neutral-700 print:border-gray-300">Balance</th>
+                            <tr className="bg-slate-100 dark:bg-slate-900 print:bg-slate-200">
+                                <th className="p-3 text-left border border-slate-200 dark:border-slate-700 print:border-slate-300">Date</th>
+                                <th className="p-3 text-left border border-slate-200 dark:border-slate-700 print:border-slate-300">Reference</th>
+                                <th className="p-3 text-left border border-slate-200 dark:border-slate-700 print:border-slate-300">Description</th>
+                                <th className="p-3 text-right border border-slate-200 dark:border-slate-700 print:border-slate-300">Debit</th>
+                                <th className="p-3 text-right border border-slate-200 dark:border-slate-700 print:border-slate-300">Credit</th>
+                                <th className="p-3 text-right border border-slate-200 dark:border-slate-700 print:border-slate-300">Balance</th>
                             </tr>
                         </thead>
                         <tbody>
                             {statementData.transactions.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="p-8 text-center text-neutral-500 border border-neutral-200 dark:border-neutral-700">
+                                    <td colSpan={6} className="p-8 text-center text-slate-500 border border-slate-200 dark:border-slate-700">
                                         No transactions in this period
                                     </td>
                                 </tr>
                             ) : (
                                 statementData.transactions.map((t, idx) => (
-                                    <tr key={idx} className="hover:bg-neutral-50 dark:hover:bg-neutral-800 print:hover:bg-transparent">
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300">
+                                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800 print:hover:bg-transparent">
+                                        <td className="p-3 border border-slate-200 dark:border-slate-700 print:border-slate-300">
                                             {formatDate(t.date)}
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 font-mono text-xs">
+                                        <td className="p-3 border border-slate-200 dark:border-slate-700 print:border-slate-300 font-mono text-xs">
                                             {t.reference}
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300">
+                                        <td className="p-3 border border-slate-200 dark:border-slate-700 print:border-slate-300">
                                             {t.description}
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-error">
+                                        <td className="p-3 border border-slate-200 dark:border-slate-700 print:border-slate-300 text-right text-error">
                                             {t.debit > 0 ? `₹${t.debit.toLocaleString()}` : '-'}
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-success">
+                                        <td className="p-3 border border-slate-200 dark:border-slate-700 print:border-slate-300 text-right text-success">
                                             {t.credit > 0 ? `₹${t.credit.toLocaleString()}` : '-'}
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right font-bold">
+                                        <td className="p-3 border border-slate-200 dark:border-slate-700 print:border-slate-300 text-right font-bold">
                                             ₹{t.balance.toLocaleString()}
                                         </td>
                                     </tr>
@@ -332,11 +332,11 @@ const CustomerStatements: React.FC = () => {
                             )}
                         </tbody>
                         <tfoot>
-                            <tr className="bg-neutral-100 dark:bg-neutral-900 font-bold print:bg-gray-200">
-                                <td colSpan={3} className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right">
+                            <tr className="bg-slate-100 dark:bg-slate-900 font-bold print:bg-slate-200">
+                                <td colSpan={3} className="p-3 border border-slate-200 dark:border-slate-700 print:border-slate-300 text-right">
                                     Balance Due:
                                 </td>
-                                <td colSpan={3} className={`p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-lg ${statementData.closingBalance > 0 ? 'text-error' : 'text-success'}`}>
+                                <td colSpan={3} className={`p-3 border border-slate-200 dark:border-slate-700 print:border-slate-300 text-right text-lg ${statementData.closingBalance > 0 ? 'text-error' : 'text-success'}`}>
                                     ₹{statementData.closingBalance.toLocaleString()}
                                 </td>
                             </tr>
@@ -344,7 +344,7 @@ const CustomerStatements: React.FC = () => {
                     </table>
 
                     {/* Footer */}
-                    <div className="mt-8 pt-4 border-t border-neutral-200 dark:border-neutral-700 text-center text-xs text-neutral-500 print:border-gray-300">
+                    <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700 text-center text-xs text-slate-500 print:border-slate-300">
                         <p>This is a computer-generated statement and does not require a signature.</p>
                         <p className="mt-1">For any queries, please contact us.</p>
                     </div>
@@ -353,10 +353,10 @@ const CustomerStatements: React.FC = () => {
 
             {/* Empty State */}
             {!selectedCustomerId && (
-                <div className="bg-white dark:bg-neutral-800 p-12 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center">
-                    <FileText className="w-16 h-16 mx-auto mb-4 text-neutral-300" />
-                    <h3 className="text-lg font-bold text-neutral-700 dark:text-neutral-300">Select a Customer</h3>
-                    <p className="text-neutral-500 mt-1">Choose a customer and date range to generate their account statement</p>
+                <div className="bg-white dark:bg-slate-800 p-12 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
+                    <FileText className="w-16 h-16 mx-auto mb-4 text-slate-300" />
+                    <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300">Select a Customer</h3>
+                    <p className="text-slate-500 mt-1">Choose a customer and date range to generate their account statement</p>
                 </div>
             )}
         </div>

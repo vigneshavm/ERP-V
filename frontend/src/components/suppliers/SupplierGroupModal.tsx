@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { createSupplierGroup, updateSupplierGroup } from '../../redux/slices/supplierGroupSlice';
@@ -15,45 +15,33 @@ interface SupplierGroupModalProps {
     initialData?: any;
 }
 
+const EMPTY_GROUP = {
+    name: '',
+    description: '',
+    color: '#3b82f6',
+    nature: 'Raw Material',
+    region: 'Local',
+    financialCategory: 'Credit',
+    priority: 'Medium',
+    taxType: 'GST',
+    paymentTerms: 30,
+    creditLimit: 0,
+    discountPercent: 0,
+    icon: 'truck'
+};
+
 const SupplierGroupModal: React.FC<SupplierGroupModalProps> = ({ isOpen, onClose, initialData }) => {
     const dispatch = useDispatch<AppDispatch>();
     const { isLoading } = useSelector((state: RootState) => state.supplierGroups);
 
-    const [formData, setFormData] = useState({
-        name: '',
-        description: '',
-        color: '#3b82f6',
-        nature: 'Raw Material',
-        region: 'Local',
-        financialCategory: 'Credit',
-        priority: 'Medium',
-        taxType: 'GST',
-        paymentTerms: 30,
-        creditLimit: 0,
-        discountPercent: 0,
-        icon: 'truck'
-    });
-
-    useEffect(() => {
-        if (initialData) {
-            setFormData(initialData);
-        } else {
-            setFormData({
-                name: '',
-                description: '',
-                color: '#3b82f6',
-                nature: 'Raw Material',
-                region: 'Local',
-                financialCategory: 'Credit',
-                priority: 'Medium',
-                taxType: 'GST',
-                paymentTerms: 30,
-                creditLimit: 0,
-                discountPercent: 0,
-                icon: 'truck'
-            });
-        }
-    }, [initialData, isOpen]);
+    const [formData, setFormData] = useState<typeof EMPTY_GROUP>(() => initialData || EMPTY_GROUP);
+    // Re-initialize when the modal is (re)opened or given a different group; adjusted during
+    // render (tracking the previous props) instead of setState in an effect.
+    const [prevProps, setPrevProps] = useState({ initialData, isOpen });
+    if (prevProps.initialData !== initialData || prevProps.isOpen !== isOpen) {
+        setPrevProps({ initialData, isOpen });
+        setFormData(initialData || EMPTY_GROUP);
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -204,7 +192,7 @@ const SupplierGroupModal: React.FC<SupplierGroupModalProps> = ({ isOpen, onClose
                             name="discountPercent"
                             value={formData.discountPercent}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-emerald-600"
+                            className="w-full px-3 py-2 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-success"
                         />
                     </div>
                 </div>
@@ -221,7 +209,7 @@ const SupplierGroupModal: React.FC<SupplierGroupModalProps> = ({ isOpen, onClose
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 disabled:opacity-50 shadow-lg shadow-indigo-200 dark:shadow-none"
+                        className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary-hover disabled:opacity-50 shadow-lg shadow-indigo-200 dark:shadow-none"
                     >
                         <Save className="w-4 h-4" /> {isLoading ? 'Saving...' : 'Save Group'}
                     </button>

@@ -39,7 +39,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
                                 </div>
                                 <p className="text-xs text-slate-500 mt-1">{formatDate(order.po_date)} {new Date(order.po_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
-                            <span className={`px-2 py-1 rounded text-xs font-bold ${(order.status as string) === 'Approved' || order.status === 'APPROVED' ? 'bg-emerald-100 dark:bg-success/20 text-emerald-700 dark:text-success' : 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400'}`}>
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${(order.status as string) === 'Approved' || order.status === 'APPROVED' ? 'bg-success-soft dark:bg-success/20 text-success dark:text-success' : 'bg-warning-soft dark:bg-warning/20 text-warning dark:text-warning'}`}>
                                 {order.status}
                             </span>
                         </div>
@@ -63,7 +63,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
                                                     e.stopPropagation();
                                                     onApprove(order);
                                                 }}
-                                                className="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors relative z-10"
+                                                className="p-2 bg-primary text-white rounded-lg hover:bg-primary transition-colors relative z-10"
                                                 title="Approve & Update Inventory"
                                             >
                                                 <Check className="w-4 h-4" />

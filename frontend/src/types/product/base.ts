@@ -22,7 +22,8 @@ export interface BaseProduct {
     discount?: number;
     taxMode?: TaxMode;
     gstPercentage?: number;
-    hsnCode?: string;
+    hsnCode?: string; // references a MasterEntry of type PRODUCT_HSN by its `name` (the HSN code itself)
+    gstRate?: number; // Backend: Item.gstRate, enum [0, 5, 12, 18, 28] -- auto-filled from the selected HSN code's meta.gstRate, editable after
 
     // Inventory
     stockQty: number; // Backend: stockQty

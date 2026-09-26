@@ -6,7 +6,9 @@ import Bill from '../../finance/models/Bill.js';
 import JournalEntry from '../../finance/models/JournalEntry.js';
 import Tenant from '../../core/models/Tenant.js';
 import Supplier from '../models/Supplier.js';
-import { error } from '../../../config/logger.js';
+import { error, warn } from '../../../config/logger.js';
+import { isSqlItemSource } from '../../../config/itemDataSource.js';
+import { isSqlId, sqlPurchaseById, sqlPurchaseList } from '../../../integrations/textilesoft/sqlSales.js';
 
 interface AuthenticatedRequest extends Request {
     user?: {
@@ -168,6 +170,16 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
                     color: i.color,
                     size: i.size,
                     washingInstructions: i.washing_instructions,
+                    // Textile descriptors -- Purchase Entry is often the first place a genuinely
+                    // new product is ever entered, so without these it silently shipped with no
+                    // brand/design/pattern/modelNo/fashionName/shelfCode until someone later
+                    // opened Product Modal and filled them in by hand.
+                    brand: i.brand,
+                    design: i.design,
+                    pattern: i.pattern,
+                    modelNo: i.model_no,
+                    fashionName: i.fashion_name,
+                    shelfCode: i.shelf_code,
                     tenantId: req.user?.tenantId || 'default',
                     addedBy: req.user?._id
                 });
@@ -189,7 +201,13 @@ export const createPurchase = async (req: AuthenticatedRequest, res: Response): 
                 color: i.color,
                 size: i.size,
                 categoryCode: catCode,
-                lotNumber: i.lot_number
+                lotNumber: i.lot_number,
+                brand: i.brand,
+                design: i.design,
+                pattern: i.pattern,
+                modelNo: i.model_no,
+                fashionName: i.fashion_name,
+                shelfCode: i.shelf_code
             });
         }
 
@@ -409,6 +427,19 @@ export const getAllPurchases = async (req: AuthenticatedRequest, res: Response):
             .populate('vendorId', 'name businessName')
             .populate('createdBy', 'name')
             .sort({ createdAt: -1 });
+
+        // SQL mode: the shop's own GRNs (Textilesoft purchgrnentry) are listed after the ERP's purchases.
+        if (isSqlItemSource() && req.query.channel !== 'WHOLESALE') {
+            try {
+                const shop = await sqlPurchaseList();
+                const merged = [...purchases.map((p: any) => p.toObject()), ...shop];
+                merged.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                res.json(merged);
+                return;
+            } catch (e) {
+                warn(`[sql-purchases] shop GRNs unavailable, showing ERP purchases only - ${(e as Error).message}`);
+            }
+        }
         res.json(purchases);
     }
     catch (err: any) {
@@ -437,6 +468,16 @@ export const getAllPurchases = async (req: AuthenticatedRequest, res: Response):
  */
 export const getPurchaseById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        const rawId = req.params.id as unknown as string;
+        if (isSqlId(rawId)) {
+            const shopPurchase = isSqlItemSource() ? await sqlPurchaseById(rawId) : undefined;
+            if (!shopPurchase) {
+                res.status(404).json({ message: "Purchase not found" });
+                return;
+            }
+            res.json(shopPurchase);
+            return;
+        }
         const purchase = await Purchase.findById(req.params.id)
             .populate('vendorId')
             .populate('items.productId');

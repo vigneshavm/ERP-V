@@ -17,7 +17,6 @@ import {
     BarChart3
 } from 'lucide-react';
 import api from "../../services/api";
-import * as XLSX from 'xlsx';
 
 interface AgeingBucket {
     "0-30": number;
@@ -35,12 +34,14 @@ interface SupplierAgeing {
 
 const SupplierAgeing: React.FC = () => {
     const navigate = useNavigate();
+    const [loadError, setLoadError] = useState('');
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<SupplierAgeing[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
 
     const fetchAgeing = async () => {
         setLoading(true);
+        setLoadError('');
         try {
             const response = await api.get('/api/purchases/suppliers/ageing-analysis');
             if (response.data.success) {
@@ -48,11 +49,9 @@ const SupplierAgeing: React.FC = () => {
             }
         } catch (error: any) {
             console.error('Fetch Ageing Error:', error);
-            // Mocking for aesthetic preview if API fails
-            setData([
-                { supplierId: 's1', businessName: 'Tech Supplies Corp', buckets: { "0-30": 45000, "31-60": 12000, "61-90": 0, "90+": 0 }, totalDue: 57000 },
-                { supplierId: 's2', businessName: 'Global Logistics', buckets: { "0-30": 15000, "31-60": 25000, "61-90": 10000, "90+": 5000 }, totalDue: 55000 }
-            ]);
+            // No sample fallback: show that loading failed rather than records that don't exist.
+            setData([]);
+            setLoadError((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Could not load supplier ageing. Check your connection and refresh.');
         } finally {
             setLoading(false);
         }
@@ -80,7 +79,8 @@ const SupplierAgeing: React.FC = () => {
         return t;
     }, [data]);
 
-    const handleExport = () => {
+    const handleExport = async () => {
+        const XLSX = await import('xlsx');
         const exportData = filteredData.map(s => ({
             'Supplier': s.businessName,
             '0-30 Days': s.buckets["0-30"],
@@ -109,9 +109,9 @@ const SupplierAgeing: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={handleExport}
-                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
+                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95"
                             >
-                                <Download className="w-4 h-4" /> Export Node Data
+                                <Download className="w-4 h-4" /> Export
                             </button>
                             <button
                                 onClick={fetchAgeing}
@@ -122,25 +122,28 @@ const SupplierAgeing: React.FC = () => {
                         </div>
                     }
                 />
+                {loadError && (
+                    <div role="alert" className="rounded-md border border-danger-line bg-danger-soft px-4 py-3 text-sm font-medium text-danger dark:border-danger/50 dark:bg-danger-soft dark:text-danger">{loadError}</div>
+                )}
 
                 {/* KPI Pulse Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
-                        { label: 'Active (0-30)', val: totals["0-30"], icon: TrendingUp, color: 'text-success', bg: 'bg-emerald-50' },
-                        { label: 'Warning (31-60)', val: totals["31-60"], icon: Clock, color: 'text-warning', bg: 'bg-amber-50' },
-                        { label: 'Critical (61-90)', val: totals["61-90"], icon: Activity, color: 'text-orange-500', bg: 'bg-orange-50' },
-                        { label: 'In Arrears (90+)', val: totals["90+"], icon: AlertTriangle, color: 'text-danger', bg: 'bg-rose-50' }
+                        { label: 'Active (0-30)', val: totals["0-30"], icon: TrendingUp, color: 'text-success', bg: 'bg-success-soft' },
+                        { label: 'Warning (31-60)', val: totals["31-60"], icon: Clock, color: 'text-warning', bg: 'bg-warning-soft' },
+                        { label: 'Critical (61-90)', val: totals["61-90"], icon: Activity, color: 'text-warning', bg: 'bg-warning-soft' },
+                        { label: 'In Arrears (90+)', val: totals["90+"], icon: AlertTriangle, color: 'text-danger', bg: 'bg-danger-soft' }
                     ].map((card, i) => (
-                        <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
+                        <div key={i} className="ui-panel p-8 group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
                                 <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />
                                 </div>
-                                <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
+                                <ArrowUpRight className="w-5 h-5 text-slate-300 group-hover:text-primary transition-colors" />
                             </div>
                             <div className="relative z-10">
-                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-2">{card.label}</p>
-                                <p className="text-2xl font-black text-neutral-900 dark:text-white tracking-tighter uppercase tabular-nums">₹{card.val.toLocaleString()}</p>
+                                <p className="ui-label leading-none mb-2">{card.label}</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase tabular-nums">₹{card.val.toLocaleString()}</p>
                             </div>
                             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
                         </div>
@@ -148,47 +151,47 @@ const SupplierAgeing: React.FC = () => {
                 </div>
 
                 {/* Audit Control Matrix */}
-                <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="ui-panel p-8 flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="relative w-full md:w-[500px]">
-                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Entity Search</label>
+                        <label className="ui-label mb-3 block">Search suppliers</label>
                         <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="text"
                                 placeholder="Search supplier by institutional name..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
                     <div className="flex items-end gap-6 w-full md:w-auto">
                         <div className="text-right">
-                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 leading-none">Aggregate Outstanding</p>
-                            <p className="text-3xl font-black text-rose-600 tabular-nums tracking-tighter">₹{totals.total.toLocaleString()}</p>
+                            <p className="ui-label mb-1 leading-none">Aggregate Outstanding</p>
+                            <p className="text-3xl font-black text-danger tabular-nums tracking-tighter">₹{totals.total.toLocaleString()}</p>
                         </div>
-                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-sm text-neutral-400 hover:text-primary transition-all active:scale-95">
+                        <button className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-sm text-slate-400 hover:text-primary transition-all active:scale-95">
                             <Filter className="w-6 h-6" />
                         </button>
                     </div>
                 </div>
 
                 {/* Ageing Matrix Grid */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <div className="ui-panel overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
+                            <thead className="bg-slate-50/50 dark:bg-slate-900/50 ui-label border-b border-slate-100 dark:border-slate-800">
                                 <tr>
-                                    <th className="px-8 py-5">Institutional Supplier</th>
+                                    <th className="px-8 py-5">Supplier</th>
                                     <th className="px-8 py-5 text-right">0-30 Days</th>
                                     <th className="px-8 py-5 text-right">31-60 Days</th>
                                     <th className="px-8 py-5 text-right">61-90 Days</th>
                                     <th className="px-8 py-5 text-right">90+ Arrears</th>
-                                    <th className="px-8 py-5 text-right">Total Node Quantum</th>
+                                    <th className="px-8 py-5 text-right">Total</th>
                                     <th className="px-8 py-5 text-center">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {loading ? (
                                     <tr>
                                         <td colSpan={7} className="px-8 py-24 text-center">
@@ -202,7 +205,7 @@ const SupplierAgeing: React.FC = () => {
                                     <tr>
                                         <td colSpan={7} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-slate-100 dark:bg-slate-900 rounded-sm flex items-center justify-center">
                                                     <Info className="w-10 h-10" />
                                                 </div>
                                                 <div>
@@ -214,32 +217,32 @@ const SupplierAgeing: React.FC = () => {
                                     </tr>
                                 ) : (
                                     filteredData.map((row) => (
-                                        <tr key={row.supplierId} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all">
+                                        <tr key={row.supplierId} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all">
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-sm bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center text-neutral-500 font-black text-xs uppercase tracking-widest border border-neutral-100 dark:border-neutral-800">
+                                                    <div className="w-10 h-10 rounded-sm bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-500 font-black text-xs uppercase tracking-widest border border-slate-100 dark:border-slate-800">
                                                         {row.businessName.charAt(0)}
                                                     </div>
-                                                    <span className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{row.businessName}</span>
+                                                    <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">{row.businessName}</span>
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["0-30"] > 0 ? 'text-neutral-900 dark:text-white' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["0-30"] > 0 ? 'text-slate-900 dark:text-white' : 'text-slate-300 dark:text-slate-700'}`}>
                                                     ₹{row.buckets["0-30"].toLocaleString()}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["31-60"] > 0 ? 'text-warning' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["31-60"] > 0 ? 'text-warning' : 'text-slate-300 dark:text-slate-700'}`}>
                                                     ₹{row.buckets["31-60"].toLocaleString()}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["61-90"] > 0 ? 'text-orange-500 underline' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["61-90"] > 0 ? 'text-warning underline' : 'text-slate-300 dark:text-slate-700'}`}>
                                                     ₹{row.buckets["61-90"].toLocaleString()}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["90+"] > 0 ? 'text-rose-600 underline decoration-2 underline-offset-4' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["90+"] > 0 ? 'text-danger underline decoration-2 underline-offset-4' : 'text-slate-300 dark:text-slate-700'}`}>
                                                     ₹{row.buckets["90+"].toLocaleString()}
                                                 </span>
                                             </td>
@@ -250,7 +253,7 @@ const SupplierAgeing: React.FC = () => {
                                                 <div className="flex justify-center">
                                                     <button
                                                         onClick={() => navigate(`/suppliers/${row.supplierId}/ledger`)}
-                                                        className="p-3 text-neutral-300 hover:text-primary hover:bg-primary/5 rounded-sm transition-all active:scale-95"
+                                                        className="p-3 text-slate-300 hover:text-primary hover:bg-primary/5 rounded-sm transition-all active:scale-95"
                                                     >
                                                         <ArrowUpRight className="w-6 h-6" />
                                                     </button>

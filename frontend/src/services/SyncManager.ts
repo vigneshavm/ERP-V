@@ -3,6 +3,7 @@ import api from './api';
 import { store } from "../redux/store";
 import { setDailyRecordSynced } from "../redux/slices/financeSlice";
 import { SyncIntelligenceService } from './SyncIntelligenceService';
+import { sendDailyFinanceChange } from './dailyFinanceApi';
 import { buildPosInvoicePayload } from './posInvoiceMapper';
 
 export class SyncManager {
@@ -15,9 +16,10 @@ export class SyncManager {
         this.isSyncing = true;
 
         try {
+            // Filter, not where('synced'): `synced` is stored as a boolean, and IndexedDB can't
+            // index booleans, so an index lookup never matched and queued sales were never sent.
             const pendingSales = await db.offlineSales
-                .where('synced')
-                .equals(0) // false
+                .filter(sale => !sale.synced)
                 .toArray();
 
             for (const sale of pendingSales) {
@@ -38,7 +40,7 @@ export class SyncManager {
 
                     // Log to Sync Intelligence Ledger
                     await SyncIntelligenceService.logEvent({
-                        deviceId: 'LOCAL_POS', // In real system, get actual device ID
+                        deviceId: SyncIntelligenceService.getDeviceId(),
                         branchId: sale.branchId || 'UNKNOWN',
                         eventType: 'SALE',
                         entityId: sale.id!,
@@ -47,11 +49,21 @@ export class SyncManager {
                         payload: { total: sale.total, itemsCount: sale.items?.length }
                     });
 
-                } catch (err) {
+                } catch (err: any) {
                     console.error(`Failed to sync sale ${sale.id}:`, err);
                     // Track retry attempts (OfflineSale has no `error` field, unlike DailyFinanceQueueItem)
                     await db.offlineSales.update(sale.localId!, {
                         retryCount: (sale.retryCount || 0) + 1
+                    });
+                    // Failures are logged too, so a sale that keeps failing is visible in the ledger.
+                    await SyncIntelligenceService.logEvent({
+                        deviceId: SyncIntelligenceService.getDeviceId(),
+                        branchId: sale.branchId || 'UNKNOWN',
+                        eventType: 'SALE',
+                        entityId: sale.id!,
+                        entityType: 'Invoice',
+                        status: 'FAILED',
+                        payload: { error: err?.message, retryCount: (sale.retryCount || 0) + 1 }
                     });
                 }
             }
@@ -99,24 +111,15 @@ export class SyncManager {
         this.isSyncingDF = true;
 
         try {
+            // Primary-key order, so a record's INSERT replays before its UPDATE/DELETE.
             const pending = await db.dailyFinanceQueue
-                .where('synced')
-                .equals(0)
+                .filter(item => !item.synced)
                 .toArray();
 
             for (const item of pending) {
                 try {
                     const { recordId, operation, data } = item;
-
-                    // Use API instead of Supabase
-                    // Assuming generic sync endpoint or mapped endpoints
-                    const endpoint = '/finance/sync'; // Placeholder
-                    await api.post(endpoint, {
-                        recordId,
-                        operation,
-                        data,
-                        tenant_id: data.tenant_id
-                    });
+                    await sendDailyFinanceChange(operation, recordId, data);
 
                     await db.dailyFinanceQueue.update(item.localId!, { synced: true });
                     console.log(`Synced ${operation} for ${recordId}`);
@@ -128,7 +131,7 @@ export class SyncManager {
 
                     // Log to Sync Intelligence Ledger
                     await SyncIntelligenceService.logEvent({
-                        deviceId: 'LOCAL_POS',
+                        deviceId: SyncIntelligenceService.getDeviceId(),
                         branchId: data.branch_id || 'UNKNOWN',
                         eventType: operation === 'INSERT' ? 'PAYMENT' : 'STOCK_ADJUST',
                         entityId: recordId,
@@ -142,6 +145,15 @@ export class SyncManager {
                     await db.dailyFinanceQueue.update(item.localId!, {
                         error: err.message,
                         retryCount: (item.retryCount || 0) + 1
+                    });
+                    await SyncIntelligenceService.logEvent({
+                        deviceId: SyncIntelligenceService.getDeviceId(),
+                        branchId: item.data?.branch_id || 'UNKNOWN',
+                        eventType: item.operation === 'INSERT' ? 'PAYMENT' : 'STOCK_ADJUST',
+                        entityId: item.recordId,
+                        entityType: 'DailyFinance',
+                        status: 'FAILED',
+                        payload: { operation: item.operation, error: err.message, retryCount: (item.retryCount || 0) + 1 }
                     });
                 }
             }

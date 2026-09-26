@@ -83,7 +83,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     const discountPercent = cartSubtotal > 0 ? (discountAmount / cartSubtotal) * 100 : 0;
     const exceedsCap = typeof maxDiscountPercent === 'number' && discountAmount > 0 && discountPercent > maxDiscountPercent;
     return (
-        <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-3 sm:p-4 shadow-lg flex-1 flex flex-col min-h-0 transition-colors">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 sm:p-4 shadow-lg flex-1 flex flex-col min-h-0 transition-colors">
             <h3 className="text-secondary font-bold uppercase text-[10px] tracking-wider mb-3 flex items-center gap-2">
                 <CreditCard className="w-3.5 h-4 text-secondary/70" /> {t('settlement')}
             </h3>
@@ -93,7 +93,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 <div className="mb-4 p-2.5 bg-secondary/5 dark:bg-secondary/10 border border-secondary/20 rounded-lg">
                     <div className="flex justify-between items-center mb-1.5">
                         <span className="text-[10px] font-bold text-secondary uppercase">{t('loyaltyRedemption')}</span>
-                        <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{t('balance')} <span className="font-bold text-secondary">{activeCustomer.points} {t('pts')}</span></span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400">{t('balance')} <span className="font-bold text-secondary">{activeCustomer.points} {t('pts')}</span></span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                             <input
                                 type="number"
                                 placeholder={t('pointsToRedeem')}
-                                className="w-full pl-2 pr-8 py-1.5 text-xs bg-white dark:bg-neutral-900 border border-secondary/30 dark:border-neutral-700 rounded focus:outline-none focus:ring-1 focus:ring-secondary font-mono"
+                                className="w-full pl-2 pr-8 py-1.5 text-xs bg-white dark:bg-slate-900 border border-secondary/30 dark:border-slate-700 rounded focus:outline-none focus:ring-1 focus:ring-secondary font-mono"
                                 min="0"
                                 max={activeCustomer.points}
                                 onChange={(e) => {
@@ -127,7 +127,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                                 }
                                 onSetRedeemedPoints(activeCustomer.points);
                             }}
-                            className="px-2 py-1.5 text-[10px] font-bold bg-secondary text-white rounded hover:bg-secondary/90 transition-colors"
+                            className="px-2 py-1.5 text-[10px] font-bold bg-primary text-primary-foreground rounded hover:bg-primary-hover transition-colors"
                         >
                             {t('max')}
                         </button>
@@ -145,13 +145,13 @@ export const POSFooter: React.FC<POSFooterProps> = ({
             <div className="space-y-3 mb-4">
                 <div className="grid grid-cols-2 gap-3">
                     <div>
-                        <span className="text-[9px] font-bold text-neutral-400 mb-1 block uppercase">{t('taxMode')}</span>
-                        <div className="flex bg-neutral-100 dark:bg-neutral-900 rounded-lg p-1 border border-neutral-200 dark:border-neutral-700">
+                        <span className="text-[9px] font-bold text-slate-400 mb-1 block uppercase">{t('taxMode')}</span>
+                        <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
                             {(['EXCLUSIVE', 'INCLUSIVE'] as TaxMode[]).map(mode => (
                                 <button
                                     key={mode}
                                     onClick={() => onSetTaxMode(mode)}
-                                    className={`flex-1 text-[10px] py-1.5 rounded-md font-bold transition-all ${taxMode === mode ? 'bg-secondary text-white shadow' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'}`}
+                                    className={`flex-1 text-[10px] py-1.5 rounded-md font-bold transition-all ${taxMode === mode ? 'bg-primary text-primary-foreground shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
                                 >
                                     {mode === 'EXCLUSIVE' ? t('plusTax') : t('inclusive')}
                                 </button>
@@ -159,13 +159,13 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                         </div>
                     </div>
                     <div>
-                        <span className="text-[9px] font-bold text-neutral-400 mb-1 block uppercase">{t('payment')}</span>
-                        <div className="flex bg-neutral-100 dark:bg-neutral-900 rounded-lg p-1 border border-neutral-200 dark:border-neutral-700">
+                        <span className="text-[9px] font-bold text-slate-400 mb-1 block uppercase">{t('payment')}</span>
+                        <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
                             {(['CASH', 'CARD', 'UPI'] as PaymentMethod[]).map(method => (
                                 <button
                                     key={method}
                                     onClick={() => onSetPaymentMethod(method)}
-                                    className={`flex-1 py-1.5 rounded-md flex flex-col items-center justify-center gap-0.5 transition-all ${paymentMethod === method ? 'bg-success text-white shadow font-bold' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'}`}
+                                    className={`flex-1 py-1.5 rounded-md flex flex-col items-center justify-center gap-0.5 transition-all ${paymentMethod === method ? 'bg-success text-white shadow font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
                                     title={method}
                                 >
                                     {method === 'CASH' && <Banknote className="w-4 h-4" />}
@@ -182,12 +182,12 @@ export const POSFooter: React.FC<POSFooterProps> = ({
 
 
             <div className="mt-auto space-y-1.5">
-                <div className="flex justify-between items-center text-xs border-t border-neutral-200 dark:border-neutral-700 pt-2">
-                    <span className="text-neutral-500 dark:text-neutral-400 font-medium">{t('subtotal')}</span>
-                    <span className="text-neutral-800 dark:text-neutral-200 font-mono">₹{(cartSubtotal || 0).toFixed(2)}</span>
+                <div className="flex justify-between items-center text-xs border-t border-slate-200 dark:border-slate-700 pt-2">
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">{t('subtotal')}</span>
+                    <span className="text-slate-800 dark:text-slate-200 font-mono">₹{(cartSubtotal || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                    <span className="text-neutral-500 dark:text-neutral-400 font-medium">{t('tax')} {taxMode === 'INCLUSIVE' ? `(${t('inclusive')})` : ''}</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">{t('tax')} {taxMode === 'INCLUSIVE' ? `(${t('inclusive')})` : ''}</span>
                     <span className="text-secondary font-mono">₹{(taxAmount || 0).toFixed(2)}</span>
                 </div>
                 {isWholesaleCustomer && wholesaleDiscountPercent > 0 && onApplyWholesaleDiscount && (
@@ -204,10 +204,10 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 )}
                 {onSetDiscountAmount && (
                     <div className="flex justify-between items-center text-xs gap-2">
-                        <span className="text-neutral-500 dark:text-neutral-400 font-medium shrink-0">{t('discount')}</span>
+                        <span className="text-slate-500 dark:text-slate-400 font-medium shrink-0">{t('discount')}</span>
                         <div className="flex flex-col items-end">
                             <div className="relative">
-                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-neutral-400">₹</span>
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">₹</span>
                                 <input
                                     type="number"
                                     min="0"
@@ -215,7 +215,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                                     value={discountAmount || ''}
                                     onChange={(e) => onSetDiscountAmount(Math.max(0, parseFloat(e.target.value) || 0))}
                                     placeholder="0.00"
-                                    className={`w-24 pl-4 pr-1.5 py-1 text-xs text-right bg-white dark:bg-neutral-900 border rounded font-mono focus:outline-none focus:ring-1 ${exceedsCap ? 'border-error focus:ring-error text-error' : 'border-neutral-300 dark:border-neutral-700 focus:ring-secondary'}`}
+                                    className={`w-24 pl-4 pr-1.5 py-1 text-xs text-right bg-white dark:bg-slate-900 border rounded font-mono focus:outline-none focus:ring-1 ${exceedsCap ? 'border-error focus:ring-error text-error' : 'border-slate-300 dark:border-slate-700 focus:ring-secondary'}`}
                                 />
                             </div>
                             {exceedsCap && (
@@ -235,7 +235,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                                 onChange={(e) => onSetMrpPending(e.target.checked, mrpPendingNote)}
                                 className="rounded"
                             />
-                            <span className="text-neutral-500 dark:text-neutral-400 font-medium">Bill at provisional price (MRP pending)</span>
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Bill at provisional price (MRP pending)</span>
                         </label>
                         {isMrpPending && (
                             <input
@@ -243,13 +243,13 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                                 value={mrpPendingNote}
                                 onChange={(e) => onSetMrpPending(true, e.target.value)}
                                 placeholder="Note (optional) — e.g. awaiting supplier price confirmation"
-                                className="w-full px-2 py-1 text-[11px] bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded font-medium focus:outline-none focus:ring-1 focus:ring-secondary"
+                                className="w-full px-2 py-1 text-[11px] bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded font-medium focus:outline-none focus:ring-1 focus:ring-secondary"
                             />
                         )}
                     </div>
                 )}
                 <div className="flex justify-between items-end pt-1">
-                    <span className="text-neutral-700 dark:text-neutral-300 font-bold text-sm">
+                    <span className="text-slate-700 dark:text-slate-300 font-bold text-sm">
                         {isRefund ? t('refundAmount') : t('totalPayable')}
                     </span>
                     <span className={`font-bold text-2xl font-mono tracking-tight ${isRefund ? 'text-error' : 'text-success'}`}>
@@ -260,7 +260,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 <button
                     onClick={onCheckout}
                     disabled={isEmpty || isProcessing}
-                    className="relative w-full py-3 bg-primary hover:bg-primary/90 disabled:bg-neutral-200 dark:disabled:bg-neutral-800 disabled:border disabled:border-neutral-300 dark:disabled:border-neutral-700 disabled:text-neutral-400 dark:disabled:text-neutral-600 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20 mt-2 text-base group"
+                    className="relative w-full py-3 bg-primary hover:bg-primary/90 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:border disabled:border-slate-300 dark:disabled:border-slate-700 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20 mt-2 text-base group"
                     title="Shortcut: Ctrl + Space"
                 >
                     {isProcessing ? (
