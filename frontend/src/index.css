@@ -899,3 +899,11 @@ button {
     background-color: white !important;
   }
 }
+
+/* Dark mode: the solid brand and status fills are light colours there
+   (#818CF8, #34D399, #FB7185, #FBBF24, #38BDF8), so white text on them is
+   about 2:1. Swap to dark ink. Kept outside @layer on purpose: layered rules
+   lose to the text-white utility no matter how specific they are. */
+.dark :is(.bg-primary, .bg-success, .bg-danger, .bg-warning, .bg-info).text-white {
+  color: rgb(11 15 20);
+}
