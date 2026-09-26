@@ -90,8 +90,8 @@ const DeliveryChallanDetail = () => {
         <div className="min-h-full bg-app text-main font-sans selection:bg-warning/10 overflow-x-hidden flex flex-col transition-colors animate-fade-in relative pb-20">
             {/* Ambient Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />
-                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-rose-600/10 rounded-full blur-[150px]" />
+                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-warning/10 rounded-full blur-[150px]" />
+                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-danger/10 rounded-full blur-[150px]" />
             </div>
 
             <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8 space-y-8">
@@ -105,7 +105,7 @@ const DeliveryChallanDetail = () => {
                             <ArrowLeft className="w-5 h-5" />
                         </button>
                         <div className="relative">
-                            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
+                            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-warning rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
                             <h1 className="page-title text-neutral-900 dark:text-white flex items-center gap-3">
                                 {challan.challanNumber}
                                 <span className={`px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-xs font-bold uppercase tracking-widest`}>
@@ -113,7 +113,7 @@ const DeliveryChallanDetail = () => {
                                 </span>
                             </h1>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
                                 <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Protocol Active // Log Date: {formatDate(challan.challanDate)}</p>
                             </div>
                         </div>
@@ -129,12 +129,12 @@ const DeliveryChallanDetail = () => {
                         {challan.status !== 'Converted' && (
                             <button 
                                 onClick={() => setConvertConfirm(true)}
-                                className="px-6 py-3 bg-emerald-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
+                                className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-success/90 transition-all shadow-lg shadow-emerald-500/20"
                             >
                                 <Receipt className="w-4 h-4 inline-block mr-2" /> Transition to Invoice
                             </button>
                         )}
-                        <button className="hidden md:flex items-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20">
+                        <button className="hidden md:flex items-center gap-2 px-6 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20">
                             <Download className="w-4 h-4" /> Export Manifest
                         </button>
                     </div>
@@ -146,7 +146,7 @@ const DeliveryChallanDetail = () => {
                         {lifecycleStages.map((stage, index) => (
                             <div key={stage.name} className="flex-1 flex items-center gap-4 last:flex-none">
                                 <div className="flex flex-col items-center gap-2 relative">
-                                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all ${stage.completed ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : stage.current ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20 animate-pulse' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'}`}>
+                                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all ${stage.completed ? 'bg-success text-white shadow-lg shadow-emerald-500/20' : stage.current ? 'bg-warning text-white shadow-lg shadow-amber-500/20 animate-pulse' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'}`}>
                                         {stage.completed ? <CheckCircle2 className="w-6 h-6" /> : <span className="font-black">{index + 1}</span>}
                                     </div>
                                     <span className={`text-[9px] font-black uppercase tracking-widest absolute -bottom-6 whitespace-nowrap ${stage.current ? 'text-warning' : 'text-neutral-400'}`}>
@@ -154,7 +154,7 @@ const DeliveryChallanDetail = () => {
                                     </span>
                                 </div>
                                 {index < 2 && (
-                                    <div className={`h-1 flex-1 rounded-full ${stage.completed ? 'bg-emerald-500' : 'bg-neutral-100 dark:bg-neutral-800'}`} />
+                                    <div className={`h-1 flex-1 rounded-full ${stage.completed ? 'bg-success' : 'bg-neutral-100 dark:bg-neutral-800'}`} />
                                 )}
                             </div>
                         ))}
@@ -188,7 +188,7 @@ const DeliveryChallanDetail = () => {
                                     </h3>
                                 </div>
                                 <div className="p-8 flex items-center gap-6">
-                                    <div className="w-16 h-16 rounded-sm bg-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-amber-500/20">
+                                    <div className="w-16 h-16 rounded-sm bg-warning flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-amber-500/20">
                                         {challan.customer?.name?.charAt(0).toUpperCase() || '?'}
                                     </div>
                                     <div>
@@ -243,7 +243,7 @@ const DeliveryChallanDetail = () => {
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                         {(challan.items || []).map((item: any, index: number) => (
-                                            <tr key={index} className="group hover:bg-amber-500/[0.01] transition-colors">
+                                            <tr key={index} className="group hover:bg-warning/90/[0.01] transition-colors">
                                                 <td className="px-8 py-6 text-center text-[10px] font-black text-neutral-400">{(index + 1).toString().padStart(2, '0')}</td>
                                                 <td className="px-8 py-6">
                                                     <div className="flex flex-col">
@@ -289,7 +289,7 @@ const DeliveryChallanDetail = () => {
                             <div className="space-y-4 relative z-10">
                                 {[
                                     { label: 'Manifest Nodes', value: (challan.items || []).length, color: 'text-white dark:text-neutral-900' },
-                                    { label: 'Logistics Protocol', value: (challan.transportMode || 'ROAD').toUpperCase(), color: 'text-warning dark:text-amber-600' },
+                                    { label: 'Logistics Protocol', value: (challan.transportMode || 'ROAD').toUpperCase(), color: 'text-warning dark:text-warning' },
                                 ].map((item, i) => (
                                     <div key={i} className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
                                         <span>{item.label}</span>
@@ -334,7 +334,7 @@ const DeliveryChallanDetail = () => {
                             </div>
                             <div className="p-8 space-y-6">
                                 <div className="flex gap-4">
-                                    <div className="w-1 bg-emerald-500 rounded-full" />
+                                    <div className="w-1 bg-success rounded-full" />
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-neutral-900 dark:text-white">Protocol Created</p>
                                         <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">{new Date(challan.createdAt).toLocaleString()}</p>
@@ -342,7 +342,7 @@ const DeliveryChallanDetail = () => {
                                 </div>
                                 {challan.status === 'Converted' && (
                                     <div className="flex gap-4">
-                                        <div className="w-1 bg-amber-500 rounded-full" />
+                                        <div className="w-1 bg-warning rounded-full" />
                                         <div>
                                             <p className="text-[10px] font-black uppercase tracking-widest text-neutral-900 dark:text-white">Fiscal Transition</p>
                                             <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1">Status: FINALIZED</p>
@@ -359,7 +359,7 @@ const DeliveryChallanDetail = () => {
             {convertConfirm && (
                 <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-xl flex items-center justify-center z-[100] p-4 animate-in fade-in zoom-in duration-300">
                     <div className="bg-white dark:bg-neutral-900 rounded-[40px] p-10 max-w-md w-full shadow-2xl border border-neutral-200 dark:border-neutral-800 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-[100px]" />
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-bl-[100px]" />
                         <div className="relative z-10 text-center">
                             <div className="w-20 h-20 bg-success/10 text-success rounded-sm flex items-center justify-center mx-auto mb-6">
                                 <Receipt className="w-10 h-10" />
@@ -377,7 +377,7 @@ const DeliveryChallanDetail = () => {
                                 </button>
                                 <button 
                                     onClick={handleConvert}
-                                    className="px-6 py-4 bg-emerald-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
+                                    className="px-6 py-4 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-success/90 transition-all shadow-lg shadow-emerald-500/20"
                                 >
                                     Transition
                                 </button>

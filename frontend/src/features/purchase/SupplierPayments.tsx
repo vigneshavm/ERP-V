@@ -114,7 +114,7 @@ const SupplierPayments: React.FC = () => {
                     }
                 />
                 {loadError && (
-                    <div role="alert" className="flex items-center gap-2 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
+                    <div role="alert" className="flex items-center gap-2 rounded-md border border-danger-line bg-danger-soft px-4 py-3 text-sm font-medium text-danger dark:border-danger/50 dark:bg-danger-soft dark:text-danger">
                         <AlertCircle className="h-4 w-4 shrink-0" /> {loadError}
                     </div>
                 )}
@@ -124,29 +124,29 @@ const SupplierPayments: React.FC = () => {
                     <StatsCard
                         title="Total Outflow"
                         value={formatCurrency(stats.totalSettled + stats.pendingAmount)}
-                        icon={<ArrowUpRight className="w-full h-full text-red-500" />}
-                        iconBgColor="bg-red-50"
-                        iconColor="text-red-600"
+                        icon={<ArrowUpRight className="w-full h-full text-danger" />}
+                        iconBgColor="bg-danger-soft"
+                        iconColor="text-danger"
                     />
                     <StatsCard
                         title="Cleared (MTD)"
                         value={formatCurrency(stats.totalSettled)}
                         icon={<CheckCircle className="w-full h-full" />}
-                        iconBgColor="bg-emerald-50"
-                        iconColor="text-emerald-600"
+                        iconBgColor="bg-success-soft"
+                        iconColor="text-success"
                     />
                     <StatsCard
                         title="Pending Clearance"
                         value={formatCurrency(stats.pendingAmount)}
                         icon={<Clock className="w-full h-full" />}
-                        iconBgColor="bg-amber-50"
-                        iconColor="text-amber-600"
+                        iconBgColor="bg-warning-soft"
+                        iconColor="text-warning"
                     />
                     <StatsCard
                         title="Payment Success"
                         value={`${Math.round((stats.clearedCount / (stats.totalCount || 1)) * 100)}%`}
                         icon={<DollarSign className="w-full h-full" />}
-                        iconBgColor="bg-indigo-50"
+                        iconBgColor="bg-primary-soft"
                         iconColor="text-primary"
                     />
                 </div>

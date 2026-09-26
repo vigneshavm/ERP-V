@@ -194,15 +194,15 @@ const Estimate = () => {
     <div className="min-h-full bg-app text-main font-sans selection:bg-warning/10 overflow-x-hidden flex flex-col transition-colors animate-fade-in relative">
       {/* Ambient Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-rose-600/10 rounded-full blur-[150px]" />
+        <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-warning/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-danger/10 rounded-full blur-[150px]" />
       </div>
 
       <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8 space-y-8">
         {/* Modern Header */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="relative">
-            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
+            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-warning rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
             <h1 className="page-title text-neutral-900 dark:text-white flex items-center gap-3">
               Proforma <span className="text-warning">Architect</span>
               <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-lg text-xs font-bold uppercase tracking-widest">
@@ -210,7 +210,7 @@ const Estimate = () => {
               </span>
             </h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
               <p className="text-[10px] uppercase tracking-[0.2em] font-black text-neutral-500 dark:text-neutral-400">Ledger Pipeline Ready // Status: Drafting</p>
             </div>
           </div>
@@ -239,9 +239,9 @@ const Estimate = () => {
               </div>
 
               {customer ? (
-                <div className="p-6 bg-amber-500/5 rounded-sm border border-amber-500/10 flex items-center justify-between transition-all hover:bg-warning/10">
+                <div className="p-6 bg-warning/5 rounded-sm border border-warning/10 flex items-center justify-between transition-all hover:bg-warning/10">
                   <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 bg-amber-500 rounded-sm flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
+                    <div className="w-14 h-14 bg-warning rounded-sm flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
                       <User className="w-7 h-7" />
                     </div>
                     <div>
@@ -263,7 +263,7 @@ const Estimate = () => {
               ) : (
                 <button
                   onClick={() => setShowCustomerSelect(true)}
-                  className="w-full py-12 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-[32px] flex flex-col items-center justify-center gap-5 text-neutral-400 hover:border-amber-500/50 hover:text-warning hover:bg-amber-500/[0.02] transition-all group"
+                  className="w-full py-12 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-[32px] flex flex-col items-center justify-center gap-5 text-neutral-400 hover:border-warning/50 hover:text-warning hover:bg-warning/90/[0.02] transition-all group"
                 >
                   <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center group-hover:scale-110 transition-all shadow-inner">
                     <Plus className="w-8 h-8 opacity-40 group-hover:opacity-100" />
@@ -292,7 +292,7 @@ const Estimate = () => {
                     placeholder="Search SKUs..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl py-3 pl-10 pr-4 text-[10px] font-black uppercase tracking-widest focus:border-amber-500/50 outline-none transition-all"
+                    className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl py-3 pl-10 pr-4 text-[10px] font-black uppercase tracking-widest focus:border-primary/50 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -302,12 +302,12 @@ const Estimate = () => {
                   <button
                     key={item._id}
                     onClick={() => addToCart(item)}
-                    className="group p-5 bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 rounded-sm text-left hover:border-amber-500/50 hover:bg-amber-500/[0.02] transition-all flex flex-col justify-between"
+                    className="group p-5 bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 rounded-sm text-left hover:border-warning/50 hover:bg-warning/90/[0.02] transition-all flex flex-col justify-between"
                   >
                     <div>
                       <div className="flex justify-between items-start mb-2">
                         <span className="text-[8px] font-black text-neutral-400 uppercase tracking-widest">{item.sku || 'N/A'}</span>
-                        <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                        <div className="w-2 h-2 rounded-full bg-success"></div>
                       </div>
                       <h4 className="font-black text-neutral-900 dark:text-white text-xs uppercase tracking-tight line-clamp-2 leading-relaxed mb-3">{item.name}</h4>
                     </div>
@@ -315,7 +315,7 @@ const Estimate = () => {
                       <p className="text-lg font-mono font-black text-neutral-900 dark:text-white tracking-tighter flex items-center">
                         <span className="text-xs text-warning mr-1 font-bold">₹</span>{item.sellingPrice.toLocaleString()}
                       </p>
-                      <div className="p-2 bg-amber-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100 shadow-lg shadow-amber-500/20">
+                      <div className="p-2 bg-warning text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100 shadow-lg shadow-amber-500/20">
                         <Plus className="w-3 h-3" />
                       </div>
                     </div>
@@ -333,7 +333,7 @@ const Estimate = () => {
                   <ShoppingBag className="w-5 h-5 text-warning" />
                   <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">Cart Matrix</h3>
                 </div>
-                <span className="px-2 py-1 bg-amber-500 text-neutral-900 rounded-md text-[10px] font-black">{cart.length}</span>
+                <span className="px-2 py-1 bg-warning text-neutral-900 rounded-md text-[10px] font-black">{cart.length}</span>
               </div>
 
               <div className="p-8 space-y-6 max-h-[400px] overflow-y-auto custom-scrollbar">
@@ -350,11 +350,11 @@ const Estimate = () => {
                         <p className="text-[10px] font-bold text-neutral-400 font-mono tracking-tighter mt-1">₹{item.price.toLocaleString()} / UNIT</p>
                       </div>
                       <div className="flex items-center gap-3 bg-neutral-50 dark:bg-neutral-950 p-1.5 rounded-sm border border-neutral-200 dark:border-neutral-800">
-                        <button onClick={() => updateQuantity(item.itemId, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-rose-500 hover:text-white rounded-xl transition-all">
+                        <button onClick={() => updateQuantity(item.itemId, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-danger/90 hover:text-white rounded-xl transition-all">
                           <Minus className="w-4 h-4" />
                         </button>
                         <span className="w-6 text-center text-xs font-mono font-black text-neutral-900 dark:text-white">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.itemId, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-emerald-500 hover:text-white rounded-xl transition-all">
+                        <button onClick={() => updateQuantity(item.itemId, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-success/90 hover:text-white rounded-xl transition-all">
                           <Plus className="w-4 h-4" />
                         </button>
                       </div>
@@ -379,7 +379,7 @@ const Estimate = () => {
                       type="number"
                       value={discount}
                       onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
-                      className="w-24 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl py-2 px-3 text-sm font-mono font-black text-danger text-right outline-none focus:border-rose-500/50 transition-all"
+                      className="w-24 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl py-2 px-3 text-sm font-mono font-black text-danger text-right outline-none focus:border-primary/50 transition-all"
                     />
                   </div>
 
@@ -392,7 +392,7 @@ const Estimate = () => {
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Protocol adjustments..."
                       rows={2}
-                      className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm p-4 text-[11px] font-bold text-neutral-600 dark:text-neutral-400 focus:border-amber-500/50 outline-none transition-all resize-none shadow-inner"
+                      className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm p-4 text-[11px] font-bold text-neutral-600 dark:text-neutral-400 focus:border-primary/50 outline-none transition-all resize-none shadow-inner"
                     />
                   </div>
                 </div>
@@ -417,7 +417,7 @@ const Estimate = () => {
                   <button onClick={handleClear} className="py-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all">
                     Purge Matrix
                   </button>
-                  <button onClick={handleSaveEstimate} disabled={isLoading || cart.length === 0} className="py-4 bg-amber-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50">
+                  <button onClick={handleSaveEstimate} disabled={isLoading || cart.length === 0} className="py-4 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50">
                     {isLoading ? "Syncing..." : "Finalize Protocol"}
                   </button>
                 </div>
@@ -447,7 +447,7 @@ const Estimate = () => {
                   placeholder="Scan Entity (Name, Contact...)"
                   value={customerSearchTerm}
                   onChange={(e) => setCustomerSearchTerm(e.target.value)}
-                  className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-5 pl-14 pr-6 text-sm font-bold focus:border-amber-500 outline-none transition-all dark:text-white shadow-inner"
+                  className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-5 pl-14 pr-6 text-sm font-bold focus:border-primary outline-none transition-all dark:text-white shadow-inner"
                 />
               </div>
 
@@ -456,10 +456,10 @@ const Estimate = () => {
                   <button
                     key={c._id}
                     onClick={() => selectCustomer(c)}
-                    className="w-full p-6 bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 rounded-sm flex items-center justify-between hover:border-amber-500/50 hover:bg-amber-500/[0.02] transition-all group"
+                    className="w-full p-6 bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 rounded-sm flex items-center justify-between hover:border-warning/50 hover:bg-warning/90/[0.02] transition-all group"
                   >
                     <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 bg-neutral-200 dark:bg-neutral-800 rounded-sm flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all">
+                      <div className="w-12 h-12 bg-neutral-200 dark:bg-neutral-800 rounded-sm flex items-center justify-center group-hover:bg-warning/90 group-hover:text-white transition-all">
                         <User className="w-6 h-6" />
                       </div>
                       <div className="text-left">

@@ -148,7 +148,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                             </p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 hover:text-rose-600 rounded-full transition-all">
+                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 hover:text-danger rounded-full transition-all">
                         <X className="w-5 h-5" />
                     </button>
                 </div>

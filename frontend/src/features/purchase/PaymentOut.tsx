@@ -166,7 +166,7 @@ const PaymentOut: React.FC = () => {
                 </div>
 
                 {loadError && (
-                    <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{loadError}</div>
+                    <div role="alert" className="rounded-md border border-danger-line bg-danger-soft px-4 py-3 text-sm font-medium text-danger dark:border-danger/50 dark:bg-danger-soft dark:text-danger">{loadError}</div>
                 )}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left: Basic Info */}

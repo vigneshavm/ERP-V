@@ -170,7 +170,7 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
             </div>
 
             {filtersError && (
-                <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl text-xs font-bold text-amber-700 dark:text-amber-300">
+                <div className="flex items-center gap-2 px-4 py-3 bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning-line rounded-xl text-xs font-bold text-warning dark:text-warning">
                     <AlertTriangle className="w-4 h-4 shrink-0" />
                     {filtersError} You can still search by product name; brand/size/color/shelf dropdowns may be incomplete.
                 </div>
@@ -321,7 +321,7 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
                     </div>
                 ) : loadError ? (
                     <div className="p-12 text-center">
-                        <AlertTriangle className="w-12 h-12 text-amber-400 mx-auto mb-3" />
+                        <AlertTriangle className="w-12 h-12 text-warning mx-auto mb-3" />
                         <h4 className="text-base font-bold text-neutral-800 dark:text-neutral-200">Couldn't load inventory</h4>
                         <p className="text-xs text-neutral-500 mt-1 mb-4">{loadError}</p>
                         <button
@@ -401,24 +401,24 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 {type ? (
-                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${type === 'FULL' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-200/50' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200/50'}`}>
+                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${type === 'FULL' ? 'bg-primary-soft text-primary dark:bg-primary-soft dark:text-primary border border-primary/50' : 'bg-warning-soft text-warning dark:bg-warning-soft dark:text-warning border border-warning/50'}`}>
                                                         {type}
                                                     </span>
                                                 ) : <span className="text-neutral-400 text-xs">—</span>}
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <span className={`font-mono text-base font-black ${qty > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                                                <span className={`font-mono text-base font-black ${qty > 0 ? 'text-success dark:text-success' : 'text-danger dark:text-danger'}`}>
                                                     {qty}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 {qty > 0 ? (
-                                                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-1 rounded-full">
+                                                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-success dark:text-success bg-success-soft dark:bg-success-soft px-2 py-1 rounded-full">
                                                         <CheckCircle2 className="w-3 h-3" />
                                                         In Stock
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-2 py-1 rounded-full">
+                                                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-danger dark:text-danger bg-danger-soft dark:bg-danger-soft px-2 py-1 rounded-full">
                                                         <XCircle className="w-3 h-3" />
                                                         Out of Stock
                                                     </span>

@@ -81,7 +81,7 @@ const SupplierGroups: React.FC = () => {
                 actions={
                     <button
                         onClick={() => { setEditingGroup(null); setIsCreateModalOpen(true); }}
-                        className="px-6 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
+                        className="px-6 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-primary-hover active:scale-95 transition-all flex items-center gap-2"
                     >
                         <FolderPlus className="w-4 h-4" /> Create Group
                     </button>
@@ -95,9 +95,9 @@ const SupplierGroups: React.FC = () => {
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {/* Total Groups */}
-                    <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                    <div className="bg-white dark:bg-neutral-800 border-2 border-primary/30 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-primary/10 text-primary dark:text-primary">
+                            <div className="p-1.5 rounded-lg bg-primary-soft dark:bg-primary/10 text-primary dark:text-primary">
                                 <FolderPlus className="w-4 h-4" />
                             </div>
                             <span className="text-xs font-bold text-primary dark:text-primary uppercase tracking-wide">Total Groups</span>
@@ -108,10 +108,10 @@ const SupplierGroups: React.FC = () => {
                     {/* Total Suppliers */}
                     <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-success/10 text-emerald-600 dark:text-success">
+                            <div className="p-1.5 rounded-lg bg-success-soft dark:bg-success/10 text-success dark:text-success">
                                 <Truck className="w-4 h-4" />
                             </div>
-                            <span className="text-xs font-bold text-emerald-600 dark:text-success uppercase tracking-wide">Total Suppliers</span>
+                            <span className="text-xs font-bold text-success dark:text-success uppercase tracking-wide">Total Suppliers</span>
                         </div>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{totalSuppliers}</span>
                     </div>
@@ -119,10 +119,10 @@ const SupplierGroups: React.FC = () => {
                     {/* Assigned */}
                     <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                            <div className="p-1.5 rounded-lg bg-primary-soft dark:bg-primary/10 text-primary dark:text-primary">
                                 <UserPlus className="w-4 h-4" />
                             </div>
-                            <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Assigned</span>
+                            <span className="text-xs font-bold text-primary dark:text-primary uppercase tracking-wide">Assigned</span>
                         </div>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{assignedSuppliers}</span>
                     </div>
@@ -130,10 +130,10 @@ const SupplierGroups: React.FC = () => {
                     {/* Unassigned */}
                     <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-warning/10 text-amber-600 dark:text-warning">
+                            <div className="p-1.5 rounded-lg bg-warning-soft dark:bg-warning/10 text-warning dark:text-warning">
                                 <Tag className="w-4 h-4" />
                             </div>
-                            <span className="text-xs font-bold text-amber-600 dark:text-warning uppercase tracking-wide">Unassigned</span>
+                            <span className="text-xs font-bold text-warning dark:text-warning uppercase tracking-wide">Unassigned</span>
                         </div>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{totalSuppliers - assignedSuppliers}</span>
                     </div>
@@ -148,7 +148,7 @@ const SupplierGroups: React.FC = () => {
                             placeholder="Search groups..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-80 pl-9 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400 shadow-sm"
+                            className="w-80 pl-9 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-primary transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400 shadow-sm"
                         />
                     </div>
                 </div>
@@ -225,9 +225,9 @@ const SupplierGroups: React.FC = () => {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex gap-1.5">
                                                     {group.priority && (
-                                                        <span className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase ${group.priority === 'High' ? 'bg-rose-50 border-rose-100 text-rose-600' :
-                                                            group.priority === 'Medium' ? 'bg-amber-50 border-amber-100 text-amber-600' :
-                                                                'bg-emerald-50 border-emerald-100 text-emerald-600'
+                                                        <span className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase ${group.priority === 'High' ? 'bg-danger-soft border-danger-line text-danger' :
+                                                            group.priority === 'Medium' ? 'bg-warning-soft border-warning-line text-warning' :
+                                                                'bg-success-soft border-success-line text-success'
                                                             }`}>
                                                             {group.priority}
                                                         </span>
@@ -266,7 +266,7 @@ const SupplierGroups: React.FC = () => {
                                                             <div className="h-px bg-slate-100 dark:bg-neutral-700 my-1" />
                                                             <button
                                                                 onClick={() => { handleDeleteGroup(group._id); setOpenMenuId(null); }}
-                                                                className="w-full px-4 py-2.5 text-left text-sm text-rose-600 dark:text-danger hover:bg-rose-50 dark:hover:bg-danger/10 flex items-center gap-2 font-medium"
+                                                                className="w-full px-4 py-2.5 text-left text-sm text-danger dark:text-danger hover:bg-danger-soft dark:hover:bg-danger/10 flex items-center gap-2 font-medium"
                                                             >
                                                                 <Trash2 className="w-3.5 h-3.5" /> Delete
                                                             </button>
@@ -283,28 +283,28 @@ const SupplierGroups: React.FC = () => {
                 </div>
 
                 {/* Quick Tips */}
-                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/10 dark:to-purple-900/10 p-5 rounded-sm border border-indigo-100 dark:border-primary/20">
-                    <h4 className="font-bold text-indigo-900 dark:text-indigo-100 flex items-center gap-2 mb-2">
-                        <div className="p-1 bg-indigo-100 dark:bg-primary/20 rounded-lg">
+                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/10 dark:to-purple-900/10 p-5 rounded-sm border border-primary/30 dark:border-primary/20">
+                    <h4 className="font-bold text-primary dark:text-primary flex items-center gap-2 mb-2">
+                        <div className="p-1 bg-primary-soft dark:bg-primary/20 rounded-lg">
                             <Star className="w-4 h-4 text-primary dark:text-primary" />
                         </div>
                         Tips for Supplier Groups
                     </h4>
-                    <ul className="text-sm text-indigo-700 dark:text-indigo-300 space-y-2 pl-1">
+                    <ul className="text-sm text-primary dark:text-primary space-y-2 pl-1">
                         <li className="flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 flex-shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
                             Group suppliers by reliability and importance for better management
                         </li>
                         <li className="flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 flex-shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
                             Set appropriate payment terms based on supplier relationships
                         </li>
                         <li className="flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 flex-shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
                             Define credit limits to control purchasing exposure
                         </li>
                         <li className="flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 flex-shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
                             Use discount rates to track negotiated pricing from strategic partners
                         </li>
                     </ul>

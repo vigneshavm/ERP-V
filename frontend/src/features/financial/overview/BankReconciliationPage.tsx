@@ -17,12 +17,12 @@ const dirLabel = (dir: 'credit' | 'debit') => (dir === 'credit' ? 'Into bank' : 
 const LINE_COLUMNS: ReportColumn<StatementLine>[] = [
     { key: 'date', header: 'Date', type: 'date', value: r => r.date },
     { key: 'description', header: 'Statement narration', value: r => r.description, subtext: r => r.reference || null },
-    { key: 'amount', header: 'Amount', type: 'currency', value: r => signed(r.type, r.amount), cellClassName: r => (r.type === 'debit' ? 'text-rose-600' : 'text-emerald-600') },
+    { key: 'amount', header: 'Amount', type: 'currency', value: r => signed(r.type, r.amount), cellClassName: r => (r.type === 'debit' ? 'text-danger' : 'text-success') },
 ];
 const ENTRY_COLUMNS: ReportColumn<LedgerEntry>[] = [
     { key: 'date', header: 'Date', type: 'date', value: r => r.date },
     { key: 'description', header: 'ERP entry', value: r => r.description || '—', subtext: r => r.reference || null },
-    { key: 'amount', header: 'Amount', type: 'currency', value: r => signed(r.direction, r.amount), cellClassName: r => (r.direction === 'debit' ? 'text-rose-600' : 'text-emerald-600') },
+    { key: 'amount', header: 'Amount', type: 'currency', value: r => signed(r.direction, r.amount), cellClassName: r => (r.direction === 'debit' ? 'text-danger' : 'text-success') },
 ];
 
 /**
@@ -123,12 +123,12 @@ const BankReconciliationPage: React.FC = () => {
                         { label: 'Still unmatched', value: formatNumber(s.onlyInStatement.count + s.onlyInErp.count), sub: `${formatNumber(s.onlyInStatement.count)} in statement · ${formatNumber(s.onlyInErp.count)} in ERP`, tone: s.onlyInStatement.count + s.onlyInErp.count ? 'warning' : 'positive', icon: <CheckCircle2 className="w-4 h-4" /> },
                     ]} />
                     {data.lines.length === 0 && (
-                        <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
+                        <p className="rounded-md border border-warning-line bg-warning-soft px-4 py-3 text-sm text-warning dark:border-warning/50 dark:bg-warning-soft dark:text-warning">
                             No bank statement lines in this period. <Link to="/finance/bank-statement" className="font-bold underline">Upload a statement</Link> to reconcile against it.
                         </p>
                     )}
-                    {savedCount !== null && <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Marked {formatNumber(savedCount)} pair{savedCount === 1 ? '' : 's'} as reconciled.</p>}
-                    {saveError && <p className="text-sm font-medium text-rose-600">{saveError}</p>}
+                    {savedCount !== null && <p className="text-sm font-medium text-success dark:text-success">Marked {formatNumber(savedCount)} pair{savedCount === 1 ? '' : 's'} as reconciled.</p>}
+                    {saveError && <p className="text-sm font-medium text-danger">{saveError}</p>}
                     {matchRows.length > 0 && (
                         <ReportTable
                             title="Suggested matches"

@@ -373,7 +373,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                         {(returnData.items || []).map((item, idx) => (
-                                            <tr key={idx} className={`group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all ${item.return_quantity > 0 ? 'bg-rose-50/20 dark:bg-rose-900/5' : ''}`}>
+                                            <tr key={idx} className={`group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all ${item.return_quantity > 0 ? 'bg-danger/20 dark:bg-danger-soft' : ''}`}>
                                                 <td className="px-8 py-6">
                                                     <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter leading-none mb-1">{item.product_name}</p>
                                                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest opacity-60">{item.sku || 'NO-SKU'}</p>

@@ -107,16 +107,16 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
             <div className="bg-white dark:bg-neutral-800 w-full max-w-md rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-2xl overflow-hidden flex flex-col">
                 <div className="px-8 py-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
                     <h3 className="text-lg font-black italic flex items-center gap-2 uppercase tracking-tight">
-                        <CheckSquare className="w-5 h-5 text-emerald-600" /> Stock Audit Adjustment
+                        <CheckSquare className="w-5 h-5 text-success" /> Stock Audit Adjustment
                     </h3>
                     <button onClick={onClose} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 rounded-full transition-all">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
                 <div className="p-8 space-y-6">
-                    <div className="p-4 bg-emerald-500/5 border border-success/20 rounded-sm">
+                    <div className="p-4 bg-success/5 border border-success/20 rounded-sm">
                         <p className="text-xs font-bold text-main">Batch Inventory Control</p>
-                        <p className="text-[10px] text-neutral-500 font-bold mt-1">Adjusting <span className="text-emerald-600 font-black">{selectedCount} items</span> simultaneously.</p>
+                        <p className="text-[10px] text-neutral-500 font-bold mt-1">Adjusting <span className="text-success font-black">{selectedCount} items</span> simultaneously.</p>
                     </div>
 
                     <div className="flex gap-2">

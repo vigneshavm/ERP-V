@@ -85,7 +85,7 @@ const PayrollRuns = () => {
                                                 setDetails(prev => prev && { ...prev, run: response.data.data.run });
                                             }
                                         }}
-                                        className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+                                        className="px-4 py-1.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-hover"
                                     >
                                         Approve Run
                                     </button>
@@ -101,7 +101,7 @@ const PayrollRuns = () => {
                                                 setDetails(prev => prev && { ...prev, run: response.data.data.run });
                                             }
                                         }}
-                                        className="px-4 py-1.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
+                                        className="px-4 py-1.5 bg-success text-white rounded-lg text-sm font-medium hover:bg-success/90"
                                     >
                                         Mark as Paid
                                     </button>
@@ -161,7 +161,7 @@ const PayrollRuns = () => {
                     actions={
                         <button
                             onClick={() => setIsGenerateOpen(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors shadow-sm"
                         >
                             <PlayCircle size={18} />
                             Generate New Payroll
@@ -209,7 +209,7 @@ const PayrollRuns = () => {
                                 <button
                                     onClick={handleGenerate}
                                     disabled={loading}
-                                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50"
                                 >
                                     {loading ? 'Processing...' : 'Run Payroll'}
                                 </button>

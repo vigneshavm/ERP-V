@@ -129,7 +129,7 @@ const BatchPriceUpdate: React.FC = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
+                            className="bg-success hover:bg-success/90 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
                         >
                             {loading ? 'Scanning...' : (
                                 <>
@@ -170,7 +170,7 @@ const BatchPriceUpdate: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-bold text-emerald-600 dark:text-success mb-2">
+                                <label className="block text-sm font-bold text-success dark:text-success mb-2">
                                     New Selling Price (₹)
                                 </label>
                                 <input
@@ -180,7 +180,7 @@ const BatchPriceUpdate: React.FC = () => {
                                     onChange={(e) => setNewPrice(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleUpdate()}
                                     placeholder="0.00"
-                                    className="w-full text-2xl font-bold text-gray-900 dark:text-white bg-white dark:bg-gray-800 border-2 border-emerald-500 rounded-lg px-4 py-3 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
+                                    className="w-full text-2xl font-bold text-gray-900 dark:text-white bg-white dark:bg-gray-800 border-2 border-success rounded-lg px-4 py-3 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
                                 />
                             </div>
                         </div>
@@ -200,7 +200,7 @@ const BatchPriceUpdate: React.FC = () => {
                             <button
                                 onClick={handleUpdate}
                                 disabled={updating || !newPrice}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transform active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-success hover:bg-success/90 text-white px-8 py-3 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transform active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {updating ? 'Updating...' : (
                                     <>
@@ -211,7 +211,7 @@ const BatchPriceUpdate: React.FC = () => {
                             </button>
                         </div>
 
-                        <div className="mt-4 flex items-center gap-2 text-sm text-amber-600 dark:text-warning bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
+                        <div className="mt-4 flex items-center gap-2 text-sm text-warning dark:text-warning bg-warning-soft dark:bg-warning-soft p-3 rounded-lg">
                             <AlertCircle className="w-4 h-4 flex-shrink-0" />
                             This will update the global price for this item and add all {item.stockQty} units to the label reprint queue.
                         </div>

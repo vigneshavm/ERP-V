@@ -188,7 +188,7 @@ const SupplierStatements: React.FC = () => {
                     </div>
 
                     {periodFrom > periodTo && (
-                        <div className="mt-4 p-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-lg flex items-center gap-3 text-rose-600 dark:text-danger">
+                        <div className="mt-4 p-3 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger-line rounded-lg flex items-center gap-3 text-danger dark:text-danger">
                             <Calendar className="w-5 h-5" />
                             <p className="text-sm font-bold">"Period From" cannot be later than "Period To".</p>
                         </div>
@@ -260,15 +260,15 @@ const SupplierStatements: React.FC = () => {
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-neutral-600 dark:text-neutral-400">Total Debits:</span>
-                                        <span className="font-medium text-emerald-600">{formatCurrency(ledgerData.totals.debit)}</span>
+                                        <span className="font-medium text-success">{formatCurrency(ledgerData.totals.debit)}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-neutral-600 dark:text-neutral-400">Total Credits:</span>
-                                        <span className="font-medium text-rose-600">{formatCurrency(ledgerData.totals.credit)}</span>
+                                        <span className="font-medium text-danger">{formatCurrency(ledgerData.totals.credit)}</span>
                                     </div>
                                     <div className="flex justify-between text-sm font-bold border-t border-neutral-200 dark:border-neutral-600 pt-1 mt-1">
                                         <span>Closing Balance:</span>
-                                        <span className={ledgerData.closingBalance > 0 ? 'text-rose-600' : 'text-emerald-600'}>
+                                        <span className={ledgerData.closingBalance > 0 ? 'text-danger' : 'text-success'}>
                                             {formatCurrency(ledgerData.closingBalance)}
                                         </span>
                                     </div>
@@ -321,9 +321,9 @@ const SupplierStatements: React.FC = () => {
                                                     {new Date(t.date).toLocaleDateString('en-IN')}
                                                 </td>
                                                 <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300">
-                                                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${t.type === 'BILL' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-primary' :
-                                                            t.type === 'PAYMENT' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-success' :
-                                                                'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-warning'
+                                                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${t.type === 'BILL' ? 'bg-primary-soft text-primary dark:bg-primary-soft dark:text-primary' :
+                                                            t.type === 'PAYMENT' ? 'bg-success-soft text-success dark:bg-success-soft dark:text-success' :
+                                                                'bg-warning-soft text-warning dark:bg-warning-soft dark:text-warning'
                                                         }`}>
                                                         {t.type === 'DEBIT_NOTE' ? 'D.NOTE' : t.type}
                                                     </span>
@@ -334,10 +334,10 @@ const SupplierStatements: React.FC = () => {
                                                 <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-sm max-w-[200px] truncate" title={t.description}>
                                                     {t.description}
                                                 </td>
-                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right font-semibold text-emerald-600 dark:text-success">
+                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right font-semibold text-success dark:text-success">
                                                     {t.debit > 0 ? formatCurrency(t.debit) : '—'}
                                                 </td>
-                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right font-semibold text-rose-600 dark:text-danger">
+                                                <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right font-semibold text-danger dark:text-danger">
                                                     {t.credit > 0 ? formatCurrency(t.credit) : '—'}
                                                 </td>
                                                 <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right font-bold text-neutral-900 dark:text-white">
@@ -352,13 +352,13 @@ const SupplierStatements: React.FC = () => {
                                         <td colSpan={4} className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right">
                                             Closing Balance:
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-emerald-600">
+                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-success">
                                             {formatCurrency(ledgerData.totals.debit)}
                                         </td>
-                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-rose-600">
+                                        <td className="p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-danger">
                                             {formatCurrency(ledgerData.totals.credit)}
                                         </td>
-                                        <td className={`p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-lg font-black ${ledgerData.closingBalance > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                                        <td className={`p-3 border border-neutral-200 dark:border-neutral-700 print:border-gray-300 text-right text-lg font-black ${ledgerData.closingBalance > 0 ? 'text-danger' : 'text-success'}`}>
                                             {formatCurrency(ledgerData.closingBalance)}
                                         </td>
                                     </tr>

@@ -19,7 +19,7 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                 {/* Header */}
                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-start bg-slate-50/50 dark:bg-slate-900/50">
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 rounded-sm bg-indigo-600 text-white flex items-center justify-center text-3xl font-black shadow-xl shadow-indigo-600/20">
+                        <div className="w-20 h-20 rounded-sm bg-primary text-white flex items-center justify-center text-3xl font-black shadow-xl shadow-indigo-600/20">
                             {customer.name.charAt(0)}
                         </div>
                         <div>
@@ -42,7 +42,7 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                     {/* Customer Intelligence Layer */}
                     <div className="col-span-12 lg:col-span-4 space-y-6">
                         {/* Loyalty Card */}
-                        <div className="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-[2.5rem] border border-indigo-100 dark:border-indigo-900/30">
+                        <div className="bg-primary-soft dark:bg-primary-soft p-6 rounded-[2.5rem] border border-primary/30 dark:border-primary/30">
                             <div className="flex justify-between items-start mb-4">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-primary">Loyalty Status</p>
                                 <Crown className="w-5 h-5 text-warning" />

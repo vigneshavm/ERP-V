@@ -44,7 +44,7 @@ const FinanceOverview: React.FC<FinanceOverviewProps> = ({ totalSales, totalExpe
 
                 <div>
                     <p className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2">Labor Cost</p>
-                    <h3 className="text-2xl font-black text-orange-500 italic tracking-tighter">
+                    <h3 className="text-2xl font-black text-warning italic tracking-tighter">
                         ₹{formatCurrency(sectorLaborCost)}
                     </h3>
                 </div>

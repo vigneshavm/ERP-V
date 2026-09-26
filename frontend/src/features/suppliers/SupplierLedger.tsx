@@ -153,7 +153,7 @@ const SupplierLedger: React.FC = () => {
                             placeholder="Search suppliers..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm text-slate-800 dark:text-neutral-200 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 outline-none shadow-sm placeholder:text-slate-400 dark:placeholder:text-neutral-500"
+                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm text-slate-800 dark:text-neutral-200 focus:ring-2 focus:ring-indigo-500/30 focus:border-primary/50 outline-none shadow-sm placeholder:text-slate-400 dark:placeholder:text-neutral-500"
                         />
                     </div>
 
@@ -170,11 +170,11 @@ const SupplierLedger: React.FC = () => {
                                 <button
                                     key={s._id}
                                     onClick={() => handleSelectSupplier(s._id)}
-                                    className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-sm shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-primary/30 transition-all text-left group relative overflow-hidden"
+                                    className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-sm shadow-sm hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 transition-all text-left group relative overflow-hidden"
                                 >
-                                    <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-500/5 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-all" />
+                                    <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-all" />
                                     <div className="flex items-center gap-4 relative z-10">
-                                        <div className="w-10 h-10 bg-indigo-50 dark:bg-primary/10 border border-indigo-100/50 dark:border-primary/20 rounded-xl flex items-center justify-center text-primary font-black text-sm shrink-0 group-hover:bg-indigo-500 group-hover:text-white group-hover:border-indigo-500 transition-all">
+                                        <div className="w-10 h-10 bg-primary-soft dark:bg-primary/10 border border-primary/50 dark:border-primary/20 rounded-xl flex items-center justify-center text-primary font-black text-sm shrink-0 group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all">
                                             {s.businessName?.charAt(0)?.toUpperCase() || 'S'}
                                         </div>
                                         <div className="min-w-0 flex-1">
@@ -237,7 +237,7 @@ const SupplierLedger: React.FC = () => {
                         {(id || selectedSupplierId) && (
                             <button
                                 onClick={() => id ? navigate(`/suppliers/${id}`) : (setSelectedSupplierId(null), setData(null))}
-                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 text-slate-500 dark:text-neutral-400 hover:bg-indigo-50 hover:text-primary hover:border-indigo-200 dark:hover:bg-primary/10 dark:hover:border-primary/20 transition-all mr-2"
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 text-slate-500 dark:text-neutral-400 hover:bg-primary-soft hover:text-primary hover:border-primary/30 dark:hover:bg-primary/10 dark:hover:border-primary/20 transition-all mr-2"
                             >
                                 <ArrowLeft className="w-4 h-4" />
                             </button>
@@ -245,7 +245,7 @@ const SupplierLedger: React.FC = () => {
                         <div className="flex flex-col">
                             <h1 className="page-title text-slate-800 dark:text-neutral-100">{data.supplier.businessName}</h1>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="px-2 py-0.5 bg-indigo-50 dark:bg-primary/10 text-primary dark:text-primary text-[9px] font-black uppercase rounded-md border border-indigo-100/50 dark:border-primary/20">
+                                <span className="px-2 py-0.5 bg-primary-soft dark:bg-primary/10 text-primary dark:text-primary text-[9px] font-black uppercase rounded-md border border-primary/50 dark:border-primary/20">
                                     Ledger
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-neutral-600" />
@@ -283,7 +283,7 @@ const SupplierLedger: React.FC = () => {
                         </div>
                         <button
                             onClick={handlePrint}
-                            className="flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-all shadow-sm active:scale-95 text-xs font-black uppercase tracking-wider"
+                            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary transition-all shadow-sm active:scale-95 text-xs font-black uppercase tracking-wider"
                         >
                             <Printer size={14} />
                             Print

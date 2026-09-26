@@ -138,9 +138,9 @@ const PurchaseReturn: React.FC = () => {
 
     const getMethodColorClasses = (color: string, isSelected: boolean) => {
         const colors: Record<string, string> = {
-            indigo: isSelected ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 ring-2 ring-indigo-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-indigo-300 hover:bg-indigo-50/50',
-            emerald: isSelected ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-emerald-300 hover:bg-emerald-50/50',
-            blue: isSelected ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-blue-300 hover:bg-blue-50/50',
+            indigo: isSelected ? 'border-primary bg-primary-soft dark:bg-primary-soft ring-2 ring-indigo-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-primary/30 hover:bg-primary/50',
+            emerald: isSelected ? 'border-success bg-success-soft dark:bg-success-soft ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-success-line hover:bg-success/50',
+            blue: isSelected ? 'border-primary bg-primary-soft dark:bg-primary-soft ring-2 ring-blue-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-primary/30 hover:bg-primary/50',
             purple: isSelected ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 ring-2 ring-purple-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-purple-300 hover:bg-purple-50/50'
         };
         return colors[color] || colors.indigo;
@@ -161,7 +161,7 @@ const PurchaseReturn: React.FC = () => {
                             <button
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="btn btn-primary bg-rose-600 hover:bg-rose-700"
+                                className="btn btn-primary bg-danger hover:bg-danger/90"
                             >
                                 <Save className="w-4 h-4" />
                                 {loading ? 'Saving...' : 'Save Debit Note'}
@@ -209,11 +209,11 @@ const PurchaseReturn: React.FC = () => {
                                 <h2 className="text-base font-semibold text-slate-900 dark:text-white">Supplier</h2>
                             </div>
                             {formData.supplier ? (
-                                <div className="p-4 bg-gradient-to-r from-rose-50 to-red-50 dark:from-rose-900/10 dark:to-red-900/10 border border-rose-200 dark:border-rose-800 rounded-xl">
+                                <div className="p-4 bg-gradient-to-r from-rose-50 to-red-50 dark:from-rose-900/10 dark:to-red-900/10 border border-danger-line dark:border-danger-line rounded-xl">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-white dark:bg-neutral-800 rounded-xl flex items-center justify-center shadow-sm">
-                                                <span className="text-lg font-bold text-rose-700 dark:text-danger">
+                                                <span className="text-lg font-bold text-danger dark:text-danger">
                                                     {formData.supplier.businessName?.charAt(0) || 'S'}
                                                 </span>
                                             </div>
@@ -230,7 +230,7 @@ const PurchaseReturn: React.FC = () => {
                                         </div>
                                         <button
                                             onClick={() => setFormData({ ...formData, supplier: null })}
-                                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                            className="p-2 text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-colors"
                                         >
                                             <X className="w-5 h-5" />
                                         </button>
@@ -239,7 +239,7 @@ const PurchaseReturn: React.FC = () => {
                             ) : (
                                 <button
                                     onClick={() => setShowSupplierModal(true)}
-                                    className="w-full px-4 py-8 border-2 border-dashed border-slate-200 dark:border-neutral-700 rounded-sm text-slate-500 hover:border-rose-400 hover:text-rose-600 hover:bg-rose-50/50 dark:hover:bg-rose-900/10 transition-all flex flex-col items-center justify-center gap-3"
+                                    className="w-full px-4 py-8 border-2 border-dashed border-slate-200 dark:border-neutral-700 rounded-sm text-slate-500 hover:border-danger hover:text-danger hover:bg-danger/50 dark:hover:bg-danger-soft transition-all flex flex-col items-center justify-center gap-3"
                                 >
                                     <div className="w-12 h-12 bg-slate-50 dark:bg-neutral-800 rounded-full flex items-center justify-center">
                                         <Plus className="w-6 h-6 text-danger" />
@@ -260,7 +260,7 @@ const PurchaseReturn: React.FC = () => {
                                 </div>
                                 <button
                                     onClick={addItem}
-                                    className="btn btn-secondary py-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                                    className="btn btn-secondary py-2 border-success-line text-success hover:bg-success-soft"
                                 >
                                     <Plus className="w-4 h-4" />
                                     Add Item
@@ -287,7 +287,7 @@ const PurchaseReturn: React.FC = () => {
                                                         type="text"
                                                         value={item.name}
                                                         onChange={(e) => updateItem(index, 'name', e.target.value)}
-                                                        className="w-full bg-transparent outline-none font-medium border-b border-transparent focus:border-rose-500"
+                                                        className="w-full bg-transparent outline-none font-medium border-b border-transparent focus:border-primary"
                                                         placeholder="Item name"
                                                     />
                                                 </td>
@@ -338,7 +338,7 @@ const PurchaseReturn: React.FC = () => {
                                                 <td className="px-6 py-3 text-center">
                                                     <button
                                                         onClick={() => removeItem(index)}
-                                                        className="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                                        className="p-1.5 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                                                         disabled={formData.items.length === 1}
                                                     >
                                                         <Trash2 className="w-4 h-4" />
@@ -426,7 +426,7 @@ const PurchaseReturn: React.FC = () => {
                                     </div>
                                     <div>
                                         <h2 className="text-lg font-bold text-white">Return Balance</h2>
-                                        <p className="text-rose-100/80 text-xs font-medium uppercase tracking-wider">Debit Note Value</p>
+                                        <p className="text-danger/80 text-xs font-medium uppercase tracking-wider">Debit Note Value</p>
                                     </div>
                                 </div>
                             </div>
@@ -449,7 +449,7 @@ const PurchaseReturn: React.FC = () => {
                                                 type="number"
                                                 value={formData.discount}
                                                 onChange={(e) => setFormData({ ...formData, discount: parseFloat(e.target.value) || 0 })}
-                                                className="w-full pl-8 pr-4 py-2.5 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-rose-500"
+                                                className="w-full pl-8 pr-4 py-2.5 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-primary"
                                             />
                                         </div>
                                     </div>
@@ -457,7 +457,7 @@ const PurchaseReturn: React.FC = () => {
 
                                 <div className="border-t dark:border-neutral-800 pt-6 mb-8 text-center">
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Refund / Credit</p>
-                                    <p className="text-4xl font-black text-emerald-600">₹{calculateTotal().toLocaleString()}</p>
+                                    <p className="text-4xl font-black text-success">₹{calculateTotal().toLocaleString()}</p>
                                 </div>
 
                                 <div className="space-y-3">

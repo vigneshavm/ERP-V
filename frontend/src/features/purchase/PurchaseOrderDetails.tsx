@@ -194,13 +194,13 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                         <div className="flex gap-3">
                             <button
                                 onClick={() => onUpdateStatus?.(order.id, 'DRAFT')}
-                                className="px-6 py-3 bg-rose-50 text-rose-600 dark:bg-rose-900/20 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all active:scale-95 flex items-center gap-2"
+                                className="px-6 py-3 bg-danger-soft text-danger dark:bg-danger-soft rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-danger-soft transition-all active:scale-95 flex items-center gap-2"
                             >
                                 <XCircle className="w-4 h-4" /> Reject Node
                             </button>
                             <button
                                 onClick={() => onUpdateStatus?.(order.id, 'APPROVED')}
-                                className="px-6 py-3 bg-emerald-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-600 transition hover:scale-105 active:scale-95"
+                                className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-success/90 transition hover:scale-105 active:scale-95"
                             >
                                 <CheckCircle2 className="w-4 h-4" /> Authorize Node
                             </button>
@@ -210,7 +210,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {canSendToVendor && (
                         <button
                             onClick={() => onUpdateStatus?.(order.id, 'SENT_TO_VENDOR')}
-                            className="px-6 py-3 bg-sky-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-sky-500/20 flex items-center gap-2 hover:bg-sky-600 transition hover:scale-105 active:scale-95"
+                            className="px-6 py-3 bg-info text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-sky-500/20 flex items-center gap-2 hover:bg-info/90 transition hover:scale-105 active:scale-95"
                         >
                             <Truck className="w-4 h-4" /> Send to Vendor
                         </button>
@@ -219,7 +219,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {canReceive && (
                         <button
                             onClick={() => setShowReceiveModal(true)}
-                            className="px-6 py-3 bg-indigo-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:bg-indigo-600 transition hover:scale-105 active:scale-95"
+                            className="px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:bg-primary transition hover:scale-105 active:scale-95"
                         >
                             <FileOutput className="w-4 h-4" /> Initialize Receipt
                         </button>
@@ -237,7 +237,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     {canPay && (
                         <button
                             onClick={() => onUpdateStatus?.(order.id, 'Paid')}
-                            className="px-6 py-3 bg-emerald-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-600 transition hover:scale-105 active:scale-95"
+                            className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-success/90 transition hover:scale-105 active:scale-95"
                         >
                             <ShieldCheck className="w-4 h-4" /> Resolve Settlement
                         </button>
@@ -261,8 +261,8 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                             <React.Fragment key={step.label}>
                                 <div className="flex flex-col items-center gap-4 relative z-10">
                                     <div className={`w-12 h-12 rounded-[1.25rem] flex items-center justify-center text-xs font-black transition-all duration-700
-                                        ${isCompleted ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-500/30 rotate-[360deg]' :
-                                            isCurrent ? (isCancelled ? 'bg-rose-500 text-white' : 'bg-primary text-white ring-8 ring-primary/10 scale-110 shadow-xl shadow-primary/20') :
+                                        ${isCompleted ? 'bg-success text-white shadow-xl shadow-emerald-500/30 rotate-[360deg]' :
+                                            isCurrent ? (isCancelled ? 'bg-danger text-white' : 'bg-primary text-white ring-8 ring-primary/10 scale-110 shadow-xl shadow-primary/20') :
                                                 'bg-neutral-50 dark:bg-neutral-900 text-neutral-300 dark:text-neutral-600 border border-neutral-100 dark:border-neutral-800'}`}>
                                         {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : idx + 1}
                                     </div>
@@ -278,7 +278,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                 {idx < steps.length - 1 && (
                                     <div className="flex-1 h-0.5 mx-6 bg-neutral-100 dark:bg-neutral-900 relative">
                                         <div
-                                            className={`absolute inset-y-0 left-0 transition-all duration-1000 ease-out ${isCompleted ? 'bg-emerald-500 w-full' : 'bg-primary/20 w-0'}`}
+                                            className={`absolute inset-y-0 left-0 transition-all duration-1000 ease-out ${isCompleted ? 'bg-success w-full' : 'bg-primary/20 w-0'}`}
                                             style={{ width: isCompleted ? '100%' : '0%' }}
                                         />
                                     </div>
@@ -351,12 +351,12 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 
                     {/* Narrative Node */}
                     {order.notes && (
-                        <div className="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 p-10 rounded-xl relative overflow-hidden">
+                        <div className="bg-warning/50 dark:bg-warning-soft border border-warning-line dark:border-warning/20 p-10 rounded-xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-6 opacity-10">
                                 <FileText className="w-20 h-20 text-warning" />
                             </div>
-                            <h4 className="text-[10px] font-black text-amber-900/60 dark:text-warning uppercase tracking-widest mb-4">Protocol Narrative</h4>
-                            <p className="text-xs font-bold text-amber-800 dark:text-amber-300 italic leading-relaxed pl-6 border-l-2 border-warning/30">
+                            <h4 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest mb-4">Protocol Narrative</h4>
+                            <p className="text-xs font-bold text-warning dark:text-warning italic leading-relaxed pl-6 border-l-2 border-warning/30">
                                 {order.notes}
                             </p>
                         </div>

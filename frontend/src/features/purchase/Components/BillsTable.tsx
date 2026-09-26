@@ -101,7 +101,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                             {(bill.status === 'Received' || bill.status === 'Approved' || bill.status === 'Matched' || bill.status === 'Partially Paid') && (
                                                 <button
                                                     onClick={() => onMarkAsPaid(bill)}
-                                                    className="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors"
+                                                    className="p-2 text-success hover:bg-success-soft dark:hover:bg-success-soft rounded-lg transition-colors"
                                                     title="Record Payment"
                                                 >
                                                     <CreditCard className="w-4 h-4" />
@@ -109,7 +109,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                             )}
                                             <button
                                                 onClick={() => onDelete(bill._id || bill.id)}
-                                                className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                                className="p-2 text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-colors"
                                                 title="Delete"
                                             >
                                                 <Trash2 className="w-4 h-4" />

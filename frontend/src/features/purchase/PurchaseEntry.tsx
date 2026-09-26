@@ -1004,7 +1004,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Selling Price</label>
                                         <div className="relative">
-                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-600 font-bold">₹</span>
+                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-success font-bold">₹</span>
                                             <input
                                                 type="number"
                                                 value={designSet.sellingPrice}
@@ -1012,7 +1012,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                     const sp = parseFloat(e.target.value) || 0;
                                                     setDesignSet({ ...designSet, sellingPrice: sp, margin: designSet.rate > 0 ? ((sp / designSet.rate) - 1) * 100 : 0 });
                                                 }}
-                                                className="w-full pl-8 pr-3 py-3 rounded-xl border border-emerald-200 dark:border-emerald-900/30 bg-emerald-50 dark:bg-emerald-900/10 text-emerald-700 font-bold focus:ring-2 focus:ring-emerald-500 outline-none"
+                                                className="w-full pl-8 pr-3 py-3 rounded-xl border border-success-line dark:border-success/30 bg-success-soft dark:bg-success-soft text-success font-bold focus:ring-2 focus:ring-emerald-500 outline-none"
                                             />
                                         </div>
                                     </div>
@@ -1156,13 +1156,13 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                             </div>
                             {/* Credit Check Badge could go here */}
                             {supplierId && (
-                                <div className="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-900/20 flex items-center gap-3 animate-fade-in">
-                                    <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
+                                <div className="p-3 bg-success-soft dark:bg-success-soft rounded-xl border border-success-line dark:border-success/20 flex items-center gap-3 animate-fade-in">
+                                    <div className="w-8 h-8 rounded-full bg-success-soft dark:bg-success-soft flex items-center justify-center text-success">
                                         <User className="w-4 h-4" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-bold text-emerald-700 dark:text-success">Supplier Selected</p>
-                                        <p className="text-[10px] text-emerald-600/80">{supplierName}</p>
+                                        <p className="text-xs font-bold text-success dark:text-success">Supplier Selected</p>
+                                        <p className="text-[10px] text-success/80">{supplierName}</p>
                                     </div>
                                 </div>
                             )}
@@ -1305,7 +1305,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                         {attachments.map((file, i) => (
                                             <div key={i} className="flex items-center gap-1 px-2 py-1 bg-neutral-100 dark:bg-neutral-700 rounded-lg text-[10px] text-neutral-500 max-w-[120px] truncate">
                                                 <Paperclip className="w-3 h-3" /> {file.name}
-                                                <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="ml-1 hover:text-red-500">&times;</button>
+                                                <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="ml-1 hover:text-danger">&times;</button>
                                             </div>
                                         ))}
                                     </div>
@@ -1361,7 +1361,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                             <div className="flex items-start gap-6">
                                 {/* Drop Zone */}
                                 <label
-                                    className="flex-shrink-0 w-56 h-36 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-indigo-300 dark:border-indigo-700 rounded-sm cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all group"
+                                    className="flex-shrink-0 w-56 h-36 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-primary/30 dark:border-primary rounded-sm cursor-pointer hover:border-primary hover:bg-primary-soft dark:hover:bg-primary-soft transition-all group"
                                     onDragOver={(e) => e.preventDefault()}
                                     onDrop={(e) => {
                                         e.preventDefault();
@@ -1383,7 +1383,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                     {isPdfParsing ? (
                                         <><Loader2 className="w-8 h-8 text-primary animate-spin" /><span className="text-xs font-bold text-primary">Parsing PDF...</span></>
                                     ) : pdfFileName ? (
-                                        <><CheckCircle2 className="w-8 h-8 text-success" /><span className="text-xs font-bold text-emerald-600 text-center px-2 truncate max-w-[200px]">{pdfFileName}</span></>
+                                        <><CheckCircle2 className="w-8 h-8 text-success" /><span className="text-xs font-bold text-success text-center px-2 truncate max-w-[200px]">{pdfFileName}</span></>
                                     ) : (
                                         <><Upload className="w-8 h-8 text-primary group-hover:text-primary transition-colors" /><span className="text-xs font-bold text-primary group-hover:text-primary">Drop PDF here</span><span className="text-[10px] text-neutral-400">or click to browse</span></>
                                     )}
@@ -1404,7 +1404,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                 <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
                                                     Found <span className="text-primary">{pdfParseResult.items.length}</span> items in PDF
                                                 </span>
-                                                <button onClick={() => { setPdfParseResult(null); setPdfFileName(''); if (pdfInputRef.current) pdfInputRef.current.value = ''; }} className="text-[10px] text-neutral-400 hover:text-red-500 flex items-center gap-1"><X className="w-3 h-3" /> Clear</button>
+                                                <button onClick={() => { setPdfParseResult(null); setPdfFileName(''); if (pdfInputRef.current) pdfInputRef.current.value = ''; }} className="text-[10px] text-neutral-400 hover:text-danger flex items-center gap-1"><X className="w-3 h-3" /> Clear</button>
                                             </div>
                                             <div className="flex-1 overflow-y-auto space-y-1 pr-1">
                                                 {pdfParseResult.items.map((item, i) => (
@@ -1417,7 +1417,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                             </div>
                                             <button
                                                 onClick={applyPdfItems}
-                                                className="mt-3 w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+                                                className="mt-3 w-full py-2 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2"
                                             >
                                                 <CheckCircle2 className="w-4 h-4" /> Import {pdfParseResult.items.length} Items into Table
                                             </button>
@@ -1480,7 +1480,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                             />
                                             <div className="text-[10px] text-neutral-400 mt-1 flex gap-2">
                                                 {item.product_id && (
-                                                    <span className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+                                                    <span className="bg-success-soft dark:bg-success-soft text-success dark:text-success px-1.5 py-0.5 rounded border border-success-line dark:border-success-line">
                                                         In Catalog
                                                     </span>
                                                 )}
@@ -1596,22 +1596,22 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                     {matchingProducts.length > 0 && (
                                                         <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">
                                                             <div className="px-2 pt-1 pb-2 flex items-center gap-2">
-                                                                <Search className="w-3.5 h-3.5 text-emerald-500" />
-                                                                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium uppercase tracking-wider">
+                                                                <Search className="w-3.5 h-3.5 text-success" />
+                                                                <span className="text-[10px] text-success dark:text-success font-medium uppercase tracking-wider">
                                                                     Existing Products
                                                                 </span>
                                                             </div>
                                                             {matchingProducts.map((prod: any, prodIdx: number) => (
                                                                 <div
                                                                     key={prod._id || prod.id}
-                                                                    className={`px-3 py-2 cursor-pointer rounded-xl transition-colors flex items-center justify-between group ${dropdownHighlightIndex === prodIdx ? 'bg-emerald-100 dark:bg-emerald-900/40' : 'hover:bg-emerald-50 dark:hover:bg-emerald-900/20'}`}
+                                                                    className={`px-3 py-2 cursor-pointer rounded-xl transition-colors flex items-center justify-between group ${dropdownHighlightIndex === prodIdx ? 'bg-success-soft dark:bg-success-soft' : 'hover:bg-success-soft dark:hover:bg-success-soft'}`}
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         handleProductSelect(idx, prod);
                                                                     }}
                                                                 >
                                                                     <div>
-                                                                        <div className="font-semibold text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-emerald-700 dark:group-hover:text-emerald-400">{prod.name}</div>
+                                                                        <div className="font-semibold text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-success dark:group-hover:text-success">{prod.name}</div>
                                                                         <div className="text-[10px] text-neutral-400">Stock: {prod.stockQty ?? 0}{prod.sku ? ` · ${prod.sku}` : ''}</div>
                                                                     </div>
                                                                     {typeof prod.costPrice === 'number' && (
@@ -1713,7 +1713,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                     />
                                                 </div>
                                                 <div className="flex items-center gap-1 justify-end">
-                                                    <span className="text-[10px] text-green-600 font-bold">SP ₹</span>
+                                                    <span className="text-[10px] text-success font-bold">SP ₹</span>
                                                     <input
                                                         type="number"
                                                         value={item.sellingPrice || 0}
@@ -1737,7 +1737,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                             newItems[idx] = { ...item, sellingPrice, margin };
                                                             setItems(newItems);
                                                         }}
-                                                        className="w-16 text-right font-bold text-green-600 outline-none bg-transparent"
+                                                        className="w-16 text-right font-bold text-success outline-none bg-transparent"
                                                     />
                                                 </div>
                                             </div>
@@ -1748,7 +1748,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                         <td className="px-4 py-4 text-center">
                                             <button
                                                 onClick={() => removeItem(idx)}
-                                                className="p-2 text-neutral-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                                className="p-2 text-neutral-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -1822,7 +1822,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                     type="number"
                                     value={discountAmount}
                                     onChange={e => setDiscountAmount(parseFloat(e.target.value) || 0)}
-                                    className="w-24 text-right bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 text-red-600 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-red-500"
+                                    className="w-24 text-right bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger/30 text-danger rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-red-500"
                                 />
                             </div>
                         </div>

@@ -308,11 +308,11 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                             </button>
                             <button onClick={handleExportCSV}
                                 className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2 text-slate-600 dark:text-neutral-300">
-                                <FileSpreadsheet className="w-4 h-4 text-green-600" /> Excel
+                                <FileSpreadsheet className="w-4 h-4 text-success" /> Excel
                             </button>
                             <button onClick={handleExportPDF}
                                 className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2 text-slate-600 dark:text-neutral-300">
-                                <FileText className="w-4 h-4 text-red-600" /> PDF
+                                <FileText className="w-4 h-4 text-danger" /> PDF
                             </button>
                         </div>
                     </div>
@@ -330,11 +330,11 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                         </button>
                         <button onClick={handleExportCSV}
                             className="px-3 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-neutral-300">
-                            <FileSpreadsheet className="w-4 h-4 text-emerald-600" /> Excel
+                            <FileSpreadsheet className="w-4 h-4 text-success" /> Excel
                         </button>
                         <button onClick={handleExportPDF}
                             className="px-3 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-neutral-300">
-                            <FileText className="w-4 h-4 text-rose-600" /> PDF
+                            <FileText className="w-4 h-4 text-danger" /> PDF
                         </button>
                     </div>
                 </div>
@@ -364,7 +364,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                         <select
                             value={vendorFilter}
                             onChange={e => setVendorFilter(e.target.value)}
-                            className="px-3 py-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all w-48"
+                            className="px-3 py-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-primary outline-none transition-all w-48"
                         >
                             <option value="ALL">All Suppliers</option>
                             {vendorOptions.map((v: any) => (
@@ -374,7 +374,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
 
                         <button
                             onClick={handleApplyFilters}
-                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 shadow-sm transition-colors"
+                            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary-hover shadow-sm transition-colors"
                         >
                             Apply
                         </button>
@@ -392,7 +392,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
 
             {/* Error */}
             {error && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-300 text-sm">
+                <div className="bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger-line rounded-xl p-4 text-danger dark:text-danger text-sm">
                     {error}
                 </div>
             )}
@@ -480,10 +480,10 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
-                                            <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">{formatCurrency(vendor.totalInflow)}</span>
+                                            <span className="text-sm font-semibold text-primary dark:text-primary">{formatCurrency(vendor.totalInflow)}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
-                                            <span className="text-sm font-semibold text-rose-600 dark:text-danger">{formatCurrency(vendor.totalOutflow)}</span>
+                                            <span className="text-sm font-semibold text-danger dark:text-danger">{formatCurrency(vendor.totalOutflow)}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
                                             <span className="text-sm text-slate-600 dark:text-neutral-400">{vendor.debitNoteTotal > 0 ? formatCurrency(vendor.debitNoteTotal) : '-'}</span>
@@ -495,7 +495,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                                             <span className="text-sm text-slate-600 dark:text-neutral-400">{vendor.paymentCount}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
-                                            <span className="text-sm font-bold text-orange-600 dark:text-orange-400">{formatCurrency(vendor.closingBalance)}</span>
+                                            <span className="text-sm font-bold text-warning dark:text-warning">{formatCurrency(vendor.closingBalance)}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
                                             <span className="text-sm font-medium text-slate-400 dark:text-neutral-500">{formatCurrency(vendor.openingBalance)}</span>
@@ -509,11 +509,11 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                             <tfoot className="bg-slate-50 dark:bg-neutral-900 border-t border-slate-200 dark:border-neutral-700">
                                 <tr>
                                     <td className="px-6 py-4 text-xs font-black text-slate-500 dark:text-neutral-400 uppercase tracking-wider">Total ({displayTotals.vendorCount})</td>
-                                    <td className="px-6 py-4 text-right text-sm font-bold text-blue-600 dark:text-blue-400">{formatCurrency(displayTotals.totalInflow)}</td>
-                                    <td className="px-6 py-4 text-right text-sm font-bold text-rose-600 dark:text-danger">{formatCurrency(displayTotals.totalOutflow)}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-bold text-primary dark:text-primary">{formatCurrency(displayTotals.totalInflow)}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-bold text-danger dark:text-danger">{formatCurrency(displayTotals.totalOutflow)}</td>
                                     <td className="px-6 py-4 text-right text-sm font-medium text-slate-600 dark:text-neutral-400">{formatCurrency(displayTotals.debitNoteTotal)}</td>
                                     <td colSpan={2}></td>
-                                    <td className="px-6 py-4 text-right text-sm font-bold text-orange-600 dark:text-orange-400">{formatCurrency(displayTotals.totalClosingBalance)}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-bold text-warning dark:text-warning">{formatCurrency(displayTotals.totalClosingBalance)}</td>
                                     <td className="px-6 py-4 text-right text-sm font-medium text-slate-400 dark:text-neutral-500">{formatCurrency(displayTotals.totalOpeningBalance)}</td>
                                 </tr>
                             </tfoot>

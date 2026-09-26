@@ -384,7 +384,7 @@ const SalesInvoice = () => {
         {deleteConfirm && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in duration-300">
             <div className="glass-panel rounded-sm shadow-2xl max-w-sm w-full p-6 border border-default/30 animate-scale-in">
-              <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <div className="w-12 h-12 bg-danger-soft dark:bg-danger-soft rounded-full flex items-center justify-center mb-4 mx-auto">
                 <AlertTriangle className="w-6 h-6 text-danger" />
               </div>
               <h3 className="text-lg font-bold text-main text-center mb-2">Delete Invoice?</h3>

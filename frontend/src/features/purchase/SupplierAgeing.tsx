@@ -123,16 +123,16 @@ const SupplierAgeing: React.FC = () => {
                     }
                 />
                 {loadError && (
-                    <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{loadError}</div>
+                    <div role="alert" className="rounded-md border border-danger-line bg-danger-soft px-4 py-3 text-sm font-medium text-danger dark:border-danger/50 dark:bg-danger-soft dark:text-danger">{loadError}</div>
                 )}
 
                 {/* KPI Pulse Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
-                        { label: 'Active (0-30)', val: totals["0-30"], icon: TrendingUp, color: 'text-success', bg: 'bg-emerald-50' },
-                        { label: 'Warning (31-60)', val: totals["31-60"], icon: Clock, color: 'text-warning', bg: 'bg-amber-50' },
-                        { label: 'Critical (61-90)', val: totals["61-90"], icon: Activity, color: 'text-orange-500', bg: 'bg-orange-50' },
-                        { label: 'In Arrears (90+)', val: totals["90+"], icon: AlertTriangle, color: 'text-danger', bg: 'bg-rose-50' }
+                        { label: 'Active (0-30)', val: totals["0-30"], icon: TrendingUp, color: 'text-success', bg: 'bg-success-soft' },
+                        { label: 'Warning (31-60)', val: totals["31-60"], icon: Clock, color: 'text-warning', bg: 'bg-warning-soft' },
+                        { label: 'Critical (61-90)', val: totals["61-90"], icon: Activity, color: 'text-warning', bg: 'bg-warning-soft' },
+                        { label: 'In Arrears (90+)', val: totals["90+"], icon: AlertTriangle, color: 'text-danger', bg: 'bg-danger-soft' }
                     ].map((card, i) => (
                         <div key={i} className="ui-panel p-8 group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
@@ -168,7 +168,7 @@ const SupplierAgeing: React.FC = () => {
                     <div className="flex items-end gap-6 w-full md:w-auto">
                         <div className="text-right">
                             <p className="ui-label mb-1 leading-none">Aggregate Outstanding</p>
-                            <p className="text-3xl font-black text-rose-600 tabular-nums tracking-tighter">₹{totals.total.toLocaleString()}</p>
+                            <p className="text-3xl font-black text-danger tabular-nums tracking-tighter">₹{totals.total.toLocaleString()}</p>
                         </div>
                         <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-sm text-neutral-400 hover:text-primary transition-all active:scale-95">
                             <Filter className="w-6 h-6" />
@@ -237,12 +237,12 @@ const SupplierAgeing: React.FC = () => {
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["61-90"] > 0 ? 'text-orange-500 underline' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["61-90"] > 0 ? 'text-warning underline' : 'text-neutral-300 dark:text-neutral-700'}`}>
                                                     ₹{row.buckets["61-90"].toLocaleString()}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["90+"] > 0 ? 'text-rose-600 underline decoration-2 underline-offset-4' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["90+"] > 0 ? 'text-danger underline decoration-2 underline-offset-4' : 'text-neutral-300 dark:text-neutral-700'}`}>
                                                     ₹{row.buckets["90+"].toLocaleString()}
                                                 </span>
                                             </td>

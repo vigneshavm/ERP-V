@@ -40,7 +40,7 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({
                         <div key={p.id} className="bg-white dark:bg-slate-800 p-3 rounded-md border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center">
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <span className={`text-[10px] font-bold px-1.5 rounded ${p.type === 'SALARY' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'}`}>
+                                    <span className={`text-[10px] font-bold px-1.5 rounded ${p.type === 'SALARY' ? 'bg-success-soft dark:bg-success-soft text-success dark:text-success' : 'bg-warning-soft dark:bg-warning-soft text-warning dark:text-warning'}`}>
                                         {p.type}
                                     </span>
                                     <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{formatCurrency(p.amount)}</span>
@@ -56,8 +56,8 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({
                 <div className="p-3 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
                     <div className="grid grid-cols-2 gap-2 mb-2">
                         <div className="flex bg-slate-100 dark:bg-slate-900 rounded p-0.5">
-                            <button onClick={() => setPaymentType('ADVANCE')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'ADVANCE' ? 'bg-white dark:bg-slate-700 shadow text-amber-600 dark:text-warning' : 'text-slate-500'}`}>Advance</button>
-                            <button onClick={() => setPaymentType('SALARY')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'SALARY' ? 'bg-white dark:bg-slate-700 shadow text-emerald-600 dark:text-success' : 'text-slate-500'}`}>Salary</button>
+                            <button onClick={() => setPaymentType('ADVANCE')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'ADVANCE' ? 'bg-white dark:bg-slate-700 shadow text-warning dark:text-warning' : 'text-slate-500'}`}>Advance</button>
+                            <button onClick={() => setPaymentType('SALARY')} className={`flex-1 text-[10px] font-bold rounded py-1 transition ${paymentType === 'SALARY' ? 'bg-white dark:bg-slate-700 shadow text-success dark:text-success' : 'text-slate-500'}`}>Salary</button>
                         </div>
                         <input
                             type="text"

@@ -78,7 +78,7 @@ const AccountLedger: React.FC = () => {
         return (
             <Layout>
                 <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
             </Layout>
         );
@@ -112,7 +112,7 @@ const AccountLedger: React.FC = () => {
                         </button>
                         <button
                             onClick={exportCSV}
-                            className="px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-100 dark:shadow-none flex items-center gap-2"
+                            className="px-4 py-2 bg-success text-white rounded-xl hover:bg-success/90 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-100 dark:shadow-none flex items-center gap-2"
                         >
                             <Download className="w-4 h-4" /> Export CSV
                         </button>
@@ -131,13 +131,13 @@ const AccountLedger: React.FC = () => {
                 <CashBankStatsCard
                     title="Total Credits"
                     amount={ledgerData.summary.totalCredits}
-                    colorClass="text-emerald-600"
+                    colorClass="text-success"
                     icon={CheckCircle2}
                 />
                 <CashBankStatsCard
                     title="Total Debits"
                     amount={ledgerData.summary.totalDebits}
-                    colorClass="text-rose-600"
+                    colorClass="text-danger"
                     icon={X}
                 />
                 <CashBankStatsCard
@@ -157,7 +157,7 @@ const AccountLedger: React.FC = () => {
                             type="date"
                             value={filters.startDate}
                             onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm"
                         />
                     </div>
                     <div className="space-y-1.5">
@@ -166,7 +166,7 @@ const AccountLedger: React.FC = () => {
                             type="date"
                             value={filters.endDate}
                             onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm"
                         />
                     </div>
                     <div className="space-y-1.5">
@@ -174,7 +174,7 @@ const AccountLedger: React.FC = () => {
                         <select
                             value={filters.reconciled}
                             onChange={(e) => setFilters({ ...filters, reconciled: e.target.value })}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm"
                         >
                             <option value="all">All Transactions</option>
                             <option value="true">Reconciled Only</option>
@@ -194,12 +194,12 @@ const AccountLedger: React.FC = () => {
 
             {/* Bulk Actions */}
             {selectedTxns.length > 0 && (
-                <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-[2rem] p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in">
-                    <span className="text-indigo-800 dark:text-indigo-300 font-black uppercase tracking-tight text-sm">{selectedTxns.length} transaction(s) targeted</span>
+                <div className="bg-primary-soft dark:bg-primary-soft border border-primary/30 dark:border-primary/30 rounded-[2rem] p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in">
+                    <span className="text-primary dark:text-primary font-black uppercase tracking-tight text-sm">{selectedTxns.length} transaction(s) targeted</span>
                     <div className="flex flex-wrap gap-2">
                         <button
                             onClick={() => bulkReconcile(true)}
-                            className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-100 dark:shadow-none hover:bg-emerald-700 transition-all"
+                            className="px-6 py-2.5 bg-success text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-100 dark:shadow-none hover:bg-success/90 transition-all"
                         >
                             Mark Reconciled
                         </button>
@@ -211,7 +211,7 @@ const AccountLedger: React.FC = () => {
                         </button>
                         <button
                             onClick={() => setSelectedTxns([])}
-                            className="px-6 py-2.5 border border-indigo-200 text-primary rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all"
+                            className="px-6 py-2.5 border border-primary/30 text-primary rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all"
                         >
                             Clear Selection
                         </button>
@@ -253,7 +253,7 @@ const AccountLedger: React.FC = () => {
                                 </tr>
                             ) : (
                                 ledgerData.ledger.map((txn) => (
-                                    <tr key={txn._id} className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${txn.reconciled ? 'bg-emerald-50/10' : ''}`}>
+                                    <tr key={txn._id} className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${txn.reconciled ? 'bg-success/10' : ''}`}>
                                         <td className="px-6 py-4">
                                             <input
                                                 type="checkbox"
@@ -282,11 +282,11 @@ const AccountLedger: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                             {txn.reconciled ? (
-                                                <span className="px-3 py-1 text-[9px] font-black rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 uppercase tracking-widest border border-emerald-200 dark:border-emerald-800">
+                                                <span className="px-3 py-1 text-[9px] font-black rounded-lg bg-success-soft dark:bg-success-soft text-success uppercase tracking-widest border border-success-line dark:border-success-line">
                                                     Reconciled
                                                 </span>
                                             ) : (
-                                                <span className="px-3 py-1 text-[9px] font-black rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 uppercase tracking-widest border border-amber-200 dark:border-amber-800">
+                                                <span className="px-3 py-1 text-[9px] font-black rounded-lg bg-warning-soft dark:bg-warning-soft text-warning uppercase tracking-widest border border-warning-line dark:border-warning-line">
                                                     Unsettled
                                                 </span>
                                             )}
@@ -294,7 +294,7 @@ const AccountLedger: React.FC = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                             <button
                                                 onClick={() => toggleReconcile(txn._id)}
-                                                className={`p-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${txn.reconciled ? 'text-slate-400 hover:text-rose-600 hover:bg-rose-50' : 'text-primary hover:bg-indigo-50'}`}
+                                                className={`p-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${txn.reconciled ? 'text-slate-400 hover:text-danger hover:bg-danger-soft' : 'text-primary hover:bg-primary-soft'}`}
                                             >
                                                 {txn.reconciled ? 'Revoke CLEAR' : 'Execute CLEAR'}
                                             </button>

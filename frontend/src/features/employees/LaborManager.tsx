@@ -432,7 +432,7 @@ export const LaborManager = () => {
                       <button
                         onClick={() => setActiveTab('STATS')}
                         className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'STATS'
-                          ? 'border-indigo-600 text-primary'
+                          ? 'border-primary text-primary'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                           }`}
                       >
@@ -442,7 +442,7 @@ export const LaborManager = () => {
                       <button
                         onClick={() => setActiveTab('ATTENDANCE')}
                         className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'ATTENDANCE'
-                          ? 'border-indigo-600 text-primary'
+                          ? 'border-primary text-primary'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                           }`}
                       >
@@ -452,7 +452,7 @@ export const LaborManager = () => {
                       <button
                         onClick={() => setActiveTab('PAYMENTS')}
                         className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'PAYMENTS'
-                          ? 'border-indigo-600 text-primary'
+                          ? 'border-primary text-primary'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                           }`}
                       >
@@ -464,14 +464,14 @@ export const LaborManager = () => {
                       <button
                         onClick={handleOpenEdit}
                         title="Edit staff details"
-                        className="p-2 rounded-lg text-gray-400 hover:text-primary hover:bg-indigo-50 transition-colors"
+                        className="p-2 rounded-lg text-gray-400 hover:text-primary hover:bg-primary-soft transition-colors"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={handleDeactivateLaborer}
                         title="Deactivate staff member"
-                        className="p-2 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                        className="p-2 rounded-lg text-gray-400 hover:text-danger hover:bg-danger-soft transition-colors"
                       >
                         <UserX className="w-4 h-4" />
                       </button>
@@ -517,7 +517,7 @@ export const LaborManager = () => {
                 <p className="text-sm mt-1 max-w-sm text-center">Select an employee from the sidebar to view their attendance records, manage payments, and track performance.</p>
                 <button
                   onClick={() => setIsAddingLaborer(true)}
-                  className="mt-6 flex items-center gap-2 text-primary font-medium hover:text-indigo-700"
+                  className="mt-6 flex items-center gap-2 text-primary font-medium hover:text-primary"
                 >
                   <UserPlus size={18} />
                   Add New Staff Member

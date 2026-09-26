@@ -348,7 +348,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                                         <td className="p-5">
                                                             <div className="flex items-center gap-2">
                                                                 <span className={`w-2 h-2 rounded-full ${order.risk_level === 'LOW' ? 'bg-success' :
-                                                                    order.risk_level === 'CRITICAL' ? 'bg-error animate-pulse' : 'bg-amber-500'
+                                                                    order.risk_level === 'CRITICAL' ? 'bg-error animate-pulse' : 'bg-warning'
                                                                     }`} />
                                                                 <span className={`text-[10px] font-black uppercase tracking-widest ${order.risk_level === 'CRITICAL' ? 'text-error' : 'text-neutral-500'
                                                                     }`}>
@@ -415,9 +415,9 @@ const POSOrdersIntelligence: React.FC = () => {
                                     </div>
                                 ) : (
                                     liveAlerts.map((alert, i) => (
-                                        <div key={i} className={`p-4 bg-white dark:bg-neutral-800 rounded-sm border ${alert.level === 'CRITICAL' ? 'border-error/20 hover:border-error/40' : 'border-amber-200 hover:border-amber-400'} shadow-sm group/alert transition-all`}>
+                                        <div key={i} className={`p-4 bg-white dark:bg-neutral-800 rounded-sm border ${alert.level === 'CRITICAL' ? 'border-error/20 hover:border-error/40' : 'border-warning-line hover:border-warning'} shadow-sm group/alert transition-all`}>
                                             <div className="flex justify-between items-center mb-2">
-                                                <span className={`text-[9px] font-black uppercase tracking-[0.15em] ${alert.level === 'CRITICAL' ? 'text-error' : 'text-amber-600'}`}>
+                                                <span className={`text-[9px] font-black uppercase tracking-[0.15em] ${alert.level === 'CRITICAL' ? 'text-error' : 'text-warning'}`}>
                                                     {alert.type.replace(/_/g, ' ')}
                                                 </span>
                                                 <Clock className="w-3 h-3 text-neutral-400" />

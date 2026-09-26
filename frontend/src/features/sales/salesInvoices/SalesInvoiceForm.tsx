@@ -198,7 +198,7 @@ const SalesInvoiceForm: React.FC = () => {
                                             type="date" 
                                             value={formData.invoiceDate}
                                             onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
-                                            className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-amber-500/50 outline-none transition-all dark:text-white"
+                                            className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-primary/50 outline-none transition-all dark:text-white"
                                         />
                                     </div>
                                 </div>
@@ -212,7 +212,7 @@ const SalesInvoiceForm: React.FC = () => {
                                             type="date" 
                                             value={formData.dueDate}
                                             onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                                            className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-amber-500/50 outline-none transition-all dark:text-white"
+                                            className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-primary/50 outline-none transition-all dark:text-white"
                                         />
                                     </div>
                                 </div>
@@ -234,7 +234,7 @@ const SalesInvoiceForm: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={addItem}
-                                    className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20"
+                                    className="flex items-center gap-2 px-6 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20"
                                 >
                                     <Plus className="w-4 h-4" /> Add Asset
                                 </button>
@@ -254,7 +254,7 @@ const SalesInvoiceForm: React.FC = () => {
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                         {formData.items.map((item, index) => (
-                                            <tr key={index} className="hover:bg-amber-500/[0.01] transition-colors group/row">
+                                            <tr key={index} className="hover:bg-warning/90/[0.01] transition-colors group/row">
                                                 <td className="px-8 py-5">
                                                     <input
                                                         type="text"
@@ -270,7 +270,7 @@ const SalesInvoiceForm: React.FC = () => {
                                                         min="1"
                                                         value={item.quantity}
                                                         onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                                        className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-neutral-900 dark:text-white outline-none focus:border-amber-500/50 transition-all"
+                                                        className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-neutral-900 dark:text-white outline-none focus:border-primary/50 transition-all"
                                                     />
                                                 </td>
                                                 <td className="px-4 py-5 text-right">
@@ -281,7 +281,7 @@ const SalesInvoiceForm: React.FC = () => {
                                                             min="0"
                                                             value={item.rate}
                                                             onChange={(e) => updateItem(index, 'rate', Number(e.target.value))}
-                                                            className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 pl-6 pr-2 text-sm text-right font-mono font-bold text-neutral-900 dark:text-white outline-none focus:border-amber-500/50 transition-all"
+                                                            className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 pl-6 pr-2 text-sm text-right font-mono font-bold text-neutral-900 dark:text-white outline-none focus:border-primary/50 transition-all"
                                                         />
                                                     </div>
                                                 </td>
@@ -292,7 +292,7 @@ const SalesInvoiceForm: React.FC = () => {
                                                         max="100"
                                                         value={item.tax}
                                                         onChange={(e) => updateItem(index, 'tax', Number(e.target.value))}
-                                                        className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-warning outline-none focus:border-amber-500/50 transition-all"
+                                                        className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-warning outline-none focus:border-primary/50 transition-all"
                                                     />
                                                 </td>
                                                 <td className="px-8 py-5 text-right">
@@ -334,7 +334,7 @@ const SalesInvoiceForm: React.FC = () => {
                                         placeholder="Add mission-critical notes for auditing..."
                                         value={formData.notes}
                                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                        className="w-full p-5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-[24px] text-xs font-bold min-h-[140px] focus:border-amber-500/50 outline-none transition-all resize-none text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-800 shadow-inner"
+                                        className="w-full p-5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-[24px] text-xs font-bold min-h-[140px] focus:border-primary/50 outline-none transition-all resize-none text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-800 shadow-inner"
                                     />
                                 </div>
                                 <div className="space-y-4">
@@ -345,7 +345,7 @@ const SalesInvoiceForm: React.FC = () => {
                                         placeholder="Define legal framework for this node..."
                                         value={formData.termsAndConditions}
                                         onChange={(e) => setFormData({ ...formData, termsAndConditions: e.target.value })}
-                                        className="w-full p-5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-[24px] text-[11px] font-bold min-h-[140px] focus:border-amber-500/50 outline-none transition-all resize-none text-neutral-500 dark:text-neutral-400 shadow-inner"
+                                        className="w-full p-5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-[24px] text-[11px] font-bold min-h-[140px] focus:border-primary/50 outline-none transition-all resize-none text-neutral-500 dark:text-neutral-400 shadow-inner"
                                     />
                                 </div>
                             </div>
@@ -360,14 +360,14 @@ const SalesInvoiceForm: React.FC = () => {
                             <div className="flex justify-between items-center mb-8">
                                 <h3 className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">B2B Entity Path</h3>
                                 {!formData.customer && (
-                                    <span className="flex h-2.5 w-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                                    <span className="flex h-2.5 w-2.5 rounded-full bg-danger animate-ping"></span>
                                 )}
                             </div>
 
                             {formData.customer ? (
-                                <div className="p-6 bg-amber-500/5 rounded-sm border border-amber-500/10 relative transition-all hover:bg-warning/10">
+                                <div className="p-6 bg-warning/5 rounded-sm border border-warning/10 relative transition-all hover:bg-warning/10">
                                     <div className="flex items-center gap-5">
-                                        <div className="w-14 h-14 bg-amber-500 rounded-sm flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
+                                        <div className="w-14 h-14 bg-warning rounded-sm flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
                                             <User className="w-7 h-7" />
                                         </div>
                                         <div>
@@ -388,7 +388,7 @@ const SalesInvoiceForm: React.FC = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowCustomerModal(true)}
-                                        className="w-full mt-6 py-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-[10px] font-black text-neutral-900 dark:text-white uppercase tracking-widest hover:border-amber-500 transition-all shadow-sm"
+                                        className="w-full mt-6 py-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-[10px] font-black text-neutral-900 dark:text-white uppercase tracking-widest hover:border-warning transition-all shadow-sm"
                                     >
                                         Switch Entity
                                     </button>
@@ -397,7 +397,7 @@ const SalesInvoiceForm: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowCustomerModal(true)}
-                                    className="w-full py-16 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-[32px] flex flex-col items-center justify-center gap-5 text-neutral-400 hover:border-amber-500/50 hover:text-warning hover:bg-amber-500/[0.02] transition-all group/btn"
+                                    className="w-full py-16 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-[32px] flex flex-col items-center justify-center gap-5 text-neutral-400 hover:border-warning/50 hover:text-warning hover:bg-warning/90/[0.02] transition-all group/btn"
                                 >
                                     <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center group-hover/btn:scale-110 transition-all shadow-inner">
                                         <Plus className="w-8 h-8 opacity-40 group-hover/btn:opacity-100" />
@@ -440,7 +440,7 @@ const SalesInvoiceForm: React.FC = () => {
                                                 type="number"
                                                 value={formData.shippingCharges}
                                                 onChange={(e) => setFormData({ ...formData, shippingCharges: Number(e.target.value) })}
-                                                className="w-full bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-neutral-900 dark:text-white outline-none focus:border-amber-500/50 transition-all text-right shadow-inner"
+                                                className="w-full bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-neutral-900 dark:text-white outline-none focus:border-primary/50 transition-all text-right shadow-inner"
                                             />
                                         </div>
                                     </div>
@@ -455,7 +455,7 @@ const SalesInvoiceForm: React.FC = () => {
                                                 type="number"
                                                 value={formData.discount}
                                                 onChange={(e) => setFormData({ ...formData, discount: Number(e.target.value) })}
-                                                className="w-full bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-danger outline-none focus:border-rose-500/50 transition-all text-right shadow-inner"
+                                                className="w-full bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-danger outline-none focus:border-primary/50 transition-all text-right shadow-inner"
                                             />
                                         </div>
                                     </div>
@@ -474,7 +474,7 @@ const SalesInvoiceForm: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full mt-8 py-5 bg-amber-500 text-white rounded-sm font-black text-xs uppercase tracking-[0.3em] shadow-xl shadow-amber-500/20 hover:bg-amber-600 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group/submit"
+                                className="w-full mt-8 py-5 bg-warning text-white rounded-sm font-black text-xs uppercase tracking-[0.3em] shadow-xl shadow-amber-500/20 hover:bg-warning/90 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group/submit"
                             >
                                 {isLoading ? (
                                     <>

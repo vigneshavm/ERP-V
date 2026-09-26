@@ -52,7 +52,7 @@ const WRSalesReport: React.FC = () => {
                             </div>
                             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
                                 <p className="text-xs font-bold text-neutral-400 uppercase tracking-wide">Total Collected</p>
-                                <p className="text-2xl font-bold text-emerald-600 mt-1">₹{report.summary.paidAmount.toFixed(2)}</p>
+                                <p className="text-2xl font-bold text-success mt-1">₹{report.summary.paidAmount.toFixed(2)}</p>
                             </div>
                         </div>
 

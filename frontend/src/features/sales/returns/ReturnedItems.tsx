@@ -115,11 +115,11 @@ const ReturnedItems = () => {
 
     return (
         <Layout>
-            <div className="flex-1 w-full bg-app text-main font-sans selection:bg-rose-500/30 relative">
+            <div className="flex-1 w-full bg-app text-main font-sans selection:bg-danger/30 relative">
                 {/* Ambient Background Blobs */}
                 <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                    <div className="absolute top-[-15%] left-[5%] w-[55%] h-[55%] bg-rose-500/10 rounded-full blur-[160px] animate-aura opacity-60" />
-                    <div className="absolute bottom-[-10%] right-[5%] w-[40%] h-[40%] bg-orange-500/10 rounded-full blur-[140px] animate-aura opacity-50" style={{ animationDelay: '7s' }} />
+                    <div className="absolute top-[-15%] left-[5%] w-[55%] h-[55%] bg-danger/10 rounded-full blur-[160px] animate-aura opacity-60" />
+                    <div className="absolute bottom-[-10%] right-[5%] w-[40%] h-[40%] bg-warning/10 rounded-full blur-[140px] animate-aura opacity-50" style={{ animationDelay: '7s' }} />
                     <div className="absolute top-[40%] right-[20%] w-[25%] h-[25%] bg-danger/5 rounded-full blur-[100px] animate-aura opacity-40" style={{ animationDelay: '3s' }} />
                 </div>
 
@@ -135,7 +135,7 @@ const ReturnedItems = () => {
                                 </span>
                             </h1>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="flex h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+                                <span className="flex h-2 w-2 rounded-full bg-danger animate-pulse" />
                                 <p className="text-[10px] uppercase tracking-[0.2em] font-black text-secondary">Monitoring Inventory Backflow</p>
                             </div>
                         </div>
@@ -262,7 +262,7 @@ const ReturnedItems = () => {
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <span className={`px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest ${
-                                                        rec.returnType === 'full' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                                                        rec.returnType === 'full' ? 'bg-purple-100 text-purple-800' : 'bg-primary-soft text-primary'
                                                     }`}>
                                                         {rec.returnType}
                                                     </span>

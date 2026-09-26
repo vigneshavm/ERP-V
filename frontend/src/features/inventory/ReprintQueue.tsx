@@ -95,7 +95,7 @@ const ReprintQueue: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={fetchQueue}
-                        className="p-2 text-gray-500 hover:text-emerald-600 transition-colors"
+                        className="p-2 text-gray-500 hover:text-success transition-colors"
                         title="Refresh"
                     >
                         <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
@@ -104,14 +104,14 @@ const ReprintQueue: React.FC = () => {
                         <>
                             <button
                                 onClick={handleClearQueue}
-                                className="px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg flex items-center gap-2 transition-colors border border-transparent hover:border-red-200"
+                                className="px-4 py-2 text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg flex items-center gap-2 transition-colors border border-transparent hover:border-danger-line"
                             >
                                 <Trash2 className="w-4 h-4" />
                                 Clear Queue
                             </button>
                             <button
                                 onClick={() => setIsPrintModalOpen(true)}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transform active:scale-95 transition-all"
+                                className="bg-success hover:bg-success/90 text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transform active:scale-95 transition-all"
                             >
                                 <Printer className="w-5 h-5" />
                                 Print {safeQueue.length} Items
@@ -123,7 +123,7 @@ const ReprintQueue: React.FC = () => {
 
             {loading ? (
                 <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success"></div>
                 </div>
             ) : safeQueue.length === 0 ? (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
@@ -159,7 +159,7 @@ const ReprintQueue: React.FC = () => {
                                     <td className="px-6 py-4 text-right text-gray-500 line-through">
                                         {item.oldPrice ? `₹${item.oldPrice}` : '-'}
                                     </td>
-                                    <td className="px-6 py-4 text-right font-bold text-emerald-600 dark:text-success">
+                                    <td className="px-6 py-4 text-right font-bold text-success dark:text-success">
                                         ₹{item.newPrice}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-500">

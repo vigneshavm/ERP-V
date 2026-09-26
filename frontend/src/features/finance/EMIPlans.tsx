@@ -111,11 +111,11 @@ const EMIPlans: React.FC = () => {
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{summary.active}</span>
                     </div>
                     <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 shadow-sm">
-                        <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide mb-1">Completed</p>
+                        <p className="text-xs font-bold text-success uppercase tracking-wide mb-1">Completed</p>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{summary.completed}</span>
                     </div>
                     <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 shadow-sm">
-                        <p className="text-xs font-bold text-rose-600 uppercase tracking-wide mb-1">Overdue Installments</p>
+                        <p className="text-xs font-bold text-danger uppercase tracking-wide mb-1">Overdue Installments</p>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{summary.overdue}</span>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ const EMIPlans: React.FC = () => {
                                             </td>
                                             <td className="px-6 py-4 text-right text-xs text-neutral-500">
                                                 {nextPending === -1 ? (
-                                                    <span className="text-emerald-600 font-bold flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> All paid</span>
+                                                    <span className="text-success font-bold flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> All paid</span>
                                                 ) : (
                                                     <div className="flex items-center gap-2">
                                                         <span>{formatDate(plan.installments[nextPending].dueDate)} · ₹{plan.installments[nextPending].amount.toLocaleString()}</span>

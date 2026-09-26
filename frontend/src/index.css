@@ -22,6 +22,7 @@
   --color-sidebar: rgb(var(--color-sidebar));
   --color-default: rgb(var(--color-border));
   --color-primary-foreground: rgb(var(--color-primary-foreground));
+  --color-primary-hover: rgb(var(--color-primary-hover));
   --color-primary-soft: rgb(var(--color-primary-soft));
   --color-success-soft: rgb(var(--color-success-soft));
   --color-success-line: rgb(var(--color-success-line));

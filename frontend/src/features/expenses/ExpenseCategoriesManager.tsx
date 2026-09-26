@@ -186,7 +186,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                                         </td>
                                         <td className="p-6">
                                             {cat.approval_required ? (
-                                                <span className="px-2.5 py-1 bg-amber-100 text-amber-700 text-[9px] font-black rounded-lg uppercase tracking-widest">Requires Manager Sig</span>
+                                                <span className="px-2.5 py-1 bg-warning-soft text-warning text-[9px] font-black rounded-lg uppercase tracking-widest">Requires Manager Sig</span>
                                             ) : (
                                                 <span className="px-2.5 py-1 bg-neutral-100 text-neutral-500 text-[9px] font-black rounded-lg uppercase tracking-widest">Auto-Approve</span>
                                             )}

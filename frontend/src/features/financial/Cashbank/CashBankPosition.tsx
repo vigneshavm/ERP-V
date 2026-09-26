@@ -184,7 +184,7 @@ const CashBankPosition: React.FC = () => {
                         {/* Internal Clearing Execution */}
                         <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-xl shadow-sm space-y-8">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-sm bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-primary shadow-sm">
+                                <div className="w-12 h-12 rounded-sm bg-primary-soft dark:bg-primary-soft flex items-center justify-center text-primary shadow-sm">
                                     <ArrowRightLeft className="w-6 h-6" />
                                 </div>
                                 <h3 className="text-lg font-black text-neutral-900 dark:text-white uppercase tracking-tighter">Node Management</h3>
@@ -193,7 +193,7 @@ const CashBankPosition: React.FC = () => {
                                 <QuickAction
                                     title="Withdrawal Execution"
                                     icon={ArrowDownLeft}
-                                    color="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20"
+                                    color="bg-success-soft text-success dark:bg-success-soft"
                                     onClick={() => navigate('/cashbank/transfers', { state: { toAccount: 'cash' } })}
                                 />
                                 <QuickAction
@@ -205,32 +205,32 @@ const CashBankPosition: React.FC = () => {
                                 <QuickAction
                                     title="Registry Control"
                                     icon={ShieldCheck}
-                                    color="bg-indigo-50 text-primary dark:bg-indigo-900/20"
+                                    color="bg-primary-soft text-primary dark:bg-primary-soft"
                                     onClick={() => navigate('/cashbank/bank-accounts')}
                                 />
                             </div>
                         </div>
 
                         {/* Fiscal Advisory Stream */}
-                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/5 border border-amber-100 dark:border-amber-900/20 p-10 rounded-xl space-y-6">
+                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/5 border border-warning-line dark:border-warning/20 p-10 rounded-xl space-y-6">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-sm text-warning shadow-sm border border-amber-100 dark:border-amber-900/20">
+                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-sm text-warning shadow-sm border border-warning-line dark:border-warning/20">
                                     <Zap className="w-6 h-6" />
                                 </div>
-                                <h4 className="text-sm font-black text-amber-900 dark:text-amber-300 uppercase tracking-[0.2em] leading-none">Fiscal Advisory</h4>
+                                <h4 className="text-sm font-black text-warning dark:text-warning uppercase tracking-[0.2em] leading-none">Fiscal Advisory</h4>
                             </div>
                             <div className="space-y-4">
                                 {(position?.breakdown.cash.percentage || 0) > 30 && (
-                                    <p className="text-[11px] text-amber-800 dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
+                                    <p className="text-[11px] text-warning dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
                                         High vault exposure detected. Consider re-routing capital to digital units for institutional risk mitigation.
                                     </p>
                                 )}
                                 {(position?.breakdown.bank.percentage || 0) > 95 && (
-                                    <p className="text-[11px] text-amber-800 dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
+                                    <p className="text-[11px] text-warning dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
                                         Minimum liquidity reached in physical nodes. Maintain operational reserve for immediate market clearance.
                                     </p>
                                 )}
-                                <p className="text-[11px] text-emerald-700 dark:text-success font-bold leading-relaxed italic opacity-80 border-l-2 border-success/30 pl-4">
+                                <p className="text-[11px] text-success dark:text-success font-bold leading-relaxed italic opacity-80 border-l-2 border-success/30 pl-4">
                                     Asset distribution aligns with optimized ERP liquidity patterns for the current fiscal cycle.
                                 </p>
                             </div>

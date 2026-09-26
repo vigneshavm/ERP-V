@@ -67,12 +67,12 @@ const AddCustomer = () => {
             />
 
             <div className="max-w-5xl mx-auto space-y-6">
-                <div className="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/30 p-4 rounded-sm flex items-start gap-4">
-                    <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
+                <div className="bg-primary-soft dark:bg-primary-soft border border-primary/30 dark:border-primary/30 p-4 rounded-sm flex items-start gap-4">
+                    <div className="p-2 bg-primary-soft dark:bg-primary-soft rounded-xl">
                         <Info className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                        <p className="text-xs font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-widest leading-none mt-1">Onboarding Protocol</p>
+                        <p className="text-xs font-black text-primary dark:text-primary uppercase tracking-widest leading-none mt-1">Onboarding Protocol</p>
                         <p className="text-[11px] text-primary dark:text-primary font-medium mt-2 leading-relaxed italic">All consumer records are multi-indexed by phone number and email to prevent marketplace duplication. Ensure accuracy of contact nodes for logistics integrity.</p>
                     </div>
                 </div>

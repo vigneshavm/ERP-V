@@ -119,7 +119,7 @@ const CardTerminals: React.FC = () => {
                                     <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-300">{t.provider || '—'}</td>
                                     <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-300">{storeName(t.storeId)}</td>
                                     <td className="px-6 py-4">
-                                        <span className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase ${t.isActive ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-neutral-100 border-neutral-200 text-neutral-500'}`}>
+                                        <span className={`text-[10px] px-2 py-0.5 rounded border font-bold uppercase ${t.isActive ? 'bg-success-soft border-success-line text-success' : 'bg-neutral-100 border-neutral-200 text-neutral-500'}`}>
                                             {t.isActive ? 'Active' : 'Inactive'}
                                         </span>
                                     </td>
@@ -129,7 +129,7 @@ const CardTerminals: React.FC = () => {
                                             <button onClick={() => openEdit(t)} className="p-1.5 text-neutral-400 hover:text-primary" title="Edit">
                                                 <Pencil className="w-4 h-4" />
                                             </button>
-                                            <button onClick={() => handleDelete(t._id)} className="p-1.5 text-neutral-400 hover:text-rose-600" title="Remove">
+                                            <button onClick={() => handleDelete(t._id)} className="p-1.5 text-neutral-400 hover:text-danger" title="Remove">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>

@@ -112,7 +112,7 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
                     {initialData ? (
                         <button
                             onClick={handleClear}
-                            className="px-4 py-2 flex items-center gap-2 text-rose-600 dark:text-danger hover:bg-rose-100 dark:hover:bg-rose-900/30 rounded-lg font-bold transition-colors"
+                            className="px-4 py-2 flex items-center gap-2 text-danger dark:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg font-bold transition-colors"
                         >
                             <Trash2 size={16} /> Clear
                         </button>
@@ -128,7 +128,7 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
                         </button>
                         <button
                             onClick={handleSave}
-                            className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-500/30 transition-all"
+                            className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold shadow-lg shadow-indigo-500/30 transition-all"
                         >
                             Save Entry
                         </button>

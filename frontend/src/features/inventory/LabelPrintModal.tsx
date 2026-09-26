@@ -136,7 +136,7 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                             <div key={idx} className="p-4 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/50">
                                 <p className="font-bold text-gray-900 dark:text-white truncate">{p.name}</p>
                                 <p className="text-xs text-gray-500 font-mono">{p.sku}</p>
-                                <p className="mt-2 font-bold text-emerald-600">₹{p.sellingPrice || p.price}</p>
+                                <p className="mt-2 font-bold text-success">₹{p.sellingPrice || p.price}</p>
                             </div>
                         ))}
                     </div>
@@ -152,7 +152,7 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                     {profile.protocol === 'pdf' ? (
                         <button
                             onClick={handleDownloadPDF}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all transform active:scale-95"
+                            className="bg-success hover:bg-success/90 text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all transform active:scale-95"
                         >
                             <Download className="w-5 h-5" />
                             Download Labels PDF
@@ -160,7 +160,7 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                     ) : (
                         <button
                             onClick={handleDownloadPrintFile}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all transform active:scale-95"
+                            className="bg-success hover:bg-success/90 text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all transform active:scale-95"
                         >
                             <Download className="w-5 h-5" />
                             Download {profile.protocol} Print File

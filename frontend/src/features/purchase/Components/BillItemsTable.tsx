@@ -34,7 +34,7 @@ const BillItemsTable: React.FC<BillItemsTableProps> = ({ items, onUpdateItem }) 
                     </thead>
                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800/50 font-medium">
                         {items.map((item, idx) => (
-                            <tr key={idx} className={`group hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors ${item.variance_flag ? 'bg-amber-50/30 dark:bg-amber-900/10' : ''}`}>
+                            <tr key={idx} className={`group hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors ${item.variance_flag ? 'bg-warning/30 dark:bg-warning-soft' : ''}`}>
                                 <td className="px-6 py-4">
                                     <div className="text-neutral-900 dark:text-white font-bold">{item.product_name}</div>
                                     <div className="text-[10px] text-neutral-500 font-mono">{item.sku || 'NO-SKU'}</div>
@@ -47,7 +47,7 @@ const BillItemsTable: React.FC<BillItemsTableProps> = ({ items, onUpdateItem }) 
                                         type="number"
                                         value={item.bill_quantity}
                                         onChange={(e) => onUpdateItem(idx, 'bill_quantity', parseFloat(e.target.value) || 0)}
-                                        className={`w-full text-center py-1.5 bg-transparent border-b ${item.bill_quantity !== item.grn_quantity ? 'border-amber-500 text-amber-600' : 'border-neutral-200 dark:border-neutral-700'}`}
+                                        className={`w-full text-center py-1.5 bg-transparent border-b ${item.bill_quantity !== item.grn_quantity ? 'border-warning text-warning' : 'border-neutral-200 dark:border-neutral-700'}`}
                                     />
                                 </td>
                                 <td className="px-6 py-4 text-right text-neutral-500">
@@ -60,7 +60,7 @@ const BillItemsTable: React.FC<BillItemsTableProps> = ({ items, onUpdateItem }) 
                                             type="number"
                                             value={item.bill_rate}
                                             onChange={(e) => onUpdateItem(idx, 'bill_rate', parseFloat(e.target.value) || 0)}
-                                            className={`w-24 text-right py-1.5 bg-transparent border-b ${item.bill_rate !== item.grn_rate ? 'border-amber-500 text-amber-600' : 'border-neutral-200 dark:border-neutral-700'}`}
+                                            className={`w-24 text-right py-1.5 bg-transparent border-b ${item.bill_rate !== item.grn_rate ? 'border-warning text-warning' : 'border-neutral-200 dark:border-neutral-700'}`}
                                         />
                                     </div>
                                 </td>

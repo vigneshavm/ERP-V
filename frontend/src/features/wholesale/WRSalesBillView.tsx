@@ -68,7 +68,7 @@ const WRSalesBillView: React.FC = () => {
                                         <td className="px-6 py-4">{inv.customer?.name || 'Walk-in'}</td>
                                         <td className="px-6 py-4 text-neutral-500">{inv.counterName || '—'}</td>
                                         <td className="px-6 py-4 text-right font-semibold">₹{inv.totalAmount?.toFixed(2)}</td>
-                                        <td className="px-6 py-4 text-right text-emerald-600">₹{inv.paidAmount?.toFixed(2)}</td>
+                                        <td className="px-6 py-4 text-right text-success">₹{inv.paidAmount?.toFixed(2)}</td>
                                         <td className="px-6 py-4">
                                             <StatusBadge status={inv.paymentStatus} />
                                         </td>

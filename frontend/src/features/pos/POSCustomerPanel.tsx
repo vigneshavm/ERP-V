@@ -185,10 +185,10 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
 
 
             <div className="flex flex-col gap-2 bg-white dark:bg-slate-900 rounded-sm p-4 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-600/5 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700" />
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700" />
                 <div className="flex justify-between items-center relative z-10">
                     <div className="flex items-center gap-2">
-                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-[10px] ${activeCustomer.id !== 'c1' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-[10px] ${activeCustomer.id !== 'c1' ? 'bg-primary text-white shadow-lg shadow-indigo-600/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
                             {activeCustomer.name.charAt(0)}
                         </div>
                         <div>
@@ -204,7 +204,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                         </div>
                     </div>
                     {activeCustomer.id !== 'c1' && (
-                        <button onClick={() => onSetCustomer('c1')} className="p-1.5 bg-rose-50 dark:bg-rose-900/20 text-danger hover:bg-rose-500 hover:text-white rounded-lg transition-all">
+                        <button onClick={() => onSetCustomer('c1')} className="p-1.5 bg-danger-soft dark:bg-danger-soft text-danger hover:bg-danger/90 hover:text-white rounded-lg transition-all">
                             <RotateCcw className="w-3.5 h-3.5" />
                         </button>
                     )}
@@ -233,10 +233,10 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
 
                 {/* Points Earned Preview */}
                 {activeCustomer.id !== 'c1' && (
-                    <div className="mt-2 p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-900/30 flex items-center justify-between relative z-10">
+                    <div className="mt-2 p-2 bg-primary-soft dark:bg-primary-soft rounded-xl border border-primary/30 dark:border-primary/30 flex items-center justify-between relative z-10">
                         <div className="flex items-center gap-2">
                             <Zap className="w-3.5 h-3.5 text-primary dark:text-primary animate-pulse" />
-                            <span className="text-[9px] font-black text-indigo-700 dark:text-indigo-300 uppercase tracking-widest">Points for this order</span>
+                            <span className="text-[9px] font-black text-primary dark:text-primary uppercase tracking-widest">Points for this order</span>
                         </div>
                         <p className="text-xs font-black text-primary dark:text-primary">+ 184</p>
                     </div>
@@ -250,14 +250,14 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-1">Reach:</span>
                             <button
                                 onClick={() => alert("Invoice emailed!")}
-                                className="p-2 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 hover:text-white rounded-xl transition-all shadow-sm border border-slate-200 dark:border-slate-700"
+                                className="p-2 bg-slate-50 dark:bg-slate-800 hover:bg-primary hover:text-white rounded-xl transition-all shadow-sm border border-slate-200 dark:border-slate-700"
                                 title="Email Invoice"
                             >
                                 <Mail className="w-3.5 h-3.5" />
                             </button>
                             <button
                                 onClick={() => alert("Invoice sent via WhatsApp!")}
-                                className="p-2 bg-emerald-50 dark:bg-emerald-900/10 hover:bg-emerald-600 hover:text-white rounded-xl text-emerald-600 transition-all shadow-sm border border-emerald-100 dark:border-emerald-900/30"
+                                className="p-2 bg-success-soft dark:bg-success-soft hover:bg-success/90 hover:text-white rounded-xl text-success transition-all shadow-sm border border-success-line dark:border-success/30"
                                 title="WhatsApp Invoice"
                             >
                                 <Send className="w-3.5 h-3.5" />
@@ -268,14 +268,14 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                         <div className="flex items-center gap-1.5 ml-auto">
                             <button
                                 onClick={() => alert("Opening Loyalty Ledger...")}
-                                className="p-2 bg-amber-50 dark:bg-amber-900/10 hover:bg-amber-500 hover:text-white rounded-xl text-amber-600 transition-all shadow-sm border border-amber-100 dark:border-amber-900/30"
+                                className="p-2 bg-warning-soft dark:bg-warning-soft hover:bg-warning/90 hover:text-white rounded-xl text-warning transition-all shadow-sm border border-warning-line dark:border-warning/30"
                                 title="Loyalty History"
                             >
                                 <History className="w-3.5 h-3.5" />
                             </button>
                             <button
                                 onClick={() => alert("Redeeming points...")}
-                                className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-600/20"
+                                className="flex items-center gap-2 px-3 py-2 bg-primary text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-600/20"
                                 title="Redeem Points"
                             >
                                 <Gift className="w-3.5 h-3.5" /> Redeem
@@ -286,7 +286,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                         <div className="flex items-center gap-1.5 ml-2 border-l border-slate-100 dark:border-slate-800 pl-4">
                             <button
                                 onClick={() => alert("Feedback request sent to customer!")}
-                                className="p-2 bg-emerald-50 dark:bg-emerald-900/10 hover:bg-emerald-600 hover:text-white rounded-xl text-emerald-600 transition-all shadow-sm border border-emerald-100 dark:border-emerald-900/30"
+                                className="p-2 bg-success-soft dark:bg-success-soft hover:bg-success/90 hover:text-white rounded-xl text-success transition-all shadow-sm border border-success-line dark:border-success/30"
                                 title="Trigger Feedback Request"
                             >
                                 <MessageSquare className="w-3.5 h-3.5" />

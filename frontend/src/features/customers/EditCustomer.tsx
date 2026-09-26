@@ -63,7 +63,7 @@ const EditCustomer = () => {
             <Layout>
                 <div className="flex justify-center items-center py-20">
                     <div className="flex flex-col items-center gap-4">
-                        <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin"></div>
+                        <div className="w-12 h-12 border-4 border-primary/20 border-t-indigo-600 rounded-full animate-spin"></div>
                         <p className="text-sm font-bold text-slate-400">Fetching Partner Intel...</p>
                     </div>
                 </div>
@@ -88,9 +88,9 @@ const EditCustomer = () => {
             />
 
             <div className="max-w-5xl mx-auto space-y-6">
-                <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30 p-4 rounded-sm flex items-start gap-4 text-amber-900 dark:text-amber-300">
-                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-xl">
-                        < Zap className="w-5 h-5 text-amber-600" />
+                <div className="bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning/30 p-4 rounded-sm flex items-start gap-4 text-warning dark:text-warning">
+                    <div className="p-2 bg-warning-soft dark:bg-warning-soft rounded-xl">
+                        < Zap className="w-5 h-5 text-warning" />
                     </div>
                     <div>
                         <p className="text-xs font-black uppercase tracking-widest leading-none mt-1">Audit Warning</p>

@@ -41,7 +41,7 @@ const CustomerDetail = () => {
             <Layout>
                 <div className="flex justify-center items-center py-20">
                     <div className="flex flex-col items-center gap-4">
-                        <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin"></div>
+                        <div className="w-12 h-12 border-4 border-primary/20 border-t-indigo-600 rounded-full animate-spin"></div>
                         <p className="text-sm font-bold text-slate-400">Authenticating Partner Profile...</p>
                     </div>
                 </div>
@@ -58,7 +58,7 @@ const CustomerDetail = () => {
                     </div>
                     <p className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-widest">Entry Restricted</p>
                     <p className="text-sm text-slate-500 max-w-xs">{message || 'This consumer profile has been archived or does not exist in the current terminal.'}</p>
-                    <button onClick={() => navigate('/customers')} className="mt-4 px-8 py-3 bg-indigo-600 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all font-medium">Return to Portfolio</button>
+                    <button onClick={() => navigate('/customers')} className="mt-4 px-8 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-primary-hover transition-all font-medium">Return to Portfolio</button>
                 </div>
             </Layout>
         );
@@ -80,7 +80,7 @@ const CustomerDetail = () => {
                         </button>
                         <button
                             onClick={() => navigate(`/customers/adjust-due/${customer._id}`)}
-                            className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none hover:bg-emerald-700 transition-all font-medium"
+                            className="flex items-center gap-2 px-6 py-2 bg-success text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none hover:bg-success/90 transition-all font-medium"
                         >
                             Adjust Ledger
                         </button>
@@ -133,8 +133,8 @@ const CustomerDetail = () => {
                         </DetailCard>
                         <DetailCard title="Operational Status" icon={ShieldCheck}>
                             <div className="space-y-4">
-                                <div className="flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-sm border border-emerald-100 dark:border-emerald-800/30">
-                                    <div className="flex items-center gap-3 text-emerald-600">
+                                <div className="flex items-center justify-between p-4 bg-success-soft dark:bg-success-soft rounded-sm border border-success-line dark:border-success/30">
+                                    <div className="flex items-center gap-3 text-success">
                                         <ShieldCheck className="w-5 h-5" />
                                         <span className="text-xs font-black uppercase tracking-widest">Active Partner</span>
                                     </div>
@@ -189,7 +189,7 @@ const CustomerDetail = () => {
                                                     <p className="text-xs font-black text-slate-800 dark:text-white">₹{(tx.amount || 0).toLocaleString('en-IN')}</p>
                                                 </td>
                                                 <td className="px-8 py-5 text-right">
-                                                    <span className="px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 text-[9px] font-black uppercase rounded-lg">Success</span>
+                                                    <span className="px-2 py-1 bg-success-soft dark:bg-success-soft text-success text-[9px] font-black uppercase rounded-lg">Success</span>
                                                 </td>
                                             </tr>
                                         ))}

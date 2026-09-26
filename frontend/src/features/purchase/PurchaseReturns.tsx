@@ -119,16 +119,16 @@ const PurchaseReturns: React.FC = () => {
                     }
                 />
                 {loadError && (
-                    <div role="alert" className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{loadError}</div>
+                    <div role="alert" className="rounded-md border border-danger-line bg-danger-soft px-4 py-3 text-sm font-medium text-danger dark:border-danger/50 dark:bg-danger-soft dark:text-danger">{loadError}</div>
                 )}
 
                 {/* KPI Pulse Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
                         { label: 'Total Nodes', val: stats.total, icon: RotateCcw, color: 'text-primary', bg: 'bg-primary/10' },
-                        { label: 'Quantum Reversal', val: formatCurrency(stats.totalAmount), icon: Zap, color: 'text-success', bg: 'bg-emerald-50' },
-                        { label: 'Floating Credits', val: formatCurrency(stats.pendingAmount), icon: Clock, color: 'text-warning', bg: 'bg-amber-50' },
-                        { label: 'Resolved (Credited)', val: stats.total - returns.filter(r => r.status !== 'Credited').length, icon: ShieldCheck, color: 'text-primary', bg: 'bg-indigo-50' }
+                        { label: 'Quantum Reversal', val: formatCurrency(stats.totalAmount), icon: Zap, color: 'text-success', bg: 'bg-success-soft' },
+                        { label: 'Floating Credits', val: formatCurrency(stats.pendingAmount), icon: Clock, color: 'text-warning', bg: 'bg-warning-soft' },
+                        { label: 'Resolved (Credited)', val: stats.total - returns.filter(r => r.status !== 'Credited').length, icon: ShieldCheck, color: 'text-primary', bg: 'bg-primary-soft' }
                     ].map((card, i) => (
                         <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
@@ -221,7 +221,7 @@ const PurchaseReturns: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="px-8 py-6">
-                                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${r.reason === 'Defective' ? 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-900/20 dark:border-rose-800/30' : 'bg-neutral-50 text-neutral-600 border-neutral-100 dark:bg-neutral-900 dark:border-neutral-800'}`}>
+                                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${r.reason === 'Defective' ? 'bg-danger-soft text-danger border-danger-line dark:bg-danger-soft dark:border-danger/30' : 'bg-neutral-50 text-neutral-600 border-neutral-100 dark:bg-neutral-900 dark:border-neutral-800'}`}>
                                                 {r.reason}
                                             </span>
                                         </td>

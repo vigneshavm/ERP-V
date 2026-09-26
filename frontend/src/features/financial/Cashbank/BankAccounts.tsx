@@ -81,7 +81,7 @@ const BankAccounts: React.FC = () => {
     const getAccountIcon = (name: string) => {
         const lowerName = name.toLowerCase();
         if (lowerName.includes('hotel') || lowerName.includes('food')) return <UtensilsCrossed className="w-12 h-12 text-warning" />;
-        if (lowerName.includes('car') || lowerName.includes('suv')) return <Car className="w-12 h-12 text-blue-500" />;
+        if (lowerName.includes('car') || lowerName.includes('suv')) return <Car className="w-12 h-12 text-primary" />;
         if (lowerName.includes('home') || lowerName.includes('rent')) return <Home className="w-12 h-12 text-success" />;
         return <Wallet className="w-12 h-12 text-primary" />;
     };
@@ -211,7 +211,7 @@ const BankAccounts: React.FC = () => {
                         {/* Add Account Trigger */}
                         <div
                             onClick={() => setShowAddAccount(true)}
-                            className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-white/5 rounded-[2.5rem] hover:border-success/30 hover:bg-emerald-500/5 transition-all cursor-pointer group"
+                            className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-white/5 rounded-[2.5rem] hover:border-success/30 hover:bg-success/5 transition-all cursor-pointer group"
                         >
                             <div className="w-12 h-12 bg-white/5 rounded-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <Plus className="w-6 h-6 text-success" />
@@ -222,7 +222,7 @@ const BankAccounts: React.FC = () => {
                 {/* Floating Action Button (Alternative Add Account) */}
                 <button
                     onClick={() => setShowAddAccount(true)}
-                    className="fixed bottom-10 right-10 w-16 h-16 bg-emerald-500 hover:bg-emerald-400 text-neutral-950 rounded-full flex items-center justify-center shadow-[0_10px_40px_-5px_rgba(16,185,129,0.5)] active:scale-95 transition-all border-[6px] border-[#05070a] z-50"
+                    className="fixed bottom-10 right-10 w-16 h-16 bg-success hover:bg-success/90 text-neutral-950 rounded-full flex items-center justify-center shadow-[0_10px_40px_-5px_rgba(16,185,129,0.5)] active:scale-95 transition-all border-[6px] border-[#05070a] z-50"
                 >
                     <Plus className="w-8 h-8 stroke-[4]" />
                 </button>
@@ -236,7 +236,7 @@ const BankAccounts: React.FC = () => {
                     footer={
                         <>
                             <button type="button" onClick={() => setShowAddAccount(false)} className="px-8 py-3.5 border border-white/5 text-neutral-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">Abort</button>
-                            <button type="submit" form="add-account-form" disabled={isLoading} className="px-10 py-3.5 bg-emerald-500 text-neutral-950 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-emerald-400 disabled:opacity-50 transition-all">
+                            <button type="submit" form="add-account-form" disabled={isLoading} className="px-10 py-3.5 bg-success text-neutral-950 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-success/90 disabled:opacity-50 transition-all">
                                 {isLoading ? 'Synchronizing...' : 'Commit Initialization'}
                             </button>
                         </>
@@ -249,7 +249,7 @@ const BankAccounts: React.FC = () => {
                                     type="text"
                                     value={formData.bankName}
                                     onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="e.g. HDFC Treasury"
                                     required
                                 />
@@ -259,7 +259,7 @@ const BankAccounts: React.FC = () => {
                                     type="text"
                                     value={formData.branch}
                                     onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="Regional Node"
                                 />
                             </CashBankInput>
@@ -271,7 +271,7 @@ const BankAccounts: React.FC = () => {
                                     type="text"
                                     value={formData.accountNumber}
                                     onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="Official Identifier"
                                     required
                                 />
@@ -281,7 +281,7 @@ const BankAccounts: React.FC = () => {
                                     type="text"
                                     value={formData.ifsc}
                                     onChange={(e) => setFormData({ ...formData, ifsc: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="HDFC0001234"
                                     required
                                 />
@@ -293,7 +293,7 @@ const BankAccounts: React.FC = () => {
                                 <select
                                     value={formData.accountType}
                                     onChange={(e) => setFormData({ ...formData, accountType: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white appearance-none"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white appearance-none"
                                 >
                                     <option>Savings</option>
                                     <option>Current</option>
@@ -305,7 +305,7 @@ const BankAccounts: React.FC = () => {
                                     type="number"
                                     value={formData.openingBalance}
                                     onChange={(e) => setFormData({ ...formData, openingBalance: parseFloat(e.target.value) || 0 })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="0.00"
                                 />
                             </CashBankInput>

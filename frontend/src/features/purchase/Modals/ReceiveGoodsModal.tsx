@@ -100,7 +100,7 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
 
                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                     {error && (
-                        <div className="mb-4 p-3 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-lg text-sm font-medium flex items-start gap-2">
+                        <div className="mb-4 p-3 bg-danger-soft dark:bg-danger-soft text-danger dark:text-danger rounded-lg text-sm font-medium flex items-start gap-2">
                             <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
                             <span>{error}</span>
                         </div>

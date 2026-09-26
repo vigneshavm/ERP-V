@@ -269,7 +269,7 @@ const RateRevisionForm: React.FC = () => {
                                 <ShieldCheck className="text-warning w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Authorization Protocol</p>
+                                <p className="text-[10px] font-black text-warning uppercase tracking-widest mb-1">Authorization Protocol</p>
                                 <p className="text-[10px] font-bold text-neutral-400 leading-relaxed italic">
                                     Retrospective adjustments require institutional sign-off before inventory basis is recalibrated.
                                 </p>

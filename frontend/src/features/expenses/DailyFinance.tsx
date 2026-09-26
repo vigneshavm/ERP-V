@@ -193,7 +193,7 @@ const DailyFinancePage: React.FC = () => {
                         <div className="flex flex-col">
                             <h1 className="page-title text-slate-800 dark:text-neutral-100">Today's Summary</h1>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="px-2 py-0.5 bg-indigo-50 dark:bg-primary/10 text-primary dark:text-primary text-[9px] font-black uppercase rounded-md border border-indigo-100/50 dark:border-primary/20">
+                                <span className="px-2 py-0.5 bg-primary-soft dark:bg-primary/10 text-primary dark:text-primary text-[9px] font-black uppercase rounded-md border border-primary/50 dark:border-primary/20">
                                     {typeof user?.tenantId === 'object' && user?.tenantId !== null ? (user.tenantId as any).name : (user?.tenantId || 'Business')}
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-neutral-600" />
@@ -214,29 +214,29 @@ const DailyFinancePage: React.FC = () => {
                 {/* Summary Metrics */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Total Sales */}
-                    <div className="bg-[#F8FFF9] dark:bg-success/10 border border-emerald-100 dark:border-success/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
+                    <div className="bg-[#F8FFF9] dark:bg-success/10 border border-success-line dark:border-success/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-3">
                                 <TrendingUp className="w-4 h-4 text-success" />
-                                <span className="text-[10px] font-bold text-emerald-600 dark:text-success uppercase tracking-widest">Total Sales</span>
+                                <span className="text-[10px] font-bold text-success dark:text-success uppercase tracking-widest">Total Sales</span>
                             </div>
                             <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {formatCurrency(summaryStats.sales)}</span>
                         </div>
                     </div>
 
                     {/* Total Expenses */}
-                    <div className="bg-[#FFF8F8] dark:bg-danger/10 border border-rose-100 dark:border-danger/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
+                    <div className="bg-[#FFF8F8] dark:bg-danger/10 border border-danger-line dark:border-danger/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-3">
                                 <TrendingDown className="w-4 h-4 text-danger" />
-                                <span className="text-[10px] font-bold text-rose-600 dark:text-danger uppercase tracking-widest">Total Expenses</span>
+                                <span className="text-[10px] font-bold text-danger dark:text-danger uppercase tracking-widest">Total Expenses</span>
                             </div>
                             <span className="text-2xl font-black text-slate-900 dark:text-white">₹ {formatCurrency(summaryStats.expenses)}</span>
                         </div>
                     </div>
 
                     {/* Net Profit */}
-                    <div className="bg-[#E8F2FF]/30 dark:bg-primary/10 border border-indigo-100 dark:border-primary/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
+                    <div className="bg-[#E8F2FF]/30 dark:bg-primary/10 border border-primary/30 dark:border-primary/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-3">
                                 <Zap className="w-4 h-4 text-primary" />
@@ -255,7 +255,7 @@ const DailyFinancePage: React.FC = () => {
 
                         {/* Sales Flow Chart */}
                         <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-all"></div>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-all"></div>
                             <div className="flex items-center justify-between mb-6 relative z-10">
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-800 dark:text-neutral-100 flex items-center gap-2">
@@ -373,11 +373,11 @@ const DailyFinancePage: React.FC = () => {
                                                 <tr
                                                     key={t.id}
                                                     onClick={() => setSelectedRowId(t.id === selectedRowId ? null : t.id)}
-                                                    className={`hover:bg-slate-50 dark:hover:bg-neutral-700/30 transition-colors group cursor-default ${selectedRowId === t.id ? 'bg-indigo-50/50 dark:bg-indigo-500/5' : ''}`}
+                                                    className={`hover:bg-slate-50 dark:hover:bg-neutral-700/30 transition-colors group cursor-default ${selectedRowId === t.id ? 'bg-primary/50 dark:bg-primary/5' : ''}`}
                                                 >
                                                     <td className="p-5">
                                                         <div className="flex items-center gap-3">
-                                                            <div className={`w-2 h-2 rounded-full ${t.synced === false ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
+                                                            <div className={`w-2 h-2 rounded-full ${t.synced === false ? 'bg-warning animate-pulse' : 'bg-success'}`} />
                                                             <div>
                                                                 <div className="font-bold text-slate-800 dark:text-neutral-100 text-sm">
                                                                     {new Date(t.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
@@ -387,7 +387,7 @@ const DailyFinancePage: React.FC = () => {
                                                         </div>
                                                     </td>
                                                     <td className="p-5 text-right">
-                                                        <span className="font-bold text-emerald-600 dark:text-success text-sm">
+                                                        <span className="font-bold text-success dark:text-success text-sm">
                                                             ₹{formatCurrency(t.totalSales || (t.cashSales + t.onlineSales))}
                                                         </span>
                                                     </td>
@@ -403,8 +403,8 @@ const DailyFinancePage: React.FC = () => {
                                                     </td>
                                                     <td className="p-5 text-right">
                                                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                                                            <button onClick={(e) => { e.stopPropagation(); handleEdit(t); }} className="p-2 text-primary hover:bg-indigo-50 dark:hover:bg-primary/10 rounded-lg transition-all active:scale-90"><Edit2 size={14} /></button>
-                                                            <button onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }} className="p-2 text-danger hover:bg-rose-50 dark:hover:bg-danger/10 rounded-lg transition-all active:scale-90"><Trash2 size={14} /></button>
+                                                            <button onClick={(e) => { e.stopPropagation(); handleEdit(t); }} className="p-2 text-primary hover:bg-primary-soft dark:hover:bg-primary/10 rounded-lg transition-all active:scale-90"><Edit2 size={14} /></button>
+                                                            <button onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }} className="p-2 text-danger hover:bg-danger-soft dark:hover:bg-danger/10 rounded-lg transition-all active:scale-90"><Trash2 size={14} /></button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -426,7 +426,7 @@ const DailyFinancePage: React.FC = () => {
                                     <Plus className="w-4 h-4 text-primary" /> {editingId ? 'Edit Record' : 'New Entry'}
                                 </h3>
                                 {editingId && (
-                                    <button onClick={cancelEdit} className="p-1.5 hover:bg-rose-50 dark:hover:bg-danger/10 text-slate-400 hover:text-danger rounded-lg transition-colors">
+                                    <button onClick={cancelEdit} className="p-1.5 hover:bg-danger-soft dark:hover:bg-danger/10 text-slate-400 hover:text-danger rounded-lg transition-colors">
                                         <X size={14} />
                                     </button>
                                 )}
@@ -468,14 +468,14 @@ const DailyFinancePage: React.FC = () => {
                                 </div>
 
                                 {/* Live Preview */}
-                                <div className="bg-[#E8F2FF]/30 dark:bg-primary/10 border border-indigo-100 dark:border-primary/20 p-4 rounded-xl">
+                                <div className="bg-[#E8F2FF]/30 dark:bg-primary/10 border border-primary/30 dark:border-primary/20 p-4 rounded-xl">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[10px] font-bold text-primary dark:text-primary uppercase tracking-widest">Total Sales Preview</span>
                                         <span className="text-lg font-black text-slate-900 dark:text-white">₹ {formatCurrency(currentTotalSales)}</span>
                                     </div>
                                 </div>
 
-                                <button type="submit" className="w-full py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+                                <button type="submit" className="w-full py-3.5 bg-primary hover:bg-primary text-white rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
                                     <CheckCircle2 className="w-4 h-4" />
                                     {editingId ? 'Update Record' : 'Save Entry'}
                                 </button>
@@ -484,7 +484,7 @@ const DailyFinancePage: React.FC = () => {
 
                         {/* Status Message */}
                         {statusMsg && (
-                            <div className={`p-4 rounded-xl flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest border ${statusMsg.type === 'success' ? 'bg-emerald-50 dark:bg-success/10 text-emerald-600 dark:text-success border-emerald-100 dark:border-success/20' : 'bg-rose-50 dark:bg-danger/10 text-rose-600 dark:text-danger border-rose-100 dark:border-danger/20'}`}>
+                            <div className={`p-4 rounded-xl flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest border ${statusMsg.type === 'success' ? 'bg-success-soft dark:bg-success/10 text-success dark:text-success border-success-line dark:border-success/20' : 'bg-danger-soft dark:bg-danger/10 text-danger dark:text-danger border-danger-line dark:border-danger/20'}`}>
                                 {statusMsg.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
                                 {statusMsg.text}
                             </div>

@@ -169,7 +169,7 @@ const SalaryStructureManager = () => {
                             <button
                                 onClick={handleBulkUpdate}
                                 disabled={!bulkData.confirm}
-                                className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+                                className="px-3 py-1 bg-primary text-white rounded hover:bg-primary-hover disabled:opacity-50"
                             >
                                 Apply to All
                             </button>
@@ -190,14 +190,14 @@ const SalaryStructureManager = () => {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => dispatch(fetchSalaryComponents())}
-                                className="px-3 py-2 text-primary hover:bg-indigo-50 rounded-lg text-sm font-medium border border-transparent hover:border-indigo-100"
+                                className="px-3 py-2 text-primary hover:bg-primary-soft rounded-lg text-sm font-medium border border-transparent hover:border-primary/30"
                                 title="Refresh Components"
                             >
                                 🔄 Refresh
                             </button>
                             <button
                                 onClick={() => setIsBulkMode(true)}
-                                className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg hover:bg-indigo-100 text-sm font-medium flex items-center gap-2"
+                                className="px-4 py-2 bg-primary-soft border border-primary/30 text-primary rounded-lg hover:bg-primary-soft text-sm font-medium flex items-center gap-2"
                             >
                                 <Users size={16} /> Bulk Assign
                             </button>
@@ -216,7 +216,7 @@ const SalaryStructureManager = () => {
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Select Employee</label>
                         <select
-                            className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-primary"
                             value={selectedEmployeeId}
                             onChange={(e) => setSelectedEmployeeId(e.target.value)}
                         >
@@ -225,9 +225,9 @@ const SalaryStructureManager = () => {
                         </select>
 
                         {selectedEmployeeId && (
-                            <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                            <div className="p-4 bg-primary-soft rounded-lg border border-primary/30">
                                 <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-10 h-10 bg-indigo-200 rounded-full flex items-center justify-center text-indigo-700">
+                                    <div className="w-10 h-10 bg-primary-soft rounded-full flex items-center justify-center text-primary">
                                         <User size={20} />
                                     </div>
                                     <div>
@@ -235,7 +235,7 @@ const SalaryStructureManager = () => {
                                         <p className="text-xs text-gray-500">{employees.find(e => e._id === selectedEmployeeId)?.role}</p>
                                     </div>
                                 </div>
-                                <div className="mt-4 pt-4 border-t border-indigo-100">
+                                <div className="mt-4 pt-4 border-t border-primary/30">
                                     <div className="flex justify-between items-center text-sm mb-1">
                                         <span className="text-gray-600">Estimated Gross</span>
                                         <span className="font-bold text-gray-900">₹{calculateGross().toLocaleString()}</span>
@@ -252,9 +252,9 @@ const SalaryStructureManager = () => {
                     {/* Main Structure Form */}
                     <div className="lg:col-span-2 space-y-6">
                         {isConfigMode ? (
-                            <div className="bg-white rounded-xl shadow-sm border border-orange-200 p-6 animate-in fade-in">
+                            <div className="bg-white rounded-xl shadow-sm border border-warning-line p-6 animate-in fade-in">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <Plus className="w-5 h-5 text-orange-500" />
+                                    <Plus className="w-5 h-5 text-warning" />
                                     Add New Salary Component
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -286,7 +286,7 @@ const SalaryStructureManager = () => {
                                 </div>
                                 <button
                                     onClick={handleCreateComponent}
-                                    className="mt-4 w-full py-2 bg-orange-600 text-white rounded hover:bg-orange-700 font-medium"
+                                    className="mt-4 w-full py-2 bg-warning text-white rounded hover:bg-warning/90 font-medium"
                                 >
                                     Create Component
                                 </button>
@@ -315,7 +315,7 @@ const SalaryStructureManager = () => {
                                                                     value={structureValues[c._id] || ''}
                                                                     onChange={(e) => setStructureValues({ ...structureValues, [c._id]: parseFloat(e.target.value) })}
                                                                     placeholder={c.defaultValue.toString()}
-                                                                    className="w-full pl-8 py-2 border border-gray-200 rounded bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-mono text-sm"
+                                                                    className="w-full pl-8 py-2 border border-gray-200 rounded bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-primary transition-all font-mono text-sm"
                                                                 />
                                                             </div>
                                                         </div>
@@ -340,7 +340,7 @@ const SalaryStructureManager = () => {
                                                                     value={structureValues[c._id] || ''}
                                                                     onChange={(e) => setStructureValues({ ...structureValues, [c._id]: parseFloat(e.target.value) })}
                                                                     placeholder={c.defaultValue.toString()}
-                                                                    className="w-full pl-8 py-2 border border-gray-200 rounded bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-mono text-sm"
+                                                                    className="w-full pl-8 py-2 border border-gray-200 rounded bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-500 focus:border-primary transition-all font-mono text-sm"
                                                                 />
                                                             </div>
                                                         </div>
@@ -359,7 +359,7 @@ const SalaryStructureManager = () => {
                                             <button
                                                 onClick={handleSave}
                                                 disabled={loading}
-                                                className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 shadow-sm"
+                                                className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50 shadow-sm"
                                             >
                                                 <Save size={18} />
                                                 {loading ? 'Saving...' : 'Save Structure'}

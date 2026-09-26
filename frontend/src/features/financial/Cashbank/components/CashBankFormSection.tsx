@@ -15,7 +15,7 @@ const CashBankFormSection: React.FC<CashBankFormSectionProps> = ({
 }) => (
     <div className={`space-y-4 ${className}`}>
         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
             {title}
         </h3>
         <div className={`grid ${gridCols} gap-4`}>

@@ -159,9 +159,9 @@ const SalesInvoiceDetail = () => {
 
     const getStatusConfig = (status: string) => {
         const configs: Record<string, any> = {
-            'paid': { color: 'from-emerald-500 to-emerald-600', icon: CheckCircle, text: 'Paid in Full', badge: 'bg-emerald-100 text-emerald-800' },
-            'partial': { color: 'from-amber-500 to-amber-600', icon: Clock, text: 'Partially Paid', badge: 'bg-amber-100 text-amber-800' },
-            'unpaid': { color: 'from-red-500 to-red-600', icon: AlertCircle, text: 'Payment Due', badge: 'bg-red-100 text-red-800' }
+            'paid': { color: 'from-emerald-500 to-emerald-600', icon: CheckCircle, text: 'Paid in Full', badge: 'bg-success-soft text-success' },
+            'partial': { color: 'from-amber-500 to-amber-600', icon: Clock, text: 'Partially Paid', badge: 'bg-warning-soft text-warning' },
+            'unpaid': { color: 'from-red-500 to-red-600', icon: AlertCircle, text: 'Payment Due', badge: 'bg-danger-soft text-danger' }
         };
         return configs[status] || configs['unpaid'];
     };
@@ -185,9 +185,9 @@ const SalesInvoiceDetail = () => {
         return (
             <Layout>
                 <div className="max-w-4xl mx-auto">
-                    <div className="p-4 bg-danger/10 border border-red-200 rounded-lg flex items-center gap-3">
-                        <AlertCircle className="w-5 h-5 text-red-500" />
-                        <p className="text-red-700">{message}</p>
+                    <div className="p-4 bg-danger/10 border border-danger-line rounded-lg flex items-center gap-3">
+                        <AlertCircle className="w-5 h-5 text-danger" />
+                        <p className="text-danger">{message}</p>
                     </div>
                     <button
                         onClick={() => navigate('/sales/invoice')}
@@ -254,7 +254,7 @@ const SalesInvoiceDetail = () => {
                                 {invoice.paymentStatus !== 'paid' && (
                                     <button
                                         onClick={() => setShowPaymentModal(true)}
-                                        className="px-4 py-2.5 glass-panel text-emerald-700 rounded-xl text-sm font-bold shadow-lg hover:bg-success/10 transition-all flex items-center gap-2"
+                                        className="px-4 py-2.5 glass-panel text-success rounded-xl text-sm font-bold shadow-lg hover:bg-success/10 transition-all flex items-center gap-2"
                                     >
                                         <CreditCard className="w-4 h-4" /> Record Payment
                                     </button>
@@ -341,7 +341,7 @@ const SalesInvoiceDetail = () => {
                             <div className="bg-surface/40 px-6 py-3 border-b border-default/20 flex justify-between items-center">
                                 <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Invoice Details</h2>
                                 {invoice.isEdited && (
-                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-amber-100 text-amber-800" title={invoice.lastEditReason || ''}>
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-warning-soft text-warning" title={invoice.lastEditReason || ''}>
                                         Edited
                                     </span>
                                 )}
@@ -374,9 +374,9 @@ const SalesInvoiceDetail = () => {
                     {/* Sidebar */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Payment Summary */}
-                        <div className="glass-panel border border-indigo-100 rounded-sm shadow-sm overflow-hidden sticky top-4 print:shadow-none print:border">
-                            <div className="bg-primary/10/50 px-6 py-3 border-b border-indigo-100">
-                                <h2 className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Payment Summary</h2>
+                        <div className="glass-panel border border-primary/30 rounded-sm shadow-sm overflow-hidden sticky top-4 print:shadow-none print:border">
+                            <div className="bg-primary/10/50 px-6 py-3 border-b border-primary/30">
+                                <h2 className="text-xs font-bold text-primary uppercase tracking-wider">Payment Summary</h2>
                             </div>
                             <div className="p-6 space-y-4">
                                 <div className="flex justify-between text-sm">
@@ -406,7 +406,7 @@ const SalesInvoiceDetail = () => {
                                     <span className="font-bold text-success">₹{invoice.paidAmount?.toFixed(2) || '0.00'}</span>
                                 </div>
                             </div>
-                            <div className={`px-6 py-5 flex justify-between items-center text-white ${balanceDue > 0 ? 'bg-red-600' : 'bg-emerald-600'
+                            <div className={`px-6 py-5 flex justify-between items-center text-white ${balanceDue > 0 ? 'bg-danger' : 'bg-success'
                                 }`}>
                                 <span className="text-lg font-bold tracking-tight">
                                     {balanceDue > 0 ? 'Balance Due' : 'Fully Paid'}
@@ -426,7 +426,7 @@ const SalesInvoiceDetail = () => {
                                 {invoice.paymentStatus !== 'paid' && (
                                     <button
                                         onClick={() => setShowPaymentModal(true)}
-                                        className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
+                                        className="w-full py-3 bg-success text-white rounded-xl font-bold hover:bg-success/90 transition-all flex items-center justify-center gap-2"
                                     >
                                         <CreditCard className="w-4 h-4" /> Record Payment
                                     </button>
@@ -589,7 +589,7 @@ const SalesInvoiceDetail = () => {
                             </div>
 
                             {editError && (
-                                <p className="text-sm text-red-600">{editError}</p>
+                                <p className="text-sm text-danger">{editError}</p>
                             )}
                         </div>
                         <div className="px-6 py-4 border-t border-default/20 flex justify-end gap-3 sticky bottom-0 bg-white">

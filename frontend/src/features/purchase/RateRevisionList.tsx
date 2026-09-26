@@ -91,9 +91,9 @@ const RateRevisionList: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
                         { label: 'Revision Nodes', val: stats.total, icon: Zap, color: 'text-primary', bg: 'bg-primary/10' },
-                        { label: 'Fiscal Impact', val: `₹${Math.abs(stats.totalImpact).toLocaleString()}`, icon: ArrowUpRight, color: stats.totalImpact > 0 ? 'text-danger' : 'text-success', bg: stats.totalImpact > 0 ? 'bg-rose-50' : 'bg-emerald-50' },
-                        { label: 'Awaiting Auth', val: stats.pending, icon: Clock, color: 'text-warning', bg: 'bg-amber-50' },
-                        { label: 'Audit Nodes', val: revisions.length, icon: Activity, color: 'text-primary', bg: 'bg-indigo-50' }
+                        { label: 'Fiscal Impact', val: `₹${Math.abs(stats.totalImpact).toLocaleString()}`, icon: ArrowUpRight, color: stats.totalImpact > 0 ? 'text-danger' : 'text-success', bg: stats.totalImpact > 0 ? 'bg-danger-soft' : 'bg-success-soft' },
+                        { label: 'Awaiting Auth', val: stats.pending, icon: Clock, color: 'text-warning', bg: 'bg-warning-soft' },
+                        { label: 'Audit Nodes', val: revisions.length, icon: Activity, color: 'text-primary', bg: 'bg-primary-soft' }
                     ].map((card, i) => (
                         <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
@@ -210,14 +210,14 @@ const RateRevisionList: React.FC = () => {
                                                         <div className="flex items-center gap-2 pr-4 border-r border-neutral-100 dark:border-neutral-800">
                                                             <button
                                                                 onClick={() => handleApprove(rev._id)}
-                                                                className="p-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-success rounded-xl hover:bg-emerald-100 transition-all active:scale-95 border border-emerald-100 dark:border-emerald-800/30"
+                                                                className="p-2.5 bg-success-soft dark:bg-success-soft text-success dark:text-success rounded-xl hover:bg-success-soft transition-all active:scale-95 border border-success-line dark:border-success/30"
                                                                 title="Authorize Revision"
                                                             >
                                                                 <Check size={18} />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleReject(rev._id)}
-                                                                className="p-2.5 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-danger rounded-xl hover:bg-rose-100 transition-all active:scale-95 border border-rose-100 dark:border-rose-800/30"
+                                                                className="p-2.5 bg-danger-soft dark:bg-danger-soft text-danger dark:text-danger rounded-xl hover:bg-danger-soft transition-all active:scale-95 border border-danger-line dark:border-danger/30"
                                                                 title="Abort Revision"
                                                             >
                                                                 <X size={18} />

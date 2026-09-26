@@ -106,13 +106,13 @@ const CashInHand: React.FC = () => {
                     <div className="flex gap-2">
                         <button
                             onClick={() => { setFormData({ ...formData, type: 'in', toAccount: 'cash', fromAccount: '' }); setShowAddTransaction(true); }}
-                            className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-100 dark:shadow-none hover:bg-emerald-700 transition-all flex items-center gap-2"
+                            className="px-6 py-2.5 bg-success text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-100 dark:shadow-none hover:bg-success/90 transition-all flex items-center gap-2"
                         >
                             <Plus className="w-4 h-4" /> Capital Inflow
                         </button>
                         <button
                             onClick={() => { setFormData({ ...formData, type: 'out', fromAccount: 'cash', toAccount: '' }); setShowAddTransaction(true); }}
-                            className="px-6 py-2.5 bg-rose-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-rose-100 dark:shadow-none hover:bg-rose-700 transition-all flex items-center gap-2"
+                            className="px-6 py-2.5 bg-danger text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-rose-100 dark:shadow-none hover:bg-danger/90 transition-all flex items-center gap-2"
                         >
                             <Minus className="w-4 h-4" /> Capital Outflow
                         </button>
@@ -127,20 +127,20 @@ const CashInHand: React.FC = () => {
                 stats={
                     <>
                         <div className="px-4 py-2 bg-white/10 rounded-sm backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                            <span className={`w-2 h-2 rounded-full ${(position?.cashInHand || 0) > 0 ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`}></span>
+                            <span className={`w-2 h-2 rounded-full ${(position?.cashInHand || 0) > 0 ? 'bg-success animate-pulse' : 'bg-danger'}`}></span>
                             Operational Status: {(position?.cashInHand || 0) > 0 ? 'Healthy' : 'Depleted'}
                         </div>
-                        <button onClick={() => navigate('/cashbank/ledger/cash')} className="text-[10px] font-black uppercase tracking-widest text-indigo-200 hover:text-white transition-all underline underline-offset-8">Audit Ledger</button>
+                        <button onClick={() => navigate('/cashbank/ledger/cash')} className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-white transition-all underline underline-offset-8">Audit Ledger</button>
                     </>
                 }
                 extraActions={
                     <div className="grid grid-cols-2 gap-4">
                         <div className="bg-white/5 border border-white/10 p-6 rounded-[2rem] backdrop-blur-sm">
-                            <p className="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-1 text-center">Aggregate Inflow</p>
+                            <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 text-center">Aggregate Inflow</p>
                             <p className="text-xl font-black text-success text-center">₹{transactions.filter(t => t.type === 'in' || (t.type === 'transfer' && t.toAccount === 'cash')).reduce((sum, t) => sum + t.amount, 0).toLocaleString('en-IN')}</p>
                         </div>
                         <div className="bg-white/5 border border-white/10 p-6 rounded-[2rem] backdrop-blur-sm">
-                            <p className="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-1 text-center">Aggregate Outflow</p>
+                            <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 text-center">Aggregate Outflow</p>
                             <p className="text-xl font-black text-danger text-center">₹{transactions.filter(t => t.type === 'out' || (t.type === 'transfer' && t.fromAccount === 'cash')).reduce((sum, t) => sum + t.amount, 0).toLocaleString('en-IN')}</p>
                         </div>
                     </div>
@@ -201,7 +201,7 @@ const CashInHand: React.FC = () => {
                                         type="date"
                                         value={formData.date}
                                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
+                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm"
                                         required
                                     />
                                 </CashBankInput>
@@ -210,7 +210,7 @@ const CashInHand: React.FC = () => {
                                         type="number"
                                         value={formData.amount}
                                         onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
-                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
+                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm"
                                         placeholder="0.00"
                                         required
                                     />
@@ -228,7 +228,7 @@ const CashInHand: React.FC = () => {
                                                 setFormData({ ...formData, toAccount: e.target.value });
                                             }
                                         }}
-                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm bg-no-repeat"
+                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm bg-no-repeat"
                                         required
                                     >
                                         <option value="">Select Routing Channel</option>
@@ -252,7 +252,7 @@ const CashInHand: React.FC = () => {
                                         type="text"
                                         value={formData.reference}
                                         onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
-                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm"
+                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm"
                                         placeholder="Voucher or Clearing ID"
                                     />
                                 </CashBankInput>
@@ -264,7 +264,7 @@ const CashInHand: React.FC = () => {
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         rows={2}
-                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-sm leading-relaxed"
+                                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm leading-relaxed"
                                         placeholder="Detailed purpose of manual clearing"
                                         required
                                     />
@@ -273,14 +273,14 @@ const CashInHand: React.FC = () => {
 
                             {/* Impact Advisory */}
                             {(formData.amount || 0) > 0 && (formData.fromAccount || formData.toAccount) && (
-                                <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 p-6 rounded-[2rem] flex items-center justify-between">
+                                <div className="bg-primary-soft dark:bg-primary-soft border border-primary/30 dark:border-primary/30 p-6 rounded-[2rem] flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <div className="p-3 bg-white dark:bg-slate-800 rounded-sm shadow-sm">
                                             <Zap className="w-5 h-5 text-primary" />
                                         </div>
                                         <div>
                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anticipated Impact</p>
-                                            <p className="text-xs font-bold text-indigo-900 dark:text-indigo-300">
+                                            <p className="text-xs font-bold text-primary dark:text-primary">
                                                 {formData.type === 'in' ? 'Depositing into Vault' : 'Withdrawing from Vault'}
                                             </p>
                                         </div>
@@ -295,7 +295,7 @@ const CashInHand: React.FC = () => {
 
                         <div className="p-8 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
                             <button type="button" onClick={() => setShowAddTransaction(false)} className="px-8 py-3.5 border border-slate-200 dark:border-slate-700 text-slate-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">Abort</button>
-                            <button type="submit" disabled={isLoading} className={`px-10 py-3.5 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl transition-all disabled:opacity-50 text-white ${formData.type === 'in' ? 'bg-emerald-600 shadow-emerald-100 dark:shadow-none hover:bg-emerald-700' : 'bg-rose-600 shadow-rose-100 dark:shadow-none hover:bg-rose-700'}`}>
+                            <button type="submit" disabled={isLoading} className={`px-10 py-3.5 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl transition-all disabled:opacity-50 text-white ${formData.type === 'in' ? 'bg-success shadow-emerald-100 dark:shadow-none hover:bg-success/90' : 'bg-danger shadow-rose-100 dark:shadow-none hover:bg-danger/90'}`}>
                                 {isLoading ? 'Committing...' : `Commit ${formData.type === 'in' ? 'Inflow' : 'Outflow'}`}
                             </button>
                         </div>
@@ -308,9 +308,9 @@ const CashInHand: React.FC = () => {
                 {filteredTransactions.map(t => {
                     const isIn = t.type === 'in' || (t.type === 'transfer' && t.toAccount === 'cash');
                     return (
-                        <div key={t._id} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:shadow-lg hover:border-indigo-100 dark:hover:border-indigo-900 transition-all group">
+                        <div key={t._id} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:shadow-lg hover:border-primary/30 dark:hover:border-primary/30 transition-all group">
                             <div className="flex items-center gap-6">
-                                <div className={`w-14 h-14 rounded-sm flex items-center justify-center transition-transform group-hover:scale-110 ${isIn ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20' : 'bg-rose-50 text-rose-600 dark:bg-rose-900/20'}`}>
+                                <div className={`w-14 h-14 rounded-sm flex items-center justify-center transition-transform group-hover:scale-110 ${isIn ? 'bg-success-soft text-success dark:bg-success-soft' : 'bg-danger-soft text-danger dark:bg-danger-soft'}`}>
                                     {isIn ? <ArrowDownLeft className="w-6 h-6" /> : <ArrowUpRight className="w-6 h-6" />}
                                 </div>
                                 <div>
@@ -322,10 +322,10 @@ const CashInHand: React.FC = () => {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className={`text-xl font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                <p className={`text-xl font-black ${isIn ? 'text-success' : 'text-danger'}`}>
                                     {isIn ? '+' : '-'} ₹{t.amount.toLocaleString('en-IN')}
                                 </p>
-                                <button className="p-1 px-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-primary transition-all">Audit Detalle</button>
+                                <button className="p-1 px-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2 hover:bg-primary-soft dark:hover:bg-primary-soft hover:text-primary transition-all">Audit Detalle</button>
                             </div>
                         </div>
                     );

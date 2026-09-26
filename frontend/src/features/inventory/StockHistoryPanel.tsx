@@ -27,7 +27,7 @@ const getLogIcon = (type: string) => {
         case 'SUBTRACT': return <TrendingDown className="w-4 h-4 text-danger" />;
         case 'SET': return <RefreshCcw className="w-4 h-4 text-primary" />;
         case 'SALE': return <ShoppingCart className="w-4 h-4 text-warning" />;
-        case 'PURCHASE': return <Truck className="w-4 h-4 text-blue-500" />;
+        case 'PURCHASE': return <Truck className="w-4 h-4 text-primary" />;
         case 'INIT': return <Database className="w-4 h-4 text-neutral-500" />;
         default: return <History className="w-4 h-4 text-neutral-400" />;
     }

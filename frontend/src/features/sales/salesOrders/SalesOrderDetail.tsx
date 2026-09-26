@@ -92,7 +92,7 @@ const SalesOrderDetail = () => {
         const configs: Record<string, StatusConfig> = {
             'Draft': { color: 'text-neutral-500', glow: 'bg-neutral-500/10', icon: ClipboardList, text: 'Draft Mode' },
             'Confirmed': { color: 'text-warning', glow: 'bg-warning/10', icon: BadgeCheck, text: 'Protocol Confirmed' },
-            'Partially Delivered': { color: 'text-blue-500', glow: 'bg-blue-500/10', icon: Truck, text: 'Partial Fulfillment' },
+            'Partially Delivered': { color: 'text-primary', glow: 'bg-primary/10', icon: Truck, text: 'Partial Fulfillment' },
             'Delivered': { color: 'text-primary', glow: 'bg-primary/10', icon: Package, text: 'Logistical Completion' },
             'Partially Invoiced': { color: 'text-warning', glow: 'bg-warning/10', icon: Receipt, text: 'Partial Invoicing' },
             'Invoiced': { color: 'text-success', glow: 'bg-success/10', icon: CheckCircle2, text: 'Fiscal Finalization' },
@@ -128,7 +128,7 @@ const SalesOrderDetail = () => {
             <div className="min-h-full bg-app text-main flex flex-col items-center justify-center gap-4">
                 <AlertTriangle className="w-16 h-16 text-danger opacity-20" />
                 <p className="text-xs font-black text-neutral-400 uppercase tracking-widest text-center">Node Not Found // Protocol Error</p>
-                <button onClick={() => navigate('/sales/orders')} className="mt-4 px-6 py-3 bg-amber-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20">
+                <button onClick={() => navigate('/sales/orders')} className="mt-4 px-6 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20">
                     Return to Registry
                 </button>
             </div>
@@ -145,8 +145,8 @@ const SalesOrderDetail = () => {
         <div className="min-h-full bg-app text-main font-sans selection:bg-warning/10 overflow-x-hidden flex flex-col transition-colors animate-fade-in relative">
             {/* Ambient Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />
-                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-rose-600/10 rounded-full blur-[150px]" />
+                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-warning/10 rounded-full blur-[150px]" />
+                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-danger/10 rounded-full blur-[150px]" />
             </div>
 
             <main className="relative z-10 flex-1 flex flex-col max-w-[1600px] w-full mx-auto px-8 py-8 space-y-8 pb-20">
@@ -160,7 +160,7 @@ const SalesOrderDetail = () => {
                             <ArrowLeft className="w-5 h-5" />
                         </button>
                         <div className="relative">
-                            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
+                            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-warning rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
                             <h1 className="page-title text-neutral-900 dark:text-white flex items-center gap-3">
                                 {order.orderNumber}
                                 <span className={`px-3 py-1 ${statusConfig.glow} border border-current/20 ${statusConfig.color} rounded-lg text-xs font-bold uppercase tracking-widest`}>
@@ -168,7 +168,7 @@ const SalesOrderDetail = () => {
                                 </span>
                             </h1>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                                <span className="flex h-2 w-2 rounded-full bg-success"></span>
                                 <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Protocol Active // Log Date: {formatDate(order.orderDate)}</p>
                             </div>
                         </div>
@@ -184,7 +184,7 @@ const SalesOrderDetail = () => {
                         {canConvertToDC && (
                             <button 
                                 onClick={() => navigate(`/sales/delivery-challan?salesOrderId=${order._id}`)}
-                                className="px-6 py-3 bg-amber-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20"
+                                className="px-6 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20"
                             >
                                 <Truck className="w-4 h-4 inline-block mr-2" /> Dispatch Fulfillment
                             </button>
@@ -193,7 +193,7 @@ const SalesOrderDetail = () => {
                             <button 
                                 onClick={handleCancelOrder}
                                 disabled={actionLoading}
-                                className="px-6 py-3 bg-white dark:bg-neutral-900 border border-danger/30 text-danger rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                                className="px-6 py-3 bg-white dark:bg-neutral-900 border border-danger/30 text-danger rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-danger/90 hover:text-white transition-all shadow-sm"
                             >
                                 <XCircle className="w-4 h-4 inline-block mr-2" /> Abort Protocol
                             </button>
@@ -207,7 +207,7 @@ const SalesOrderDetail = () => {
                         {lifecycleStages.map((stage, index) => (
                             <div key={stage.name} className="flex-1 flex items-center gap-4 last:flex-none">
                                 <div className="flex flex-col items-center gap-2 relative">
-                                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all ${stage.completed ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : stage.current ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20 animate-pulse' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'}`}>
+                                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all ${stage.completed ? 'bg-success text-white shadow-lg shadow-emerald-500/20' : stage.current ? 'bg-warning text-white shadow-lg shadow-amber-500/20 animate-pulse' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'}`}>
                                         {stage.completed ? <CheckCircle className="w-6 h-6" /> : <span className="font-black">{index + 1}</span>}
                                     </div>
                                     <span className={`text-[9px] font-black uppercase tracking-widest absolute -bottom-6 whitespace-nowrap ${stage.current ? 'text-warning' : 'text-neutral-400'}`}>
@@ -215,7 +215,7 @@ const SalesOrderDetail = () => {
                                     </span>
                                 </div>
                                 {index < 3 && (
-                                    <div className={`h-1 flex-1 rounded-full ${stage.completed ? 'bg-emerald-500' : 'bg-neutral-100 dark:bg-neutral-800'}`} />
+                                    <div className={`h-1 flex-1 rounded-full ${stage.completed ? 'bg-success' : 'bg-neutral-100 dark:bg-neutral-800'}`} />
                                 )}
                             </div>
                         ))}
@@ -257,7 +257,7 @@ const SalesOrderDetail = () => {
                                     </h3>
                                 </div>
                                 <div className="p-8 flex items-center gap-6">
-                                    <div className="w-16 h-16 rounded-sm bg-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-amber-500/20">
+                                    <div className="w-16 h-16 rounded-sm bg-warning flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-amber-500/20">
                                         {order.customer?.name?.charAt(0).toUpperCase() || '?'}
                                     </div>
                                     <div>
@@ -292,7 +292,7 @@ const SalesOrderDetail = () => {
                                         {order.items.map((item, index) => {
                                             const progress = item.quantity > 0 ? ((item.deliveredQty || 0) / item.quantity) * 100 : 0;
                                             return (
-                                                <tr key={index} className="group hover:bg-amber-500/[0.01] transition-colors">
+                                                <tr key={index} className="group hover:bg-warning/90/[0.01] transition-colors">
                                                     <td className="px-8 py-6 text-center text-[10px] font-black text-neutral-400">{(index + 1).toString().padStart(2, '0')}</td>
                                                     <td className="px-8 py-6">
                                                         <div className="flex flex-col">
@@ -307,7 +307,7 @@ const SalesOrderDetail = () => {
                                                         <div className="flex flex-col items-end gap-1.5">
                                                             <div className="w-full h-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden shadow-inner">
                                                                 <div 
-                                                                    className={`h-full transition-all duration-1000 ${progress === 100 ? 'bg-emerald-500' : 'bg-amber-500'}`} 
+                                                                    className={`h-full transition-all duration-1000 ${progress === 100 ? 'bg-success' : 'bg-warning'}`} 
                                                                     style={{ width: `${progress}%` }} 
                                                                 />
                                                             </div>
@@ -350,8 +350,8 @@ const SalesOrderDetail = () => {
                             <div className="space-y-4 relative z-10">
                                 {[
                                     { label: 'Sub-Valuation', value: order.subtotal, color: 'text-white dark:text-neutral-900' },
-                                    { label: 'Tax Vector', value: order.taxTotal, color: 'text-success dark:text-emerald-600' },
-                                    { label: 'Protocol Discount', value: -(order.discountTotal || 0), color: 'text-danger dark:text-rose-600' },
+                                    { label: 'Tax Vector', value: order.taxTotal, color: 'text-success dark:text-success' },
+                                    { label: 'Protocol Discount', value: -(order.discountTotal || 0), color: 'text-danger dark:text-danger' },
                                 ].map((item, i) => (
                                     <div key={i} className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
                                         <span>{item.label}</span>

@@ -32,13 +32,13 @@ export const InputWrapper: React.FC<InputWrapperProps> = ({ label, icon: Icon, c
         <label className="text-sm font-semibold text-gray-700 dark:text-[rgb(var(--color-text-secondary))] flex items-center gap-2">
             <Icon className="w-4 h-4 text-primary dark:text-[rgb(var(--color-primary-light))]" />
             {label}
-            {required && <span className="text-red-500">*</span>}
+            {required && <span className="text-danger">*</span>}
         </label>
         <div className="relative group">
             {children}
         </div>
         {error && (
-            <p className="text-xs font-medium text-red-500 mt-1 flex items-center gap-1">
+            <p className="text-xs font-medium text-danger mt-1 flex items-center gap-1">
                 <span>⚠</span> {error}
             </p>
         )}
@@ -54,7 +54,7 @@ interface DetailCardProps {
 export const DetailCard: React.FC<DetailCardProps> = ({ title, icon: Icon, children }) => (
     <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-sm shadow-sm dark:shadow-lg border dark:border-[rgb(var(--color-border))] overflow-hidden h-full">
         <div className="px-6 py-4 border-b border-gray-100 dark:border-[rgb(var(--color-border))] flex items-center gap-3">
-            <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+            <div className="p-2 bg-primary-soft dark:bg-primary-soft rounded-lg">
                 <Icon className="w-5 h-5 text-primary dark:text-[rgb(var(--color-primary))]" />
             </div>
             <h3 className="font-bold text-gray-900 dark:text-[rgb(var(--color-text))]">{title}</h3>

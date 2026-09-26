@@ -97,7 +97,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                 <span className="text-xs font-black uppercase tracking-widest">{selectedOrders.length} Nodes Active</span>
                                 <div className="h-4 w-px bg-primary/20 mx-2" />
                                 <button className="p-1.5 hover:bg-primary/10 rounded-xl transition-all" title="Bulk Approve"><CheckCircle className="w-4 h-4" /></button>
-                                <button className="p-1.5 hover:bg-rose-100 text-rose-600 rounded-xl transition-all" title="Bulk Cancel"><Trash2 className="w-4 h-4" /></button>
+                                <button className="p-1.5 hover:bg-danger-soft text-danger rounded-xl transition-all" title="Bulk Cancel"><Trash2 className="w-4 h-4" /></button>
                                 <button className="p-1.5 hover:bg-primary/10 rounded-xl transition-all" title="Bulk Print"><Printer className="w-4 h-4" /></button>
                             </div>
                         )}
@@ -253,7 +253,7 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                             </div>
                                             <div className="h-1.5 w-full bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden shadow-inner">
                                                 <div
-                                                    className="h-full bg-emerald-500 rounded-full transition-all duration-1000 shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+                                                    className="h-full bg-success rounded-full transition-all duration-1000 shadow-[0_0_8px_rgba(16,185,129,0.4)]"
                                                     style={{ width: `${Math.round(((order.items?.reduce((acc: number, item: PurchaseOrderItem) => acc + (item.received_quantity || 0), 0) || 0) / (order.items?.reduce((acc: number, item: PurchaseOrderItem) => acc + (item.quantity || 1), 0) || 1)) * 100)}%` }}
                                                 />
                                             </div>

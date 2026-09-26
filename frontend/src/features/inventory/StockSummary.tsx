@@ -107,7 +107,7 @@ const StockSummary: React.FC = () => {
                             className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
                 </div>
-                {error && <div className="p-4 text-sm font-bold text-red-600">{error}</div>}
+                {error && <div className="p-4 text-sm font-bold text-danger">{error}</div>}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 dark:bg-slate-900/50">
@@ -123,7 +123,7 @@ const StockSummary: React.FC = () => {
                                 const isLow = qty <= (item.lowStockLimit ?? 0);
                                 return (
                                     <tr key={item._id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                                        <td className="px-4 py-3 text-xs font-black text-blue-600">{item.sku || item.barcode}</td>
+                                        <td className="px-4 py-3 text-xs font-black text-primary">{item.sku || item.barcode}</td>
                                         <td className="px-4 py-3"><p className="text-sm font-bold text-slate-900 dark:text-white">{item.name}</p></td>
                                         <td className="px-4 py-3 text-xs text-slate-500">{item.category || '—'}</td>
                                         <td className="px-4 py-3 text-xs text-slate-500">{item.unit || '—'}</td>
@@ -131,7 +131,7 @@ const StockSummary: React.FC = () => {
                                         <td className="px-4 py-3 text-right text-xs text-slate-500">₹{(item.costPrice || 0).toLocaleString('en-IN')}</td>
                                         <td className="px-4 py-3 text-right text-sm font-bold text-slate-700 dark:text-slate-300">₹{(qty * (item.costPrice || 0)).toLocaleString('en-IN')}</td>
                                         <td className="px-4 py-3">
-                                            <span className={`px-2 py-1 rounded-lg text-xs font-bold ${isLow ? 'text-red-600 bg-red-50 dark:bg-red-900/20' : 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20'}`}>
+                                            <span className={`px-2 py-1 rounded-lg text-xs font-bold ${isLow ? 'text-danger bg-danger-soft dark:bg-danger-soft' : 'text-success bg-success-soft dark:bg-success-soft'}`}>
                                                 {isLow ? 'Low Stock' : 'OK'}
                                             </span>
                                         </td>

@@ -41,7 +41,7 @@ const SupplierFilterBar: React.FC<SupplierFilterBarProps> = ({
                         placeholder={placeholder}
                         value={searchTerm}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className="w-64 pl-9 pr-4 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400"
+                        className="w-64 pl-9 pr-4 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-primary transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400"
                     />
                 </div>
 
@@ -53,7 +53,7 @@ const SupplierFilterBar: React.FC<SupplierFilterBarProps> = ({
                                 key={status}
                                 onClick={() => onFilterChange(status)}
                                 className={`px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-colors ${filterStatus === status
-                                    ? 'bg-indigo-50 dark:bg-primary/10 text-primary dark:text-primary'
+                                    ? 'bg-primary-soft dark:bg-primary/10 text-primary dark:text-primary'
                                     : 'text-slate-400 dark:text-neutral-500 hover:text-slate-600 dark:hover:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700'
                                     }`}
                             >

@@ -189,8 +189,8 @@ const SalesOrderPage = () => {
         <div className="min-h-full bg-app text-main font-sans selection:bg-warning/10 overflow-hidden flex flex-col transition-colors animate-fade-in relative">
             {/* Ambient Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-amber-600/10 rounded-full blur-[150px]" />
-                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-rose-600/10 rounded-full blur-[150px]" />
+                <div className="absolute top-[-20%] left-[10%] w-[60%] h-[60%] bg-warning/10 rounded-full blur-[150px]" />
+                <div className="absolute bottom-[-10%] right-[10%] w-[40%] h-[40%] bg-danger/10 rounded-full blur-[150px]" />
             </div>
 
             {/* Top Command Bar */}
@@ -228,7 +228,7 @@ const SalesOrderPage = () => {
                     <button 
                         onClick={handleConfirmOrder}
                         disabled={loading}
-                        className="flex items-center gap-2 px-8 py-3 bg-amber-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                        className="flex items-center gap-2 px-8 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50"
                     >
                         {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                         Finalize Protocol
@@ -244,7 +244,7 @@ const SalesOrderPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {[
                                 { label: 'Node Status', value: 'Ready', icon: Zap, color: 'text-warning' },
-                                { label: 'Item Manifest', value: `${formData.items.length} Nodes`, icon: Layers, color: 'text-blue-500' },
+                                { label: 'Item Manifest', value: `${formData.items.length} Nodes`, icon: Layers, color: 'text-primary' },
                                 { label: 'Logistical Risk', value: 'Low', icon: ShieldCheck, color: 'text-success' }
                             ].map((stat, i) => (
                                 <div key={i} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-sm p-6 shadow-sm flex items-center gap-4">
@@ -265,7 +265,7 @@ const SalesOrderPage = () => {
                                 <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em]">Manifest Ledger</h3>
                                 <button 
                                     onClick={() => setShowItemModal(true)}
-                                    className="p-3 bg-amber-500 text-white rounded-sm hover:scale-110 transition-transform shadow-lg shadow-amber-500/20"
+                                    className="p-3 bg-warning text-white rounded-sm hover:scale-110 transition-transform shadow-lg shadow-amber-500/20"
                                 >
                                     <Plus className="w-5 h-5" />
                                 </button>
@@ -352,7 +352,7 @@ const SalesOrderPage = () => {
                                                     <td className="px-8 py-6 text-center">
                                                         <button 
                                                             onClick={() => removeItem(index)}
-                                                            className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-danger rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                                                            className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-danger rounded-xl hover:bg-danger/90 hover:text-white transition-all shadow-sm"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
                                                         </button>
@@ -388,9 +388,9 @@ const SalesOrderPage = () => {
                             <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] mb-4">Entity Mapping</h3>
                             {formData.customer ? (
                                 <div className="bg-white dark:bg-neutral-900 border-2 border-warning/20 rounded-sm p-6 shadow-xl shadow-amber-500/5 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-bl-[40px]" />
+                                    <div className="absolute top-0 right-0 w-16 h-16 bg-warning/5 rounded-bl-[40px]" />
                                     <div className="flex items-start gap-4 mb-4 relative z-10">
-                                        <div className="w-12 h-12 rounded-sm bg-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
+                                        <div className="w-12 h-12 rounded-sm bg-warning flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
                                             <User className="w-6 h-6" />
                                         </div>
                                         <div className="flex-1 overflow-hidden">
@@ -416,9 +416,9 @@ const SalesOrderPage = () => {
                             ) : (
                                 <button 
                                     onClick={() => setShowCustomerModal(true)}
-                                    className="w-full bg-white dark:bg-neutral-900 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-sm p-8 flex flex-col items-center gap-4 hover:border-amber-500/50 transition-all group shadow-sm"
+                                    className="w-full bg-white dark:bg-neutral-900 border border-dashed border-neutral-300 dark:border-neutral-700 rounded-sm p-8 flex flex-col items-center gap-4 hover:border-warning/50 transition-all group shadow-sm"
                                 >
-                                    <div className="w-16 h-16 rounded-sm bg-neutral-50 dark:bg-neutral-800 flex items-center justify-center text-neutral-300 group-hover:bg-amber-500 group-hover:text-white transition-all shadow-inner">
+                                    <div className="w-16 h-16 rounded-sm bg-neutral-50 dark:bg-neutral-800 flex items-center justify-center text-neutral-300 group-hover:bg-warning/90 group-hover:text-white transition-all shadow-inner">
                                         <Search className="w-8 h-8" />
                                     </div>
                                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] group-hover:text-warning transition-colors">Scan for Customer Entity</p>
@@ -468,11 +468,11 @@ const SalesOrderPage = () => {
                                 </div>
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
                                     <span>Tax Vector</span>
-                                    <span className="font-mono text-success dark:text-emerald-600">₹{totals.tax.toLocaleString()}</span>
+                                    <span className="font-mono text-success dark:text-success">₹{totals.tax.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest opacity-80">
                                     <span>Manifest Credits</span>
-                                    <span className="font-mono text-danger dark:text-rose-600">-₹{totals.itemDiscount.toLocaleString()}</span>
+                                    <span className="font-mono text-danger dark:text-danger">-₹{totals.itemDiscount.toLocaleString()}</span>
                                 </div>
                                 <div className="pt-4 border-t border-white/10 dark:border-neutral-200">
                                     <div className="flex justify-between items-center mb-6">
@@ -483,7 +483,7 @@ const SalesOrderPage = () => {
                                                 type="number"
                                                 value={formData.discount}
                                                 onChange={(e) => setFormData({ ...formData, discount: parseFloat(e.target.value) || 0 })}
-                                                className="w-24 bg-white/5 dark:bg-neutral-100 border border-white/10 dark:border-neutral-200 rounded-xl py-2 pl-8 pr-3 text-right text-xs font-black outline-none focus:border-amber-500/50 transition-all dark:text-neutral-900 shadow-inner"
+                                                className="w-24 bg-white/5 dark:bg-neutral-100 border border-white/10 dark:border-neutral-200 rounded-xl py-2 pl-8 pr-3 text-right text-xs font-black outline-none focus:border-primary/50 transition-all dark:text-neutral-900 shadow-inner"
                                             />
                                         </div>
                                     </div>

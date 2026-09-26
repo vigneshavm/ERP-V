@@ -279,7 +279,7 @@ const InventoryManager: React.FC = () => {
                             <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:border-primary/50 transition-all uppercase tracking-widest text-main shadow-sm">
                                 <Download className="w-4 h-4" /> Export
                             </button>
-                            <button onClick={handleOpenAgingReport} className="px-4 py-2 bg-rose-50 dark:bg-rose-900/10 text-rose-600 border border-rose-200 dark:border-rose-900/20 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-rose-600 hover:text-white transition-all uppercase tracking-widest shadow-sm">
+                            <button onClick={handleOpenAgingReport} className="px-4 py-2 bg-danger-soft dark:bg-danger-soft text-danger border border-danger-line dark:border-danger/20 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-danger/90 hover:text-white transition-all uppercase tracking-widest shadow-sm">
                                 <AlertOctagon className="w-4 h-4" /> Stock Aging
                             </button>
                             <button
@@ -362,7 +362,7 @@ const InventoryManager: React.FC = () => {
                             </button>
                             <button
                                 onClick={() => { setStockFilter('LOW_STOCK'); setPage(1); }}
-                                className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 whitespace-nowrap ${stockFilter === 'LOW_STOCK' ? 'bg-white dark:bg-neutral-800 text-rose-600 shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
+                                className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 whitespace-nowrap ${stockFilter === 'LOW_STOCK' ? 'bg-white dark:bg-neutral-800 text-danger shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
                             >
                                 <AlertTriangle className="w-3 h-3" /> Low Stock
                             </button>
@@ -392,7 +392,7 @@ const InventoryManager: React.FC = () => {
                         {selectedItems.size > 0 && (
                             <button
                                 onClick={handleBulkDelete}
-                                className="px-6 py-3 bg-rose-600 text-white rounded-xl text-xs font-black uppercase tracking-[0.15em] shadow-xl shadow-rose-600/20 flex items-center gap-2 hover:bg-rose-700 transition-all active:scale-95"
+                                className="px-6 py-3 bg-danger text-white rounded-xl text-xs font-black uppercase tracking-[0.15em] shadow-xl shadow-rose-600/20 flex items-center gap-2 hover:bg-danger/90 transition-all active:scale-95"
                             >
                                 Trash ({selectedItems.size})
                             </button>
@@ -434,7 +434,7 @@ const InventoryManager: React.FC = () => {
                                     <div className="h-px bg-neutral-100 dark:bg-neutral-700 mx-2 my-1"></div>
                                     <button
                                         onClick={() => { setShowMoreActions(false); setShowImportModal(true); }}
-                                        className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-emerald-500/5 hover:text-success transition-all flex items-center gap-3"
+                                        className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-600 dark:text-neutral-300 hover:bg-success/5 hover:text-success transition-all flex items-center gap-3"
                                     >
                                         <Download className="w-4 h-4" /> Import Excel/CSV
                                     </button>
@@ -535,7 +535,7 @@ const InventoryManager: React.FC = () => {
                                                     <div className="font-black text-primary text-xl italic tracking-tight mt-0.5">₹{item.sellingPrice?.toLocaleString()}</div>
                                                 </td>
                                                 <td className="px-6 py-5">
-                                                    <span className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] border ${isLowStock ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-900/20 dark:border-rose-900/30' : 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-900/30'}`}>
+                                                    <span className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.15em] border ${isLowStock ? 'bg-danger-soft text-danger border-danger-line dark:bg-danger-soft dark:border-danger/30' : 'bg-success-soft text-success border-success-line dark:bg-success-soft dark:border-success/30'}`}>
                                                         {isLowStock ? 'Critical Low' : 'In Stock'}
                                                     </span>
                                                 </td>
@@ -572,14 +572,14 @@ const InventoryManager: React.FC = () => {
                                                                 <div className="h-px bg-neutral-100 dark:bg-neutral-700 mx-2 my-1"></div>
                                                                 <button
                                                                     onClick={() => handleToggleStatus(item._id)}
-                                                                    className={`w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3 ${item.isActive ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'}`}
+                                                                    className={`w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3 ${item.isActive ? 'text-danger hover:bg-danger-soft' : 'text-success hover:bg-success-soft'}`}
                                                                 >
                                                                     {item.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                                                     {item.isActive ? 'Deactivate Record' : 'Activate Record'}
                                                                 </button>
                                                                 <button
                                                                     onClick={() => { handleDeleteSingle(item._id, item.name); setRowActionDropdown(null); }}
-                                                                    className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50 transition-all flex items-center gap-3"
+                                                                    className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-danger hover:bg-danger-soft transition-all flex items-center gap-3"
                                                                 >
                                                                     <Trash2 className="w-4 h-4" /> Archive Product
                                                                 </button>
@@ -663,11 +663,11 @@ const InventoryManager: React.FC = () => {
                         <div className="px-10 py-8 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-700/50">
                             <div>
                                 <h3 className="text-2xl font-black italic flex items-center gap-3 text-neutral-900 dark:text-neutral-100">
-                                    <AlertOctagon className="w-8 h-8 text-rose-600" /> Dead Stock Analysis
+                                    <AlertOctagon className="w-8 h-8 text-danger" /> Dead Stock Analysis
                                 </h3>
                                 <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-[0.2em]">Identified items with stock age {'>'} 180 days</p>
                             </div>
-                            <button onClick={() => setShowAgingModal(false)} className="p-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 hover:text-rose-600 rounded-full transition-all"><X className="w-6 h-6" /></button>
+                            <button onClick={() => setShowAgingModal(false)} className="p-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 hover:text-danger rounded-full transition-all"><X className="w-6 h-6" /></button>
                         </div>
                         <div className="flex-1 overflow-y-auto">
                             {isLoading ? (
@@ -677,8 +677,8 @@ const InventoryManager: React.FC = () => {
                                 </div>
                             ) : (!agingReport || agingReport.length === 0) ? (
                                 <div className="p-32 text-center flex flex-col items-center">
-                                    <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mb-6 border border-emerald-100 dark:border-emerald-900/30">
-                                        <CheckSquare className="w-10 h-10 text-emerald-600 stroke-[3]" />
+                                    <div className="w-20 h-20 bg-success-soft dark:bg-success-soft rounded-full flex items-center justify-center mb-6 border border-success-line dark:border-success/30">
+                                        <CheckSquare className="w-10 h-10 text-success stroke-[3]" />
                                     </div>
                                     <h4 className="text-xl font-black text-neutral-900 dark:text-neutral-100 mb-2 italic tracking-tight">Inventory Healthy</h4>
                                     <p className="font-bold text-neutral-500 text-sm italic">No dead stock detected. Outstanding maintenance!</p>
@@ -701,7 +701,7 @@ const InventoryManager: React.FC = () => {
                                                     <div className="text-[10px] text-neutral-400 font-black uppercase mt-1 tracking-widest">SKU: {item.sku}</div>
                                                 </td>
                                                 <td className="px-8 py-6">
-                                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-50 dark:bg-rose-900/20 text-rose-600 rounded-lg text-xs font-black border border-rose-200 dark:border-rose-900/30">
+                                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-danger-soft dark:bg-danger-soft text-danger rounded-lg text-xs font-black border border-danger-line dark:border-danger/30">
                                                         <AlertTriangle className="w-3 h-3 fill-current" /> {item.ageInDays} Days
                                                     </div>
                                                 </td>

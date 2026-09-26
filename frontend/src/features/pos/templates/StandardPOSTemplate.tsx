@@ -178,13 +178,13 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             <div className="flex bg-gray-200 p-0.5 rounded-lg mr-2">
                                 <button
                                     onClick={() => setIsReturnMode(false)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-emerald-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-success shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                                 >
                                     {t('sale')}
                                 </button>
                                 <button
                                     onClick={() => setIsReturnMode(true)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-red-50 text-red-600 shadow-sm ring-1 ring-red-100' : 'text-gray-500 hover:text-gray-700'}`}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-danger-soft text-danger shadow-sm ring-1 ring-red-100' : 'text-gray-500 hover:text-gray-700'}`}
                                 >
                                     {t('return')}
                                 </button>

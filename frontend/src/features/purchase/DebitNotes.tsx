@@ -115,11 +115,11 @@ const DebitNotes: React.FC = () => {
 
     const getReasonBadge = (reason: string) => {
         const colors: Record<string, string> = {
-            SHORT_DELIVERY: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-            QUALITY_ISSUE: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
-            RETURN_SHIPPING: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+            SHORT_DELIVERY: 'bg-danger-soft text-danger dark:bg-danger-soft dark:text-danger',
+            QUALITY_ISSUE: 'bg-warning-soft text-warning dark:bg-warning-soft dark:text-warning',
+            RETURN_SHIPPING: 'bg-primary-soft text-primary dark:bg-primary-soft dark:text-primary',
             SERVICE_CHARGE: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-accent',
-            PRICE_DIFFERENCE: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-success',
+            PRICE_DIFFERENCE: 'bg-success-soft text-success dark:bg-success-soft dark:text-success',
             OTHER: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400'
         };
         return <span className={`px-2 py-0.5 text-[10px] font-bold rounded ${colors[reason] || colors.OTHER}`}>

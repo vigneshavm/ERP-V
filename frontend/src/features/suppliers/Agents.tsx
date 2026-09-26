@@ -65,7 +65,7 @@ const Agents: React.FC = () => {
                 actions={
                     <button
                         onClick={() => { setEditingAgent(null); setIsModalOpen(true); }}
-                        className="px-6 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
+                        className="px-6 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-primary-hover active:scale-95 transition-all flex items-center gap-2"
                     >
                         <UserPlus className="w-4 h-4" /> Register Agent
                     </button>
@@ -77,9 +77,9 @@ const Agents: React.FC = () => {
             <div className="space-y-6 animate-fade-in">
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 border-2 border-indigo-200 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
+                    <div className="bg-white dark:bg-neutral-800 border-2 border-primary/30 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-primary/10 text-primary dark:text-primary">
+                            <div className="p-1.5 rounded-lg bg-primary-soft dark:bg-primary/10 text-primary dark:text-primary">
                                 <Contact className="w-4 h-4" />
                             </div>
                             <span className="text-xs font-bold text-primary dark:text-primary uppercase tracking-wide">Total Agents</span>
@@ -89,20 +89,20 @@ const Agents: React.FC = () => {
 
                     <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-success/10 text-emerald-600 dark:text-success">
+                            <div className="p-1.5 rounded-lg bg-success-soft dark:bg-success/10 text-success dark:text-success">
                                 <UserPlus className="w-4 h-4" />
                             </div>
-                            <span className="text-xs font-bold text-emerald-600 dark:text-success uppercase tracking-wide">Active</span>
+                            <span className="text-xs font-bold text-success dark:text-success uppercase tracking-wide">Active</span>
                         </div>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">{agents.filter(a => a.status === 'active').length}</span>
                     </div>
 
                     <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden shadow-sm">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-warning/10 text-amber-600 dark:text-warning">
+                            <div className="p-1.5 rounded-lg bg-warning-soft dark:bg-warning/10 text-warning dark:text-warning">
                                 <Percent className="w-4 h-4" />
                             </div>
-                            <span className="text-xs font-bold text-amber-600 dark:text-warning uppercase tracking-wide">Avg. Commission</span>
+                            <span className="text-xs font-bold text-warning dark:text-warning uppercase tracking-wide">Avg. Commission</span>
                         </div>
                         <span className="text-3xl font-black text-slate-900 dark:text-white">
                             {agents.length > 0 ? (agents.reduce((s, a) => s + (a.commissionPercent || 0), 0) / agents.length).toFixed(1) : 0}%
@@ -119,7 +119,7 @@ const Agents: React.FC = () => {
                             placeholder="Search agents by name or phone..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-80 pl-9 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400 shadow-sm"
+                            className="w-80 pl-9 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-primary transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400 shadow-sm"
                         />
                     </div>
                 </div>
@@ -159,7 +159,7 @@ const Agents: React.FC = () => {
                                         >
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-sm bg-indigo-500">
+                                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-sm bg-primary">
                                                         {agent.name[0]}
                                                     </div>
                                                     <p className="text-sm font-bold text-slate-800 dark:text-neutral-100">{agent.name}</p>
@@ -175,7 +175,7 @@ const Agents: React.FC = () => {
                                                 {supplierName(agent.linkedSupplierId)}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="text-sm font-bold text-emerald-600">{agent.commissionPercent || 0}%</span>
+                                                <span className="text-sm font-bold text-success">{agent.commissionPercent || 0}%</span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <StatusBadge status={agent.status} />
@@ -199,7 +199,7 @@ const Agents: React.FC = () => {
                                                             <div className="h-px bg-slate-100 dark:bg-neutral-700 my-1" />
                                                             <button
                                                                 onClick={() => { handleDelete(agent._id); setOpenMenuId(null); }}
-                                                                className="w-full px-4 py-2.5 text-left text-sm text-rose-600 dark:text-danger hover:bg-rose-50 dark:hover:bg-danger/10 flex items-center gap-2 font-medium"
+                                                                className="w-full px-4 py-2.5 text-left text-sm text-danger dark:text-danger hover:bg-danger-soft dark:hover:bg-danger/10 flex items-center gap-2 font-medium"
                                                             >
                                                                 <Trash2 className="w-3.5 h-3.5" /> Delete
                                                             </button>

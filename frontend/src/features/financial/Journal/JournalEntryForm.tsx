@@ -198,7 +198,7 @@ const JournalEntryForm: React.FC = () => {
                                             <input
                                                 type="number"
                                                 placeholder="0.00"
-                                                className="w-full px-4 py-2.5 text-right bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-mono font-bold text-emerald-600 dark:text-success focus:ring-2 focus:ring-primary/20"
+                                                className="w-full px-4 py-2.5 text-right bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-mono font-bold text-success dark:text-success focus:ring-2 focus:ring-primary/20"
                                                 value={item.debit || ''}
                                                 onChange={e => handleLineChange(item.id, 'debit', e.target.value)}
                                             />
@@ -207,7 +207,7 @@ const JournalEntryForm: React.FC = () => {
                                             <input
                                                 type="number"
                                                 placeholder="0.00"
-                                                className="w-full px-4 py-2.5 text-right bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-mono font-bold text-rose-600 dark:text-danger focus:ring-2 focus:ring-primary/20"
+                                                className="w-full px-4 py-2.5 text-right bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-mono font-bold text-danger dark:text-danger focus:ring-2 focus:ring-primary/20"
                                                 value={item.credit || ''}
                                                 onChange={e => handleLineChange(item.id, 'credit', e.target.value)}
                                             />
@@ -216,7 +216,7 @@ const JournalEntryForm: React.FC = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveLine(item.id)}
-                                                className="p-2.5 text-neutral-300 hover:text-danger hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl transition-all"
+                                                className="p-2.5 text-neutral-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-xl transition-all"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -239,7 +239,7 @@ const JournalEntryForm: React.FC = () => {
                     </div>
 
                     {/* Finalization Controller */}
-                    <div className={`p-8 rounded-xl border shadow-2xl flex flex-col md:flex-row justify-between items-center gap-8 transition-all duration-500 ${isBalanced ? 'bg-neutral-900 text-white border-neutral-800' : 'bg-rose-50 dark:bg-rose-900/10 border-rose-100 dark:border-rose-900/30 ring-4 ring-rose-500/10'}`}>
+                    <div className={`p-8 rounded-xl border shadow-2xl flex flex-col md:flex-row justify-between items-center gap-8 transition-all duration-500 ${isBalanced ? 'bg-neutral-900 text-white border-neutral-800' : 'bg-danger-soft dark:bg-danger-soft border-danger-line dark:border-danger/30 ring-4 ring-rose-500/10'}`}>
                         <div className="flex items-center gap-4">
                             {!isBalanced ? (
                                 <div className="w-12 h-12 bg-danger/20 rounded-sm flex items-center justify-center text-danger animate-pulse">
@@ -254,7 +254,7 @@ const JournalEntryForm: React.FC = () => {
                                 <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${isBalanced ? 'text-neutral-400' : 'text-danger'}`}>
                                     {isBalanced ? 'Institutional Balance Confirmed' : 'Ledger Imbalance Detected'}
                                 </p>
-                                <p className={`text-sm font-bold mt-1 ${isBalanced ? 'text-white' : 'text-rose-700 dark:text-danger italic'}`}>
+                                <p className={`text-sm font-bold mt-1 ${isBalanced ? 'text-white' : 'text-danger dark:text-danger italic'}`}>
                                     {isBalanced ? 'Ready for immutable ledger commitment.' : `Variance detected: ₹${Math.abs(difference).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
                                 </p>
                             </div>

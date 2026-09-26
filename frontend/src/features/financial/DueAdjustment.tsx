@@ -127,7 +127,7 @@ const DueAdjustment = () => {
         return (
             <Layout>
                 <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-[rgb(var(--color-primary))]"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary dark:border-[rgb(var(--color-primary))]"></div>
                 </div>
             </Layout>
         );
@@ -142,7 +142,7 @@ const DueAdjustment = () => {
                     </p>
                     <button
                         onClick={() => navigate("/customers")}
-                        className="mt-4 text-primary dark:text-[rgb(var(--color-primary))] hover:text-indigo-700 dark:hover:text-[rgb(var(--color-primary-hover))]"
+                        className="mt-4 text-primary dark:text-[rgb(var(--color-primary))] hover:text-primary dark:hover:text-[rgb(var(--color-primary-hover))]"
                     >
                         Back to Customers
                     </button>
@@ -179,7 +179,7 @@ const DueAdjustment = () => {
                             <p className="text-sm text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
                                 Outstanding Due
                             </p>
-                            <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                            <p className="text-2xl font-bold text-danger dark:text-danger">
                                 ₹{customer.dues.toFixed(2)}
                             </p>
                         </div>
@@ -195,7 +195,7 @@ const DueAdjustment = () => {
                                 htmlFor="adjustmentAmount"
                                 className="block text-sm font-medium text-gray-700 dark:text-[rgb(var(--color-text))] mb-2"
                             >
-                                Adjustment Amount <span className="text-red-500">*</span>
+                                Adjustment Amount <span className="text-danger">*</span>
                             </label>
                             <div className="relative">
                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-[rgb(var(--color-text-secondary))]">
@@ -211,14 +211,14 @@ const DueAdjustment = () => {
                                     min="0"
                                     max={customer.dues}
                                     className={`w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))] ${errors.adjustmentAmount
-                                        ? "border-red-500"
+                                        ? "border-danger"
                                         : "border-gray-300"
                                         }`}
                                     placeholder="0.00"
                                 />
                             </div>
                             {errors.adjustmentAmount && (
-                                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                <p className="mt-1 text-sm text-danger dark:text-danger">
                                     {errors.adjustmentAmount}
                                 </p>
                             )}
@@ -233,14 +233,14 @@ const DueAdjustment = () => {
                                 htmlFor="adjustmentMethod"
                                 className="block text-sm font-medium text-gray-700 dark:text-[rgb(var(--color-text))] mb-2"
                             >
-                                Adjustment Method <span className="text-red-500">*</span>
+                                Adjustment Method <span className="text-danger">*</span>
                             </label>
                             <select
                                 id="adjustmentMethod"
                                 name="adjustmentMethod"
                                 value={formData.adjustmentMethod}
                                 onChange={handleChange}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))] ${errors.adjustmentMethod ? "border-red-500" : "border-gray-300"
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))] ${errors.adjustmentMethod ? "border-danger" : "border-gray-300"
                                     }`}
                             >
                                 <option value="cash">Cash</option>
@@ -249,7 +249,7 @@ const DueAdjustment = () => {
                                 <option value="original_payment">Original Payment Method</option>
                             </select>
                             {errors.adjustmentMethod && (
-                                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                <p className="mt-1 text-sm text-danger dark:text-danger">
                                     {errors.adjustmentMethod}
                                 </p>
                             )}
@@ -286,7 +286,7 @@ const DueAdjustment = () => {
                             <button
                                 type="submit"
                                 disabled={dueLoading || customer.dues <= 0}
-                                className="flex-1 px-6 py-3 bg-indigo-600 dark:bg-[rgb(var(--color-primary))] text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-[rgb(var(--color-primary-hover))] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                                className="flex-1 px-6 py-3 bg-primary dark:bg-[rgb(var(--color-primary))] text-white rounded-lg hover:bg-primary-hover dark:hover:bg-[rgb(var(--color-primary-hover))] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
                             >
                                 {dueLoading ? (
                                     <>

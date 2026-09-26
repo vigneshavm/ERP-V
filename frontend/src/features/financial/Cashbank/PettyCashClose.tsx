@@ -126,7 +126,7 @@ const PettyCashClose: React.FC = () => {
             />
 
             {error && (
-                <div className="p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/20 rounded-lg text-rose-700 dark:text-danger text-sm font-bold">
+                <div className="p-4 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger/20 rounded-lg text-danger dark:text-danger text-sm font-bold">
                     {error}
                 </div>
             )}

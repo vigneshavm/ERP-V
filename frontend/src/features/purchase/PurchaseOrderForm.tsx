@@ -283,13 +283,13 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
 
             {/* Supplier Warning Node */}
             {supplierStatus && (supplierStatus.overdueCount > 0 || supplierStatus.isCreditRisk) && (
-                <div className="mx-8 mt-6 p-6 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/30 rounded-[2.5rem] flex items-center gap-6 animate-in slide-in-from-top-4 duration-500">
-                    <div className="p-4 bg-rose-500 text-white rounded-sm shadow-lg shadow-rose-500/20">
+                <div className="mx-8 mt-6 p-6 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger/30 rounded-[2.5rem] flex items-center gap-6 animate-in slide-in-from-top-4 duration-500">
+                    <div className="p-4 bg-danger text-white rounded-sm shadow-lg shadow-rose-500/20">
                         <AlertTriangle className="w-6 h-6" />
                     </div>
                     <div>
-                        <h4 className="text-[10px] font-black text-rose-800 dark:text-danger uppercase tracking-widest">Supplier Risk Surveillance</h4>
-                        <p className="text-xs font-bold text-rose-700 dark:text-rose-300 mt-1 italic leading-relaxed">
+                        <h4 className="text-[10px] font-black text-danger dark:text-danger uppercase tracking-widest">Supplier Risk Surveillance</h4>
+                        <p className="text-xs font-bold text-danger dark:text-danger mt-1 italic leading-relaxed">
                             {supplierStatus.overdueCount > 0 && `Institutional overdue detected: ${supplierStatus.overdueCount} bills totaling ₹${supplierStatus.overdueAmount?.toFixed(2)}.`}
                             {supplierStatus.isCreditRisk && ` Credit utilization threshold breached (${supplierStatus.creditUtilization?.toFixed(1)}%).`}
                         </p>
@@ -387,7 +387,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                 <h3 className="text-sm font-black uppercase tracking-widest">Inventory Nodes</h3>
                                 <button
                                     onClick={handleAddLot}
-                                    className="px-4 py-1.5 bg-indigo-50 text-primary dark:bg-indigo-900/20 dark:text-primary text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 hover:bg-indigo-100 transition-all"
+                                    className="px-4 py-1.5 bg-primary-soft text-primary dark:bg-primary-soft dark:text-primary text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 hover:bg-primary-soft transition-all"
                                 >
                                     <Plus className="w-3.5 h-3.5" /> Bulk Lot
                                 </button>
@@ -489,7 +489,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                                 </button>
                                             </td>
                                             <td className="px-8 py-5 text-center">
-                                                <button onClick={() => removeItem(idx)} className="p-2 text-neutral-300 hover:text-danger hover:bg-rose-50 rounded-xl transition-all">
+                                                <button onClick={() => removeItem(idx)} className="p-2 text-neutral-300 hover:text-danger hover:bg-danger-soft rounded-xl transition-all">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </td>
@@ -679,12 +679,12 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                         </div>
                     </div>
                     
-                    <div className="bg-amber-50 dark:bg-amber-900/10 p-8 rounded-xl border border-amber-100 dark:border-amber-900/20">
+                    <div className="bg-warning-soft dark:bg-warning-soft p-8 rounded-xl border border-warning-line dark:border-warning/20">
                         <div className="flex items-center gap-3 mb-4">
                             <Zap className="w-5 h-5 text-warning animate-pulse" />
-                            <h5 className="text-[10px] font-black text-amber-900/60 dark:text-warning uppercase tracking-widest">Protocol Optimizer</h5>
+                            <h5 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest">Protocol Optimizer</h5>
                         </div>
-                        <p className="text-[10px] text-amber-800 dark:text-warning font-bold italic leading-relaxed pl-4 border-l-2 border-warning/30">
+                        <p className="text-[10px] text-warning dark:text-warning font-bold italic leading-relaxed pl-4 border-l-2 border-warning/30">
                             Ensure all SKU nodes are verified against supplier quotations to prevent institutional fiscal discrepancies.
                         </p>
                     </div>

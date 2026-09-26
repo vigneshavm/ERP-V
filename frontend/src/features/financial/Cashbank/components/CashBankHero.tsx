@@ -25,12 +25,12 @@ const CashBankHero: React.FC<CashBankHeroProps> = ({
             </div>
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
                 <div className="lg:col-span-2">
-                    <div className="flex items-center gap-2 text-indigo-200 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+                    <div className="flex items-center gap-2 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-4">
                         <Activity className="w-4 h-4 text-success animate-pulse" />
                         {title}
                     </div>
                     <h2 className="text-6xl font-black tracking-tighter">{value}</h2>
-                    {subtitle && <p className="text-indigo-200 text-sm font-bold mt-2">{subtitle}</p>}
+                    {subtitle && <p className="text-primary text-sm font-bold mt-2">{subtitle}</p>}
                     <div className="flex flex-wrap items-center gap-4 mt-8">
                         {stats}
                     </div>

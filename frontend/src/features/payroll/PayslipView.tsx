@@ -56,7 +56,7 @@ const PayslipView = () => {
                                 <button onClick={handlePrint} className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700">
                                     <Printer size={16} /> Print
                                 </button>
-                                <button onClick={handleEmail} className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                <button onClick={handleEmail} className="flex items-center gap-2 px-3 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover">
                                     <Mail size={16} /> Email
                                 </button>
                             </div>
@@ -66,7 +66,7 @@ const PayslipView = () => {
 
                 <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200 print:shadow-none print:border-0">
                     {/* Header */}
-                    <div className="bg-indigo-900 text-white p-8 print:bg-gray-100 print:text-black">
+                    <div className="bg-primary-soft text-white p-8 print:bg-gray-100 print:text-black">
                         <div className="flex justify-between items-start">
                             <div>
                                 <h1 className="text-2xl font-bold mb-1">PAYSLIP</h1>
@@ -117,7 +117,7 @@ const PayslipView = () => {
                         <div className="grid grid-cols-2 gap-12">
                             {/* Earnings */}
                             <div>
-                                <h3 className="text-xs font-bold text-green-600 uppercase tracking-wider mb-4 border-b border-green-100 pb-2">Earnings</h3>
+                                <h3 className="text-xs font-bold text-success uppercase tracking-wider mb-4 border-b border-success-line pb-2">Earnings</h3>
                                 <table className="w-full text-sm">
                                     <tbody>
                                         <tr>
@@ -140,7 +140,7 @@ const PayslipView = () => {
 
                             {/* Deductions */}
                             <div>
-                                <h3 className="text-xs font-bold text-red-600 uppercase tracking-wider mb-4 border-b border-red-100 pb-2">Deductions</h3>
+                                <h3 className="text-xs font-bold text-danger uppercase tracking-wider mb-4 border-b border-danger-line pb-2">Deductions</h3>
                                 <table className="w-full text-sm">
                                     <tbody>
                                         {payslip.deductions.map((d: any, i: number) => (
@@ -156,7 +156,7 @@ const PayslipView = () => {
                                         )}
                                         <tr className="border-t border-gray-100" style={{ marginTop: 'auto' }}>
                                             <td className="py-3 font-bold text-gray-900">Total Deductions</td>
-                                            <td className="py-3 text-right font-bold text-red-600">-₹{payslip.totalDeductions?.toLocaleString()}</td>
+                                            <td className="py-3 text-right font-bold text-danger">-₹{payslip.totalDeductions?.toLocaleString()}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -168,7 +168,7 @@ const PayslipView = () => {
                     <div className="bg-gray-50 p-8 border-t border-gray-100 flex justify-end">
                         <div className="text-right">
                             <p className="text-sm font-medium text-gray-500 mb-1">Net Payable Amount</p>
-                            <h2 className="text-3xl font-bold text-indigo-900">₹{payslip.netPay?.toLocaleString()}</h2>
+                            <h2 className="text-3xl font-bold text-primary">₹{payslip.netPay?.toLocaleString()}</h2>
                             <p className="text-xs text-gray-400 mt-2 uppercase tracking-wide font-medium">
                                 {payslip.paymentStatus === 'PAID' ? 'PAID via Bank Transfer' : 'PAYMENT PENDING'}
                             </p>

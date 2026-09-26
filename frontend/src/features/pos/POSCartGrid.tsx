@@ -57,7 +57,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
             <td className="py-1.5 px-2">
                 <p className="font-bold text-neutral-800 dark:text-neutral-200 text-xs">
                     {item.name}
-                    {item.qty < 0 && <span className="ml-2 text-[10px] uppercase font-black text-white bg-red-500 px-1 rounded-sm">RETURN</span>}
+                    {item.qty < 0 && <span className="ml-2 text-[10px] uppercase font-black text-white bg-danger px-1 rounded-sm">RETURN</span>}
                 </p>
                 <p className="text-[10px] text-neutral-500 font-mono">
                     {item.sku} {item.unit === 'Meter' && <span className="bg-neutral-100 dark:bg-neutral-700 px-1 rounded ml-1">Per Meter</span>}
@@ -132,7 +132,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                 </div>
             </td>
             <td className={`py-1.5 px-2 text-right font-bold font-mono text-xs ${(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)) < 0
-                ? 'text-red-500'
+                ? 'text-danger'
                 : 'text-success'
                 }`}>
                 ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)).toFixed(2)}
@@ -163,7 +163,7 @@ const CartItemCard = React.memo<CartItemRowProps>(({
                 <div>
                     <p className="font-bold text-neutral-800 dark:text-neutral-100 line-clamp-2">
                         {item.name}
-                        {item.qty < 0 && <span className="ml-2 text-[10px] uppercase font-black text-white bg-red-500 px-1 rounded-sm">RET</span>}
+                        {item.qty < 0 && <span className="ml-2 text-[10px] uppercase font-black text-white bg-danger px-1 rounded-sm">RET</span>}
                     </p>
                     <p className="text-xs text-neutral-500 font-mono mt-0.5">{item.sku}</p>
                     {(item.size || item.color) && (
@@ -173,7 +173,7 @@ const CartItemCard = React.memo<CartItemRowProps>(({
                         </div>
                     )}
                 </div>
-                <p className={`font-bold font-mono ${item.qty < 0 ? 'text-red-500' : 'text-success'}`}>
+                <p className={`font-bold font-mono ${item.qty < 0 ? 'text-danger' : 'text-success'}`}>
                     ₹{(item.price * item.qty).toFixed(2)}
                 </p>
             </div>
@@ -712,14 +712,14 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
             {/* Visual Search Banner */}
             {/* Visual Search Banner - COMMENTED OUT
             {visualMatches && (
-                <div className="bg-indigo-50 dark:bg-indigo-900/20 px-4 py-2 flex justify-between items-center border-b border-indigo-100 dark:border-primary/20">
-                    <span className="text-indigo-700 dark:text-indigo-300 text-sm flex items-center gap-2">
+                <div className="bg-primary-soft dark:bg-primary-soft px-4 py-2 flex justify-between items-center border-b border-primary/30 dark:border-primary/20">
+                    <span className="text-primary dark:text-primary text-sm flex items-center gap-2">
                         <Camera className="w-4 h-4" />
                         Visual Search: Found {visualMatches.length} matches
                     </span>
                     <button
                         onClick={() => setVisualMatches(null)}
-                        className="p-1 hover:bg-indigo-200 rounded-full text-indigo-700"
+                        className="p-1 hover:bg-primary-soft rounded-full text-primary"
                     >
                         <X className="w-4 h-4" />
                     </button>

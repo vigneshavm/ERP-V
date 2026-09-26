@@ -44,7 +44,7 @@ const GRNForm: React.FC = () => {
                             <button
                                 onClick={() => saveGRN()}
                                 disabled={isSaving}
-                                className="px-6 py-2.5 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition hover:scale-105 active:scale-95 flex items-center gap-2 disabled:opacity-60"
+                                className="px-6 py-2.5 bg-success text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:bg-success/90 transition hover:scale-105 active:scale-95 flex items-center gap-2 disabled:opacity-60"
                             >
                                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <ClipboardCheck className="w-4 h-4" />}
                                 {isSaving ? 'Recording...' : 'Authorize & Receive'}
@@ -54,7 +54,7 @@ const GRNForm: React.FC = () => {
                 />
 
                 {saveError && (
-                    <div className="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-2xl text-sm font-bold flex items-start gap-2">
+                    <div className="p-4 bg-danger-soft dark:bg-danger-soft text-danger dark:text-danger rounded-2xl text-sm font-bold flex items-start gap-2">
                         <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
                         <span>{saveError}</span>
                     </div>
@@ -72,12 +72,12 @@ const GRNForm: React.FC = () => {
                         </div>
                     </div>
                     <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-success/20 transition-all">
-                        <div className="p-4 bg-emerald-50 text-success dark:bg-emerald-900/20 rounded-sm group-hover:rotate-12 transition-transform">
+                        <div className="p-4 bg-success-soft text-success dark:bg-success-soft rounded-sm group-hover:rotate-12 transition-transform">
                             <CheckCircle className="w-6 h-6" />
                         </div>
                         <div>
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-1">QA Protocol</p>
-                            <p className="text-xl font-black text-emerald-600 dark:text-success tracking-tighter uppercase tabular-nums">Active</p>
+                            <p className="text-xl font-black text-success dark:text-success tracking-tighter uppercase tabular-nums">Active</p>
                         </div>
                     </div>
                 </div>

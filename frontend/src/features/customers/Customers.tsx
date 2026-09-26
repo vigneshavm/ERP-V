@@ -75,13 +75,13 @@ const Customers = () => {
                     <>
                         <button
                             onClick={() => navigate('/customers/with-dues')}
-                            className="flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-warning rounded-xl text-sm font-bold shadow-sm hover:bg-amber-100 transition-all font-medium"
+                            className="flex items-center gap-2 px-4 py-2 bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning-line text-warning dark:text-warning rounded-xl text-sm font-bold shadow-sm hover:bg-warning-soft transition-all font-medium"
                         >
                             <CreditCard className="w-4 h-4" /> Collection Report
                         </button>
                         <button
                             onClick={() => navigate('/customers/add')}
-                            className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all font-medium"
+                            className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-primary-hover active:scale-95 transition-all font-medium"
                         >
                             <UserPlus className="w-4 h-4" /> Add High-Value Customer
                         </button>
@@ -128,7 +128,7 @@ const Customers = () => {
                                 placeholder="Filter records by name, ID or terminal..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-sm text-[rgb(var(--color-text))]"
+                                className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-medium text-sm text-[rgb(var(--color-text))]"
                             />
                         </div>
                         <div className="flex items-center gap-2">
@@ -160,7 +160,7 @@ const Customers = () => {
                                     <tr>
                                         <td colSpan={5} className="px-8 py-20 text-center">
                                             <div className="flex flex-col items-center gap-4">
-                                                <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin"></div>
+                                                <div className="w-12 h-12 border-4 border-primary/20 border-t-indigo-600 rounded-full animate-spin"></div>
                                                 <p className="text-sm font-bold text-slate-400">Synchronizing Global Records...</p>
                                             </div>
                                         </td>
@@ -202,14 +202,14 @@ const Customers = () => {
                                         <td className="px-8 py-6">
                                             <div className="flex flex-col gap-1.5">
                                                 <div className="flex items-center justify-between gap-4">
-                                                    <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-tight ${customer.dues > 0 ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600'}`}>
+                                                    <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-tight ${customer.dues > 0 ? 'bg-warning-soft dark:bg-warning-soft text-warning' : 'bg-success-soft dark:bg-success-soft text-success'}`}>
                                                         ₹{(customer.dues || 0).toLocaleString('en-IN')}
                                                     </span>
                                                     {customer.dues > 0 && <span className="text-[9px] font-black text-danger uppercase tracking-tighter animate-pulse flex items-center gap-1"><ArrowUpRight className="w-2.5 h-2.5" /> High</span>}
                                                 </div>
                                                 <div className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                                                     <div
-                                                        className={`h-full rounded-full ${customer.dues > 0 ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                                                        className={`h-full rounded-full ${customer.dues > 0 ? 'bg-warning' : 'bg-success'}`}
                                                         style={{ width: customer.dues > 50000 ? '100%' : `${(customer.dues / 50000) * 100}%` }}
                                                     ></div>
                                                 </div>
@@ -232,14 +232,14 @@ const Customers = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => navigate(`/customers/edit/${customer._id}`)}
-                                                    className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                                                    className="p-2.5 text-slate-400 hover:text-primary hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                                                     title="Modify Node"
                                                 >
                                                     <TrendingUp className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => setDeleteConfirm(customer._id)}
-                                                    className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                                                    className="p-2.5 text-slate-400 hover:text-danger hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                                                     title="Termination"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
@@ -263,8 +263,8 @@ const Customers = () => {
             >
                 <div className="space-y-6">
                     <div className="flex flex-col items-center text-center gap-4">
-                        <div className="w-16 h-16 rounded-sm bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
-                            <Trash2 className="w-8 h-8 text-red-600" />
+                        <div className="w-16 h-16 rounded-sm bg-danger-soft dark:bg-danger-soft flex items-center justify-center">
+                            <Trash2 className="w-8 h-8 text-danger" />
                         </div>
                         <div>
                             <p className="text-lg font-black text-slate-800 dark:text-white leading-tight">Terminate Partner Link?</p>
@@ -282,7 +282,7 @@ const Customers = () => {
                         </button>
                         <button
                             onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
-                            className="flex-1 px-6 py-3 bg-red-600 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-700 shadow-lg shadow-red-200 dark:shadow-none transition-all font-medium"
+                            className="flex-1 px-6 py-3 bg-danger text-white rounded-sm text-[10px] font-black uppercase tracking-[0.2em] hover:bg-danger/90 shadow-lg shadow-red-200 dark:shadow-none transition-all font-medium"
                         >
                             Confirm
                         </button>

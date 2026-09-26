@@ -28,7 +28,7 @@ import {
 const STATUS_STYLES: Record<SerializedUnitStatus, string> = {
     IN_STOCK: 'bg-success/10 text-success',
     SOLD: 'bg-primary/10 text-primary',
-    RETURNED: 'bg-amber-100 text-amber-700',
+    RETURNED: 'bg-warning-soft text-warning',
     DAMAGED: 'bg-error/10 text-error',
 };
 
@@ -182,7 +182,7 @@ const SerializedUnitLookup: React.FC = () => {
                     </div>
 
                     {selectedItem && !selectedItem.isSerialized && (
-                        <div className="mx-6 mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 rounded-sm text-xs font-bold flex items-center gap-2">
+                        <div className="mx-6 mt-4 p-4 bg-warning-soft dark:bg-warning-soft text-warning dark:text-warning rounded-sm text-xs font-bold flex items-center gap-2">
                             <ShieldCheck className="w-4 h-4 flex-shrink-0" />
                             "{selectedItem.name}" isn't marked as serialized yet -- enable serial tracking on the item before adding units.
                         </div>
@@ -230,7 +230,7 @@ const SerializedUnitLookup: React.FC = () => {
                                                     </button>
                                                 )}
                                                 {unit.status === 'SOLD' && (
-                                                    <button onClick={() => handleStatusChange(unit._id, 'RETURNED')} title="Mark returned" className="p-2 text-neutral-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all">
+                                                    <button onClick={() => handleStatusChange(unit._id, 'RETURNED')} title="Mark returned" className="p-2 text-neutral-400 hover:text-warning hover:bg-warning-soft rounded-lg transition-all">
                                                         <RotateCcw className="w-4 h-4" />
                                                     </button>
                                                 )}

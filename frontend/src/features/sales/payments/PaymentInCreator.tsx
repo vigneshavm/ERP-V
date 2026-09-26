@@ -41,11 +41,11 @@ const API_METHOD: Record<PaymentMethod['method'], string> = { CASH: 'cash', UPI:
 const errorText = (err: unknown, fallback: string) => (err as { response?: { data?: { message?: string } } })?.response?.data?.message || fallback;
 
 const methodConfig = {
-    CASH: { label: 'Cash', icon: Banknote, color: 'text-green-600' },
+    CASH: { label: 'Cash', icon: Banknote, color: 'text-success' },
     UPI: { label: 'UPI', icon: Smartphone, color: 'text-purple-600' },
     CARD: { label: 'Card', icon: CreditCard, color: 'text-info' },
     BANK: { label: 'Bank Transfer', icon: Building2, color: 'text-primary' },
-    CHEQUE: { label: 'Cheque', icon: Receipt, color: 'text-amber-600' },
+    CHEQUE: { label: 'Cheque', icon: Receipt, color: 'text-warning' },
 };
 
 /**
@@ -219,10 +219,10 @@ const PaymentInCreator: React.FC = () => {
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <Receipt className="w-5 h-5 text-green-600" />
+                            <Receipt className="w-5 h-5 text-success" />
                             <span className="font-bold text-lg">Receipt</span>
                         </div>
-                        <span className="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                        <span className="px-2 py-1 rounded-full text-xs font-bold bg-success-soft text-success dark:bg-success-soft dark:text-success">
                             New Receipt
                         </span>
                     </div>
@@ -245,7 +245,7 @@ const PaymentInCreator: React.FC = () => {
 
             <div className="flex-1 overflow-auto p-4">
                 {loadError && (
-                    <div role="alert" className="mb-4 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">{loadError}</div>
+                    <div role="alert" className="mb-4 rounded-md border border-danger-line bg-danger-soft px-4 py-3 text-sm font-medium text-danger dark:border-danger/50 dark:bg-danger-soft dark:text-danger">{loadError}</div>
                 )}
                 <div className="grid lg:grid-cols-2 gap-4">
                     {/* Left Column */}
@@ -257,7 +257,7 @@ const PaymentInCreator: React.FC = () => {
                                     <User className="w-4 h-4" /> Customer
                                 </h3>
                                 {customer && !isCustomerLocked && (
-                                    <button onClick={() => setCustomer(null)} className="text-xs text-red-500 hover:underline">
+                                    <button onClick={() => setCustomer(null)} className="text-xs text-danger hover:underline">
                                         Change
                                     </button>
                                 )}
@@ -271,21 +271,21 @@ const PaymentInCreator: React.FC = () => {
                                             <p className="text-sm text-secondary opacity-70">{customer.phone}</p>
                                         </div>
                                         {isCustomerLocked && (
-                                            <span className="text-xs text-amber-600 bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded">
+                                            <span className="text-xs text-warning bg-warning-soft dark:bg-warning-soft px-2 py-1 rounded">
                                                 Locked
                                             </span>
                                         )}
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">
-                                        <div className="p-3 bg-danger/10 dark:bg-red-900/20 rounded-lg">
-                                            <p className="text-xs text-danger dark:text-red-400 font-medium">Outstanding</p>
-                                            <p className="text-lg font-bold text-red-700 dark:text-red-400">
+                                        <div className="p-3 bg-danger/10 dark:bg-danger-soft rounded-lg">
+                                            <p className="text-xs text-danger dark:text-danger font-medium">Outstanding</p>
+                                            <p className="text-lg font-bold text-danger dark:text-danger">
                                                 {formatCurrency(customer.outstandingBalance)}
                                             </p>
                                         </div>
-                                        <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                                            <p className="text-xs text-green-600 dark:text-green-400 font-medium">Advance</p>
-                                            <p className="text-lg font-bold text-green-700 dark:text-green-400">
+                                        <div className="p-3 bg-success-soft dark:bg-success-soft rounded-lg">
+                                            <p className="text-xs text-success dark:text-success font-medium">Advance</p>
+                                            <p className="text-lg font-bold text-success dark:text-success">
                                                 {formatCurrency(customer.advanceBalance)}
                                             </p>
                                         </div>
@@ -312,7 +312,7 @@ const PaymentInCreator: React.FC = () => {
                                                 >
                                                     <div className="flex justify-between">
                                                         <span className="font-medium">{c.name}</span>
-                                                        <span className="text-xs text-red-500">Due: {formatCurrency(c.outstandingBalance)}</span>
+                                                        <span className="text-xs text-danger">Due: {formatCurrency(c.outstandingBalance)}</span>
                                                     </div>
                                                     <span className="text-xs text-secondary opacity-70">{c.phone}</span>
                                                 </button>
@@ -371,7 +371,7 @@ const PaymentInCreator: React.FC = () => {
                                             </div>
                                             <div className="col-span-1 text-center">
                                                 {paymentMethods.length > 1 && (
-                                                    <button onClick={() => removePaymentMethod(pm.id)} className="text-red-500 hover:text-red-700">
+                                                    <button onClick={() => removePaymentMethod(pm.id)} className="text-danger hover:text-danger">
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
                                                 )}
@@ -389,9 +389,9 @@ const PaymentInCreator: React.FC = () => {
                                 </select>
                             </label>
 
-                            <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg flex justify-between items-center">
-                                <span className="font-bold text-green-700 dark:text-green-400">Total Payment</span>
-                                <span className="text-xl font-bold text-green-700 dark:text-green-400">
+                            <div className="mt-4 p-3 bg-success-soft dark:bg-success-soft rounded-lg flex justify-between items-center">
+                                <span className="font-bold text-success dark:text-success">Total Payment</span>
+                                <span className="text-xl font-bold text-success dark:text-success">
                                     {formatCurrency(totalPayment)}
                                 </span>
                             </div>
@@ -421,7 +421,7 @@ const PaymentInCreator: React.FC = () => {
                                 <div className="text-center py-12 text-secondary opacity-50"><p>Loading invoices…</p></div>
                             ) : invoices.length === 0 ? (
                                 <div className="text-center py-12 text-secondary opacity-50">
-                                    <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50 text-green-500" />
+                                    <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50 text-success" />
                                     <p>No outstanding invoices</p>
                                 </div>
                             ) : (
@@ -467,7 +467,7 @@ const PaymentInCreator: React.FC = () => {
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-secondary opacity-70">Allocated to Invoices</span>
-                                        <span className="font-medium text-green-600">{formatCurrency(totalAllocated)}</span>
+                                        <span className="font-medium text-success">{formatCurrency(totalAllocated)}</span>
                                     </div>
                                     {advanceCreated > 0 && (
                                         <div className="flex justify-between text-sm">
@@ -478,7 +478,7 @@ const PaymentInCreator: React.FC = () => {
                                     <div className="border-t border-default/30 pt-2">
                                         <div className="flex justify-between font-bold">
                                             <span>Remaining</span>
-                                            <span className={remainingUnallocated > 0 ? 'text-amber-600' : 'text-green-600'}>
+                                            <span className={remainingUnallocated > 0 ? 'text-warning' : 'text-success'}>
                                                 {formatCurrency(remainingUnallocated)}
                                             </span>
                                         </div>
@@ -493,7 +493,7 @@ const PaymentInCreator: React.FC = () => {
             {/* Actions */}
             <div className="px-4 py-3 border-t border-neutral-200 dark:border-neutral-800 flex flex-wrap gap-3 justify-between">
                 <div className="flex gap-2">
-                    <button onClick={handleClear} className="btn btn-ghost text-red-500">
+                    <button onClick={handleClear} className="btn btn-ghost text-danger">
                         <RefreshCw className="w-4 h-4" /> Clear
                     </button>
                 </div>

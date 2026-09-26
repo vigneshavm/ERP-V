@@ -166,7 +166,7 @@ const BankStatementView: React.FC = () => {
                             sub={`${transactions.filter(t => t.type === 'credit').length} inbound nodes`}
                             icon={<TrendingUp className="w-6 h-6" />}
                             colorClass="text-success"
-                            bgClass="bg-emerald-50 dark:bg-emerald-900/20"
+                            bgClass="bg-success-soft dark:bg-success-soft"
                         />
                         <SummaryCard
                             label="Consolidated Debits"
@@ -174,7 +174,7 @@ const BankStatementView: React.FC = () => {
                             sub={`${transactions.filter(t => t.type === 'debit').length} outbound nodes`}
                             icon={<TrendingDown className="w-6 h-6" />}
                             colorClass="text-danger"
-                            bgClass="bg-rose-50 dark:bg-rose-900/20"
+                            bgClass="bg-danger-soft dark:bg-danger-soft"
                         />
                         <SummaryCard
                             label="Net Capital Flow"
@@ -182,7 +182,7 @@ const BankStatementView: React.FC = () => {
                             sub={netFlow >= 0 ? '▲ Net surplus position' : '▼ Net deficit position'}
                             icon={<Activity className="w-6 h-6" />}
                             colorClass={netFlow >= 0 ? 'text-success' : 'text-danger'}
-                            bgClass={netFlow >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-rose-50 dark:bg-rose-900/20'}
+                            bgClass={netFlow >= 0 ? 'bg-success-soft dark:bg-success-soft' : 'bg-danger-soft dark:bg-danger-soft'}
                         />
                     </div>
                 )}
@@ -308,8 +308,8 @@ const BankStatementView: React.FC = () => {
                                             <td className="px-8 py-6">
                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
                                                     tx.type === 'credit'
-                                                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success'
-                                                        : 'bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-danger'
+                                                        ? 'bg-success-soft text-success dark:bg-success-soft dark:text-success'
+                                                        : 'bg-danger-soft text-danger dark:bg-danger-soft dark:text-danger'
                                                 }`}>
                                                     {tx.type === 'credit' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                                                     {tx.type}

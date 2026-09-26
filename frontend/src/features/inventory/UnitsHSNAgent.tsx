@@ -71,7 +71,7 @@ const UnitsHSNAgent: React.FC = () => {
                                     <td className="px-4 py-3"><span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300">{u.type}</span></td>
                                     <td className="px-4 py-3 flex gap-2">
                                         <button className="p-1.5 hover:bg-teal-50 dark:hover:bg-teal-900/20 text-teal-600 rounded-lg transition-colors"><Edit className="w-3.5 h-3.5" /></button>
-                                        <button className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 rounded-lg transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                                        <button className="p-1.5 hover:bg-danger-soft dark:hover:bg-danger-soft text-danger rounded-lg transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
                                     </td>
                                 </tr>
                             ))}
@@ -89,7 +89,7 @@ const UnitsHSNAgent: React.FC = () => {
                                 <tr key={h.code} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                                     <td className="px-4 py-3 font-black text-teal-600">{h.code}</td>
                                     <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300">{h.description}</td>
-                                    <td className="px-4 py-3"><span className="px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-success rounded-lg text-xs font-black">{h.gst}</span></td>
+                                    <td className="px-4 py-3"><span className="px-2 py-1 bg-success-soft dark:bg-success-soft text-success dark:text-success rounded-lg text-xs font-black">{h.gst}</span></td>
                                     <td className="px-4 py-3 text-sm font-bold text-slate-500">{h.items} items</td>
                                     <td className="px-4 py-3 flex gap-2">
                                         <button className="p-1.5 hover:bg-teal-50 dark:hover:bg-teal-900/20 text-teal-600 rounded-lg transition-colors"><Edit className="w-3.5 h-3.5" /></button>

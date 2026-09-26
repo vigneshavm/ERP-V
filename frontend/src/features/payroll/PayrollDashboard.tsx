@@ -67,7 +67,7 @@ const PayrollDashboard = () => {
                             </button>
                             <button
                                 onClick={() => navigate('/people/payroll/run')}
-                                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors shadow-sm"
                             >
                                 <PlayCircle size={18} />
                                 Run Payroll
@@ -81,26 +81,26 @@ const PayrollDashboard = () => {
                         title="Last Payroll Run"
                         value={stats.lastRun}
                         icon={Clock}
-                        color="bg-blue-500"
+                        color="bg-primary"
                     />
                     <PayrollInfoCard
                         title="Pending Approvals"
                         value={stats.pendingApprovals}
                         icon={FileText}
-                        color="bg-amber-500"
+                        color="bg-warning"
                     />
                     <PayrollInfoCard
                         title="Total Paid (this FY)"
                         value={stats.totalPaidYTD}
                         icon={DollarSign}
-                        color="bg-emerald-500"
+                        color="bg-success"
                     />
                 </div>
 
                 <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                         <h3 className="font-semibold text-gray-800">Recent Payroll Runs</h3>
-                        <button onClick={() => navigate('/people/payroll/history')} className="text-sm text-primary hover:text-indigo-800 font-medium">View All</button>
+                        <button onClick={() => navigate('/people/payroll/history')} className="text-sm text-primary hover:text-primary font-medium">View All</button>
                     </div>
 
                     {loading && runs.length === 0 ? (
@@ -132,7 +132,7 @@ const PayrollDashboard = () => {
                                         <td className="px-6 py-4 text-right">
                                             <button
                                                 onClick={() => navigate(`/people/payroll/run/${run._id}`)}
-                                                className="text-primary hover:text-indigo-900 text-sm font-medium"
+                                                className="text-primary hover:text-primary text-sm font-medium"
                                             >
                                                 View
                                             </button>
@@ -148,7 +148,7 @@ const PayrollDashboard = () => {
                             <p className="text-sm mt-1">Get started by running your first payroll.</p>
                             <button
                                 onClick={() => navigate('/people/payroll/run')}
-                                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium"
+                                className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover text-sm font-medium"
                             >
                                 Run Payroll
                             </button>

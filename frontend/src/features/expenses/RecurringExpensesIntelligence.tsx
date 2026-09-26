@@ -35,7 +35,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
 
     const riskColorMap = {
         HIGH: 'text-error bg-error/10 border-error/20',
-        MEDIUM: 'text-amber-600 bg-amber-100 border-amber-200',
+        MEDIUM: 'text-warning bg-warning-soft border-warning-line',
         LOW: 'text-success bg-success/10 border-success/20',
     };
 

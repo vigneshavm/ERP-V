@@ -302,7 +302,7 @@ const CategoryManager: React.FC = () => {
         return (
             <Layout>
                 <div className="flex flex-col items-center justify-center p-12 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-sm h-[500px]">
-                    <div className="w-12 h-12 bg-rose-50 dark:bg-rose-900/20 text-rose-600 rounded-xl flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 bg-danger-soft dark:bg-danger-soft text-danger rounded-xl flex items-center justify-center mb-4">
                         <AlertTriangle className="w-6 h-6" />
                     </div>
                     <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-2">Connection Failed</h3>
@@ -357,9 +357,9 @@ const CategoryManager: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                     { label: 'Total Categories', value: stats?.totalCategories.toLocaleString() || '-', icon: Layers, color: 'text-primary', bg: 'bg-primary/10' },
-                    { label: 'Total Items SKUs', value: stats?.totalItems.toLocaleString() || '-', icon: Package, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
-                    { label: 'Stock Valuation', value: stats ? `₹${(stats.totalStockValue / 1000000).toFixed(2)}M` : '-', icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-                    { label: 'Avg Items / Cat', value: stats?.avgItemsPerCategory.toLocaleString() || '-', icon: BarChart3, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' }
+                    { label: 'Total Items SKUs', value: stats?.totalItems.toLocaleString() || '-', icon: Package, color: 'text-success', bg: 'bg-success-soft dark:bg-success-soft' },
+                    { label: 'Stock Valuation', value: stats ? `₹${(stats.totalStockValue / 1000000).toFixed(2)}M` : '-', icon: TrendingUp, color: 'text-warning', bg: 'bg-warning-soft dark:bg-warning-soft' },
+                    { label: 'Avg Items / Cat', value: stats?.avgItemsPerCategory.toLocaleString() || '-', icon: BarChart3, color: 'text-primary', bg: 'bg-primary-soft dark:bg-primary-soft' }
                 ].map((stat, idx) => (
                     <div key={idx} className="bg-white dark:bg-neutral-800 p-5 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-4">
                         <div className={`p-3 rounded-xl ${stat.bg}`}>
@@ -503,17 +503,17 @@ const CategoryManager: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase border ${cat.riskFlag === 'HEALTHY' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 border-emerald-100 dark:border-emerald-900/30' :
-                                                cat.riskFlag === 'OVERSTOCKED' ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 border-amber-100 dark:border-amber-900/30' :
-                                                    'bg-rose-50 dark:bg-rose-900/20 text-rose-600 border-rose-100 dark:border-rose-900/30'
+                                            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase border ${cat.riskFlag === 'HEALTHY' ? 'bg-success-soft dark:bg-success-soft text-success border-success-line dark:border-success/30' :
+                                                cat.riskFlag === 'OVERSTOCKED' ? 'bg-warning-soft dark:bg-warning-soft text-warning border-warning-line dark:border-warning/30' :
+                                                    'bg-danger-soft dark:bg-danger-soft text-danger border-danger-line dark:border-danger/30'
                                                 }`}>
                                                 {(cat.riskFlag || 'HEALTHY').replace('_', ' ')}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-1.5">
-                                                <div className={`w-2 h-2 rounded-full ${cat.pricingHealth === 'GOOD' ? 'bg-emerald-500' :
-                                                    cat.pricingHealth === 'LOW_MARGIN' ? 'bg-amber-500' : 'bg-rose-500'
+                                                <div className={`w-2 h-2 rounded-full ${cat.pricingHealth === 'GOOD' ? 'bg-success' :
+                                                    cat.pricingHealth === 'LOW_MARGIN' ? 'bg-warning' : 'bg-danger'
                                                     }`} />
                                                 <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
                                                     {(cat.pricingHealth || 'GOOD').replace('_', ' ')}
@@ -525,7 +525,7 @@ const CategoryManager: React.FC = () => {
                                                 <button className="p-2 hover:bg-white dark:hover:bg-neutral-700 hover:text-primary rounded-lg hover:shadow-sm border border-transparent hover:border-neutral-200 dark:hover:border-neutral-600 transition-all">
                                                     <Edit className="w-4 h-4" />
                                                 </button>
-                                                <button className="p-2 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 rounded-lg border border-transparent hover:border-rose-100 dark:hover:border-rose-900/30 transition-all">
+                                                <button className="p-2 hover:bg-danger-soft dark:hover:bg-danger-soft hover:text-danger rounded-lg border border-transparent hover:border-danger-line dark:hover:border-danger/30 transition-all">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
@@ -585,13 +585,13 @@ const CategoryManager: React.FC = () => {
                     <form onSubmit={handleCreateCategory}>
                         <div className="px-6 py-5 space-y-4">
                             {createCategoryError && (
-                                <div className="px-3 py-2 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-900/30 text-rose-600 text-sm rounded-lg flex items-center gap-2">
+                                <div className="px-3 py-2 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger/30 text-danger text-sm rounded-lg flex items-center gap-2">
                                     <AlertTriangle className="w-4 h-4 flex-shrink-0" /> {createCategoryError}
                                 </div>
                             )}
                             <div>
                                 <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1.5">
-                                    Category Name <span className="text-rose-500">*</span>
+                                    Category Name <span className="text-danger">*</span>
                                 </label>
                                 <input
                                     type="text"

@@ -139,12 +139,12 @@ const DailyAttendanceBoard: React.FC = () => {
                         <div className="flex items-center bg-slate-100 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-800">
                             <button
                                 onClick={() => changeDate(-1)}
-                                className="p-2 hover:bg-white dark:hover:bg-slate-800 rounded-md transition-all text-slate-500 hover:text-blue-600"
+                                className="p-2 hover:bg-white dark:hover:bg-slate-800 rounded-md transition-all text-slate-500 hover:text-primary"
                             >
                                 <ChevronLeft size={18} />
                             </button>
                             <div className="px-4 py-1.5 flex items-center gap-2">
-                                <Calendar size={16} className="text-blue-600" />
+                                <Calendar size={16} className="text-primary" />
                                 <input
                                     type="date"
                                     value={selectedDate}
@@ -154,7 +154,7 @@ const DailyAttendanceBoard: React.FC = () => {
                             </div>
                             <button
                                 onClick={() => changeDate(1)}
-                                className="p-2 hover:bg-white dark:hover:bg-slate-800 rounded-md transition-all text-slate-500 hover:text-blue-600"
+                                className="p-2 hover:bg-white dark:hover:bg-slate-800 rounded-md transition-all text-slate-500 hover:text-primary"
                             >
                                 <ChevronRight size={18} />
                             </button>
@@ -174,9 +174,9 @@ const DailyAttendanceBoard: React.FC = () => {
 
                     <div className="flex items-center gap-3">
                         {message.text && (
-                            <span className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all animate-in fade-in zoom-in ${message.type === 'success' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                                    message.type === 'error' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
-                                        'bg-blue-50 text-blue-600 border border-blue-100'
+                            <span className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all animate-in fade-in zoom-in ${message.type === 'success' ? 'bg-success-soft text-success border border-success-line' :
+                                    message.type === 'error' ? 'bg-danger-soft text-danger border border-danger-line' :
+                                        'bg-primary-soft text-primary border border-primary/30'
                                 }`}>
                                 {message.text}
                             </span>
@@ -184,7 +184,7 @@ const DailyAttendanceBoard: React.FC = () => {
                         <button
                             disabled={isSaving || !Object.values(attendanceMap).some(v => v.isDirty)}
                             onClick={handleSave}
-                            className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all uppercase text-xs tracking-widest"
+                            className="bg-primary hover:bg-primary-hover disabled:bg-slate-400 text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all uppercase text-xs tracking-widest"
                         >
                             {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                             Save Attendance
@@ -196,7 +196,7 @@ const DailyAttendanceBoard: React.FC = () => {
                 <div className="mt-6 bg-white dark:bg-slate-800 rounded-sm shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                     {isLoading ? (
                         <div className="py-32 flex flex-col items-center justify-center">
-                            <Loader2 className="w-12 h-12 animate-spin text-blue-500 mb-4" />
+                            <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
                             <p className="text-slate-500 font-bold dark:text-slate-400">Loading attendance data...</p>
                         </div>
                     ) : (
@@ -219,7 +219,7 @@ const DailyAttendanceBoard: React.FC = () => {
                                             <tr key={id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-9 h-9 bg-blue-50 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-xs border border-blue-100 dark:border-blue-800">
+                                                        <div className="w-9 h-9 bg-primary-soft dark:bg-primary-soft rounded-full flex items-center justify-center text-primary dark:text-primary font-black text-xs border border-primary/30 dark:border-primary/30">
                                                             {emp.name.charAt(0)}
                                                         </div>
                                                         <div>
@@ -265,8 +265,8 @@ const DailyAttendanceBoard: React.FC = () => {
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
                                                     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800">
-                                                        <span className={`w-2 h-2 rounded-full ${att.status === 'PRESENT' ? 'bg-emerald-500' :
-                                                                att.status === 'HALF' ? 'bg-amber-500' : 'bg-rose-500'
+                                                        <span className={`w-2 h-2 rounded-full ${att.status === 'PRESENT' ? 'bg-success' :
+                                                                att.status === 'HALF' ? 'bg-warning' : 'bg-danger'
                                                             }`} />
                                                         <span className="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest">
                                                             {att.status} {att.overtimeHours > 0 ? `+ ${att.overtimeHours}H OT` : ''}
@@ -285,16 +285,16 @@ const DailyAttendanceBoard: React.FC = () => {
                 {/* Legend */}
                 <div className="mt-8 flex flex-wrap gap-6 justify-center text-xs font-bold text-slate-500 uppercase tracking-widest">
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-emerald-500 rounded-full" /> Full Day 100%
+                        <div className="w-3 h-3 bg-success rounded-full" /> Full Day 100%
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-amber-500 rounded-full" /> Half Day 50%
+                        <div className="w-3 h-3 bg-warning rounded-full" /> Half Day 50%
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-rose-500 rounded-full" /> Absent 0%
+                        <div className="w-3 h-3 bg-danger rounded-full" /> Absent 0%
                     </div>
                     <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-blue-500" /> Mark Retroactively
+                        <Calendar size={14} className="text-primary" /> Mark Retroactively
                     </div>
                 </div>
             </div>

@@ -150,8 +150,8 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                             
                             {id && bill.status !== 'Paid' && (
                                 <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
-                                    <button onClick={() => handleUpdateStatus('Hold')} className="p-2 text-warning hover:bg-amber-50 rounded-lg transition-colors" title="Hold"><Clock className="w-4 h-4" /></button>
-                                    <button onClick={() => handleUpdateStatus('Disputed')} className="p-2 text-danger hover:bg-rose-50 rounded-lg transition-colors" title="Dispute"><AlertCircle className="w-4 h-4" /></button>
+                                    <button onClick={() => handleUpdateStatus('Hold')} className="p-2 text-warning hover:bg-warning-soft rounded-lg transition-colors" title="Hold"><Clock className="w-4 h-4" /></button>
+                                    <button onClick={() => handleUpdateStatus('Disputed')} className="p-2 text-danger hover:bg-danger-soft rounded-lg transition-colors" title="Dispute"><AlertCircle className="w-4 h-4" /></button>
                                     <button onClick={() => handleUpdateStatus('Rejected')} className="p-2 text-neutral-400 hover:bg-neutral-50 rounded-lg transition-colors" title="Reject"><Ban className="w-4 h-4" /></button>
                                 </div>
                             )}
@@ -232,7 +232,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                 {bill.po_number && (
                                     <div className="flex items-center gap-3 px-6 py-4 bg-success/10 border border-success/20 rounded-sm animate-in zoom-in-95">
                                         <CheckCircle className="w-5 h-5 text-success" />
-                                        <span className="text-[10px] font-black text-emerald-600 dark:text-success uppercase tracking-widest">Matched to Protocol {bill.po_number}</span>
+                                        <span className="text-[10px] font-black text-success dark:text-success uppercase tracking-widest">Matched to Protocol {bill.po_number}</span>
                                     </div>
                                 )}
                             </div>

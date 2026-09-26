@@ -31,17 +31,17 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                             <thead>
                                 <tr className="bg-slate-50 dark:bg-slate-800/50">
                                     <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-200 dark:border-slate-800">
-                                        <div className="flex items-center gap-1 cursor-pointer hover:text-emerald-600" onClick={() => onSort('vendorName')}>
+                                        <div className="flex items-center gap-1 cursor-pointer hover:text-success" onClick={() => onSort('vendorName')}>
                                             Vendor / Bill Details <ArrowUpDown size={12} />
                                         </div>
                                     </th>
                                     <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-200 dark:border-slate-800">
-                                        <div className="flex items-center gap-1 cursor-pointer hover:text-emerald-600" onClick={() => onSort('dueDate')}>
+                                        <div className="flex items-center gap-1 cursor-pointer hover:text-success" onClick={() => onSort('dueDate')}>
                                             Due Logistics <ArrowUpDown size={12} />
                                         </div>
                                     </th>
                                     <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-200 dark:border-slate-800 text-right">
-                                        <div className="flex items-center justify-end gap-1 cursor-pointer hover:text-emerald-600" onClick={() => onSort('amount')}>
+                                        <div className="flex items-center justify-end gap-1 cursor-pointer hover:text-success" onClick={() => onSort('amount')}>
                                             Financials <ArrowUpDown size={12} />
                                         </div>
                                     </th>
@@ -50,20 +50,20 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                             </thead>
                             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                                 {filteredBills.map((bill) => (
-                                    <tr key={bill.id} className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group ${bill.isUrgent ? 'bg-rose-50/20 dark:bg-rose-950/5' : ''}`}>
+                                    <tr key={bill.id} className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group ${bill.isUrgent ? 'bg-danger/20 dark:bg-danger-soft' : ''}`}>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-10 h-10 rounded-xl ${bill.isUrgent ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'} flex items-center justify-center transition-colors`}>
+                                                <div className={`w-10 h-10 rounded-xl ${bill.isUrgent ? 'bg-danger-soft text-danger' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'} flex items-center justify-center transition-colors`}>
                                                     <Building2 size={20} />
                                                 </div>
                                                 <div>
                                                     <div className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-2">
                                                         {bill.vendorName}
-                                                        {bill.isUrgent && <span className="px-1.5 py-0.5 bg-rose-100 text-rose-600 text-[8px] rounded uppercase font-bold animate-pulse">Critical</span>}
-                                                        {bill.isDisputed && <span className="px-1.5 py-0.5 bg-amber-100 text-amber-600 text-[8px] rounded uppercase font-bold">On Hold</span>}
+                                                        {bill.isUrgent && <span className="px-1.5 py-0.5 bg-danger-soft text-danger text-[8px] rounded uppercase font-bold animate-pulse">Critical</span>}
+                                                        {bill.isDisputed && <span className="px-1.5 py-0.5 bg-warning-soft text-warning text-[8px] rounded uppercase font-bold">On Hold</span>}
                                                     </div>
                                                     <div className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-2">
-                                                        <span className="font-bold text-emerald-600">#{bill.billNumber}</span>
+                                                        <span className="font-bold text-success">#{bill.billNumber}</span>
                                                         <span>•</span>
                                                         <span>{formatDate(bill.billDate)}</span>
                                                         {bill.hasDiscount && <span className="flex items-center gap-0.5 text-warning font-bold"><TrendingUp size={10} /> Discount Eligible</span>}
@@ -79,7 +79,7 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                                                     </div>
                                                     <div className="w-16 h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                                                         <div
-                                                            className={`h-full rounded-full ${bill.daysOverdue > 0 ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                                            className={`h-full rounded-full ${bill.daysOverdue > 0 ? 'bg-danger' : 'bg-success'}`}
                                                             style={{ width: `${Math.min(100, Math.abs(bill.daysOverdue) * 3)}%` }}
                                                         />
                                                     </div>
@@ -94,7 +94,7 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                                         <td className="px-6 py-4 text-center">
                                             <button
                                                 onClick={() => onQuickPayment(bill.vendorId)}
-                                                className="px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm"
+                                                className="px-4 py-2 bg-success-soft text-success hover:bg-success/90 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm"
                                             >
                                                 Pay Now
                                             </button>
@@ -137,7 +137,7 @@ const PayablesTable: React.FC<PayablesTableProps> = ({
                                         <td className="px-6 py-4 text-center">
                                             <button
                                                 onClick={() => onQuickPayment(v.vendorId)}
-                                                className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                                                className="p-2 text-slate-400 hover:text-success hover:bg-success-soft rounded-lg transition-all"
                                                 title="Settle All Balances"
                                             >
                                                 <ExternalLink size={18} />

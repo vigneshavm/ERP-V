@@ -54,8 +54,8 @@ const LaborSidebar: React.FC<LaborSidebarProps> = ({
                     <button
                         onClick={onToggleAddForm}
                         className={`p-2 rounded-lg transition-all ${isAddingLaborer
-                            ? 'bg-indigo-600 text-white shadow-md'
-                            : 'bg-indigo-50 text-primary hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-primary dark:hover:bg-indigo-900/50'
+                            ? 'bg-primary text-white shadow-md'
+                            : 'bg-primary-soft text-primary hover:bg-primary-soft dark:bg-primary-soft dark:text-primary dark:hover:bg-primary-soft'
                             }`}
                     >
                         <Plus size={20} />
@@ -86,7 +86,7 @@ const LaborSidebar: React.FC<LaborSidebarProps> = ({
                     placeholder="Search staff..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-lg text-sm text-gray-700 dark:text-gray-200 outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900 focus:border-indigo-400 dark:focus:border-indigo-500 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                    className="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-lg text-sm text-gray-700 dark:text-gray-200 outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900 focus:border-primary dark:focus:border-primary transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
                 />
             </div>
 
@@ -98,8 +98,8 @@ const LaborSidebar: React.FC<LaborSidebarProps> = ({
                     </div>
                 ) : loadError ? (
                     <div className="text-center py-8 px-2">
-                        <AlertTriangle className="w-8 h-8 text-rose-300 dark:text-rose-700 mx-auto mb-2" />
-                        <p className="text-xs font-semibold text-rose-500 dark:text-rose-400">Unable to load staff</p>
+                        <AlertTriangle className="w-8 h-8 text-danger dark:text-danger mx-auto mb-2" />
+                        <p className="text-xs font-semibold text-danger dark:text-danger">Unable to load staff</p>
                         <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1 mb-3">{loadError}</p>
                         <button
                             onClick={onRetry}
@@ -122,14 +122,14 @@ const LaborSidebar: React.FC<LaborSidebarProps> = ({
                         onClick={() => onSelectLaborer(l.id)}
                         className={`w-full text-left p-3 rounded-lg border transition-all flex justify-between items-center group relative overflow-hidden
                         ${selectedLaborerId === l.id
-                                ? 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800 shadow-sm'
+                                ? 'bg-primary-soft dark:bg-primary-soft border-primary/30 dark:border-primary/30 shadow-sm'
                                 : 'bg-white dark:bg-neutral-800 border-transparent hover:bg-gray-50 dark:hover:bg-neutral-750 hover:border-gray-200 dark:hover:border-neutral-700'}`}
                     >
                         {selectedLaborerId === l.id && (
-                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 rounded-l-lg" />
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-lg" />
                         )}
                         <div className="pl-2">
-                            <p className={`font-semibold text-sm ${selectedLaborerId === l.id ? 'text-indigo-900 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200'}`}>
+                            <p className={`font-semibold text-sm ${selectedLaborerId === l.id ? 'text-primary dark:text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
                                 {l.name}
                             </p>
                             <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1.5">

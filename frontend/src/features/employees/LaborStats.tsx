@@ -45,25 +45,25 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {/* Work Stats Card */}
-                <div className="p-4 bg-white rounded-xl border border-gray-200 hover:border-indigo-100 hover:shadow-sm transition-all group">
+                <div className="p-4 bg-white rounded-xl border border-gray-200 hover:border-primary/30 hover:shadow-sm transition-all group">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-blue-50 text-blue-600 rounded-lg group-hover:scale-110 transition-transform">
+                        <div className="p-2 bg-primary-soft text-primary rounded-lg group-hover:scale-110 transition-transform">
                             <CalendarDays size={18} />
                         </div>
                         <span className="text-2xl font-bold text-gray-900">{stats.days}</span>
                     </div>
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Work Days</p>
                     <div className="flex gap-1">
-                        {stats.full > 0 && <span className="text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded font-bold">F:{stats.full}</span>}
-                        {stats.half > 0 && <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-bold">H:{stats.half}</span>}
-                        {stats.absent > 0 && <span className="text-[10px] px-1.5 py-0.5 bg-rose-100 text-rose-700 rounded font-bold">A:{stats.absent}</span>}
+                        {stats.full > 0 && <span className="text-[10px] px-1.5 py-0.5 bg-success-soft text-success rounded font-bold">F:{stats.full}</span>}
+                        {stats.half > 0 && <span className="text-[10px] px-1.5 py-0.5 bg-warning-soft text-warning rounded font-bold">H:{stats.half}</span>}
+                        {stats.absent > 0 && <span className="text-[10px] px-1.5 py-0.5 bg-danger-soft text-danger rounded font-bold">A:{stats.absent}</span>}
                     </div>
                 </div>
 
                 {/* Month Earnings */}
-                <div className="p-4 bg-white rounded-xl border border-gray-200 hover:border-emerald-100 hover:shadow-sm transition-all group">
+                <div className="p-4 bg-white rounded-xl border border-gray-200 hover:border-success-line hover:shadow-sm transition-all group">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg group-hover:scale-110 transition-transform">
+                        <div className="p-2 bg-success-soft text-success rounded-lg group-hover:scale-110 transition-transform">
                             <Calculator size={18} />
                         </div>
                         <span className="text-2xl font-bold text-gray-900">{formatCurrency(stats.earned)}</span>
@@ -73,9 +73,9 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
                 </div>
 
                 {/* Total Paid */}
-                <div className="p-4 bg-white rounded-xl border border-gray-200 hover:border-amber-100 hover:shadow-sm transition-all group">
+                <div className="p-4 bg-white rounded-xl border border-gray-200 hover:border-warning-line hover:shadow-sm transition-all group">
                     <div className="flex justify-between items-start mb-2">
-                        <div className="p-2 bg-amber-50 text-amber-600 rounded-lg group-hover:scale-110 transition-transform">
+                        <div className="p-2 bg-warning-soft text-warning rounded-lg group-hover:scale-110 transition-transform">
                             <Wallet size={18} />
                         </div>
                         <span className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalPaid)}</span>
@@ -86,20 +86,20 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
 
                 {/* Net Payable */}
                 <div className={`p-4 rounded-xl border transition-all group relative overflow-hidden ${stats.balance < 0
-                        ? 'bg-rose-50/50 border-rose-100'
-                        : 'bg-indigo-50/50 border-indigo-100'
+                        ? 'bg-danger/50 border-danger-line'
+                        : 'bg-primary/50 border-primary/30'
                     }`}>
                     <div className="flex justify-between items-start mb-2 relative z-10">
-                        <div className={`p-2 rounded-lg group-hover:scale-110 transition-transform ${stats.balance < 0 ? 'bg-rose-100 text-rose-600' : 'bg-indigo-100 text-primary'
+                        <div className={`p-2 rounded-lg group-hover:scale-110 transition-transform ${stats.balance < 0 ? 'bg-danger-soft text-danger' : 'bg-primary-soft text-primary'
                             }`}>
                             <AlertCircle size={18} />
                         </div>
-                        <span className={`text-2xl font-bold ${stats.balance < 0 ? 'text-rose-700' : 'text-indigo-700'
+                        <span className={`text-2xl font-bold ${stats.balance < 0 ? 'text-danger' : 'text-primary'
                             }`}>
                             {formatCurrency(Math.abs(stats.balance))}
                         </span>
                     </div>
-                    <p className={`text-xs font-bold uppercase tracking-wide relative z-10 ${stats.balance < 0 ? 'text-rose-600' : 'text-primary'
+                    <p className={`text-xs font-bold uppercase tracking-wide relative z-10 ${stats.balance < 0 ? 'text-danger' : 'text-primary'
                         }`}>
                         {stats.balance < 0 ? 'Due Payment' : 'Credit Balance'}
                     </p>

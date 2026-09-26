@@ -43,12 +43,12 @@ insufficient: boolean;
 const AccountPulse: React.FC<AccountPulseProps> = ({ account, label, value, onChange, options, insufficient }) => (
     <div className="flex-1 space-y-4">
         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-            <div className={`w-1.5 h-1.5 rounded-full ${account ? 'bg-indigo-500' : 'bg-slate-300'}`}></div>
+            <div className={`w-1.5 h-1.5 rounded-full ${account ? 'bg-primary' : 'bg-slate-300'}`}></div>
             {label} Node
         </h3>
         <div className={`relative group transition-all duration-300 ${account ? 'scale-105' : ''}`}>
             <div className={`absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity ${account ? 'opacity-50' : 'hidden'}`}></div>
-            <div className={`relative bg-white dark:bg-slate-900 border-2 rounded-[2.5rem] p-8 transition-all ${account ? 'border-indigo-500 shadow-2xl shadow-indigo-100 dark:shadow-none' : 'border-slate-200 dark:border-slate-800 border-dashed'}`}>
+            <div className={`relative bg-white dark:bg-slate-900 border-2 rounded-[2.5rem] p-8 transition-all ${account ? 'border-primary shadow-2xl shadow-indigo-100 dark:shadow-none' : 'border-slate-200 dark:border-slate-800 border-dashed'}`}>
                 <select
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
@@ -62,7 +62,7 @@ const AccountPulse: React.FC<AccountPulseProps> = ({ account, label, value, onCh
                 </select>
 
                 <div className="flex flex-col items-center text-center space-y-3 pointer-events-none">
-                    <div className={`w-16 h-16 rounded-sm flex items-center justify-center transition-all ${account ? 'bg-indigo-600 text-white rotate-12 scale-110 shadow-lg' : 'bg-slate-50 dark:bg-slate-800 text-slate-300'}`}>
+                    <div className={`w-16 h-16 rounded-sm flex items-center justify-center transition-all ${account ? 'bg-primary text-white rotate-12 scale-110 shadow-lg' : 'bg-slate-50 dark:bg-slate-800 text-slate-300'}`}>
                         {account ? (account.isBank ? <Building2 className="w-8 h-8" /> : <Wallet className="w-8 h-8" />) : <Plus className="w-8 h-8" />}
                     </div>
                     <div>
@@ -76,7 +76,7 @@ const AccountPulse: React.FC<AccountPulseProps> = ({ account, label, value, onCh
                     {account && (
                         <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 w-full">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Available Reserve</p>
-                            <p className={`text-lg font-black ${insufficient ? 'text-rose-600' : 'text-emerald-600'}`}>
+                            <p className={`text-lg font-black ${insufficient ? 'text-danger' : 'text-success'}`}>
                                 ₹{(account.balance || 0).toLocaleString('en-IN')}
                             </p>
                         </div>
@@ -164,7 +164,7 @@ const Transfers: React.FC = () => {
                         <AccountPulse account={selectedFrom} label="Source" value={formData.fromAccount} onChange={fromAccount => setFormData(prev => ({ ...prev, fromAccount }))} options={accountOptions} insufficient={insufficientBalance} />
 
                         <div className="flex flex-col items-center gap-4 relative">
-                            <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${selectedFrom && selectedTo ? 'bg-indigo-600 text-white shadow-2xl shadow-indigo-200 scale-125 rotate-0' : 'bg-slate-200 dark:bg-slate-700 text-slate-400 -rotate-45'}`}>
+                            <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${selectedFrom && selectedTo ? 'bg-primary text-white shadow-2xl shadow-indigo-200 scale-125 rotate-0' : 'bg-slate-200 dark:bg-slate-700 text-slate-400 -rotate-45'}`}>
                                 <ArrowRightLeft className={`w-8 h-8 ${selectedFrom && selectedTo ? 'animate-pulse' : ''}`} />
                             </div>
                             <div className="hidden md:block absolute top-1/2 left-full w-24 h-0.5 bg-gradient-to-r from-indigo-500 to-transparent -translate-y-1/2 -ml-12 pointer-events-none opacity-20"></div>
@@ -178,7 +178,7 @@ const Transfers: React.FC = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                         <div className="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-10 shadow-sm space-y-8">
                             <div className="flex items-center gap-3">
-                                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-sm text-primary">
+                                <div className="p-3 bg-primary-soft dark:bg-primary-soft rounded-sm text-primary">
                                     <Activity className="w-6 h-6" />
                                 </div>
                                 <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Execution Parameters</h3>
@@ -193,7 +193,7 @@ const Transfers: React.FC = () => {
                                             type="number"
                                             value={formData.amount}
                                             onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
-                                            className={`w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 transition-all text-2xl font-black ${insufficientBalance ? 'border-rose-200 text-rose-600' : 'border-slate-100 dark:border-slate-700 focus:border-indigo-500'}`}
+                                            className={`w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 transition-all text-2xl font-black ${insufficientBalance ? 'border-danger-line text-danger' : 'border-slate-100 dark:border-slate-700 focus:border-primary'}`}
                                             placeholder="0.00"
                                             required
                                             min="0.01"
@@ -215,7 +215,7 @@ const Transfers: React.FC = () => {
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                             rows={2}
-                                            className="w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all font-bold text-sm leading-relaxed"
+                                            className="w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 focus:border-primary transition-all font-bold text-sm leading-relaxed"
                                             placeholder="Internal transfer purpose..."
                                         />
                                     </div>
@@ -233,16 +233,16 @@ const Transfers: React.FC = () => {
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center bg-white/10 p-4 rounded-sm backdrop-blur-md">
                                             <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Source Unit</span>
-                                            <span className="text-sm font-black text-rose-300">
+                                            <span className="text-sm font-black text-danger">
                                                 - ₹{formData.amount.toLocaleString('en-IN')}
                                             </span>
                                         </div>
-                                        <div className="flex justify-center text-indigo-200">
+                                        <div className="flex justify-center text-primary">
                                             <ArrowRight className="w-4 h-4 rotate-90" />
                                         </div>
                                         <div className="flex justify-between items-center bg-white/10 p-4 rounded-sm backdrop-blur-md">
                                             <span className="text-[9px] font-black uppercase tracking-widest opacity-80">Target Unit</span>
-                                            <span className="text-sm font-black text-emerald-300">
+                                            <span className="text-sm font-black text-success">
                                                 + ₹{formData.amount.toLocaleString('en-IN')}
                                             </span>
                                         </div>
@@ -266,13 +266,13 @@ const Transfers: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 rounded-[2.5rem] p-8 flex items-start gap-4">
-                                <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-xl text-amber-600">
+                            <div className="bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning-line rounded-[2.5rem] p-8 flex items-start gap-4">
+                                <div className="p-2 bg-warning-soft dark:bg-warning-soft rounded-xl text-warning">
                                     <Info className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-amber-900 dark:text-amber-300 uppercase tracking-widest leading-none mb-2">Clearing Protocol</p>
-                                    <p className="text-[10px] font-medium text-amber-800 dark:text-warning leading-relaxed italic">Verify all institutional parameters before execution. Internal clearing is final and will reflect immediately in global liquidity surveillance.</p>
+                                    <p className="text-[10px] font-black text-warning dark:text-warning uppercase tracking-widest leading-none mb-2">Clearing Protocol</p>
+                                    <p className="text-[10px] font-medium text-warning dark:text-warning leading-relaxed italic">Verify all institutional parameters before execution. Internal clearing is final and will reflect immediately in global liquidity surveillance.</p>
                                 </div>
                             </div>
                         </div>

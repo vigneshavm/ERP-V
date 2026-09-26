@@ -15,9 +15,9 @@ import type { BankRow, CashBankOverviewData, ChequeRow, LoanRow, OverdueBill } f
 const BANK_COLUMNS: ReportColumn<BankRow>[] = [
     { key: 'name', header: 'Account', value: r => r.name, subtext: r => [r.type, r.branch].filter(Boolean).join(' · ') || null,
         render: r => <Link to={`/cashbank/ledger/${r.id}`} className="font-bold text-primary hover:underline">{r.name}</Link> },
-    { key: 'balance', header: 'Balance (ERP)', type: 'currency', value: r => r.balance, cellClassName: r => (r.balance < 0 ? 'text-rose-600 font-bold' : 'font-bold') },
+    { key: 'balance', header: 'Balance (ERP)', type: 'currency', value: r => r.balance, cellClassName: r => (r.balance < 0 ? 'text-danger font-bold' : 'font-bold') },
     { key: 'unreconciled', header: 'Not matched to statement', type: 'number', value: r => r.unreconciled || null, subtext: r => (r.unreconciled ? rupees0(r.unreconciledAmount) : null) },
-    { key: 'unreconciledOld', header: 'Older than 30 days', type: 'number', value: r => r.unreconciledOld || null, cellClassName: r => (r.unreconciledOld ? 'text-amber-600 font-bold' : undefined) },
+    { key: 'unreconciledOld', header: 'Older than 30 days', type: 'number', value: r => r.unreconciledOld || null, cellClassName: r => (r.unreconciledOld ? 'text-warning font-bold' : undefined) },
     { key: 'status', header: 'Status', type: 'status', value: r => (r.status === 'inactive' ? 'Inactive' : 'Active'), statusTones: { Active: 'success', Inactive: 'neutral' } },
 ];
 
@@ -82,7 +82,7 @@ const CashBankOverview: React.FC = () => {
 
                     <section aria-label="Alerts" className="space-y-2">
                         {data.alerts.length === 0 ? (
-                            <p className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-200">
+                            <p className="rounded-md border border-success-line bg-success-soft px-4 py-3 text-sm font-medium text-success dark:border-success/50 dark:bg-success-soft dark:text-success">
                                 Nothing needs attention: cash was counted recently, no EMIs or cheques are overdue, and bank entries are matched.
                             </p>
                         ) : data.alerts.map(a => (
@@ -117,7 +117,7 @@ const CashBankOverview: React.FC = () => {
                                 <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm tabular-nums">
                                     <dt className="text-slate-500">Counted</dt><dd className="text-right font-bold">{rupees0(cash.count.counted)}</dd>
                                     <dt className="text-slate-500">Expected at that close</dt><dd className="text-right">{rupees0(cash.count.expected)}</dd>
-                                    <dt className="text-slate-500">Difference</dt><dd className={`text-right font-bold ${cash.count.variance < 0 ? 'text-rose-600' : cash.count.variance > 0 ? 'text-amber-600' : ''}`}>{rupees0(cash.count.variance)}</dd>
+                                    <dt className="text-slate-500">Difference</dt><dd className={`text-right font-bold ${cash.count.variance < 0 ? 'text-danger' : cash.count.variance > 0 ? 'text-warning' : ''}`}>{rupees0(cash.count.variance)}</dd>
                                     <dt className="text-slate-500">Cash in since</dt><dd className="text-right">{rupees0(cash.movement.cashIn)}</dd>
                                     <dt className="text-slate-500">Cash out since</dt><dd className="text-right">{rupees0(cash.movement.cashOut)}</dd>
                                     <dt className="text-slate-500">Withdrawn from bank</dt><dd className="text-right">{rupees0(cash.movement.fromBank)}</dd>

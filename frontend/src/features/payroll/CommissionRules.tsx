@@ -293,7 +293,7 @@ const CommissionRules: React.FC = () => {
                                         <td className="px-6 py-4 text-right">
                                             <button
                                                 onClick={() => handleDelete(rule)}
-                                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"
+                                                className="p-1.5 text-danger hover:bg-danger-soft rounded-lg"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -344,7 +344,7 @@ const CommissionRules: React.FC = () => {
                     </button>
                 </div>
                 {reportNote && (
-                    <div className="mx-6 mb-4 px-4 py-2 bg-amber-50 border border-amber-100 text-amber-800 text-xs rounded-lg">{reportNote}</div>
+                    <div className="mx-6 mb-4 px-4 py-2 bg-warning-soft border border-warning-line text-warning text-xs rounded-lg">{reportNote}</div>
                 )}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
@@ -362,7 +362,7 @@ const CommissionRules: React.FC = () => {
                                     <td className="px-6 py-4 font-medium">{row.employeeName}</td>
                                     <td className="px-6 py-4 text-right">{row.invoiceCount}</td>
                                     <td className="px-6 py-4 text-right">₹{row.totalSalesAttributed.toFixed(2)}</td>
-                                    <td className="px-6 py-4 text-right font-bold text-emerald-600">₹{row.totalCommission.toFixed(2)}</td>
+                                    <td className="px-6 py-4 text-right font-bold text-success">₹{row.totalCommission.toFixed(2)}</td>
                                 </tr>
                             ))}
                             {!reportLoading && reportRows.length === 0 && !reportNote && (

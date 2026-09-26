@@ -45,7 +45,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                     const status = log?.status;
                     const isSelected = selectedDates.has(dateKey);
 
-                    let bgClass = 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500';
+                    let bgClass = 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary';
                     let textClass = 'text-slate-700 dark:text-slate-200';
                     let icon = null;
 
@@ -68,7 +68,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                     }
 
                     if (isSelected) {
-                        bgClass = 'bg-blue-600 border-blue-600 shadow-md ring-2 ring-blue-200 dark:ring-blue-900';
+                        bgClass = 'bg-primary border-primary shadow-md ring-2 ring-blue-200 dark:ring-blue-900';
                         textClass = 'text-white';
                         icon = null;
                     }
@@ -99,7 +99,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                     </h3>
                     <button
                         onClick={onToggleSelectionMode}
-                        className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition ${isSelectionMode ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
+                        className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition ${isSelectionMode ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
                     >
                         {isSelectionMode ? <CheckSquare size={14} /> : <ListChecks size={14} />}
                         {isSelectionMode ? 'Done' : 'Select'}
@@ -114,7 +114,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                             {onRetry && (
                                 <button
                                     onClick={onRetry}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-bold transition"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-md text-xs font-bold transition"
                                 >
                                     <RefreshCw className="w-3.5 h-3.5" /> Retry
                                 </button>
@@ -122,7 +122,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                         </div>
                     ) : isLoading ? (
                         <div className="h-full flex flex-col items-center justify-center p-6 text-slate-400">
-                            <Loader2 className="w-8 h-8 animate-spin mb-2 text-blue-600" />
+                            <Loader2 className="w-8 h-8 animate-spin mb-2 text-primary" />
                             <p className="text-xs font-medium">Loading attendance records...</p>
                         </div>
                     ) : (

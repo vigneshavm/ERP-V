@@ -244,7 +244,7 @@ const PaymentInList: React.FC = () => {
                                                                 {payment.allocatedCount} Invoices
                                                             </span>
                                                         ) : (
-                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-200">
+                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest bg-warning-soft text-warning border border-warning-line">
                                                                 Advance
                                                             </span>
                                                         )}

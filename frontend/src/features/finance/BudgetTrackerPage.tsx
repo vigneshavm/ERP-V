@@ -78,7 +78,7 @@ const BudgetTrackerPage: React.FC = () => {
                             </button>
                             <button
                                 onClick={() => setIsFormOpen(true)}
-                                className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-emerald-700 transition active:scale-95 uppercase tracking-widest"
+                                className="px-6 py-2.5 bg-success text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-success/90 transition active:scale-95 uppercase tracking-widest"
                             >
                                 <Plus className="w-5 h-5" /> Record Expense
                             </button>
@@ -93,7 +93,7 @@ const BudgetTrackerPage: React.FC = () => {
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-neutral-500 font-black uppercase tracking-[0.2em] text-[10px] mb-4">
                                     <span>Aggregate Burn</span>
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                                 </div>
                                 <div className="flex items-baseline gap-2">
                                     <span className="text-3xl font-black text-neutral-400">₹</span>
@@ -155,7 +155,7 @@ const BudgetTrackerPage: React.FC = () => {
                                     <div key={idx} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[2.5rem] p-10 shadow-sm">
                                         <div className="flex items-center justify-between mb-8">
                                             <h3 className="text-xl font-black text-neutral-900 dark:text-white uppercase tracking-tight">Consolidated Summary: {m.month}</h3>
-                                            <span className="px-4 py-1.5 bg-success/10 text-emerald-600 dark:text-success rounded-full text-[10px] font-black uppercase tracking-widest">Active Monitoring</span>
+                                            <span className="px-4 py-1.5 bg-success/10 text-success dark:text-success rounded-full text-[10px] font-black uppercase tracking-widest">Active Monitoring</span>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                             <div className="space-y-4">
@@ -163,7 +163,7 @@ const BudgetTrackerPage: React.FC = () => {
                                                 {m.budget_utilization !== null && (
                                                     <div className="h-2.5 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
                                                         <div
-                                                            className={`h-full rounded-full ${m.budget_utilization > 100 ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                                            className={`h-full rounded-full ${m.budget_utilization > 100 ? 'bg-danger' : 'bg-success'}`}
                                                             style={{ width: `${Math.min(m.budget_utilization, 100)}%` }}
                                                         />
                                                     </div>
@@ -174,7 +174,7 @@ const BudgetTrackerPage: React.FC = () => {
                                                 </p>
                                             </div>
                                             <div className="flex flex-col justify-center items-end text-right">
-                                                <div className="flex items-center gap-2 text-emerald-600 dark:text-success mb-2">
+                                                <div className="flex items-center gap-2 text-success dark:text-success mb-2">
                                                     <ShieldCheck className="w-5 h-5" />
                                                     <span className="text-xs font-black uppercase tracking-widest">Budget Status</span>
                                                 </div>
@@ -201,7 +201,7 @@ const BudgetTrackerPage: React.FC = () => {
                                     <div className="space-y-6">
                                         {report?.audit_flags.slice(0, 3).map((flag, i) => (
                                             <div key={i} className="flex gap-4 items-start">
-                                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 shadow-[0_0_10px_#10b981]" />
+                                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-success shrink-0 shadow-[0_0_10px_#10b981]" />
                                                 <p className="text-xs font-bold leading-relaxed text-neutral-400 italic">"{flag}"</p>
                                             </div>
                                         ))}
@@ -219,7 +219,7 @@ const BudgetTrackerPage: React.FC = () => {
                                                 </div>
                                                 <div className="h-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
                                                     <div
-                                                        className={`h-full rounded-full transition-all duration-1000 ${cat.status === 'OVER' ? 'bg-rose-500' : 'bg-emerald-500 shadow-lg shadow-emerald-500/20'}`}
+                                                        className={`h-full rounded-full transition-all duration-1000 ${cat.status === 'OVER' ? 'bg-danger' : 'bg-success shadow-lg shadow-emerald-500/20'}`}
                                                         style={{ width: `${cat.percentage}` }}
                                                     />
                                                 </div>

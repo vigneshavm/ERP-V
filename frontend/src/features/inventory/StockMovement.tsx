@@ -107,13 +107,13 @@ const StockMovement: React.FC = () => {
                     <div className="flex gap-1">
                         {['All', 'IN', 'OUT'].map(t => (
                             <button key={t} onClick={() => { setType(t); setPage(1); }}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${type === t ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700'}`}>
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${type === t ? 'bg-primary text-white' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700'}`}>
                                 {t}
                             </button>
                         ))}
                     </div>
                 </div>
-                {error && <div className="p-4 text-sm font-bold text-red-600">{error}</div>}
+                {error && <div className="p-4 text-sm font-bold text-danger">{error}</div>}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 dark:bg-slate-900/50">
@@ -130,12 +130,12 @@ const StockMovement: React.FC = () => {
                                     <td className="px-4 py-3 text-sm font-bold text-slate-900 dark:text-white">{m.item}</td>
                                     <td className="px-4 py-3 text-xs text-slate-400">{m.sku}</td>
                                     <td className="px-4 py-3">
-                                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black ${m.type === 'IN' ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20' : 'text-red-600 bg-red-50 dark:bg-red-900/20'}`}>
+                                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black ${m.type === 'IN' ? 'text-success bg-success-soft dark:bg-success-soft' : 'text-danger bg-danger-soft dark:bg-danger-soft'}`}>
                                             {m.type === 'IN' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />} {m.type}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 text-sm font-black text-slate-900 dark:text-white">{m.qty}</td>
-                                    <td className="px-4 py-3 text-xs font-bold text-blue-600">{m.ref}</td>
+                                    <td className="px-4 py-3 text-xs font-bold text-primary">{m.ref}</td>
                                     <td className="px-4 py-3 text-xs text-slate-500">{m.party}</td>
                                     <td className="px-4 py-3 text-xs text-slate-500">{m.reason}</td>
                                 </tr>

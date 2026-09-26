@@ -150,7 +150,7 @@ const Suppliers: React.FC = () => {
               </button>
               <button
                 onClick={() => navigate('/suppliers/add')}
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-lg text-xs font-bold hover:bg-indigo-600 transition-all shadow-sm"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary transition-all shadow-sm"
               >
                 <UserPlus className="w-3.5 h-3.5" /> Add Supplier
               </button>
@@ -248,7 +248,7 @@ const Suppliers: React.FC = () => {
                   filteredSuppliers.map((supplier) => (
                     <tr
                       key={supplier._id}
-                      className="group hover:bg-indigo-50/30 dark:hover:bg-indigo-500/5 transition-colors cursor-pointer"
+                      className="group hover:bg-primary/30 dark:hover:bg-primary/5 transition-colors cursor-pointer"
                       onClick={() => navigate(`/suppliers/${supplier._id}`)}
                     >
                       {/* Supplier Name */}
@@ -283,7 +283,7 @@ const Suppliers: React.FC = () => {
 
                       {/* Total Paid */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-semibold text-emerald-600 dark:text-success">
+                        <span className="text-sm font-semibold text-success dark:text-success">
                           ₹ {(supplier.totalPaid || 0).toLocaleString('en-IN')}
                         </span>
                       </td>
@@ -291,7 +291,7 @@ const Suppliers: React.FC = () => {
                       {/* Balance */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`text-sm font-bold flex items-center gap-1 ${(supplier.netBalance || 0) > 0
-                          ? 'text-emerald-600 dark:text-success'
+                          ? 'text-success dark:text-success'
                           : (supplier.netBalance || 0) < 0
                             ? 'text-danger dark:text-danger'
                             : 'text-slate-500 dark:text-neutral-400'
@@ -328,7 +328,7 @@ const Suppliers: React.FC = () => {
                               </button>
                               <button
                                 onClick={() => { setDeleteConfirm(supplier._id); setOpenMenuId(null); }}
-                                className="w-full px-4 py-2.5 text-left text-sm text-rose-600 dark:text-danger hover:bg-rose-50 dark:hover:bg-danger/10 flex items-center gap-2 font-medium"
+                                className="w-full px-4 py-2.5 text-left text-sm text-danger dark:text-danger hover:bg-danger-soft dark:hover:bg-danger/10 flex items-center gap-2 font-medium"
                               >
                                 <Trash2 className="w-3.5 h-3.5" /> Delete
                               </button>
@@ -354,7 +354,7 @@ const Suppliers: React.FC = () => {
       >
         <div className="space-y-4">
           <div className="flex flex-col items-center text-center gap-3">
-            <div className="w-14 h-14 rounded-xl bg-rose-50 dark:bg-danger/10 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-xl bg-danger-soft dark:bg-danger/10 flex items-center justify-center">
               <Trash2 className="w-7 h-7 text-danger" />
             </div>
             <div>
@@ -373,7 +373,7 @@ const Suppliers: React.FC = () => {
             </button>
             <button
               onClick={() => handleDelete(deleteConfirm)}
-              className="flex-1 px-4 py-2.5 bg-rose-500 text-white rounded-lg text-sm font-medium hover:bg-rose-600 transition-all"
+              className="flex-1 px-4 py-2.5 bg-danger text-white rounded-lg text-sm font-medium hover:bg-danger/90 transition-all"
             >
               Delete
             </button>

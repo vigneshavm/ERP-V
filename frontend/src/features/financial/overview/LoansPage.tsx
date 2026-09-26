@@ -27,7 +27,7 @@ const Dialog: React.FC<{ title: string; onClose: () => void; children: React.Rea
 
 const Actions: React.FC<{ busy: boolean; error: string; onCancel: () => void; submit: string }> = ({ busy, error, onCancel, submit }) => (
     <>
-        {error && <p className="text-sm font-medium text-rose-600">{error}</p>}
+        {error && <p className="text-sm font-medium text-danger">{error}</p>}
         <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={onCancel} className="rounded-md px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700">Cancel</button>
             <button type="submit" disabled={busy} className="rounded-md bg-primary px-3 py-2 text-xs font-bold text-white disabled:opacity-50">{busy ? 'Saving…' : submit}</button>
@@ -136,7 +136,7 @@ const LoansPage: React.FC = () => {
         { key: 'emi', header: 'EMI', type: 'currency', fractionDigits: 0, value: r => r.emi },
         { key: 'paid', header: 'Paid', type: 'currency', fractionDigits: 0, value: r => r.paid, subtext: r => `${r.payments} of ${r.termMonths} EMIs${r.lastPayment ? ` · last ${dateText(r.lastPayment)}` : ''}` },
         { key: 'pending', header: 'Pending', type: 'currency', fractionDigits: 0, value: r => r.pending, subtext: r => `${r.paidPct}% repaid` },
-        { key: 'nextDue', header: 'Next EMI', type: 'date', value: r => r.nextDue, subtext: r => (r.overdueEmis ? `${r.overdueEmis} overdue` : null), cellClassName: r => (r.overdueEmis ? 'text-rose-600 font-bold' : undefined) },
+        { key: 'nextDue', header: 'Next EMI', type: 'date', value: r => r.nextDue, subtext: r => (r.overdueEmis ? `${r.overdueEmis} overdue` : null), cellClassName: r => (r.overdueEmis ? 'text-danger font-bold' : undefined) },
         { key: 'health', header: 'Status', type: 'status', value: r => LOAN_HEALTH_LABEL[r.health], statusTones: LOAN_HEALTH_TONE },
     ];
 

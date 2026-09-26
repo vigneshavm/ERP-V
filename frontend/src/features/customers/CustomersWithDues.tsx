@@ -73,8 +73,8 @@ const CustomersWithDues = () => {
 
                 {/* Error Message */}
                 {isError && (
-                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                        <p className="text-red-600 dark:text-red-400 text-sm">{message}</p>
+                    <div className="mb-6 p-4 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger-line rounded-lg">
+                        <p className="text-danger dark:text-danger text-sm">{message}</p>
                     </div>
                 )}
 
@@ -108,13 +108,13 @@ const CustomersWithDues = () => {
                 <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-xl shadow-lg p-6 mb-6 text-white">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-red-100 text-sm font-medium mb-1">
+                            <p className="text-danger text-sm font-medium mb-1">
                                 Total Outstanding Dues
                             </p>
                             <p className="text-4xl font-bold">
                                 ₹{totalOutstandingDues.toFixed(2)}
                             </p>
-                            <p className="text-red-100 text-sm mt-2">
+                            <p className="text-danger text-sm mt-2">
                                 From {customersWithDues.length} customer
                                 {customersWithDues.length !== 1 ? "s" : ""}
                             </p>
@@ -141,7 +141,7 @@ const CustomersWithDues = () => {
                 <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-xl shadow-sm dark:shadow-lg border dark:border-[rgb(var(--color-border))] overflow-hidden">
                     {isLoading ? (
                         <div className="flex justify-center items-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-[rgb(var(--color-primary))]"></div>
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary dark:border-[rgb(var(--color-primary))]"></div>
                         </div>
                     ) : filteredCustomers.length === 0 ? (
                         <div className="text-center py-12">
@@ -197,7 +197,7 @@ const CustomersWithDues = () => {
                                         >
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">
-                                                    <div className="w-10 h-10 bg-indigo-600 dark:bg-[rgb(var(--color-primary))] rounded-full flex items-center justify-center">
+                                                    <div className="w-10 h-10 bg-primary dark:bg-[rgb(var(--color-primary))] rounded-full flex items-center justify-center">
                                                         <span className="text-white font-bold">
                                                             {customer.name.charAt(0).toUpperCase()}
                                                         </span>
@@ -223,7 +223,7 @@ const CustomersWithDues = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-danger-soft text-danger">
                                                     ₹{(customer.dues || 0).toFixed(2)}
                                                 </span>
                                             </td>
@@ -231,7 +231,7 @@ const CustomersWithDues = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => navigate(`/customers/${customer._id}`)}
-                                                    className="text-primary dark:text-[rgb(var(--color-primary))] hover:text-indigo-900 dark:hover:text-[rgb(var(--color-primary-hover))] mr-4 font-medium"
+                                                    className="text-primary dark:text-[rgb(var(--color-primary))] hover:text-primary dark:hover:text-[rgb(var(--color-primary-hover))] mr-4 font-medium"
                                                 >
                                                     View
                                                 </button>
@@ -240,7 +240,7 @@ const CustomersWithDues = () => {
                                                     onClick={() =>
                                                         navigate(`/customers/adjust-due/${customer._id}`)
                                                     }
-                                                    className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-500 font-medium"
+                                                    className="text-success dark:text-success hover:text-success dark:hover:text-success font-medium"
                                                 >
                                                     Adjust Due
                                                 </button>

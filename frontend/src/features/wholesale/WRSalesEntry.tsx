@@ -350,7 +350,7 @@ const WRSalesEntry: React.FC = () => {
                                             <td className="px-4 py-4 text-center">
                                                 <button
                                                     onClick={() => removeRow(idx)}
-                                                    className="p-2 text-neutral-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                                    className="p-2 text-neutral-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -390,7 +390,7 @@ const WRSalesEntry: React.FC = () => {
                                     type="number"
                                     value={discountAmount}
                                     onChange={e => setDiscountAmount(parseFloat(e.target.value) || 0)}
-                                    className="w-24 text-right bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 text-red-600 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-red-500"
+                                    className="w-24 text-right bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger/30 text-danger rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-red-500"
                                 />
                             </div>
                         </div>
