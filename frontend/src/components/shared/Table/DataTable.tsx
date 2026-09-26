@@ -49,7 +49,7 @@ const DataTable: React.FC<DataTableProps> = ({
         return (
             <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-xl shadow-sm dark:shadow-lg overflow-hidden border dark:border-[rgb(var(--color-border))]">
                 <div className="flex justify-center items-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-[rgb(var(--color-primary))]"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary dark:border-[rgb(var(--color-primary))]"></div>
                 </div>
             </div>
         );

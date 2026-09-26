@@ -10,8 +10,8 @@ interface ExpenseListItemProps {
 
 const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
-        case 'shopping': return <ShoppingCart className="w-5 h-5 text-blue-400" />;
-        case 'transportation': return <Car className="w-5 h-5 text-yellow-400" />;
+        case 'shopping': return <ShoppingCart className="w-5 h-5 text-primary" />;
+        case 'transportation': return <Car className="w-5 h-5 text-warning" />;
         case 'living':
         case 'rent': return <Home className="w-5 h-5 text-success" />;
         case 'mobile':

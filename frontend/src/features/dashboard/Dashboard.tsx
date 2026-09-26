@@ -367,7 +367,7 @@ const Dashboard: React.FC = () => {
     if (outOfStock > 0) alerts.push({ title: 'Out of Stock', desc: `${outOfStock} item${outOfStock > 1 ? 's' : ''} out of stock.`, colorClass: 'text-danger border-danger/30 bg-danger/10', icon: 'Box' });
     if (lowStock > 0) alerts.push({ title: 'Low Stock', desc: `${lowStock} item${lowStock > 1 ? 's' : ''} at or below reorder level.`, colorClass: 'text-warning border-warning/30 bg-warning/10', icon: 'Box' });
     const dueCount = (activeCustomersList as any[]).filter((c: any) => (c.dues || c.outstanding_balance || 0) > 0).length;
-    if (dueCount > 0) alerts.push({ title: 'Pending Dues', desc: `${dueCount} customer${dueCount > 1 ? 's have' : ' has'} outstanding dues.`, colorClass: 'text-blue-500 border-blue-500/30 bg-blue-500/10', icon: 'Banknote' });
+    if (dueCount > 0) alerts.push({ title: 'Pending Dues', desc: `${dueCount} customer${dueCount > 1 ? 's have' : ' has'} outstanding dues.`, colorClass: 'text-primary border-primary/30 bg-primary/10', icon: 'Banknote' });
     return alerts;
   }, [products, activeCustomersList]);
 

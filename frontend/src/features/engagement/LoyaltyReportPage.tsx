@@ -26,7 +26,7 @@ const ACTIVITY_COLUMNS: ReportColumn<Activity>[] = [
     { key: 'date', header: 'Date', type: 'date', value: r => r.date },
     { key: 'customer', header: 'Customer', value: r => r.customer, subtext: r => r.description || null },
     { key: 'type', header: 'Type', type: 'status', value: r => TYPE_LABEL[r.type] ?? r.type, statusTones: TYPE_TONE },
-    { key: 'points', header: 'Points', type: 'number', value: r => r.points, cellClassName: r => (r.points < 0 ? 'text-rose-600' : 'text-emerald-600') },
+    { key: 'points', header: 'Points', type: 'number', value: r => r.points, cellClassName: r => (r.points < 0 ? 'text-danger' : 'text-success') },
     { key: 'balanceAfter', header: 'Balance after', type: 'number', value: r => r.balanceAfter },
 ];
 

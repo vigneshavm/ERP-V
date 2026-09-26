@@ -37,7 +37,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
         <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
             <div className="max-w-md w-full bg-slate-800 rounded-sm shadow-2xl border border-slate-700 overflow-hidden">
                 <div className="p-8 text-center border-b border-slate-700 bg-slate-800/50">
-                    <div className="w-16 h-16 bg-indigo-600 rounded-sm flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-600/30">
+                    <div className="w-16 h-16 bg-primary rounded-sm flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-600/30">
                         <Shield className="w-8 h-8 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-1">System Access</h2>
@@ -60,7 +60,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
                                     autoComplete="username"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-3 border border-slate-600 rounded-xl leading-5 bg-slate-900/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all sm:text-sm"
+                                    className="block w-full pl-10 pr-3 py-3 border border-slate-600 rounded-xl leading-5 bg-slate-900/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-primary transition-all sm:text-sm"
                                     placeholder="admin@example.com"
                                     required
                                     autoFocus
@@ -81,7 +81,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
                                     autoComplete="current-password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="block w-full pl-10 pr-3 py-3 border border-slate-600 rounded-xl leading-5 bg-slate-900/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all sm:text-sm"
+                                    className="block w-full pl-10 pr-3 py-3 border border-slate-600 rounded-xl leading-5 bg-slate-900/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-primary transition-all sm:text-sm"
                                     required
                                 />
                             </div>
@@ -91,9 +91,9 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
                         </p>
 
                         {error && (
-                            <div role="alert" className="bg-red-900/20 border border-red-900/50 rounded-lg p-3 flex items-start gap-3">
-                                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                                <span className="text-red-400 text-sm font-medium">{error}</span>
+                            <div role="alert" className="bg-danger-soft border border-danger/50 rounded-lg p-3 flex items-start gap-3">
+                                <AlertCircle className="w-5 h-5 text-danger flex-shrink-0 mt-0.5" />
+                                <span className="text-danger text-sm font-medium">{error}</span>
                             </div>
                         )}
 
@@ -101,7 +101,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onCancel }) => {
                             <button
                                 type="submit"
                                 disabled={isLoading || !email || !password}
-                                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-indigo-500 transition-all ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-indigo-500 transition-all ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                             >
                                 {isLoading ? 'Verifying access…' : 'Sign in'}
                             </button>

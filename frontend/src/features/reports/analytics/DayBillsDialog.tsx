@@ -72,7 +72,7 @@ const Dialog: React.FC<{ title: string; subtitle: React.ReactNode; onClose: () =
 };
 
 const Message: React.FC<{ tone?: 'muted' | 'error'; children: React.ReactNode }> = ({ tone = 'muted', children }) => (
-    <div className={`p-10 text-center text-sm font-bold ${tone === 'error' ? 'text-rose-500' : 'text-slate-400'}`}>{children}</div>
+    <div className={`p-10 text-center text-sm font-bold ${tone === 'error' ? 'text-danger' : 'text-slate-400'}`}>{children}</div>
 );
 
 const th = 'px-5 py-2.5';
@@ -205,8 +205,8 @@ export const DayBillsDialog: React.FC<{ date: string; onClose: () => void }> = (
         cancelled: bills.filter(b => b.cancelled).reduce((a, b) => a + b.totalAmount, 0),
     };
     const chip = (active: boolean, danger = false) => `px-3 py-1.5 rounded-lg text-xs font-bold ${active
-        ? danger ? 'bg-rose-600 text-white' : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
-        : danger ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'}`;
+        ? danger ? 'bg-danger text-white' : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
+        : danger ? 'bg-danger-soft dark:bg-danger-soft text-danger dark:text-danger' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'}`;
 
     return (
         <>
@@ -225,8 +225,8 @@ export const DayBillsDialog: React.FC<{ date: string; onClose: () => void }> = (
                         </div>
                         <div className="flex flex-wrap gap-x-6 gap-y-1 mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 text-xs tabular-nums">
                             <span className="text-slate-500">Total bill amount <b className="text-slate-900 dark:text-white">{rupees(totals.total)}</b></span>
-                            <span className="text-slate-500">Cancelled <b className="text-rose-600 dark:text-rose-400">{rupees(totals.cancelled)}</b></span>
-                            <span className="text-slate-500">Final <b className="text-emerald-600 dark:text-emerald-400">{rupees(totals.total - totals.cancelled)}</b></span>
+                            <span className="text-slate-500">Cancelled <b className="text-danger dark:text-danger">{rupees(totals.cancelled)}</b></span>
+                            <span className="text-slate-500">Final <b className="text-success dark:text-success">{rupees(totals.total - totals.cancelled)}</b></span>
                         </div>
                     </>
                 )}
@@ -242,18 +242,18 @@ export const DayBillsDialog: React.FC<{ date: string; onClose: () => void }> = (
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                             {visible.map(b => (
-                                <tr key={b.id} onClick={() => setBillId(b.id)} className={`cursor-pointer ${b.cancelled ? 'bg-rose-50/70 dark:bg-rose-900/10 hover:bg-rose-50' : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'}`}>
-                                    <td className={`px-5 py-3 font-bold underline decoration-dotted underline-offset-4 ${b.cancelled ? 'text-rose-600 dark:text-rose-400' : 'text-primary'}`}>
+                                <tr key={b.id} onClick={() => setBillId(b.id)} className={`cursor-pointer ${b.cancelled ? 'bg-danger/70 dark:bg-danger-soft hover:bg-danger-soft' : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'}`}>
+                                    <td className={`px-5 py-3 font-bold underline decoration-dotted underline-offset-4 ${b.cancelled ? 'text-danger dark:text-danger' : 'text-primary'}`}>
                                         {b.invoiceNo}
-                                        {b.cancelled && <span className="ml-2 px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 no-underline">Cancelled</span>}
+                                        {b.cancelled && <span className="ml-2 px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-danger-soft text-danger dark:bg-danger-soft dark:text-danger no-underline">Cancelled</span>}
                                     </td>
                                     <td className="px-5 py-3 text-slate-500">{b.time}</td>
                                     <td className="px-5 py-3">
-                                        <div className={b.cancelled ? 'text-rose-600 dark:text-rose-400 font-medium' : 'text-slate-900 dark:text-white font-medium'}>{b.customerName}</div>
+                                        <div className={b.cancelled ? 'text-danger dark:text-danger font-medium' : 'text-slate-900 dark:text-white font-medium'}>{b.customerName}</div>
                                         {b.phone && <div className="text-xs text-slate-400">{b.phone}</div>}
                                     </td>
                                     <td className="px-5 py-3 capitalize text-slate-500">{b.paymentMethod}</td>
-                                    <td className={`px-5 py-3 text-right font-bold tabular-nums ${b.cancelled ? 'text-rose-600 dark:text-rose-400 line-through decoration-2' : 'text-slate-900 dark:text-white'}`}>{rupees(b.totalAmount)}</td>
+                                    <td className={`px-5 py-3 text-right font-bold tabular-nums ${b.cancelled ? 'text-danger dark:text-danger line-through decoration-2' : 'text-slate-900 dark:text-white'}`}>{rupees(b.totalAmount)}</td>
                                 </tr>
                             ))}
                         </tbody>

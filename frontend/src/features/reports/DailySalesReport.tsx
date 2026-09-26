@@ -39,8 +39,8 @@ const COLUMNS: ReportColumn<TableRow>[] = [
     { key: 'card', header: 'Card', type: 'currency', fractionDigits: 0, value: r => r.card },
     { key: 'credit', header: 'Credit', type: 'currency', fractionDigits: 0, value: r => r.credit },
     { key: 'upi', header: 'UPI', type: 'currency', fractionDigits: 0, value: r => r.upi },
-    { key: 'cancelledCount', header: 'Cancelled', type: 'number', value: r => r.cancelledCount || null, cellClassName: r => (r.cancelledCount ? 'font-bold text-rose-600!' : undefined) },
-    { key: 'cancelledAmount', header: 'Cancelled amt', type: 'currency', fractionDigits: 0, value: r => r.cancelledAmount || null, cellClassName: r => (r.cancelledAmount ? 'font-bold text-rose-600!' : undefined) },
+    { key: 'cancelledCount', header: 'Cancelled', type: 'number', value: r => r.cancelledCount || null, cellClassName: r => (r.cancelledCount ? 'font-bold text-danger!' : undefined) },
+    { key: 'cancelledAmount', header: 'Cancelled amt', type: 'currency', fractionDigits: 0, value: r => r.cancelledAmount || null, cellClassName: r => (r.cancelledAmount ? 'font-bold text-danger!' : undefined) },
     { key: 'avgBill', header: 'Avg / bill', type: 'currency', fractionDigits: 0, value: r => r.avgBill },
 ];
 

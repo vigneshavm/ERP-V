@@ -47,7 +47,7 @@ const WhatsAppCampaignsPage: React.FC = () => {
             {data && (
                 <>
                     {!data.deliveryTracked && (
-                        <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
+                        <p className="rounded-md border border-warning-line bg-warning-soft px-4 py-3 text-sm text-warning dark:border-warning/50 dark:bg-warning-soft dark:text-warning">
                             Messages aren't sent from the ERP yet{data.connection.connected ? '' : ' and no WhatsApp Business account is connected'}, so there are no sent, delivered or read figures. Campaigns below are saved drafts and schedules.
                         </p>
                     )}

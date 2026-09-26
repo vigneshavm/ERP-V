@@ -14,9 +14,9 @@ export interface ReportKpi {
 
 const TONE: Record<KpiTone, string> = {
     default: 'text-slate-900 dark:text-white',
-    positive: 'text-emerald-600 dark:text-emerald-400',
-    negative: 'text-rose-600 dark:text-rose-400',
-    warning: 'text-amber-600 dark:text-amber-400',
+    positive: 'text-success dark:text-success',
+    negative: 'text-danger dark:text-danger',
+    warning: 'text-warning dark:text-warning',
 };
 
 export const ReportKpiCard: React.FC<ReportKpi> = ({ label, value, sub, tone = 'default', icon }) => (

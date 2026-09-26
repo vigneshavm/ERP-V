@@ -44,7 +44,7 @@ interface SupplierFormProps {
 
 /* ─── shared field classes ──────────────────────────────── */
 const inputCls =
-    'w-full px-3 py-2.5 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 transition-all placeholder:text-slate-300 dark:placeholder:text-neutral-600';
+    'w-full px-3 py-2.5 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-primary transition-all placeholder:text-slate-300 dark:placeholder:text-neutral-600';
 const labelCls =
     'block text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider mb-1';
 const requiredDot = <span className="text-danger ml-0.5">*</span>;
@@ -336,7 +336,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                     <button
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, isOneTime: !prev.isOneTime }))}
-                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${formData.isOneTime ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-neutral-600'}`}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${formData.isOneTime ? 'bg-primary' : 'bg-slate-300 dark:bg-neutral-600'}`}
                     >
                         <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${formData.isOneTime ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
                     </button>
@@ -404,7 +404,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                     <button
                         type="button"
                         onClick={addBankAccount}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-primary hover:bg-indigo-50 dark:hover:bg-primary/10 rounded-lg text-xs font-semibold transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-primary hover:bg-primary-soft dark:hover:bg-primary/10 rounded-lg text-xs font-semibold transition-colors"
                     >
                         <Plus className="w-3.5 h-3.5" /> Add Account
                     </button>
@@ -453,7 +453,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                                             type="button"
                                             onClick={() => updateBankAccount(index, 'isDefault', true)}
                                             className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${account.isDefault
-                                                ? 'bg-emerald-50 dark:bg-success/10 text-emerald-600 dark:text-success border border-emerald-200 dark:border-success/20'
+                                                ? 'bg-success-soft dark:bg-success/10 text-success dark:text-success border border-success-line dark:border-success/20'
                                                 : 'bg-white dark:bg-neutral-800 text-slate-400 hover:text-slate-600 border border-slate-200 dark:border-neutral-700'
                                                 }`}
                                         >
@@ -480,7 +480,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold shadow-sm transition-all active:scale-95 disabled:opacity-60"
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary hover:bg-primary text-white text-sm font-semibold shadow-sm transition-all active:scale-95 disabled:opacity-60"
                 >
                     <Save className="w-4 h-4" />
                     {isLoading ? 'Saving...' : mode === 'edit' ? 'Save Changes' : 'Save Supplier'}

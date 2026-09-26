@@ -13,7 +13,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
             <div className="bg-white p-6 rounded-lg">
                 <h2>Change Password</h2>
                 <p>Feature coming soon...</p>
-                <button onClick={onClose} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Close</button>
+                <button onClick={onClose} className="mt-4 px-4 py-2 bg-primary text-white rounded">Close</button>
             </div>
         </div>
     );

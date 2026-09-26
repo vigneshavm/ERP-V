@@ -13,24 +13,24 @@ const GrowthHub: React.FC = () => {
             description: 'Manage your digital storefront, products, and online orders.',
             icon: Globe,
             path: 'GROW_STORE',
-            color: 'text-blue-600',
-            bg: 'bg-blue-100 dark:bg-blue-900/20'
+            color: 'text-primary',
+            bg: 'bg-primary-soft dark:bg-primary-soft'
         },
         {
             title: 'Marketing',
             description: 'Run campaigns, manage social media, and WhatsApp marketing.',
             icon: Zap,
             path: 'GROW_MARKETING',
-            color: 'text-amber-600',
-            bg: 'bg-amber-100 dark:bg-amber-900/20'
+            color: 'text-warning',
+            bg: 'bg-warning-soft dark:bg-warning-soft'
         },
         {
             title: 'Google Business',
             description: 'Sync and manage your Google Business Profile and reviews.',
             icon: Globe,
             path: 'GROW_GOOGLE',
-            color: 'text-green-600',
-            bg: 'bg-green-100 dark:bg-green-900/20'
+            color: 'text-success',
+            bg: 'bg-success-soft dark:bg-success-soft'
         },
         {
             title: 'Data & Sync',
@@ -45,8 +45,8 @@ const GrowthHub: React.FC = () => {
             description: 'Advanced business intelligence, sales, and inventory analytics.',
             icon: BarChart,
             path: 'PROFIT_PULSE',
-            color: 'text-rose-600',
-            bg: 'bg-rose-100 dark:bg-rose-900/20'
+            color: 'text-danger',
+            bg: 'bg-danger-soft dark:bg-danger-soft'
         },
         {
             title: 'Business Health',
@@ -54,7 +54,7 @@ const GrowthHub: React.FC = () => {
             icon: Rocket,
             path: 'GROW_ARCHITECTURE',
             color: 'text-primary',
-            bg: 'bg-indigo-100 dark:bg-indigo-900/20'
+            bg: 'bg-primary-soft dark:bg-primary-soft'
         }
     ];
 
@@ -79,7 +79,7 @@ const GrowthHub: React.FC = () => {
                     <div
                         key={card.path}
                         onClick={() => dispatch(setActiveTab(card.path as any))}
-                        className="group bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-xl hover:border-indigo-500 dark:hover:border-indigo-500 transition-all cursor-pointer"
+                        className="group bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-xl hover:border-primary dark:hover:border-primary transition-all cursor-pointer"
                     >
                         <div className={`w-14 h-14 ${card.bg} rounded-sm flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                             <card.icon className={`w-7 h-7 ${card.color}`} />

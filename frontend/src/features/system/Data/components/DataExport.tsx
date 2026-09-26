@@ -115,8 +115,8 @@ const DataExport = () => {
                                     key={mod.id}
                                     onClick={() => setSelectedModule(mod.id)}
                                     className={`p-4 rounded-xl border-2 transition-all text-left ${selectedModule === mod.id
-                                            ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 shadow-md'
-                                            : 'border-slate-100 dark:border-slate-800 hover:border-indigo-300'
+                                            ? 'border-primary bg-primary-soft dark:bg-primary-soft shadow-md'
+                                            : 'border-slate-100 dark:border-slate-800 hover:border-primary/30'
                                         }`}
                                 >
                                     <div className="text-2xl mb-2">{mod.icon}</div>
@@ -139,7 +139,7 @@ const DataExport = () => {
                                                 key={fmt}
                                                 onClick={() => setExportFormat(fmt)}
                                                 className={`py-2 px-3 rounded-lg border-2 font-black text-[10px] uppercase transition-all ${exportFormat === fmt
-                                                        ? 'border-indigo-600 bg-indigo-50 text-primary'
+                                                        ? 'border-primary bg-primary-soft text-primary'
                                                         : 'border-slate-100 dark:border-slate-800 text-slate-400'
                                                     }`}
                                             >
@@ -208,7 +208,7 @@ const DataExport = () => {
                             <button
                                 onClick={handleExport}
                                 disabled={exporting}
-                                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-600/20 active:scale-95 transition-all disabled:bg-slate-300"
+                                className="w-full py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-600/20 active:scale-95 transition-all disabled:bg-slate-300"
                             >
                                 {exporting ? 'Processing Export...' : 'Generate and Download Export'}
                             </button>
@@ -217,7 +217,7 @@ const DataExport = () => {
                 </div>
 
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-indigo-600 rounded-xl p-6 text-white shadow-xl shadow-indigo-600/20">
+                    <div className="bg-primary rounded-xl p-6 text-white shadow-xl shadow-indigo-600/20">
                         <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-4">Storage Usage</h3>
                         <div className="flex items-end gap-2 mb-2">
                             <span className="text-4xl font-black">2.4</span>
@@ -243,7 +243,7 @@ const DataExport = () => {
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <p className="text-[9px] font-bold text-slate-400 uppercase">{item.date}</p>
-                                        <span className="text-[8px] font-black px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded uppercase tracking-tighter">SUCCESS</span>
+                                        <span className="text-[8px] font-black px-1.5 py-0.5 bg-success-soft text-success rounded uppercase tracking-tighter">SUCCESS</span>
                                     </div>
                                 </div>
                             ))}

@@ -95,7 +95,7 @@ const EstimateTemplate: React.FC<EstimateTemplateProps> = ({ estimate }) => {
                         <span>₹{estimate.subtotal?.toFixed(2)}</span>
                     </div>
                     {estimate.discount > 0 && (
-                        <div className="flex justify-between text-red-500">
+                        <div className="flex justify-between text-danger">
                             <span>Discount:</span>
                             <span>-₹{estimate.discount?.toFixed(2)}</span>
                         </div>

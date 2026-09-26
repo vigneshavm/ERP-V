@@ -125,7 +125,7 @@ const ReportsModule: React.FC = () => {
                             </span>
                         )}
                         {status === 'validation' && (
-                            <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400" title="Real data wired; figures still being reconciled">
+                            <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-warning-soft dark:bg-warning-soft text-warning dark:text-warning" title="Real data wired; figures still being reconciled">
                                 Data validation
                             </span>
                         )}
@@ -201,7 +201,7 @@ const ReportsModule: React.FC = () => {
                     <div className="animate-in fade-in zoom-in-95 duration-700">
                         <div className="relative overflow-hidden rounded-xl bg-neutral-900 border border-neutral-800 p-8 lg:p-16 text-white shadow-2xl">
                             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full -mr-64 -mt-64" />
-                            <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-600/10 blur-[100px] rounded-full -ml-40 -mb-40" />
+                            <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/10 blur-[100px] rounded-full -ml-40 -mb-40" />
 
                             <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
                                 <div className="max-w-2xl text-center lg:text-left">

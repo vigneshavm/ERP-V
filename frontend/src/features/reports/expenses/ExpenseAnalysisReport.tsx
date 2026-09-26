@@ -64,7 +64,7 @@ const ExpenseAnalysisReport: React.FC = () => {
         { key: 'amount', header: 'Amount', type: 'currency', value: r => r.amount, subtext: r => methodLabel(r.paymentMethod), cellClassName: () => 'font-bold' },
         { key: 'hasReceipt', header: 'Receipt', type: 'status', value: r => (r.hasReceipt ? 'Attached' : 'None'), statusTones: { Attached: 'success', None: 'neutral' } },
         { key: 'recordedBy', header: 'Recorded by', value: r => r.recordedBy },
-        { key: 'flags', header: 'Check', value: r => r.flags.map(f => labels?.[f] ?? f).join('; ') || null, cellClassName: r => (r.flags.length ? 'text-amber-700 dark:text-amber-300' : undefined) },
+        { key: 'flags', header: 'Check', value: r => r.flags.map(f => labels?.[f] ?? f).join('; ') || null, cellClassName: r => (r.flags.length ? 'text-warning dark:text-warning' : undefined) },
     ], [labels]);
     const { tableProps, filteredRows } = useClientReportTable(rows, columns, { searchPlaceholder: 'Expense no., description or category…' });
 

@@ -286,11 +286,11 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                         </div>
 
                         {addCategoriesResult && (
-                            <p className="text-xs font-bold mb-3 text-emerald-600 dark:text-emerald-400">
+                            <p className="text-xs font-bold mb-3 text-success dark:text-success">
                                 {addCategoriesResult.added > 0 && `${addCategoriesResult.added} added to your Categories`}
                                 {addCategoriesResult.existed > 0 && `${addCategoriesResult.added > 0 ? ' · ' : ''}${addCategoriesResult.existed} already in your Categories`}
                                 {addCategoriesResult.failed > 0 && (
-                                    <span className="text-rose-600 dark:text-rose-400">{(addCategoriesResult.added > 0 || addCategoriesResult.existed > 0) ? ' · ' : ''}{addCategoriesResult.failed} failed</span>
+                                    <span className="text-danger dark:text-danger">{(addCategoriesResult.added > 0 || addCategoriesResult.existed > 0) ? ' · ' : ''}{addCategoriesResult.failed} failed</span>
                                 )}
                             </p>
                         )}
@@ -310,11 +310,11 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
                                             <div
                                                 key={cat._id || cat.name}
                                                 title="Already in your Categories"
-                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-900/10"
+                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-success-line dark:border-success/40 bg-success-soft dark:bg-success-soft"
                                             >
-                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
                                                 <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">{cat.name}</span>
-                                                <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Added</span>
+                                                <span className="text-[9px] font-black text-success dark:text-success uppercase tracking-widest">Added</span>
                                             </div>
                                         );
                                     }

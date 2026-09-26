@@ -36,12 +36,12 @@ export const ReportEmpty: React.FC<{ onClearFilters?: () => void }> = ({ onClear
 
 /** Never falls back to sample data: the report shows this until the data loads. */
 export const ReportError: React.FC<{ message?: string | null; onRetry?: () => void }> = ({ message, onRetry }) => (
-    <div className="py-16 px-6 text-center bg-rose-50/60 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/30 rounded-sm" role="alert">
-        <AlertTriangle className="w-10 h-10 mx-auto text-rose-400" aria-hidden />
-        <p className="mt-3 text-sm font-bold text-rose-700 dark:text-rose-300">Unable to load report</p>
-        <p className="mt-1 text-xs text-rose-600/80 dark:text-rose-300/80">We couldn't retrieve the report data.{message ? ` (${message})` : ''}</p>
+    <div className="py-16 px-6 text-center bg-danger/60 dark:bg-danger-soft border border-danger-line dark:border-danger/30 rounded-sm" role="alert">
+        <AlertTriangle className="w-10 h-10 mx-auto text-danger" aria-hidden />
+        <p className="mt-3 text-sm font-bold text-danger dark:text-danger">Unable to load report</p>
+        <p className="mt-1 text-xs text-danger/80 dark:text-danger/80">We couldn't retrieve the report data.{message ? ` (${message})` : ''}</p>
         {onRetry && (
-            <button type="button" onClick={onRetry} className="mt-4 px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-900/40 text-xs font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-slate-700">
+            <button type="button" onClick={onRetry} className="mt-4 px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-danger-line dark:border-danger/40 text-xs font-bold text-danger dark:text-danger hover:bg-danger-soft dark:hover:bg-slate-700">
                 Try again
             </button>
         )}

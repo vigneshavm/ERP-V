@@ -133,7 +133,7 @@ const AgentModal: React.FC<AgentModalProps> = ({ isOpen, onClose, initialData })
                             name="commissionPercent"
                             value={formData.commissionPercent}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-emerald-600"
+                            className="w-full px-3 py-2 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-success"
                         />
                     </div>
                     <div>
@@ -218,7 +218,7 @@ const AgentModal: React.FC<AgentModalProps> = ({ isOpen, onClose, initialData })
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 disabled:opacity-50 shadow-lg shadow-indigo-200 dark:shadow-none"
+                        className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary-hover disabled:opacity-50 shadow-lg shadow-indigo-200 dark:shadow-none"
                     >
                         <Save className="w-4 h-4" /> {isLoading ? 'Saving...' : 'Save Agent'}
                     </button>

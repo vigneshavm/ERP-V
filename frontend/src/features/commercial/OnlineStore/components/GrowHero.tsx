@@ -24,7 +24,7 @@ const GrowHero: React.FC<GrowHeroProps> = ({ isLoading, onActivate, currentPlan:
 
                 <div className="relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-16">
                     <div className="max-w-3xl">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#4F46E5]/10 rounded-full border border-[#4F46E5]/20 text-[#4F46E5] dark:text-indigo-300 text-xs font-black uppercase tracking-widest mb-8">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#4F46E5]/10 rounded-full border border-[#4F46E5]/20 text-[#4F46E5] dark:text-primary text-xs font-black uppercase tracking-widest mb-8">
                             <Rocket className="w-4 h-4" aria-hidden="true" />
                             Used by Global Stores
                         </div>

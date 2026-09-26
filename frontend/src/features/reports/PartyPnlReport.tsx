@@ -46,9 +46,9 @@ const COLUMNS: ReportColumn<PnlRow>[] = [
     { key: 'bills', header: 'Bills', type: 'number', value: r => r.bills },
     { key: 'netSales', header: 'Net sales', type: 'currency', fractionDigits: 0, value: r => r.netSales },
     { key: 'cost', header: 'Cost', type: 'currency', fractionDigits: 0, value: r => r.cost },
-    { key: 'profit', header: 'Gross profit', type: 'currency', fractionDigits: 0, value: r => r.profit, cellClassName: r => (r.profit < 0 ? 'text-rose-600! font-bold' : 'font-bold') },
+    { key: 'profit', header: 'Gross profit', type: 'currency', fractionDigits: 0, value: r => r.profit, cellClassName: r => (r.profit < 0 ? 'text-danger! font-bold' : 'font-bold') },
     { key: 'marginPct', header: 'Margin', type: 'percent', value: r => r.marginPct },
-    { key: 'costCoveragePct', header: 'Cost known', type: 'percent', value: r => r.costCoveragePct, cellClassName: r => (r.costCoveragePct < 90 ? 'text-amber-600!' : undefined) },
+    { key: 'costCoveragePct', header: 'Cost known', type: 'percent', value: r => r.costCoveragePct, cellClassName: r => (r.costCoveragePct < 90 ? 'text-warning!' : undefined) },
 ];
 
 const EXPORT_COLUMNS: ReportColumn<PnlRow>[] = [

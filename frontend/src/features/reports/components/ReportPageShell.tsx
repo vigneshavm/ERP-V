@@ -151,7 +151,7 @@ export function ReportPageShell<Row = unknown>({
             )}
 
             {status === 'validation' && (
-                <div className="p-3 rounded-sm border border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-300 text-xs font-bold">
+                <div className="p-3 rounded-sm border border-warning-line bg-warning-soft text-warning dark:border-warning/40 dark:bg-warning-soft dark:text-warning text-xs font-bold">
                     Data validation: this report is being reconciled against your shop's records. Don't rely on it for audit yet.
                 </div>
             )}

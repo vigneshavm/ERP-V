@@ -20,12 +20,12 @@ const COLUMNS: ReportColumn<ProfitRow>[] = [
     { key: 'cost', header: 'Cost', type: 'currency', value: r => r.cost, sortable: true },
     {
         key: 'profit', header: 'Profit', type: 'currency', value: r => r.profit, sortable: true,
-        render: r => <span className={r.profit < 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : ''}>{rupees0(r.profit)}</span>,
+        render: r => <span className={r.profit < 0 ? 'text-danger dark:text-danger font-bold' : ''}>{rupees0(r.profit)}</span>,
     },
     { key: 'marginPct', header: 'Margin', type: 'percent', value: r => r.marginPct, sortable: true },
     {
         key: 'coverage', header: 'Costed', type: 'percent', value: r => Math.round(r.coverage * 1000) / 10, sortable: true,
-        render: r => <span className={r.coverage < 1 ? 'text-amber-700 dark:text-amber-300' : ''}>{formatPercentage(r.coverage * 100, 0)}</span>,
+        render: r => <span className={r.coverage < 1 ? 'text-warning dark:text-warning' : ''}>{formatPercentage(r.coverage * 100, 0)}</span>,
     },
 ];
 

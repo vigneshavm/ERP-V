@@ -50,7 +50,7 @@ const COLUMNS: ReportColumn<DeadStockRow>[] = [
         key: 'lastMovement', header: 'Last movement', type: 'date', value: r => r.lastMovement,
         subtext: r => (r.neverSold ? 'Never sold · purchase date' : 'Last sale'),
     },
-    { key: 'idleDays', header: 'Idle', type: 'number', value: r => r.idleDays, render: r => idleText(r.idleDays), cellClassName: () => 'font-bold text-rose-600!' },
+    { key: 'idleDays', header: 'Idle', type: 'number', value: r => r.idleDays, render: r => idleText(r.idleDays), cellClassName: () => 'font-bold text-danger!' },
     { key: 'remainingQty', header: 'Pcs', type: 'quantity', value: r => r.remainingQty },
     { key: 'value', header: 'Value (cost)', type: 'currency', fractionDigits: 0, value: r => r.value, cellClassName: () => 'font-bold' },
 ];

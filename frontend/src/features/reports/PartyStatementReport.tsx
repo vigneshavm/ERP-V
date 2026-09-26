@@ -187,7 +187,7 @@ const PartyStatementReport: React.FC = () => {
                         emptyMessage="No transactions in this period."
                     />
                     {party.truncated && (
-                        <p className="text-xs font-bold text-amber-600">Showing the latest 5,000 entries. Narrow the period to see earlier ones.</p>
+                        <p className="text-xs font-bold text-warning">Showing the latest 5,000 entries. Narrow the period to see earlier ones.</p>
                     )}
                 </>
             )}

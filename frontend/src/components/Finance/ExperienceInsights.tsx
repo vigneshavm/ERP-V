@@ -43,10 +43,10 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
     }));
 
     const categoryIcons: Record<string, React.ReactNode> = {
-        'Savings': <PiggyBank className="w-5 h-5 text-amber-200" />,
+        'Savings': <PiggyBank className="w-5 h-5 text-warning" />,
         'Investments': <TrendingUp className="w-5 h-5 text-pink-400" />,
-        'Rent': <Home className="w-5 h-5 text-red-300" />,
-        'Food & Drinks': <Utensils className="w-5 h-5 text-yellow-500" />,
+        'Rent': <Home className="w-5 h-5 text-danger" />,
+        'Food & Drinks': <Utensils className="w-5 h-5 text-warning" />,
         'Default': <CreditCard className="w-5 h-5 text-neutral-400" />
     };
 
@@ -85,7 +85,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
             {/* Main Chart */}
             <div className="relative h-[300px] w-full mt-4">
                 <div className="absolute top-0 right-0 flex items-center gap-2 text-[10px] font-bold text-neutral-500">
-                    <div className="w-3 h-3 bg-orange-500 rounded-sm" />
+                    <div className="w-3 h-3 bg-warning rounded-sm" />
                     Balance per month
                 </div>
                 <ResponsiveContainer width="100%" height="100%">
@@ -147,7 +147,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
                                 </div>
                                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-emerald-500/50 rounded-full"
+                                        className="h-full bg-success/50 rounded-full"
                                         style={{ width: `${percentage}%` }}
                                     />
                                 </div>

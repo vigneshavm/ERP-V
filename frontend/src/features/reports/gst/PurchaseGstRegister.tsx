@@ -32,7 +32,7 @@ const COLUMNS: ReportColumn<InwardRow>[] = [
         value: r => (r.itcEligible ? r.gstin : r.gstin ? `Invalid: ${r.gstin}` : 'Missing'),
         render: r => (r.itcEligible
             ? <span className="font-mono text-xs">{r.gstin}</span>
-            : <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">{r.gstin ? 'Invalid GSTIN' : 'No GSTIN'}</span>),
+            : <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-warning-soft text-warning dark:bg-warning-soft dark:text-warning">{r.gstin ? 'Invalid GSTIN' : 'No GSTIN'}</span>),
     },
     { key: 'rates', header: 'Rates', value: r => r.rates },
     { key: 'taxable', header: 'Taxable value', type: 'currency', value: r => r.taxable, sortable: true },

@@ -15,8 +15,8 @@ const StatsCard: React.FC<StatsCardProps> = ({
     title,
     value,
     icon,
-    iconBgColor = 'bg-indigo-100',
-    iconColor = 'text-indigo-600',
+    iconBgColor = 'bg-primary-soft',
+    iconColor = 'text-primary',
     trend,
     trendUp,
     className = ''
@@ -31,9 +31,9 @@ const StatsCard: React.FC<StatsCardProps> = ({
                     {trend && (
                         <div className="mt-2 flex items-center gap-1.5">
                             <span className={`text-xs font-bold px-1.5 py-0.5 rounded-md ${trendUp === true
-                                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20'
+                                    ? 'bg-success-soft text-success dark:bg-success-soft'
                                     : trendUp === false
-                                        ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/20'
+                                        ? 'bg-danger-soft text-danger dark:bg-danger-soft'
                                         : 'bg-slate-100 text-slate-600 dark:bg-neutral-800'
                                 }`}>
                                 {trend}

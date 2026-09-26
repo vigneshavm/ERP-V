@@ -92,7 +92,7 @@ const SubscriptionTab: React.FC = () => {
                     <Shield className="w-64 h-64 text-success" />
                 </div>
 
-                <div className="relative z-10 w-24 h-24 rounded-sm bg-emerald-600 flex items-center justify-center shadow-xl shadow-emerald-500/20 shrink-0">
+                <div className="relative z-10 w-24 h-24 rounded-sm bg-success flex items-center justify-center shadow-xl shadow-emerald-500/20 shrink-0">
                     <Activity className="w-12 h-12 text-white" />
                 </div>
 
@@ -137,17 +137,17 @@ const SubscriptionTab: React.FC = () => {
                         const isCurrent = currentPlanCode === plan.code;
                         return (
                             <div key={plan.code} className={`group relative p-8 rounded-xl border transition-all duration-500 flex flex-col ${plan.popular
-                                ? 'bg-white dark:bg-slate-900 border-indigo-200 dark:border-indigo-500 shadow-2xl scale-105 z-10'
+                                ? 'bg-white dark:bg-slate-900 border-primary/30 dark:border-primary shadow-2xl scale-105 z-10'
                                 : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300'
                                 }`}>
                                 {plan.popular && (
-                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-2 bg-indigo-600 text-white rounded-full text-[10px] font-black tracking-[0.2em] shadow-lg">
+                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-2 bg-primary text-white rounded-full text-[10px] font-black tracking-[0.2em] shadow-lg">
                                         MOST ADOPTED
                                     </div>
                                 )}
 
                                 <div className="mb-8">
-                                    <div className={`w-14 h-14 rounded-sm mb-4 flex items-center justify-center transition-transform group-hover:scale-110 duration-500 ${plan.popular ? 'bg-indigo-600 text-white shadow-xl' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'
+                                    <div className={`w-14 h-14 rounded-sm mb-4 flex items-center justify-center transition-transform group-hover:scale-110 duration-500 ${plan.popular ? 'bg-primary text-white shadow-xl' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'
                                         }`}>
                                         <Icon className="w-7 h-7" />
                                     </div>
@@ -165,7 +165,7 @@ const SubscriptionTab: React.FC = () => {
                                 <div className="space-y-4 mb-10 flex-1">
                                     {plan.features.map(f => (
                                         <div key={f} className="flex items-center gap-3 text-xs font-bold text-slate-600 dark:text-slate-400">
-                                            <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-success flex items-center justify-center shrink-0">
+                                            <div className="w-5 h-5 rounded-full bg-success-soft dark:bg-success-soft text-success dark:text-success flex items-center justify-center shrink-0">
                                                 <Check className="w-3 h-3" />
                                             </div>
                                             {f}
@@ -176,9 +176,9 @@ const SubscriptionTab: React.FC = () => {
                                 <button
                                     onClick={() => !isCurrent && handleSwitchPlan(plan.code)}
                                     className={`w-full py-4 rounded-sm text-[11px] font-black tracking-widest transition-all ${isCurrent
-                                        ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-200 dark:shadow-none'
+                                        ? 'bg-success text-white shadow-xl shadow-emerald-200 dark:shadow-none'
                                         : plan.popular
-                                            ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200 dark:shadow-none hover:bg-slate-900'
+                                            ? 'bg-primary text-white shadow-xl shadow-indigo-200 dark:shadow-none hover:bg-slate-900'
                                             : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-900 hover:text-white'
                                         }`}
                                 >
@@ -210,7 +210,7 @@ const SubscriptionTab: React.FC = () => {
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Assistance</p>
                         <p className="text-xs font-bold text-primary">Contact billing support</p>
                     </div>
-                    <div className="w-12 h-12 rounded-sm bg-indigo-600 text-white flex items-center justify-center shadow-lg">
+                    <div className="w-12 h-12 rounded-sm bg-primary text-white flex items-center justify-center shadow-lg">
                         <ChevronRight className="w-6 h-6" />
                     </div>
                 </div>

@@ -4,13 +4,13 @@ export type ReportDisplayStatus = 'live' | 'validation' | 'coming-soon' | 'no-da
 
 const STATUS: Record<ReportDisplayStatus, { label: string; dot: string; chip: string; title: string }> = {
     'live': {
-        label: 'Live data', dot: 'bg-emerald-500',
-        chip: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-900/40',
+        label: 'Live data', dot: 'bg-success',
+        chip: 'bg-success-soft text-success border-success-line dark:bg-success-soft dark:text-success dark:border-success/40',
         title: "Real, reconciled data from your shop's records",
     },
     'validation': {
-        label: 'Data validation', dot: 'bg-amber-500',
-        chip: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-900/40',
+        label: 'Data validation', dot: 'bg-warning',
+        chip: 'bg-warning-soft text-warning border-warning-line dark:bg-warning-soft dark:text-warning dark:border-warning/40',
         title: 'Connected to real data; figures are still being reconciled',
     },
     'coming-soon': {
@@ -24,8 +24,8 @@ const STATUS: Record<ReportDisplayStatus, { label: string; dot: string; chip: st
         title: 'No records for the selected period or filters',
     },
     'error': {
-        label: 'Error', dot: 'bg-rose-500',
-        chip: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-900/40',
+        label: 'Error', dot: 'bg-danger',
+        chip: 'bg-danger-soft text-danger border-danger-line dark:bg-danger-soft dark:text-danger dark:border-danger/40',
         title: 'The report data could not be loaded',
     },
 };

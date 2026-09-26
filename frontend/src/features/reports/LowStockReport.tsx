@@ -42,7 +42,7 @@ const COLUMNS: ReportColumn<LowStockRow>[] = [
     { key: 'category', header: 'Category / Brand', value: r => [r.category, r.brand].filter(Boolean).join(' · ') || null },
     { key: 'supplier', header: 'Supplier', value: r => r.supplier },
     { key: 'purchaseDate', header: 'Purchased on', type: 'date', value: r => r.purchaseDate },
-    { key: 'remainingQty', header: 'Pcs left', type: 'quantity', value: r => r.remainingQty, cellClassName: () => 'font-bold text-amber-600!' },
+    { key: 'remainingQty', header: 'Pcs left', type: 'quantity', value: r => r.remainingQty, cellClassName: () => 'font-bold text-warning!' },
     { key: 'costPrice', header: 'Cost', type: 'currency', fractionDigits: 0, value: r => r.costPrice },
     { key: 'value', header: 'Value', type: 'currency', fractionDigits: 0, value: r => r.value, cellClassName: () => 'font-bold' },
 ];

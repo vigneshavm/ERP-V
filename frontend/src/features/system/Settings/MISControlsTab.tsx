@@ -15,9 +15,9 @@ interface ControlItemProps {
 }
 
 const ControlItem: React.FC<ControlItemProps> = ({ k, label, desc, icon: Icon, misConfig, onToggle }) => (
-    <div className="group flex items-center justify-between p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:border-indigo-300 transition-all shadow-sm">
+    <div className="group flex items-center justify-between p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:border-primary/30 transition-all shadow-sm">
         <div className="flex items-center gap-5">
-            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-indigo-50 group-hover:text-primary transition-colors">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-primary-soft group-hover:text-primary transition-colors">
                 <Icon className="w-5 h-5" />
             </div>
             <div>
@@ -32,7 +32,7 @@ const ControlItem: React.FC<ControlItemProps> = ({ k, label, desc, icon: Icon, m
                 checked={!!(misConfig as any)[k]}
                 onChange={() => onToggle(k)}
             />
-            <div className="w-12 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+            <div className="w-12 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
         </label>
     </div>
 );
@@ -41,12 +41,12 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
     return (
         <div className="p-6 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Global Advisory Alert */}
-            <div className="p-6 bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800 rounded-sm flex items-start gap-5">
+            <div className="p-6 bg-primary/50 dark:bg-primary-soft border border-primary/30 dark:border-primary/30 rounded-sm flex items-start gap-5">
                 <div className="w-12 h-12 rounded-sm bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0">
                     <AlertTriangle className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                    <p className="text-sm font-black text-indigo-800 dark:text-indigo-200">Management Information System (MIS) Governance</p>
+                    <p className="text-sm font-black text-primary dark:text-primary">Management Information System (MIS) Governance</p>
                     <p className="text-xs text-primary dark:text-primary mt-1 leading-relaxed max-w-2xl">
                         These protocols dictate the operational boundaries for your staff. Enabling or disabling these controls will immediately affect transaction workflows, inventory validation, and financial compliance across all terminals.
                     </p>
@@ -56,8 +56,8 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
             {/* Financial & Inventory Governance */}
             <section>
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
-                        <DollarSign className="w-5 h-5 text-emerald-600 dark:text-success" />
+                    <div className="w-10 h-10 rounded-xl bg-success-soft dark:bg-success-soft flex items-center justify-center">
+                        <DollarSign className="w-5 h-5 text-success dark:text-success" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Financial & Inventory Governance</h3>
@@ -76,8 +76,8 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
             {/* Transactional Integrity */}
             <section>
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <div className="w-10 h-10 rounded-xl bg-primary-soft dark:bg-primary-soft flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-primary dark:text-primary" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Transactional Integrity</h3>
@@ -119,8 +119,8 @@ const MISControlsTab: React.FC<MISControlsTabProps> = ({ misConfig, handleMisTog
             {/* Audit & Compliance */}
             <section>
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
-                        <Shield className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                    <div className="w-10 h-10 rounded-xl bg-warning-soft dark:bg-warning-soft flex items-center justify-center">
+                        <Shield className="w-5 h-5 text-warning dark:text-warning" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Audit & Compliance</h3>

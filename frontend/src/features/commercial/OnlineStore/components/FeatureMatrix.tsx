@@ -50,7 +50,7 @@ const FeatureMatrix = () => {
                         <tr className="bg-slate-50 dark:bg-slate-900/50">
                             <th className="p-4 w-1/3 text-xs font-bold text-slate-500 uppercase tracking-wider">Feature</th>
                             <th className="p-4 w-1/6 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Starter</th>
-                            <th className="p-4 w-1/6 text-center text-xs font-bold text-primary uppercase tracking-wider bg-indigo-50/50 dark:bg-indigo-900/20 border-t-2 border-indigo-500">Growth</th>
+                            <th className="p-4 w-1/6 text-center text-xs font-bold text-primary uppercase tracking-wider bg-primary/50 dark:bg-primary-soft border-t-2 border-primary">Growth</th>
                             <th className="p-4 w-1/6 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Scale</th>
                         </tr>
                     </thead>
@@ -69,7 +69,7 @@ const FeatureMatrix = () => {
                                             <Info className="w-3.5 h-3.5 text-slate-300 cursor-help" />
                                         </td>
                                         <td className="p-4 text-center">{renderValue(item.free)}</td>
-                                        <td className="p-4 text-center bg-indigo-50/10 dark:bg-indigo-900/10 font-bold border-x border-slate-100 dark:border-slate-800">
+                                        <td className="p-4 text-center bg-primary/10 dark:bg-primary-soft font-bold border-x border-slate-100 dark:border-slate-800">
                                             {renderValue(item.pro)}
                                         </td>
                                         <td className="p-4 text-center">{renderValue(item.enterprise)}</td>

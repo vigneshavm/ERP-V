@@ -3,7 +3,7 @@ import { AlertTriangle, CheckCircle2, Info } from 'lucide-react';
 import type { Finding } from './gstFindings';
 
 const TONE = {
-    warning: { icon: AlertTriangle, cls: 'text-amber-700 dark:text-amber-300', label: 'Check' },
+    warning: { icon: AlertTriangle, cls: 'text-warning dark:text-warning', label: 'Check' },
     info: { icon: Info, cls: 'text-slate-500 dark:text-slate-400', label: 'Note' },
 };
 
@@ -13,7 +13,7 @@ export const GstChecks: React.FC<{ findings: Finding[] }> = ({ findings }) => (
         <h3 className="font-bold text-slate-900 dark:text-white text-sm">Before you file</h3>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Reconciliation checks on the data behind these figures.</p>
         {findings.length === 0 ? (
-            <p className="mt-3 flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+            <p className="mt-3 flex items-center gap-2 text-xs font-bold text-success dark:text-success">
                 <CheckCircle2 className="w-4 h-4" aria-hidden /> No issues found for this period.
             </p>
         ) : (

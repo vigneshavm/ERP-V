@@ -68,18 +68,18 @@ const PricingTiers: React.FC<PricingTiersProps> = ({ currentPlan, onUpgrade }) =
                 <div
                     key={tier.id}
                     className={`relative p-8 rounded-sm border transition-all duration-300 ${tier.popular
-                            ? 'bg-white dark:bg-slate-800 border-indigo-500 shadow-xl shadow-indigo-500/10 scale-105 z-10'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-300'
+                            ? 'bg-white dark:bg-slate-800 border-primary shadow-xl shadow-indigo-500/10 scale-105 z-10'
+                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-primary/30'
                         }`}
                 >
                     {tier.popular && (
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
                             Most Popular
                         </div>
                     )}
 
-                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center mb-6 ${tier.color === 'indigo' ? 'bg-indigo-50 text-primary dark:bg-primary/20' :
-                            tier.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 dark:bg-success/20' :
+                    <div className={`w-12 h-12 rounded-sm flex items-center justify-center mb-6 ${tier.color === 'indigo' ? 'bg-primary-soft text-primary dark:bg-primary/20' :
+                            tier.color === 'emerald' ? 'bg-success-soft text-success dark:bg-success/20' :
                                 'bg-slate-50 text-slate-600 dark:bg-slate-700'
                         }`}>
                         <tier.icon className="w-6 h-6" />
@@ -109,7 +109,7 @@ const PricingTiers: React.FC<PricingTiersProps> = ({ currentPlan, onUpgrade }) =
                         className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all ${currentPlan === tier.id
                                 ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                 : tier.popular
-                                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/20 hover:scale-[1.02]'
+                                    ? 'bg-primary hover:bg-primary-hover text-white shadow-lg shadow-indigo-600/20 hover:scale-[1.02]'
                                     : 'bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-900'
                             }`}
                     >

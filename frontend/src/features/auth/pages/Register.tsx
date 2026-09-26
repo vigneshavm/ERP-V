@@ -68,7 +68,7 @@ const Register: React.FC = () => {
                             type="tel"
                             placeholder="9876543210"
                             leftElement={
-                                <span className="h-full rounded-l-2xl border-r border-slate-800 bg-slate-950 px-3 flex items-center text-slate-500 text-[10px] font-black tracking-widest transition-colors group-focus-within:text-primary group-focus-within:border-indigo-500/50">
+                                <span className="h-full rounded-l-2xl border-r border-slate-800 bg-slate-950 px-3 flex items-center text-slate-500 text-[10px] font-black tracking-widest transition-colors group-focus-within:text-primary group-focus-within:border-primary/50">
                                     +91
                                 </span>
                             }
@@ -104,7 +104,7 @@ const Register: React.FC = () => {
                                 id="terms"
                                 type="checkbox"
                                 {...register('terms')}
-                                className="peer h-5 w-5 rounded-lg border-slate-800 bg-slate-900 text-primary focus:ring-indigo-500/50 transition-all cursor-pointer appearance-none border-2 checked:bg-indigo-600 checked:border-indigo-600"
+                                className="peer h-5 w-5 rounded-lg border-slate-800 bg-slate-900 text-primary focus:ring-indigo-500/50 transition-all cursor-pointer appearance-none border-2 checked:bg-primary checked:border-primary"
                             />
                             <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3.5 h-3.5 text-white left-0.5" />
                         </div>
@@ -134,7 +134,7 @@ const Register: React.FC = () => {
                     <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
                         Already have access?
                     </p>
-                    <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-indigo-300 transition-colors">
+                    <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-primary transition-colors">
                         Sign In to Workspace <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                 </div>

@@ -61,7 +61,7 @@ const Statement: React.FC<{ lines: Line[] }> = ({ lines }) => (
                                 {l.label}
                                 {l.note && <span className="block text-[11px] font-normal text-slate-400">{l.note}</span>}
                             </td>
-                            <td className={`py-2 text-right tabular-nums whitespace-nowrap ${strong ? 'font-bold' : ''} ${l.kind === 'info' ? 'text-slate-500 dark:text-slate-400 text-xs' : neg ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white'} ${l.kind === 'total' && neg ? 'text-rose-600 dark:text-rose-400' : ''}`}>
+                            <td className={`py-2 text-right tabular-nums whitespace-nowrap ${strong ? 'font-bold' : ''} ${l.kind === 'info' ? 'text-slate-500 dark:text-slate-400 text-xs' : neg ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white'} ${l.kind === 'total' && neg ? 'text-danger dark:text-danger' : ''}`}>
                                 {l.amount === null ? '—' : rupees(l.amount)}
                             </td>
                         </tr>

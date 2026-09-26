@@ -481,7 +481,7 @@ const BarcodeGenerator = () => {
                         key="print"
                         onClick={handlePrint}
                         disabled={!generated && !bulkGenerated}
-                        className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-xs font-black uppercase tracking-widest shadow-lg"
+                        className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:bg-slate-400 disabled:cursor-not-allowed text-xs font-black uppercase tracking-widest shadow-lg"
                     >
                         Print Barcodes
                     </button>
@@ -489,7 +489,7 @@ const BarcodeGenerator = () => {
             />
 
             {error && (
-                <div className="mb-4 p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/20 rounded-lg text-rose-700 dark:text-danger">
+                <div className="mb-4 p-4 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger/20 rounded-lg text-danger dark:text-danger">
                     {error}
                 </div>
             )}
@@ -598,18 +598,18 @@ const BarcodeGenerator = () => {
                         <p className="text-slate-500 mb-4">Generate barcodes for multiple items at once</p>
                         <button
                             onClick={() => setShowInventoryModal(true)}
-                            className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+                            className="px-6 py-2 bg-success text-white rounded-lg hover:bg-success/90 font-bold text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all"
                         >
                             Select Items from Inventory
                         </button>
 
                         {selectedInventoryItems.length > 0 && (
-                            <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                            <div className="mt-4 p-3 bg-primary-soft dark:bg-primary-soft rounded-lg">
                                 <p className="text-sm text-primary dark:text-primary font-medium">
                                     <strong>{selectedInventoryItems.length}</strong> items selected
                                 </p>
                                 {bulkGenerated && (
-                                    <p className="text-xs text-emerald-600 dark:text-success mt-1 font-medium">✓ Barcodes generated successfully</p>
+                                    <p className="text-xs text-success dark:text-success mt-1 font-medium">✓ Barcodes generated successfully</p>
                                 )}
                             </div>
                         )}
@@ -712,7 +712,7 @@ const BarcodeGenerator = () => {
                         <div className="mt-6 space-y-3">
                             <button
                                 onClick={handleGenerateClick}
-                                className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-black text-xs uppercase tracking-widest disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed transition-all shadow-lg active:scale-95"
+                                className="w-full py-3 bg-primary text-white rounded-lg hover:bg-primary-hover font-black text-xs uppercase tracking-widest disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed transition-all shadow-lg active:scale-95"
                                 disabled={!formData.sku && selectedInventoryItems.length === 0}
                             >
                                 Generate Barcode
@@ -730,7 +730,7 @@ const BarcodeGenerator = () => {
                                         setSelectedInventoryItems([]);
                                         setBulkGenerated(false);
                                     }}
-                                    className="w-full py-3 border border-rose-300 text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/20 text-xs font-black uppercase tracking-widest"
+                                    className="w-full py-3 border border-danger-line text-danger rounded-lg hover:bg-danger-soft dark:hover:bg-danger-soft text-xs font-black uppercase tracking-widest"
                                 >
                                     Clear Bulk Selection
                                 </button>
@@ -738,7 +738,7 @@ const BarcodeGenerator = () => {
                         </div>
 
                         {!bulkGenerated && (
-                            <div className="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/10 rounded-lg border border-indigo-100 dark:border-indigo-900/20">
+                            <div className="mt-6 p-4 bg-primary-soft dark:bg-primary-soft rounded-lg border border-primary/30 dark:border-primary/20">
                                 <p className="text-[10px] text-primary dark:text-primary font-black mb-2 uppercase tracking-wider">Format Guidelines:</p>
                                 <ul className="text-[10px] text-slate-500 space-y-1 font-bold">
                                     {formData.barcodeType === 'CODE128' && <li>• Any text up to 80 chars</li>}
@@ -787,8 +787,8 @@ const BarcodeGenerator = () => {
                                             key={item._id}
                                             onClick={() => handleInventoryItemToggle(item)}
                                             className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${isSelected
-                                                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20'
-                                                : 'border-slate-100 dark:border-slate-800 hover:border-indigo-300'
+                                                ? 'border-primary bg-primary-soft dark:bg-primary-soft'
+                                                : 'border-slate-100 dark:border-slate-800 hover:border-primary/30'
                                                 }`}
                                         >
                                             <div className="flex justify-between items-start">
@@ -797,7 +797,7 @@ const BarcodeGenerator = () => {
                                                     <p className="text-xs text-slate-500">SKU: {item.sku || 'N/A'}</p>
                                                     <p className="text-sm font-bold text-primary mt-1">₹{item.sellingPrice}</p>
                                                 </div>
-                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200'}`}>
+                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${isSelected ? 'bg-primary border-primary' : 'border-slate-200'}`}>
                                                     {isSelected && (
                                                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -818,13 +818,13 @@ const BarcodeGenerator = () => {
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setSelectedInventoryItems([])}
-                                    className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-rose-600 font-bold text-xs uppercase tracking-widest"
+                                    className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-danger font-bold text-xs uppercase tracking-widest"
                                 >
                                     Clear All
                                 </button>
                                 <button
                                     onClick={handleGenerateBulkBarcodes}
-                                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-bold text-xs uppercase tracking-widest shadow-lg"
+                                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover font-bold text-xs uppercase tracking-widest shadow-lg"
                                 >
                                     Generate Bulk
                                 </button>

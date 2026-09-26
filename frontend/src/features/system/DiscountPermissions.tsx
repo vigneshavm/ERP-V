@@ -105,7 +105,7 @@ const DiscountPermissions: React.FC = () => {
                                         <div className="text-xs text-neutral-400">{u.email}</div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="text-[10px] px-2 py-0.5 rounded border font-bold uppercase bg-indigo-50 border-indigo-100 text-primary">{u.role}</span>
+                                        <span className="text-[10px] px-2 py-0.5 rounded border font-bold uppercase bg-primary-soft border-primary/30 text-primary">{u.role}</span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="relative w-32">
