@@ -34,7 +34,7 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
             </div>
 
             {/* Total Debit (Payments) */}
-            <div className="bg-[#F8FFF9] dark:bg-success/10 border border-success-line dark:border-success/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+            <div className="bg-success-soft dark:bg-success/10 border border-success-line dark:border-success/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-success/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
@@ -48,7 +48,7 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
             </div>
 
             {/* Total Credit (Bills) */}
-            <div className="bg-[#FFF8F8] dark:bg-danger/10 border border-danger-line dark:border-danger/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+            <div className="bg-danger-soft dark:bg-danger/10 border border-danger-line dark:border-danger/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-danger/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
@@ -62,7 +62,7 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
             </div>
 
             {/* Closing Balance */}
-            <div className="bg-[#E8F2FF]/30 dark:bg-primary/10 border border-primary/30 dark:border-primary/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+            <div className="bg-primary-soft dark:bg-primary/10 border border-primary/30 dark:border-primary/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">

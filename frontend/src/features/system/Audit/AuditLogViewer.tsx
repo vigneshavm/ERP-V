@@ -314,7 +314,7 @@ const AuditLogViewer = () => {
                                                 <span className="w-2 h-2 rounded-full bg-success"></span>
                                                 New/Updated State
                                             </p>
-                                            <div className="bg-slate-950 dark:bg-[#0a0a0a] rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
+                                            <div className="bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
                                                 <div className="absolute top-0 left-0 w-1 h-full bg-success"></div>
                                                 <pre className="text-[11px] font-mono text-slate-300 p-4 overflow-x-auto custom-scrollbar">
                                                     {JSON.stringify(selectedLog.afterSnapshot, null, 2)}
@@ -329,7 +329,7 @@ const AuditLogViewer = () => {
                                                 <span className="w-2 h-2 rounded-full bg-error"></span>
                                                 Previous/Deleted State
                                             </p>
-                                            <div className="bg-slate-950 dark:bg-[#0a0a0a] rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
+                                            <div className="bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
                                                 <div className="absolute top-0 left-0 w-1 h-full bg-error"></div>
                                                 <pre className="text-[11px] font-mono text-slate-300 p-4 overflow-x-auto custom-scrollbar">
                                                     {JSON.stringify(selectedLog.beforeSnapshot, null, 2)}

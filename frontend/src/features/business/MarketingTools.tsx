@@ -188,7 +188,7 @@ const MarketingTools: React.FC = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-[#f8fafc]">
+            <div className="min-h-screen bg-app">
                 {/* <PageHeader
                     title="Marketing Suite"
                     description="Professional-grade tools to scale your brand presence"

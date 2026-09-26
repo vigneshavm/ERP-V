@@ -222,7 +222,7 @@ const BankAccounts: React.FC = () => {
                 {/* Floating Action Button (Alternative Add Account) */}
                 <button
                     onClick={() => setShowAddAccount(true)}
-                    className="fixed bottom-10 right-10 w-16 h-16 bg-success hover:bg-success/90 text-slate-950 rounded-full flex items-center justify-center shadow-[0_10px_40px_-5px_rgba(16,185,129,0.5)] active:scale-95 transition-all border-[6px] border-[#05070a] z-50"
+                    className="fixed bottom-10 right-10 w-16 h-16 bg-success hover:bg-success/90 text-slate-950 rounded-full flex items-center justify-center shadow-[0_10px_40px_-5px_rgb(var(--color-success)/0.5)] active:scale-95 transition-all border-[6px] border-bg z-50"
                 >
                     <Plus className="w-8 h-8 stroke-[4]" />
                 </button>

@@ -404,7 +404,7 @@ const SupplierDetail: React.FC = () => {
           {/* Credit & Terms Sidebar */}
           <div className="grid grid-cols-2 gap-4">
             {/* Credit Limit */}
-            <div className="bg-[#F8FBFF] dark:bg-primary/10 border border-primary/50 dark:border-primary/20 p-4 rounded-sm shadow-sm flex flex-col justify-center text-center">
+            <div className="bg-primary-soft dark:bg-primary/10 border border-primary/50 dark:border-primary/20 p-4 rounded-sm shadow-sm flex flex-col justify-center text-center">
               <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Credit Limit</p>
               <p className="text-lg font-black text-primary dark:text-primary">₹{(supplier.creditLimit || 0).toLocaleString()}</p>
             </div>

@@ -28,6 +28,7 @@ import FinanceOverviewCard from "@/features/financial/FinanceOverview";
 import ExpenseManager from "@/features/financial/ExpenseManager";
 import ChequeLedger from "@/features/financial/ChequeLedger";
 import FinanceModals from "@/features/financial/FinanceModals";
+import { chartSeries } from '@/utils/chartTheme';
 
 const FinanceOverviewPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -84,7 +85,7 @@ const FinanceOverviewPage: React.FC = () => {
         name: key,
         value: expensesByCategory[key]
     }));
-    const COLORS = ['#ef4444', '#f59e0b', '#3b82f6', '#8b5cf6', '#10b981'];
+    const COLORS = chartSeries(theme === 'dark');
 
     // --- Modal Handlers ---
     const [newExpense, setNewExpense] = useState({ category: '', amount: '', description: '', paymentMethod: 'Cash' });

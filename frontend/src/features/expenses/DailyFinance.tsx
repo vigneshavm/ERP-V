@@ -15,6 +15,7 @@ import { Plus, CheckCircle2, History,
 } from 'lucide-react';
 import { formatCurrency } from "../../utils/helpers";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
+import { chartSeries, chartChrome } from '@/utils/chartTheme';
 import {
     AreaChart, Area, CartesianGrid, Legend,
     ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -182,6 +183,8 @@ const DailyFinancePage: React.FC = () => {
     }, [tx, recentFrom, recentTo, recentSearch, netMin, netMax, recentSortBy, recentSortDir]);
 
     const isDark = theme === 'dark';
+    const series = chartSeries(isDark);
+    const chrome = chartChrome(isDark);
 
     return (
         <Layout>
@@ -214,7 +217,7 @@ const DailyFinancePage: React.FC = () => {
                 {/* Summary Metrics */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Total Sales */}
-                    <div className="bg-[#F8FFF9] dark:bg-success/10 border border-success-line dark:border-success/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
+                    <div className="bg-success-soft dark:bg-success/10 border border-success-line dark:border-success/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-3">
                                 <TrendingUp className="w-4 h-4 text-success" />
@@ -225,7 +228,7 @@ const DailyFinancePage: React.FC = () => {
                     </div>
 
                     {/* Total Expenses */}
-                    <div className="bg-[#FFF8F8] dark:bg-danger/10 border border-danger-line dark:border-danger/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
+                    <div className="bg-danger-soft dark:bg-danger/10 border border-danger-line dark:border-danger/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-3">
                                 <TrendingDown className="w-4 h-4 text-danger" />
@@ -236,7 +239,7 @@ const DailyFinancePage: React.FC = () => {
                     </div>
 
                     {/* Net Profit */}
-                    <div className="bg-[#E8F2FF]/30 dark:bg-primary/10 border border-primary/30 dark:border-primary/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
+                    <div className="bg-primary-soft dark:bg-primary/10 border border-primary/30 dark:border-primary/20 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group">
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-3">
                                 <Zap className="w-4 h-4 text-primary" />
@@ -299,25 +302,25 @@ const DailyFinancePage: React.FC = () => {
                                         <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                             <defs>
                                                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
-                                                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                                                    <stop offset="5%" stopColor={series[0]} stopOpacity={0.2} />
+                                                    <stop offset="95%" stopColor={series[0]} stopOpacity={0} />
                                                 </linearGradient>
                                                 <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.1} />
-                                                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                                                    <stop offset="5%" stopColor={series[2]} stopOpacity={0.1} />
+                                                    <stop offset="95%" stopColor={series[2]} stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
-                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? '#262626' : '#f1f5f9'} />
-                                            <XAxis dataKey="label" fontSize={10} stroke="#94a3b8" axisLine={false} tickLine={false} fontWeight={600} dy={10} />
-                                            <YAxis fontSize={10} stroke="#94a3b8" tickFormatter={val => `₹${val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val}`} axisLine={false} tickLine={false} fontWeight={600} />
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chrome.grid} />
+                                            <XAxis dataKey="label" fontSize={10} stroke={chrome.axis} axisLine={false} tickLine={false} fontWeight={600} dy={10} />
+                                            <YAxis fontSize={10} stroke={chrome.axis} tickFormatter={val => `₹${val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val}`} axisLine={false} tickLine={false} fontWeight={600} />
                                             <Tooltip
-                                                contentStyle={{ backgroundColor: isDark ? '#171717' : '#fff', borderColor: isDark ? '#404040' : '#e2e8f0', borderRadius: '12px' }}
+                                                contentStyle={{ backgroundColor: chrome.tooltipBg, borderColor: chrome.tooltipBorder, color: chrome.tooltipText, borderRadius: '12px' }}
                                                 formatter={(val: number) => [`₹${formatCurrency(val)}`, '']}
                                             />
                                             <Legend iconType="circle" align="right" verticalAlign="top" wrapperStyle={{ fontSize: '10px', fontWeight: 600 }} />
-                                            <Area type="monotone" dataKey="income" name="Income" stroke="#6366f1" fill="url(#colorIncome)" strokeWidth={3} activeDot={{ r: 6, strokeWidth: 0, fill: '#6366f1' }} />
-                                            <Area type="monotone" dataKey="expense" name="Expense" stroke="#f43f5e" fill="url(#colorExpense)" strokeWidth={3} strokeDasharray="5 5" activeDot={{ r: 4, strokeWidth: 0, fill: '#f43f5e' }} />
-                                            <Area type="monotone" dataKey="profit" name="Net Profit" stroke="#10b981" fill="transparent" strokeWidth={4} activeDot={{ r: 8, strokeWidth: 0, fill: '#10b981' }} />
+                                            <Area type="monotone" dataKey="income" name="Income" stroke={series[0]} fill="url(#colorIncome)" strokeWidth={3} activeDot={{ r: 6, strokeWidth: 0, fill: series[0] }} />
+                                            <Area type="monotone" dataKey="expense" name="Expense" stroke={series[2]} fill="url(#colorExpense)" strokeWidth={3} strokeDasharray="5 5" activeDot={{ r: 4, strokeWidth: 0, fill: series[2] }} />
+                                            <Area type="monotone" dataKey="profit" name="Net Profit" stroke={series[1]} fill="transparent" strokeWidth={4} activeDot={{ r: 8, strokeWidth: 0, fill: series[1] }} />
                                         </AreaChart>
                                     </ResponsiveContainer>
                                 ) : (
@@ -468,7 +471,7 @@ const DailyFinancePage: React.FC = () => {
                                 </div>
 
                                 {/* Live Preview */}
-                                <div className="bg-[#E8F2FF]/30 dark:bg-primary/10 border border-primary/30 dark:border-primary/20 p-4 rounded-xl">
+                                <div className="bg-primary-soft dark:bg-primary/10 border border-primary/30 dark:border-primary/20 p-4 rounded-xl">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[10px] font-bold text-primary dark:text-primary uppercase tracking-widest">Total Sales Preview</span>
                                         <span className="text-lg font-black text-slate-900 dark:text-white">₹ {formatCurrency(currentTotalSales)}</span>

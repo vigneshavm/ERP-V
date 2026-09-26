@@ -2,6 +2,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { TransactionType } from "../../types/common";
 import { formatCurrency, formatDate} from "../../utils/helpers";
+import { chartChrome } from '@/utils/chartTheme';
 
 interface ExpenseManagerProps {
     pieData: { name: string; value: number }[];
@@ -34,7 +35,7 @@ const ExpenseManager: React.FC<ExpenseManagerProps> = ({ pieData, sectorTx, them
                             </Pie>
                             <Tooltip
                                 contentStyle={{
-                                    backgroundColor: theme === 'dark' ? '#171717' : '#fff',
+                                    backgroundColor: chartChrome(theme === 'dark').tooltipBg,
                                     borderRadius: '12px',
                                     border: 'none',
                                     boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'

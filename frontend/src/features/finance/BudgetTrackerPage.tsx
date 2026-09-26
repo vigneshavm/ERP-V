@@ -201,7 +201,7 @@ const BudgetTrackerPage: React.FC = () => {
                                     <div className="space-y-6">
                                         {report?.audit_flags.slice(0, 3).map((flag, i) => (
                                             <div key={i} className="flex gap-4 items-start">
-                                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-success shrink-0 shadow-[0_0_10px_#10b981]" />
+                                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-success shrink-0 shadow-[0_0_10px_rgb(var(--color-success))]" />
                                                 <p className="text-xs font-bold leading-relaxed text-slate-400 italic">"{flag}"</p>
                                             </div>
                                         ))}

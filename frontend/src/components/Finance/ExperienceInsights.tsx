@@ -18,6 +18,7 @@ import {
     Share2
 } from 'lucide-react';
 import { formatCurrency } from '../../utils/formatters';
+import { chartSeries, chartChrome, isDarkMode } from '@/utils/chartTheme';
 
 interface ExperienceInsightsProps {
     data: any;
@@ -50,6 +51,9 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
         'Default': <CreditCard className="w-5 h-5 text-slate-400" />
     };
 
+    const dark = isDarkMode();
+    const series = chartSeries(dark);
+    const chrome = chartChrome(dark);
     return (
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             {/* Header Section */}
@@ -85,38 +89,38 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
             {/* Main Chart */}
             <div className="relative h-[300px] w-full mt-4">
                 <div className="absolute top-0 right-0 flex items-center gap-2 text-[10px] font-bold text-slate-500">
-                    <div className="w-3 h-3 bg-warning rounded-sm" />
+                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: series[0] }} />
                     Balance per month
                 </div>
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={{ top: 30, right: 10, left: -20, bottom: 20 }}>
-                        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#ffffff0a" />
+                        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke={chrome.grid} />
                         <XAxis
                             dataKey="name"
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#737373', fontSize: 12 }}
+                            tick={{ fill: chrome.axis, fontSize: 12 }}
                             dy={10}
                         />
                         <YAxis
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#737373', fontSize: 12 }}
+                            tick={{ fill: chrome.axis, fontSize: 12 }}
                             tickFormatter={(value) => `${value / 1000}k`}
                         />
                         <Tooltip
-                            contentStyle={{ backgroundColor: '#000', border: '1px solid #333', borderRadius: '12px' }}
-                            itemStyle={{ color: '#f97316' }}
-                            labelStyle={{ color: '#fff' }}
+                            contentStyle={{ backgroundColor: chrome.tooltipBg, border: `1px solid ${chrome.tooltipBorder}`, borderRadius: '12px' }}
+                            itemStyle={{ color: series[0] }}
+                            labelStyle={{ color: chrome.tooltipText }}
                         />
                         <Line
                             type="linear"
                             dataKey="balance"
-                            stroke="#f97316"
+                            stroke={series[0]}
                             strokeWidth={2}
                             strokeDasharray="5 5"
-                            dot={{ fill: '#f97316', stroke: '#f97316', strokeWidth: 2, r: 4 }}
-                            activeDot={{ r: 6, fill: '#f97316' }}
+                            dot={{ fill: series[0], stroke: series[0], strokeWidth: 2, r: 4 }}
+                            activeDot={{ r: 6, fill: series[0] }}
                         />
                     </LineChart>
                 </ResponsiveContainer>
