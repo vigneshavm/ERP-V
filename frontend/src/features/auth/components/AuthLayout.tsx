@@ -37,7 +37,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, seco
                     <h1 className="text-5xl font-display font-black text-main leading-[1.1] mb-8 tracking-tighter">
                         {title}
                     </h1>
-                    <p className="text-secondary text-lg leading-relaxed max-w-md opacity-70">
+                    <p className="text-muted text-lg leading-relaxed max-w-md ">
                         {description}
                     </p>
                 </div>
@@ -53,7 +53,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, seco
                     <div className="text-center lg:text-left transition-all">
                         <h2 className="text-4xl font-display font-black tracking-tighter text-main">{subtitle}</h2>
                         {secondarySubtitle && (
-                            <p className="mt-2 text-sm font-bold text-secondary uppercase tracking-[0.15em] opacity-60">
+                            <p className="mt-2 text-sm font-bold text-muted uppercase tracking-[0.15em] ">
                                 {secondarySubtitle}
                             </p>
                         )}

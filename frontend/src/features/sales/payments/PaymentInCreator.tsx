@@ -236,7 +236,7 @@ const PaymentInCreator: React.FC = () => {
                                 className="input text-sm w-36"
                             />
                         </div>
-                        <div className="text-secondary opacity-70">
+                        <div className="text-muted">
                             <span className="font-medium">By:</span> {user?.name || 'Admin'}
                         </div>
                     </div>
@@ -268,7 +268,7 @@ const PaymentInCreator: React.FC = () => {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="font-bold text-lg">{customer.name}</p>
-                                            <p className="text-sm text-secondary opacity-70">{customer.phone}</p>
+                                            <p className="text-sm text-muted ">{customer.phone}</p>
                                         </div>
                                         {isCustomerLocked && (
                                             <span className="text-xs text-warning bg-warning-soft dark:bg-warning-soft px-2 py-1 rounded">
@@ -314,7 +314,7 @@ const PaymentInCreator: React.FC = () => {
                                                         <span className="font-medium">{c.name}</span>
                                                         <span className="text-xs text-danger">Due: {formatCurrency(c.outstandingBalance)}</span>
                                                     </div>
-                                                    <span className="text-xs text-secondary opacity-70">{c.phone}</span>
+                                                    <span className="text-xs text-muted ">{c.phone}</span>
                                                 </button>
                                             ))}
                                         </div>
@@ -413,14 +413,14 @@ const PaymentInCreator: React.FC = () => {
                             </div>
 
                             {!customer ? (
-                                <div className="text-center py-12 text-secondary opacity-50">
+                                <div className="text-center py-12 text-muted">
                                     <User className="w-12 h-12 mx-auto mb-3 opacity-50" />
                                     <p>Select a customer to see open invoices</p>
                                 </div>
                             ) : invoicesLoading ? (
-                                <div className="text-center py-12 text-secondary opacity-50"><p>Loading invoices…</p></div>
+                                <div className="text-center py-12 text-muted"><p>Loading invoices…</p></div>
                             ) : invoices.length === 0 ? (
-                                <div className="text-center py-12 text-secondary opacity-50">
+                                <div className="text-center py-12 text-muted">
                                     <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50 text-success" />
                                     <p>No outstanding invoices</p>
                                 </div>
@@ -431,13 +431,13 @@ const PaymentInCreator: React.FC = () => {
                                             <div className="flex items-center justify-between mb-2">
                                                 <div>
                                                     <span className="font-medium text-brand-600">{inv.invoiceNo}</span>
-                                                    <span className="text-xs text-secondary opacity-70 ml-2">{inv.date}</span>
+                                                    <span className="text-xs text-muted ml-2">{inv.date}</span>
                                                 </div>
                                                 <span className="text-sm font-medium">{formatCurrency(inv.totalAmount)}</span>
                                             </div>
                                             <div className="flex items-center gap-3">
                                                 <div className="flex-1">
-                                                    <div className="flex justify-between text-xs text-secondary opacity-70 mb-1">
+                                                    <div className="flex justify-between text-xs text-muted mb-1">
                                                         <span>Balance Due</span>
                                                         <span className="text-danger font-medium">{formatCurrency(inv.balanceDue)}</span>
                                                     </div>
@@ -462,11 +462,11 @@ const PaymentInCreator: React.FC = () => {
                             {customer && (
                                 <div className="mt-4 p-4 glass-panel rounded-lg border border-default/30 space-y-2">
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-secondary opacity-70">Total Payment</span>
+                                        <span className="text-muted">Total Payment</span>
                                         <span className="font-medium">{formatCurrency(totalPayment)}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-secondary opacity-70">Allocated to Invoices</span>
+                                        <span className="text-muted">Allocated to Invoices</span>
                                         <span className="font-medium text-success">{formatCurrency(totalAllocated)}</span>
                                     </div>
                                     {advanceCreated > 0 && (

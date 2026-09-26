@@ -67,7 +67,7 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
                             />
                             <ShieldCheck className="absolute pointer-events-none opacity-0 peer-checked:opacity-100 w-3.5 h-3.5 text-white left-0.5" />
                         </div>
-                        <label htmlFor="rememberMe" className="text-[10px] font-bold text-secondary uppercase tracking-widest group-hover:text-main transition-colors cursor-pointer opacity-60 group-hover:opacity-100">
+                        <label htmlFor="rememberMe" className="text-[10px] font-bold text-muted uppercase tracking-widest group-hover:text-main transition-colors cursor-pointer group-hover:opacity-100">
                             Remember Access
                         </label>
                     </div>
@@ -97,7 +97,7 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
             <div className="mt-8 pt-8 border-t border-default text-center">
                 {!isAdmin && (
                     <div className="space-y-4">
-                        <p className="text-[10px] font-bold text-secondary uppercase tracking-widest opacity-60">
+                        <p className="text-[10px] font-bold text-muted uppercase tracking-widest ">
                             New to the Platform?
                         </p>
                         <Link to="/signup" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-primary/80 transition-colors">
@@ -106,7 +106,7 @@ const Login: React.FC<LoginProps> = ({ isAdmin = false }) => {
                     </div>
                 )}
                 {isAdmin && (
-                    <Link to="/" className="text-[10px] font-bold text-secondary hover:text-main uppercase tracking-widest transition-colors flex items-center justify-center gap-2 opacity-60 hover:opacity-100">
+                    <Link to="/" className="text-[10px] font-bold text-muted hover:text-main uppercase tracking-widest transition-colors flex items-center justify-center gap-2 hover:opacity-100">
                         <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Back to System Login
                     </Link>
                 )}

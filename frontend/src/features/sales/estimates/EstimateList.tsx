@@ -410,7 +410,7 @@ const EstimateList = () => {
                                 Next <ChevronRight className="w-3.5 h-3.5" />
                             </button>
                         </div>
-                        <p className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-50 hidden sm:block">
+                        <p className="text-[9px] font-black text-muted uppercase tracking-widest hidden sm:block">
                             {PAGE_SIZE} per page
                         </p>
                     </div>

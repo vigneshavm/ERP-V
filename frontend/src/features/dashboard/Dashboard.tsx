@@ -421,7 +421,7 @@ const Dashboard: React.FC = () => {
                     {sectorName}
                   </span>
                   <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  <span className="text-xs font-bold text-secondary uppercase tracking-[0.2em] opacity-70">
+                  <span className="text-xs font-bold text-muted uppercase tracking-[0.2em] ">
                     {branchName} Shop
                   </span>
                 </div>
@@ -430,7 +430,7 @@ const Dashboard: React.FC = () => {
 
             <div className="flex items-center gap-4">
               <div className="flex flex-col items-end mr-4">
-                <span className="text-[10px] font-black text-secondary uppercase tracking-widest opacity-50 mb-1">Store / Branch</span>
+                <span className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Store / Branch</span>
                 <select 
                   className="bg-surface border border-default rounded px-2 py-1 text-xs text-main"
                   value={currentBranchId || ''}
@@ -476,9 +476,9 @@ const Dashboard: React.FC = () => {
         {/* Business Overview Section */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-bold text-secondary uppercase tracking-[0.2em] opacity-60">Business Overview</h2>
+            <h2 className="text-xs font-bold text-muted uppercase tracking-[0.2em] ">Business Overview</h2>
             <div className="flex items-center gap-3 glass-panel px-4 py-2 hover:border-primary/40 transition-all">
-              <span className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-60">Sync: {lastUpdate}{dashboardStats?.asOf ? ` · Shop data to ${dashboardStats.asOf}` : ''}</span>
+              <span className="text-[9px] font-black text-muted uppercase tracking-widest ">Sync: {lastUpdate}{dashboardStats?.asOf ? ` · Shop data to ${dashboardStats.asOf}` : ''}</span>
               <div className="w-px h-3 bg-default opacity-50" />
               <RotateCcw
                 onClick={handleRefresh}
@@ -503,7 +503,7 @@ const Dashboard: React.FC = () => {
                   <TrendBadge pct={revenueTrend} />
                 </div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-sm font-black text-primary opacity-50">₹</span>
+                  <span className="text-sm font-black text-primary ">₹</span>
                   <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-primary transition-colors">{(totalRevenueLive / 100000).toFixed(2)}L</span>
                 </div>
               </div>
@@ -530,7 +530,7 @@ const Dashboard: React.FC = () => {
                   <TrendBadge pct={expenseTrend} increaseIsBad />
                 </div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-sm font-black text-danger opacity-50">₹</span>
+                  <span className="text-sm font-black text-danger ">₹</span>
                   <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-danger transition-colors">{(totalExpensesLive / 100000).toFixed(2)}L</span>
                 </div>
               </div>
@@ -599,7 +599,7 @@ const Dashboard: React.FC = () => {
                     <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--color-primary),0.5)]" />
                     Sales Performance
                   </h3>
-                  <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Institutional Performance Over Time</p>
+                  <p className="text-[11px] text-muted font-black uppercase tracking-[0.3em] mt-1">Institutional Performance Over Time</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {['1W', '1M', '3M', '1Y'].map(p => (
@@ -653,7 +653,7 @@ const Dashboard: React.FC = () => {
                           <div className="w-2 h-8 bg-danger rounded-full shadow-[0_0_15px_rgba(var(--color-error),0.5)]" />
                           Floor Alerts
                       </h3>
-                      <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Immediate Tactical Tasks</p>
+                      <p className="text-[11px] text-muted font-black uppercase tracking-[0.3em] mt-1">Immediate Tactical Tasks</p>
                   </div>
                   <span className="w-7 h-7 bg-danger/10 text-danger rounded-sm border border-danger/20 flex items-center justify-center text-[11px] font-black animate-pulse">
                       {floorAlerts.length}
@@ -669,7 +669,7 @@ const Dashboard: React.FC = () => {
                               </div>
                               <div className="flex-1">
                                   <h4 className="text-[12px] font-black text-main uppercase tracking-tight group-hover/alert:text-primary transition-colors">{alert.title}</h4>
-                                  <p className="text-[10px] text-secondary mt-0.5 leading-relaxed opacity-80 font-bold uppercase tracking-widest">{alert.desc}</p>
+                                  <p className="text-[10px] text-muted mt-0.5 leading-relaxed font-bold uppercase tracking-widest">{alert.desc}</p>
                               </div>
                           </div>
                       );
@@ -695,7 +695,7 @@ const Dashboard: React.FC = () => {
                   <div className="w-2 h-8 bg-success rounded-full shadow-[0_0_15px_rgba(var(--color-success),0.5)]" />
                   Monthly Business Health (P&L)
                 </h3>
-                <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">6-Month Growth Analysis</p>
+                <p className="text-[11px] text-muted font-black uppercase tracking-[0.3em] mt-1">6-Month Growth Analysis</p>
               </div>
             </div>
             <div className="h-56 relative z-10">
@@ -733,7 +733,7 @@ const Dashboard: React.FC = () => {
                   <div className="w-2 h-8 bg-danger rounded-full shadow-[0_0_15px_rgba(var(--color-error),0.5)]" />
                   Expense Breakdown
                 </h3>
-                <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Where Your Money is Going</p>
+                <p className="text-[11px] text-muted font-black uppercase tracking-[0.3em] mt-1">Where Your Money is Going</p>
               </div>
             </div>
             <div className="h-56 relative z-10 flex items-center">
@@ -765,7 +765,7 @@ const Dashboard: React.FC = () => {
                   <div key={i} className="flex items-center justify-between border-b border-default/30 pb-2">
                     <div className="flex items-center gap-3">
                       <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: item.color, boxShadow: `0 0 10px ${item.color}40` }} />
-                      <span className="text-[10px] font-black text-secondary uppercase tracking-[0.1em] truncate max-w-[100px] opacity-80">{item.name}</span>
+                      <span className="text-[10px] font-black text-muted uppercase tracking-[0.1em] truncate max-w-[100px] ">{item.name}</span>
                     </div>
                     <span className="text-[11px] font-black text-main tracking-tighter">{Math.round((item.value / costCategoriesData.reduce((s, c) => s + c.value, 0)) * 100)}%</span>
                   </div>
@@ -788,7 +788,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div>
                 <h4 className="text-sm font-black text-main uppercase tracking-tight">Low Stock Warning</h4>
-                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Items at or below reorder level</p>
+                <p className="text-[10px] text-muted font-black uppercase tracking-widest ">Items at or below reorder level</p>
               </div>
             </div>
             <div className="space-y-4 relative z-10">
@@ -796,7 +796,7 @@ const Dashboard: React.FC = () => {
                 <div key={idx} className="flex items-center justify-between bg-surface/40 p-4 rounded-sm border border-default/30 hover:border-primary/40 transition-all group/stock">
                   <div>
                     <p className="text-[11px] font-black text-main uppercase tracking-tight mb-1 group-hover/stock:text-primary transition-colors">{item.name}</p>
-                    <p className="text-[9px] text-secondary uppercase font-black opacity-40">Reorder level: {item.limit}</p>
+                    <p className="text-[9px] text-muted uppercase font-black ">Reorder level: {item.limit}</p>
                   </div>
                   <div className="text-right">
                     <p className={`text-[11px] font-black uppercase tracking-widest ${item.urgency === 'Critical' ? 'text-danger animate-pulse' : 'text-primary'}`}>
@@ -817,13 +817,13 @@ const Dashboard: React.FC = () => {
               </div>
               <div>
                 <h4 className="text-sm font-black text-main uppercase tracking-tight">Top Outstanding Dues</h4>
-                <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">Customers owing the most</p>
+                <p className="text-[10px] text-muted font-black uppercase tracking-widest ">Customers owing the most</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 relative z-10">
               {creditInsights.map((item, idx) => (
                 <div key={idx} className="p-4 bg-surface/40 rounded-sm border border-default/30 hover:border-accent/40 transition-all">
-                  <p className="text-[9px] font-black text-secondary uppercase tracking-[0.2em] mb-4 opacity-50">{item.name}</p>
+                  <p className="text-[9px] font-black text-muted uppercase tracking-[0.2em] mb-4 ">{item.name}</p>
                   <div className="flex items-end justify-between">
                     <p className="text-xl font-display font-black text-main tracking-tighter">₹{Number(item.outstanding).toLocaleString('en-IN')}</p>
                     <span className="text-[8px] font-black px-2 py-0.5 rounded-sm uppercase tracking-widest border shadow-sm bg-warning/20 border-warning/40 text-warning">
@@ -838,7 +838,7 @@ const Dashboard: React.FC = () => {
 
         {activeDashboardTab === 'ALERTS' &&
         <div className="space-y-6 mt-12">
-          <h3 className="text-[11px] font-black text-secondary uppercase tracking-[0.5em] opacity-50 pl-2 mb-4 border-b border-default pb-4">Important Business Alerts</h3>
+          <h3 className="text-[11px] font-black text-muted uppercase tracking-[0.5em] pl-2 mb-4 border-b border-default pb-4">Important Business Alerts</h3>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {businessAlerts.map((alert, idx) => (
               <div key={idx} className="card-interactive p-8 grad-error border-l-4 border-l-danger group relative overflow-hidden bg-card/60 backdrop-blur-2xl">
@@ -850,11 +850,11 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div>
                       <h4 className="text-sm font-black text-main uppercase tracking-tight">{alert.title}</h4>
-                      <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-60">{alert.subtitle}</p>
+                      <p className="text-[10px] text-muted font-black uppercase tracking-widest ">{alert.subtitle}</p>
                     </div>
                   </div>
                 </div>
-                <p className="text-[11px] text-secondary leading-relaxed mb-6 font-bold opacity-80 relative z-10">
+                <p className="text-[11px] text-muted leading-relaxed mb-6 font-bold relative z-10">
                   {alert.description}
                 </p>
                 <div className="flex items-end justify-between mb-6 relative z-10">
@@ -881,18 +881,18 @@ const Dashboard: React.FC = () => {
                         <div className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--color-primary),0.5)]" />
                         Vendor Purchase Log
                     </h3>
-                    <p className="text-[11px] text-secondary font-black uppercase tracking-[0.3em] opacity-50 mt-1">Latest procurement & supply nodes</p>
+                    <p className="text-[11px] text-muted font-black uppercase tracking-[0.3em] mt-1">Latest procurement & supply nodes</p>
                 </div>
             </div>
             <div className="overflow-x-auto relative z-10">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-default">
-                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-secondary opacity-50">Vendor Node</th>
-                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-secondary opacity-50">Identity Node</th>
-                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-secondary opacity-50">Throughput</th>
-                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-secondary opacity-50 text-center">Protocol State</th>
-                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-secondary opacity-50 text-right">Timestamp</th>
+                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted ">Vendor Node</th>
+                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted ">Identity Node</th>
+                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted ">Throughput</th>
+                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted text-center">Protocol State</th>
+                            <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest text-muted text-right">Timestamp</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-default/50">

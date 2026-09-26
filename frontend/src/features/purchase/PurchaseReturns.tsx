@@ -217,7 +217,7 @@ const PurchaseReturns: React.FC = () => {
                                         <td className="px-8 py-6">
                                             <div className="flex flex-col gap-1.5">
                                                 <span className="text-[10px] font-black text-primary bg-primary/5 px-3 py-1 rounded-full w-fit uppercase tracking-widest border border-primary/10">GRN: {r.grn_number}</span>
-                                                {r.po_number && <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest opacity-60">PO: {r.po_number}</span>}
+                                                {r.po_number && <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest ">PO: {r.po_number}</span>}
                                             </div>
                                         </td>
                                         <td className="px-8 py-6">

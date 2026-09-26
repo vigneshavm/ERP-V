@@ -80,7 +80,7 @@ const LandingPage = ({ setViewMode, setCurrentTenant, setIsLoggedIn }: {
           <Shield className="w-7 h-7" />
         </div>
         <h2 className="text-2xl font-display font-bold text-main mb-2">Platform Control</h2>
-        <p className="text-secondary opacity-70 mb-6">Manage global infrastructure, tenants, and system-level parameters.</p>
+        <p className="text-muted mb-6">Manage global infrastructure, tenants, and system-level parameters.</p>
         <div className="flex items-center text-primary font-bold text-sm tracking-widest uppercase">
           Initialize Access <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
         </div>
@@ -107,14 +107,14 @@ const LandingPage = ({ setViewMode, setCurrentTenant, setIsLoggedIn }: {
           <Store className="w-7 h-7" />
         </div>
         <h2 className="text-2xl font-display font-bold text-main mb-2">Tenant Interface</h2>
-        <p className="text-secondary opacity-70 mb-6">Launch specialized retail operations, POS terminals, and analytics.</p>
+        <p className="text-muted mb-6">Launch specialized retail operations, POS terminals, and analytics.</p>
         <div className="flex items-center text-secondary font-bold text-sm tracking-widest uppercase">
           Authenticate Unit <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
         </div>
       </button>
     </div>
 
-    <p className="mt-20 text-xs text-secondary font-bold tracking-[0.2em] opacity-40 uppercase">© 2026 SmartERPAI // Secure Access Point</p>
+    <p className="mt-20 text-xs text-muted font-bold tracking-[0.2em] uppercase">© 2026 SmartERPAI // Secure Access Point</p>
   </div>
 );
 

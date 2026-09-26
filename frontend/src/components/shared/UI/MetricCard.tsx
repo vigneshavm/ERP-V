@@ -91,7 +91,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                         <Icon className={compact ? 'w-5 h-5' : 'w-6 h-6'} />
                     </div>
                     <div>
-                        <p className={`micro mb-0.5 ${isDark ? 'text-slate-500' : 'text-secondary opacity-60'
+                        <p className={`micro mb-0.5 ${isDark ? 'text-slate-500' : 'text-muted'
                             }`}>{title}</p>
                         <h3 className={`${compact ? 'text-xl' : 'metric-value'} font-black tracking-tighter italic ${isDark ? 'text-white' : 'text-main'
                             }`}>{value}</h3>

@@ -221,16 +221,16 @@ const CashBankPosition: React.FC = () => {
                             </div>
                             <div className="space-y-4">
                                 {(position?.breakdown.cash.percentage || 0) > 30 && (
-                                    <p className="text-[11px] text-warning dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
+                                    <p className="text-[11px] text-warning dark:text-warning font-bold leading-relaxed italic border-l-2 border-warning/30 pl-4">
                                         High vault exposure detected. Consider re-routing capital to digital units for institutional risk mitigation.
                                     </p>
                                 )}
                                 {(position?.breakdown.bank.percentage || 0) > 95 && (
-                                    <p className="text-[11px] text-warning dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
+                                    <p className="text-[11px] text-warning dark:text-warning font-bold leading-relaxed italic border-l-2 border-warning/30 pl-4">
                                         Minimum liquidity reached in physical nodes. Maintain operational reserve for immediate market clearance.
                                     </p>
                                 )}
-                                <p className="text-[11px] text-success dark:text-success font-bold leading-relaxed italic opacity-80 border-l-2 border-success/30 pl-4">
+                                <p className="text-[11px] text-success dark:text-success font-bold leading-relaxed italic border-l-2 border-success/30 pl-4">
                                     Asset distribution aligns with optimized ERP liquidity patterns for the current fiscal cycle.
                                 </p>
                             </div>

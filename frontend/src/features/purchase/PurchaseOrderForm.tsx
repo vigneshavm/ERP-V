@@ -304,7 +304,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div className="md:col-span-1">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Node Protocol #</label>
-                            <div className="px-5 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black text-slate-500 font-mono tracking-tighter opacity-70">
+                            <div className="px-5 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black text-slate-500 font-mono tracking-tighter ">
                                 {header.po_number}
                             </div>
                         </div>
@@ -586,7 +586,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                 </div>
                                 
                                 <div className="pt-6 border-t border-slate-100 dark:border-slate-700 space-y-4">
-                                    <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest italic opacity-60">
+                                    <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest italic ">
                                         <span>Tax Protocol</span>
                                         <span>{taxBreakdown.igst > 0 ? 'IGST (Inter-State)' : 'CGST+SGST (Intra)'}</span>
                                     </div>

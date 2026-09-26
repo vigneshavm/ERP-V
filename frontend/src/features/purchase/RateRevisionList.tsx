@@ -197,7 +197,7 @@ const RateRevisionList: React.FC = () => {
                                                 <p className={`text-sm font-black tabular-nums tracking-tighter ${rev.diffAmount > 0 ? 'text-danger' : 'text-success'}`}>
                                                     {rev.diffAmount > 0 ? '+' : ''}₹{rev.diffAmount?.toLocaleString()}
                                                 </p>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest opacity-60">Impact on {rev.affectedQty} Qty</p>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest ">Impact on {rev.affectedQty} Qty</p>
                                             </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex justify-center">

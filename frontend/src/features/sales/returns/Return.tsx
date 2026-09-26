@@ -378,7 +378,7 @@ const Return = () => {
             {/* Invoice Selection */}
             <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden">
               <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
-                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider flex items-center gap-2">
+                <h2 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                   <FileText className="w-4 h-4" /> Select Invoice
                 </h2>
               </div>
@@ -408,7 +408,7 @@ const Return = () => {
                 ) : (
                   <button
                     onClick={() => setShowInvoiceModal(true)}
-                    className="w-full px-4 py-4 border-2 border-dashed border-default/40 rounded-xl text-secondary opacity-70 hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
+                    className="w-full px-4 py-4 border-2 border-dashed border-default/40 rounded-xl text-muted hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
                   >
                     <FileText className="w-5 h-5" /> Click to select invoice
                   </button>
@@ -420,7 +420,7 @@ const Return = () => {
             {formData.customer && (
               <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden">
                 <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
-                  <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider flex items-center gap-2">
+                  <h2 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <User className="w-4 h-4" /> Customer
                   </h2>
                 </div>
@@ -467,12 +467,12 @@ const Return = () => {
             {formData.items.length > 0 && (
               <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden">
                 <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
-                  <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Return Items</h2>
+                  <h2 className="text-xs font-bold text-muted uppercase tracking-wider">Return Items</h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead className="bg-surface/40 border-b border-default/30">
-                      <tr className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">
+                      <tr className="text-xs font-bold text-muted uppercase tracking-wider">
                         <th className="px-4 py-3">Item</th>
                         <th className="px-4 py-3 text-right">Original</th>
                         <th className="px-4 py-3 text-right">Returned</th>
@@ -682,11 +682,11 @@ const Return = () => {
               </div>
               <div className="p-6 space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-secondary opacity-70 font-medium">Subtotal</span>
+                  <span className="text-muted font-medium">Subtotal</span>
                   <span className="font-bold text-main">₹{calculateSubtotal().toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-secondary opacity-70 font-medium">Tax</span>
+                  <span className="text-muted font-medium">Tax</span>
                   <span className="font-bold text-main">₹{calculateTax().toFixed(2)}</span>
                 </div>
               </div>

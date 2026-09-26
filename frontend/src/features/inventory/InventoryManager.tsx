@@ -476,7 +476,7 @@ const InventoryManager: React.FC = () => {
                                     </tr>
                                 ) : items.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="p-24 text-center text-slate-400 font-black uppercase tracking-[0.3em] text-xs italic opacity-50">
+                                        <td colSpan={7} className="p-24 text-center text-slate-400 font-black uppercase tracking-[0.3em] text-xs italic ">
                                             No SKUs found in this node
                                         </td>
                                     </tr>

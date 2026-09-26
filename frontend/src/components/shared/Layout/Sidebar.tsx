@@ -197,7 +197,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
 
             {/* Tenant Info & Branch */}
             <div className={`mb-6 ${desktopCollapsed ? 'px-2' : 'px-4'}`}>
-                {!desktopCollapsed && <span className="label-sm text-secondary opacity-80">{currentTenant?.name}</span>}
+                {!desktopCollapsed && <span className="label-sm text-muted ">{currentTenant?.name}</span>}
                 {branchSelector}
             </div>
 
@@ -206,7 +206,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 {/* Main ERP Section */}
                 {!desktopCollapsed && visibleErpItems.length > 0 && (
                     <div className="px-3 pt-4 pb-2">
-                        <h3 className="overline font-display text-secondary opacity-60">System Core</h3>
+                        <h3 className="overline font-display text-muted ">System Core</h3>
                     </div>
                 )}
                 {visibleErpItems.map((item: MenuItem) => renderRecursive(item, false))}
@@ -214,7 +214,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 {/* Growth Platform Section */}
                 {!desktopCollapsed && visibleGrowItems.length > 0 && (
                     <div className="px-3 pt-6 pb-2 border-t border-white/5 mt-4">
-                        <h3 className="overline font-display text-secondary opacity-60">Growth Matrix</h3>
+                        <h3 className="overline font-display text-muted ">Growth Matrix</h3>
                     </div>
                 )}
                 {visibleGrowItems.map((item: MenuItem) => renderRecursive(item, false))}

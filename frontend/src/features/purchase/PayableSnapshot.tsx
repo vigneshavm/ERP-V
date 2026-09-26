@@ -177,11 +177,11 @@ const PayableSnapshot: React.FC = () => {
                             </div>
                             <div className="space-y-4">
                                 {totalOverdue > 0 ? (
-                                    <p className="text-[11px] text-warning dark:text-warning font-bold leading-relaxed italic opacity-80 border-l-2 border-warning/30 pl-4">
+                                    <p className="text-[11px] text-warning dark:text-warning font-bold leading-relaxed italic border-l-2 border-warning/30 pl-4">
                                         Significant overdue volume detected. Prioritize settlement of aged nodes to maintain supply-chain integrity.
                                     </p>
                                 ) : (
-                                    <p className="text-[11px] text-success dark:text-success font-bold leading-relaxed italic opacity-80 border-l-2 border-success/30 pl-4">
+                                    <p className="text-[11px] text-success dark:text-success font-bold leading-relaxed italic border-l-2 border-success/30 pl-4">
                                         Liability distribution aligns with optimized ERP cash-flow patterns for the current fiscal cycle.
                                     </p>
                                 )}

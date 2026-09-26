@@ -107,7 +107,7 @@ const ReturnedItems = () => {
             <Layout>
                 <div className="flex flex-col items-center justify-center py-20 min-h-[60vh]">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
-                    <p className="text-secondary opacity-70 font-black uppercase tracking-widest text-[10px]">Synchronizing Reverse Logistics...</p>
+                    <p className="text-muted font-black uppercase tracking-widest text-[10px]">Synchronizing Reverse Logistics...</p>
                 </div>
             </Layout>
         );

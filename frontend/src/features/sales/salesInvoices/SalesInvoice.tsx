@@ -169,7 +169,7 @@ const SalesInvoice = () => {
           <div className="flex flex-wrap gap-4 items-end">
             {/* Search */}
             <div className="flex-1 min-w-[200px]">
-              <label className="text-xs font-bold text-secondary opacity-70 uppercase mb-1 block">Search</label>
+              <label className="text-xs font-bold text-muted uppercase mb-1 block">Search</label>
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-2.5 text-secondary opacity-50" />
                 <input
@@ -184,7 +184,7 @@ const SalesInvoice = () => {
 
             {/* Status Filter */}
             <div className="w-48">
-              <label className="text-xs font-bold text-secondary opacity-70 uppercase mb-1 block">Status</label>
+              <label className="text-xs font-bold text-muted uppercase mb-1 block">Status</label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -199,7 +199,7 @@ const SalesInvoice = () => {
 
             {/* Customer Filter */}
             <div className="w-auto">
-              <label className="text-xs font-bold text-secondary opacity-70 uppercase mb-1 block">Customer</label>
+              <label className="text-xs font-bold text-muted uppercase mb-1 block">Customer</label>
               {selectedCustomer ? (
                 <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-2 rounded-lg text-sm font-medium animate-fade-in h-[38px]">
                   <span className="truncate max-w-[150px]">{selectedCustomer.name}</span>
@@ -225,7 +225,7 @@ const SalesInvoice = () => {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-32">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
-              <p className="text-secondary opacity-70 text-sm font-medium">Loading invoices...</p>
+              <p className="text-muted text-sm font-medium">Loading invoices...</p>
             </div>
           ) : filteredInvoices.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 px-4 text-center">
@@ -233,7 +233,7 @@ const SalesInvoice = () => {
                 <Search className="w-8 h-8 text-secondary opacity-50" />
               </div>
               <h3 className="text-lg font-bold text-main">No Invoices Found</h3>
-              <p className="text-secondary opacity-70 mt-1 max-w-sm text-sm">No sales invoices match your current search or filter criteria.</p>
+              <p className="text-muted mt-1 max-w-sm text-sm">No sales invoices match your current search or filter criteria.</p>
               <button
                 onClick={() => { setSearchTerm(''); setStatusFilter('all'); setSelectedCustomer(null); }}
                 className="mt-6 px-4 py-2 glass-panel border border-default/30 text-main opacity-90 text-sm font-medium rounded-lg hover:bg-surface/50 transition-all shadow-sm"
@@ -248,13 +248,13 @@ const SalesInvoice = () => {
                 <table className="w-full text-left text-sm">
                   <thead className="bg-surface/40 border-b border-default/30">
                     <tr>
-                      <th className="px-6 py-4 text-xs font-semibold text-secondary opacity-70 uppercase tracking-wider">Invoice #</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-secondary opacity-70 uppercase tracking-wider">Date</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-secondary opacity-70 uppercase tracking-wider">Customer</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-secondary opacity-70 uppercase tracking-wider text-right">Amount</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-secondary opacity-70 uppercase tracking-wider text-right">Paid</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-secondary opacity-70 uppercase tracking-wider text-center">Status</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-secondary opacity-70 uppercase tracking-wider text-right">Actions</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider">Invoice #</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider">Customer</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider text-right">Amount</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider text-right">Paid</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider text-center">Status</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-muted uppercase tracking-wider text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-default/30">
@@ -265,14 +265,14 @@ const SalesInvoice = () => {
                         </td>
                         <td className="px-6 py-4 text-secondary">
                           <div>{new Date(invoice.createdAt).toLocaleDateString("en-IN")}</div>
-                          <div className="text-xs text-secondary opacity-50 mt-0.5">{new Date(invoice.createdAt).toLocaleTimeString()}</div>
+                          <div className="text-xs text-muted mt-0.5">{new Date(invoice.createdAt).toLocaleTimeString()}</div>
                         </td>
                         <td className="px-6 py-4">
                           <div className="font-medium text-main">
                             {isCustomer(invoice.customer) ? invoice.customer.name : "Walk-in Customer"}
                           </div>
                           {(isCustomer(invoice.customer) && invoice.customer.phone) && (
-                            <div className="text-xs text-secondary opacity-70 mt-0.5">{invoice.customer.phone}</div>
+                            <div className="text-xs text-muted mt-0.5">{invoice.customer.phone}</div>
                           )}
                         </td>
                         <td className="px-6 py-4 text-right font-medium text-main">
@@ -288,14 +288,14 @@ const SalesInvoice = () => {
                           <div className="flex justify-end gap-2">
                             <button
                               onClick={() => navigate(`/sales/invoice/${invoice._id}`)}
-                              className="p-2 text-secondary opacity-70 hover:text-primary hover:bg-surface/60 rounded-lg transition-all"
+                              className="p-2 text-muted hover:text-primary hover:bg-surface/60 rounded-lg transition-all"
                               title="View Invoice"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => setDeleteConfirm(invoice._id || null)}
-                              className="p-2 text-secondary opacity-70 hover:text-danger hover:bg-surface/60 rounded-lg transition-all"
+                              className="p-2 text-muted hover:text-danger hover:bg-surface/60 rounded-lg transition-all"
                               title="Delete Invoice"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -315,13 +315,13 @@ const SalesInvoice = () => {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <div className="font-bold text-main">{invoice.invoiceNo}</div>
-                        <div className="text-sm text-secondary opacity-70 mt-0.5">
+                        <div className="text-sm text-muted mt-0.5">
                           {isCustomer(invoice.customer) ? invoice.customer.name : "Walk-in Customer"}
                         </div>
                       </div>
                       <StatusBadge status={invoice.paymentStatus} />
                     </div>
-                    <div className="flex justify-between items-center mt-3 text-xs text-secondary opacity-70">
+                    <div className="flex justify-between items-center mt-3 text-xs text-muted ">
                       <span>{formatDate(invoice.createdAt)}</span>
                       <div className="text-sm font-bold text-main">
                         ₹{invoice.totalAmount.toLocaleString()}
@@ -334,7 +334,7 @@ const SalesInvoice = () => {
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-default/30 flex items-center justify-between bg-surface/40">
-                  <div className="text-xs text-secondary opacity-70">
+                  <div className="text-xs text-muted ">
                     Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, filteredInvoices.length)}</span> of <span className="font-medium">{filteredInvoices.length}</span> results
                   </div>
                   <div className="flex items-center gap-2">
@@ -361,7 +361,7 @@ const SalesInvoice = () => {
                             </button>
                           );
                         } else if (page === currentPage - 2 || page === currentPage + 2) {
-                          return <span key={page} className="px-1 text-secondary opacity-50">...</span>;
+                          return <span key={page} className="px-1 text-muted">...</span>;
                         }
                         return null;
                       })}
@@ -388,7 +388,7 @@ const SalesInvoice = () => {
                 <AlertTriangle className="w-6 h-6 text-danger" />
               </div>
               <h3 className="text-lg font-bold text-main text-center mb-2">Delete Invoice?</h3>
-              <p className="text-sm text-secondary opacity-70 text-center mb-6">
+              <p className="text-sm text-muted text-center mb-6">
                 Are you sure you want to delete this invoice? This action cannot be undone.
               </p>
               <div className="flex gap-3">

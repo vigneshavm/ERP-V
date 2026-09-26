@@ -358,7 +358,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
                             <div className="p-10 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                                 <h3 className="text-sm font-black uppercase tracking-widest">Reversal Node Allocation</h3>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-60">Source: {returnData.grn_number || 'No Node Linked'}</span>
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest ">Source: {returnData.grn_number || 'No Node Linked'}</span>
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
@@ -376,7 +376,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                                             <tr key={idx} className={`group hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all ${item.return_quantity > 0 ? 'bg-danger/20 dark:bg-danger-soft' : ''}`}>
                                                 <td className="px-8 py-6">
                                                     <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none mb-1">{item.product_name}</p>
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-60">{item.sku || 'NO-SKU'}</p>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ">{item.sku || 'NO-SKU'}</p>
                                                 </td>
                                                 <td className="px-8 py-6 text-center">
                                                     <span className="text-[10px] font-black text-slate-400 tabular-nums">{item.grn_quantity}</span>

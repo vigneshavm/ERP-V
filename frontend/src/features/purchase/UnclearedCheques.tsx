@@ -198,7 +198,7 @@ const UnclearedCheques: React.FC = () => {
                                                 </td>
                                                 <td className="px-8 py-6 text-right whitespace-nowrap">
                                                     <p className="text-lg font-black tabular-nums text-slate-900 dark:text-white tracking-tighter">₹{cheque.amount.toLocaleString()}</p>
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest opacity-60">ID: {cheque.paymentNo}</p>
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest ">ID: {cheque.paymentNo}</p>
                                                 </td>
                                                 <td className="px-8 py-6">
                                                     <div className="flex justify-center gap-3">

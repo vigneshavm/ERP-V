@@ -94,7 +94,7 @@ const ResetPassword: React.FC = () => {
             </form>
 
             <div className="mt-8 pt-8 border-t border-slate-800/50 text-center">
-                <Link to="/login" className="text-[10px] font-bold text-secondary hover:text-main uppercase tracking-widest transition-colors flex items-center justify-center gap-2 opacity-60 hover:opacity-100">
+                <Link to="/login" className="text-[10px] font-bold text-muted hover:text-main uppercase tracking-widest transition-colors flex items-center justify-center gap-2 hover:opacity-100">
                     <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Abort and Return to Login
                 </Link>
             </div>
