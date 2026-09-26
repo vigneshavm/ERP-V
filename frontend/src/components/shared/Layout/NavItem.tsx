@@ -49,7 +49,7 @@ const NavItem: React.FC<NavItemProps> = ({ id, icon: Icon, label, isSubItem = fa
 
     const activeClasses = isActive
         ? "border-l-2 border-primary bg-primary/10 text-primary font-bold"
-        : "border-l-2 border-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 font-medium";
+        : "border-l-2 border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium";
 
     // Text Size
     const textClasses = isSubItem ? "text-[12px]" : "text-[13px] font-semibold";
@@ -69,7 +69,7 @@ const NavItem: React.FC<NavItemProps> = ({ id, icon: Icon, label, isSubItem = fa
         >
             {/* Icon - Only for Main items or if explicit */}
             {Icon && !isSubItem && (
-                <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-primary' : 'text-neutral-500 group-hover:text-neutral-700'}`} />
+                <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-primary' : 'text-slate-500 group-hover:text-slate-700'}`} />
             )}
 
             {!desktopCollapsed && (

@@ -162,20 +162,20 @@ const SalesInvoiceForm: React.FC = () => {
                     <div className="lg:col-span-8 space-y-8">
                         
                         {/* Section 1: Transaction Context */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 p-8 shadow-sm relative overflow-hidden group">
+                        <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 p-8 shadow-sm relative overflow-hidden group">
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="w-12 h-12 bg-warning/10 rounded-sm flex items-center justify-center text-warning">
                                     <Receipt className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">Transaction Context</h3>
-                                    <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mt-1">Define temporal and reference parameters</p>
+                                    <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Transaction Context</h3>
+                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Define temporal and reference parameters</p>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Reference ID</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Reference ID</label>
                                     <div className="relative group">
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-warning">
                                             <Layers className="w-4 h-4" />
@@ -184,12 +184,12 @@ const SalesInvoiceForm: React.FC = () => {
                                             type="text" 
                                             value={formData.invoiceNo}
                                             disabled
-                                            className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-12 pr-4 text-sm font-mono font-bold text-neutral-400 cursor-not-allowed"
+                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-12 pr-4 text-sm font-mono font-bold text-slate-400 cursor-not-allowed"
                                         />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Emission Date</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Emission Date</label>
                                     <div className="relative group">
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-warning">
                                             <Calendar className="w-4 h-4" />
@@ -198,12 +198,12 @@ const SalesInvoiceForm: React.FC = () => {
                                             type="date" 
                                             value={formData.invoiceDate}
                                             onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
-                                            className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-primary/50 outline-none transition-all dark:text-white"
+                                            className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-primary/50 outline-none transition-all dark:text-white"
                                         />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Due Threshold</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Due Threshold</label>
                                     <div className="relative group">
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-danger">
                                             <Clock className="w-4 h-4" />
@@ -212,7 +212,7 @@ const SalesInvoiceForm: React.FC = () => {
                                             type="date" 
                                             value={formData.dueDate}
                                             onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                                            className="w-full bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-primary/50 outline-none transition-all dark:text-white"
+                                            className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-primary/50 outline-none transition-all dark:text-white"
                                         />
                                     </div>
                                 </div>
@@ -220,15 +220,15 @@ const SalesInvoiceForm: React.FC = () => {
                         </div>
 
                         {/* Section 2: Items Matrix */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden flex flex-col group">
-                            <div className="p-8 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-950/50">
+                        <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col group">
+                            <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-950/50">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 bg-danger/10 rounded-sm flex items-center justify-center text-danger">
                                         <Zap className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">Inventory Matrix</h3>
-                                        <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mt-1">Process line-item valuations</p>
+                                        <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Inventory Matrix</h3>
+                                        <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Process line-item valuations</p>
                                     </div>
                                 </div>
                                 <button
@@ -243,7 +243,7 @@ const SalesInvoiceForm: React.FC = () => {
                             <div className="overflow-x-auto custom-scrollbar">
                                 <table className="w-full text-left">
                                     <thead>
-                                        <tr className="border-b border-neutral-200 dark:border-neutral-800 text-[10px] font-black text-neutral-500 dark:text-neutral-400 uppercase tracking-[0.2em] bg-neutral-50/30 dark:bg-neutral-950/30">
+                                        <tr className="border-b border-slate-200 dark:border-slate-800 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] bg-slate-50/30 dark:bg-slate-950/30">
                                             <th className="px-8 py-5 min-w-[280px]">Item Definition</th>
                                             <th className="px-4 py-5 w-24 text-center">Qty</th>
                                             <th className="px-4 py-5 w-32 text-right">Unit Rate</th>
@@ -252,7 +252,7 @@ const SalesInvoiceForm: React.FC = () => {
                                             <th className="px-4 py-5 w-16"></th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                         {formData.items.map((item, index) => (
                                             <tr key={index} className="hover:bg-warning/90/[0.01] transition-colors group/row">
                                                 <td className="px-8 py-5">
@@ -261,7 +261,7 @@ const SalesInvoiceForm: React.FC = () => {
                                                         placeholder="Define inventory item / SKU..."
                                                         value={item.name}
                                                         onChange={(e) => updateItem(index, 'name', e.target.value)}
-                                                        className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-bold text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-700 placeholder:uppercase placeholder:text-[10px] placeholder:tracking-widest"
+                                                        className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-700 placeholder:uppercase placeholder:text-[10px] placeholder:tracking-widest"
                                                     />
                                                 </td>
                                                 <td className="px-4 py-5">
@@ -270,7 +270,7 @@ const SalesInvoiceForm: React.FC = () => {
                                                         min="1"
                                                         value={item.quantity}
                                                         onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                                        className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-neutral-900 dark:text-white outline-none focus:border-primary/50 transition-all"
+                                                        className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-slate-900 dark:text-white outline-none focus:border-primary/50 transition-all"
                                                     />
                                                 </td>
                                                 <td className="px-4 py-5 text-right">
@@ -281,7 +281,7 @@ const SalesInvoiceForm: React.FC = () => {
                                                             min="0"
                                                             value={item.rate}
                                                             onChange={(e) => updateItem(index, 'rate', Number(e.target.value))}
-                                                            className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 pl-6 pr-2 text-sm text-right font-mono font-bold text-neutral-900 dark:text-white outline-none focus:border-primary/50 transition-all"
+                                                            className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-6 pr-2 text-sm text-right font-mono font-bold text-slate-900 dark:text-white outline-none focus:border-primary/50 transition-all"
                                                         />
                                                     </div>
                                                 </td>
@@ -292,17 +292,17 @@ const SalesInvoiceForm: React.FC = () => {
                                                         max="100"
                                                         value={item.tax}
                                                         onChange={(e) => updateItem(index, 'tax', Number(e.target.value))}
-                                                        className="w-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-warning outline-none focus:border-primary/50 transition-all"
+                                                        className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-warning outline-none focus:border-primary/50 transition-all"
                                                     />
                                                 </td>
                                                 <td className="px-8 py-5 text-right">
-                                                    <span className="text-sm font-black text-neutral-900 dark:text-white font-mono tracking-tighter">₹{item.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                                                    <span className="text-sm font-black text-slate-900 dark:text-white font-mono tracking-tighter">₹{item.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
                                                 </td>
                                                 <td className="px-4 py-5 text-center">
                                                     <button
                                                         type="button"
                                                         onClick={() => removeItem(index)}
-                                                        className="p-2.5 text-neutral-400 hover:text-danger hover:bg-danger/10 rounded-xl transition-all"
+                                                        className="p-2.5 text-slate-400 hover:text-danger hover:bg-danger/10 rounded-xl transition-all"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
@@ -315,37 +315,37 @@ const SalesInvoiceForm: React.FC = () => {
                         </div>
 
                         {/* Section 3: Notes & Compliance */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 p-8 shadow-sm">
+                        <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
                             <div className="flex items-center gap-4 mb-8">
-                                <div className="w-12 h-12 bg-neutral-500/10 rounded-sm flex items-center justify-center text-neutral-500">
+                                <div className="w-12 h-12 bg-slate-500/10 rounded-sm flex items-center justify-center text-slate-500">
                                     <Globe className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">Metadata & Compliance</h3>
-                                    <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mt-1">Legal and internal protocol strings</p>
+                                    <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Metadata & Compliance</h3>
+                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Legal and internal protocol strings</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                                         <Info className="w-3.5 h-3.5 text-warning" /> Internal Notes
                                     </label>
                                     <textarea
                                         placeholder="Add mission-critical notes for auditing..."
                                         value={formData.notes}
                                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                        className="w-full p-5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-[24px] text-xs font-bold min-h-[140px] focus:border-primary/50 outline-none transition-all resize-none text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-800 shadow-inner"
+                                        className="w-full p-5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[24px] text-xs font-bold min-h-[140px] focus:border-primary/50 outline-none transition-all resize-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-800 shadow-inner"
                                     />
                                 </div>
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                                         <ShieldCheck className="w-3.5 h-3.5 text-danger" /> Terms & Conditions
                                     </label>
                                     <textarea
                                         placeholder="Define legal framework for this node..."
                                         value={formData.termsAndConditions}
                                         onChange={(e) => setFormData({ ...formData, termsAndConditions: e.target.value })}
-                                        className="w-full p-5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-[24px] text-[11px] font-bold min-h-[140px] focus:border-primary/50 outline-none transition-all resize-none text-neutral-500 dark:text-neutral-400 shadow-inner"
+                                        className="w-full p-5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[24px] text-[11px] font-bold min-h-[140px] focus:border-primary/50 outline-none transition-all resize-none text-slate-500 dark:text-slate-400 shadow-inner"
                                     />
                                 </div>
                             </div>
@@ -356,9 +356,9 @@ const SalesInvoiceForm: React.FC = () => {
                     <div className="lg:col-span-4 space-y-8">
                         
                         {/* Customer Selection Card */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 p-8 shadow-sm relative group">
+                        <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 p-8 shadow-sm relative group">
                             <div className="flex justify-between items-center mb-8">
-                                <h3 className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">B2B Entity Path</h3>
+                                <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">B2B Entity Path</h3>
                                 {!formData.customer && (
                                     <span className="flex h-2.5 w-2.5 rounded-full bg-danger animate-ping"></span>
                                 )}
@@ -371,24 +371,24 @@ const SalesInvoiceForm: React.FC = () => {
                                             <User className="w-7 h-7" />
                                         </div>
                                         <div>
-                                            <p className="font-black text-neutral-900 dark:text-white text-lg tracking-tighter">{formData.customer.name}</p>
+                                            <p className="font-black text-slate-900 dark:text-white text-lg tracking-tighter">{formData.customer.name}</p>
                                             <p className="text-[10px] text-warning font-black uppercase tracking-widest mt-1">ID: {formData.customer._id?.slice(-8).toUpperCase()}</p>
                                         </div>
                                     </div>
-                                    <div className="mt-6 pt-6 border-t border-neutral-200 dark:border-neutral-800 space-y-3">
+                                    <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 space-y-3">
                                         <div className="flex justify-between text-[11px] font-bold">
-                                            <span className="text-neutral-400 uppercase tracking-widest">Protocol</span>
-                                            <span className="text-neutral-900 dark:text-white">{formData.customer.phone || 'Standard'}</span>
+                                            <span className="text-slate-400 uppercase tracking-widest">Protocol</span>
+                                            <span className="text-slate-900 dark:text-white">{formData.customer.phone || 'Standard'}</span>
                                         </div>
                                         <div className="flex justify-between text-[11px] font-bold">
-                                            <span className="text-neutral-400 uppercase tracking-widest">Tax ID</span>
-                                            <span className="text-neutral-900 dark:text-white">{formData.customer.gstin || 'EXEMPT'}</span>
+                                            <span className="text-slate-400 uppercase tracking-widest">Tax ID</span>
+                                            <span className="text-slate-900 dark:text-white">{formData.customer.gstin || 'EXEMPT'}</span>
                                         </div>
                                     </div>
                                     <button
                                         type="button"
                                         onClick={() => setShowCustomerModal(true)}
-                                        className="w-full mt-6 py-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-[10px] font-black text-neutral-900 dark:text-white uppercase tracking-widest hover:border-warning transition-all shadow-sm"
+                                        className="w-full mt-6 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest hover:border-warning transition-all shadow-sm"
                                     >
                                         Switch Entity
                                     </button>
@@ -397,9 +397,9 @@ const SalesInvoiceForm: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowCustomerModal(true)}
-                                    className="w-full py-16 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-[32px] flex flex-col items-center justify-center gap-5 text-neutral-400 hover:border-warning/50 hover:text-warning hover:bg-warning/90/[0.02] transition-all group/btn"
+                                    className="w-full py-16 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[32px] flex flex-col items-center justify-center gap-5 text-slate-400 hover:border-warning/50 hover:text-warning hover:bg-warning/90/[0.02] transition-all group/btn"
                                 >
-                                    <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center group-hover/btn:scale-110 transition-all shadow-inner">
+                                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-sm flex items-center justify-center group-hover/btn:scale-110 transition-all shadow-inner">
                                         <Plus className="w-8 h-8 opacity-40 group-hover/btn:opacity-100" />
                                     </div>
                                     <span className="font-black text-[10px] uppercase tracking-[0.2em]">Map Customer Node</span>
@@ -408,30 +408,30 @@ const SalesInvoiceForm: React.FC = () => {
                         </div>
 
                         {/* Valuation Summary Card */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-[32px] border border-neutral-200 dark:border-neutral-800 p-8 shadow-sm relative overflow-hidden">
+                        <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 p-8 shadow-sm relative overflow-hidden">
                             <div className="flex items-center gap-4 mb-8">
-                                <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center text-warning">
+                                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-sm flex items-center justify-center text-warning">
                                     <Calculator className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-[0.2em]">Valuation Engine</h3>
-                                    <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mt-1">Real-time fiscal computation</p>
+                                    <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Valuation Engine</h3>
+                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Real-time fiscal computation</p>
                                 </div>
                             </div>
 
                             <div className="space-y-6">
                                 <div className="flex justify-between items-center group/item">
-                                    <span className="text-[11px] font-black text-neutral-400 uppercase tracking-widest group-hover/item:text-neutral-900 dark:group-hover/item:text-white transition-colors">Subtotal Core</span>
-                                    <span className="font-mono font-bold text-neutral-900 dark:text-white">₹{calculateSubtotal().toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                                    <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest group-hover/item:text-slate-900 dark:group-hover/item:text-white transition-colors">Subtotal Core</span>
+                                    <span className="font-mono font-bold text-slate-900 dark:text-white">₹{calculateSubtotal().toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
                                 </div>
                                 <div className="flex justify-between items-center group/item">
-                                    <span className="text-[11px] font-black text-neutral-400 uppercase tracking-widest group-hover/item:text-neutral-900 dark:group-hover/item:text-white transition-colors">Tax Accumulation</span>
+                                    <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest group-hover/item:text-slate-900 dark:group-hover/item:text-white transition-colors">Tax Accumulation</span>
                                     <span className="font-mono font-bold text-success">+ ₹{calculateTotalTax().toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
                                 </div>
                                 
-                                <div className="pt-6 border-t border-neutral-100 dark:border-neutral-800 space-y-6">
+                                <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-6">
                                     <div className="space-y-3">
-                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] flex items-center justify-between">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-between">
                                             Logistics Adjustment <Truck className="w-4 h-4 text-warning" />
                                         </label>
                                         <div className="relative">
@@ -440,13 +440,13 @@ const SalesInvoiceForm: React.FC = () => {
                                                 type="number"
                                                 value={formData.shippingCharges}
                                                 onChange={(e) => setFormData({ ...formData, shippingCharges: Number(e.target.value) })}
-                                                className="w-full bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-neutral-900 dark:text-white outline-none focus:border-primary/50 transition-all text-right shadow-inner"
+                                                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-slate-900 dark:text-white outline-none focus:border-primary/50 transition-all text-right shadow-inner"
                                             />
                                         </div>
                                     </div>
                                     
                                     <div className="space-y-3">
-                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] flex items-center justify-between">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-between">
                                             Yield Discount <Percent className="w-4 h-4 text-danger" />
                                         </label>
                                         <div className="relative">
@@ -455,15 +455,15 @@ const SalesInvoiceForm: React.FC = () => {
                                                 type="number"
                                                 value={formData.discount}
                                                 onChange={(e) => setFormData({ ...formData, discount: Number(e.target.value) })}
-                                                className="w-full bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-danger outline-none focus:border-primary/50 transition-all text-right shadow-inner"
+                                                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-danger outline-none focus:border-primary/50 transition-all text-right shadow-inner"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="mt-8 p-8 bg-neutral-900 dark:bg-black rounded-sm relative shadow-2xl group overflow-hidden border border-neutral-800">
+                                <div className="mt-8 p-8 bg-slate-900 dark:bg-black rounded-sm relative shadow-2xl group overflow-hidden border border-slate-800">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                                    <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em] mb-2 relative z-10">Net Total Valuation</p>
+                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2 relative z-10">Net Total Valuation</p>
                                     <h2 className="text-4xl font-display font-black text-white tracking-tighter relative z-10 flex items-baseline gap-2">
                                         <span className="text-warning text-2xl font-mono">₹</span>
                                         {calculateTotal().toLocaleString(undefined, {minimumFractionDigits: 2})}
@@ -491,9 +491,9 @@ const SalesInvoiceForm: React.FC = () => {
                         </div>
 
                         {/* Security Badge */}
-                        <div className="flex items-center justify-center gap-4 py-4 px-6 bg-neutral-100 dark:bg-neutral-900/50 rounded-sm border border-neutral-200 dark:border-neutral-800">
+                        <div className="flex items-center justify-center gap-4 py-4 px-6 bg-slate-100 dark:bg-slate-900/50 rounded-sm border border-slate-200 dark:border-slate-800">
                             <ShieldCheck className="w-5 h-5 text-success" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Secured via Ledger Protocol v4.0</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Secured via Ledger Protocol v4.0</span>
                         </div>
                     </div>
                 </form>

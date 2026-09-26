@@ -108,11 +108,11 @@ const BankAccounts: React.FC = () => {
                 />
 
                     {/* Hero Section */}
-                    <div className="relative flex flex-col items-center py-10 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-800">
+                    <div className="relative flex flex-col items-center py-10 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div className="flex flex-col md:flex-row items-center gap-12 w-full justify-center px-8">
                             <div className="flex flex-col items-center text-center">
                                 <div className="flex flex-col items-start gap-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Total Outflow</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Total Outflow</span>
                                     <span className="text-2xl font-black text-danger tracking-tighter">₹{totalExpense.toLocaleString('en-IN')}</span>
                                 </div>
                             </div>
@@ -127,7 +127,7 @@ const BankAccounts: React.FC = () => {
                                         stroke="currentColor"
                                         strokeWidth="12"
                                         fill="transparent"
-                                        className="text-neutral-200 dark:text-neutral-800"
+                                        className="text-slate-200 dark:text-slate-800"
                                     />
                                     <circle
                                         cx="128"
@@ -143,8 +143,8 @@ const BankAccounts: React.FC = () => {
                                     />
                                 </svg>
                                 <div className="absolute flex flex-col items-center justify-center text-center">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Portfolio Value</span>
-                                    <h2 className="text-4xl font-black text-neutral-900 dark:text-white tracking-tighter mb-1">₹{totalBalance.toLocaleString('en-IN')}</h2>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Portfolio Value</span>
+                                    <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter mb-1">₹{totalBalance.toLocaleString('en-IN')}</h2>
                                     <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
                                         <Activity className="w-3.5 h-3.5 text-primary" />
                                         <span className="text-[9px] font-black uppercase tracking-widest text-primary">Stable</span>
@@ -154,25 +154,25 @@ const BankAccounts: React.FC = () => {
 
                             <div className="flex flex-col items-center text-center">
                                 <div className="flex flex-col items-end gap-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Total Inflow</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Total Inflow</span>
                                     <span className="text-2xl font-black text-success tracking-tighter">₹{totalIncome.toLocaleString('en-IN')}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-full h-px bg-neutral-200 dark:bg-neutral-800" />
+                    <div className="w-full h-px bg-slate-200 dark:bg-slate-800" />
 
                     {/* Account List */}
                     <div className="space-y-4">
                         {accounts.map(acc => (
                             <div
                                 key={acc._id}
-                                className="group relative bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-sm p-8 transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-xl"
+                                className="group relative bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-sm p-8 transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-xl"
                                 onClick={() => navigate(`/cashbank/ledger/${acc._id}`)}>
                                 <div className="flex items-center justify-between relative z-10">
                                     <div className="space-y-4">
-                                        <h3 className="text-xl font-black text-neutral-200 uppercase tracking-tight">{acc.bankName}</h3>
+                                        <h3 className="text-xl font-black text-slate-200 uppercase tracking-tight">{acc.bankName}</h3>
                                         <div className="flex items-center gap-3">
                                             <div className="px-3 py-1 bg-danger/10 border border-danger/20 rounded-full">
                                                 <span className="text-[10px] font-black text-danger">₹{(acc.currentBalance * 0.4).toLocaleString()}</span>
@@ -180,8 +180,8 @@ const BankAccounts: React.FC = () => {
                                             <div className="px-3 py-1 bg-success/10 border border-success/20 rounded-full">
                                                 <span className="text-[10px] font-black text-success">₹{(acc.currentBalance * 1.4).toLocaleString()}</span>
                                             </div>
-                                            <div className="px-3 py-1 bg-neutral-800 border border-white/5 rounded-full">
-                                                <span className="text-[10px] font-black text-neutral-300">₹{acc.currentBalance.toLocaleString()}</span>
+                                            <div className="px-3 py-1 bg-slate-800 border border-white/5 rounded-full">
+                                                <span className="text-[10px] font-black text-slate-300">₹{acc.currentBalance.toLocaleString()}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -194,13 +194,13 @@ const BankAccounts: React.FC = () => {
                                 <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button
                                         onClick={(e) => { e.stopPropagation(); toggleReveal(acc._id); }}
-                                        className="p-1.5 hover:bg-white/10 rounded-lg text-neutral-500"
+                                        className="p-1.5 hover:bg-white/10 rounded-lg text-slate-500"
                                     >
                                         {revealedAccounts[acc._id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); if (window.confirm('Wipe unit from registry?')) dispatch(deleteAccount(acc._id)); }}
-                                        className="p-1.5 hover:bg-danger/10 rounded-lg text-neutral-500 hover:text-danger"
+                                        className="p-1.5 hover:bg-danger/10 rounded-lg text-slate-500 hover:text-danger"
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </button>
@@ -216,13 +216,13 @@ const BankAccounts: React.FC = () => {
                             <div className="w-12 h-12 bg-white/5 rounded-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <Plus className="w-6 h-6 text-success" />
                             </div>
-                            <h4 className="text-sm font-black uppercase tracking-widest text-neutral-500">Initialize New Unit</h4>
+                            <h4 className="text-sm font-black uppercase tracking-widest text-slate-500">Initialize New Unit</h4>
                         </div>
                     </div>
                 {/* Floating Action Button (Alternative Add Account) */}
                 <button
                     onClick={() => setShowAddAccount(true)}
-                    className="fixed bottom-10 right-10 w-16 h-16 bg-success hover:bg-success/90 text-neutral-950 rounded-full flex items-center justify-center shadow-[0_10px_40px_-5px_rgba(16,185,129,0.5)] active:scale-95 transition-all border-[6px] border-[#05070a] z-50"
+                    className="fixed bottom-10 right-10 w-16 h-16 bg-success hover:bg-success/90 text-slate-950 rounded-full flex items-center justify-center shadow-[0_10px_40px_-5px_rgba(16,185,129,0.5)] active:scale-95 transition-all border-[6px] border-[#05070a] z-50"
                 >
                     <Plus className="w-8 h-8 stroke-[4]" />
                 </button>
@@ -235,8 +235,8 @@ const BankAccounts: React.FC = () => {
                     icon={Building2}
                     footer={
                         <>
-                            <button type="button" onClick={() => setShowAddAccount(false)} className="px-8 py-3.5 border border-white/5 text-neutral-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">Abort</button>
-                            <button type="submit" form="add-account-form" disabled={isLoading} className="px-10 py-3.5 bg-success text-neutral-950 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-success/90 disabled:opacity-50 transition-all">
+                            <button type="button" onClick={() => setShowAddAccount(false)} className="px-8 py-3.5 border border-white/5 text-slate-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">Abort</button>
+                            <button type="submit" form="add-account-form" disabled={isLoading} className="px-10 py-3.5 bg-success text-slate-950 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-success/90 disabled:opacity-50 transition-all">
                                 {isLoading ? 'Synchronizing...' : 'Commit Initialization'}
                             </button>
                         </>
@@ -249,7 +249,7 @@ const BankAccounts: React.FC = () => {
                                     type="text"
                                     value={formData.bankName}
                                     onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="e.g. HDFC Treasury"
                                     required
                                 />
@@ -259,7 +259,7 @@ const BankAccounts: React.FC = () => {
                                     type="text"
                                     value={formData.branch}
                                     onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="Regional Node"
                                 />
                             </CashBankInput>
@@ -271,7 +271,7 @@ const BankAccounts: React.FC = () => {
                                     type="text"
                                     value={formData.accountNumber}
                                     onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="Official Identifier"
                                     required
                                 />
@@ -281,7 +281,7 @@ const BankAccounts: React.FC = () => {
                                     type="text"
                                     value={formData.ifsc}
                                     onChange={(e) => setFormData({ ...formData, ifsc: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="HDFC0001234"
                                     required
                                 />
@@ -293,7 +293,7 @@ const BankAccounts: React.FC = () => {
                                 <select
                                     value={formData.accountType}
                                     onChange={(e) => setFormData({ ...formData, accountType: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white appearance-none"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white appearance-none"
                                 >
                                     <option>Savings</option>
                                     <option>Current</option>
@@ -305,7 +305,7 @@ const BankAccounts: React.FC = () => {
                                     type="number"
                                     value={formData.openingBalance}
                                     onChange={(e) => setFormData({ ...formData, openingBalance: parseFloat(e.target.value) || 0 })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-neutral-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
+                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white"
                                     placeholder="0.00"
                                 />
                             </CashBankInput>

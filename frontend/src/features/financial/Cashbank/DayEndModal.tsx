@@ -58,17 +58,17 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-neutral-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl rounded-xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative">
                 <div className="p-10">
                     <div className="flex items-center justify-between mb-10">
                         <div>
                             <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Day End Reconciliation</h3>
-                            <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest italic flex items-center gap-2">
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
                                 <Calendar className="w-4 h-4" /> {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                             </p>
                         </div>
-                        <button onClick={onClose} className="p-3 bg-neutral-100 dark:bg-neutral-900 rounded-full text-neutral-400 hover:text-error transition">
+                        <button onClick={onClose} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-full text-slate-400 hover:text-error transition">
                             <X size={20} />
                         </button>
                     </div>
@@ -92,22 +92,22 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                             </div>
 
                             {/* Expected vs Physical */}
-                            <div className="p-6 bg-neutral-50 dark:bg-neutral-900 rounded-[2rem] border border-neutral-100 dark:border-neutral-800">
+                            <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800">
                                 <div className="flex items-center justify-between mb-6">
                                     <div>
-                                        <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mb-1">Expected Cash in Drawer</p>
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Expected Cash in Drawer</p>
                                         <p className="text-3xl font-black italic text-primary">{formatCurrency(summary.expectedCash)}</p>
                                     </div>
-                                    <IndianRupee className="w-12 h-12 text-neutral-200 dark:text-neutral-700" />
+                                    <IndianRupee className="w-12 h-12 text-slate-200 dark:text-slate-700" />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] pl-1">Actual Physical Cash Count</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Actual Physical Cash Count</label>
                                     <input
                                         type="number"
                                         value={physicalCash}
                                         onChange={e => setPhysicalCash(e.target.value)}
-                                        className="w-full px-5 py-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xl font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
+                                        className="w-full px-5 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xl font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                         placeholder="Enter counted cash..."
                                     />
                                 </div>
@@ -139,12 +139,12 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
 
                             {/* Notes */}
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] pl-1">Reconciliation Notes</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Reconciliation Notes</label>
                                 <textarea
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
                                     rows={2}
-                                    className="w-full px-5 py-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-sm text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all resize-none"
+                                    className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all resize-none"
                                     placeholder="Any discrepancies or notes..."
                                 />
                             </div>
@@ -159,14 +159,14 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                             <button
                                 onClick={handleSave}
                                 disabled={saving || !physicalCash}
-                                className="w-full py-5 bg-neutral-950 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-neutral-900 transition-all flex items-center justify-center gap-4 border border-neutral-700 disabled:opacity-50"
+                                className="w-full py-5 bg-slate-950 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-slate-900 transition-all flex items-center justify-center gap-4 border border-slate-700 disabled:opacity-50"
                             >
                                 <CheckCircle2 className="w-5 h-5 text-primary" />
                                 {saving ? 'Saving...' : 'Close Day & Save Reconciliation'}
                             </button>
                         </div>
                     ) : (
-                        <div className="text-center py-20 text-neutral-400">
+                        <div className="text-center py-20 text-slate-400">
                             Failed to load summary. Please try again.
                         </div>
                     )}

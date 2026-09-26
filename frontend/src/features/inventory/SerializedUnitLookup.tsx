@@ -114,24 +114,24 @@ const SerializedUnitLookup: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-12">
+            <div className="space-y-6 animate-fade-in text-slate-900 dark:text-slate-100 pb-12">
                 <div>
                     <h2 className="page-title flex items-center gap-2">
                         <Fingerprint className="w-6 h-6 text-primary" />
                         Serial / IMEI Tracking
                     </h2>
-                    <p className="text-sm text-neutral-500 mt-0.5">Per-unit tracking for serialized stock like phones -- one row per physical device, not per SKU.</p>
+                    <p className="text-sm text-slate-500 mt-0.5">Per-unit tracking for serialized stock like phones -- one row per physical device, not per SKU.</p>
                 </div>
 
                 {/* Quick lookup */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm p-6">
+                <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm p-6">
                     <form onSubmit={handleLookup} className="flex gap-3">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="text"
                                 placeholder="Scan or type a serial number / IMEI..."
-                                className="w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border-none rounded-sm text-sm focus:ring-2 focus:ring-primary/20"
+                                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border-none rounded-sm text-sm focus:ring-2 focus:ring-primary/20"
                                 value={lookupValue}
                                 onChange={e => { setLookupValue(e.target.value); if (!e.target.value) dispatch(clearLookup()); }}
                             />
@@ -141,10 +141,10 @@ const SerializedUnitLookup: React.FC = () => {
                         </button>
                     </form>
                     {lookupResult && (
-                        <div className="mt-4 p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-sm flex items-center justify-between">
+                        <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-sm flex items-center justify-between">
                             <div>
                                 <p className="font-black text-sm">{typeof lookupResult.itemId === 'object' ? lookupResult.itemId.name : 'Item'}</p>
-                                <p className="text-xs text-neutral-500 font-mono mt-0.5">S/N {lookupResult.serialNumber}{lookupResult.imei1 ? ` · IMEI ${lookupResult.imei1}` : ''}</p>
+                                <p className="text-xs text-slate-500 font-mono mt-0.5">S/N {lookupResult.serialNumber}{lookupResult.imei1 ? ` · IMEI ${lookupResult.imei1}` : ''}</p>
                             </div>
                             <span className={`px-2.5 py-1 text-[10px] font-black rounded-lg uppercase tracking-widest ${STATUS_STYLES[lookupResult.status]}`}>
                                 {lookupResult.status.replace('_', ' ')}
@@ -152,15 +152,15 @@ const SerializedUnitLookup: React.FC = () => {
                         </div>
                     )}
                     {isLoading && !lookupResult && lookupValue && (
-                        <p className="mt-4 text-xs text-neutral-400">Searching...</p>
+                        <p className="mt-4 text-xs text-slate-400">Searching...</p>
                     )}
                 </div>
 
                 {/* Per-item unit management */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
-                    <div className="p-6 border-b border-neutral-50 dark:border-neutral-800 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between">
                         <select
-                            className="w-full md:w-96 px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border-none rounded-sm text-sm font-bold focus:ring-2 focus:ring-primary/20"
+                            className="w-full md:w-96 px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border-none rounded-sm text-sm font-bold focus:ring-2 focus:ring-primary/20"
                             value={selectedItemId}
                             onChange={e => setSelectedItemId(e.target.value)}
                         >
@@ -190,7 +190,7 @@ const SerializedUnitLookup: React.FC = () => {
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
+                            <thead className="bg-slate-50 dark:bg-slate-900/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                                 <tr>
                                     <th className="p-6">Serial Number</th>
                                     <th className="p-6">IMEI 1 / IMEI 2</th>
@@ -198,19 +198,19 @@ const SerializedUnitLookup: React.FC = () => {
                                     <th className="p-6 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {!selectedItemId && (
-                                    <tr><td colSpan={4} className="p-8 text-center text-sm text-neutral-400">Select an item above to see its units.</td></tr>
+                                    <tr><td colSpan={4} className="p-8 text-center text-sm text-slate-400">Select an item above to see its units.</td></tr>
                                 )}
                                 {selectedItemId && unitsByItem.length === 0 && (
-                                    <tr><td colSpan={4} className="p-8 text-center text-sm text-neutral-400">No units on file for this item yet.</td></tr>
+                                    <tr><td colSpan={4} className="p-8 text-center text-sm text-slate-400">No units on file for this item yet.</td></tr>
                                 )}
                                 {unitsByItem.map(unit => (
-                                    <tr key={unit._id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-900/40 transition-colors">
+                                    <tr key={unit._id} className="group hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
                                         <td className="p-6"><p className="font-mono text-sm font-bold">{unit.serialNumber}</p></td>
                                         <td className="p-6">
-                                            <p className="font-mono text-xs text-neutral-500">{unit.imei1 || '—'}</p>
-                                            <p className="font-mono text-xs text-neutral-400">{unit.imei2 || ''}</p>
+                                            <p className="font-mono text-xs text-slate-500">{unit.imei1 || '—'}</p>
+                                            <p className="font-mono text-xs text-slate-400">{unit.imei2 || ''}</p>
                                         </td>
                                         <td className="p-6">
                                             <span className={`px-2.5 py-1 text-[10px] font-black rounded-lg uppercase tracking-widest ${STATUS_STYLES[unit.status]}`}>
@@ -220,21 +220,21 @@ const SerializedUnitLookup: React.FC = () => {
                                         <td className="p-6 text-right">
                                             <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 {unit.status !== 'IN_STOCK' && (
-                                                    <button onClick={() => handleStatusChange(unit._id, 'IN_STOCK')} title="Mark back in stock" className="p-2 text-neutral-400 hover:text-success hover:bg-success/5 rounded-lg transition-all">
+                                                    <button onClick={() => handleStatusChange(unit._id, 'IN_STOCK')} title="Mark back in stock" className="p-2 text-slate-400 hover:text-success hover:bg-success/5 rounded-lg transition-all">
                                                         <PackageCheck className="w-4 h-4" />
                                                     </button>
                                                 )}
                                                 {unit.status === 'IN_STOCK' && (
-                                                    <button onClick={() => handleStatusChange(unit._id, 'DAMAGED')} title="Mark damaged" className="p-2 text-neutral-400 hover:text-error hover:bg-error/5 rounded-lg transition-all">
+                                                    <button onClick={() => handleStatusChange(unit._id, 'DAMAGED')} title="Mark damaged" className="p-2 text-slate-400 hover:text-error hover:bg-error/5 rounded-lg transition-all">
                                                         <PackageX className="w-4 h-4" />
                                                     </button>
                                                 )}
                                                 {unit.status === 'SOLD' && (
-                                                    <button onClick={() => handleStatusChange(unit._id, 'RETURNED')} title="Mark returned" className="p-2 text-neutral-400 hover:text-warning hover:bg-warning-soft rounded-lg transition-all">
+                                                    <button onClick={() => handleStatusChange(unit._id, 'RETURNED')} title="Mark returned" className="p-2 text-slate-400 hover:text-warning hover:bg-warning-soft rounded-lg transition-all">
                                                         <RotateCcw className="w-4 h-4" />
                                                     </button>
                                                 )}
-                                                <button onClick={() => handleDelete(unit._id)} title="Delete" className="p-2 text-neutral-400 hover:text-error hover:bg-error/5 rounded-lg transition-all">
+                                                <button onClick={() => handleDelete(unit._id)} title="Delete" className="p-2 text-slate-400 hover:text-error hover:bg-error/5 rounded-lg transition-all">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
@@ -248,44 +248,44 @@ const SerializedUnitLookup: React.FC = () => {
 
                 {isAddOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-                        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] w-full max-w-xl shadow-2xl overflow-hidden border border-neutral-200 dark:border-neutral-700 animate-in zoom-in-95 duration-200 max-h-[85vh] flex flex-col">
-                            <div className="p-8 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center">
+                        <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] w-full max-w-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 animate-in zoom-in-95 duration-200 max-h-[85vh] flex flex-col">
+                            <div className="p-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                                 <div>
                                     <h3 className="text-xl font-black tracking-tight">Add Units</h3>
-                                    <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">{selectedItem?.name}</p>
+                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">{selectedItem?.name}</p>
                                 </div>
-                                <button onClick={() => setIsAddOpen(false)} className="text-neutral-400 hover:text-neutral-600 transition-colors">
+                                <button onClick={() => setIsAddOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
                                     <X className="w-6 h-6" />
                                 </button>
                             </div>
                             <form onSubmit={handleAddUnits} className="p-8 space-y-4 overflow-y-auto">
                                 {draftUnits.map((unit, index) => (
-                                    <div key={index} className="p-4 bg-neutral-50 dark:bg-neutral-900 rounded-sm space-y-2 relative">
+                                    <div key={index} className="p-4 bg-slate-50 dark:bg-slate-900 rounded-sm space-y-2 relative">
                                         <button
                                             type="button"
                                             onClick={() => removeDraftLine(index)}
                                             disabled={draftUnits.length === 1}
-                                            className="absolute top-3 right-3 text-neutral-400 hover:text-error disabled:opacity-30"
+                                            className="absolute top-3 right-3 text-slate-400 hover:text-error disabled:opacity-30"
                                         >
                                             <X className="w-4 h-4" />
                                         </button>
                                         <input
                                             required
                                             placeholder="Serial number"
-                                            className="w-full px-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm font-mono"
+                                            className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm font-mono"
                                             value={unit.serialNumber}
                                             onChange={e => updateDraftLine(index, { serialNumber: e.target.value })}
                                         />
                                         <div className="grid grid-cols-2 gap-2">
                                             <input
                                                 placeholder="IMEI 1 (optional)"
-                                                className="px-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm font-mono"
+                                                className="px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm font-mono"
                                                 value={unit.imei1}
                                                 onChange={e => updateDraftLine(index, { imei1: e.target.value })}
                                             />
                                             <input
                                                 placeholder="IMEI 2 (optional)"
-                                                className="px-4 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm font-mono"
+                                                className="px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm font-mono"
                                                 value={unit.imei2}
                                                 onChange={e => updateDraftLine(index, { imei2: e.target.value })}
                                             />
@@ -299,7 +299,7 @@ const SerializedUnitLookup: React.FC = () => {
                                     <button
                                         type="button"
                                         onClick={() => setIsAddOpen(false)}
-                                        className="flex-1 px-6 py-4 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-sm font-black text-sm hover:bg-neutral-50 transition-all"
+                                        className="flex-1 px-6 py-4 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm font-black text-sm hover:bg-slate-50 transition-all"
                                     >
                                         Cancel
                                     </button>

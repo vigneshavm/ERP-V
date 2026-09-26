@@ -25,11 +25,11 @@ const AddSupplier: React.FC = () => {
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate('/suppliers')}
-                            className="p-2 hover:bg-slate-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                         >
-                            <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-neutral-400" />
+                            <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                         </button>
-                        <h1 className="page-title text-slate-800 dark:text-neutral-100">Add Supplier</h1>
+                        <h1 className="page-title text-slate-800 dark:text-slate-100">Add Supplier</h1>
                     </div>
                 </div>
 

@@ -125,7 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                         </select>
                     </div>
                 ) : (
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-1">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
                         <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
                         {getBranchName(selectedBranch)}
                         {isSyncing && (
@@ -184,7 +184,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                         </div>
                     )}
                 </div>
-                <button onClick={() => dispatch(setSidebarOpen(false))} className="lg:hidden text-neutral-400">
+                <button onClick={() => dispatch(setSidebarOpen(false))} className="lg:hidden text-slate-400">
                     <X className="w-6 h-6" />
                 </button>
                 <button
@@ -221,7 +221,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             </nav>
 
             {/* Footer / User Controls */}
-            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-2 space-y-2">
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-2">
                 <button
                     onClick={onLogout}
                     className={`w-full flex items-center ${desktopCollapsed ? 'hidden' : 'space-x-3 px-4'} py-3 rounded-lg text-secondary hover:bg-white/5 hover:text-main transition-all group`}
@@ -242,13 +242,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
             </div>
             {/* Theme Toggle - Desktop Footer */}
             {!desktopCollapsed && (
-                <div className="pt-2 px-4 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-between items-center">
-                    <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Appearance</span>
+                <div className="pt-2 px-4 pb-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Appearance</span>
                     <ThemeToggle />
                 </div>
             )}
             {desktopCollapsed && (
-                <div className="pt-2 px-2 pb-2 border-t border-neutral-200 dark:border-neutral-800 flex justify-center">
+                <div className="pt-2 px-2 pb-2 border-t border-slate-200 dark:border-slate-800 flex justify-center">
                     <ThemeToggle />
                 </div>
             )}

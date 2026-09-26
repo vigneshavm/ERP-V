@@ -109,7 +109,7 @@ const SupplierAgeing: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={handleExport}
-                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
+                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95"
                             >
                                 <Download className="w-4 h-4" /> Export Node Data
                             </button>
@@ -139,11 +139,11 @@ const SupplierAgeing: React.FC = () => {
                                 <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />
                                 </div>
-                                <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
+                                <ArrowUpRight className="w-5 h-5 text-slate-300 group-hover:text-primary transition-colors" />
                             </div>
                             <div className="relative z-10">
                                 <p className="ui-label leading-none mb-2">{card.label}</p>
-                                <p className="text-2xl font-black text-neutral-900 dark:text-white tracking-tighter uppercase tabular-nums">₹{card.val.toLocaleString()}</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase tabular-nums">₹{card.val.toLocaleString()}</p>
                             </div>
                             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
                         </div>
@@ -155,13 +155,13 @@ const SupplierAgeing: React.FC = () => {
                     <div className="relative w-full md:w-[500px]">
                         <label className="ui-label mb-3 block">Entity Search</label>
                         <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="text"
                                 placeholder="Search supplier by institutional name..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
@@ -170,7 +170,7 @@ const SupplierAgeing: React.FC = () => {
                             <p className="ui-label mb-1 leading-none">Aggregate Outstanding</p>
                             <p className="text-3xl font-black text-danger tabular-nums tracking-tighter">₹{totals.total.toLocaleString()}</p>
                         </div>
-                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-sm text-neutral-400 hover:text-primary transition-all active:scale-95">
+                        <button className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-sm text-slate-400 hover:text-primary transition-all active:scale-95">
                             <Filter className="w-6 h-6" />
                         </button>
                     </div>
@@ -180,7 +180,7 @@ const SupplierAgeing: React.FC = () => {
                 <div className="ui-panel overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 ui-label border-b border-neutral-100 dark:border-neutral-800">
+                            <thead className="bg-slate-50/50 dark:bg-slate-900/50 ui-label border-b border-slate-100 dark:border-slate-800">
                                 <tr>
                                     <th className="px-8 py-5">Institutional Supplier</th>
                                     <th className="px-8 py-5 text-right">0-30 Days</th>
@@ -191,7 +191,7 @@ const SupplierAgeing: React.FC = () => {
                                     <th className="px-8 py-5 text-center">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {loading ? (
                                     <tr>
                                         <td colSpan={7} className="px-8 py-24 text-center">
@@ -205,7 +205,7 @@ const SupplierAgeing: React.FC = () => {
                                     <tr>
                                         <td colSpan={7} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-slate-100 dark:bg-slate-900 rounded-sm flex items-center justify-center">
                                                     <Info className="w-10 h-10" />
                                                 </div>
                                                 <div>
@@ -217,32 +217,32 @@ const SupplierAgeing: React.FC = () => {
                                     </tr>
                                 ) : (
                                     filteredData.map((row) => (
-                                        <tr key={row.supplierId} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all">
+                                        <tr key={row.supplierId} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all">
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-sm bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center text-neutral-500 font-black text-xs uppercase tracking-widest border border-neutral-100 dark:border-neutral-800">
+                                                    <div className="w-10 h-10 rounded-sm bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-500 font-black text-xs uppercase tracking-widest border border-slate-100 dark:border-slate-800">
                                                         {row.businessName.charAt(0)}
                                                     </div>
-                                                    <span className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{row.businessName}</span>
+                                                    <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">{row.businessName}</span>
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["0-30"] > 0 ? 'text-neutral-900 dark:text-white' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["0-30"] > 0 ? 'text-slate-900 dark:text-white' : 'text-slate-300 dark:text-slate-700'}`}>
                                                     ₹{row.buckets["0-30"].toLocaleString()}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["31-60"] > 0 ? 'text-warning' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["31-60"] > 0 ? 'text-warning' : 'text-slate-300 dark:text-slate-700'}`}>
                                                     ₹{row.buckets["31-60"].toLocaleString()}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["61-90"] > 0 ? 'text-warning underline' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["61-90"] > 0 ? 'text-warning underline' : 'text-slate-300 dark:text-slate-700'}`}>
                                                     ₹{row.buckets["61-90"].toLocaleString()}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6 text-right tabular-nums">
-                                                <span className={`text-xs font-black ${row.buckets["90+"] > 0 ? 'text-danger underline decoration-2 underline-offset-4' : 'text-neutral-300 dark:text-neutral-700'}`}>
+                                                <span className={`text-xs font-black ${row.buckets["90+"] > 0 ? 'text-danger underline decoration-2 underline-offset-4' : 'text-slate-300 dark:text-slate-700'}`}>
                                                     ₹{row.buckets["90+"].toLocaleString()}
                                                 </span>
                                             </td>
@@ -253,7 +253,7 @@ const SupplierAgeing: React.FC = () => {
                                                 <div className="flex justify-center">
                                                     <button
                                                         onClick={() => navigate(`/suppliers/${row.supplierId}/ledger`)}
-                                                        className="p-3 text-neutral-300 hover:text-primary hover:bg-primary/5 rounded-sm transition-all active:scale-95"
+                                                        className="p-3 text-slate-300 hover:text-primary hover:bg-primary/5 rounded-sm transition-all active:scale-95"
                                                     >
                                                         <ArrowUpRight className="w-6 h-6" />
                                                     </button>

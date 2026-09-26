@@ -143,16 +143,16 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                             <button
                                 onClick={runOCR}
                                 disabled={isLoading}
-                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95"
+                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95"
                             >
                                 <Zap className={`w-4 h-4 ${isLoading ? 'animate-pulse text-warning' : 'text-primary'}`} /> {isLoading ? 'Extracting...' : 'Auto-Extract (OCR)'}
                             </button>
                             
                             {id && bill.status !== 'Paid' && (
-                                <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
                                     <button onClick={() => handleUpdateStatus('Hold')} className="p-2 text-warning hover:bg-warning-soft rounded-lg transition-colors" title="Hold"><Clock className="w-4 h-4" /></button>
                                     <button onClick={() => handleUpdateStatus('Disputed')} className="p-2 text-danger hover:bg-danger-soft rounded-lg transition-colors" title="Dispute"><AlertCircle className="w-4 h-4" /></button>
-                                    <button onClick={() => handleUpdateStatus('Rejected')} className="p-2 text-neutral-400 hover:bg-neutral-50 rounded-lg transition-colors" title="Reject"><Ban className="w-4 h-4" /></button>
+                                    <button onClick={() => handleUpdateStatus('Rejected')} className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg transition-colors" title="Reject"><Ban className="w-4 h-4" /></button>
                                 </div>
                             )}
 
@@ -171,7 +171,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                     {/* Main Workspace */}
                     <div className="lg:col-span-8 space-y-10">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <BillBasicInfo
                                     bill={bill}
                                     vendors={vendors}
@@ -180,28 +180,28 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                 />
                             </div>
 
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm animate-in fade-in slide-in-from-bottom-6 duration-500">
-                                <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3 mb-6">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm animate-in fade-in slide-in-from-bottom-6 duration-500">
+                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3 mb-6">
                                     <FileSpreadsheet className="w-5 h-5 text-success" /> Vendor Documents
                                 </h3>
                                 <div className="space-y-6">
                                     <div>
-                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Vendor Invoice No.</label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Vendor Invoice No.</label>
                                         <input
                                             type="text"
                                             value={bill.vendorInvoiceNo || ''}
                                             onChange={(e) => updateBillField('vendorInvoiceNo', e.target.value)}
                                             placeholder="INV-X"
-                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                            className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Invoice Date</label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Invoice Date</label>
                                         <input
                                             type="date"
                                             value={bill.bill_date || ''}
                                             onChange={(e) => updateBillField('bill_date', e.target.value)}
-                                            className="w-full px-5 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                            className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                                         />
                                     </div>
                                 </div>
@@ -223,7 +223,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                         value={bill.grn_id || ''}
                                         onChange={(e) => handleGRNChange(e.target.value)}
                                         disabled={!bill.vendor_id}
-                                        className="w-full px-6 py-3.5 bg-white dark:bg-neutral-800 border border-primary/20 rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30"
+                                        className="w-full px-6 py-3.5 bg-white dark:bg-slate-800 border border-primary/20 rounded-sm text-xs font-black uppercase tracking-tighter shadow-sm focus:ring-4 focus:ring-primary/10 outline-none disabled:opacity-30"
                                     >
                                         <option value="">Select Receipt Node...</option>
                                         {Array.isArray(grns) && grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} ({formatDate(g.receivedDate)})</option>)}
@@ -238,7 +238,7 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
+                        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700">
                             <div className="p-2 pt-10">
                                 <BillItemsTable
                                     items={bill.items || []}
@@ -257,13 +257,13 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                         />
 
                         {/* Evidence Node */}
-                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-6">
-                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                        <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 space-y-6">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3">
                                 <Paperclip className="w-5 h-5" /> Document Evidence
                             </h3>
                             <div
                                 onClick={() => document.getElementById('bill-upload')?.click()}
-                                className="border-2 border-dashed border-neutral-100 dark:border-neutral-700 rounded-[2rem] p-10 text-center hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer group"
+                                className="border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-[2rem] p-10 text-center hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer group"
                             >
                                 <input
                                     type="file"
@@ -272,31 +272,31 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                     onChange={handleFileUpload}
                                     accept=".pdf,image/*"
                                 />
-                                <div className="w-16 h-16 bg-neutral-50 dark:bg-neutral-900 rounded-sm flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform border border-neutral-100 dark:border-neutral-700">
-                                    <Plus className="w-8 h-8 text-neutral-300 group-hover:text-primary" />
+                                <div className="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-sm flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform border border-slate-100 dark:border-slate-700">
+                                    <Plus className="w-8 h-8 text-slate-300 group-hover:text-primary" />
                                 </div>
-                                <p className="text-[10px] font-black text-neutral-500 dark:text-neutral-400 uppercase tracking-widest leading-relaxed">Upload Invoice Node<br/><span className="text-primary/60 opacity-60">Supports Intel Extraction</span></p>
+                                <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-relaxed">Upload Invoice Node<br/><span className="text-primary/60 opacity-60">Supports Intel Extraction</span></p>
                             </div>
                             <div className="flex flex-wrap gap-3">
                                 {attachments.map((at, i) => (
-                                    <div key={i} className="flex items-center gap-3 px-4 py-2 bg-neutral-50 dark:bg-neutral-900 rounded-xl text-[10px] font-black uppercase tracking-widest border border-neutral-100 dark:border-neutral-700 group">
-                                        <FileText className="w-4 h-4 text-neutral-400" />
+                                    <div key={i} className="flex items-center gap-3 px-4 py-2 bg-slate-50 dark:bg-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest border border-slate-100 dark:border-slate-700 group">
+                                        <FileText className="w-4 h-4 text-slate-400" />
                                         <span className="max-w-[120px] truncate">{at}</span>
-                                        <X className="w-4 h-4 cursor-pointer text-neutral-300 hover:text-danger" onClick={() => removeAttachment(i)} />
+                                        <X className="w-4 h-4 cursor-pointer text-slate-300 hover:text-danger" onClick={() => removeAttachment(i)} />
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-6">
-                            <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-3">
+                        <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 space-y-6">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3">
                                 <FileText className="w-5 h-5" /> Institutional Notes
                             </h3>
                             <textarea
                                 value={bill.notes || ''}
                                 onChange={(e) => updateBillField('notes', e.target.value)}
                                 rows={4}
-                                className="w-full px-6 py-5 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                className="w-full px-6 py-5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
                                 placeholder="Audit trail remarks..."
                             />
                         </div>

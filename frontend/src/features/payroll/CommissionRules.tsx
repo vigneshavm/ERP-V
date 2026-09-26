@@ -237,18 +237,18 @@ const CommissionRules: React.FC = () => {
             />
 
             {canManage && (
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden mb-6">
-                    <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 flex flex-wrap justify-between items-center gap-3">
-                        <h2 className="text-sm font-bold text-neutral-700 dark:text-neutral-200 uppercase tracking-wider">Commission Rules</h2>
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden mb-6">
+                    <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap justify-between items-center gap-3">
+                        <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Commission Rules</h2>
                         <div className="flex items-center gap-3">
                             <div className="relative">
-                                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                                 <input
                                     type="text"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Search rules..."
-                                    className="pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm outline-none"
+                                    className="pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm outline-none"
                                 />
                             </div>
                             <button
@@ -261,7 +261,7 @@ const CommissionRules: React.FC = () => {
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900 text-xs font-bold text-neutral-500 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">
+                            <thead className="bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
                                 <tr>
                                     <th className="px-6 py-3">Name</th>
                                     <th className="px-6 py-3">Employee</th>
@@ -271,12 +271,12 @@ const CommissionRules: React.FC = () => {
                                     <th className="px-6 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {filteredRules.map((rule) => (
-                                    <tr key={rule._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40">
+                                    <tr key={rule._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40">
                                         <td className="px-6 py-4 font-medium">{rule.name}</td>
-                                        <td className="px-6 py-4 text-neutral-500">{displayName(rule.employeeId, 'name') || 'All employees'}</td>
-                                        <td className="px-6 py-4 text-neutral-500">{scopeLabel(rule)}</td>
+                                        <td className="px-6 py-4 text-slate-500">{displayName(rule.employeeId, 'name') || 'All employees'}</td>
+                                        <td className="px-6 py-4 text-slate-500">{scopeLabel(rule)}</td>
                                         <td className="px-6 py-4 font-bold">
                                             {rule.rateType === 'PERCENT' ? `${rule.rateValue}%` : `₹${rule.rateValue}`}
                                         </td>
@@ -302,7 +302,7 @@ const CommissionRules: React.FC = () => {
                                 ))}
                                 {!isLoading && filteredRules.length === 0 && (
                                     <tr>
-                                        <td colSpan={6} className="px-6 py-16 text-center text-neutral-400">
+                                        <td colSpan={6} className="px-6 py-16 text-center text-slate-400">
                                             <Percent className="w-10 h-10 mx-auto mb-3 opacity-40" />
                                             No commission rules yet.
                                         </td>
@@ -315,22 +315,22 @@ const CommissionRules: React.FC = () => {
             )}
 
             {/* Commission Report */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
-                    <h2 className="text-sm font-bold text-neutral-700 dark:text-neutral-200 uppercase tracking-wider">Commission Report</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                    <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Commission Report</h2>
                 </div>
                 <div className="p-6 flex flex-wrap items-end gap-4">
                     <div>
-                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">From</label>
-                        <input type="date" value={reportFrom} onChange={(e) => setReportFrom(e.target.value)} className="border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent" />
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">From</label>
+                        <input type="date" value={reportFrom} onChange={(e) => setReportFrom(e.target.value)} className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent" />
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">To</label>
-                        <input type="date" value={reportTo} onChange={(e) => setReportTo(e.target.value)} className="border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent" />
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">To</label>
+                        <input type="date" value={reportTo} onChange={(e) => setReportTo(e.target.value)} className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent" />
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">Employee</label>
-                        <select value={reportEmployeeId} onChange={(e) => setReportEmployeeId(e.target.value)} className="border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent min-w-[180px]">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Employee</label>
+                        <select value={reportEmployeeId} onChange={(e) => setReportEmployeeId(e.target.value)} className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent min-w-[180px]">
                             <option value="">All employees</option>
                             {users.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
                         </select>
@@ -348,7 +348,7 @@ const CommissionRules: React.FC = () => {
                 )}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-neutral-50 dark:bg-neutral-900 text-xs font-bold text-neutral-500 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">
+                        <thead className="bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
                             <tr>
                                 <th className="px-6 py-3">Employee</th>
                                 <th className="px-6 py-3 text-right">Invoices</th>
@@ -356,9 +356,9 @@ const CommissionRules: React.FC = () => {
                                 <th className="px-6 py-3 text-right">Commission Earned</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                             {reportRows.map((row) => (
-                                <tr key={row.employeeId} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40">
+                                <tr key={row.employeeId} className="hover:bg-slate-50 dark:hover:bg-slate-900/40">
                                     <td className="px-6 py-4 font-medium">{row.employeeName}</td>
                                     <td className="px-6 py-4 text-right">{row.invoiceCount}</td>
                                     <td className="px-6 py-4 text-right">₹{row.totalSalesAttributed.toFixed(2)}</td>
@@ -367,7 +367,7 @@ const CommissionRules: React.FC = () => {
                             ))}
                             {!reportLoading && reportRows.length === 0 && !reportNote && (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-16 text-center text-neutral-400">
+                                    <td colSpan={4} className="px-6 py-16 text-center text-slate-400">
                                         No commission earned in this date range.
                                     </td>
                                 </tr>
@@ -380,41 +380,41 @@ const CommissionRules: React.FC = () => {
             {/* New Rule Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                        <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center sticky top-0 bg-white dark:bg-neutral-800">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center sticky top-0 bg-white dark:bg-slate-800">
                             <h2 className="text-lg font-bold">New Commission Rule</h2>
-                            <button onClick={() => setShowModal(false)} className="text-neutral-400 hover:text-neutral-700">
+                            <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-700">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
                         <div className="p-6 space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">Rule Name</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Rule Name</label>
                                 <input
                                     type="text"
                                     value={form.name}
                                     onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
                                     placeholder="e.g. Silk sarees - floor staff"
-                                    className="w-full border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent"
+                                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent"
                                 />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">Employee (optional)</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Employee (optional)</label>
                                 <select
                                     value={form.employeeId}
                                     onChange={(e) => setForm(f => ({ ...f, employeeId: e.target.value }))}
-                                    className="w-full border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent"
+                                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent"
                                 >
                                     <option value="">All employees (tenant-wide default)</option>
                                     {users.map(u => <option key={u._id} value={u._id}>{u.name} ({u.role})</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">Applies To</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Applies To</label>
                                 <select
                                     value={form.scope}
                                     onChange={(e) => setForm(f => ({ ...f, scope: e.target.value as Scope }))}
-                                    className="w-full border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent"
+                                    className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent"
                                 >
                                     <option value="ALL">All items</option>
                                     <option value="CATEGORY">A specific category</option>
@@ -423,11 +423,11 @@ const CommissionRules: React.FC = () => {
                             </div>
                             {form.scope === 'CATEGORY' && (
                                 <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">Category</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Category</label>
                                     <select
                                         value={form.category}
                                         onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))}
-                                        className="w-full border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent"
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent"
                                     >
                                         <option value="">Select category...</option>
                                         {categories.map(c => <option key={c} value={c}>{c}</option>)}
@@ -436,11 +436,11 @@ const CommissionRules: React.FC = () => {
                             )}
                             {form.scope === 'ITEM' && (
                                 <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">Item</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Item</label>
                                     <select
                                         value={form.itemId}
                                         onChange={(e) => setForm(f => ({ ...f, itemId: e.target.value }))}
-                                        className="w-full border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent"
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent"
                                     >
                                         <option value="">Select item...</option>
                                         {items.map(it => <option key={it._id} value={it._id}>{it.name}{it.sku ? ` (${it.sku})` : ''}</option>)}
@@ -449,18 +449,18 @@ const CommissionRules: React.FC = () => {
                             )}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">Rate Type</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Rate Type</label>
                                     <select
                                         value={form.rateType}
                                         onChange={(e) => setForm(f => ({ ...f, rateType: e.target.value as RateType }))}
-                                        className="w-full border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent"
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent"
                                     >
                                         <option value="PERCENT">Percent of sale</option>
                                         <option value="FLAT">Flat amount per line</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1 block">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">
                                         {form.rateType === 'PERCENT' ? 'Percent (%)' : 'Amount (₹)'}
                                     </label>
                                     <input
@@ -470,13 +470,13 @@ const CommissionRules: React.FC = () => {
                                         step="0.01"
                                         value={form.rateValue}
                                         onChange={(e) => setForm(f => ({ ...f, rateValue: e.target.value }))}
-                                        className="w-full border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm bg-transparent"
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent"
                                     />
                                 </div>
                             </div>
                         </div>
-                        <div className="px-6 py-4 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-3 sticky bottom-0 bg-white dark:bg-neutral-800">
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg font-medium">
+                        <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 sticky bottom-0 bg-white dark:bg-slate-800">
+                            <button onClick={() => setShowModal(false)} className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
                                 Cancel
                             </button>
                             <button

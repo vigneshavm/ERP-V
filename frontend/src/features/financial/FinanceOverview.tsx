@@ -13,12 +13,12 @@ const FinanceOverview: React.FC<FinanceOverviewProps> = ({ totalSales, totalExpe
     const profitMargin = totalSales > 0 ? (netProfit / totalSales) * 100 : 0;
 
     return (
-        <div className="bg-white dark:bg-neutral-800 rounded-sm p-8 border border-neutral-100 dark:border-neutral-700 shadow-xl relative overflow-hidden group">
+        <div className="bg-white dark:bg-slate-800 rounded-sm p-8 border border-slate-100 dark:border-slate-700 shadow-xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 group-hover:scale-150 transition duration-700" />
 
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <p className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2">Net Profit</p>
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Net Profit</p>
                     <h3 className={`text-4xl font-black italic tracking-tighter ${netProfit >= 0 ? 'text-primary' : 'text-error'}`}>
                         ₹{formatCurrency(netProfit)}
                     </h3>
@@ -29,21 +29,21 @@ const FinanceOverview: React.FC<FinanceOverviewProps> = ({ totalSales, totalExpe
                 </div>
 
                 <div>
-                    <p className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2">Revenue</p>
-                    <h3 className="text-2xl font-black text-neutral-900 dark:text-white italic tracking-tighter">
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Revenue</p>
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-white italic tracking-tighter">
                         ₹{formatCurrency(totalSales)}
                     </h3>
                 </div>
 
                 <div>
-                    <p className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2">OpEx (Burn)</p>
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">OpEx (Burn)</p>
                     <h3 className="text-2xl font-black text-error italic tracking-tighter">
                         ₹{formatCurrency(totalExpenses)}
                     </h3>
                 </div>
 
                 <div>
-                    <p className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-2">Labor Cost</p>
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Labor Cost</p>
                     <h3 className="text-2xl font-black text-warning italic tracking-tighter">
                         ₹{formatCurrency(sectorLaborCost)}
                     </h3>

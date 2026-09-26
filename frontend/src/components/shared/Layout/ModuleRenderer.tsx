@@ -31,9 +31,9 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
                 view={activeTab as AppView}
                 moduleName={activeTab.split('_')[0].charAt(0) + activeTab.split('_')[0].slice(1).toLowerCase()}
             >
-                <div className="flex flex-col items-center justify-center h-full text-neutral-400 animate-in fade-in">
+                <div className="flex flex-col items-center justify-center h-full text-slate-400 animate-in fade-in">
                     <Ban className="w-16 h-16 mb-4 text-error/80 opacity-80" />
-                    <h2 className="text-2xl font-bold text-neutral-600 dark:text-neutral-300">Role Access Denied</h2>
+                    <h2 className="text-2xl font-bold text-slate-600 dark:text-slate-300">Role Access Denied</h2>
                     <p className="mt-2 text-sm">Your role ({role}) does not have permission to view this specific view.</p>
                 </div>
             </EntitlementGuard>

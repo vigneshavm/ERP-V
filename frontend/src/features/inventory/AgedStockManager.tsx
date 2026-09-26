@@ -86,7 +86,7 @@ const ageText = (r: StockAgeRow): string =>
     r.ageMonths === null ? 'No purchase record' : `${r.purchaseMonth} · ${r.ageMonths === 0 ? 'this month' : `${r.ageMonths} month${r.ageMonths === 1 ? '' : 's'}`}`;
 
 const bucketTone = (key: BucketKey | 'all'): string =>
-    key === '12+' ? 'text-error' : key === '6-11' ? 'text-warning' : key === 'unknown' ? 'text-neutral-400' : 'text-neutral-900 dark:text-white';
+    key === '12+' ? 'text-error' : key === '6-11' ? 'text-warning' : key === 'unknown' ? 'text-slate-400' : 'text-slate-900 dark:text-white';
 
 const AgedStockManager: React.FC = () => {
     // 'all' | a bucket key ('3', '6-11', ...) | 'm:YYYY-MM' for one purchase month
@@ -169,7 +169,7 @@ const AgedStockManager: React.FC = () => {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-fade-in text-neutral-900 dark:text-neutral-100 pb-16">
+            <div className="space-y-6 animate-fade-in text-slate-900 dark:text-slate-100 pb-16">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
@@ -177,16 +177,16 @@ const AgedStockManager: React.FC = () => {
                             <Clock className="w-6 h-6 text-primary" />
                             Aged Stock
                         </h2>
-                        <p className="text-sm text-neutral-500 mt-0.5 font-medium">
+                        <p className="text-sm text-slate-500 mt-0.5 font-medium">
                             Purchased but not yet sold, grouped by purchase month
-                            {hasRange && <> · bought <span className="font-bold text-neutral-700 dark:text-neutral-300">{fromDate || 'start'} to {toDate || 'latest'}</span></>}
-                            {data?.asOf && <> · as of <span className="font-bold text-neutral-700 dark:text-neutral-300">{data.asOf}</span> (latest sale in shop data)</>}
+                            {hasRange && <> · bought <span className="font-bold text-slate-700 dark:text-slate-300">{fromDate || 'start'} to {toDate || 'latest'}</span></>}
+                            {data?.asOf && <> · as of <span className="font-bold text-slate-700 dark:text-slate-300">{data.asOf}</span> (latest sale in shop data)</>}
                         </p>
                     </div>
                     <button
                         onClick={() => load(true)}
                         disabled={loading}
-                        className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm font-bold flex items-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 shadow-sm transition disabled:opacity-50"
+                        className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm font-bold flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm transition disabled:opacity-50"
                     >
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
                     </button>
@@ -194,13 +194,13 @@ const AgedStockManager: React.FC = () => {
 
                 {/* Data-quality notes */}
                 {data?.approximate && (
-                    <div className="flex items-start gap-2 p-3 rounded-sm border border-warning/30 bg-warning/5 text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                    <div className="flex items-start gap-2 p-3 rounded-sm border border-warning/30 bg-warning/5 text-xs font-medium text-slate-700 dark:text-slate-300">
                         <Info className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                         MongoDB mode: each item's whole stock uses the date of its oldest purchase still in stock, so ages are approximate.
                     </div>
                 )}
                 {multi > 0 && (
-                    <div className="flex items-start gap-2 p-3 rounded-sm border border-warning/30 bg-warning/5 text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                    <div className="flex items-start gap-2 p-3 rounded-sm border border-warning/30 bg-warning/5 text-xs font-medium text-slate-700 dark:text-slate-300">
                         <Info className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                         {multi.toLocaleString('en-IN')} barcode{multi === 1 ? ' has' : 's have'} more than one purchase entry. Their age uses the earliest entry.
                     </div>
@@ -221,12 +221,12 @@ const AgedStockManager: React.FC = () => {
 
                 {/* Month / age-group picker */}
                 <div className="flex flex-col md:flex-row md:items-center gap-3">
-                    <label htmlFor="stock-age-month" className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider shrink-0">Show</label>
+                    <label htmlFor="stock-age-month" className="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0">Show</label>
                     <select
                         id="stock-age-month"
                         value={selection}
                         onChange={(e) => select(e.target.value)}
-                        className="w-full md:w-96 px-3 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
+                        className="w-full md:w-96 px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
                     >
                         <option value="all">All months — {qtyText(totals.qty)} pcs · {rupees(totals.value)}</option>
                         <optgroup label="Age groups">
@@ -249,10 +249,10 @@ const AgedStockManager: React.FC = () => {
 
                 {/* Details for the selected month / age group */}
                 {data?.detail && (
-                    <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm p-4 space-y-4">
+                    <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm p-4 space-y-4">
                         <div className="flex items-baseline justify-between gap-2 flex-wrap">
                             <h3 className="text-base font-black">{detailTitle}</h3>
-                            <span className="text-[11px] text-neutral-400 font-medium">Purchased / sold / returned are for the lots that still have stock</span>
+                            <span className="text-[11px] text-slate-400 font-medium">Purchased / sold / returned are for the lots that still have stock</span>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
                             <Stat label="Lots" value={data.detail.lots.toLocaleString('en-IN')} />
@@ -265,7 +265,7 @@ const AgedStockManager: React.FC = () => {
                         </div>
                         {data.detail.suppliers.length > 0 && (
                             <div>
-                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">
+                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
                                     <Truck className="w-3.5 h-3.5" /> Top suppliers by unsold value
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
@@ -274,10 +274,10 @@ const AgedStockManager: React.FC = () => {
                                             key={sup.name}
                                             onClick={() => setSearchInput(sup.name === 'Unknown supplier' ? '' : sup.name)}
                                             title="Filter the table by this supplier"
-                                            className="text-left p-2.5 rounded-sm border border-neutral-100 dark:border-neutral-700 hover:border-primary/40 transition"
+                                            className="text-left p-2.5 rounded-sm border border-slate-100 dark:border-slate-700 hover:border-primary/40 transition"
                                         >
                                             <div className="text-xs font-bold truncate">{sup.name}</div>
-                                            <div className="text-[11px] text-neutral-500 font-medium">{rupees(sup.value)} · {qtyText(sup.qty)} pcs · {sup.lots.toLocaleString('en-IN')} lots</div>
+                                            <div className="text-[11px] text-slate-500 font-medium">{rupees(sup.value)} · {qtyText(sup.qty)} pcs · {sup.lots.toLocaleString('en-IN')} lots</div>
                                         </button>
                                     ))}
                                 </div>
@@ -289,29 +289,29 @@ const AgedStockManager: React.FC = () => {
                 {/* Search + purchase date range */}
                 <div className="flex flex-col lg:flex-row gap-3">
                     <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
                             type="text"
                             placeholder="Search product, barcode or supplier..."
-                            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium"
+                            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                         />
                     </div>
-                    <div className="flex flex-wrap items-center gap-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm px-3 py-2 shadow-sm">
-                        <CalendarDays className="w-4 h-4 text-neutral-400" />
-                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Purchased</span>
-                        <label className="flex items-center gap-1 text-xs font-medium text-neutral-500">
+                    <div className="flex flex-wrap items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm px-3 py-2 shadow-sm">
+                        <CalendarDays className="w-4 h-4 text-slate-400" />
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Purchased</span>
+                        <label className="flex items-center gap-1 text-xs font-medium text-slate-500">
                             From
                             <input
                                 type="date"
                                 value={fromDate}
                                 max={toDate || data?.asOf || undefined}
                                 onChange={(e) => setRange(e.target.value, toDate)}
-                                className="px-2 py-1.5 bg-transparent border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm text-neutral-900 dark:text-white outline-none focus:ring-2 focus:ring-primary/20"
+                                className="px-2 py-1.5 bg-transparent border border-slate-200 dark:border-slate-700 rounded-sm text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-primary/20"
                             />
                         </label>
-                        <label className="flex items-center gap-1 text-xs font-medium text-neutral-500">
+                        <label className="flex items-center gap-1 text-xs font-medium text-slate-500">
                             To
                             <input
                                 type="date"
@@ -319,11 +319,11 @@ const AgedStockManager: React.FC = () => {
                                 min={fromDate || undefined}
                                 max={data?.asOf || undefined}
                                 onChange={(e) => setRange(fromDate, e.target.value)}
-                                className="px-2 py-1.5 bg-transparent border border-neutral-200 dark:border-neutral-700 rounded-sm text-sm text-neutral-900 dark:text-white outline-none focus:ring-2 focus:ring-primary/20"
+                                className="px-2 py-1.5 bg-transparent border border-slate-200 dark:border-slate-700 rounded-sm text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-primary/20"
                             />
                         </label>
                         {hasRange && (
-                            <button onClick={() => setRange('', '')} className="p-1.5 rounded-sm text-neutral-400 hover:text-error hover:bg-error/5 transition" aria-label="Clear purchase date range" title="Clear dates">
+                            <button onClick={() => setRange('', '')} className="p-1.5 rounded-sm text-slate-400 hover:text-error hover:bg-error/5 transition" aria-label="Clear purchase date range" title="Clear dates">
                                 <X className="w-4 h-4" />
                             </button>
                         )}
@@ -331,10 +331,10 @@ const AgedStockManager: React.FC = () => {
                 </div>
 
                 {/* Lots */}
-                <div className="bg-white dark:bg-neutral-800 rounded-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm tabular-nums">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
+                            <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
                                 <tr>
                                     <SortTh label="Product" col="name" sort={srt.sort} dir={srt.dir} onSort={srt.onSort} />
                                     <SortTh label="Supplier" col="supplier" sort={srt.sort} dir={srt.dir} onSort={srt.onSort} />
@@ -346,21 +346,21 @@ const AgedStockManager: React.FC = () => {
                                     <SortTh label="Value (cost)" col="value" sort={srt.sort} dir={srt.dir} onSort={srt.onSort} align="right" />
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {(data?.items ?? []).map(r => (
-                                    <tr key={`${r.barcode}-${r._id}`} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors">
+                                    <tr key={`${r.barcode}-${r._id}`} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                                         <td className="p-4">
                                             <div className="flex items-start gap-3">
                                                 <Package className={`w-4 h-4 mt-0.5 shrink-0 ${bucketTone(r.bucket)}`} />
                                                 <div>
-                                                    <div className="font-bold text-neutral-900 dark:text-white">{r.name}</div>
-                                                    <div className="text-[11px] text-neutral-400 font-medium">
+                                                    <div className="font-bold text-slate-900 dark:text-white">{r.name}</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">
                                                         {r.barcode}{r.category ? ` · ${r.category}` : ''}
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-4 text-neutral-600 dark:text-neutral-300">{r.supplier || '—'}</td>
+                                        <td className="p-4 text-slate-600 dark:text-slate-300">{r.supplier || '—'}</td>
                                         <td className="p-4">
                                             <div className="font-medium">{r.purchaseDate ?? '—'}</div>
                                             <div className={`text-[11px] font-bold ${bucketTone(r.bucket)}`}>{ageText(r)}</div>
@@ -374,14 +374,14 @@ const AgedStockManager: React.FC = () => {
                                 ))}
                                 {!loading && (data?.items ?? []).length === 0 && (
                                     <tr>
-                                        <td colSpan={8} className="p-10 text-center text-sm text-neutral-400 font-medium">
+                                        <td colSpan={8} className="p-10 text-center text-sm text-slate-400 font-medium">
                                             {data?.asOf === null ? 'No shop sales data found yet.' : hasRange ? 'No unsold stock bought in this date range.' : 'No unsold stock in this group.'}
                                         </td>
                                     </tr>
                                 )}
                                 {loading && !data && (
                                     <tr>
-                                        <td colSpan={8} className="p-10 text-center text-sm text-neutral-400 font-medium">Loading aged stock…</td>
+                                        <td colSpan={8} className="p-10 text-center text-sm text-slate-400 font-medium">Loading aged stock…</td>
                                     </tr>
                                 )}
                             </tbody>
@@ -389,7 +389,7 @@ const AgedStockManager: React.FC = () => {
                     </div>
 
                     {pagination && pagination.total > 0 && (
-                        <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-100 dark:border-neutral-800 text-xs text-neutral-500 font-medium">
+                        <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 font-medium">
                             <span>
                                 {((pagination.page - 1) * pagination.limit + 1).toLocaleString('en-IN')}–
                                 {Math.min(pagination.page * pagination.limit, pagination.total).toLocaleString('en-IN')} of {pagination.total.toLocaleString('en-IN')} lots
@@ -398,7 +398,7 @@ const AgedStockManager: React.FC = () => {
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={loading || pagination.page <= 1}
-                                    className="p-1.5 rounded-sm border border-neutral-200 dark:border-neutral-700 disabled:opacity-40"
+                                    className="p-1.5 rounded-sm border border-slate-200 dark:border-slate-700 disabled:opacity-40"
                                     aria-label="Previous page"
                                 >
                                     <ChevronLeft className="w-4 h-4" />
@@ -407,7 +407,7 @@ const AgedStockManager: React.FC = () => {
                                 <button
                                     onClick={() => setPage(p => Math.min(pagination.pages, p + 1))}
                                     disabled={loading || pagination.page >= pagination.pages}
-                                    className="p-1.5 rounded-sm border border-neutral-200 dark:border-neutral-700 disabled:opacity-40"
+                                    className="p-1.5 rounded-sm border border-slate-200 dark:border-slate-700 disabled:opacity-40"
                                     aria-label="Next page"
                                 >
                                     <ChevronRight className="w-4 h-4" />
@@ -422,17 +422,17 @@ const AgedStockManager: React.FC = () => {
 };
 
 const Kpi: React.FC<{ label: string; value: string; sub?: string; tone?: string }> = ({ label, value, sub, tone }) => (
-    <div className="bg-white dark:bg-neutral-800 p-4 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
-        <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1">{label}</p>
+    <div className="bg-white dark:bg-slate-800 p-4 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
         <h3 className={`text-2xl font-black ${tone ?? ''}`}>{value}</h3>
-        {sub && <p className="text-[11px] text-neutral-500 mt-1 font-medium">{sub}</p>}
+        {sub && <p className="text-[11px] text-slate-500 mt-1 font-medium">{sub}</p>}
     </div>
 );
 
 const Stat: React.FC<{ label: string; value: string; strong?: boolean }> = ({ label, value, strong }) => (
     <div>
-        <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">{label}</p>
-        <p className={`text-lg ${strong ? 'font-black' : 'font-bold text-neutral-700 dark:text-neutral-200'}`}>{value}</p>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</p>
+        <p className={`text-lg ${strong ? 'font-black' : 'font-bold text-slate-700 dark:text-slate-200'}`}>{value}</p>
     </div>
 );
 

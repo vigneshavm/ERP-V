@@ -26,15 +26,15 @@ import {
 const QuickAction: React.FC<{ title: string; icon: React.ElementType; onClick: () => void; color: string }> = ({ title, icon: Icon, onClick, color }) => (
     <button
         onClick={onClick}
-        className="flex items-center justify-between p-6 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-[2rem] hover:border-primary group transition-all duration-300 shadow-sm"
+        className="flex items-center justify-between p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[2rem] hover:border-primary group transition-all duration-300 shadow-sm"
     >
         <div className="flex items-center gap-4">
             <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-300 ${color} shadow-sm group-hover:scale-110`}>
                 <Icon className="w-6 h-6" />
             </div>
-            <span className="text-xs font-black text-neutral-600 dark:text-neutral-400 uppercase tracking-widest group-hover:text-primary transition-colors">{title}</span>
+            <span className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{title}</span>
         </div>
-        <ChevronRight className="w-5 h-5 text-neutral-300 group-hover:translate-x-2 transition-all" />
+        <ChevronRight className="w-5 h-5 text-slate-300 group-hover:translate-x-2 transition-all" />
     </button>
 );
 
@@ -57,7 +57,7 @@ const CashBankPosition: React.FC = () => {
                 <div className="flex justify-center items-center py-40">
                     <div className="flex flex-col items-center gap-6">
                         <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] animate-pulse">Synchronizing Treasury Nodes...</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Synchronizing Treasury Nodes...</p>
                     </div>
                 </div>
             </Layout>
@@ -121,14 +121,14 @@ const CashBankPosition: React.FC = () => {
                                 </button>
                             </div>
 
-                            <div className="bg-neutral-900 dark:bg-neutral-900 p-10 rounded-xl text-white shadow-2xl space-y-10 relative overflow-hidden group border border-neutral-800">
+                            <div className="bg-slate-900 dark:bg-slate-900 p-10 rounded-xl text-white shadow-2xl space-y-10 relative overflow-hidden group border border-slate-800">
                                 <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-125 group-hover:rotate-12 transition-all duration-1000">
                                     <PiggyBank className="w-56 h-56" />
                                 </div>
                                 <div className="relative z-10">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500">Digital Treasury Node</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Digital Treasury Node</p>
                                     <h2 className="text-5xl font-black mt-3 tracking-tighter tabular-nums">₹{(position?.totalBankBalance || 0).toLocaleString('en-IN')}</h2>
-                                    <p className="text-xs font-bold text-neutral-400 mt-4 flex items-center gap-2 italic">
+                                    <p className="text-xs font-bold text-slate-400 mt-4 flex items-center gap-2 italic">
                                         <ArrowUpRight className="w-4 h-4 text-primary" /> Mapping {position?.breakdown.bank.accounts} active accounts
                                     </p>
                                 </div>
@@ -144,7 +144,7 @@ const CashBankPosition: React.FC = () => {
 
                     {/* Aggregate Exposure Sidebar */}
                     <div className="col-span-12 lg:col-span-4 space-y-8">
-                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-xl shadow-sm relative overflow-hidden group">
+                        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-10 rounded-xl shadow-sm relative overflow-hidden group">
                             <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-700">
                                 <PieChart className="w-48 h-48" />
                             </div>
@@ -153,27 +153,27 @@ const CashBankPosition: React.FC = () => {
                                     <div className="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center text-primary shadow-sm">
                                         <PieChart className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-lg font-black text-neutral-900 dark:text-white uppercase tracking-tighter">Capital Allocation</h3>
+                                    <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter">Capital Allocation</h3>
                                 </div>
 
                                 <div className="space-y-8">
                                     <div className="space-y-4">
-                                        <div className="flex justify-between text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">
+                                        <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                                             <span>Allocation Metric</span>
                                             <span>100% Total Volume</span>
                                         </div>
-                                        <div className="flex h-4 w-full rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700">
+                                        <div className="flex h-4 w-full rounded-full overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                                             <div className="bg-primary shadow-lg shadow-primary/40 transition-all duration-1000" style={{ width: `${position?.breakdown.cash.percentage}%` }}></div>
-                                            <div className="bg-neutral-800 dark:bg-neutral-400 transition-all duration-1000" style={{ width: `${position?.breakdown.bank.percentage}%` }}></div>
+                                            <div className="bg-slate-800 dark:bg-slate-400 transition-all duration-1000" style={{ width: `${position?.breakdown.bank.percentage}%` }}></div>
                                         </div>
                                         <div className="flex gap-6">
                                             <div className="flex items-center gap-2.5">
                                                 <div className="w-3 h-3 rounded-full bg-primary" />
-                                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{position?.breakdown.cash.percentage || 0}% Vault</span>
+                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{position?.breakdown.cash.percentage || 0}% Vault</span>
                                             </div>
                                             <div className="flex items-center gap-2.5">
-                                                <div className="w-3 h-3 rounded-full bg-neutral-800 dark:bg-neutral-400" />
-                                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{position?.breakdown.bank.percentage || 0}% Bank</span>
+                                                <div className="w-3 h-3 rounded-full bg-slate-800 dark:bg-slate-400" />
+                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{position?.breakdown.bank.percentage || 0}% Bank</span>
                                             </div>
                                         </div>
                                     </div>
@@ -182,12 +182,12 @@ const CashBankPosition: React.FC = () => {
                         </div>
 
                         {/* Internal Clearing Execution */}
-                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-xl shadow-sm space-y-8">
+                        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-10 rounded-xl shadow-sm space-y-8">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-sm bg-primary-soft dark:bg-primary-soft flex items-center justify-center text-primary shadow-sm">
                                     <ArrowRightLeft className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-lg font-black text-neutral-900 dark:text-white uppercase tracking-tighter">Node Management</h3>
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter">Node Management</h3>
                             </div>
                             <div className="grid grid-cols-1 gap-4">
                                 <QuickAction
@@ -214,7 +214,7 @@ const CashBankPosition: React.FC = () => {
                         {/* Fiscal Advisory Stream */}
                         <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/5 border border-warning-line dark:border-warning/20 p-10 rounded-xl space-y-6">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-sm text-warning shadow-sm border border-warning-line dark:border-warning/20">
+                                <div className="p-3 bg-white dark:bg-slate-900 rounded-sm text-warning shadow-sm border border-warning-line dark:border-warning/20">
                                     <Zap className="w-6 h-6" />
                                 </div>
                                 <h4 className="text-sm font-black text-warning dark:text-warning uppercase tracking-[0.2em] leading-none">Fiscal Advisory</h4>

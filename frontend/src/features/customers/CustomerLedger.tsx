@@ -162,7 +162,7 @@ const CustomerLedgerPage: React.FC = () => {
             case 'SALE': return <Receipt className="w-4 h-4 text-primary" />;
             case 'PAYMENT': return <CreditCard className="w-4 h-4 text-success" />;
             case 'RETURN': return <RotateCcw className="w-4 h-4 text-warning" />;
-            default: return <Receipt className="w-4 h-4 text-neutral-400" />;
+            default: return <Receipt className="w-4 h-4 text-slate-400" />;
         }
     };
 
@@ -175,24 +175,24 @@ const CustomerLedgerPage: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="page-title text-neutral-900 dark:text-white flex items-center gap-2">
+                    <h2 className="page-title text-slate-900 dark:text-white flex items-center gap-2">
                         <Book className="w-6 h-6 text-primary" />
                         Customer Ledger
                     </h2>
-                    <p className="text-neutral-500 text-sm mt-1">View transaction history and balances for each customer</p>
+                    <p className="text-slate-500 text-sm mt-1">View transaction history and balances for each customer</p>
                 </div>
-                <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
+                <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
                     <Download className="w-4 h-4" /> Export Ledger
                 </button>
             </div>
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-xs font-medium text-neutral-500 uppercase">Customers with Balance</p>
-                            <p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">{filteredLedgers.length}</p>
+                            <p className="text-xs font-medium text-slate-500 uppercase">Customers with Balance</p>
+                            <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{filteredLedgers.length}</p>
                         </div>
                         <div className="p-3 bg-primary/10 rounded-xl">
                             <User className="w-6 h-6 text-primary" />
@@ -200,10 +200,10 @@ const CustomerLedgerPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-xs font-medium text-neutral-500 uppercase">Total Receivable</p>
+                            <p className="text-xs font-medium text-slate-500 uppercase">Total Receivable</p>
                             <p className="text-2xl font-bold text-error mt-1">₹{totalReceivable.toLocaleString()}</p>
                         </div>
                         <div className="p-3 bg-error/10 rounded-xl">
@@ -212,10 +212,10 @@ const CustomerLedgerPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-xs font-medium text-neutral-500 uppercase">Total Advance</p>
+                            <p className="text-xs font-medium text-slate-500 uppercase">Total Advance</p>
                             <p className="text-2xl font-bold text-success mt-1">₹{totalAdvance.toLocaleString()}</p>
                         </div>
                         <div className="p-3 bg-success/10 rounded-xl">
@@ -226,37 +226,37 @@ const CustomerLedgerPage: React.FC = () => {
             </div>
 
             {/* Search */}
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-wrap gap-4 items-end">
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-end">
                 <div className="flex-1 min-w-[250px]">
-                    <label className="text-xs text-neutral-500 font-bold uppercase mb-1 block">Search Customer</label>
+                    <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Search Customer</label>
                     <div className="relative">
                         <input
                             type="text"
                             placeholder="Name or phone..."
-                            className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
-                        <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
+                        <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                     </div>
                 </div>
 
                 {selectedLedger && (
                     <>
                         <div>
-                            <label className="text-xs text-neutral-500 font-bold uppercase mb-1 block">From Date</label>
+                            <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">From Date</label>
                             <input
                                 type="date"
-                                className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                                className="px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                                 value={dateFrom}
                                 onChange={e => setDateFrom(e.target.value)}
                             />
                         </div>
                         <div>
-                            <label className="text-xs text-neutral-500 font-bold uppercase mb-1 block">To Date</label>
+                            <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">To Date</label>
                             <input
                                 type="date"
-                                className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                                className="px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                                 value={dateTo}
                                 onChange={e => setDateTo(e.target.value)}
                             />
@@ -268,16 +268,16 @@ const CustomerLedgerPage: React.FC = () => {
             {/* Customer List with Expandable Ledgers */}
             <div className="space-y-3">
                 {filteredLedgers.length === 0 ? (
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center text-neutral-500">
-                        <Book className="w-12 h-12 mx-auto mb-2 text-neutral-300" />
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 text-center text-slate-500">
+                        <Book className="w-12 h-12 mx-auto mb-2 text-slate-300" />
                         <p>No customer ledgers found</p>
                     </div>
                 ) : (
                     filteredLedgers.map(ledger => (
-                        <div key={ledger.customerId} className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                        <div key={ledger.customerId} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
                             {/* Customer Header */}
                             <div
-                                className="p-4 flex justify-between items-center cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
+                                className="p-4 flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50"
                                 onClick={() => toggleExpand(ledger.customerId)}
                             >
                                 <div className="flex items-center gap-3">
@@ -285,31 +285,31 @@ const CustomerLedgerPage: React.FC = () => {
                                         <span className="text-white font-bold">{ledger.customerName.charAt(0)}</span>
                                     </div>
                                     <div>
-                                        <p className="font-bold text-neutral-900 dark:text-white">{ledger.customerName}</p>
-                                        <p className="text-xs text-neutral-500">{ledger.phone || 'No phone'} • {ledger.entries.length} transactions</p>
+                                        <p className="font-bold text-slate-900 dark:text-white">{ledger.customerName}</p>
+                                        <p className="text-xs text-slate-500">{ledger.phone || 'No phone'} • {ledger.entries.length} transactions</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <div className="text-right">
-                                        <p className="text-xs text-neutral-500">Balance</p>
-                                        <p className={`font-bold ${ledger.closingBalance > 0 ? 'text-error' : ledger.closingBalance < 0 ? 'text-success' : 'text-neutral-500'}`}>
+                                        <p className="text-xs text-slate-500">Balance</p>
+                                        <p className={`font-bold ${ledger.closingBalance > 0 ? 'text-error' : ledger.closingBalance < 0 ? 'text-success' : 'text-slate-500'}`}>
                                             {ledger.closingBalance > 0 ? '₹' : ledger.closingBalance < 0 ? '-₹' : '₹'}
                                             {Math.abs(ledger.closingBalance).toLocaleString()}
                                         </p>
                                     </div>
                                     {expandedCustomers.has(ledger.customerId) ? (
-                                        <ChevronUp className="w-5 h-5 text-neutral-400" />
+                                        <ChevronUp className="w-5 h-5 text-slate-400" />
                                     ) : (
-                                        <ChevronDown className="w-5 h-5 text-neutral-400" />
+                                        <ChevronDown className="w-5 h-5 text-slate-400" />
                                     )}
                                 </div>
                             </div>
 
                             {/* Expanded Ledger Entries */}
                             {expandedCustomers.has(ledger.customerId) && (
-                                <div className="border-t border-neutral-100 dark:border-neutral-700">
+                                <div className="border-t border-slate-100 dark:border-slate-700">
                                     <table className="w-full text-sm">
-                                        <thead className="bg-neutral-50 dark:bg-neutral-900 text-neutral-500 text-xs uppercase">
+                                        <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 text-xs uppercase">
                                             <tr>
                                                 <th className="p-3 text-left">Date</th>
                                                 <th className="p-3 text-left">Type</th>
@@ -320,38 +320,38 @@ const CustomerLedgerPage: React.FC = () => {
                                                 <th className="p-3 text-right">Balance</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                                        <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                                             {ledger.entries.map(entry => (
-                                                <tr key={entry.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                                                    <td className="p-3 text-neutral-600 dark:text-neutral-400">
+                                                <tr key={entry.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
+                                                    <td className="p-3 text-slate-600 dark:text-slate-400">
                                                         {formatDate(entry.date)}
                                                     </td>
                                                     <td className="p-3">
                                                         <div className="flex items-center gap-2">
                                                             {getTypeIcon(entry.type)}
-                                                            <span className="text-neutral-700 dark:text-neutral-300">{entry.type}</span>
+                                                            <span className="text-slate-700 dark:text-slate-300">{entry.type}</span>
                                                         </div>
                                                     </td>
                                                     <td className="p-3 font-mono text-xs text-primary">{entry.reference}</td>
-                                                    <td className="p-3 text-neutral-500">{entry.description}</td>
+                                                    <td className="p-3 text-slate-500">{entry.description}</td>
                                                     <td className="p-3 text-right font-medium text-error">
                                                         {entry.debit > 0 ? `₹${entry.debit.toLocaleString()}` : '-'}
                                                     </td>
                                                     <td className="p-3 text-right font-medium text-success">
                                                         {entry.credit > 0 ? `₹${entry.credit.toLocaleString()}` : '-'}
                                                     </td>
-                                                    <td className="p-3 text-right font-bold text-neutral-900 dark:text-white">
+                                                    <td className="p-3 text-right font-bold text-slate-900 dark:text-white">
                                                         ₹{entry.balance.toLocaleString()}
                                                     </td>
                                                 </tr>
                                             ))}
                                         </tbody>
-                                        <tfoot className="bg-neutral-50 dark:bg-neutral-900 font-bold">
+                                        <tfoot className="bg-slate-50 dark:bg-slate-900 font-bold">
                                             <tr>
-                                                <td colSpan={4} className="p-3 text-right text-neutral-600 dark:text-neutral-400">Totals:</td>
+                                                <td colSpan={4} className="p-3 text-right text-slate-600 dark:text-slate-400">Totals:</td>
                                                 <td className="p-3 text-right text-error">₹{ledger.totalDebit.toLocaleString()}</td>
                                                 <td className="p-3 text-right text-success">₹{ledger.totalCredit.toLocaleString()}</td>
-                                                <td className="p-3 text-right text-neutral-900 dark:text-white">₹{ledger.closingBalance.toLocaleString()}</td>
+                                                <td className="p-3 text-right text-slate-900 dark:text-white">₹{ledger.closingBalance.toLocaleString()}</td>
                                             </tr>
                                         </tfoot>
                                     </table>

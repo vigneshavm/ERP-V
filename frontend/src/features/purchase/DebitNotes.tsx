@@ -38,7 +38,7 @@ const REASON_LABELS: Record<string, string> = {
 };
 
 const STATUS_CONFIG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
-    DRAFT: { label: 'Drafted', icon: FileText, color: 'text-neutral-600', bg: 'bg-neutral-100' },
+    DRAFT: { label: 'Drafted', icon: FileText, color: 'text-slate-600', bg: 'bg-slate-100' },
     SENT: { label: 'Sent', icon: Clock, color: 'text-primary', bg: 'bg-primary/10' },
     ACKNOWLEDGED: { label: 'Acknowledged', icon: CheckCircle, color: 'text-info', bg: 'bg-info/10' },
     SETTLED: { label: 'Settled', icon: CheckCircle, color: 'text-success', bg: 'bg-success/10' }
@@ -120,7 +120,7 @@ const DebitNotes: React.FC = () => {
             RETURN_SHIPPING: 'bg-primary-soft text-primary dark:bg-primary-soft dark:text-primary',
             SERVICE_CHARGE: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-accent',
             PRICE_DIFFERENCE: 'bg-success-soft text-success dark:bg-success-soft dark:text-success',
-            OTHER: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400'
+            OTHER: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
         };
         return <span className={`px-2 py-0.5 text-[10px] font-bold rounded ${colors[reason] || colors.OTHER}`}>
             {REASON_LABELS[reason] || reason}
@@ -135,7 +135,7 @@ const DebitNotes: React.FC = () => {
                     description={`Track returns and claims against suppliers • ${getBranchName(currentBranch)}`}
                     actions={
                         <>
-                            <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
+                            <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
                                 <Download className="w-4 h-4" /> Export
                             </button>
                             <button
@@ -156,18 +156,18 @@ const DebitNotes: React.FC = () => {
                 />
 
                 {/* Filters */}
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-wrap gap-4 items-end">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-end">
                     <div className="flex-1 min-w-[200px]">
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">Search</label>
                         <div className="relative">
                             <input
                                 type="text"
                                 placeholder="DN # or Vendor..."
-                                className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                                className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
-                            <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
+                            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                         </div>
                     </div>
 
@@ -175,7 +175,7 @@ const DebitNotes: React.FC = () => {
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">From</label>
                         <input
                             type="date"
-                            className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                             value={dateFrom}
                             onChange={e => setDateFrom(e.target.value)}
                         />
@@ -185,7 +185,7 @@ const DebitNotes: React.FC = () => {
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">To</label>
                         <input
                             type="date"
-                            className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                             value={dateTo}
                             onChange={e => setDateTo(e.target.value)}
                         />
@@ -194,7 +194,7 @@ const DebitNotes: React.FC = () => {
                     <div>
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">Status</label>
                         <select
-                            className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                             value={statusFilter}
                             onChange={e => setStatusFilter(e.target.value)}
                         >
@@ -209,7 +209,7 @@ const DebitNotes: React.FC = () => {
                     <div>
                         <label className="text-xs text-secondary font-bold uppercase mb-1 block">Reason</label>
                         <select
-                            className="px-3 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                            className="px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                             value={reasonFilter}
                             onChange={e => setReasonFilter(e.target.value)}
                         >
@@ -224,17 +224,17 @@ const DebitNotes: React.FC = () => {
 
                     <button
                         onClick={() => { setSearchTerm(''); setStatusFilter('ALL'); setReasonFilter('ALL'); setDateFrom(''); setDateTo(''); }}
-                        className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-300 rounded-lg text-sm font-bold"
+                        className="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold"
                     >
                         Clear
                     </button>
                 </div>
 
                 {/* Debit Notes Table */}
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
                     <div className="hidden md:block overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900 text-secondary uppercase text-xs font-medium">
+                            <thead className="bg-slate-50 dark:bg-slate-900 text-secondary uppercase text-xs font-medium">
                                 <tr>
                                     <th className="p-4">DN #</th>
                                     <th className="p-4">Date</th>
@@ -246,26 +246,26 @@ const DebitNotes: React.FC = () => {
                                     <th className="p-4 text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                                 {loading ? (
-                                    <tr><td colSpan={8} className="p-8 text-center text-neutral-500">
+                                    <tr><td colSpan={8} className="p-8 text-center text-slate-500">
                                         <div className="flex flex-col items-center gap-2">
-                                            <Loader2 className="w-8 h-8 text-neutral-300 animate-spin" />
+                                            <Loader2 className="w-8 h-8 text-slate-300 animate-spin" />
                                             <p>Loading debit notes...</p>
                                         </div>
                                     </td></tr>
                                 ) : filteredNotes.length === 0 ? (
-                                    <tr><td colSpan={8} className="p-8 text-center text-neutral-500">
+                                    <tr><td colSpan={8} className="p-8 text-center text-slate-500">
                                         <div className="flex flex-col items-center gap-2">
-                                            <RotateCcw className="w-8 h-8 text-neutral-300" />
+                                            <RotateCcw className="w-8 h-8 text-slate-300" />
                                             <p>No debit notes found</p>
                                         </div>
                                     </td></tr>
                                 ) : (
                                     filteredNotes.map(note => (
-                                        <tr key={note._id || note.noteId} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                                        <tr key={note._id || note.noteId} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
                                             <td className="p-4 font-mono text-xs text-error font-medium">{note.noteId}</td>
-                                            <td className="p-4 text-neutral-600 dark:text-neutral-400">
+                                            <td className="p-4 text-slate-600 dark:text-slate-400">
                                                 {formatDate(note.date)}
                                             </td>
                                             <td className="p-4">
@@ -273,15 +273,15 @@ const DebitNotes: React.FC = () => {
                                                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                                                         <Truck className="w-4 h-4 text-primary" />
                                                     </div>
-                                                    <span className="font-medium text-neutral-900 dark:text-white">{note.vendorName}</span>
+                                                    <span className="font-medium text-slate-900 dark:text-white">{note.vendorName}</span>
                                                 </div>
                                             </td>
-                                            <td className="p-4 font-mono text-xs text-neutral-500">{note.originalBillNumber || note.originalGrnNumber || '-'}</td>
+                                            <td className="p-4 font-mono text-xs text-slate-500">{note.originalBillNumber || note.originalGrnNumber || '-'}</td>
                                             <td className="p-4">{getReasonBadge(note.reason)}</td>
                                             <td className="p-4 text-right font-bold text-error">₹{note.totalAmount.toLocaleString()}</td>
                                             <td className="p-4 text-center">{getStatusBadge(note.status)}</td>
                                             <td className="p-4 text-center">
-                                                <button className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg" title="View">
+                                                <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg" title="View">
                                                     <Eye className="w-4 h-4 text-primary" />
                                                 </button>
                                             </td>
@@ -293,20 +293,20 @@ const DebitNotes: React.FC = () => {
                     </div>
 
                     {/* Mobile View */}
-                    <div className="md:hidden divide-y divide-neutral-100 dark:divide-neutral-700">
+                    <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-700">
                         {filteredNotes.length === 0 ? (
-                            <div className="p-8 text-center text-neutral-500">No debit notes</div>
+                            <div className="p-8 text-center text-slate-500">No debit notes</div>
                         ) : (
                             filteredNotes.map(note => (
                                 <div key={note._id || note.noteId} className="p-4">
                                     <div className="flex justify-between items-start mb-2">
                                         <div>
                                             <p className="font-mono text-xs text-error font-medium">{note.noteId}</p>
-                                            <p className="font-bold text-neutral-900 dark:text-white">{note.vendorName}</p>
+                                            <p className="font-bold text-slate-900 dark:text-white">{note.vendorName}</p>
                                         </div>
                                         {getStatusBadge(note.status)}
                                     </div>
-                                    <div className="flex justify-between items-center bg-neutral-50 dark:bg-neutral-700/50 p-3 rounded-lg mt-2">
+                                    <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg mt-2">
                                         <div className="flex items-center gap-2">
                                             {getReasonBadge(note.reason)}
                                         </div>

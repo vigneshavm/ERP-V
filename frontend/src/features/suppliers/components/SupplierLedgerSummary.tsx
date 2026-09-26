@@ -22,12 +22,12 @@ const SupplierLedgerSummary: React.FC<SupplierLedgerSummaryProps> = ({ data }) =
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Opening Balance */}
-            <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-slate-200/20 dark:bg-neutral-700/30 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
+            <div className="bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-5 rounded-sm flex flex-col justify-between min-h-[120px] relative overflow-hidden group shadow-sm">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-slate-200/20 dark:bg-slate-700/30 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-all" />
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
-                        <TrendingUp className="w-4 h-4 text-slate-500 dark:text-neutral-400" />
-                        <span className="text-xs font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wide">Opening Balance</span>
+                        <TrendingUp className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Opening Balance</span>
                     </div>
                     <span className="text-3xl font-black text-slate-900 dark:text-white">{formatCurrency(data.openingBalance)}</span>
                 </div>

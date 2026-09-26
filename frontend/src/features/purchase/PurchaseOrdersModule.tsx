@@ -127,7 +127,7 @@ const PurchaseOrdersModule: React.FC = () => {
                 <div className="flex justify-center items-center py-40">
                     <div className="flex flex-col items-center gap-6">
                         <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] animate-pulse">Synchronizing Purchase Nodes...</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Synchronizing Purchase Nodes...</p>
                     </div>
                 </div>
             );
@@ -157,41 +157,41 @@ const PurchaseOrdersModule: React.FC = () => {
 
                         {/* Stats Node Row */}
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500">
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="p-3 bg-primary-soft text-primary dark:bg-primary-soft rounded-sm group-hover:scale-110 transition-transform shadow-sm">
                                         <ClipboardList className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Total Orders</h3>
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Orders</h3>
                                 </div>
-                                <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">{stats.total}</p>
+                                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">{stats.total}</p>
                             </div>
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-warning/20 transition-all duration-500">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-warning/20 transition-all duration-500">
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="p-3 bg-warning-soft text-warning dark:bg-warning-soft rounded-sm group-hover:scale-110 transition-transform shadow-sm">
                                         <Clock className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Awaiting Review</h3>
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Awaiting Review</h3>
                                 </div>
                                 <p className="text-3xl font-black text-warning dark:text-warning tracking-tighter tabular-nums">{stats.pending}</p>
                             </div>
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-success/20 transition-all duration-500">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-success/20 transition-all duration-500">
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="p-3 bg-success-soft text-success dark:bg-success-soft rounded-sm group-hover:scale-110 transition-transform shadow-sm">
                                         <CheckCircle className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Approved Nodes</h3>
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Approved Nodes</h3>
                                 </div>
                                 <p className="text-3xl font-black text-success dark:text-success tracking-tighter tabular-nums">{stats.approved}</p>
                             </div>
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-neutral-400/20 transition-all duration-500">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-slate-400/20 transition-all duration-500">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="p-3 bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 rounded-sm group-hover:scale-110 transition-transform shadow-sm">
+                                    <div className="p-3 bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 rounded-sm group-hover:scale-110 transition-transform shadow-sm">
                                         <Lock className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Fulfilled</h3>
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Fulfilled</h3>
                                 </div>
-                                <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">{stats.converted}</p>
+                                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">{stats.converted}</p>
                             </div>
                         </div>
 

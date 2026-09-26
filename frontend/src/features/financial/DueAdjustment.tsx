@@ -137,7 +137,7 @@ const DueAdjustment = () => {
         return (
             <Layout>
                 <div className="text-center py-12">
-                    <p className="text-gray-500 dark:text-[rgb(var(--color-text-secondary))]">
+                    <p className="text-slate-500 dark:text-[rgb(var(--color-text-secondary))]">
                         Customer not found
                     </p>
                     <button
@@ -168,15 +168,15 @@ const DueAdjustment = () => {
                 <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-xl shadow-sm dark:shadow-lg border dark:border-[rgb(var(--color-border))] p-6 mb-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-[rgb(var(--color-text))]">
+                            <h3 className="text-lg font-semibold text-slate-900 dark:text-[rgb(var(--color-text))]">
                                 {customer.name}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
+                            <p className="text-sm text-slate-600 dark:text-[rgb(var(--color-text-secondary))]">
                                 {customer.phone}
                             </p>
                         </div>
                         <div className="text-right">
-                            <p className="text-sm text-gray-600 dark:text-[rgb(var(--color-text-secondary))]">
+                            <p className="text-sm text-slate-600 dark:text-[rgb(var(--color-text-secondary))]">
                                 Outstanding Due
                             </p>
                             <p className="text-2xl font-bold text-danger dark:text-danger">
@@ -193,12 +193,12 @@ const DueAdjustment = () => {
                         <div className="mb-6">
                             <label
                                 htmlFor="adjustmentAmount"
-                                className="block text-sm font-medium text-gray-700 dark:text-[rgb(var(--color-text))] mb-2"
+                                className="block text-sm font-medium text-slate-700 dark:text-[rgb(var(--color-text))] mb-2"
                             >
                                 Adjustment Amount <span className="text-danger">*</span>
                             </label>
                             <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-[rgb(var(--color-text-secondary))]">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-[rgb(var(--color-text-secondary))]">
                                     ₹
                                 </span>
                                 <input
@@ -212,7 +212,7 @@ const DueAdjustment = () => {
                                     max={customer.dues}
                                     className={`w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))] ${errors.adjustmentAmount
                                         ? "border-danger"
-                                        : "border-gray-300"
+                                        : "border-slate-300"
                                         }`}
                                     placeholder="0.00"
                                 />
@@ -222,7 +222,7 @@ const DueAdjustment = () => {
                                     {errors.adjustmentAmount}
                                 </p>
                             )}
-                            <p className="mt-1 text-xs text-gray-500 dark:text-[rgb(var(--color-text-secondary))]">
+                            <p className="mt-1 text-xs text-slate-500 dark:text-[rgb(var(--color-text-secondary))]">
                                 Maximum: ₹{customer.dues.toFixed(2)}
                             </p>
                         </div>
@@ -231,7 +231,7 @@ const DueAdjustment = () => {
                         <div className="mb-6">
                             <label
                                 htmlFor="adjustmentMethod"
-                                className="block text-sm font-medium text-gray-700 dark:text-[rgb(var(--color-text))] mb-2"
+                                className="block text-sm font-medium text-slate-700 dark:text-[rgb(var(--color-text))] mb-2"
                             >
                                 Adjustment Method <span className="text-danger">*</span>
                             </label>
@@ -240,7 +240,7 @@ const DueAdjustment = () => {
                                 name="adjustmentMethod"
                                 value={formData.adjustmentMethod}
                                 onChange={handleChange}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))] ${errors.adjustmentMethod ? "border-danger" : "border-gray-300"
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))] ${errors.adjustmentMethod ? "border-danger" : "border-slate-300"
                                     }`}
                             >
                                 <option value="cash">Cash</option>
@@ -259,7 +259,7 @@ const DueAdjustment = () => {
                         <div className="mb-6">
                             <label
                                 htmlFor="notes"
-                                className="block text-sm font-medium text-gray-700 dark:text-[rgb(var(--color-text))] mb-2"
+                                className="block text-sm font-medium text-slate-700 dark:text-[rgb(var(--color-text))] mb-2"
                             >
                                 Notes (Optional)
                             </label>
@@ -269,7 +269,7 @@ const DueAdjustment = () => {
                                 value={formData.notes}
                                 onChange={handleChange}
                                 rows={3}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))]"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))]"
                                 placeholder="Add any additional notes..."
                             />
                         </div>
@@ -279,7 +279,7 @@ const DueAdjustment = () => {
                             <button
                                 type="button"
                                 onClick={() => navigate(`/customers/${id}`)}
-                                className="flex-1 px-6 py-3 border border-gray-300 dark:border-[rgb(var(--color-border))] text-gray-700 dark:text-[rgb(var(--color-text))] rounded-lg hover:bg-gray-50 dark:hover:bg-[rgb(var(--color-input))] transition-colors"
+                                className="flex-1 px-6 py-3 border border-slate-300 dark:border-[rgb(var(--color-border))] text-slate-700 dark:text-[rgb(var(--color-text))] rounded-lg hover:bg-slate-50 dark:hover:bg-[rgb(var(--color-input))] transition-colors"
                             >
                                 Cancel
                             </button>

@@ -76,20 +76,20 @@ const DiscountPermissions: React.FC = () => {
             />
 
             <div className="mb-4 relative max-w-sm">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search by name or email..."
-                    className="w-full pl-9 pr-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                    className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary/20"
                 />
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-neutral-50 dark:bg-neutral-900 text-xs font-bold text-neutral-500 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">
+                        <thead className="bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
                             <tr>
                                 <th className="px-6 py-3">User</th>
                                 <th className="px-6 py-3">Role</th>
@@ -97,12 +97,12 @@ const DiscountPermissions: React.FC = () => {
                                 <th className="px-6 py-3 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                             {filteredUsers.map((u) => (
-                                <tr key={u._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40">
+                                <tr key={u._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40">
                                     <td className="px-6 py-4">
-                                        <div className="text-sm font-bold text-neutral-900 dark:text-white">{u.name}</div>
-                                        <div className="text-xs text-neutral-400">{u.email}</div>
+                                        <div className="text-sm font-bold text-slate-900 dark:text-white">{u.name}</div>
+                                        <div className="text-xs text-slate-400">{u.email}</div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="text-[10px] px-2 py-0.5 rounded border font-bold uppercase bg-primary-soft border-primary/30 text-primary">{u.role}</span>
@@ -116,9 +116,9 @@ const DiscountPermissions: React.FC = () => {
                                                 value={drafts[u._id] ?? ''}
                                                 onChange={(e) => setDrafts(prev => ({ ...prev, [u._id]: e.target.value }))}
                                                 placeholder="Shop default"
-                                                className="w-full pl-3 pr-7 py-1.5 text-sm bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg outline-none"
+                                                className="w-full pl-3 pr-7 py-1.5 text-sm bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none"
                                             />
-                                            <Percent className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400" />
+                                            <Percent className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400" />
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
@@ -134,7 +134,7 @@ const DiscountPermissions: React.FC = () => {
                             ))}
                             {!isLoading && filteredUsers.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-16 text-center text-neutral-400">
+                                    <td colSpan={4} className="px-6 py-16 text-center text-slate-400">
                                         <Percent className="w-10 h-10 mx-auto mb-3 opacity-40" />
                                         No users found.
                                     </td>

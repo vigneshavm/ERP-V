@@ -109,7 +109,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
     }, []);
 
     return (
-        <div className="bg-white dark:bg-neutral-800 p-2 border-b border-neutral-200 dark:border-neutral-700 shadow-sm shrink-0 transition-colors">
+        <div className="bg-white dark:bg-slate-800 p-2 border-b border-slate-200 dark:border-slate-700 shadow-sm shrink-0 transition-colors">
 
 
             <div className="relative mb-2 flex flex-col gap-2">
@@ -119,7 +119,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                             ref={phoneInputRef}
                             type="text"
                             placeholder={t('identifyCustomer')}
-                            className={`w-full pl-8 pr-2 py-1.5 text-xs bg-neutral-50 dark:bg-neutral-900 border ${activeCustomer.id !== 'c1' ? 'border-success text-success dark:text-success/90 ring-2 ring-success/10' : 'border-primary/30 dark:border-primary/60 animate-pulse-subtle'} rounded focus:outline-none focus:ring-2 focus:ring-primary transition-all`}
+                            className={`w-full pl-8 pr-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border ${activeCustomer.id !== 'c1' ? 'border-success text-success dark:text-success/90 ring-2 ring-success/10' : 'border-primary/30 dark:border-primary/60 animate-pulse-subtle'} rounded focus:outline-none focus:ring-2 focus:ring-primary transition-all`}
                             value={phoneQuery}
                             onChange={e => handlePhoneChange(e.target.value)}
                             onKeyDown={handlePhoneKeyDown}
@@ -135,7 +135,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                                 ref={nameInputRef}
                                 type="text"
                                 placeholder={t('customerNameOptional')}
-                                className="w-full pl-8 pr-2 py-1.5 text-xs bg-primary/5 dark:bg-neutral-900 border border-primary/20 dark:border-primary/40 rounded focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                                className="w-full pl-8 pr-2 py-1.5 text-xs bg-primary/5 dark:bg-slate-900 border border-primary/20 dark:border-primary/40 rounded focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                                 value={nameQuery}
                                 onChange={e => setNameQuery(e.target.value)}
                                 onKeyDown={handleNameKeyDown}
@@ -157,7 +157,7 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
 
                 {/* Customer Suggestions */}
                 {phoneSuggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
                         {phoneSuggestions.map((cust, idx) => (
                             <button
                                 key={cust.id}
@@ -166,15 +166,15 @@ export const POSCustomerPanel: React.FC<POSCustomerPanelProps> = ({
                                     setPhoneQuery('');
                                     setNameQuery('');
                                 }}
-                                className={`w-full text-left px-3 py-2.5 text-sm border-b border-neutral-100 dark:border-neutral-700/50 block ${idx === selectedPhoneIndex ? 'bg-primary text-white' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}
+                                className={`w-full text-left px-3 py-2.5 text-sm border-b border-slate-100 dark:border-slate-700/50 block ${idx === selectedPhoneIndex ? 'bg-primary text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
                             >
                                 <span className="font-bold">{cust.name}</span>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                    <span className={`text-xs ${idx === selectedPhoneIndex ? 'text-white/70' : 'text-neutral-500'}`}>{cust.phone}</span>
-                                    <span className={`text-[10px] px-1 rounded font-bold ${idx === selectedPhoneIndex ? 'bg-white/20 text-white' : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400'}`}>
+                                    <span className={`text-xs ${idx === selectedPhoneIndex ? 'text-white/70' : 'text-slate-500'}`}>{cust.phone}</span>
+                                    <span className={`text-[10px] px-1 rounded font-bold ${idx === selectedPhoneIndex ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
                                         {cust.tier || 'General'}
                                     </span>
-                                    <span className={`text-xs ${idx === selectedPhoneIndex ? 'text-white/70' : 'text-neutral-500'}`}>&bull; {cust.points} pts</span>
+                                    <span className={`text-xs ${idx === selectedPhoneIndex ? 'text-white/70' : 'text-slate-500'}`}>&bull; {cust.points} pts</span>
                                 </div>
                             </button>
                         ))}

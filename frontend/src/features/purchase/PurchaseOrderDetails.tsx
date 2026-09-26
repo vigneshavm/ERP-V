@@ -115,7 +115,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             <div className="flex justify-center items-center py-40">
                 <div className="flex flex-col items-center gap-6">
                     <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] animate-pulse">Decompressing Node Intel...</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Decompressing Node Intel...</p>
                 </div>
             </div>
         );
@@ -124,11 +124,11 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
     if (!order) {
         return (
             <div className="p-20 text-center">
-                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center mx-auto mb-6">
-                    <Info className="w-10 h-10 text-neutral-400" />
+                <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-sm flex items-center justify-center mx-auto mb-6">
+                    <Info className="w-10 h-10 text-slate-400" />
                 </div>
-                <h3 className="text-sm font-black uppercase tracking-widest text-neutral-900 dark:text-white">Node Not Found</h3>
-                <p className="text-xs font-bold text-neutral-500 mt-2 italic leading-relaxed">The requested procurement node does not exist in the institutional archive.</p>
+                <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Node Not Found</h3>
+                <p className="text-xs font-bold text-slate-500 mt-2 italic leading-relaxed">The requested procurement node does not exist in the institutional archive.</p>
                 <button onClick={handleBack} className="mt-8 text-primary font-black uppercase tracking-widest text-[10px] hover:underline">Return to Register</button>
             </div>
         );
@@ -162,23 +162,23 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             {/* Context Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
-                    <button onClick={handleBack} className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm hover:bg-neutral-50 shadow-sm transition active:scale-95">
-                        <ArrowLeft className="w-5 h-5 text-neutral-500" />
+                    <button onClick={handleBack} className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm hover:bg-slate-50 shadow-sm transition active:scale-95">
+                        <ArrowLeft className="w-5 h-5 text-slate-500" />
                     </button>
                     <div>
                         <div className="flex items-center gap-3">
-                            <h2 className="text-3xl font-black tracking-tighter text-neutral-900 dark:text-white uppercase">
+                            <h2 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white uppercase">
                                 #{order.po_number}
                             </h2>
                             <StatusBadge status={order.status} />
                         </div>
-                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-1 italic">Node initialized on {order.created_at ? new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A'}</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 italic">Node initialized on {order.created_at ? new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A'}</p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button className="p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-sm hover:bg-neutral-50 shadow-sm transition active:scale-95">
-                        <Printer className="w-5 h-5 text-neutral-400" />
+                    <button className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm hover:bg-slate-50 shadow-sm transition active:scale-95">
+                        <Printer className="w-5 h-5 text-slate-400" />
                     </button>
 
                     {canSubmit && (
@@ -246,7 +246,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             </div>
 
             {/* Cyber-Carbon Node Stepper */}
-            <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-x-auto custom-scrollbar relative overflow-hidden group">
+            <div className="bg-white dark:bg-slate-800 p-10 rounded-[3.5rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto custom-scrollbar relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-8 opacity-5">
                     <Activity className="w-32 h-32 text-primary" />
                 </div>
@@ -263,11 +263,11 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                     <div className={`w-12 h-12 rounded-[1.25rem] flex items-center justify-center text-xs font-black transition-all duration-700
                                         ${isCompleted ? 'bg-success text-white shadow-xl shadow-emerald-500/30 rotate-[360deg]' :
                                             isCurrent ? (isCancelled ? 'bg-danger text-white' : 'bg-primary text-white ring-8 ring-primary/10 scale-110 shadow-xl shadow-primary/20') :
-                                                'bg-neutral-50 dark:bg-neutral-900 text-neutral-300 dark:text-neutral-600 border border-neutral-100 dark:border-neutral-800'}`}>
+                                                'bg-slate-50 dark:bg-slate-900 text-slate-300 dark:text-slate-600 border border-slate-100 dark:border-slate-800'}`}>
                                         {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : idx + 1}
                                     </div>
                                     <div className="text-center">
-                                        <p className={`text-[10px] font-black uppercase tracking-widest ${isCurrent || isCompleted ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>
+                                        <p className={`text-[10px] font-black uppercase tracking-widest ${isCurrent || isCompleted ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>
                                             {step.label}
                                         </p>
                                         {isCurrent && !isCancelled && (
@@ -276,7 +276,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                     </div>
                                 </div>
                                 {idx < steps.length - 1 && (
-                                    <div className="flex-1 h-0.5 mx-6 bg-neutral-100 dark:bg-neutral-900 relative">
+                                    <div className="flex-1 h-0.5 mx-6 bg-slate-100 dark:bg-slate-900 relative">
                                         <div
                                             className={`absolute inset-y-0 left-0 transition-all duration-1000 ease-out ${isCompleted ? 'bg-success w-full' : 'bg-primary/20 w-0'}`}
                                             style={{ width: isCompleted ? '100%' : '0%' }}
@@ -293,14 +293,14 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div className="lg:col-span-8 space-y-8">
                     {/* Items Workspace */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
-                        <div className="p-8 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                        <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <h3 className="text-sm font-black uppercase tracking-widest">Allocated SKU Nodes</h3>
-                            <span className="px-3 py-1 bg-neutral-50 dark:bg-neutral-900 text-[10px] font-black text-neutral-400 uppercase tracking-widest rounded-full">{items.length} Units</span>
+                            <span className="px-3 py-1 bg-slate-50 dark:bg-slate-900 text-[10px] font-black text-slate-400 uppercase tracking-widest rounded-full">{items.length} Units</span>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
+                                <thead className="bg-slate-50/50 dark:bg-slate-900/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                                     <tr>
                                         <th className="px-8 py-5">Product Node</th>
                                         <th className="px-8 py-5 text-center">Fulfillment</th>
@@ -309,7 +309,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                         <th className="px-8 py-5 text-right">Node Total</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                     {items.map((item, idx) => {
                                         const productName = item.product_name || (item as any).productName || 'Unknown Product';
                                         const rate = item.rate || 0;
@@ -319,24 +319,24 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                         const unit = (item as any).unit || (item as any).unitId || 'pcs';
 
                                         return (
-                                            <tr key={idx} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all">
+                                            <tr key={idx} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all">
                                                 <td className="px-8 py-6">
-                                                    <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter">{productName}</p>
-                                                    <p className="text-[10px] font-black text-neutral-400 mt-1 uppercase tracking-widest italic">Institutional SKU</p>
+                                                    <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">{productName}</p>
+                                                    <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest italic">Institutional SKU</p>
                                                 </td>
                                                 <td className="px-8 py-6 text-center">
                                                     <div className="flex flex-col items-center gap-1.5">
-                                                        <span className="text-[10px] font-black text-neutral-900 dark:text-white tabular-nums">{qty} {unit}</span>
-                                                        <div className="w-16 h-1 bg-neutral-100 dark:bg-neutral-900 rounded-full overflow-hidden">
+                                                        <span className="text-[10px] font-black text-slate-900 dark:text-white tabular-nums">{qty} {unit}</span>
+                                                        <div className="w-16 h-1 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden">
                                                             <div className="h-full bg-primary" style={{ width: '100%' }} />
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-8 py-6 text-right">
-                                                    <span className="text-xs font-black text-neutral-900 dark:text-white tabular-nums">₹{(rate || 0).toLocaleString()}</span>
+                                                    <span className="text-xs font-black text-slate-900 dark:text-white tabular-nums">₹{(rate || 0).toLocaleString()}</span>
                                                 </td>
                                                 <td className="px-8 py-6 text-center">
-                                                    <span className="px-2 py-0.5 bg-neutral-50 dark:bg-neutral-900 text-[9px] font-black text-neutral-400 uppercase tracking-widest rounded-full">{taxPercent}%</span>
+                                                    <span className="px-2 py-0.5 bg-slate-50 dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest rounded-full">{taxPercent}%</span>
                                                 </td>
                                                 <td className="px-8 py-6 text-right">
                                                     <span className="text-sm font-black text-primary tabular-nums">₹{(lineTotal || 0).toLocaleString()}</span>
@@ -365,19 +365,19 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 
                 <div className="lg:col-span-4 space-y-8">
                     {/* Institutional Intelligence */}
-                    <div className="bg-neutral-900 dark:bg-neutral-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group">
+                    <div className="bg-slate-900 dark:bg-slate-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group">
                         <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-110 transition-transform duration-1000">
                             <ShieldCheck className="w-48 h-48" />
                         </div>
                         <div className="relative z-10">
-                            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 mb-10">Operational Intel</h4>
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-10">Operational Intel</h4>
                             <div className="space-y-8">
                                 <div className="flex items-start gap-5">
                                     <div className="p-3 bg-white/5 rounded-sm">
                                         <Activity className="w-5 h-5 text-primary" />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Supplier</p>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Supplier</p>
                                         <p className="text-sm font-black text-white uppercase tracking-tighter mt-1">{order.vendor_name}</p>
                                     </div>
                                 </div>
@@ -386,7 +386,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                         <Clock className="w-5 h-5 text-warning" />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">ETA Constraint</p>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">ETA Constraint</p>
                                         <p className="text-sm font-black text-white uppercase tracking-tighter mt-1">{order.expected_delivery || 'No ETA Provided'}</p>
                                     </div>
                                 </div>
@@ -395,7 +395,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                         <Zap className="w-5 h-5 text-success" />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Fiscal Aggregate</p>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Fiscal Aggregate</p>
                                         <p className="text-2xl font-black text-primary tracking-tighter mt-1 tabular-nums">₹{(Number(order.total_amount || (order as any).totalAmount) || 0).toLocaleString()}</p>
                                     </div>
                                 </div>
@@ -403,14 +403,14 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-10 rounded-[3.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-6">
+                    <div className="bg-white dark:bg-slate-800 p-10 rounded-[3.5rem] border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-primary/10 rounded-sm text-primary">
                                 <ShieldCheck className="w-6 h-6" />
                             </div>
-                            <h4 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Protocol Validator</h4>
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Protocol Validator</h4>
                         </div>
-                        <p className="text-[10px] text-neutral-500 font-bold leading-relaxed italic border-l-2 border-primary/20 pl-4">
+                        <p className="text-[10px] text-slate-500 font-bold leading-relaxed italic border-l-2 border-primary/20 pl-4">
                             All procurement parameters have been synchronized with the institutional supply-chain ledger. Audit integrity is currently verified.
                         </p>
                     </div>

@@ -12,12 +12,12 @@ const DeleteBillModal: React.FC<Props> = ({ isOpen, onClose, onConfirm }) => {
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-sm w-full max-w-sm p-6 shadow-2xl border dark:border-neutral-700">
+            <div className="bg-white dark:bg-slate-800 rounded-sm w-full max-w-sm p-6 shadow-2xl border dark:border-slate-700">
                 <div className="w-12 h-12 bg-danger-soft rounded-full flex items-center justify-center mb-4">
                     <Trash2 className="w-6 h-6 text-danger" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Delete Bill?</h3>
-                <p className="text-neutral-500 text-sm mb-6">Are you sure you want to delete this bill? This action cannot be undone.</p>
+                <p className="text-slate-500 text-sm mb-6">Are you sure you want to delete this bill? This action cannot be undone.</p>
                 <div className="flex gap-3">
                     <button
                         onClick={onConfirm}
@@ -27,7 +27,7 @@ const DeleteBillModal: React.FC<Props> = ({ isOpen, onClose, onConfirm }) => {
                     </button>
                     <button
                         onClick={onClose}
-                        className="flex-1 py-1 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 rounded-lg text-sm font-medium transition-colors"
+                        className="flex-1 py-1 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 rounded-lg text-sm font-medium transition-colors"
                     >
                         Cancel
                     </button>

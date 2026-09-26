@@ -41,20 +41,20 @@ const SupplierFilterBar: React.FC<SupplierFilterBarProps> = ({
                         placeholder={placeholder}
                         value={searchTerm}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className="w-64 pl-9 pr-4 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-primary transition-all text-sm text-slate-700 dark:text-neutral-200 placeholder:text-slate-400"
+                        className="w-64 pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-primary transition-all text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400"
                     />
                 </div>
 
                 {/* Status Filter */}
                 {showStatusFilter && onFilterChange && (
-                    <div className="flex items-center bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg overflow-hidden">
+                    <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
                         {['all', 'overdue', 'due_week'].map((status) => (
                             <button
                                 key={status}
                                 onClick={() => onFilterChange(status)}
                                 className={`px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-colors ${filterStatus === status
                                     ? 'bg-primary-soft dark:bg-primary/10 text-primary dark:text-primary'
-                                    : 'text-slate-400 dark:text-neutral-500 hover:text-slate-600 dark:hover:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700'
+                                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                                     }`}
                             >
                                 {status === 'all' ? 'All' : status === 'overdue' ? 'Overdue' : 'Due Soon'}
@@ -69,7 +69,7 @@ const SupplierFilterBar: React.FC<SupplierFilterBarProps> = ({
             <div className="flex items-center gap-2">
                 <button
                     onClick={onRefresh}
-                    className={`p-2 text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-all ${isLoading ? 'animate-spin' : ''}`}
+                    className={`p-2 text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all ${isLoading ? 'animate-spin' : ''}`}
                     title="Refresh"
                 >
                     <RefreshCcw className="w-4 h-4" />

@@ -44,16 +44,16 @@ interface SupplierFormProps {
 
 /* ─── shared field classes ──────────────────────────────── */
 const inputCls =
-    'w-full px-3 py-2.5 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-primary transition-all placeholder:text-slate-300 dark:placeholder:text-neutral-600';
+    'w-full px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-primary transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600';
 const labelCls =
-    'block text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider mb-1';
+    'block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1';
 const requiredDot = <span className="text-danger ml-0.5">*</span>;
 
 // Moved to module scope - was defined inside SupplierForm's render body (recreated on every
 // render). Takes everything via props already, so no closure to thread through.
 const SectionTitle = ({ title }: { title: string }) => (
-    <div className="border-b border-slate-100 dark:border-neutral-700 pb-2 mb-5">
-        <h3 className="text-xs font-black text-slate-800 dark:text-neutral-200 uppercase tracking-wide">{title}</h3>
+    <div className="border-b border-slate-100 dark:border-slate-700 pb-2 mb-5">
+        <h3 className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide">{title}</h3>
     </div>
 );
 
@@ -178,7 +178,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
         <form onSubmit={handleSubmit} className="space-y-6">
 
             {/* ═══ GENERAL DETAILS ═══ */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm p-6">
                 <SectionTitle title="General Details" />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
@@ -219,7 +219,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                     <div>
                         <label className={labelCls}>Opening Balance</label>
                         <div className="flex">
-                            <span className="inline-flex items-center px-3 bg-slate-50 dark:bg-neutral-900 border border-r-0 border-slate-200 dark:border-neutral-700 rounded-l-lg text-sm text-slate-400">₹</span>
+                            <span className="inline-flex items-center px-3 bg-slate-50 dark:bg-slate-900 border border-r-0 border-slate-200 dark:border-slate-700 rounded-l-lg text-sm text-slate-400">₹</span>
                             <input
                                 type="number"
                                 name="openingBalance"
@@ -232,7 +232,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                                 name="balanceType"
                                 value={formData.balanceType}
                                 onChange={handleChange}
-                                className="px-2 bg-slate-50 dark:bg-neutral-900 border border-l-0 border-slate-200 dark:border-neutral-700 rounded-r-lg text-xs text-slate-600 dark:text-neutral-300 outline-none"
+                                className="px-2 bg-slate-50 dark:bg-slate-900 border border-l-0 border-slate-200 dark:border-slate-700 rounded-r-lg text-xs text-slate-600 dark:text-slate-300 outline-none"
                             >
                                 <option value="payable">To Pay</option>
                                 <option value="receivable">To Collect</option>
@@ -269,7 +269,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                 </div>
 
                 {/* Divider */}
-                <hr className="border-slate-100 dark:border-neutral-700 my-5" />
+                <hr className="border-slate-100 dark:border-slate-700 my-5" />
 
                 {/* Row 3: Classification */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
@@ -332,20 +332,20 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                 </div>
 
                 {/* One-time toggle */}
-                <div className="flex items-center gap-3 mt-5 p-3 bg-slate-50 dark:bg-neutral-900 rounded-lg border border-slate-100 dark:border-neutral-700">
+                <div className="flex items-center gap-3 mt-5 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-700">
                     <button
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, isOneTime: !prev.isOneTime }))}
-                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${formData.isOneTime ? 'bg-primary' : 'bg-slate-300 dark:bg-neutral-600'}`}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${formData.isOneTime ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-600'}`}
                     >
                         <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${formData.isOneTime ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
                     </button>
-                    <span className="text-xs font-medium text-slate-600 dark:text-neutral-300">One-time Supplier</span>
+                    <span className="text-xs font-medium text-slate-600 dark:text-slate-300">One-time Supplier</span>
                 </div>
             </div>
 
             {/* ═══ ADDRESS ═══ */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm p-6">
                 <SectionTitle title="Address" />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div>
@@ -375,7 +375,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
             </div>
 
             {/* ═══ PAYMENT MODE ═══ */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm p-6">
                 <SectionTitle title="Payment Details" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
                     <div>
@@ -398,9 +398,9 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
             </div>
 
             {/* ═══ BANKING DETAILS ═══ */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-6">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-neutral-700 pb-2 mb-5">
-                    <h3 className="text-xs font-black text-slate-800 dark:text-neutral-200 uppercase tracking-wide">Bank Accounts</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm p-6">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-2 mb-5">
+                    <h3 className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide">Bank Accounts</h3>
                     <button
                         type="button"
                         onClick={addBankAccount}
@@ -411,14 +411,14 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                 </div>
 
                 {formData.bankAccounts.length === 0 ? (
-                    <div className="p-8 text-center border border-dashed border-slate-200 dark:border-neutral-700 rounded-lg">
-                        <Landmark className="w-8 h-8 text-slate-200 dark:text-neutral-700 mx-auto mb-2" />
-                        <p className="text-xs text-slate-400 dark:text-neutral-500">No bank accounts added yet</p>
+                    <div className="p-8 text-center border border-dashed border-slate-200 dark:border-slate-700 rounded-lg">
+                        <Landmark className="w-8 h-8 text-slate-200 dark:text-slate-700 mx-auto mb-2" />
+                        <p className="text-xs text-slate-400 dark:text-slate-500">No bank accounts added yet</p>
                     </div>
                 ) : (
                     <div className="space-y-4">
                         {formData.bankAccounts.map((account, index) => (
-                            <div key={index} className="p-4 bg-slate-50 dark:bg-neutral-900 border border-slate-100 dark:border-neutral-700 rounded-lg relative group">
+                            <div key={index} className="p-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-lg relative group">
                                 <button
                                     type="button"
                                     onClick={() => removeBankAccount(index)}
@@ -454,7 +454,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                                             onClick={() => updateBankAccount(index, 'isDefault', true)}
                                             className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${account.isDefault
                                                 ? 'bg-success-soft dark:bg-success/10 text-success dark:text-success border border-success-line dark:border-success/20'
-                                                : 'bg-white dark:bg-neutral-800 text-slate-400 hover:text-slate-600 border border-slate-200 dark:border-neutral-700'
+                                                : 'bg-white dark:bg-slate-800 text-slate-400 hover:text-slate-600 border border-slate-200 dark:border-slate-700'
                                                 }`}
                                         >
                                             <CreditCard className="w-3.5 h-3.5" />
@@ -473,7 +473,7 @@ const SupplierForm: React.FC<SupplierFormProps> = ({ mode, supplierId, initialDa
                 <button
                     type="button"
                     onClick={() => navigate('/suppliers')}
-                    className="px-5 py-2.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-sm font-medium text-slate-600 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-700 transition-all"
+                    className="px-5 py-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
                 >
                     Cancel
                 </button>

@@ -218,7 +218,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                 ? <ArrowUp className="w-3 h-3 text-primary" />
                 : <ArrowDown className="w-3 h-3 text-primary" />;
         }
-        return <ArrowUpDown className="w-3 h-3 text-neutral-300" />;
+        return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
     };
 
     // PDF Export
@@ -271,30 +271,30 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
             {!embedded && (
                 <div className="flex items-center justify-between pb-2">
                     <div className="flex flex-col">
-                        <h1 className="page-title text-slate-800 dark:text-neutral-100">Supplier Inflow / Outflow</h1>
-                        <p className="text-sm text-slate-500 dark:text-neutral-400 mt-1">Consolidated view of all supplier purchase inflows and payment outflows</p>
+                        <h1 className="page-title text-slate-800 dark:text-slate-100">Supplier Inflow / Outflow</h1>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Consolidated view of all supplier purchase inflows and payment outflows</p>
                     </div>
 
                     <div className="flex items-center gap-3">
                         {/* Date Range Picker - Ledger Style */}
-                        <div className="flex items-center gap-1.5 bg-white dark:bg-neutral-800 p-1.5 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm">
+                        <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1.5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
                             <Calendar size={14} className="ml-2 text-slate-400" />
                             <input
                                 type="date"
-                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-neutral-200 font-bold"
+                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-slate-200 font-bold"
                                 value={dateFrom}
                                 onChange={(e) => setDateFrom(e.target.value)}
                             />
-                            <span className="text-slate-200 dark:text-neutral-600 font-bold text-xs">→</span>
+                            <span className="text-slate-200 dark:text-slate-600 font-bold text-xs">→</span>
                             <input
                                 type="date"
-                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-neutral-200 font-bold"
+                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-slate-200 font-bold"
                                 value={dateTo}
                                 onChange={(e) => setDateTo(e.target.value)}
                             />
                             <button
                                 onClick={handleApplyFilters}
-                                className="p-1.5 hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-colors text-primary"
+                                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-colors text-primary"
                                 title="Apply Filter"
                             >
                                 <Filter size={14} />
@@ -303,15 +303,15 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
 
                         <div className="flex gap-2">
                             <button onClick={handleRefresh} disabled={isRefreshing || isLoading}
-                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors text-slate-500">
+                                className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-500">
                                 <RefreshCw className={`w-4 h-4 ${(isRefreshing || isLoading) ? 'animate-spin' : ''}`} />
                             </button>
                             <button onClick={handleExportCSV}
-                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2 text-slate-600 dark:text-neutral-300">
+                                className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-600 dark:text-slate-300">
                                 <FileSpreadsheet className="w-4 h-4 text-success" /> Excel
                             </button>
                             <button onClick={handleExportPDF}
-                                className="px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2 text-slate-600 dark:text-neutral-300">
+                                className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-600 dark:text-slate-300">
                                 <FileText className="w-4 h-4 text-danger" /> PDF
                             </button>
                         </div>
@@ -325,15 +325,15 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                 <div className="flex justify-end mb-4">
                     <div className="flex gap-2">
                         <button onClick={handleRefresh} disabled={isRefreshing || isLoading}
-                            className="px-3 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg hover:bg-slate-50 dark:hover:bg-neutral-700 transition-colors">
+                            className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                             <RefreshCw className={`w-4 h-4 ${(isRefreshing || isLoading) ? 'animate-spin' : ''}`} />
                         </button>
                         <button onClick={handleExportCSV}
-                            className="px-3 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-neutral-300">
+                            className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-slate-300">
                             <FileSpreadsheet className="w-4 h-4 text-success" /> Excel
                         </button>
                         <button onClick={handleExportPDF}
-                            className="px-3 py-2 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-neutral-300">
+                            className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-slate-300">
                             <FileText className="w-4 h-4 text-danger" /> PDF
                         </button>
                     </div>
@@ -351,7 +351,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
             />
 
             {/* Filters */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm p-4 mb-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm p-4 mb-6">
                 <SupplierFilterBar
                     searchTerm={searchTerm}
                     onSearchChange={setSearchTerm}
@@ -364,7 +364,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                         <select
                             value={vendorFilter}
                             onChange={e => setVendorFilter(e.target.value)}
-                            className="px-3 py-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-lg text-sm text-slate-800 dark:text-neutral-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-primary outline-none transition-all w-48"
+                            className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-primary outline-none transition-all w-48"
                         >
                             <option value="ALL">All Suppliers</option>
                             {vendorOptions.map((v: any) => (
@@ -381,7 +381,7 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                         {(vendorFilter !== 'ALL' || dateFrom || dateTo) && (
                             <button
                                 onClick={handleClearFilters}
-                                className="px-3 py-2 text-slate-500 hover:text-slate-700 dark:text-neutral-400 dark:hover:text-neutral-200 text-sm font-medium"
+                                className="px-3 py-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium"
                             >
                                 Clear
                             </button>
@@ -398,54 +398,54 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
             )}
 
             {/* Table */}
-            <div className="bg-white dark:bg-neutral-800 rounded-sm border border-slate-100 dark:border-neutral-700 shadow-sm overflow-hidden flex-1 flex flex-col">
+            <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden flex-1 flex flex-col">
                 <div className="flex-1 overflow-auto custom-scrollbar">
                     <table className="w-full text-left">
-                        <thead className="bg-slate-50/50 dark:bg-neutral-900/50 sticky top-0 z-10 backdrop-blur-sm">
-                            <tr className="border-b border-slate-100 dark:border-neutral-700">
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
+                        <thead className="bg-slate-50/50 dark:bg-slate-900/50 sticky top-0 z-10 backdrop-blur-sm">
+                            <tr className="border-b border-slate-100 dark:border-slate-700">
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
                                     onClick={() => handleSort('businessName')}>
                                     <div className="flex items-center gap-1">
                                         Supplier <SortIcon column="businessName" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('totalInflow')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Total Inflow <SortIcon column="totalInflow" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('totalOutflow')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Total Outflow <SortIcon column="totalOutflow" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('debitNoteTotal')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Debit Notes <SortIcon column="debitNoteTotal" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-center whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-center whitespace-nowrap"
                                     onClick={() => handleSort('billCount')}>
                                     <div className="flex items-center justify-center gap-1">
                                         Bills <SortIcon column="billCount" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-center whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-center whitespace-nowrap"
                                     onClick={() => handleSort('paymentCount')}>
                                     <div className="flex items-center justify-center gap-1">
                                         Payments <SortIcon column="paymentCount" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('closingBalance')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Closing Balance <SortIcon column="closingBalance" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
+                                <th className="px-6 py-3.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap"
                                     onClick={() => handleSort('openingBalance')}>
                                     <div className="flex items-center justify-end gap-1">
                                         Opening <SortIcon column="openingBalance" />
@@ -453,29 +453,29 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50 dark:divide-neutral-700/50">
+                        <tbody className="divide-y divide-slate-50 dark:divide-slate-700/50">
                             {isLoading ? (
                                 <tr><td colSpan={8} className="px-6 py-16 text-center">
                                     <div className="flex flex-col items-center gap-3">
                                         <RefreshCw className="w-6 h-6 text-primary animate-spin" />
-                                        <p className="text-xs font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider">Loading data...</p>
+                                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Loading data...</p>
                                     </div>
                                 </td></tr>
                             ) : paginatedVendors.length === 0 ? (
                                 <tr><td colSpan={8} className="px-6 py-16 text-center">
                                     <div className="flex flex-col items-center gap-3">
-                                        <FileSpreadsheet className="w-10 h-10 text-slate-200 dark:text-neutral-700" />
-                                        <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">No records found</p>
+                                        <FileSpreadsheet className="w-10 h-10 text-slate-200 dark:text-slate-700" />
+                                        <p className="text-sm font-bold text-slate-400 dark:text-slate-500">No records found</p>
                                     </div>
                                 </td></tr>
                             ) : (
                                 paginatedVendors.map(vendor => (
-                                    <tr key={vendor._id} className="group hover:bg-slate-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer" onClick={() => navigate(`/suppliers/${vendor._id}/ledger`)}>
+                                    <tr key={vendor._id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer" onClick={() => navigate(`/suppliers/${vendor._id}/ledger`)}>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-semibold text-slate-800 dark:text-neutral-100 group-hover:text-primary dark:group-hover:text-primary transition-colors">{vendor.businessName || 'N/A'}</span>
+                                                <span className="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-primary dark:group-hover:text-primary transition-colors">{vendor.businessName || 'N/A'}</span>
                                                 {vendor.supplierId && (
-                                                    <span className="text-[10px] text-slate-400 dark:text-neutral-500 font-mono mt-0.5">{vendor.supplierId}</span>
+                                                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">{vendor.supplierId}</span>
                                                 )}
                                             </div>
                                         </td>
@@ -486,19 +486,19 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                                             <span className="text-sm font-semibold text-danger dark:text-danger">{formatCurrency(vendor.totalOutflow)}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
-                                            <span className="text-sm text-slate-600 dark:text-neutral-400">{vendor.debitNoteTotal > 0 ? formatCurrency(vendor.debitNoteTotal) : '-'}</span>
+                                            <span className="text-sm text-slate-600 dark:text-slate-400">{vendor.debitNoteTotal > 0 ? formatCurrency(vendor.debitNoteTotal) : '-'}</span>
                                         </td>
                                         <td className="px-6 py-4 text-center whitespace-nowrap">
-                                            <span className="text-sm text-slate-600 dark:text-neutral-400">{vendor.billCount}</span>
+                                            <span className="text-sm text-slate-600 dark:text-slate-400">{vendor.billCount}</span>
                                         </td>
                                         <td className="px-6 py-4 text-center whitespace-nowrap">
-                                            <span className="text-sm text-slate-600 dark:text-neutral-400">{vendor.paymentCount}</span>
+                                            <span className="text-sm text-slate-600 dark:text-slate-400">{vendor.paymentCount}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
                                             <span className="text-sm font-bold text-warning dark:text-warning">{formatCurrency(vendor.closingBalance)}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
-                                            <span className="text-sm font-medium text-slate-400 dark:text-neutral-500">{formatCurrency(vendor.openingBalance)}</span>
+                                            <span className="text-sm font-medium text-slate-400 dark:text-slate-500">{formatCurrency(vendor.openingBalance)}</span>
                                         </td>
                                     </tr>
                                 ))
@@ -506,15 +506,15 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                         </tbody>
                         {/* Footer totals row */}
                         {!isLoading && processedVendors.length > 0 && (
-                            <tfoot className="bg-slate-50 dark:bg-neutral-900 border-t border-slate-200 dark:border-neutral-700">
+                            <tfoot className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
                                 <tr>
-                                    <td className="px-6 py-4 text-xs font-black text-slate-500 dark:text-neutral-400 uppercase tracking-wider">Total ({displayTotals.vendorCount})</td>
+                                    <td className="px-6 py-4 text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total ({displayTotals.vendorCount})</td>
                                     <td className="px-6 py-4 text-right text-sm font-bold text-primary dark:text-primary">{formatCurrency(displayTotals.totalInflow)}</td>
                                     <td className="px-6 py-4 text-right text-sm font-bold text-danger dark:text-danger">{formatCurrency(displayTotals.totalOutflow)}</td>
-                                    <td className="px-6 py-4 text-right text-sm font-medium text-slate-600 dark:text-neutral-400">{formatCurrency(displayTotals.debitNoteTotal)}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-medium text-slate-600 dark:text-slate-400">{formatCurrency(displayTotals.debitNoteTotal)}</td>
                                     <td colSpan={2}></td>
                                     <td className="px-6 py-4 text-right text-sm font-bold text-warning dark:text-warning">{formatCurrency(displayTotals.totalClosingBalance)}</td>
-                                    <td className="px-6 py-4 text-right text-sm font-medium text-slate-400 dark:text-neutral-500">{formatCurrency(displayTotals.totalOpeningBalance)}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-medium text-slate-400 dark:text-slate-500">{formatCurrency(displayTotals.totalOpeningBalance)}</td>
                                 </tr>
                             </tfoot>
                         )}

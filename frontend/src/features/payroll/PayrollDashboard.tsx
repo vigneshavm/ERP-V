@@ -10,10 +10,10 @@ import { formatDateISO } from '../../utils/helpers';
 import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const PayrollInfoCard = ({ title, value, icon: Icon, color }: any) => (
-    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+    <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex items-center justify-between">
         <div>
-            <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
-            <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
+            <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
+            <h3 className="text-2xl font-bold text-slate-900">{value}</h3>
         </div>
         <div className={`p-3 rounded-lg ${color}`}>
             <Icon className="w-6 h-6 text-white" />
@@ -60,7 +60,7 @@ const PayrollDashboard = () => {
                         <div className="flex gap-3">
                             <button
                                 onClick={() => navigate('/people/payroll/structure')}
-                                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 text-slate-700 transition-colors"
                             >
                                 <Users size={18} />
                                 Salary Structures
@@ -97,18 +97,18 @@ const PayrollDashboard = () => {
                     />
                 </div>
 
-                <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                        <h3 className="font-semibold text-gray-800">Recent Payroll Runs</h3>
+                <div className="mt-8 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h3 className="font-semibold text-slate-800">Recent Payroll Runs</h3>
                         <button onClick={() => navigate('/people/payroll/history')} className="text-sm text-primary hover:text-primary font-medium">View All</button>
                     </div>
 
                     {loading && runs.length === 0 ? (
-                        <div className="p-8 text-center text-gray-500">Loading payroll history...</div>
+                        <div className="p-8 text-center text-slate-500">Loading payroll history...</div>
                     ) : recentRuns.length > 0 ? (
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="text-xs text-gray-500 border-b border-gray-100 bg-gray-50/50">
+                                <tr className="text-xs text-slate-500 border-b border-slate-100 bg-slate-50/50">
                                     <th className="px-6 py-3 font-medium">Month/Year</th>
                                     <th className="px-6 py-3 font-medium">Run Date</th>
                                     <th className="px-6 py-3 font-medium">Total Payout</th>
@@ -118,14 +118,14 @@ const PayrollDashboard = () => {
                             </thead>
                             <tbody>
                                 {recentRuns.map((run) => (
-                                    <tr key={run._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                    <tr key={run._id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                                        <td className="px-6 py-4 text-sm font-medium text-slate-900">
                                             {run.periodStart ? new Date(run.periodStart).toLocaleString('default', { month: 'long', year: 'numeric' }) : 'N/A'}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                        <td className="px-6 py-4 text-sm text-slate-500">
                                             {run.processedDate || run.createdAt ? formatDateISO(new Date(run.processedDate || run.createdAt)) : 'N/A'}
                                         </td>
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
+                                        <td className="px-6 py-4 text-sm font-medium text-slate-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">
                                             <StatusBadge status={run.status} />
                                         </td>
@@ -142,9 +142,9 @@ const PayrollDashboard = () => {
                             </tbody>
                         </table>
                     ) : (
-                        <div className="p-12 text-center text-gray-500 flex flex-col items-center">
-                            <FileText className="w-12 h-12 text-gray-300 mb-3" />
-                            <p className="text-lg font-medium text-gray-900">No payroll runs found</p>
+                        <div className="p-12 text-center text-slate-500 flex flex-col items-center">
+                            <FileText className="w-12 h-12 text-slate-300 mb-3" />
+                            <p className="text-lg font-medium text-slate-900">No payroll runs found</p>
                             <p className="text-sm mt-1">Get started by running your first payroll.</p>
                             <button
                                 onClick={() => navigate('/people/payroll/run')}

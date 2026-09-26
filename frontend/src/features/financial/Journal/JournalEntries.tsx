@@ -45,7 +45,7 @@ const JournalEntries: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex gap-3">
-                            <button className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                            <button className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
                                 <Download className="w-4 h-4" /> Export Ledger
                             </button>
                             <button
@@ -59,46 +59,46 @@ const JournalEntries: React.FC = () => {
                 />
 
                 {/* Search & Stats Pulse */}
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-white dark:bg-neutral-800 p-4 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-white dark:bg-slate-800 p-4 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="relative flex-1 w-full">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
                             type="text"
                             placeholder="Search by description or reference code..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-12 pr-6 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-sm focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                            className="w-full pl-12 pr-6 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-sm focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                         />
                     </div>
                     <div className="flex gap-3 shrink-0">
-                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 rounded-sm text-neutral-500 transition shadow-sm">
+                        <button className="p-3 bg-slate-50 dark:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 rounded-sm text-slate-500 transition shadow-sm">
                             <Filter className="w-5 h-5" />
                         </button>
                     </div>
                 </div>
 
                 {/* Ledger Container */}
-                <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-100 dark:border-neutral-800">
+                            <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
                                 <tr>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Fiscal Date</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Reference ID</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Narration</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] text-right">Debit (INR)</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] text-right">Credit (INR)</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] text-center">Status</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Fiscal Date</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Reference ID</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Narration</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Debit (INR)</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Credit (INR)</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Status</th>
                                     <th className="px-8 py-5"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {loading && entries.length === 0 ? (
                                     <tr>
                                         <td colSpan={7} className="px-8 py-20 text-center">
                                             <div className="flex flex-col items-center gap-4">
                                                 <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Synchronizing Ledger...</p>
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Synchronizing Ledger...</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -115,30 +115,30 @@ const JournalEntries: React.FC = () => {
                                     filteredEntries.map((entry) => {
                                         const totalAmount = entry.entries.reduce((sum, e) => sum + e.debit, 0);
                                         return (
-                                            <tr key={entry._id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-900/40 transition-all cursor-default">
+                                            <tr key={entry._id} className="group hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-all cursor-default">
                                                 <td className="px-8 py-6 whitespace-nowrap">
                                                     <div className="flex items-center gap-3">
-                                                        <CalendarIcon className="w-4 h-4 text-neutral-300" />
-                                                        <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">{formatDate(entry.date)}</span>
+                                                        <CalendarIcon className="w-4 h-4 text-slate-300" />
+                                                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{formatDate(entry.date)}</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-8 py-6 whitespace-nowrap">
-                                                    <span className="text-xs font-black text-neutral-900 dark:text-white font-mono tracking-tighter uppercase">{entry.reference}</span>
+                                                    <span className="text-xs font-black text-slate-900 dark:text-white font-mono tracking-tighter uppercase">{entry.reference}</span>
                                                 </td>
                                                 <td className="px-8 py-6">
-                                                    <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400 max-w-xs truncate italic">"{entry.description}"</p>
+                                                    <p className="text-xs font-bold text-slate-600 dark:text-slate-400 max-w-xs truncate italic">"{entry.description}"</p>
                                                 </td>
                                                 <td className="px-8 py-6 whitespace-nowrap text-right">
-                                                    <span className="text-xs font-black text-neutral-900 dark:text-white tabular-nums">{totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                                                    <span className="text-xs font-black text-slate-900 dark:text-white tabular-nums">{totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                                                 </td>
                                                 <td className="px-8 py-6 whitespace-nowrap text-right">
-                                                    <span className="text-xs font-black text-neutral-900 dark:text-white tabular-nums">{totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                                                    <span className="text-xs font-black text-slate-900 dark:text-white tabular-nums">{totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                                                 </td>
                                                 <td className="px-8 py-6 whitespace-nowrap text-center">
                                                     <StatusBadge status={entry.status} />
                                                 </td>
                                                 <td className="px-8 py-6 whitespace-nowrap text-right">
-                                                    <button className="p-2 text-neutral-300 hover:text-primary transition-all group-hover:translate-x-1">
+                                                    <button className="p-2 text-slate-300 hover:text-primary transition-all group-hover:translate-x-1">
                                                         <ChevronRight className="w-5 h-5" />
                                                     </button>
                                                 </td>

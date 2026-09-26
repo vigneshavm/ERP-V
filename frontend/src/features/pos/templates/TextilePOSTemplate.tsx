@@ -160,18 +160,18 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             <PauseCircle className="w-5 h-5" />
                         </button>
 
-                        <div className="bg-neutral-100 p-1 rounded-lg flex gap-1 ml-2">
+                        <div className="bg-slate-100 p-1 rounded-lg flex gap-1 ml-2">
                             {/* Sale / Return Toggle */}
-                            <div className="flex bg-gray-200 p-0.5 rounded-lg mr-2">
+                            <div className="flex bg-slate-200 p-0.5 rounded-lg mr-2">
                                 <button
                                     onClick={() => setIsReturnMode(false)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-success shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isReturnMode ? 'bg-white text-success shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                                 >
                                     {t('sale')}
                                 </button>
                                 <button
                                     onClick={() => setIsReturnMode(true)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-danger-soft text-danger shadow-sm ring-1 ring-red-100' : 'text-gray-500 hover:text-gray-700'}`}
+                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${isReturnMode ? 'bg-danger-soft text-danger shadow-sm ring-1 ring-red-100' : 'text-slate-500 hover:text-slate-700'}`}
                                 >
                                     {t('return')}
                                 </button>
@@ -179,13 +179,13 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
 
                             <button
                                 onClick={() => setViewMode('SCANNER')}
-                                className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${viewMode === 'SCANNER' ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}
+                                className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${viewMode === 'SCANNER' ? 'bg-white text-primary shadow-sm' : 'text-slate-500'}`}
                             >
                                 <TableIcon className="w-3.5 h-3.5 inline mr-1" /> {t('scanner')}
                             </button>
                             <button
                                 onClick={() => setViewMode('VISUAL')}
-                                className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${viewMode === 'VISUAL' ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}
+                                className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${viewMode === 'VISUAL' ? 'bg-white text-primary shadow-sm' : 'text-slate-500'}`}
                             >
                                 <LayoutGrid className="w-3.5 h-3.5 inline mr-1" /> {t('visual')}
                             </button>
@@ -245,18 +245,18 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             <div className="px-2 pb-1">
                                 <div className="bg-card border border-default rounded-sm p-2 shadow-sm">
                                     <div className="flex justify-between items-center mb-1">
-                                        <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">Last Bill</span>
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Last Bill</span>
                                         <div className="flex gap-1">
                                             <button
                                                 onClick={downloadLastBill}
-                                                className="text-neutral-400 hover:text-primary p-0.5 transition-colors"
+                                                className="text-slate-400 hover:text-primary p-0.5 transition-colors"
                                                 title="Download PDF"
                                             >
                                                 <Download className="w-3.5 h-3.5" />
                                             </button>
                                             <button
                                                 onClick={reprintLastBill}
-                                                className="text-neutral-400 hover:text-primary p-0.5 transition-colors"
+                                                className="text-slate-400 hover:text-primary p-0.5 transition-colors"
                                                 title="Reprint Last Bill"
                                             >
                                                 <Printer className="w-3.5 h-3.5" />
@@ -267,9 +267,9 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                         <span className="text-xl font-black text-primary tracking-tight leading-none mb-1">
                                             ₹{lastBill.total.toFixed(2)}
                                         </span>
-                                        <div className="flex items-center gap-1.5 text-[10px] text-neutral-400 leading-none">
-                                            <span className="font-medium text-neutral-600 dark:text-neutral-300">#{lastBill.id.split('-').pop()}</span>
-                                            <div className="w-0.5 h-0.5 rounded-full bg-neutral-300" />
+                                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400 leading-none">
+                                            <span className="font-medium text-slate-600 dark:text-slate-300">#{lastBill.id.split('-').pop()}</span>
+                                            <div className="w-0.5 h-0.5 rounded-full bg-slate-300" />
                                             <span>{new Date(lastBill.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).toLowerCase()}</span>
                                         </div>
                                     </div>
@@ -316,9 +316,9 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
             </div>
 
             {/* Mobile Nav */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 p-2 flex justify-around">
-                <button onClick={() => setMobileTab('MAIN')} className={`px-4 py-2 rounded ${mobileTab === 'MAIN' ? 'bg-primary text-white' : 'bg-neutral-100'}`}>View</button>
-                <button onClick={() => setMobileTab('CART')} className={`px-4 py-2 rounded ${mobileTab === 'CART' ? 'bg-primary text-white' : 'bg-neutral-100'}`}>Cart</button>
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around">
+                <button onClick={() => setMobileTab('MAIN')} className={`px-4 py-2 rounded ${mobileTab === 'MAIN' ? 'bg-primary text-white' : 'bg-slate-100'}`}>View</button>
+                <button onClick={() => setMobileTab('CART')} className={`px-4 py-2 rounded ${mobileTab === 'CART' ? 'bg-primary text-white' : 'bg-slate-100'}`}>Cart</button>
             </div>
         </div>
     );

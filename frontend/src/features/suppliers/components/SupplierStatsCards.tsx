@@ -47,7 +47,7 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {/* Total Inflow */}
-                <div className="bg-white dark:bg-neutral-800 border-2 border-primary/30 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 border-2 border-primary/30 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-1">
                         <TrendingUp className="w-4 h-4 text-primary" />
                         <span className="text-xs font-bold text-primary dark:text-primary uppercase tracking-wide">Total Inflow</span>
@@ -56,7 +56,7 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
                 </div>
 
                 {/* Total Outflow */}
-                <div className="bg-white dark:bg-neutral-800 border-2 border-danger-line dark:border-danger/30 rounded-xl p-5 relative overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 border-2 border-danger-line dark:border-danger/30 rounded-xl p-5 relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-1">
                         <TrendingDown className="w-4 h-4 text-danger" />
                         <span className="text-xs font-bold text-danger dark:text-danger uppercase tracking-wide">Total Outflow</span>
@@ -65,7 +65,7 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
                 </div>
 
                 {/* Total Closing Balance */}
-                <div className="bg-white dark:bg-neutral-800 border-2 border-warning-line dark:border-warning/30 rounded-xl p-5 relative overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 border-2 border-warning-line dark:border-warning/30 rounded-xl p-5 relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-1">
                         <FileText className="w-4 h-4 text-warning" />
                         <span className="text-xs font-bold text-warning dark:text-warning uppercase tracking-wide">Closing Balance</span>
@@ -74,7 +74,7 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
                 </div>
 
                 {/* Net Period Change */}
-                <div className={`bg-white dark:bg-neutral-800 border-2 rounded-xl p-5 relative overflow-hidden ${netChange >= 0 ? 'border-warning-line dark:border-warning/30' : 'border-success-line dark:border-success/30'}`}>
+                <div className={`bg-white dark:bg-slate-800 border-2 rounded-xl p-5 relative overflow-hidden ${netChange >= 0 ? 'border-warning-line dark:border-warning/30' : 'border-success-line dark:border-success/30'}`}>
                     <div className="flex items-center gap-2 mb-1">
                         <DollarSign className={`w-4 h-4 ${netChange >= 0 ? 'text-warning' : 'text-success'}`} />
                         <span className={`text-xs font-bold uppercase tracking-wide ${netChange >= 0 ? 'text-warning dark:text-warning' : 'text-success dark:text-success'}`}>Net Change</span>
@@ -83,7 +83,7 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
                 </div>
 
                 {/* Active Suppliers */}
-                <div className="bg-white dark:bg-neutral-800 border-2 border-purple-100 dark:border-purple-900/30 rounded-xl p-5 relative overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 border-2 border-purple-100 dark:border-purple-900/30 rounded-xl p-5 relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-1">
                         <Users className="w-4 h-4 text-purple-500" />
                         <span className="text-xs font-bold text-purple-600 dark:text-accent uppercase tracking-wide">Active Suppliers</span>
@@ -98,7 +98,7 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
         <div className={`grid grid-cols-1 ${showSupplierCount ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
             {/* All Suppliers */}
             {showSupplierCount && (
-                <div className="bg-white dark:bg-neutral-800 border-2 border-primary/30 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 border-2 border-primary/30 dark:border-primary/30 rounded-xl p-5 relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-1">
                         <Users className="w-4 h-4 text-primary" />
                         <span className="text-xs font-bold text-primary dark:text-primary uppercase tracking-wide">{labels.suppliers}</span>
@@ -108,7 +108,7 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
             )}
 
             {/* To Collect / Inflow */}
-            <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-5 relative overflow-hidden">
                 <div className="flex items-center gap-2 mb-1">
                     <div className="w-5 h-5 rounded-full bg-success-soft dark:bg-success/10 flex items-center justify-center">
                         <ArrowDownLeft className="w-3 h-3 text-success" />
@@ -119,7 +119,7 @@ const SupplierStatsCards: React.FC<SupplierStatsCardsProps> = ({
             </div>
 
             {/* To Pay / Outflow */}
-            <div className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl p-5 relative overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-5 relative overflow-hidden">
                 <div className="flex items-center gap-2 mb-1">
                     <div className="w-5 h-5 rounded-full bg-danger-soft dark:bg-danger/10 flex items-center justify-center">
                         <ArrowUpRight className="w-3 h-3 text-danger" />

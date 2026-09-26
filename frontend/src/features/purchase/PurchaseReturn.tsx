@@ -138,10 +138,10 @@ const PurchaseReturn: React.FC = () => {
 
     const getMethodColorClasses = (color: string, isSelected: boolean) => {
         const colors: Record<string, string> = {
-            indigo: isSelected ? 'border-primary bg-primary-soft dark:bg-primary-soft ring-2 ring-indigo-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-primary/30 hover:bg-primary/50',
-            emerald: isSelected ? 'border-success bg-success-soft dark:bg-success-soft ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-success-line hover:bg-success/50',
-            blue: isSelected ? 'border-primary bg-primary-soft dark:bg-primary-soft ring-2 ring-blue-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-primary/30 hover:bg-primary/50',
-            purple: isSelected ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 ring-2 ring-purple-500/20' : 'border-slate-200 dark:border-neutral-700 hover:border-purple-300 hover:bg-purple-50/50'
+            indigo: isSelected ? 'border-primary bg-primary-soft dark:bg-primary-soft ring-2 ring-indigo-500/20' : 'border-slate-200 dark:border-slate-700 hover:border-primary/30 hover:bg-primary/50',
+            emerald: isSelected ? 'border-success bg-success-soft dark:bg-success-soft ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700 hover:border-success-line hover:bg-success/50',
+            blue: isSelected ? 'border-primary bg-primary-soft dark:bg-primary-soft ring-2 ring-blue-500/20' : 'border-slate-200 dark:border-slate-700 hover:border-primary/30 hover:bg-primary/50',
+            purple: isSelected ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 ring-2 ring-purple-500/20' : 'border-slate-200 dark:border-slate-700 hover:border-purple-300 hover:bg-purple-50/50'
         };
         return colors[color] || colors.indigo;
     };
@@ -154,7 +154,7 @@ const PurchaseReturn: React.FC = () => {
                     description="Record returns and issue debit notes to suppliers"
                     actions={
                         <div className="flex gap-3">
-                            <button className="btn btn-secondary bg-white dark:bg-neutral-800">
+                            <button className="btn btn-secondary bg-white dark:bg-slate-800">
                                 <Printer className="w-4 h-4" />
                                 Print
                             </button>
@@ -176,8 +176,8 @@ const PurchaseReturn: React.FC = () => {
                         {/* Debit Note Details Card */}
                         <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                                    <FileText className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
+                                <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
+                                    <FileText className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                                 </div>
                                 <h2 className="text-base font-semibold text-slate-900 dark:text-white">Debit Note Details</h2>
                             </div>
@@ -203,8 +203,8 @@ const PurchaseReturn: React.FC = () => {
                         {/* Supplier Card */}
                         <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                                    <User className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
+                                <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
+                                    <User className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                                 </div>
                                 <h2 className="text-base font-semibold text-slate-900 dark:text-white">Supplier</h2>
                             </div>
@@ -212,14 +212,14 @@ const PurchaseReturn: React.FC = () => {
                                 <div className="p-4 bg-gradient-to-r from-rose-50 to-red-50 dark:from-rose-900/10 dark:to-red-900/10 border border-danger-line dark:border-danger-line rounded-xl">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 bg-white dark:bg-neutral-800 rounded-xl flex items-center justify-center shadow-sm">
+                                            <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shadow-sm">
                                                 <span className="text-lg font-bold text-danger dark:text-danger">
                                                     {formData.supplier.businessName?.charAt(0) || 'S'}
                                                 </span>
                                             </div>
                                             <div>
                                                 <p className="font-semibold text-slate-900 dark:text-white">{formData.supplier.businessName}</p>
-                                                <p className="text-sm text-slate-600 dark:text-neutral-400">{formData.supplier.contactPersonName}</p>
+                                                <p className="text-sm text-slate-600 dark:text-slate-400">{formData.supplier.contactPersonName}</p>
                                                 {formData.supplier.contactNo && (
                                                     <div className="flex items-center gap-1.5 mt-1 text-sm text-slate-500">
                                                         <Phone className="w-3.5 h-3.5" />
@@ -239,9 +239,9 @@ const PurchaseReturn: React.FC = () => {
                             ) : (
                                 <button
                                     onClick={() => setShowSupplierModal(true)}
-                                    className="w-full px-4 py-8 border-2 border-dashed border-slate-200 dark:border-neutral-700 rounded-sm text-slate-500 hover:border-danger hover:text-danger hover:bg-danger/50 dark:hover:bg-danger-soft transition-all flex flex-col items-center justify-center gap-3"
+                                    className="w-full px-4 py-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-sm text-slate-500 hover:border-danger hover:text-danger hover:bg-danger/50 dark:hover:bg-danger-soft transition-all flex flex-col items-center justify-center gap-3"
                                 >
-                                    <div className="w-12 h-12 bg-slate-50 dark:bg-neutral-800 rounded-full flex items-center justify-center">
+                                    <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center">
                                         <Plus className="w-6 h-6 text-danger" />
                                     </div>
                                     <span className="font-medium">Click to select supplier</span>
@@ -253,8 +253,8 @@ const PurchaseReturn: React.FC = () => {
                         <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-6 shadow-sm overflow-hidden">
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                                        <AlertTriangle className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
+                                    <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
+                                        <AlertTriangle className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                                     </div>
                                     <h2 className="text-base font-semibold text-slate-900 dark:text-white">Return Items</h2>
                                 </div>
@@ -268,7 +268,7 @@ const PurchaseReturn: React.FC = () => {
                             </div>
                             <div className="overflow-x-auto -mx-6">
                                 <table className="w-full text-left text-sm whitespace-nowrap">
-                                    <thead className="bg-slate-50 dark:bg-neutral-900/50 border-y dark:border-neutral-700">
+                                    <thead className="bg-slate-50 dark:bg-slate-900/50 border-y dark:border-slate-700">
                                         <tr>
                                             <th className="px-6 py-3 font-semibold text-slate-500">Item</th>
                                             <th className="px-6 py-3 font-semibold text-slate-500 w-20 text-right">Qty</th>
@@ -279,9 +279,9 @@ const PurchaseReturn: React.FC = () => {
                                             <th className="px-6 py-3 w-10"></th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                         {formData.items.map((item, index) => (
-                                            <tr key={index} className="group hover:bg-slate-50/50 dark:hover:bg-neutral-800/50 transition-colors">
+                                            <tr key={index} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                                 <td className="px-6 py-3">
                                                     <input
                                                         type="text"
@@ -327,7 +327,7 @@ const PurchaseReturn: React.FC = () => {
                                                     <select
                                                         value={item.reason}
                                                         onChange={(e) => updateItem(index, 'reason', e.target.value)}
-                                                        className="w-full bg-transparent outline-none font-medium text-slate-600 dark:text-neutral-400"
+                                                        className="w-full bg-transparent outline-none font-medium text-slate-600 dark:text-slate-400"
                                                     >
                                                         <option value="">Select reason</option>
                                                         {returnReasons.map(reason => (
@@ -354,8 +354,8 @@ const PurchaseReturn: React.FC = () => {
                         {/* Refund Details Card */}
                         <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-6 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-8 h-8 bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                                    <CreditCard className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
+                                <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
+                                    <CreditCard className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                                 </div>
                                 <h2 className="text-base font-semibold text-slate-900 dark:text-white">Refund Details</h2>
                             </div>
@@ -372,7 +372,7 @@ const PurchaseReturn: React.FC = () => {
                                                     onClick={() => setFormData({ ...formData, refundMethod: method.value, bankAccount: '' })}
                                                     className={`group p-4 border-2 rounded-sm transition-all text-center ${getMethodColorClasses(method.color, isSelected)}`}
                                                 >
-                                                    <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-colors ${isSelected ? getColorClasses(method.color).surface : 'bg-slate-50 dark:bg-neutral-800'}`}>
+                                                    <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-colors ${isSelected ? getColorClasses(method.color).surface : 'bg-slate-50 dark:bg-slate-800'}`}>
                                                         <IconComponent className={`w-6 h-6 transition-colors ${isSelected ? getColorClasses(method.color).icon : 'text-slate-400'}`} />
                                                     </div>
                                                     <div className={`text-xs font-bold uppercase tracking-wider transition-colors ${isSelected ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>
@@ -386,11 +386,11 @@ const PurchaseReturn: React.FC = () => {
 
                                 {formData.refundMethod === 'bank_transfer' && (
                                     <div className="animate-in slide-in-from-top-2">
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-neutral-300 mb-2">Select Bank Account</label>
+                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Select Bank Account</label>
                                         <select
                                             value={formData.bankAccount}
                                             onChange={(e) => setFormData({ ...formData, bankAccount: e.target.value })}
-                                            className="w-full px-4 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20"
+                                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20"
                                         >
                                             <option value="">Choose Bank Account</option>
                                             {bankAccounts.map(acc => (
@@ -403,12 +403,12 @@ const PurchaseReturn: React.FC = () => {
                                 )}
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-neutral-300 mb-2">Notes</label>
+                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Notes</label>
                                     <textarea
                                         value={formData.notes}
                                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                                         rows={3}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 resize-none transition-all"
+                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 resize-none transition-all"
                                         placeholder="Add notes about this return..."
                                     />
                                 </div>
@@ -449,13 +449,13 @@ const PurchaseReturn: React.FC = () => {
                                                 type="number"
                                                 value={formData.discount}
                                                 onChange={(e) => setFormData({ ...formData, discount: parseFloat(e.target.value) || 0 })}
-                                                className="w-full pl-8 pr-4 py-2.5 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-primary"
+                                                className="w-full pl-8 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-primary"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="border-t dark:border-neutral-800 pt-6 mb-8 text-center">
+                                <div className="border-t dark:border-slate-800 pt-6 mb-8 text-center">
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Refund / Credit</p>
                                     <p className="text-4xl font-black text-success">₹{calculateTotal().toLocaleString()}</p>
                                 </div>
@@ -469,7 +469,7 @@ const PurchaseReturn: React.FC = () => {
                                         <Save className="w-5 h-5" />
                                         {loading ? 'Processing...' : 'Issue Debit Note'}
                                     </button>
-                                    <button className="w-full py-3.5 border border-slate-200 dark:border-neutral-700 text-slate-700 dark:text-neutral-300 font-semibold rounded-sm hover:bg-slate-50 dark:hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2">
+                                    <button className="w-full py-3.5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
                                         <Printer className="w-4 h-4" />
                                         Print Document
                                     </button>

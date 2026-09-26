@@ -85,10 +85,10 @@ const MrpPendingInvoices: React.FC = () => {
                 description="Bills raised at a provisional price, awaiting final MRP confirmation."
             />
 
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-neutral-50 dark:bg-neutral-900 text-xs font-bold text-neutral-500 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">
+                        <thead className="bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
                             <tr>
                                 <th className="px-6 py-3">Invoice</th>
                                 <th className="px-6 py-3">Customer</th>
@@ -98,14 +98,14 @@ const MrpPendingInvoices: React.FC = () => {
                                 <th className="px-6 py-3 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                             {invoices.map((inv) => (
-                                <tr key={inv._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40">
-                                    <td className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white">{inv.invoiceNo}</td>
-                                    <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-300">{inv.customer?.name || 'Walk-in Customer'}</td>
-                                    <td className="px-6 py-4 text-xs text-neutral-500">{formatDate(inv.createdAt)}</td>
-                                    <td className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white">₹{inv.totalAmount.toLocaleString()}</td>
-                                    <td className="px-6 py-4 text-xs text-neutral-500 max-w-xs truncate">{inv.mrpPendingNote || '—'}</td>
+                                <tr key={inv._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40">
+                                    <td className="px-6 py-4 text-sm font-bold text-slate-900 dark:text-white">{inv.invoiceNo}</td>
+                                    <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">{inv.customer?.name || 'Walk-in Customer'}</td>
+                                    <td className="px-6 py-4 text-xs text-slate-500">{formatDate(inv.createdAt)}</td>
+                                    <td className="px-6 py-4 text-sm font-bold text-slate-900 dark:text-white">₹{inv.totalAmount.toLocaleString()}</td>
+                                    <td className="px-6 py-4 text-xs text-slate-500 max-w-xs truncate">{inv.mrpPendingNote || '—'}</td>
                                     <td className="px-6 py-4 text-right">
                                         <button
                                             onClick={() => openFinalize(inv)}
@@ -118,7 +118,7 @@ const MrpPendingInvoices: React.FC = () => {
                             ))}
                             {!isLoading && invoices.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-16 text-center text-neutral-400">
+                                    <td colSpan={6} className="px-6 py-16 text-center text-slate-400">
                                         <AlertTriangle className="w-10 h-10 mx-auto mb-3 opacity-40" />
                                         No invoices awaiting MRP confirmation.
                                     </td>
@@ -131,40 +131,40 @@ const MrpPendingInvoices: React.FC = () => {
 
             {editingInvoice && (
                 <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
                             <h3 className="text-lg font-bold">Finalize MRP — {editingInvoice.invoiceNo}</h3>
-                            <button onClick={() => setEditingInvoice(null)} className="text-neutral-400 hover:text-neutral-700">
+                            <button onClick={() => setEditingInvoice(null)} className="text-slate-400 hover:text-slate-700">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
                         <div className="p-6 space-y-3">
-                            <p className="text-xs text-neutral-500">
+                            <p className="text-xs text-slate-500">
                                 Correct each line's price to the confirmed MRP, or leave unchanged and just clear the pending flag.
                             </p>
                             {editingInvoice.items.map((it) => (
                                 <div key={it.item} className="flex items-center justify-between gap-3">
-                                    <span className="text-sm text-neutral-700 dark:text-neutral-300 truncate">{it.name || it.item} × {it.quantity}</span>
+                                    <span className="text-sm text-slate-700 dark:text-slate-300 truncate">{it.name || it.item} × {it.quantity}</span>
                                     <div className="relative shrink-0">
-                                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-neutral-400">₹</span>
+                                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">₹</span>
                                         <input
                                             type="number"
                                             min="0"
                                             step="0.01"
                                             value={draftPrices[it.item] ?? ''}
                                             onChange={(e) => setDraftPrices(prev => ({ ...prev, [it.item]: e.target.value }))}
-                                            className="w-28 pl-4 pr-2 py-1.5 text-sm text-right bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg outline-none"
+                                            className="w-28 pl-4 pr-2 py-1.5 text-sm text-right bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none"
                                         />
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-200 dark:border-neutral-700">
-                            <button onClick={() => setEditingInvoice(null)} className="px-4 py-2 text-sm font-bold text-neutral-500 hover:text-neutral-800">Cancel</button>
+                        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-700">
+                            <button onClick={() => setEditingInvoice(null)} className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800">Cancel</button>
                             <button
                                 onClick={() => handleFinalize(false)}
                                 disabled={isSaving}
-                                className="px-4 py-2 text-sm font-bold text-neutral-600 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-60"
+                                className="px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-60"
                             >
                                 Clear flag only
                             </button>

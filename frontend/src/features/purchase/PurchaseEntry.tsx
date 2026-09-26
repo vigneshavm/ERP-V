@@ -915,62 +915,62 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                 {/* Design Set Modal - Updated UI */}
                 {showDesignSetModal && (
                     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in zoom-in-95 duration-200">
-                        <div className="bg-white dark:bg-neutral-800 rounded-sm shadow-2xl w-full max-w-3xl overflow-hidden border border-neutral-100 dark:border-neutral-700" onClick={e => e.stopPropagation()}>
-                            <div className="px-8 py-6 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900">
+                        <div className="bg-white dark:bg-slate-800 rounded-sm shadow-2xl w-full max-w-3xl overflow-hidden border border-slate-100 dark:border-slate-700" onClick={e => e.stopPropagation()}>
+                            <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
                                 <div>
-                                    <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Add Design Set</h2>
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">Generates variants (Size/Color) automatically</p>
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">Add Design Set</h2>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400">Generates variants (Size/Color) automatically</p>
                                 </div>
-                                <button onClick={() => setShowDesignSetModal(false)} className="p-2 hover:bg-white/50 rounded-full transition-colors text-neutral-500">&times;</button>
+                                <button onClick={() => setShowDesignSetModal(false)} className="p-2 hover:bg-white/50 rounded-full transition-colors text-slate-500">&times;</button>
                             </div>
                             <div className="p-8 space-y-6">
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Base Name</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Base Name</label>
                                         <input
                                             type="text"
                                             value={designSet.name}
                                             onChange={e => setDesignSet({ ...designSet, name: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-900 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                                             placeholder="e.g. Silk Saree"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Category</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Category</label>
                                         <div className="relative">
                                             <select
                                                 onChange={e => {
                                                     const cat = categories.find(c => c.id === e.target.value);
                                                     setDesignSet({ ...designSet, category: cat || null });
                                                 }}
-                                                className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-900 appearance-none focus:ring-2 focus:ring-primary outline-none transition-all"
+                                                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 appearance-none focus:ring-2 focus:ring-primary outline-none transition-all"
                                             >
                                                 <option value="">Select Category</option>
                                                 {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                             </select>
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400">▼</div>
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Colors <span className="font-normal text-neutral-400 normal-case">(Comma separated)</span></label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Colors <span className="font-normal text-slate-400 normal-case">(Comma separated)</span></label>
                                         <input
                                             type="text"
                                             value={designSet.colors.join(', ')}
                                             onChange={e => setDesignSet({ ...designSet, colors: e.target.value.split(',').map(s => s.trim()) })}
-                                            className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-900 focus:ring-2 focus:ring-primary outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none transition-all"
                                             placeholder="Red, Blue, Green"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Sizes <span className="font-normal text-neutral-400 normal-case">(Comma separated)</span></label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Sizes <span className="font-normal text-slate-400 normal-case">(Comma separated)</span></label>
                                         <input
                                             type="text"
                                             value={designSet.sizes.join(', ')}
                                             onChange={e => setDesignSet({ ...designSet, sizes: e.target.value.split(',').map(s => s.trim()) })}
-                                            className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-900 focus:ring-2 focus:ring-primary outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none transition-all"
                                             placeholder="S, M, L, XL"
                                         />
                                     </div>
@@ -978,19 +978,19 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
 
                                 <div className="grid grid-cols-4 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Cost Price</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Cost Price</label>
                                         <div className="relative">
-                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">₹</span>
+                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
                                             <input
                                                 type="number"
                                                 value={designSet.rate}
                                                 onChange={e => setDesignSet({ ...designSet, rate: parseFloat(e.target.value) || 0 })}
-                                                className="w-full pl-8 pr-3 py-3 rounded-xl border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-900 focus:ring-2 focus:ring-primary outline-none"
+                                                className="w-full pl-8 pr-3 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Margin %</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Margin %</label>
                                         <input
                                             type="number"
                                             value={designSet.margin}
@@ -998,11 +998,11 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                 const margin = parseFloat(e.target.value) || 0;
                                                 setDesignSet({ ...designSet, margin, sellingPrice: designSet.rate * (1 + margin / 100) });
                                             }}
-                                            className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-900 focus:ring-2 focus:ring-primary outline-none"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Selling Price</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Selling Price</label>
                                         <div className="relative">
                                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-success font-bold">₹</span>
                                             <input
@@ -1017,29 +1017,29 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Tax %</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Tax %</label>
                                         <input
                                             type="number"
                                             value={designSet.taxPercent}
                                             onChange={e => setDesignSet({ ...designSet, taxPercent: parseFloat(e.target.value) || 0 })}
-                                            className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-900 focus:ring-2 focus:ring-primary outline-none"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wide">Washing Instructions</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Washing Instructions</label>
                                     <input
                                         type="text"
                                         value={designSet.washingInstructions}
                                         onChange={e => setDesignSet({ ...designSet, washingInstructions: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-900 focus:ring-2 focus:ring-primary outline-none"
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
                                         placeholder="e.g. Dry Clean Only, Hand Wash"
                                     />
                                 </div>
                             </div>
-                            <div className="px-8 py-6 border-t border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50 flex justify-end gap-3">
-                                <button onClick={() => setShowDesignSetModal(false)} className="px-6 py-2.5 rounded-xl text-neutral-600 font-medium hover:bg-neutral-200 transition-colors">Cancel</button>
+                            <div className="px-8 py-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3">
+                                <button onClick={() => setShowDesignSetModal(false)} className="px-6 py-2.5 rounded-xl text-slate-600 font-medium hover:bg-slate-200 transition-colors">Cancel</button>
                                 <button
                                     onClick={expandDesignSet}
                                     className="px-6 py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 transition-all shadow-sm"
@@ -1077,7 +1077,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                     if (labelItems.length === 0) return toast.info('No items to print');
                                     printBarcodeLabels(labelItems);
                                 }}
-                                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 transition-colors border border-neutral-200 dark:border-neutral-700"
+                                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700"
                             >
                                 <Printer className="w-4 h-4" />
                                 <span>Labels</span>
@@ -1107,15 +1107,15 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                 {/* Top Section: Supplier Selection & Meta Data */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Supplier Card */}
-                    <div className="lg:col-span-1 bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 hover:border-primary/50 transition-colors group">
-                        <h3 className="text-sm font-bold text-neutral-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
+                    <div className="lg:col-span-1 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 hover:border-primary/50 transition-colors group">
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
                             <User className="w-4 h-4 text-primary" /> Supplier Details
                         </h3>
                         <div className="space-y-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Select Supplier</label>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Select Supplier</label>
                                 <div className="relative group/input">
-                                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within/input:text-primary transition-colors">
+                                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/input:text-primary transition-colors">
                                         <Search className="w-4 h-4" />
                                     </div>
                                     <input
@@ -1129,11 +1129,11 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                             setShowSupplierDropdown(true);
                                         }}
                                         onFocus={() => setShowSupplierDropdown(true)}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
                                     />
                                     {/* Dropdown */}
                                     {showSupplierDropdown && (supplierSearch || suppliers.length > 0) && (
-                                        <div className="absolute top-full text-neutral-900 left-0 right-0 mt-2 bg-white dark:bg-neutral-900 rounded-xl shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 max-h-60 overflow-y-auto custom-scrollbar">
+                                        <div className="absolute top-full text-slate-900 left-0 right-0 mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 z-50 max-h-60 overflow-y-auto custom-scrollbar">
                                             {suppliers.filter(s => s.businessName.toLowerCase().includes(supplierSearch.toLowerCase())).map(s => (
                                                 <div
                                                     key={s._id}
@@ -1143,13 +1143,13 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                         setSupplierSearch('');
                                                         setShowSupplierDropdown(false);
                                                     }}
-                                                    className="px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer border-b border-neutral-50 dark:border-neutral-800 last:border-0"
+                                                    className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer border-b border-slate-50 dark:border-slate-800 last:border-0"
                                                 >
                                                     <div className="font-semibold text-sm">{s.businessName}</div>
-                                                    <div className="text-xs text-neutral-400">{s.contactNo}</div>
+                                                    <div className="text-xs text-slate-400">{s.contactNo}</div>
                                                 </div>
                                             ))}
-                                            {suppliers.length === 0 && <div className="p-4 text-center text-xs text-neutral-400">No suppliers found</div>}
+                                            {suppliers.length === 0 && <div className="p-4 text-center text-xs text-slate-400">No suppliers found</div>}
                                         </div>
                                     )}
                                 </div>
@@ -1170,80 +1170,80 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                     </div>
 
                     {/* Invoice & Meta */}
-                    <div className="lg:col-span-2 bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 hover:border-primary/50 transition-colors">
-                        <h3 className="text-sm font-bold text-neutral-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
+                    <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 hover:border-primary/50 transition-colors">
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
                             <FileText className="w-4 h-4 text-primary" /> Invoice Details
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Invoice Number</label>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Invoice Number</label>
                                 <input
                                     type="text"
                                     value={invoiceNo}
                                     onChange={e => setInvoiceNo(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all uppercase placeholder:normal-case"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all uppercase placeholder:normal-case"
                                     placeholder="e.g. INV-8823"
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Date</label>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Date</label>
                                 <div className="flex gap-4">
                                     <div className="relative flex-1 group/date">
-                                        <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within/date:text-primary transition-colors" />
+                                        <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/date:text-primary transition-colors" />
                                         <input
                                             type="date"
                                             value={purchaseDate}
                                             onChange={e => setPurchaseDate(e.target.value)}
-                                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
                                         />
                                     </div>
                                 </div>
                             </div>
                             <div className="md:col-span-2 space-y-1.5">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Remarks / Terms</label>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Remarks / Terms</label>
                                 <input
                                     type="text"
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
                                     placeholder="Add payment terms or delivery notes..."
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Manual Total Amount</label>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Manual Total Amount</label>
                                 <div className="relative group/manual">
-                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 font-bold group-focus-within/manual:text-primary transition-colors">₹</span>
+                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold group-focus-within/manual:text-primary transition-colors">₹</span>
                                     <input
                                         type="number"
                                         value={manualTotalAmount}
                                         onChange={e => setManualTotalAmount(e.target.value === '' ? '' : parseFloat(e.target.value))}
-                                        className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                                        className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
                                         placeholder="Auto-calculated if empty"
                                     />
                                 </div>
-                                <p className="text-[10px] text-neutral-400">Overrides calculated total if set</p>
+                                <p className="text-[10px] text-slate-400">Overrides calculated total if set</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Entry Options Card */}
-                    <div className="lg:col-span-3 bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 hover:border-primary/50 transition-colors">
-                        <h3 className="text-sm font-bold text-neutral-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
+                    <div className="lg:col-span-3 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 hover:border-primary/50 transition-colors">
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
                             <ClipboardList className="w-4 h-4 text-success" /> Entry Options
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Receipt Mode</label>
-                                <div className="flex bg-neutral-100 dark:bg-neutral-900/50 p-1 rounded-xl">
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Receipt Mode</label>
+                                <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-xl">
                                     <button
                                         onClick={() => setReceiptStatus('Received')}
-                                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${receiptStatus === 'Received' ? 'bg-white dark:bg-neutral-700 shadow-sm text-primary' : 'text-neutral-500'}`}
+                                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${receiptStatus === 'Received' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-500'}`}
                                     >
                                         Immediate
                                     </button>
                                     <button
                                         onClick={() => setReceiptStatus('Pending')}
-                                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${receiptStatus === 'Pending' ? 'bg-white dark:bg-neutral-700 shadow-sm text-primary' : 'text-neutral-500'}`}
+                                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${receiptStatus === 'Pending' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-500'}`}
                                     >
                                         Pending
                                     </button>
@@ -1251,11 +1251,11 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Payment Terms</label>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Payment Terms</label>
                                 <select
                                     value={paymentTerms}
                                     onChange={e => setPaymentTerms(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
                                 >
                                     <option value="COD">COD (Cash on Delivery)</option>
                                     <option value="Net 15">Net 15 Days</option>
@@ -1265,25 +1265,25 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Ref Document</label>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Ref Document</label>
                                 <div className="relative group/ref">
-                                    <FileCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within/ref:text-success transition-colors" />
+                                    <FileCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/ref:text-success transition-colors" />
                                     <input
                                         type="text"
                                         value={referenceDoc}
                                         onChange={e => setReferenceDoc(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
                                         placeholder="PO#, Email Date..."
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Attachments</label>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Attachments</label>
                                 <div className="flex gap-2">
-                                    <label className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-700 hover:border-primary dark:hover:border-primary cursor-pointer transition-all group">
-                                        <Paperclip className="w-4 h-4 text-neutral-400 group-hover:text-primary" />
-                                        <span className="text-xs font-bold text-neutral-500 group-hover:text-primary">Upload</span>
+                                    <label className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary cursor-pointer transition-all group">
+                                        <Paperclip className="w-4 h-4 text-slate-400 group-hover:text-primary" />
+                                        <span className="text-xs font-bold text-slate-500 group-hover:text-primary">Upload</span>
                                         <input
                                             type="file"
                                             multiple
@@ -1303,7 +1303,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                 {attachments.length > 0 && (
                                     <div className="flex flex-wrap gap-2 mt-2">
                                         {attachments.map((file, i) => (
-                                            <div key={i} className="flex items-center gap-1 px-2 py-1 bg-neutral-100 dark:bg-neutral-700 rounded-lg text-[10px] text-neutral-500 max-w-[120px] truncate">
+                                            <div key={i} className="flex items-center gap-1 px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg text-[10px] text-slate-500 max-w-[120px] truncate">
                                                 <Paperclip className="w-3 h-3" /> {file.name}
                                                 <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="ml-1 hover:text-danger">&times;</button>
                                             </div>
@@ -1316,15 +1316,15 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                 </div>
 
                 {/* Items Table */}
-                <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-                    <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-800/50">
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
                         <div className="flex items-center gap-3">
-                            <h3 className="font-bold text-neutral-700 dark:text-neutral-300">Items List</h3>
-                            <div className="flex bg-neutral-100 dark:bg-neutral-900 p-0.5 rounded-lg">
+                            <h3 className="font-bold text-slate-700 dark:text-slate-300">Items List</h3>
+                            <div className="flex bg-slate-100 dark:bg-slate-900 p-0.5 rounded-lg">
                                 <button
                                     onClick={() => setShowPdfPanel(false)}
                                     className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
-                                        !showPdfPanel ? 'bg-white dark:bg-neutral-700 shadow-sm text-primary' : 'text-neutral-400 hover:text-neutral-600'
+                                        !showPdfPanel ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400 hover:text-slate-600'
                                     }`}
                                 >
                                     Manual Entry
@@ -1332,7 +1332,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                 <button
                                     onClick={() => setShowPdfPanel(true)}
                                     className={`px-3 py-1 text-xs font-bold rounded-md transition-all flex items-center gap-1 ${
-                                        showPdfPanel ? 'bg-white dark:bg-neutral-700 shadow-sm text-primary' : 'text-neutral-400 hover:text-neutral-600'
+                                        showPdfPanel ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400 hover:text-slate-600'
                                     }`}
                                 >
                                     <FileUp className="w-3 h-3" /> PDF Import
@@ -1357,7 +1357,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
 
                     {/* PDF Import Panel */}
                     {showPdfPanel && (
-                        <div className="border-b border-neutral-100 dark:border-neutral-700 p-6 bg-gradient-to-br from-indigo-50/50 to-violet-50/50 dark:from-indigo-950/20 dark:to-violet-950/20 animate-in slide-in-from-top-2 duration-300">
+                        <div className="border-b border-slate-100 dark:border-slate-700 p-6 bg-gradient-to-br from-indigo-50/50 to-violet-50/50 dark:from-indigo-950/20 dark:to-violet-950/20 animate-in slide-in-from-top-2 duration-300">
                             <div className="flex items-start gap-6">
                                 {/* Drop Zone */}
                                 <label
@@ -1385,7 +1385,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                     ) : pdfFileName ? (
                                         <><CheckCircle2 className="w-8 h-8 text-success" /><span className="text-xs font-bold text-success text-center px-2 truncate max-w-[200px]">{pdfFileName}</span></>
                                     ) : (
-                                        <><Upload className="w-8 h-8 text-primary group-hover:text-primary transition-colors" /><span className="text-xs font-bold text-primary group-hover:text-primary">Drop PDF here</span><span className="text-[10px] text-neutral-400">or click to browse</span></>
+                                        <><Upload className="w-8 h-8 text-primary group-hover:text-primary transition-colors" /><span className="text-xs font-bold text-primary group-hover:text-primary">Drop PDF here</span><span className="text-[10px] text-slate-400">or click to browse</span></>
                                     )}
                                 </label>
 
@@ -1393,25 +1393,25 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                 <div className="flex-1">
                                     {!pdfParseResult && !isPdfParsing && (
                                         <div className="h-36 flex flex-col justify-center">
-                                            <h4 className="font-bold text-neutral-700 dark:text-neutral-300 text-sm mb-1 flex items-center gap-2"><FileUp className="w-4 h-4 text-primary" /> PDF Items Import</h4>
-                                            <p className="text-xs text-neutral-500 leading-relaxed">Upload a supplier <strong>invoice or packing list</strong> PDF. The system will automatically extract item names, quantities, and rates into the items table.</p>
-                                            <p className="text-[10px] text-neutral-400 mt-2 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Works best with text-based PDFs. Scanned images are not supported.</p>
+                                            <h4 className="font-bold text-slate-700 dark:text-slate-300 text-sm mb-1 flex items-center gap-2"><FileUp className="w-4 h-4 text-primary" /> PDF Items Import</h4>
+                                            <p className="text-xs text-slate-500 leading-relaxed">Upload a supplier <strong>invoice or packing list</strong> PDF. The system will automatically extract item names, quantities, and rates into the items table.</p>
+                                            <p className="text-[10px] text-slate-400 mt-2 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Works best with text-based PDFs. Scanned images are not supported.</p>
                                         </div>
                                     )}
                                     {pdfParseResult && (
                                         <div className="h-36 flex flex-col">
                                             <div className="flex items-center justify-between mb-2">
-                                                <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
+                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
                                                     Found <span className="text-primary">{pdfParseResult.items.length}</span> items in PDF
                                                 </span>
-                                                <button onClick={() => { setPdfParseResult(null); setPdfFileName(''); if (pdfInputRef.current) pdfInputRef.current.value = ''; }} className="text-[10px] text-neutral-400 hover:text-danger flex items-center gap-1"><X className="w-3 h-3" /> Clear</button>
+                                                <button onClick={() => { setPdfParseResult(null); setPdfFileName(''); if (pdfInputRef.current) pdfInputRef.current.value = ''; }} className="text-[10px] text-slate-400 hover:text-danger flex items-center gap-1"><X className="w-3 h-3" /> Clear</button>
                                             </div>
                                             <div className="flex-1 overflow-y-auto space-y-1 pr-1">
                                                 {pdfParseResult.items.map((item, i) => (
-                                                    <div key={i} className="flex items-center gap-3 bg-white dark:bg-neutral-800 rounded-lg px-3 py-1.5 border border-neutral-100 dark:border-neutral-700 text-xs">
-                                                        <span className="flex-1 font-medium text-neutral-700 dark:text-neutral-300 truncate">{item.product_name}</span>
-                                                        <span className="text-neutral-400">Qty: <strong>{item.quantity}</strong></span>
-                                                        <span className="text-neutral-400">₹<strong>{item.rate}</strong></span>
+                                                    <div key={i} className="flex items-center gap-3 bg-white dark:bg-slate-800 rounded-lg px-3 py-1.5 border border-slate-100 dark:border-slate-700 text-xs">
+                                                        <span className="flex-1 font-medium text-slate-700 dark:text-slate-300 truncate">{item.product_name}</span>
+                                                        <span className="text-slate-400">Qty: <strong>{item.quantity}</strong></span>
+                                                        <span className="text-slate-400">₹<strong>{item.rate}</strong></span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -1430,7 +1430,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                     <div className="overflow-x-auto min-h-[300px]">
                         <table className="w-full text-left text-sm">
                             <thead>
-                                <tr className="border-b border-neutral-100 dark:border-neutral-700 text-neutral-400">
+                                <tr className="border-b border-slate-100 dark:border-slate-700 text-slate-400">
                                     <th className="px-6 py-4 font-semibold w-16">#</th>
                                     <th className="px-6 py-4 font-semibold min-w-[250px]">Product / Description</th>
                                     <th className="px-6 py-4 font-semibold text-right w-24">Qty</th>
@@ -1442,10 +1442,10 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                     <th className="px-4 py-4 w-12 text-center"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
                                 {items.map((item, idx) => (
-                                    <tr key={item.id || idx} className={`group hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors ${activeSearchRow === idx ? 'relative z-50' : ''}`}>
-                                        <td className="px-6 py-4 text-neutral-400 font-medium">{idx + 1}</td>
+                                    <tr key={item.id || idx} className={`group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors ${activeSearchRow === idx ? 'relative z-50' : ''}`}>
+                                        <td className="px-6 py-4 text-slate-400 font-medium">{idx + 1}</td>
                                         <td className={`px-6 py-4 relative ${activeSearchRow === idx ? 'z-50' : ''}`}>
                                             <input
                                                 type="text"
@@ -1476,9 +1476,9 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                         }
                                                     }
                                                 }}
-                                                className="w-full bg-transparent border-none outline-none font-medium placeholder:text-neutral-300 focus:placeholder:text-neutral-400 text-neutral-900 dark:text-neutral-100"
+                                                className="w-full bg-transparent border-none outline-none font-medium placeholder:text-slate-300 focus:placeholder:text-slate-400 text-slate-900 dark:text-slate-100"
                                             />
-                                            <div className="text-[10px] text-neutral-400 mt-1 flex gap-2">
+                                            <div className="text-[10px] text-slate-400 mt-1 flex gap-2">
                                                 {item.product_id && (
                                                     <span className="bg-success-soft dark:bg-success-soft text-success dark:text-success px-1.5 py-0.5 rounded border border-success-line dark:border-success-line">
                                                         In Catalog
@@ -1489,9 +1489,9 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                         {item.category_name}
                                                     </span>
                                                 )}
-                                                {item.sku && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">SKU: {item.sku}</span>}
-                                                {item.color && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">{item.color}</span>}
-                                                {item.size && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">{item.size}</span>}
+                                                {item.sku && <span className="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">SKU: {item.sku}</span>}
+                                                {item.color && <span className="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">{item.color}</span>}
+                                                {item.size && <span className="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">{item.size}</span>}
                                             </div>
 
                                             {/* ─── Textile Descriptors for a NEW product ───
@@ -1501,7 +1501,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                 pattern and same Master Data lists as ProductModal.tsx, so a value typed
                                                 in either place becomes a suggestion in the other. */}
                                             {!item.product_id && (item.product_name || item.category_name) && (
-                                                <div className="grid grid-cols-3 gap-x-2 gap-y-1.5 mt-2 pt-2 border-t border-dashed border-neutral-200 dark:border-neutral-700 max-w-[360px]">
+                                                <div className="grid grid-cols-3 gap-x-2 gap-y-1.5 mt-2 pt-2 border-t border-dashed border-slate-200 dark:border-slate-700 max-w-[360px]">
                                                     <div>
                                                         <input
                                                             type="text"
@@ -1509,7 +1509,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                             placeholder="Brand"
                                                             value={item.brand || ''}
                                                             onChange={e => updateItem(idx, 'brand', e.target.value)}
-                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 outline-none focus:ring-1 focus:ring-primary"
                                                         />
                                                         <datalist id={`brand-options-${idx}`}>
                                                             {brandOptions.map((b) => <option key={b._id} value={b.name} />)}
@@ -1522,7 +1522,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                             placeholder="Design"
                                                             value={item.design || ''}
                                                             onChange={e => updateItem(idx, 'design', e.target.value)}
-                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 outline-none focus:ring-1 focus:ring-primary"
                                                         />
                                                         <datalist id={`design-options-${idx}`}>
                                                             {designOptions.map((d) => <option key={d._id} value={d.name} />)}
@@ -1535,7 +1535,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                             placeholder="Pattern"
                                                             value={item.pattern || ''}
                                                             onChange={e => updateItem(idx, 'pattern', e.target.value)}
-                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 outline-none focus:ring-1 focus:ring-primary"
                                                         />
                                                         <datalist id={`pattern-options-${idx}`}>
                                                             {patternOptions.map((p) => <option key={p._id} value={p.name} />)}
@@ -1548,7 +1548,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                             placeholder="Model No"
                                                             value={item.modelNo || ''}
                                                             onChange={e => updateItem(idx, 'modelNo', e.target.value)}
-                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 outline-none focus:ring-1 focus:ring-primary"
                                                         />
                                                         <datalist id={`modelno-options-${idx}`}>
                                                             {modelNoOptions.map((m) => <option key={m._id} value={m.name} />)}
@@ -1561,7 +1561,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                             placeholder="Fashion Name"
                                                             value={item.fashionName || ''}
                                                             onChange={e => updateItem(idx, 'fashionName', e.target.value)}
-                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 outline-none focus:ring-1 focus:ring-primary"
                                                         />
                                                         <datalist id={`fashionname-options-${idx}`}>
                                                             {fashionNameOptions.map((f) => <option key={f._id} value={f.name} />)}
@@ -1574,7 +1574,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                             placeholder="Rack"
                                                             value={item.shelfCode || ''}
                                                             onChange={e => updateItem(idx, 'shelfCode', e.target.value)}
-                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 outline-none focus:ring-1 focus:ring-primary"
+                                                            className="w-full text-[11px] px-2 py-1 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 outline-none focus:ring-1 focus:ring-primary"
                                                         />
                                                         <datalist id={`rack-options-${idx}`}>
                                                             {rackOptions.map((r) => <option key={r._id} value={r.name} />)}
@@ -1585,7 +1585,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
 
                                             {/* ─── Existing-Product / New-Product-Category Dropdown ─── */}
                                             {activeSearchRow === idx && (
-                                                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-neutral-900 rounded-sm shadow-2xl border border-neutral-200 dark:border-neutral-700 z-50 w-[320px] overflow-hidden"
+                                                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-900 rounded-sm shadow-2xl border border-slate-200 dark:border-slate-700 z-50 w-[320px] overflow-hidden"
                                                     onMouseDown={e => {
                                                         e.preventDefault(); // prevent input blur
                                                         e.stopPropagation(); // prevent window click-outside from firing
@@ -1594,7 +1594,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                     {/* Existing catalog matches -- picking one links this line to the real Item
                                                         instead of creating a duplicate on save */}
                                                     {matchingProducts.length > 0 && (
-                                                        <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">
+                                                        <div className="p-2 border-b border-slate-100 dark:border-slate-800">
                                                             <div className="px-2 pt-1 pb-2 flex items-center gap-2">
                                                                 <Search className="w-3.5 h-3.5 text-success" />
                                                                 <span className="text-[10px] text-success dark:text-success font-medium uppercase tracking-wider">
@@ -1611,11 +1611,11 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                                     }}
                                                                 >
                                                                     <div>
-                                                                        <div className="font-semibold text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-success dark:group-hover:text-success">{prod.name}</div>
-                                                                        <div className="text-[10px] text-neutral-400">Stock: {prod.stockQty ?? 0}{prod.sku ? ` · ${prod.sku}` : ''}</div>
+                                                                        <div className="font-semibold text-sm text-slate-700 dark:text-slate-300 group-hover:text-success dark:group-hover:text-success">{prod.name}</div>
+                                                                        <div className="text-[10px] text-slate-400">Stock: {prod.stockQty ?? 0}{prod.sku ? ` · ${prod.sku}` : ''}</div>
                                                                     </div>
                                                                     {typeof prod.costPrice === 'number' && (
-                                                                        <div className="text-[10px] text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-md">₹{prod.costPrice}</div>
+                                                                        <div className="text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">₹{prod.costPrice}</div>
                                                                     )}
                                                                 </div>
                                                             ))}
@@ -1625,8 +1625,8 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                     {/* Category list, for classifying a genuinely new product */}
                                                     <div className="px-4 pt-3 pb-2 flex flex-col gap-1">
                                                         <div className="flex items-center gap-2">
-                                                            <Plus className="w-3.5 h-3.5 text-neutral-400" />
-                                                            <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
+                                                            <Plus className="w-3.5 h-3.5 text-slate-400" />
+                                                            <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
                                                                 Or Create New in Category
                                                             </span>
                                                         </div>
@@ -1642,13 +1642,13 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                                         handleCategorySelect(idx, cat);
                                                                     }}
                                                                 >
-                                                                    <div className="font-semibold text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-violet-700 dark:group-hover:text-accent">{cat.name}</div>
-                                                                    {cat.shortCode && <div className="text-[10px] text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-md">{cat.shortCode}</div>}
+                                                                    <div className="font-semibold text-sm text-slate-700 dark:text-slate-300 group-hover:text-violet-700 dark:group-hover:text-accent">{cat.name}</div>
+                                                                    {cat.shortCode && <div className="text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">{cat.shortCode}</div>}
                                                                 </div>
                                                             ))
                                                         ) : (
                                                             <div className="px-4 py-3 text-center">
-                                                                <p className="text-xs text-neutral-400">No category matched</p>
+                                                                <p className="text-xs text-slate-400">No category matched</p>
                                                             </div>
                                                         )}
                                                     </div>
@@ -1661,7 +1661,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                 value={item.quantity}
                                                 onFocus={e => e.target.select()}
                                                 onChange={e => updateItem(idx, 'quantity', parseFloat(e.target.value) || 0)}
-                                                className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none font-medium text-neutral-700 dark:text-neutral-300"
+                                                className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none font-medium text-slate-700 dark:text-slate-300"
                                             />
                                         </td>
                                         <td className="px-6 py-4">
@@ -1670,7 +1670,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                 value={item.rate}
                                                 onFocus={e => e.target.select()}
                                                 onChange={e => updateItem(idx, 'rate', parseFloat(e.target.value) || 0)}
-                                                className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none font-medium text-neutral-700 dark:text-neutral-300"
+                                                className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none font-medium text-slate-700 dark:text-slate-300"
                                             />
                                         </td>
                                         <td className="px-6 py-4">
@@ -1679,7 +1679,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                 value={item.tax_percent}
                                                 onFocus={e => e.target.select()}
                                                 onChange={e => updateItem(idx, 'tax_percent', parseFloat(e.target.value) || 0)}
-                                                className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none text-neutral-500"
+                                                className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none text-slate-500"
                                             />
                                         </td>
                                         {isWholesale && (
@@ -1697,7 +1697,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                         <td className="px-6 py-4 text-center">
                                             <div className="flex flex-col gap-1 items-end">
                                                 <div className="flex items-center gap-1 justify-end">
-                                                    <span className="text-[10px] text-neutral-400 uppercase">Margin %</span>
+                                                    <span className="text-[10px] text-slate-400 uppercase">Margin %</span>
                                                     <input
                                                         type="number"
                                                         value={item.margin || 0}
@@ -1709,7 +1709,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                             newItems[idx] = { ...item, margin, sellingPrice };
                                                             setItems(newItems);
                                                         }}
-                                                        className="w-12 text-right text-xs bg-neutral-100 dark:bg-neutral-700 rounded px-1 py-0.5 outline-none"
+                                                        className="w-12 text-right text-xs bg-slate-100 dark:bg-slate-700 rounded px-1 py-0.5 outline-none"
                                                     />
                                                 </div>
                                                 <div className="flex items-center gap-1 justify-end">
@@ -1742,13 +1742,13 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-right font-bold text-neutral-900 dark:text-white">
+                                        <td className="px-6 py-4 text-right font-bold text-slate-900 dark:text-white">
                                             ₹{item.line_total.toFixed(2)}
                                         </td>
                                         <td className="px-4 py-4 text-center">
                                             <button
                                                 onClick={() => removeItem(idx)}
-                                                className="p-2 text-neutral-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                                className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -1759,10 +1759,10 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                     <tr>
                                         <td colSpan={isWholesale ? 9 : 8} className="py-12 text-center">
                                             <div className="flex flex-col items-center gap-3">
-                                                <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center text-neutral-400">
+                                                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400">
                                                     <ShoppingBag className="w-6 h-6" />
                                                 </div>
-                                                <p className="text-neutral-500 font-medium">No items added yet</p>
+                                                <p className="text-slate-500 font-medium">No items added yet</p>
                                                 <button onClick={addEmptyRow} className="text-primary text-sm font-bold hover:underline">Start adding items</button>
                                             </div>
                                         </td>
@@ -1775,49 +1775,49 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
 
                 {/* Footer / Calculations */}
                 <div className="flex justify-end">
-                    <div className="w-full md:w-1/2 lg:w-1/3 bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                    <div className="w-full md:w-1/2 lg:w-1/3 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
                         <div className="p-6 space-y-4">
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-neutral-500">Subtotal</span>
-                                <span className="font-semibold text-neutral-900 dark:text-white">₹{subtotal.toFixed(2)}</span>
+                                <span className="text-slate-500">Subtotal</span>
+                                <span className="font-semibold text-slate-900 dark:text-white">₹{subtotal.toFixed(2)}</span>
                             </div>
                             {totalTax > 0 ? (
                                 <>
                                     {isInterState ? (
                                         <div className="flex justify-between items-center text-sm">
-                                            <span className="text-neutral-500">IGST Output</span>
-                                            <span className="font-semibold text-neutral-900 dark:text-white">₹{igst.toFixed(2)}</span>
+                                            <span className="text-slate-500">IGST Output</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white">₹{igst.toFixed(2)}</span>
                                         </div>
                                     ) : (
                                         <>
                                             <div className="flex justify-between items-center text-sm">
-                                                <span className="text-neutral-500">CGST Output</span>
-                                                <span className="font-semibold text-neutral-900 dark:text-white">₹{cgst.toFixed(2)}</span>
+                                                <span className="text-slate-500">CGST Output</span>
+                                                <span className="font-semibold text-slate-900 dark:text-white">₹{cgst.toFixed(2)}</span>
                                             </div>
                                             <div className="flex justify-between items-center text-sm">
-                                                <span className="text-neutral-500">SGST Output</span>
-                                                <span className="font-semibold text-neutral-900 dark:text-white">₹{sgst.toFixed(2)}</span>
+                                                <span className="text-slate-500">SGST Output</span>
+                                                <span className="font-semibold text-slate-900 dark:text-white">₹{sgst.toFixed(2)}</span>
                                             </div>
                                         </>
                                     )}
                                 </>
                             ) : (
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-neutral-500">Tax Total</span>
-                                    <span className="font-semibold text-neutral-900 dark:text-white">₹{totalTax.toFixed(2)}</span>
+                                    <span className="text-slate-500">Tax Total</span>
+                                    <span className="font-semibold text-slate-900 dark:text-white">₹{totalTax.toFixed(2)}</span>
                                 </div>
                             )}
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-neutral-500 flex items-center gap-2"><Truck className="w-3 h-3" /> Shipping</span>
+                                <span className="text-slate-500 flex items-center gap-2"><Truck className="w-3 h-3" /> Shipping</span>
                                 <input
                                     type="number"
                                     value={shippingAmount}
                                     onChange={e => setShippingAmount(parseFloat(e.target.value) || 0)}
-                                    className="w-24 text-right bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-primary"
+                                    className="w-24 text-right bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-primary"
                                 />
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-neutral-500">Discount</span>
+                                <span className="text-slate-500">Discount</span>
                                 <input
                                     type="number"
                                     value={discountAmount}
@@ -1826,7 +1826,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                 />
                             </div>
                         </div>
-                        <div className="px-6 py-5 bg-gradient-to-br from-neutral-900 to-neutral-800 dark:from-neutral-950 dark:to-black text-white">
+                        <div className="px-6 py-5 bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-950 dark:to-black text-white">
                             <div className="flex justify-between items-baseline">
                                 <span className="text-sm font-medium opacity-80">Grand Total</span>
                                 <span className="text-2xl font-bold tracking-tight">₹{grandTotal.toFixed(2)}</span>

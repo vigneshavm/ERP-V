@@ -33,14 +33,14 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                     <p className="text-muted font-medium">Loading bills...</p>
                 </div>
             ) : bills.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-neutral-500">
+                <div className="flex flex-col items-center justify-center py-20 text-slate-500">
                     <FileText className="w-12 h-12 mb-4 opacity-20" />
                     <p className="font-medium">No bills found</p>
                 </div>
             ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 dark:bg-neutral-900/50 border-b dark:border-neutral-700">
+                        <thead className="bg-slate-50 dark:bg-slate-900/50 border-b dark:border-slate-700">
                             <tr>
                                 <th className="px-6 py-4 font-semibold text-secondary uppercase tracking-wider">Bill Details</th>
                                 <th className="px-6 py-4 font-semibold text-secondary uppercase tracking-wider">Reference (PO/GRN)</th>
@@ -51,19 +51,19 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                 <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                             {bills.map((bill: any) => (
-                                <tr key={bill._id} className="group hover:bg-slate-50/50 dark:hover:bg-neutral-800/50 transition-colors">
+                                <tr key={bill._id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                     <td className="table-cell text-left">
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-primary dark:text-primary">{bill.bill_number}</span>
-                                            <span className="text-[10px] text-neutral-500">{formatDate(bill.date || bill.bill_date)}</span>
+                                            <span className="text-[10px] text-slate-500">{formatDate(bill.date || bill.bill_date)}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col gap-1">
                                             {bill.po_number && (
-                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-neutral-500 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded">
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
                                                     PO: {bill.po_number}
                                                 </span>
                                             )}
@@ -72,7 +72,7 @@ const BillsTable: React.FC<Props> = ({ bills, isLoading, onMarkAsPaid, onDelete 
                                                     GRN: {bill.grn_number}
                                                 </span>
                                             )}
-                                            {!bill.po_number && !bill.grn_number && <span className="text-neutral-400 text-xs">Direct Bill</span>}
+                                            {!bill.po_number && !bill.grn_number && <span className="text-slate-400 text-xs">Direct Bill</span>}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">

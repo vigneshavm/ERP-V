@@ -182,12 +182,12 @@ const WRSalesEntry: React.FC = () => {
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-1 bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
-                        <h3 className="text-sm font-bold text-neutral-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
+                    <div className="lg:col-span-1 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
                             <Building2 className="w-4 h-4 text-primary" /> Customer
                         </h3>
                         <div className="relative">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="text"
                                 placeholder="Search wholesale customer..."
@@ -199,10 +199,10 @@ const WRSalesEntry: React.FC = () => {
                                     setShowCustomerDropdown(true);
                                 }}
                                 onFocus={() => setShowCustomerDropdown(true)}
-                                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/50"
+                                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/50"
                             />
                             {showCustomerDropdown && (customerSearch || customers.length > 0) && (
-                                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-neutral-900 rounded-xl shadow-xl border border-neutral-100 dark:border-neutral-700 z-50 max-h-60 overflow-y-auto">
+                                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 z-50 max-h-60 overflow-y-auto">
                                     {customers
                                         .filter((c: any) => c.name.toLowerCase().includes(customerSearch.toLowerCase()))
                                         .map((c: any) => (
@@ -214,30 +214,30 @@ const WRSalesEntry: React.FC = () => {
                                                     setCustomerSearch('');
                                                     setShowCustomerDropdown(false);
                                                 }}
-                                                className="px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer border-b border-neutral-50 dark:border-neutral-800 last:border-0"
+                                                className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer border-b border-slate-50 dark:border-slate-800 last:border-0"
                                             >
                                                 <div className="font-semibold text-sm">{c.name}</div>
-                                                <div className="text-xs text-neutral-400">{c.phone}</div>
+                                                <div className="text-xs text-slate-400">{c.phone}</div>
                                             </div>
                                         ))}
-                                    {customers.length === 0 && <div className="p-4 text-center text-xs text-neutral-400">No customers found</div>}
+                                    {customers.length === 0 && <div className="p-4 text-center text-xs text-slate-400">No customers found</div>}
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <div className="lg:col-span-2 bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
-                        <h3 className="text-sm font-bold text-neutral-900 dark:text-white mb-4 uppercase tracking-wide">Payment</h3>
-                        <div className="flex bg-neutral-100 dark:bg-neutral-900/50 p-1 rounded-xl w-fit">
+                    <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wide">Payment</h3>
+                        <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-xl w-fit">
                             <button
                                 onClick={() => setPaymentMethod('CASH')}
-                                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${paymentMethod === 'CASH' ? 'bg-white dark:bg-neutral-700 shadow-sm text-primary' : 'text-neutral-500'}`}
+                                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${paymentMethod === 'CASH' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-500'}`}
                             >
                                 Cash / Paid
                             </button>
                             <button
                                 onClick={() => setPaymentMethod('CREDIT')}
-                                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${paymentMethod === 'CREDIT' ? 'bg-white dark:bg-neutral-700 shadow-sm text-primary' : 'text-neutral-500'}`}
+                                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${paymentMethod === 'CREDIT' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-500'}`}
                             >
                                 On Credit
                             </button>
@@ -245,9 +245,9 @@ const WRSalesEntry: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-                    <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center bg-neutral-50/50 dark:bg-neutral-800/50">
-                        <h3 className="font-bold text-neutral-700 dark:text-neutral-300">Items List</h3>
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                        <h3 className="font-bold text-slate-700 dark:text-slate-300">Items List</h3>
                         <button
                             onClick={addRow}
                             className="text-xs font-bold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex items-center gap-1"
@@ -258,7 +258,7 @@ const WRSalesEntry: React.FC = () => {
                     <div className="overflow-x-auto min-h-[240px]">
                         <table className="w-full text-left text-sm">
                             <thead>
-                                <tr className="border-b border-neutral-100 dark:border-neutral-700 text-neutral-400">
+                                <tr className="border-b border-slate-100 dark:border-slate-700 text-slate-400">
                                     <th className="px-6 py-4 font-semibold w-16">#</th>
                                     <th className="px-6 py-4 font-semibold min-w-[250px]">Product</th>
                                     <th className="px-6 py-4 font-semibold text-right w-24">Qty</th>
@@ -268,12 +268,12 @@ const WRSalesEntry: React.FC = () => {
                                     <th className="px-4 py-4 w-12 text-center"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
                                 {rows.map((row, idx) => {
                                     const lineTotal = (row.qty || 0) * (row.price || 0) * (1 + (row.gstPercentage || 0) / 100);
                                     return (
-                                        <tr key={row.id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors">
-                                            <td className="px-6 py-4 text-neutral-400 font-medium">{idx + 1}</td>
+                                        <tr key={row.id} className="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                                            <td className="px-6 py-4 text-slate-400 font-medium">{idx + 1}</td>
                                             <td className="px-6 py-4 relative">
                                                 <input
                                                     type="text"
@@ -284,27 +284,27 @@ const WRSalesEntry: React.FC = () => {
                                                         updateRow(idx, { name: e.target.value, productId: undefined });
                                                         setActiveSearchRow(idx);
                                                     }}
-                                                    className="w-full bg-transparent border-none outline-none font-medium placeholder:text-neutral-300 text-neutral-900 dark:text-neutral-100"
+                                                    className="w-full bg-transparent border-none outline-none font-medium placeholder:text-slate-300 text-slate-900 dark:text-slate-100"
                                                 />
-                                                <div className="text-[10px] text-neutral-400 mt-1 flex gap-2">
-                                                    {row.brand && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">{row.brand}</span>}
-                                                    {row.design && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">{row.design}</span>}
-                                                    {row.sku && <span className="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-neutral-500">SKU: {row.sku}</span>}
+                                                <div className="text-[10px] text-slate-400 mt-1 flex gap-2">
+                                                    {row.brand && <span className="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">{row.brand}</span>}
+                                                    {row.design && <span className="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">{row.design}</span>}
+                                                    {row.sku && <span className="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">SKU: {row.sku}</span>}
                                                 </div>
                                                 {activeSearchRow === idx && (
                                                     <div
-                                                        className="absolute top-full left-0 mt-1 bg-white dark:bg-neutral-900 rounded-lg shadow-2xl border border-neutral-200 dark:border-neutral-700 z-50 w-[320px] max-h-64 overflow-y-auto"
+                                                        className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-900 rounded-lg shadow-2xl border border-slate-200 dark:border-slate-700 z-50 w-[320px] max-h-64 overflow-y-auto"
                                                         onMouseDown={e => e.preventDefault()}
                                                     >
                                                         {filteredProducts(row.name).map((p: any) => (
                                                             <div
                                                                 key={p.id || p._id}
                                                                 onClick={() => selectProduct(idx, p)}
-                                                                className="px-4 py-2.5 hover:bg-primary/5 cursor-pointer border-b border-neutral-50 dark:border-neutral-800 last:border-0 flex justify-between items-center gap-2"
+                                                                className="px-4 py-2.5 hover:bg-primary/5 cursor-pointer border-b border-slate-50 dark:border-slate-800 last:border-0 flex justify-between items-center gap-2"
                                                             >
                                                                 <div className="min-w-0">
                                                                     <div className="font-semibold text-sm truncate">{p.name}</div>
-                                                                    <div className="text-[10px] text-neutral-400">SKU: {p.sku} · Stock: {p.stockQty}</div>
+                                                                    <div className="text-[10px] text-slate-400">SKU: {p.sku} · Stock: {p.stockQty}</div>
                                                                 </div>
                                                                 <div className="text-xs font-bold text-primary flex-shrink-0">
                                                                     ₹{p.wholesaleRate ?? p.sellingPrice ?? p.price ?? 0}
@@ -312,7 +312,7 @@ const WRSalesEntry: React.FC = () => {
                                                             </div>
                                                         ))}
                                                         {filteredProducts(row.name).length === 0 && (
-                                                            <div className="p-3 text-center text-xs text-neutral-400">No matching items</div>
+                                                            <div className="p-3 text-center text-xs text-slate-400">No matching items</div>
                                                         )}
                                                     </div>
                                                 )}
@@ -341,16 +341,16 @@ const WRSalesEntry: React.FC = () => {
                                                     value={row.gstPercentage}
                                                     onFocus={e => e.target.select()}
                                                     onChange={e => updateRow(idx, { gstPercentage: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none text-neutral-500"
+                                                    className="w-full text-right bg-transparent border-b border-transparent focus:border-primary outline-none text-slate-500"
                                                 />
                                             </td>
-                                            <td className="px-6 py-4 text-right font-bold text-neutral-900 dark:text-white">
+                                            <td className="px-6 py-4 text-right font-bold text-slate-900 dark:text-white">
                                                 ₹{lineTotal.toFixed(2)}
                                             </td>
                                             <td className="px-4 py-4 text-center">
                                                 <button
                                                     onClick={() => removeRow(idx)}
-                                                    className="p-2 text-neutral-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                                    className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -362,8 +362,8 @@ const WRSalesEntry: React.FC = () => {
                                     <tr>
                                         <td colSpan={7} className="py-12 text-center">
                                             <div className="flex flex-col items-center gap-3">
-                                                <ShoppingBag className="w-8 h-8 text-neutral-300" />
-                                                <p className="text-neutral-500 font-medium">No items added yet</p>
+                                                <ShoppingBag className="w-8 h-8 text-slate-300" />
+                                                <p className="text-slate-500 font-medium">No items added yet</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -374,18 +374,18 @@ const WRSalesEntry: React.FC = () => {
                 </div>
 
                 <div className="flex justify-end">
-                    <div className="w-full md:w-1/2 lg:w-1/3 bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                    <div className="w-full md:w-1/2 lg:w-1/3 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
                         <div className="p-6 space-y-4">
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-neutral-500">Subtotal</span>
-                                <span className="font-semibold text-neutral-900 dark:text-white">₹{subtotal.toFixed(2)}</span>
+                                <span className="text-slate-500">Subtotal</span>
+                                <span className="font-semibold text-slate-900 dark:text-white">₹{subtotal.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-neutral-500">Tax Total</span>
-                                <span className="font-semibold text-neutral-900 dark:text-white">₹{taxTotal.toFixed(2)}</span>
+                                <span className="text-slate-500">Tax Total</span>
+                                <span className="font-semibold text-slate-900 dark:text-white">₹{taxTotal.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-neutral-500">Discount</span>
+                                <span className="text-slate-500">Discount</span>
                                 <input
                                     type="number"
                                     value={discountAmount}
@@ -394,7 +394,7 @@ const WRSalesEntry: React.FC = () => {
                                 />
                             </div>
                         </div>
-                        <div className="px-6 py-5 bg-gradient-to-br from-neutral-900 to-neutral-800 dark:from-neutral-950 dark:to-black text-white">
+                        <div className="px-6 py-5 bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-950 dark:to-black text-white">
                             <div className="flex justify-between items-baseline">
                                 <span className="text-sm font-medium opacity-80">Grand Total</span>
                                 <span className="text-2xl font-bold tracking-tight">₹{grandTotal.toFixed(2)}</span>

@@ -142,16 +142,16 @@ const PaymentOut: React.FC = () => {
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate(-1)}
-                            className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors"
+                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </button>
                         <div>
-                            <h1 className="page-title text-neutral-900 dark:text-white flex items-center gap-2">
+                            <h1 className="page-title text-slate-900 dark:text-white flex items-center gap-2">
                                 <CreditCard className="w-6 h-6 text-brand-600" />
                                 Record Supplier Payment
                             </h1>
-                            <p className="text-sm text-neutral-500 font-medium">Clear outstanding balances and settle multi-bill invoices.</p>
+                            <p className="text-sm text-slate-500 font-medium">Clear outstanding balances and settle multi-bill invoices.</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
@@ -171,18 +171,18 @@ const PaymentOut: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left: Basic Info */}
                     <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-white dark:bg-neutral-900 rounded-sm border border-neutral-200 dark:border-neutral-800 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
                             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                                <Building className="w-5 h-5 text-neutral-400" />
+                                <Building className="w-5 h-5 text-slate-400" />
                                 Payment Header
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Supplier</label>
+                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Supplier</label>
                                     <select
                                         value={supplierId}
                                         onChange={(e) => setSupplierId(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
+                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     >
                                         <option value="">Select Supplier</option>
                                         {suppliers.map(v => (
@@ -191,20 +191,20 @@ const PaymentOut: React.FC = () => {
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Payment Date</label>
+                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Payment Date</label>
                                     <input
                                         type="date"
                                         value={paymentDate}
                                         onChange={(e) => setPaymentDate(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
+                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Payment Method</label>
+                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Payment Method</label>
                                     <select
                                         value={mode}
                                         onChange={(e) => setMode(e.target.value as Mode)}
-                                        className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
+                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                     >
                                         <option value="Bank Transfer">Bank Transfer</option>
                                         <option value="UPI">UPI</option>
@@ -214,8 +214,8 @@ const PaymentOut: React.FC = () => {
                                 </div>
                                 {needsBank && (
                                     <div className="space-y-1.5">
-                                        <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Paid From</label>
-                                        <select value={bankAccountId} onChange={(e) => setBankAccountId(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none">
+                                        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Paid From</label>
+                                        <select value={bankAccountId} onChange={(e) => setBankAccountId(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none">
                                             {banks.length === 0 && <option value="">No bank accounts — add one under Finance › Bank</option>}
                                             {banks.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                                         </select>
@@ -223,29 +223,29 @@ const PaymentOut: React.FC = () => {
                                 )}
                                 {mode === 'Cheque' && (
                                     <div className="space-y-1.5">
-                                        <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Cheque Date</label>
-                                        <input type="date" value={chequeDate} onChange={(e) => setChequeDate(e.target.value)} className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none" />
+                                        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Cheque Date</label>
+                                        <input type="date" value={chequeDate} onChange={(e) => setChequeDate(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none" />
                                     </div>
                                 )}
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Reference ID / Cheque #</label>
+                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Reference ID / Cheque #</label>
                                     <div className="relative">
                                         <input
                                             type="text"
                                             value={referenceNo}
                                             onChange={(e) => setReferenceNo(e.target.value)}
                                             placeholder="Enter Transaction Ref"
-                                            className="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
+                                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
                                         />
-                                        <Tag className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300" />
+                                        <Tag className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Bill Allocation Section */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-sm border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden text-neutral-900 dark:text-neutral-100">
-                            <div className="p-4 border-b dark:border-neutral-800 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900/50">
+                        <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden text-slate-900 dark:text-slate-100">
+                            <div className="p-4 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
                                 <h3 className="font-bold flex items-center gap-2">
                                     <Calculator className="w-4 h-4 text-brand-600" />
                                     Bill Allocation
@@ -256,16 +256,16 @@ const PaymentOut: React.FC = () => {
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm">
-                                    <thead className="bg-neutral-50 dark:bg-neutral-900/50 border-b dark:border-neutral-800">
+                                    <thead className="bg-slate-50 dark:bg-slate-900/50 border-b dark:border-slate-800">
                                         <tr>
                                             <th className="px-6 py-3 w-10"></th>
-                                            <th className="px-6 py-3 font-bold text-neutral-500 uppercase text-[10px]">Bill Details</th>
-                                            <th className="px-6 py-3 font-bold text-neutral-500 uppercase text-[10px]">Due Date</th>
-                                            <th className="px-6 py-3 font-bold text-neutral-500 uppercase text-[10px] text-right">Balance</th>
-                                            <th className="px-6 py-3 font-bold text-neutral-500 uppercase text-[10px] text-right w-40">Payment</th>
+                                            <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px]">Bill Details</th>
+                                            <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px]">Due Date</th>
+                                            <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] text-right">Balance</th>
+                                            <th className="px-6 py-3 font-bold text-slate-500 uppercase text-[10px] text-right w-40">Payment</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                         {outstandingBills.map((bill) => {
                                             const allocation = allocations.find(a => a.billId === bill.id);
                                             const isSelected = !!allocation;
@@ -277,17 +277,17 @@ const PaymentOut: React.FC = () => {
                                                             type="checkbox"
                                                             checked={isSelected}
                                                             onChange={() => toggleBillSelection(bill)}
-                                                            className="w-4 h-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                                                            className="w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
                                                         />
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex flex-col">
-                                                            <span className="font-bold text-neutral-900 dark:text-white">{bill.billNo || '—'}</span>
-                                                            <span className="text-[10px] text-neutral-500">{bill.date}</span>
+                                                            <span className="font-bold text-slate-900 dark:text-white">{bill.billNo || '—'}</span>
+                                                            <span className="text-[10px] text-slate-500">{bill.date}</span>
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <span className="text-neutral-600 font-medium">{bill.due || '—'}</span>
+                                                        <span className="text-slate-600 font-medium">{bill.due || '—'}</span>
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
                                                         <span className="font-bold">{formatCurrency(bill.balance)}</span>
@@ -299,12 +299,12 @@ const PaymentOut: React.FC = () => {
                                                                     type="number"
                                                                     value={allocation.amount}
                                                                     onChange={(e) => setAllocationAmount(bill.id, e.target.value)}
-                                                                    className="w-full pl-7 pr-3 py-1.5 bg-white dark:bg-neutral-950 border border-brand-200 dark:border-brand-800 rounded-lg text-sm text-right font-bold focus:ring-2 focus:ring-brand-500/20 outline-none"
+                                                                    className="w-full pl-7 pr-3 py-1.5 bg-white dark:bg-slate-950 border border-brand-200 dark:border-brand-800 rounded-lg text-sm text-right font-bold focus:ring-2 focus:ring-brand-500/20 outline-none"
                                                                 />
-                                                                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400 text-[10px] font-bold">₹</span>
+                                                                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">₹</span>
                                                             </div>
                                                         ) : (
-                                                            <span className="text-neutral-300 text-[10px] italic">Select to pay</span>
+                                                            <span className="text-slate-300 text-[10px] italic">Select to pay</span>
                                                         )}
                                                     </td>
                                                 </tr>
@@ -312,7 +312,7 @@ const PaymentOut: React.FC = () => {
                                         })}
                                         {outstandingBills.length === 0 && (
                                             <tr>
-                                                <td colSpan={5} className="px-6 py-12 text-center text-neutral-400">
+                                                <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
                                                     {!supplierId ? 'Select a supplier to see outstanding bills.' : billsLoading ? 'Loading bills…' : 'This supplier has no unpaid bills in the ERP.'}
                                                 </td>
                                             </tr>
@@ -353,7 +353,7 @@ const PaymentOut: React.FC = () => {
                                     <button
                                         onClick={handleSave}
                                         disabled={isLoading}
-                                        className="w-full py-3 bg-white text-brand-600 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-neutral-50 transition-colors disabled:opacity-60"
+                                        className="w-full py-3 bg-white text-brand-600 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors disabled:opacity-60"
                                     >
                                         <CheckCircle2 className="w-5 h-5" />
                                         Complete Payment
@@ -363,16 +363,16 @@ const PaymentOut: React.FC = () => {
                         </div>
 
                         {/* Extra Notes */}
-                        <div className="bg-white dark:bg-neutral-900 rounded-sm border border-neutral-200 dark:border-neutral-800 p-6 shadow-sm">
+                        <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
                             <h3 className="font-bold mb-4 flex items-center gap-2">
-                                <FileText className="w-4 h-4 text-neutral-400" />
+                                <FileText className="w-4 h-4 text-slate-400" />
                                 Private Notes
                             </h3>
                             <textarea
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}
                                 placeholder="Add internal notes about this payment..."
-                                className="w-full h-32 px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20"
+                                className="w-full h-32 px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20"
                             />
                         </div>
                     </div>

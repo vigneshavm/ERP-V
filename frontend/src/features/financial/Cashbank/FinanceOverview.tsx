@@ -135,7 +135,7 @@ const FinanceOverviewPage: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex gap-3">
-                            <button className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
+                            <button className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
                                 <Download className="w-4 h-4" /> Export Ledger
                             </button>
                             <button
@@ -150,9 +150,9 @@ const FinanceOverviewPage: React.FC = () => {
 
                 {/* KPI Pulse Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
-                        <div className="absolute -top-4 -right-4 w-24 h-24 bg-neutral-50 dark:bg-neutral-900 rounded-full opacity-50 group-hover:scale-110 transition duration-700" />
-                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Total Net Flow</p>
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
+                        <div className="absolute -top-4 -right-4 w-24 h-24 bg-slate-50 dark:bg-slate-900 rounded-full opacity-50 group-hover:scale-110 transition duration-700" />
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Net Flow</p>
                         <h3 className={`text-3xl font-black italic tracking-tighter ${netProfit >= 0 ? 'text-primary' : 'text-error'}`}>
                             ₹{formatCurrency(netProfit)}
                         </h3>
@@ -164,9 +164,9 @@ const FinanceOverviewPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
-                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Total Revenue</p>
-                        <h3 className="text-3xl font-black text-neutral-900 dark:text-white italic tracking-tighter">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Revenue</p>
+                        <h3 className="text-3xl font-black text-slate-900 dark:text-white italic tracking-tighter">
                             ₹{formatCurrency(totalSales)}
                         </h3>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -175,8 +175,8 @@ const FinanceOverviewPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
-                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-1">Operating Burn</p>
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Operating Burn</p>
                         <h3 className="text-3xl font-black text-error italic tracking-tighter">
                             ₹{formatCurrency(totalExpenses + sectorLaborCost)}
                         </h3>
@@ -186,7 +186,7 @@ const FinanceOverviewPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-neutral-950 text-white p-6 rounded-[2rem] shadow-2xl relative overflow-hidden group">
+                    <div className="bg-slate-950 text-white p-6 rounded-[2rem] shadow-2xl relative overflow-hidden group">
                         <Zap className="absolute -top-4 -right-4 w-20 h-20 text-primary opacity-20 group-hover:scale-125 transition duration-1000" />
                         <div className="relative z-10">
                             <div className="inline-flex items-center gap-2 px-2 py-0.5 bg-primary/20 border border-primary/30 rounded-full text-primary-light text-[9px] font-black uppercase tracking-[0.2em] mb-2">
@@ -205,8 +205,8 @@ const FinanceOverviewPage: React.FC = () => {
 
                     {/* View Controls & Main View */}
                     <div className="lg:col-span-12 space-y-4">
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-neutral-800 p-2 rounded-sm border border-neutral-200 dark:border-neutral-700">
-                            <div className="flex p-1 bg-neutral-100 dark:bg-neutral-900 rounded-xl w-full md:w-auto">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-800 p-2 rounded-sm border border-slate-200 dark:border-slate-700">
+                            <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl w-full md:w-auto">
                                 {[
                                     { id: 'OVERVIEW', label: 'P&L Pulse', icon: PieChart },
                                     { id: 'EXPENSES', label: 'Burn Manager', icon: DollarSign },
@@ -216,8 +216,8 @@ const FinanceOverviewPage: React.FC = () => {
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id as any)}
                                         className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab.id
-                                            ? 'bg-white dark:bg-neutral-800 text-primary shadow-sm'
-                                            : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                                            ? 'bg-white dark:bg-slate-800 text-primary shadow-sm'
+                                            : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
                                             }`}
                                     >
                                         <tab.icon className="w-4 h-4" />
@@ -228,21 +228,21 @@ const FinanceOverviewPage: React.FC = () => {
 
                             <div className="flex items-center gap-4 w-full md:w-auto px-2">
                                 <div className="relative flex-1 md:w-48">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                     <input
                                         type="text"
                                         placeholder="Search Ledger..."
-                                        className="w-full pl-9 pr-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 transition font-medium"
+                                        className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 transition font-medium"
                                     />
                                 </div>
-                                <button className="p-2.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-500 hover:text-primary transition shadow-sm">
+                                <button className="p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-primary transition shadow-sm">
                                     <Filter className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
 
                         {/* Dynamics View Container */}
-                        <div className="bg-white dark:bg-neutral-800 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 overflow-hidden shadow-sm">
+                        <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
                             <div className="p-8">
                                 {activeTab === 'OVERVIEW' && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -277,12 +277,12 @@ const FinanceOverviewPage: React.FC = () => {
                             </div>
 
                             {/* Footer Pulse */}
-                            <div className="px-8 py-4 bg-neutral-50 dark:bg-neutral-900/50 border-t border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
+                            <div className="px-8 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                                    <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Oracle Sync Active</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Oracle Sync Active</span>
                                 </div>
-                                <div className="text-[10px] font-black text-neutral-400 uppercase tracking-widest italic">
+                                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
                                     Last Audit: {new Date().toLocaleTimeString()}
                                 </div>
                             </div>
@@ -291,7 +291,7 @@ const FinanceOverviewPage: React.FC = () => {
                 </div>
 
                 {/* Premium Intelligence Advisory */}
-                <div className="bg-neutral-950 text-white p-8 rounded-xl border border-neutral-800 shadow-2xl relative overflow-hidden group">
+                <div className="bg-slate-950 text-white p-8 rounded-xl border border-slate-800 shadow-2xl relative overflow-hidden group">
                     <TrendingUp className="absolute -bottom-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 group-hover:rotate-6 transition duration-1000" />
                     <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
                         <div className="flex-1">
@@ -299,14 +299,14 @@ const FinanceOverviewPage: React.FC = () => {
                                 <ShieldCheck className="w-3.5 h-3.5" /> Capital Protection Active
                             </div>
                             <h4 className="text-3xl font-black mb-4 italic tracking-tighter">Liquid Capital <span className="text-primary underline underline-offset-8">Authority.</span></h4>
-                            <p className="text-sm text-neutral-400 font-bold leading-relaxed italic max-w-2xl">
+                            <p className="text-sm text-slate-400 font-bold leading-relaxed italic max-w-2xl">
                                 Your current operating buffer is <span className="text-white">{(netProfit / 30000).toFixed(1)} months</span>.
                                 Wings AI suggests redistributing surplus cash into short-term inventory assets for the upcoming pulse season.
                                 Avoid stagnant bank balances to maximize return on capital.
                             </p>
                         </div>
                         <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-4">
-                            <button className="px-8 py-4 bg-white text-neutral-950 rounded-sm font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all">
+                            <button className="px-8 py-4 bg-white text-slate-950 rounded-sm font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all">
                                 Run Audit
                             </button>
                             <button className="px-8 py-4 bg-primary text-white rounded-sm font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">

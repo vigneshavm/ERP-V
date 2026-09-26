@@ -153,7 +153,7 @@ const SupplierLedger: React.FC = () => {
                             placeholder="Search suppliers..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 rounded-xl text-sm text-slate-800 dark:text-neutral-200 focus:ring-2 focus:ring-indigo-500/30 focus:border-primary/50 outline-none shadow-sm placeholder:text-slate-400 dark:placeholder:text-neutral-500"
+                            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/30 focus:border-primary/50 outline-none shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
                         />
                     </div>
 
@@ -161,16 +161,16 @@ const SupplierLedger: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filteredSuppliers.length === 0 ? (
                             <div className="col-span-full text-center py-20">
-                                <Book className="w-12 h-12 mx-auto mb-3 text-slate-200 dark:text-neutral-700" />
-                                <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">No suppliers found</p>
-                                <p className="text-[10px] text-slate-300 dark:text-neutral-600 mt-1 uppercase tracking-wider font-bold">Try adjusting your search term</p>
+                                <Book className="w-12 h-12 mx-auto mb-3 text-slate-200 dark:text-slate-700" />
+                                <p className="text-sm font-bold text-slate-400 dark:text-slate-500">No suppliers found</p>
+                                <p className="text-[10px] text-slate-300 dark:text-slate-600 mt-1 uppercase tracking-wider font-bold">Try adjusting your search term</p>
                             </div>
                         ) : (
                             filteredSuppliers.map((s: any) => (
                                 <button
                                     key={s._id}
                                     onClick={() => handleSelectSupplier(s._id)}
-                                    className="bg-white dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-5 rounded-sm shadow-sm hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 transition-all text-left group relative overflow-hidden"
+                                    className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-5 rounded-sm shadow-sm hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 transition-all text-left group relative overflow-hidden"
                                 >
                                     <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-all" />
                                     <div className="flex items-center gap-4 relative z-10">
@@ -178,12 +178,12 @@ const SupplierLedger: React.FC = () => {
                                             {s.businessName?.charAt(0)?.toUpperCase() || 'S'}
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <p className="font-bold text-slate-800 dark:text-neutral-100 text-sm truncate">{s.businessName}</p>
+                                            <p className="font-bold text-slate-800 dark:text-slate-100 text-sm truncate">{s.businessName}</p>
                                             {s.contactPersonName && (
-                                                <p className="text-[10px] text-slate-400 dark:text-neutral-500 truncate font-medium mt-0.5">{s.contactPersonName}</p>
+                                                <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate font-medium mt-0.5">{s.contactPersonName}</p>
                                             )}
                                         </div>
-                                        <Book className="w-4 h-4 text-slate-200 dark:text-neutral-700 group-hover:text-primary transition-colors shrink-0" />
+                                        <Book className="w-4 h-4 text-slate-200 dark:text-slate-700 group-hover:text-primary transition-colors shrink-0" />
                                     </div>
                                 </button>
                             ))
@@ -203,7 +203,7 @@ const SupplierLedger: React.FC = () => {
                 <SupplierSubNav />
                 <div className="flex flex-col items-center justify-center py-20">
                     <RefreshCw className="w-8 h-8 text-primary animate-spin mb-4" />
-                    <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">Loading Ledger...</p>
+                    <p className="text-sm font-bold text-slate-400 dark:text-slate-500">Loading Ledger...</p>
                 </div>
             </div>
         </Layout>
@@ -217,8 +217,8 @@ const SupplierLedger: React.FC = () => {
             <div className="space-y-8 animate-in fade-in duration-700 pb-10 w-full">
                 <SupplierSubNav />
                 <div className="flex flex-col items-center justify-center py-20">
-                    <FileText className="w-12 h-12 text-slate-200 dark:text-neutral-700 mb-3" />
-                    <p className="text-sm font-bold text-slate-400 dark:text-neutral-500">No Data Found</p>
+                    <FileText className="w-12 h-12 text-slate-200 dark:text-slate-700 mb-3" />
+                    <p className="text-sm font-bold text-slate-400 dark:text-slate-500">No Data Found</p>
                 </div>
             </div>
         </Layout>
@@ -237,19 +237,19 @@ const SupplierLedger: React.FC = () => {
                         {(id || selectedSupplierId) && (
                             <button
                                 onClick={() => id ? navigate(`/suppliers/${id}`) : (setSelectedSupplierId(null), setData(null))}
-                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 text-slate-500 dark:text-neutral-400 hover:bg-primary-soft hover:text-primary hover:border-primary/30 dark:hover:bg-primary/10 dark:hover:border-primary/20 transition-all mr-2"
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-primary-soft hover:text-primary hover:border-primary/30 dark:hover:bg-primary/10 dark:hover:border-primary/20 transition-all mr-2"
                             >
                                 <ArrowLeft className="w-4 h-4" />
                             </button>
                         )}
                         <div className="flex flex-col">
-                            <h1 className="page-title text-slate-800 dark:text-neutral-100">{data.supplier.businessName}</h1>
+                            <h1 className="page-title text-slate-800 dark:text-slate-100">{data.supplier.businessName}</h1>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="px-2 py-0.5 bg-primary-soft dark:bg-primary/10 text-primary dark:text-primary text-[9px] font-black uppercase rounded-md border border-primary/50 dark:border-primary/20">
                                     Ledger
                                 </span>
-                                <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-neutral-600" />
-                                <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500">
+                                <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-600" />
+                                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
                                     {new Date(data.period.start).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })} — {new Date(data.period.end).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                 </span>
                             </div>
@@ -258,24 +258,24 @@ const SupplierLedger: React.FC = () => {
 
                     {/* Controls */}
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1.5 bg-white dark:bg-neutral-800 p-1.5 rounded-xl border border-slate-100 dark:border-neutral-700 shadow-sm">
+                        <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1.5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
                             <Calendar size={14} className="ml-2 text-slate-400" />
                             <input
                                 type="date"
-                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-neutral-200 font-bold"
+                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-slate-200 font-bold"
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
                             />
-                            <span className="text-slate-200 dark:text-neutral-600 font-bold text-xs">→</span>
+                            <span className="text-slate-200 dark:text-slate-600 font-bold text-xs">→</span>
                             <input
                                 type="date"
-                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-neutral-200 font-bold"
+                                className="bg-transparent border-none text-xs px-1.5 py-1 outline-none text-slate-700 dark:text-slate-200 font-bold"
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
                             />
                             <button
                                 onClick={fetchLedger}
-                                className="p-1.5 hover:bg-slate-50 dark:hover:bg-neutral-700 rounded-lg transition-colors text-primary"
+                                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-colors text-primary"
                                 title="Apply Filter"
                             >
                                 <Filter size={14} />
@@ -298,7 +298,7 @@ const SupplierLedger: React.FC = () => {
                 <div className="hidden print:block text-center mb-6 border-b-2 border-black pb-4">
                     <h2 className="text-2xl font-bold uppercase tracking-wide">Statement of Accounts</h2>
                     <h3 className="text-lg font-semibold mt-1">{data.supplier.businessName}</h3>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-slate-600 mt-1">
                         Period: {new Date(data.period.start).toLocaleDateString('en-IN')} to {new Date(data.period.end).toLocaleDateString('en-IN')}
                     </p>
                 </div>
@@ -311,7 +311,7 @@ const SupplierLedger: React.FC = () => {
                 />
 
                 {/* Print-only Statement Footer */}
-                <div className="hidden print:block mt-8 pt-4 border-t border-gray-300 text-center text-xs text-gray-500">
+                <div className="hidden print:block mt-8 pt-4 border-t border-slate-300 text-center text-xs text-slate-500">
                     <p>This is a computer-generated statement and does not require a signature.</p>
                     <p className="mt-1">For any queries, please contact us.</p>
                 </div>

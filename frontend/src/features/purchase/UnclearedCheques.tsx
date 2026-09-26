@@ -87,16 +87,16 @@ const UnclearedCheques: React.FC = () => {
                         { label: 'Due Today', val: filteredCheques.filter(c => new Date(c.chequeDate) <= new Date()).length, icon: Clock, color: 'text-danger', bg: 'bg-danger-soft' },
                         { label: 'Operational Nodes', val: cheques.length, icon: Activity, color: 'text-primary', bg: 'bg-primary-soft' }
                     ].map((card, i) => (
-                        <div key={i} className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
+                        <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
                                 <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />
                                 </div>
-                                <ArrowUpRight className="w-5 h-5 text-neutral-300 group-hover:text-primary transition-colors" />
+                                <ArrowUpRight className="w-5 h-5 text-slate-300 group-hover:text-primary transition-colors" />
                             </div>
                             <div className="relative z-10">
-                                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-2">{card.label}</p>
-                                <p className="text-2xl font-black text-neutral-900 dark:text-white tracking-tighter uppercase tabular-nums">{card.val}</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">{card.label}</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase tabular-nums">{card.val}</p>
                             </div>
                             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
                         </div>
@@ -104,36 +104,36 @@ const UnclearedCheques: React.FC = () => {
                 </div>
 
                 {/* Audit Control Matrix */}
-                <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="relative w-full md:w-[500px]">
-                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 block">Instrument Search</label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Instrument Search</label>
                         <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="text"
                                 placeholder="Search by Vendor, Chq Node ID, or Reference..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
                     <div className="flex items-end gap-6 w-full md:w-auto">
                         <div className="text-right">
-                            <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1 leading-none">Vault Aggregate</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Vault Aggregate</p>
                             <p className="text-3xl font-black text-warning tabular-nums tracking-tighter">₹{totalPending.toLocaleString()}</p>
                         </div>
-                        <button className="p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-sm text-neutral-400 hover:text-primary transition-all active:scale-95">
+                        <button className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-sm text-slate-400 hover:text-primary transition-all active:scale-95">
                             <Filter className="w-6 h-6" />
                         </button>
                     </div>
                 </div>
 
                 {/* Instrument Vault Grid */}
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-neutral-50/50 dark:bg-neutral-900/50 text-[10px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800">
+                            <thead className="bg-slate-50/50 dark:bg-slate-900/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                                 <tr>
                                     <th className="px-8 py-5">Node Entry Date</th>
                                     <th className="px-8 py-5">Fiscal Maturity (Due)</th>
@@ -142,7 +142,7 @@ const UnclearedCheques: React.FC = () => {
                                     <th className="px-8 py-5 text-center">Clearance Controls</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {loading ? (
                                     <tr>
                                         <td colSpan={5} className="px-8 py-24 text-center">
@@ -156,7 +156,7 @@ const UnclearedCheques: React.FC = () => {
                                     <tr>
                                         <td colSpan={5} className="px-8 py-32 text-center">
                                             <div className="flex flex-col items-center gap-6 opacity-30 grayscale max-w-sm mx-auto">
-                                                <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-900 rounded-sm flex items-center justify-center">
+                                                <div className="w-20 h-20 bg-slate-100 dark:bg-slate-900 rounded-sm flex items-center justify-center">
                                                     <CheckCircle2 className="w-10 h-10" />
                                                 </div>
                                                 <div>
@@ -172,33 +172,33 @@ const UnclearedCheques: React.FC = () => {
                                         const daysToClear = Math.ceil((new Date(cheque.chequeDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
 
                                         return (
-                                            <tr key={cheque._id} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-900/40 transition-all cursor-default">
+                                            <tr key={cheque._id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all cursor-default">
                                                 <td className="px-8 py-6">
-                                                    <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                                         {new Date(cheque.paymentDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                     </span>
                                                 </td>
                                                 <td className="px-8 py-6">
                                                     <div className="flex items-center gap-3">
                                                         <Calendar className={`w-4 h-4 ${isDue ? 'text-danger animate-pulse' : 'text-primary'}`} />
-                                                        <span className={`text-xs font-black uppercase tracking-tighter ${isDue ? 'text-danger' : 'text-neutral-900 dark:text-white'}`}>
+                                                        <span className={`text-xs font-black uppercase tracking-tighter ${isDue ? 'text-danger' : 'text-slate-900 dark:text-white'}`}>
                                                             {new Date(cheque.chequeDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                         </span>
                                                     </div>
-                                                    {!isDue && <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest mt-1 italic">Maturity in {daysToClear} Days</p>}
+                                                    {!isDue && <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1 italic">Maturity in {daysToClear} Days</p>}
                                                     {isDue && <p className="text-[9px] font-black text-danger uppercase tracking-widest mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Overdue Node</p>}
                                                 </td>
                                                 <td className="px-8 py-6">
-                                                    <p className="text-xs font-black text-neutral-900 dark:text-white uppercase tracking-tighter truncate max-w-[200px]">{cheque.supplierId?.businessName || 'Unknown Entity'}</p>
+                                                    <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter truncate max-w-[200px]">{cheque.supplierId?.businessName || 'Unknown Entity'}</p>
                                                     <div className="flex items-center gap-2 mt-1.5">
                                                         <span className="text-[9px] font-black bg-primary/5 text-primary px-2 py-0.5 rounded-full border border-primary/10 uppercase tracking-widest">{cheque.referenceNo}</span>
-                                                        <span className="text-[9px] font-black text-neutral-300 uppercase tracking-widest">•</span>
-                                                        <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest italic">{cheque.bankName}</span>
+                                                        <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">•</span>
+                                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">{cheque.bankName}</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-8 py-6 text-right whitespace-nowrap">
-                                                    <p className="text-lg font-black tabular-nums text-neutral-900 dark:text-white tracking-tighter">₹{cheque.amount.toLocaleString()}</p>
-                                                    <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest opacity-60">ID: {cheque.paymentNo}</p>
+                                                    <p className="text-lg font-black tabular-nums text-slate-900 dark:text-white tracking-tighter">₹{cheque.amount.toLocaleString()}</p>
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest opacity-60">ID: {cheque.paymentNo}</p>
                                                 </td>
                                                 <td className="px-8 py-6">
                                                     <div className="flex justify-center gap-3">

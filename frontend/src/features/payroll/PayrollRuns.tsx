@@ -71,9 +71,9 @@ const PayrollRuns = () => {
                             { label: 'Details' }
                         ]}
                     />
-                    <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                            <h3 className="font-bold text-gray-700">Employee Payslips ({payslips.length})</h3>
+                    <div className="mt-6 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                            <h3 className="font-bold text-slate-700">Employee Payslips ({payslips.length})</h3>
                             <div className="flex gap-2">
                                 {runDetails.status === 'DRAFT' && (
                                     <button
@@ -106,14 +106,14 @@ const PayrollRuns = () => {
                                         Mark as Paid
                                     </button>
                                 )}
-                                <button className="p-2 text-gray-400 hover:text-gray-600">
+                                <button className="p-2 text-slate-400 hover:text-slate-600">
                                     <Printer size={18} />
                                 </button>
                             </div>
                         </div>
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="text-xs text-gray-500 border-b border-gray-100 bg-gray-50/50">
+                                <tr className="text-xs text-slate-500 border-b border-slate-100 bg-slate-50/50">
                                     <th className="px-6 py-3 font-medium">Employee</th>
                                     <th className="px-6 py-3 font-medium">Role</th>
                                     <th className="px-6 py-3 font-medium text-right">Net Pay</th>
@@ -123,10 +123,10 @@ const PayrollRuns = () => {
                             </thead>
                             <tbody>
                                 {payslips.map(p => (
-                                    <tr key={p._id} className="border-b border-gray-50 hover:bg-gray-50/50">
-                                        <td className="px-6 py-3 font-medium text-gray-900">{p.employeeId?.name || 'Unknown'}</td>
-                                        <td className="px-6 py-3 text-sm text-gray-500">{p.employeeId?.role || 'Staff'}</td>
-                                        <td className="px-6 py-3 text-right font-medium text-gray-900">₹{p.netPay.toLocaleString()}</td>
+                                    <tr key={p._id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                                        <td className="px-6 py-3 font-medium text-slate-900">{p.employeeId?.name || 'Unknown'}</td>
+                                        <td className="px-6 py-3 text-sm text-slate-500">{p.employeeId?.role || 'Staff'}</td>
+                                        <td className="px-6 py-3 text-right font-medium text-slate-900">₹{p.netPay.toLocaleString()}</td>
                                         <td className="px-6 py-3">
                                             <StatusBadge status={p.paymentStatus} />
                                         </td>
@@ -172,14 +172,14 @@ const PayrollRuns = () => {
                 {isGenerateOpen && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in">
                         <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 m-4">
-                            <h3 className="text-xl font-bold text-gray-900 mb-4">Run Payroll</h3>
-                            <p className="text-sm text-gray-500 mb-6">Select the period for which you want to generate the payroll. This will calculate salaries based on attendance and structure.</p>
+                            <h3 className="text-xl font-bold text-slate-900 mb-4">Run Payroll</h3>
+                            <p className="text-sm text-slate-500 mb-6">Select the period for which you want to generate the payroll. This will calculate salaries based on attendance and structure.</p>
 
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div>
-                                    <label className="text-sm font-medium text-gray-700 block mb-1">Month</label>
+                                    <label className="text-sm font-medium text-slate-700 block mb-1">Month</label>
                                     <select
-                                        className="w-full p-2 border rounded-lg bg-gray-50"
+                                        className="w-full p-2 border rounded-lg bg-slate-50"
                                         value={selectedDate.month}
                                         onChange={(e) => setSelectedDate({ ...selectedDate, month: parseInt(e.target.value) })}
                                     >
@@ -189,10 +189,10 @@ const PayrollRuns = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-gray-700 block mb-1">Year</label>
+                                    <label className="text-sm font-medium text-slate-700 block mb-1">Year</label>
                                     <input
                                         type="number"
-                                        className="w-full p-2 border rounded-lg bg-gray-50"
+                                        className="w-full p-2 border rounded-lg bg-slate-50"
                                         value={selectedDate.year}
                                         onChange={(e) => setSelectedDate({ ...selectedDate, year: parseInt(e.target.value) })}
                                     />
@@ -202,7 +202,7 @@ const PayrollRuns = () => {
                             <div className="flex justify-end gap-3">
                                 <button
                                     onClick={() => setIsGenerateOpen(false)}
-                                    className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                                    className="px-4 py-2 text-slate-600 hover:text-slate-900"
                                 >
                                     Cancel
                                 </button>
@@ -218,11 +218,11 @@ const PayrollRuns = () => {
                     </div>
                 )}
 
-                <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="mt-6 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                     {runs.length > 0 ? (
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="text-xs text-gray-500 border-b border-gray-100 bg-gray-50/50">
+                                <tr className="text-xs text-slate-500 border-b border-slate-100 bg-slate-50/50">
                                     <th className="px-6 py-4 font-medium">Period</th>
                                     <th className="px-6 py-4 font-medium">Run Date</th>
                                     <th className="px-6 py-4 font-medium">Total Payout</th>
@@ -232,22 +232,22 @@ const PayrollRuns = () => {
                             </thead>
                             <tbody>
                                 {runs.map((run) => (
-                                    <tr key={run._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                    <tr key={run._id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                                        <td className="px-6 py-4 text-sm font-medium text-slate-900">
                                             <div>
-                                                <div className="text-sm font-medium text-gray-900">
+                                                <div className="text-sm font-medium text-slate-900">
                                                     {run.periodStart ? new Date(run.periodStart).toLocaleString('default', { month: 'long', year: 'numeric' }) : 'N/A'}
                                                 </div>
-                                                <div className="text-xs text-gray-500">
+                                                <div className="text-xs text-slate-500">
                                                     Run Date: {run.processedDate || run.createdAt ? formatDateISO(new Date(run.processedDate || run.createdAt)) : 'N/A'}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
+                                        <td className="px-6 py-4 text-sm font-medium text-slate-900">₹{(run.totalAmount || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">
                                             <StatusBadge status={run.status} />
                                         </td>
-                                        <td className="px-6 py-4 flex justify-end gap-3 text-gray-400">
+                                        <td className="px-6 py-4 flex justify-end gap-3 text-slate-400">
                                             <button
                                                 title="View Details"
                                                 onClick={() => navigate(`/people/payroll/run/${run._id}`)}
@@ -255,7 +255,7 @@ const PayrollRuns = () => {
                                             >
                                                 <Eye size={18} />
                                             </button>
-                                            <button className="hover:text-gray-600 transition-colors" title="Print Reports">
+                                            <button className="hover:text-slate-600 transition-colors" title="Print Reports">
                                                 <Printer size={18} />
                                             </button>
                                         </td>
@@ -264,7 +264,7 @@ const PayrollRuns = () => {
                             </tbody>
                         </table>
                     ) : (
-                        <div className="p-12 text-center text-gray-500">
+                        <div className="p-12 text-center text-slate-500">
                             No payroll runs found. Click "Generate" to start.
                         </div>
                     )}

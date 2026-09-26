@@ -25,7 +25,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
         <div className={`bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-5 shadow-sm hover:shadow-md transition-all ${className}`}>
             <div className="flex items-start justify-between">
                 <div>
-                    <h3 className="text-sm font-medium text-slate-500 dark:text-neutral-400 mb-1">{title}</h3>
+                    <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">{title}</h3>
                     <div className="text-2xl font-bold text-slate-900 dark:text-white">{value}</div>
 
                     {trend && (
@@ -34,7 +34,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
                                     ? 'bg-success-soft text-success dark:bg-success-soft'
                                     : trendUp === false
                                         ? 'bg-danger-soft text-danger dark:bg-danger-soft'
-                                        : 'bg-slate-100 text-slate-600 dark:bg-neutral-800'
+                                        : 'bg-slate-100 text-slate-600 dark:bg-slate-800'
                                 }`}>
                                 {trend}
                             </span>

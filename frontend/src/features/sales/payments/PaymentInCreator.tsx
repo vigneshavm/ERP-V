@@ -213,9 +213,9 @@ const PaymentInCreator: React.FC = () => {
     };
 
     return (
-        <div className="h-full flex flex-col glass-panel dark:bg-neutral-900">
+        <div className="h-full flex flex-col glass-panel dark:bg-slate-900">
             {/* Header */}
-            <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
+            <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -251,7 +251,7 @@ const PaymentInCreator: React.FC = () => {
                     {/* Left Column */}
                     <div className="space-y-4">
                         {/* Customer Section */}
-                        <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4">
+                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="font-bold text-sm flex items-center gap-2">
                                     <User className="w-4 h-4" /> Customer
@@ -308,7 +308,7 @@ const PaymentInCreator: React.FC = () => {
                                                 <button
                                                     key={c.id}
                                                     onClick={() => selectCustomer(c)}
-                                                    className="w-full text-left px-4 py-3 hover:bg-surface/60 border-b border-neutral-100 dark:border-neutral-700 last:border-0"
+                                                    className="w-full text-left px-4 py-3 hover:bg-surface/60 border-b border-slate-100 dark:border-slate-700 last:border-0"
                                                 >
                                                     <div className="flex justify-between">
                                                         <span className="font-medium">{c.name}</span>
@@ -324,7 +324,7 @@ const PaymentInCreator: React.FC = () => {
                         </div>
 
                         {/* Payment Methods */}
-                        <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4">
+                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="font-bold text-sm flex items-center gap-2">
                                     <CreditCard className="w-4 h-4" /> Payment Methods
@@ -400,7 +400,7 @@ const PaymentInCreator: React.FC = () => {
 
                     {/* Right Column - Invoice Allocation */}
                     <div className="space-y-4">
-                        <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-4 h-full">
+                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 h-full">
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="font-bold text-sm flex items-center gap-2">
                                     <Receipt className="w-4 h-4" /> Invoice Allocation
@@ -491,7 +491,7 @@ const PaymentInCreator: React.FC = () => {
             </div>
 
             {/* Actions */}
-            <div className="px-4 py-3 border-t border-neutral-200 dark:border-neutral-800 flex flex-wrap gap-3 justify-between">
+            <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-3 justify-between">
                 <div className="flex gap-2">
                     <button onClick={handleClear} className="btn btn-ghost text-danger">
                         <RefreshCw className="w-4 h-4" /> Clear

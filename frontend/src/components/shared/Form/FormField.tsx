@@ -11,7 +11,7 @@ interface FormFieldProps {
 const FormField: React.FC<FormFieldProps> = ({ label, children, error, required, className = "" }) => {
     return (
         <div className={`space-y-1.5 ${className}`}>
-            <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
                 {label} {required && <span className="text-danger">*</span>}
             </label>
             {children}

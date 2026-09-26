@@ -36,7 +36,7 @@ const PayableSnapshot: React.FC = () => {
                 <div className="flex justify-center items-center py-40">
                     <div className="flex flex-col items-center gap-6">
                         <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] animate-pulse">Synchronizing Liability Nodes...</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Synchronizing Liability Nodes...</p>
                     </div>
                 </div>
             </Layout>
@@ -91,7 +91,7 @@ const PayableSnapshot: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-10 rounded-[3.5rem] shadow-sm relative overflow-hidden group">
+                        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-10 rounded-[3.5rem] shadow-sm relative overflow-hidden group">
                             <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-700">
                                 <AlertTriangle className="w-48 h-48" />
                             </div>
@@ -104,7 +104,7 @@ const PayableSnapshot: React.FC = () => {
                                         <h3 className="text-[10px] font-black text-danger uppercase tracking-widest">Critical Overdue Volume</h3>
                                     </div>
                                     <p className="text-4xl font-black text-danger dark:text-danger tracking-tighter tabular-nums">₹{totalOverdue.toLocaleString('en-IN')}</p>
-                                    <p className="text-xs font-bold text-neutral-400 mt-2 italic">Immediate capital allocation required for {topOverdueSuppliers.length} nodes.</p>
+                                    <p className="text-xs font-bold text-slate-400 mt-2 italic">Immediate capital allocation required for {topOverdueSuppliers.length} nodes.</p>
                                 </div>
                                 <button
                                     onClick={() => navigate('/purchase/ageing-analysis')}
@@ -118,7 +118,7 @@ const PayableSnapshot: React.FC = () => {
 
                     {/* Side Intelligence Panel */}
                     <div className="md:col-span-4 space-y-8">
-                        <div className="bg-neutral-900 dark:bg-neutral-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group">
+                        <div className="bg-slate-900 dark:bg-slate-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group">
                             <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-110 transition-transform duration-1000">
                                 <Users className="w-48 h-48" />
                             </div>
@@ -135,7 +135,7 @@ const PayableSnapshot: React.FC = () => {
                                         <div key={idx} className="p-5 bg-white/5 rounded-[2rem] border border-white/5 hover:bg-white/10 transition-all group/item">
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-xs font-black text-neutral-200 uppercase tracking-tighter truncate">{sup.supplierName || sup.businessName}</p>
+                                                    <p className="text-xs font-black text-slate-200 uppercase tracking-tighter truncate">{sup.supplierName || sup.businessName}</p>
                                                     <p className="text-[10px] font-black text-danger mt-1 uppercase tracking-widest italic">{sup.daysOverdue || '0'} Days Overdue</p>
                                                 </div>
                                                 <p className="text-sm font-black text-white ml-4 tabular-nums">₹{(sup.totalAmount || sup.amount || 0).toLocaleString()}</p>
@@ -160,7 +160,7 @@ const PayableSnapshot: React.FC = () => {
                                 {topOverdueSuppliers.length > 4 && (
                                     <button
                                         onClick={() => navigate('/purchase/ageing-analysis')}
-                                        className="w-full text-center text-[10px] font-black text-neutral-500 hover:text-primary uppercase tracking-widest transition-colors py-4 group"
+                                        className="w-full text-center text-[10px] font-black text-slate-500 hover:text-primary uppercase tracking-widest transition-colors py-4 group"
                                     >
                                         View All {topOverdueSuppliers.length} Nodes <ChevronRight className="w-3 h-3 inline ml-1 group-hover:translate-x-1 transition-transform" />
                                     </button>
@@ -170,7 +170,7 @@ const PayableSnapshot: React.FC = () => {
 
                         <div className="bg-warning/50 dark:bg-warning-soft border border-warning-line dark:border-warning/20 p-10 rounded-[3.5rem] space-y-6">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 bg-white dark:bg-neutral-900 rounded-sm text-warning shadow-sm border border-warning-line dark:border-warning/20">
+                                <div className="p-3 bg-white dark:bg-slate-900 rounded-sm text-warning shadow-sm border border-warning-line dark:border-warning/20">
                                     <TrendingUp className="w-6 h-6" />
                                 </div>
                                 <h4 className="text-[10px] font-black text-warning/60 dark:text-warning uppercase tracking-widest leading-none">Institutional Advisory</h4>

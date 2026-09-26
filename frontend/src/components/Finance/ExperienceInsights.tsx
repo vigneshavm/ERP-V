@@ -47,7 +47,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
         'Investments': <TrendingUp className="w-5 h-5 text-pink-400" />,
         'Rent': <Home className="w-5 h-5 text-danger" />,
         'Food & Drinks': <Utensils className="w-5 h-5 text-warning" />,
-        'Default': <CreditCard className="w-5 h-5 text-neutral-400" />
+        'Default': <CreditCard className="w-5 h-5 text-slate-400" />
     };
 
     return (
@@ -58,33 +58,33 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
                     <div className="p-2 hover:bg-white/5 rounded-full transition-colors cursor-pointer text-success">
                         <ArrowRight className="w-5 h-5 rotate-180" />
                     </div>
-                    <h2 className="text-xl font-medium text-neutral-300">Last 6 months</h2>
+                    <h2 className="text-xl font-medium text-slate-300">Last 6 months</h2>
                 </div>
-                <div className="p-2 hover:bg-white/5 rounded-full transition-colors cursor-pointer text-neutral-500">
+                <div className="p-2 hover:bg-white/5 rounded-full transition-colors cursor-pointer text-slate-500">
                     <Share2 className="w-5 h-5" />
                 </div>
             </div>
 
             {/* Hero Insights */}
             <div className="text-center space-y-2 py-4">
-                <p className="text-sm font-medium text-neutral-500">Average monthly balance (income − expenses), last 6 months</p>
+                <p className="text-sm font-medium text-slate-500">Average monthly balance (income − expenses), last 6 months</p>
                 <h3 className="text-4xl font-bold text-success">{perMonth(avgBalance)}</h3>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="text-center space-y-1">
-                    <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Average monthly expense</p>
+                    <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Average monthly expense</p>
                     <p className="text-xl font-bold text-danger">{perMonth(avgExpense)}</p>
                 </div>
                 <div className="text-center space-y-1">
-                    <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Average monthly income</p>
+                    <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Average monthly income</p>
                     <p className="text-xl font-bold text-success">{perMonth(avgIncome)}</p>
                 </div>
             </div>
 
             {/* Main Chart */}
             <div className="relative h-[300px] w-full mt-4">
-                <div className="absolute top-0 right-0 flex items-center gap-2 text-[10px] font-bold text-neutral-500">
+                <div className="absolute top-0 right-0 flex items-center gap-2 text-[10px] font-bold text-slate-500">
                     <div className="w-3 h-3 bg-warning rounded-sm" />
                     Balance per month
                 </div>
@@ -124,7 +124,7 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
 
             {/* Distribution Text */}
             <div className="text-center pt-8">
-                <p className="text-sm font-medium text-neutral-400">
+                <p className="text-sm font-medium text-slate-400">
                     Share of total expenses by category
                 </p>
             </div>
@@ -135,15 +135,15 @@ const ExperienceInsights: React.FC<ExperienceInsightsProps> = ({ data }) => {
                     const percentage = parseFloat(cat.percentage);
                     return (
                         <div key={idx} className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-sm bg-neutral-900 border border-white/5 flex items-center justify-center shrink-0">
+                            <div className="w-12 h-12 rounded-sm bg-slate-900 border border-white/5 flex items-center justify-center shrink-0">
                                 {categoryIcons[cat.category] || categoryIcons['Default']}
                             </div>
                             <div className="flex-1 space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <h4 className="text-sm font-bold text-neutral-300">
-                                        {cat.category} <span className="text-neutral-500 font-medium ml-1">₹{cat.amount.toLocaleString()}</span>
+                                    <h4 className="text-sm font-bold text-slate-300">
+                                        {cat.category} <span className="text-slate-500 font-medium ml-1">₹{cat.amount.toLocaleString()}</span>
                                     </h4>
-                                    <span className="text-lg font-bold text-neutral-200">{cat.percentage}%</span>
+                                    <span className="text-lg font-bold text-slate-200">{cat.percentage}%</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                     <div

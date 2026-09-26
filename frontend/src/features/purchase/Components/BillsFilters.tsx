@@ -19,13 +19,13 @@ const BillsFilters: React.FC<Props> = ({ searchTerm, onSearchChange, statusFilte
                         placeholder="Search bill # or supplier..."
                         value={searchTerm}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl text-sm"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
                     />
                 </div>
                 <select
                     value={statusFilter}
                     onChange={(e) => onStatusFilterChange(e.target.value)}
-                    className="px-4 py-2.5 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl text-sm"
+                    className="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
                 >
                     <option value="all">All Status</option>
                     <option value="Received">Received</option>

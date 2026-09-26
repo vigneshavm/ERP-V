@@ -37,7 +37,7 @@ class PageErrorBoundary extends React.Component<PageErrorBoundaryProps, PageErro
             <div role="alert" className="flex flex-col items-center justify-center gap-4 min-h-[50vh] p-8 text-center">
                 <AlertTriangle className="w-10 h-10 text-error" />
                 <h2 className="text-lg font-black text-main">This page couldn't be displayed</h2>
-                <p className="text-sm text-neutral-500 max-w-md">
+                <p className="text-sm text-slate-500 max-w-md">
                     Something went wrong while showing it. The rest of the app still works; try again, or open another page.
                 </p>
                 <button

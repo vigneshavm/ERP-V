@@ -30,7 +30,7 @@ const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
     onWarehouseChange
 }) => {
     return (
-        <div className="bg-white dark:bg-neutral-800 p-6 rounded-sm border border-neutral-200 dark:border-neutral-700 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <Truck className="w-5 h-5 text-primary" /> General Information
             </h3>
@@ -38,7 +38,7 @@ const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
                 {!poId && (
                     <FormField label="Select Purchase Order" required>
                         <select
-                            className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-primary outline-none"
+                            className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary outline-none"
                             onChange={(e) => onPOSelect(e.target.value)}
                         >
                             <option value="">Choose a PO...</option>
@@ -52,14 +52,14 @@ const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
                     <input
                         type="text"
                         readOnly
-                        className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-500"
+                        className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500"
                         value={grnNumber || ''}
                     />
                 </FormField>
                 <FormField label="Receipt Date" required>
                     <input
                         type="date"
-                        className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-primary outline-none"
+                        className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary outline-none"
                         value={receivedDate || ''}
                         onChange={e => onDateChange(e.target.value)}
                     />
@@ -68,13 +68,13 @@ const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
                     <input
                         type="text"
                         readOnly
-                        className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-500"
+                        className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500"
                         value={vendorName || ''}
                     />
                 </FormField>
                 <FormField label="Receiving Warehouse">
                     <select
-                        className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-primary outline-none"
+                        className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary outline-none"
                         value={warehouseId || ''}
                         onChange={(e) => onWarehouseChange(e.target.value)}
                     >

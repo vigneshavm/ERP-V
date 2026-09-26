@@ -71,27 +71,27 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-sm shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-                <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-800 rounded-sm shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+                <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <Printer className="w-6 h-6 text-success" />
                         Print Labels ({products.length})
                     </h2>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                    <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
                 <div className="p-6 max-h-[60vh] overflow-y-auto">
-                    <div className="mb-6 p-4 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/50">
-                        <p className="text-xs font-black uppercase tracking-widest text-gray-500 mb-3">Label Printer</p>
+                    <div className="mb-6 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                        <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">Label Printer</p>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div className="sm:col-span-1">
-                                <label className="text-[10px] font-bold text-gray-400 uppercase">Brand / Protocol</label>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase">Brand / Protocol</label>
                                 <select
                                     value={printerBrand}
                                     onChange={(e) => setPrinterBrand(e.target.value as PrinterBrand)}
-                                    className="w-full mt-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-bold"
+                                    className="w-full mt-1 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold"
                                 >
                                     {Object.values(PRINTER_PROFILES).map((p) => (
                                         <option key={p.brand} value={p.brand}>{p.label}</option>
@@ -101,30 +101,30 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                             {profile.protocol !== 'pdf' && (
                                 <>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase">Label Width (mm)</label>
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase">Label Width (mm)</label>
                                         <input
                                             type="number"
                                             min={10}
                                             value={labelWidthMm}
                                             onChange={(e) => setLabelWidthMm(parseInt(e.target.value, 10) || 50)}
-                                            className="w-full mt-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-bold"
+                                            className="w-full mt-1 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase">Label Height (mm)</label>
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase">Label Height (mm)</label>
                                         <input
                                             type="number"
                                             min={10}
                                             value={labelHeightMm}
                                             onChange={(e) => setLabelHeightMm(parseInt(e.target.value, 10) || 25)}
-                                            className="w-full mt-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-bold"
+                                            className="w-full mt-1 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold"
                                         />
                                     </div>
                                 </>
                             )}
                         </div>
                         {profile.protocol !== 'pdf' && (
-                            <p className="text-[10px] text-gray-400 mt-3 leading-relaxed">
+                            <p className="text-[10px] text-slate-400 mt-3 leading-relaxed">
                                 Generates raw {profile.protocol} commands as a downloadable file. Send it to the printer via its
                                 network port (9100) or USB print utility — a browser can't talk to the printer directly.
                             </p>
@@ -133,19 +133,19 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {products.map((p, idx) => (
-                            <div key={idx} className="p-4 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/50">
-                                <p className="font-bold text-gray-900 dark:text-white truncate">{p.name}</p>
-                                <p className="text-xs text-gray-500 font-mono">{p.sku}</p>
+                            <div key={idx} className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                                <p className="font-bold text-slate-900 dark:text-white truncate">{p.name}</p>
+                                <p className="text-xs text-slate-500 font-mono">{p.sku}</p>
                                 <p className="mt-2 font-bold text-success">₹{p.sellingPrice || p.price}</p>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                <div className="p-6 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+                <div className="p-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
                     <button
                         onClick={onClose}
-                        className="px-6 py-2 text-gray-600 dark:text-gray-400 font-bold hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                        className="px-6 py-2 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     >
                         Cancel
                     </button>

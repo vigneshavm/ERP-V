@@ -88,7 +88,7 @@ const AccountLedger: React.FC = () => {
         return (
             <Layout>
                 <div className="text-center py-12">
-                    <p className="text-gray-500">Account not found</p>
+                    <p className="text-slate-500">Account not found</p>
                 </div>
             </Layout>
         );

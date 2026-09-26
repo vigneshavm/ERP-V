@@ -75,7 +75,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
     return (
         <div className={`${isDark
-            ? 'bg-neutral-950 dark:bg-card text-white border-neutral-800 shadow-2xl'
+            ? 'bg-slate-950 dark:bg-card text-white border-slate-800 shadow-2xl'
             : 'bg-card text-main border-default shadow-sm'
             } ${compact ? 'p-4 lg:p-5 rounded-sm' : 'p-6 lg:p-8 rounded-metric'} border relative overflow-hidden group transition-all hover:border-primary/50`}>
 
@@ -91,7 +91,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                         <Icon className={compact ? 'w-5 h-5' : 'w-6 h-6'} />
                     </div>
                     <div>
-                        <p className={`micro mb-0.5 ${isDark ? 'text-neutral-500' : 'text-secondary opacity-60'
+                        <p className={`micro mb-0.5 ${isDark ? 'text-slate-500' : 'text-secondary opacity-60'
                             }`}>{title}</p>
                         <h3 className={`${compact ? 'text-xl' : 'metric-value'} font-black tracking-tighter italic ${isDark ? 'text-white' : 'text-main'
                             }`}>{value}</h3>
@@ -102,7 +102,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
             {/* Progress Bar Visualization */}
             {progress !== undefined && (
                 <div className={`${compact ? 'mt-3' : 'mt-4'} relative z-10`}>
-                    <div className={`h-1 lg:h-1.5 w-full rounded-full overflow-hidden ${isDark ? 'bg-white/10' : 'bg-neutral-100 dark:bg-neutral-700'
+                    <div className={`h-1 lg:h-1.5 w-full rounded-full overflow-hidden ${isDark ? 'bg-white/10' : 'bg-slate-100 dark:bg-slate-700'
                         }`}>
                         <div
                             className={`h-full ${classes.progress} transition-all duration-1000 ease-out`}

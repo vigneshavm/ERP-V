@@ -152,7 +152,7 @@ const SupplierDetail: React.FC = () => {
         {/* Total Invoiced */}
         <div
           onClick={() => setEditingField('invoiced')}
-          className="bg-white dark:bg-neutral-800 border-2 border-primary/30 dark:border-primary/30 rounded-sm p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
+          className="bg-white dark:bg-slate-800 border-2 border-primary/30 dark:border-primary/30 rounded-sm p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
         >
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="p-1 bg-primary-soft rounded-md text-primary">
@@ -174,7 +174,7 @@ const SupplierDetail: React.FC = () => {
         {/* Total Paid */}
         <div
           onClick={() => setEditingField('paid')}
-          className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-sm p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
+          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
         >
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="p-1 bg-success-soft rounded-md text-success">
@@ -195,7 +195,7 @@ const SupplierDetail: React.FC = () => {
         {/* Net Balance */}
         <div
           onClick={() => setEditingField('outstanding')}
-          className="bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-sm p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
+          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm p-5 relative overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all group"
         >
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="p-1 bg-danger-soft rounded-md text-danger">
@@ -286,7 +286,7 @@ const SupplierDetail: React.FC = () => {
         {/* Main Content Area */}
         <div className="lg:col-span-8 space-y-6">
           {/* Core Identity Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-neutral-700 shadow-sm overflow-hidden p-8 relative">
+          <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden p-8 relative">
             <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
               <Building2 className="w-48 h-48 text-primary" />
             </div>
@@ -337,7 +337,7 @@ const SupplierDetail: React.FC = () => {
 
           {/* Reachability & Logistics */}
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-neutral-700 p-6 space-y-4 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-xl bg-warning-soft dark:bg-warning-soft flex items-center justify-center text-warning">
                   <MapPin className="w-5 h-5" />
@@ -348,7 +348,7 @@ const SupplierDetail: React.FC = () => {
                 {supplier.physicalAddress || "No registered facility address provided."}
               </p>
             </div>
-            <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-neutral-700 p-6 space-y-4 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4 shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-xl bg-primary-soft dark:bg-primary-soft flex items-center justify-center text-primary">
                   <Phone className="w-5 h-5" />
@@ -369,7 +369,7 @@ const SupplierDetail: React.FC = () => {
           </div>
 
           {/* Inventory/Items History */}
-          <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-neutral-700 shadow-sm p-8">
+          <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm p-8">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center text-violet-600">
@@ -405,21 +405,21 @@ const SupplierDetail: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             {/* Credit Limit */}
             <div className="bg-[#F8FBFF] dark:bg-primary/10 border border-primary/50 dark:border-primary/20 p-4 rounded-sm shadow-sm flex flex-col justify-center text-center">
-              <p className="text-[11px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider mb-1">Credit Limit</p>
+              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Credit Limit</p>
               <p className="text-lg font-black text-primary dark:text-primary">₹{(supplier.creditLimit || 0).toLocaleString()}</p>
             </div>
 
             {/* Credit Days */}
-            <div className="bg-slate-50 dark:bg-neutral-800 border border-slate-100 dark:border-neutral-700 p-4 rounded-sm shadow-sm flex flex-col justify-center text-center">
-              <p className="text-[11px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider mb-1">Term</p>
+            <div className="bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-4 rounded-sm shadow-sm flex flex-col justify-center text-center">
+              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Term</p>
               <p className="text-lg font-black text-slate-700 dark:text-slate-200">{supplier.creditPeriod || 0} Days</p>
             </div>
           </div>
 
           {/* Operational Insights - Checklist Style */}
-          <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-neutral-700 shadow-sm overflow-hidden flex flex-col">
-            <div className="p-5 border-b border-slate-50 dark:border-neutral-700">
-              <h3 className="font-bold text-slate-800 dark:text-neutral-100">Performance Check</h3>
+          <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
+            <div className="p-5 border-b border-slate-50 dark:border-slate-700">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100">Performance Check</h3>
             </div>
 
             <div className="p-5 space-y-4">

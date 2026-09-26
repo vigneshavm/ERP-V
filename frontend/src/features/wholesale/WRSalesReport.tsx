@@ -31,43 +31,43 @@ const WRSalesReport: React.FC = () => {
                 <PageHeader title="Wholesale Sales Report" description="Wholesale/Retail Billing / Sales Report" />
 
                 {loading ? (
-                    <div className="flex items-center justify-center py-20 text-neutral-400">
+                    <div className="flex items-center justify-center py-20 text-slate-400">
                         <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading report...
                     </div>
                 ) : !report || report.summary.invoiceCount === 0 ? (
-                    <div className="flex flex-col items-center gap-3 py-20 text-neutral-400">
+                    <div className="flex flex-col items-center gap-3 py-20 text-slate-400">
                         <TrendingUp className="w-8 h-8" />
                         <p className="font-medium">No wholesale sales recorded yet</p>
                     </div>
                 ) : (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
-                                <p className="text-xs font-bold text-neutral-400 uppercase tracking-wide">Total Bills</p>
-                                <p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">{report.summary.invoiceCount}</p>
+                            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Bills</p>
+                                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{report.summary.invoiceCount}</p>
                             </div>
-                            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
-                                <p className="text-xs font-bold text-neutral-400 uppercase tracking-wide">Total Sales</p>
-                                <p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">₹{report.summary.totalAmount.toFixed(2)}</p>
+                            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Sales</p>
+                                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹{report.summary.totalAmount.toFixed(2)}</p>
                             </div>
-                            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
-                                <p className="text-xs font-bold text-neutral-400 uppercase tracking-wide">Total Collected</p>
+                            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Collected</p>
                                 <p className="text-2xl font-bold text-success mt-1">₹{report.summary.paidAmount.toFixed(2)}</p>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-                                <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 font-bold text-neutral-700 dark:text-neutral-300">By Day</div>
+                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                <div className="p-4 border-b border-slate-100 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300">By Day</div>
                                 <table className="w-full text-left text-sm">
                                     <thead>
-                                        <tr className="border-b border-neutral-100 dark:border-neutral-700 text-neutral-400">
+                                        <tr className="border-b border-slate-100 dark:border-slate-700 text-slate-400">
                                             <th className="px-6 py-3 font-semibold">Date</th>
                                             <th className="px-6 py-3 font-semibold text-right">Bills</th>
                                             <th className="px-6 py-3 font-semibold text-right">Amount</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
                                         {report.byDay.map(d => (
                                             <tr key={d._id}>
                                                 <td className="px-6 py-3">{d._id}</td>
@@ -79,17 +79,17 @@ const WRSalesReport: React.FC = () => {
                                 </table>
                             </div>
 
-                            <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-                                <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 font-bold text-neutral-700 dark:text-neutral-300">By Counter</div>
+                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                <div className="p-4 border-b border-slate-100 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300">By Counter</div>
                                 <table className="w-full text-left text-sm">
                                     <thead>
-                                        <tr className="border-b border-neutral-100 dark:border-neutral-700 text-neutral-400">
+                                        <tr className="border-b border-slate-100 dark:border-slate-700 text-slate-400">
                                             <th className="px-6 py-3 font-semibold">Counter</th>
                                             <th className="px-6 py-3 font-semibold text-right">Bills</th>
                                             <th className="px-6 py-3 font-semibold text-right">Amount</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
                                         {report.byCounter.map(c => (
                                             <tr key={c._id}>
                                                 <td className="px-6 py-3">{c._id}</td>

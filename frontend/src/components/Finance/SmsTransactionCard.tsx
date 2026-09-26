@@ -34,8 +34,8 @@ const SmsTransactionCard: React.FC<SmsTransactionCardProps> = ({ transaction, on
         switch (status) {
             case 'pending': return 'text-warning bg-warning/10 border-warning/20';
             case 'converted': return 'text-success bg-success/10 border-success/20';
-            case 'ignored': return 'text-neutral-500 bg-neutral-500/10 border-neutral-500/20';
-            default: return 'text-neutral-400 bg-neutral-400/10 border-neutral-400/20';
+            case 'ignored': return 'text-slate-500 bg-slate-500/10 border-slate-500/20';
+            default: return 'text-slate-400 bg-slate-400/10 border-slate-400/20';
         }
     };
 
