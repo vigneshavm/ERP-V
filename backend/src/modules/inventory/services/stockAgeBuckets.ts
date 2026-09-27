@@ -89,6 +89,7 @@ export interface StockAgeLot {
     sellingPrice?: number; // MRP
     lastSoldDate?: string | null; // yyyy-mm-dd, newest non-cancelled sale
     rack?: string | null; // stockdetails.rackno via mapping shelfCode
+    grnNo?: string | null; // purchase GRN (purentrydetails.grn_no) the lot came in on; earliest if bought more than once
 }
 
 export interface StockAgeRow extends StockAgeLot {

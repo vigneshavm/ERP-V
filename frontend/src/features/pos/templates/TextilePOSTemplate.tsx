@@ -60,6 +60,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         currentBranch,
         activeCounterId,
         onAddToCart,
+        onBarcodeLookup,
         onRemoveFromCart,
         onUpdateCartQty,
         onUpdateCartLength,
@@ -212,6 +213,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             currentBranch={currentBranch || 'All'}
                             isProcessing={isProcessing}
                             onAddToCart={onAddToCart}
+                            onBarcodeLookup={onBarcodeLookup}
                             onRemoveFromCart={onRemoveFromCart}
                             onUpdateCartQty={onUpdateCartQty}
                             onUpdateCartLength={onUpdateCartLength}

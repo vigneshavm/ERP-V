@@ -376,7 +376,7 @@ export const usePOSLogic = () => {
             }
 
             // If not found locally, query the backend
-            const res = await api.get(`/inventory/barcode/${barcode}`);
+            const res = await api.get(`/api/inventory/barcode/${encodeURIComponent(barcode.trim())}`);
             if (res.data) {
                 const item = res.data;
                 addItem({
@@ -499,6 +499,8 @@ export const usePOSLogic = () => {
         isWholesaleCustomer,
         wholesaleDiscountPercent,
         onApplyWholesaleDiscount: () => dispatch(setDiscountAmount(Math.round(cartSubtotal * wholesaleDiscountPercent) / 100)),
+        // Barcode box fallback when the code isn't in the products already loaded in the browser.
+        onBarcodeLookup: handleBarcodeScan,
         onRemoveFromCart: removeItem,
         onUpdateCartQty: updateQty,
         onUpdateCartLength: updateLength,

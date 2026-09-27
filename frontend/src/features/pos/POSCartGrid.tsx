@@ -14,6 +14,8 @@ interface POSCartGridProps {
     currentBranch: string;
     isProcessing: boolean;
     onAddToCart: (item: CartItem) => void;
+    /** Looks a barcode up on the server when it isn't among the loaded `products` (adds it or reports not found). */
+    onBarcodeLookup: (barcode: string) => void | Promise<void>;
     onRemoveFromCart: (id: string) => void;
     onUpdateCartQty: (id: string, qty: number) => void;
     onUpdateCartLength: (id: string, length: number) => void;
@@ -216,6 +218,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     currentBranch,
     isProcessing: __isProcessing,
     onAddToCart,
+    onBarcodeLookup,
     onRemoveFromCart,
     onUpdateCartQty,
     onUpdateCartLength,
@@ -395,6 +398,11 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     // Handlers
     const handleSkuKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
+            // A fast scanner scan was already handled by the global scanner hook.
+            if (e.defaultPrevented) {
+                e.currentTarget.value = '';
+                return;
+            }
             const val = e.currentTarget.value.trim();
             if (!val) return;
 
@@ -410,11 +418,9 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                     e.currentTarget.value = '';
                 }
             } else {
-                // Determine if we should clear on not found? 
-                // Usually scanner just leaves it or selects it.
-                // Let's select it so they can overwrite easily
-                e.currentTarget.select();
-                // Optional: alert("Product not found"); 
+                // Not in the products loaded in the browser: look it up on the server (shop DB / ERP items).
+                e.currentTarget.value = '';
+                void onBarcodeLookup(val);
             }
         }
     };

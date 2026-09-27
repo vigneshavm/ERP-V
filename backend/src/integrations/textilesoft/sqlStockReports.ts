@@ -244,11 +244,11 @@ function stockAgeLotQuery(derivedText: string, where: string, mapping: ShopDbMap
     return (
         `SELECT it.[barcode] AS barcode, it.[name] AS name, TRY_CAST(it.[stockQty] AS float) AS stockQty, TRY_CAST(it.[costPrice] AS float) AS costPrice, ` +
         `${opt("category", "it.[category]")}, ${opt("brand", "it.[brand]")}, ${opt("sellingPrice", "TRY_CAST(it.[sellingPrice] AS float)")}, ${opt("shelfCode", "it.[shelfCode]")}, ` +
-        `CONVERT(varchar(10), pe.ed, 23) AS entryDate, pe.pq AS purchasedQty, pe.sup AS supplier, pe.n AS purchaseRows, ` +
+        `CONVERT(varchar(10), pe.ed, 23) AS entryDate, pe.pq AS purchasedQty, pe.sup AS supplier, pe.n AS purchaseRows, pe.grn AS grnNo, ` +
         `ISNULL(sa.sq, 0) AS soldQty, CONVERT(varchar(10), sa.ld, 23) AS lastSold, ISNULL(pr.rq, 0) AS returnedQty ` +
         `FROM (${derivedText}) AS it ` +
         // Active purchase rows only (STATUS IS NULL), same as the movement log. qty + free qty = pieces received.
-        `LEFT JOIN (SELECT p.[barcode] AS bc, MIN(p.[entry_date]) AS ed, COUNT(*) AS n, MAX(g.[sup]) AS sup, ` +
+        `LEFT JOIN (SELECT p.[barcode] AS bc, MIN(p.[entry_date]) AS ed, COUNT(*) AS n, MAX(g.[sup]) AS sup, MIN(CAST(p.[grn_no] AS varchar(50))) AS grn, ` +
         `SUM(ISNULL(TRY_CAST(p.[qty] AS float), 0) + ISNULL(TRY_CAST(p.[fqty] AS float), 0)) AS pq ` +
         `FROM dbo.[purentrydetails] AS p LEFT JOIN (SELECT [grn_no] AS grn, MAX([suplier_name]) AS sup FROM dbo.[purgrnentry] GROUP BY [grn_no]) AS g ON g.grn = p.[grn_no] ` +
         `WHERE p.[STATUS] IS NULL GROUP BY p.[barcode]) AS pe ON pe.bc = it.[barcode] ` +
@@ -314,6 +314,7 @@ async function loadStockAge(tenantId: string): Promise<StockAgeSnapshot | null> 
             name: String(r.name ?? "").trim() || barcode,
             purchaseDate: r.entryDate ? String(r.entryDate) : null,
             supplier: String(r.supplier ?? "").trim(),
+            grnNo: r.grnNo == null ? null : String(r.grnNo).trim() || null,
             purchasedQty: round3(num(r.purchasedQty)),
             soldQty: round3(num(r.soldQty)),
             returnedQty: round3(num(r.returnedQty)),
@@ -402,6 +403,7 @@ export interface StockReportQuery extends StockFilterQuery {
     limit?: string;
     threshold?: string;
     days?: string;
+    neverSold?: string;
     refresh?: string;
 }
 

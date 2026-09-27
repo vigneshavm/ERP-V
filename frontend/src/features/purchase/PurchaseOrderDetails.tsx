@@ -317,12 +317,13 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                                         const taxPercent = item.tax_percent || (item as any).taxPercent || 0;
                                         const qty = item.quantity || 0;
                                         const unit = (item as any).unit || (item as any).unitId || 'pcs';
+                                        const code: string = (item as any).sku || (item as any).barcode || '';
 
                                         return (
                                             <tr key={idx} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all">
                                                 <td className="px-8 py-6">
                                                     <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter">{productName}</p>
-                                                    <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest italic">SKU</p>
+                                                    <p className="text-[10px] font-bold text-slate-500 mt-1 font-mono tracking-wider">{code ? `Barcode ${code}` : 'No barcode'}</p>
                                                 </td>
                                                 <td className="px-8 py-6 text-center">
                                                     <div className="flex flex-col items-center gap-1.5">

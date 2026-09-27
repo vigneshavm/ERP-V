@@ -65,6 +65,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         activeCounterName,
         // branches, // Removed as it's not in logic
         onAddToCart,
+        onBarcodeLookup,
         onRemoveFromCart,
         onUpdateCartQty,
         onUpdateCartLength,
@@ -230,6 +231,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             currentBranch={currentBranch || 'All'}
                             isProcessing={isProcessing}
                             onAddToCart={onAddToCart}
+                            onBarcodeLookup={onBarcodeLookup}
                             onRemoveFromCart={onRemoveFromCart}
                             onUpdateCartQty={onUpdateCartQty}
                             onUpdateCartLength={onUpdateCartLength}

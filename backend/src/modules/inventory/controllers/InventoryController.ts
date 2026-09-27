@@ -292,7 +292,7 @@ export class InventoryController {
         const str = (k: string): string | undefined => (typeof req.query[k] === 'string' ? (req.query[k] as string) : undefined);
         return {
             search: str('search'), category: str('category'), brand: str('brand'), supplier: str('supplier'), from: str('from'), to: str('to'),
-            page: str('page'), limit: str('limit'), threshold: str('threshold'), days: str('days'), refresh: str('refresh'),
+            page: str('page'), limit: str('limit'), threshold: str('threshold'), days: str('days'), neverSold: str('neverSold'), refresh: str('refresh'),
             sort: str('sort'), dir: str('dir'),
         };
     }

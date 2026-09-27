@@ -88,9 +88,15 @@ const SORTABLE: Record<string, (r: any) => string | number | null> = {
     brand: (r) => r.brand ?? "",
     supplier: (r) => r.supplier ?? "",
     purchaseDate: (r) => r.purchaseDate,
+    grnNo: (r) => r.grnNo ?? null,
     lastMovement: (r) => r.lastMovement,
+    lastSoldDate: (r) => r.lastSoldDate ?? null,
     idleDays: (r) => r.idleDays,
     remainingQty: (r) => r.remainingQty,
+    purchasedQty: (r) => r.purchasedQty,
+    soldQty: (r) => r.soldQty,
+    purchasedValue: (r) => (r.purchasedQty || 0) * (r.costPrice || 0),
+    soldValue: (r) => (r.soldQty || 0) * (r.costPrice || 0),
     costPrice: (r) => r.costPrice,
     value: (r) => r.value,
 };
@@ -155,6 +161,7 @@ export function daysBetween(from: string | null | undefined, to: string): number
 }
 
 const IDLE_BANDS: { label: string; min: number; max: number }[] = [
+    { label: "Under 60 days", min: 0, max: 59 },
     { label: "60–89 days", min: 60, max: 89 },
     { label: "90–179 days", min: 90, max: 179 },
     { label: "180–364 days", min: 180, max: 364 },
@@ -169,16 +176,18 @@ export interface DeadStockRow extends StockAgeRow {
 }
 
 /**
- * Dead Stock (non-moving): lots with stock left and no sale for at least `days` (default 90), counted to asOf.
- * "Last movement" = last sale, or the purchase date if the lot never sold. Lots with neither date are counted
- * separately (they can't be aged) and not listed.
+ * Dead Stock (non-moving): lots with stock left and no sale for at least `days` (default 90; 0 = no minimum), counted
+ * to asOf. "Last movement" = last sale, or the purchase date if the lot never sold. Lots with neither date are counted
+ * separately (they can't be aged) and not listed. `neverSold=1` keeps only lots that have not sold a single piece.
  */
-export function deadStock(rows: StockAgeRow[], asOf: string, q: PageQuery & { days?: string | number }) {
+export function deadStock(rows: StockAgeRow[], asOf: string, q: PageQuery & { days?: string | number; neverSold?: string }) {
     const d = Number(q.days);
-    const days = Number.isFinite(d) && d >= 1 ? Math.min(Math.floor(d), 3650) : 90;
+    const days = q.days !== undefined && q.days !== "" && Number.isFinite(d) && d >= 0 ? Math.min(Math.floor(d), 3650) : 90;
+    const neverSoldOnly = q.neverSold === "1" || q.neverSold === "true";
     let undated = 0;
     const aged: DeadStockRow[] = [];
     for (const r of rows) {
+        if (neverSoldOnly && r.lastSoldDate) continue;
         const lastMovement = r.lastSoldDate || r.purchaseDate;
         const idle = daysBetween(lastMovement, asOf);
         if (idle === null) {
@@ -191,10 +200,27 @@ export function deadStock(rows: StockAgeRow[], asOf: string, q: PageQuery & { da
     const list = sorted.rows;
     const all = totalsOf(rows);
     const dead = totalsOf(aged);
+    // Purchase -> sold -> still in stock for these lots, all at the lot's purchase cost (per-lot sale prices are not tracked here).
+    let purchasedQty = 0, purchasedValue = 0, soldQty = 0, soldValue = 0, returnedQty = 0, returnedValue = 0;
+    for (const r of aged) {
+        const cost = r.costPrice || 0;
+        purchasedQty += r.purchasedQty || 0;
+        purchasedValue += (r.purchasedQty || 0) * cost;
+        soldQty += r.soldQty || 0;
+        soldValue += (r.soldQty || 0) * cost;
+        returnedQty += r.returnedQty || 0;
+        returnedValue += (r.returnedQty || 0) * cost;
+    }
     return {
         days,
-        totals: { ...dead, neverSold: aged.filter((r) => r.neverSold).length, shareOfValuePct: all.costValue > 0 ? Math.round((dead.costValue / all.costValue) * 1000) / 10 : 0, undatedLots: undated },
-        byIdle: IDLE_BANDS.map((b) => ({ key: b.label, ...totalsOf(aged.filter((r) => r.idleDays >= b.min && r.idleDays <= b.max)) })),
+        totals: {
+            ...dead,
+            purchasedQty: round3(purchasedQty), purchasedValue: round2(purchasedValue),
+            soldQty: round3(soldQty), soldValue: round2(soldValue),
+            returnedQty: round3(returnedQty), returnedValue: round2(returnedValue),
+            neverSold: aged.filter((r) => r.neverSold).length, shareOfValuePct: all.costValue > 0 ? Math.round((dead.costValue / all.costValue) * 1000) / 10 : 0, undatedLots: undated },
+        neverSoldOnly,
+        byIdle: IDLE_BANDS.filter((b) => b.max >= days).map((b) => ({ key: b.label, ...totalsOf(aged.filter((r) => r.idleDays >= b.min && r.idleDays <= b.max)) })),
         byCategory: groupBy(aged, category),
         sort: sorted.sort,
         dir: sorted.dir,

@@ -14,15 +14,6 @@ export const useBarcodeScanner = ({ onScan, enabled = true, timeout = 50 }: UseB
         if (!enabled) return;
 
         const handleKeyDown = (e: KeyboardEvent) => {
-            // Ignore if the user is explicitly typing in an input or textarea
-            const target = e.target as HTMLElement;
-            const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
-            
-            // Allow scanner to work if it's a hidden input, or just rely on global if not in an input
-            // We usually want to capture it globally *unless* they are typing in a search box.
-            // But if they scan while focused in a text input, it will type the barcode there and hit enter.
-            // For a robust POS, we might intercept it anyway if it's super fast.
-            
             const currentTime = Date.now();
             
             // Check if this is the start of a new scan or continuing an existing one
@@ -35,9 +26,9 @@ export const useBarcodeScanner = ({ onScan, enabled = true, timeout = 50 }: UseB
             // Handle the Enter key, which usually signifies the end of a scan
             if (e.key === 'Enter') {
                 if (buffer.current.length > 3) { // Arbitrary minimum length for a barcode
-                    if (!isInput) {
-                        e.preventDefault(); // Prevent default if it was captured globally
-                    }
+                    // Always mark the Enter as handled, so an input's own Enter handler (e.g. the POS
+                    // barcode box) skips this scan instead of adding the item a second time.
+                    e.preventDefault();
                     onScan(buffer.current);
                     buffer.current = '';
                 }

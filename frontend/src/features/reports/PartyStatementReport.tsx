@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowDownLeft, ArrowUpRight, Scale, Search, Wallet, X } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ArrowDownLeft, ArrowUpRight, ChevronDown, Scale, Search, Wallet, X } from 'lucide-react';
 import api from '@/services/api';
 import { formatCurrency, formatNumber } from '@/utils/formatters';
 import { ReportColumn, ReportKpiGrid, ReportPageShell, ReportTable, useDebounced, useReportData, useReportPeriod } from './components';
 import type { ResolvedSource } from './components';
+import { useDismiss } from './components/useDismiss';
 
 interface PartyOption {
     key: string;
@@ -51,62 +52,108 @@ const COLUMNS: ReportColumn<Entry>[] = [
 
 const fieldCls = 'px-2.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.2)]';
 
-/** Search customers and suppliers (All Parties API) and pick one. */
+/**
+ * Dropdown of customers and suppliers (All Parties API). Opens with the most active parties; typing 2+ letters
+ * searches by name, card no., phone or city. Arrow keys + Enter pick from the keyboard.
+ */
 const PartyPicker: React.FC<{ onPick: (p: PartyOption) => void }> = ({ onPick }) => {
     const [input, setInput] = useState('');
-    const q = useDebounced(input);
+    const q = useDebounced(input.trim());
     const [type, setType] = useState('');
+    const [open, setOpen] = useState(false);
     const [options, setOptions] = useState<PartyOption[]>([]);
-    const [busy, setBusy] = useState(false);
-    const [searched, setSearched] = useState('');
+    const [loadedFor, setLoadedFor] = useState<string | null>(null);
+    const [active, setActive] = useState(0);
+    const searching = q.length >= 2;
+    const requestKey = `${type}|${searching ? q : ''}`;
+    const close = useCallback(() => setOpen(false), []);
+    const ref = useDismiss<HTMLDivElement>(open, close);
+
     useEffect(() => {
-        if (q.length < 2) return;
+        if (!open) return;
         let cancelled = false;
-        api.get<{ items: PartyOption[] }>('/api/reports/party/all-parties', { params: { search: q, type: type || undefined, limit: '15', sort: 'transactions', dir: 'desc' } })
+        api.get<{ items: PartyOption[] }>('/api/reports/party/all-parties', {
+            params: { search: searching ? q : undefined, type: type || undefined, limit: searching ? '25' : '50', sort: 'transactions', dir: 'desc' },
+        })
             .then(r => { if (!cancelled) setOptions(r.data.items || []); })
             .catch(() => { if (!cancelled) setOptions([]); })
-            .finally(() => { if (!cancelled) { setBusy(false); setSearched(q); } });
+            .finally(() => { if (!cancelled) { setLoadedFor(requestKey); setActive(0); } });
         return () => { cancelled = true; };
-    }, [q, type]);
-    const shown = q.length >= 2 ? options : [];
+    }, [open, q, type, searching, requestKey]);
+
+    const pick = (o: PartyOption) => { setOpen(false); setInput(''); onPick(o); };
+    const ready = loadedFor === requestKey;
+    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (!open) setOpen(true); else setActive(i => Math.min(i + 1, options.length - 1)); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(i => Math.max(i - 1, 0)); }
+        else if (e.key === 'Enter' && open && ready && options[active]) { e.preventDefault(); pick(options[active]); }
+    };
+
     return (
         <section className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm p-4 space-y-3">
             <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Choose a customer or supplier</p>
             <div className="flex flex-wrap gap-3">
-                <label className="relative flex-1 min-w-[16rem]">
-                    <span className="sr-only">Search parties</span>
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" aria-hidden />
-                    <input
-                        autoFocus
-                        value={input}
-                        onChange={e => { setInput(e.target.value); if (e.target.value.trim().length >= 2) setBusy(true); }}
-                        placeholder="Type at least 2 letters: name, card no., phone, city…"
-                        className={`w-full pl-8 pr-3 ${fieldCls}`}
-                    />
-                </label>
-                <select value={type} onChange={e => setType(e.target.value)} className={fieldCls} aria-label="Party type">
+                <div ref={ref} className="relative flex-1 min-w-[16rem]">
+                    <label>
+                        <span className="sr-only">Select a party</span>
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" aria-hidden />
+                        <input
+                            autoFocus
+                            role="combobox"
+                            aria-expanded={open}
+                            aria-controls="party-picker-list"
+                            aria-autocomplete="list"
+                            value={input}
+                            onFocus={() => setOpen(true)}
+                            onClick={() => setOpen(true)}
+                            onChange={e => { setInput(e.target.value); setOpen(true); }}
+                            onKeyDown={onKeyDown}
+                            placeholder="Select a party, or type to search name, card no., phone, city…"
+                            className={`w-full pl-8 pr-9 ${fieldCls}`}
+                        />
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            aria-label={open ? 'Close list' : 'Open list'}
+                            onClick={() => setOpen(o => !o)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                        >
+                            <ChevronDown className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+                        </button>
+                    </label>
+                    {open && (
+                        <div id="party-picker-list" role="listbox" className="absolute z-30 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+                            <p className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                                {searching ? `Matches for “${q}”` : 'Most active parties · type to search all'}
+                            </p>
+                            {!ready && <p className="px-3 py-2 text-xs text-slate-400">Loading…</p>}
+                            {ready && options.length === 0 && <p className="px-3 py-2 text-xs text-slate-400">{searching ? `No party matches “${q}”.` : 'No parties found.'}</p>}
+                            {ready && options.map((o, i) => (
+                                <button
+                                    key={o.key}
+                                    type="button"
+                                    role="option"
+                                    aria-selected={i === active}
+                                    onMouseEnter={() => setActive(i)}
+                                    onClick={() => pick(o)}
+                                    className={`w-full text-left px-3 py-2 flex items-center justify-between gap-3 ${i === active ? 'bg-slate-100 dark:bg-slate-700/60' : ''}`}
+                                >
+                                    <span>
+                                        <span className="font-bold text-slate-900 dark:text-white">{o.name}</span>
+                                        <span className="block text-[11px] text-slate-400">{partyLine(o)}</span>
+                                    </span>
+                                    <span className="text-[10px] font-bold uppercase text-slate-500 shrink-0">{o.type} · {formatNumber(o.transactions)} {o.type === 'Customer' ? 'bills' : 'GRNs'}</span>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <select value={type} onChange={e => { setType(e.target.value); setOpen(true); }} className={fieldCls} aria-label="Party type">
                     <option value="">Customers & suppliers</option>
                     <option value="customer">Customers</option>
                     <option value="supplier">Suppliers</option>
                 </select>
             </div>
-            {busy && input.trim().length >= 2 && <p className="text-xs text-slate-400">Searching…</p>}
-            {!busy && q.length >= 2 && searched === q && shown.length === 0 && <p className="text-xs text-slate-400">No party matches “{q}”.</p>}
-            {shown.length > 0 && (
-                <ul className="divide-y divide-slate-100 dark:divide-slate-700 border border-slate-100 dark:border-slate-700 rounded-lg max-h-80 overflow-y-auto">
-                    {shown.map(o => (
-                        <li key={o.key}>
-                            <button type="button" onClick={() => onPick(o)} className="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/40 flex items-center justify-between gap-3">
-                                <span>
-                                    <span className="font-bold text-slate-900 dark:text-white">{o.name}</span>
-                                    <span className="block text-[11px] text-slate-400">{partyLine(o)}</span>
-                                </span>
-                                <span className="text-[10px] font-bold uppercase text-slate-500 shrink-0">{o.type} · {formatNumber(o.transactions)} {o.type === 'Customer' ? 'bills' : 'GRNs'}</span>
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            )}
         </section>
     );
 };
