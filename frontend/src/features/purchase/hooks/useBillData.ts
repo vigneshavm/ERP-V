@@ -28,7 +28,7 @@ export const useBillData = (id?: string, grnId?: string, initialData?: PurchaseB
     useEffect(() => {
         const fetchVendors = async () => {
             try {
-                const { data } = await api.get('/suppliers');
+                const { data } = await api.get('/api/suppliers');
                 const vendorList = Array.isArray(data) ? data : (data?.data || []);
                 setVendors(vendorList);
             } catch (err) {

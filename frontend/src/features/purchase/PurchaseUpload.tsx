@@ -89,7 +89,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                         payment_terms: 'Net 30',
                         branch_id: targetBranch || currentBranch
                     };
-                    await api.post('/purchases', payload);
+                    await api.post('/api/purchases', payload);
                     successCount++;
                 } catch (err) {
                     failCount++;

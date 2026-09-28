@@ -15,7 +15,7 @@ const PayableSnapshot: React.FC = () => {
     const loadData = async () => {
         setLoading(true);
         try {
-            const { data } = await api.get('/purchases/suppliers/reports');
+            const { data } = await api.get('/api/purchases/suppliers/reports');
             if (data && data.success) {
                 setData(data.data);
             }

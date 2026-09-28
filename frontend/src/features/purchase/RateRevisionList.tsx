@@ -16,7 +16,7 @@ const RateRevisionList: React.FC = () => {
     const fetchRevisions = async () => {
         setLoading(true);
         try {
-            const { data } = await api.get('/purchases/rate-revisions');
+            const { data } = await api.get('/api/purchases/rate-revisions');
             if (data.success) {
                 setRevisions(data.data);
             }
@@ -37,7 +37,7 @@ const RateRevisionList: React.FC = () => {
     const handleApprove = async (id: string) => {
         if (!window.confirm("Approve this revision? This will create a Debit Note and update Inventory Cost.")) return;
         try {
-            await api.post(`/purchases/rate-revisions/${id}/approve`);
+            await api.post(`/api/purchases/rate-revisions/${id}/approve`);
             toast.success("Revision Approved Successfully");
             fetchRevisions();
         } catch (error: any) {
@@ -48,7 +48,7 @@ const RateRevisionList: React.FC = () => {
     const handleReject = async (id: string) => {
         if (!window.confirm("Reject this revision?")) return;
         try {
-            await api.post(`/purchases/rate-revisions/${id}/reject`);
+            await api.post(`/api/purchases/rate-revisions/${id}/reject`);
             toast.info("Revision Rejected");
             fetchRevisions();
         } catch (error: any) {

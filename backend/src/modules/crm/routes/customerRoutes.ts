@@ -10,6 +10,7 @@ const customerController = container.resolve(CustomerController);
 
 router.post("/", protect, customerController.addCustomer);
 router.get("/", protect, customerController.getAllCustomers);
+router.get("/search", protect, customerController.searchByPhone); // before "/:id"
 router.get("/:id/transactions", protect, customerController.getCustomerTransactions);
 router.get("/:id", protect, customerController.getCustomerById);
 router.put(

@@ -36,12 +36,12 @@ const RateRevisionForm: React.FC = () => {
 
     useEffect(() => {
         // Fetch Suppliers
-        api.get('/purchases/suppliers').then(res => {
+        api.get('/api/suppliers').then(res => {
             if (res.data.success) setSuppliers(res.data.data);
         }).catch(err => console.error("Failed to fetch suppliers", err));
 
         // Fetch Items
-        api.get('/inventory/items').then(res => {
+        api.get('/api/inventory/items').then(res => {
             if (res.data.data?.items) setItems(res.data.data.items);
             else if (Array.isArray(res.data.data)) setItems(res.data.data);
         }).catch(err => console.error("Failed to fetch items", err));
@@ -70,7 +70,7 @@ const RateRevisionForm: React.FC = () => {
 
         setIsSaving(true);
         try {
-            await api.post('/purchases/rate-revisions', {
+            await api.post('/api/purchases/rate-revisions', {
                 supplierId,
                 itemId,
                 batchNumber,

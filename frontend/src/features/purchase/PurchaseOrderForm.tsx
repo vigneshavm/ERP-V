@@ -68,7 +68,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
     useEffect(() => {
         const loadVendors = async () => {
             try {
-                const { data } = await api.get('/suppliers');
+                const { data } = await api.get('/api/suppliers');
                 if (data) {
                     const vendorList = Array.isArray(data) ? data : (data.data && Array.isArray(data.data) ? data.data : []);
                     setVendors(vendorList);
@@ -85,7 +85,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
         if (!productSearch) return;
         const search = async () => {
             try {
-                const { data } = await api.get('/inventory', { params: { search: productSearch } });
+                const { data } = await api.get('/api/inventory', { params: { search: productSearch } });
                 if (data) {
                     const productList = Array.isArray(data) ? data : (data.data && Array.isArray(data.data) ? data.data : []);
                     setProducts(productList);
@@ -107,7 +107,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
         const checkSupplier = async () => {
             setLoadingSupplier(true);
             try {
-                const { data } = await api.get(`/suppliers/analytics?supplierId=${header.vendor_id}`);
+                const { data } = await api.get(`/api/suppliers/analytics?supplierId=${header.vendor_id}`);
                 if (data && data.success && data.data && data.data.length > 0) {
                     setSupplierStatus(data.data[0]);
                 }
@@ -124,7 +124,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
     const handleShowHistory = async (itemId: string, itemName: string) => {
         setHistoryModal({ show: true, item: itemName, data: [], loading: true });
         try {
-            const { data } = await api.get(`/purchase/history/item/${itemId}`);
+            const { data } = await api.get(`/api/purchases/history/item/${itemId}`);
             if (data && data.success) {
                 setHistoryModal(prev => ({ ...prev, data: data.data, loading: false }));
             }
