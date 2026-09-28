@@ -49,12 +49,12 @@ const FormInput: React.FC<FormInputProps> & { IconWrapper: React.FC<IconWrapperP
                     placeholder={placeholder}
                     required={required}
                     disabled={disabled}
-                    className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-2 border ${error ? 'border-rose-500' : 'border-default'
+                    className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-2 border ${error ? 'border-danger' : 'border-default'
                         } bg-input text-main placeholder:text-muted rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-surface disabled:cursor-not-allowed transition-all`}
                     {...props}
                 />
             </div>
-            {error && <p className="mt-1 text-sm text-rose-600 font-medium">{error}</p>}
+            {error && <p className="mt-1 text-sm text-danger font-medium">{error}</p>}
         </div>
     );
 };

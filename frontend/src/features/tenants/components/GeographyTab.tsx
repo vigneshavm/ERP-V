@@ -95,7 +95,7 @@ export const GeographyTab: React.FC<{
                             <div key={cityIdx} className="border border-slate-200 rounded-lg overflow-hidden bg-white">
                                 <div className="bg-slate-50 px-3 py-2 flex justify-between items-center border-b border-slate-100">
                                     <span className="font-bold text-slate-700 text-sm">{loc.city}</span>
-                                    <button type="button" onClick={() => removeCity(cityIdx)} className="text-slate-400 hover:text-red-500">
+                                    <button type="button" onClick={() => removeCity(cityIdx)} className="text-slate-400 hover:text-danger">
                                         <X className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -108,7 +108,7 @@ export const GeographyTab: React.FC<{
                                                     <div className="font-semibold text-slate-700">{br.name}</div>
                                                     <div className="text-slate-500 truncate max-w-[150px]">{br.address}</div>
                                                 </div>
-                                                <button type="button" onClick={() => removeBranch(cityIdx, brIdx)} className="text-slate-300 hover:text-red-500">
+                                                <button type="button" onClick={() => removeBranch(cityIdx, brIdx)} className="text-slate-300 hover:text-danger">
                                                     <X className="w-3 h-3" />
                                                 </button>
                                             </div>
@@ -119,17 +119,17 @@ export const GeographyTab: React.FC<{
                                     </div>
 
                                     {tempBranch.cityIndex === cityIdx ? (
-                                        <div className="bg-white p-2 rounded border border-blue-100 animate-in fade-in zoom-in-95 duration-200">
+                                        <div className="bg-white p-2 rounded border border-primary/30 animate-in fade-in zoom-in-95 duration-200">
                                             <input
                                                 autoFocus
                                                 placeholder="Branch Name (e.g. South End)"
-                                                className="w-full px-2 py-1 border border-slate-200 rounded text-xs mb-2 outline-none focus:border-blue-500"
+                                                className="w-full px-2 py-1 border border-slate-200 rounded text-xs mb-2 outline-none focus:border-primary"
                                                 value={tempBranch.name}
                                                 onChange={e => setTempBranch((prev: any) => ({ ...prev, name: e.target.value }))}
                                             />
                                             <input
                                                 placeholder="Address / Area"
-                                                className="w-full px-2 py-1 border border-slate-200 rounded text-xs mb-2 outline-none focus:border-blue-500"
+                                                className="w-full px-2 py-1 border border-slate-200 rounded text-xs mb-2 outline-none focus:border-primary"
                                                 value={tempBranch.address}
                                                 onChange={e => setTempBranch((prev: any) => ({ ...prev, address: e.target.value }))}
                                             />
@@ -137,7 +137,7 @@ export const GeographyTab: React.FC<{
                                                 <button
                                                     type="button"
                                                     onClick={() => addBranch(cityIdx)}
-                                                    className="flex-1 bg-blue-600 text-white py-1 rounded text-xs font-medium hover:bg-blue-700"
+                                                    className="flex-1 bg-primary text-white py-1 rounded text-xs font-medium hover:bg-primary-hover"
                                                 >
                                                     Save Branch
                                                 </button>
@@ -154,7 +154,7 @@ export const GeographyTab: React.FC<{
                                         <button
                                             type="button"
                                             onClick={() => setTempBranch({ cityIndex: cityIdx, name: '', address: '' })}
-                                            className="w-full py-1.5 border border-dashed border-slate-300 text-slate-500 rounded text-xs hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-1"
+                                            className="w-full py-1.5 border border-dashed border-slate-300 text-slate-500 rounded text-xs hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-1"
                                         >
                                             <Plus className="w-3 h-3" />
                                             Add Branch

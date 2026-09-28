@@ -85,10 +85,10 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
                         <Shield className="w-32 h-32" />
                     </div>
                     <div className="flex justify-between items-start mb-4 relative z-10">
-                        <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-sm flex items-center justify-center">
+                        <div className="w-12 h-12 bg-primary-soft dark:bg-primary-soft rounded-sm flex items-center justify-center">
                             <Shield className="w-6 h-6 text-primary dark:text-primary" />
                         </div>
-                        <span className={`text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest ${securityScore > 70 ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-success' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-warning'}`}>
+                        <span className={`text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest ${securityScore > 70 ? 'bg-success-soft text-success dark:bg-success-soft dark:text-success' : 'bg-warning-soft text-warning dark:bg-warning-soft dark:text-warning'}`}>
                             {securityScore}% SECURE
                         </span>
                     </div>
@@ -103,10 +103,10 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
                         <Lock className="w-32 h-32" />
                     </div>
                     <div className="flex justify-between items-start mb-4 relative z-10">
-                        <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-sm flex items-center justify-center">
-                            <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                        <div className="w-12 h-12 bg-primary-soft dark:bg-primary-soft rounded-sm flex items-center justify-center">
+                            <Users className="w-6 h-6 text-primary dark:text-primary" />
                         </div>
-                        <span className="text-[10px] font-black px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg uppercase tracking-widest">
+                        <span className="text-[10px] font-black px-3 py-1.5 bg-primary-soft dark:bg-primary-soft text-primary dark:text-primary rounded-lg uppercase tracking-widest">
                             {staffStatus.percent}% Protected
                         </span>
                     </div>
@@ -141,8 +141,8 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
             {/* Password Security Section */}
             <section>
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
-                        <Key className="w-5 h-5 text-amber-600 dark:text-warning" />
+                    <div className="w-10 h-10 rounded-xl bg-warning-soft dark:bg-warning-soft flex items-center justify-center">
+                        <Key className="w-5 h-5 text-warning dark:text-warning" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Password Governance</h3>
@@ -151,8 +151,8 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
                 </div>
 
                 {insecureUsers.length === 0 ? (
-                    <div className="p-8 bg-emerald-50/30 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800 rounded-sm flex flex-col md:flex-row items-center gap-8">
-                        <div className="w-20 h-20 rounded-sm bg-emerald-500 text-white flex items-center justify-center shadow-xl shadow-emerald-200 dark:shadow-none shrink-0">
+                    <div className="p-8 bg-success/30 dark:bg-success-soft border border-success-line dark:border-success-line rounded-sm flex flex-col md:flex-row items-center gap-8">
+                        <div className="w-20 h-20 rounded-sm bg-success text-white flex items-center justify-center shadow-xl shadow-emerald-200 dark:shadow-none shrink-0">
                             <CheckCircle className="w-10 h-10" />
                         </div>
                         <div className="text-center md:text-left">
@@ -161,17 +161,17 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
                                 All identified enterprise user credentials are currently using high-level hashing algorithms (BCRYPT-256). No manual intervention is required at this stage.
                             </p>
                         </div>
-                        <div className="px-6 py-2 bg-white dark:bg-slate-800 rounded-sm border border-slate-100 dark:border-slate-700 text-[10px] font-black tracking-widest text-emerald-600 uppercase">
+                        <div className="px-6 py-2 bg-white dark:bg-slate-800 rounded-sm border border-slate-100 dark:border-slate-700 text-[10px] font-black tracking-widest text-success uppercase">
                             ENCRYPTED
                         </div>
                     </div>
                 ) : (
-                    <div className="p-8 bg-amber-50/50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-sm flex flex-col md:flex-row items-center gap-8 shadow-sm">
-                        <div className="w-20 h-20 rounded-sm bg-amber-500 text-white flex items-center justify-center shadow-xl shadow-amber-200 dark:shadow-none shrink-0 border-4 border-white dark:border-slate-800">
+                    <div className="p-8 bg-warning/50 dark:bg-warning-soft border border-warning-line dark:border-warning-line rounded-sm flex flex-col md:flex-row items-center gap-8 shadow-sm">
+                        <div className="w-20 h-20 rounded-sm bg-warning text-white flex items-center justify-center shadow-xl shadow-amber-200 dark:shadow-none shrink-0 border-4 border-white dark:border-slate-800">
                             <AlertTriangle className="w-10 h-10" />
                         </div>
                         <div className="flex-1 text-center md:text-left">
-                            <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">IMMEDIATE ACTION REQUIRED</p>
+                            <p className="text-[10px] font-black text-warning uppercase tracking-widest mb-1">IMMEDIATE ACTION REQUIRED</p>
                             <h4 className="text-xl font-black text-slate-800 dark:text-white leading-none mb-2">Legacy Credentials Detected</h4>
                             <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-xl">
                                 Found {insecureUsers.length} active sessions using legacy plaintext or weak hashing. Migrating them will enforce modern security standards without affecting user login flows.
@@ -180,7 +180,7 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
                         <button
                             onClick={handleMigrateAll}
                             disabled={isMigrating}
-                            className="bg-slate-900 dark:bg-indigo-600 hover:scale-105 text-white px-8 py-4 rounded-sm text-xs font-black tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-50 flex items-center gap-3"
+                            className="bg-slate-900 dark:bg-primary hover:scale-105 text-white px-8 py-4 rounded-sm text-xs font-black tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-50 flex items-center gap-3"
                         >
                             {isMigrating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
                             {isMigrating ? `SECURING ${progress.done}/${progress.total}` : 'MIGRATE ALL SECURELY'}
@@ -193,8 +193,8 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
             <section>
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                            <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <div className="w-10 h-10 rounded-xl bg-primary-soft dark:bg-primary-soft flex items-center justify-center">
+                            <Users className="w-5 h-5 text-primary dark:text-primary" />
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Enterprise Roles & ACL</h3>
@@ -227,8 +227,8 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
                                             key={view.id}
                                             onClick={() => handlePermissionToggle(role.code, view.id)}
                                             className={`p-4 rounded-sm text-[10px] font-black transition-all border flex flex-col justify-between h-24 text-left ${isAllowed
-                                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none'
-                                                : 'bg-slate-50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700 text-slate-400 hover:border-indigo-300'
+                                                ? 'bg-primary border-primary text-white shadow-lg shadow-indigo-200 dark:shadow-none'
+                                                : 'bg-slate-50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700 text-slate-400 hover:border-primary/30'
                                                 }`}
                                         >
                                             <span className={`opacity-60 text-[8px] uppercase tracking-tighter ${isAllowed ? 'text-white' : ''}`}>{view.category}</span>

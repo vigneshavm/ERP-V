@@ -4,7 +4,6 @@ import { calculateLoyaltyPoints } from "../../utils/loyalty";
 import { updateCustomerPoints } from '../slices/posSlice';
 import { recordSale } from '../slices/posSlice';
 import { deductStock } from '../slices/inventorySlice';
-// import { supabase } from '../../lib/supabase'; // Removed
 import { TransactionType, Sector } from "../../types/common";
 import { addTransaction } from '../slices/financeSlice';
 import api from "../../services/api";

@@ -41,12 +41,12 @@ const AuthInput: React.FC<AuthInputProps> = ({
                     id={id}
                     {...registration}
                     {...props}
-                    className={`w-full h-14 bg-slate-900 border ${error ? 'border-red-500/50' : 'border-slate-800'
-                        } rounded-sm ${Icon ? 'pl-12' : leftElement ? 'pl-16' : 'pl-4'} pr-4 text-white font-medium outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600 ${className}`}
+                    className={`w-full h-14 bg-slate-900 border ${error ? 'border-danger/50' : 'border-slate-800'
+                        } rounded-sm ${Icon ? 'pl-12' : leftElement ? 'pl-16' : 'pl-4'} pr-4 text-white font-medium outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-primary transition-all placeholder:text-slate-600 ${className}`}
                 />
             </div>
             {error && (
-                <p className="mt-1 text-xs text-red-500 font-medium ml-1 animate-in fade-in slide-in-from-top-1">
+                <p className="mt-1 text-xs text-danger font-medium ml-1 animate-in fade-in slide-in-from-top-1">
                     {error}
                 </p>
             )}

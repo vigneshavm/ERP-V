@@ -17,6 +17,7 @@ export type MasterType =
     | 'TRANSACTION_NAME'
     | 'CASH_GROUP'
     | 'CASH_NAME'
+    | 'SALES_COUNTER'
     | 'PAYMENT_TYPE'
     | 'BOOKING_GROUP'
     | 'EXPENSE_GROUP'
@@ -32,6 +33,7 @@ export type MasterType =
     | 'PRODUCT_COLOR'
     | 'PRODUCT_SIZE'
     | 'PRODUCT_RACK'
+    | 'PRODUCT_HSN'
     | 'UNIT'
     | 'WAREHOUSE';
 

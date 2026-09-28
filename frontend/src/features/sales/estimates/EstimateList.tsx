@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Layout from '../../../components/shared/Layout/index';
 import { Estimate } from '../../../types/sales';
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 const PAGE_SIZE = 10;
 
@@ -67,15 +68,6 @@ const EstimateList = () => {
         return { total, value, accepted, conversion };
     }, [estimates]);
 
-    const getStatusStyle = (status: string) => {
-        switch (status?.toLowerCase()) {
-            case 'accepted': return 'text-success bg-success/10 border-success/30';
-            case 'sent':     return 'text-warning bg-warning/10 border-warning/30';
-            case 'rejected': return 'text-danger bg-danger/10 border-danger/30';
-            case 'draft':    return 'text-secondary bg-surface border-default';
-            default:         return 'text-secondary bg-surface border-default';
-        }
-    };
 
     const handleSort = (field: typeof sortField) => {
         if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
@@ -154,7 +146,7 @@ const EstimateList = () => {
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div className="relative pl-5">
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning rounded-full shadow-[0_0_15px_rgba(var(--color-warning),0.5)]" />
-                        <h1 className="text-3xl font-display font-black tracking-tighter text-main flex items-center gap-3">
+                        <h1 className="page-title text-main flex items-center gap-3">
                             Estimates <span className="text-warning">Register</span>
                             <span className="px-3 py-1 bg-warning/10 border border-warning/20 text-warning rounded-sm text-[10px] font-black uppercase tracking-widest">
                                 Proforma
@@ -317,9 +309,7 @@ const EstimateList = () => {
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <div className="flex justify-center">
-                                                        <span className={`px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border ${getStatusStyle(est.status)}`}>
-                                                            {est.status}
-                                                        </span>
+                                                        <StatusBadge status={est.status} />
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-5">
@@ -420,7 +410,7 @@ const EstimateList = () => {
                                 Next <ChevronRight className="w-3.5 h-3.5" />
                             </button>
                         </div>
-                        <p className="text-[9px] font-black text-secondary uppercase tracking-widest opacity-50 hidden sm:block">
+                        <p className="text-[9px] font-black text-muted uppercase tracking-widest hidden sm:block">
                             {PAGE_SIZE} per page
                         </p>
                     </div>

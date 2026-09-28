@@ -19,7 +19,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                                     type="radio" name="taxSystem" value={sys}
                                     checked={taxDetails.taxSystem === sys}
                                     onChange={() => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, taxSystem: sys as any } })}
-                                    className="text-blue-600 focus:ring-blue-500"
+                                    className="text-primary focus:ring-blue-500"
                                 />
                                 <span className="text-sm font-medium text-slate-700">{sys}</span>
                             </label>
@@ -57,7 +57,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                                     type="checkbox"
                                     checked={taxDetails.isEInvoiceEnabled}
                                     onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, isEInvoiceEnabled: e.target.checked } })}
-                                    className="rounded text-blue-600 focus:ring-blue-500"
+                                    className="rounded text-primary focus:ring-blue-500"
                                 />
                                 <span className="text-sm text-slate-700">Enable e-Invoicing</span>
                             </label>
@@ -66,7 +66,7 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                                     type="checkbox"
                                     checked={taxDetails.isEWayBillEnabled}
                                     onChange={e => setNewTenant({ ...newTenant, taxDetails: { ...newTenant.taxDetails, isEWayBillEnabled: e.target.checked } })}
-                                    className="rounded text-blue-600 focus:ring-blue-500"
+                                    className="rounded text-primary focus:ring-blue-500"
                                 />
                                 <span className="text-sm text-slate-700">Enable e-Way Bill</span>
                             </label>
@@ -75,12 +75,12 @@ export const TaxTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTen
                 )}
             </div>
 
-            <div className="bg-blue-50 p-3 rounded-lg border border-blue-100 mt-4">
+            <div className="bg-primary-soft p-3 rounded-lg border border-primary/30 mt-4">
                 <div className="flex gap-2">
                     <div className="shrink-0 pt-0.5">
-                        <AlertCircle className="w-4 h-4 text-blue-600" />
+                        <AlertCircle className="w-4 h-4 text-primary" />
                     </div>
-                    <p className="text-xs text-blue-800">
+                    <p className="text-xs text-primary">
                         Ensure GSTIN and PAN numbers are valid. Incorrect tax details may lead to invoicing errors.
                     </p>
                 </div>

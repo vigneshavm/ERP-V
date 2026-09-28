@@ -39,14 +39,22 @@ test.describe('Inventory Variant Search & Multi-Filter Suite (INV-SRCH-001 to IN
         await page.route('**/api/**', async (route) => {
             const url = route.request().url();
 
-            if (url.includes('/api/inventory/brands')) {
-                await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(['Peter England', 'Raymond']) });
-            } else if (url.includes('/api/inventory/sizes')) {
-                await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(['S', 'M', 'L', 'XL']) });
-            } else if (url.includes('/api/inventory/colors')) {
-                await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(['Blue', 'White', 'Black']) });
-            } else if (url.includes('/api/inventory/shelves')) {
-                await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(['A-03', 'B-01']) });
+            // The page loads every dropdown's options from one endpoint (GET /api/inventory/filters,
+            // InventoryController.getFilterOptions); shelves carry their code and type.
+            if (url.includes('/api/inventory/filters')) {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        success: true,
+                        data: {
+                            brands: ['Peter England', 'Raymond'],
+                            sizes: ['S', 'M', 'L', 'XL'],
+                            colors: ['Blue', 'White', 'Black'],
+                            shelves: [{ shelfCode: 'A-03', shelfType: 'FULL' }, { shelfCode: 'B-01', shelfType: 'HALF' }],
+                        },
+                    }),
+                });
             } else if (url.includes('/api/inventory')) {
                 let filtered = [...MOCK_INVENTORY];
                 if (url.includes('search=NonExistentProduct999')) {

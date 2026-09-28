@@ -1,11 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { generateReceiptJSON } from './receiptGenerator';
 import { TaxMode } from '../types/common';
-import receiptDataService, {
-    buildDynamicTenant,
-    buildDynamicBranch,
-    buildDynamicSale
-} from '../services/receiptDataService';
+import receiptDataService from '../services/receiptDataService';
+import { buildDynamicTenant, buildDynamicBranch, buildDynamicSale } from './receiptFixtures';
 import api from '../services/api';
 
 describe('receiptGenerator (Dynamic DB/API Data Context)', () => {
@@ -157,7 +154,7 @@ describe('receiptGenerator (Dynamic DB/API Data Context)', () => {
         expect(result.receipt_data.footer.message_2).toBe('Thank you for shopping!');
     });
 
-    it('fetches context dynamically via receiptDataService with API fallback', async () => {
+    it('fetches context dynamically via receiptDataService', async () => {
         // receiptDataService.fetchReceiptContext calls the real invoice-by-id route
         // (GET /api/sales-invoice/invoice/:id -- see SalesInvoiceController.getSalesInvoiceById),
         // which returns an already-Sale-shaped double here (normalizeSaleResponse passes a
@@ -170,6 +167,9 @@ describe('receiptGenerator (Dynamic DB/API Data Context)', () => {
                     }
                 } as any;
             }
+            if (url === '/api/business/profile') {
+                return { data: buildDynamicTenant() } as any;
+            }
             return { data: { data: null } } as any;
         });
 
@@ -181,6 +181,40 @@ describe('receiptGenerator (Dynamic DB/API Data Context)', () => {
         expect(result.receipt_data.transaction_details.bill_no).toBe('BILL-999');
         expect(result.receipt_data.transaction_details.customer_name).toBe('DYNAMIC_USER');
 
+        vi.restoreAllMocks();
+    });
+
+    // Mocks api.get per URL; a missing entry behaves like a failed request.
+    const mockApi = (responses: Record<string, unknown>) =>
+        vi.spyOn(api, 'get').mockImplementation(async (url: string) => {
+            if (!(url in responses)) throw new Error(`request failed: ${url}`);
+            return { data: responses[url] } as any;
+        });
+
+    const profile = { businessName: 'Real Shop', address: '12 Real Street', phone: '9000000000', gstNumber: '33REALGSTIN1Z5' };
+    const invoice = { invoiceNo: 'INV-7', createdAt: '2026-09-25T10:00:00Z', items: [{ name: 'Shirt', price: 500, quantity: 2 }], totalAmount: 1000, customer: { name: 'Anu' } };
+
+    it('throws instead of inventing a sale when the invoice cannot be loaded', async () => {
+        mockApi({ '/api/business/profile': profile, '/api/branches': [] });
+        await expect(receiptDataService.fetchReceiptContext('INV-7')).rejects.toThrow('Could not load invoice INV-7');
+        vi.restoreAllMocks();
+    });
+
+    it('throws instead of printing another shop\'s header when the business profile cannot be loaded', async () => {
+        mockApi({ '/api/sales-invoice/invoice/INV-7': invoice, '/api/branches': [] });
+        await expect(receiptDataService.fetchReceiptContext('INV-7')).rejects.toThrow('business profile');
+        vi.restoreAllMocks();
+    });
+
+    it('uses the business profile address when branches cannot be loaded', async () => {
+        mockApi({ '/api/sales-invoice/invoice/INV-7': invoice, '/api/business/profile': profile });
+        const { sale, tenant, branch } = await receiptDataService.fetchReceiptContext('INV-7');
+        expect(branch.address).toBe('');
+
+        const header = JSON.stringify(generateReceiptJSON(sale, tenant, branch).receipt_data);
+        expect(header).toContain('Real Shop');
+        expect(header).toContain('12 Real Street');
+        expect(header).not.toMatch(/Mukkudal|Vijayalakshmi/);
         vi.restoreAllMocks();
     });
 });

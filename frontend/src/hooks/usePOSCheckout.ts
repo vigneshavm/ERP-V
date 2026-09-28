@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
+import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../redux/store';
 import { processSale } from '../redux/thunks/saleThunks';
 import { incrementCounterBillNumber } from '../redux/slices/tenantSlice';
-import { setTaxMode } from '../redux/slices/posSlice';
+import { setTaxMode, clearCart, setCustomer, setRedeemedPoints } from '../redux/slices/posSlice';
 import { Sale, CartItem, Session } from "../types/sales";
 import { Branch, Tenant } from "../types/tenant";
 import { DEFAULT_MIS_CONFIG } from "../types/tenant/mis";
@@ -130,7 +131,10 @@ export const usePOSCheckout = ({
         }
 
         if (!effectiveBranch) {
+            // Tell the cashier; this used to fail with only a console message, so "Finalize Bill"
+            // appeared to do nothing.
             console.error("Critical: Cannot process sale. Missing Branch data.");
+            toast.error("Can't complete the sale: no branch or business profile is set up for this shop.");
             setIsProcessing(false);
             return;
         }
@@ -213,6 +217,13 @@ export const usePOSCheckout = ({
             // Logic to send WhatsApp/Email/SMS with Feedback Link
             // In a real system: await FeedbackService.sendRequest(sale);
         }
+
+        // Start the next bill empty. Nothing cleared the cart after a sale before, so the sold items
+        // stayed on screen and could be billed again. (A sale the server rejects is queued for
+        // retry by processSale, so it's recorded either way.)
+        dispatch(clearCart());
+        dispatch(setCustomer(null));
+        dispatch(setRedeemedPoints(0));
 
         setIsProcessing(false);
         setIsPreOrder(false);

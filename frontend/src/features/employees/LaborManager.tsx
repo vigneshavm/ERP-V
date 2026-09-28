@@ -414,7 +414,7 @@ export const LaborManager = () => {
             )}
           </div>
 
-          <div className="flex-1 min-w-0 flex flex-col gap-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6 overflow-hidden">
+          <div className="flex-1 min-w-0 flex flex-col gap-6 bg-white rounded-xl shadow-sm border border-slate-100 p-6 overflow-hidden">
             {selectedLaborer ? (
               <div className="flex flex-col h-full gap-6">
                 {activeTab === 'STATS' && (
@@ -427,13 +427,13 @@ export const LaborManager = () => {
                 )}
 
                 <div className="flex flex-col flex-1 min-h-0">
-                  <div className="flex items-center justify-between border-b border-gray-200 mb-4">
+                  <div className="flex items-center justify-between border-b border-slate-200 mb-4">
                     <div className="flex">
                       <button
                         onClick={() => setActiveTab('STATS')}
                         className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'STATS'
-                          ? 'border-indigo-600 text-primary'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                           }`}
                       >
                         <Users className="w-4 h-4" />
@@ -442,8 +442,8 @@ export const LaborManager = () => {
                       <button
                         onClick={() => setActiveTab('ATTENDANCE')}
                         className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'ATTENDANCE'
-                          ? 'border-indigo-600 text-primary'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                           }`}
                       >
                         <Calendar className="w-4 h-4" />
@@ -452,8 +452,8 @@ export const LaborManager = () => {
                       <button
                         onClick={() => setActiveTab('PAYMENTS')}
                         className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-colors ${activeTab === 'PAYMENTS'
-                          ? 'border-indigo-600 text-primary'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                           }`}
                       >
                         <CreditCard className="w-4 h-4" />
@@ -464,14 +464,14 @@ export const LaborManager = () => {
                       <button
                         onClick={handleOpenEdit}
                         title="Edit staff details"
-                        className="p-2 rounded-lg text-gray-400 hover:text-primary hover:bg-indigo-50 transition-colors"
+                        className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary-soft transition-colors"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={handleDeactivateLaborer}
                         title="Deactivate staff member"
-                        className="p-2 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                        className="p-2 rounded-lg text-slate-400 hover:text-danger hover:bg-danger-soft transition-colors"
                       >
                         <UserX className="w-4 h-4" />
                       </button>
@@ -509,15 +509,15 @@ export const LaborManager = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                  <Users className="text-gray-300" size={32} />
+              <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
+                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                  <Users className="text-slate-300" size={32} />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">No Staff Selected</h3>
+                <h3 className="text-lg font-medium text-slate-900">No Staff Selected</h3>
                 <p className="text-sm mt-1 max-w-sm text-center">Select an employee from the sidebar to view their attendance records, manage payments, and track performance.</p>
                 <button
                   onClick={() => setIsAddingLaborer(true)}
-                  className="mt-6 flex items-center gap-2 text-primary font-medium hover:text-indigo-700"
+                  className="mt-6 flex items-center gap-2 text-primary font-medium hover:text-primary"
                 >
                   <UserPlus size={18} />
                   Add New Staff Member

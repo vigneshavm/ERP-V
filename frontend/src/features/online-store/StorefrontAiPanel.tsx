@@ -29,7 +29,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
     if (!showAi && !aiResult && !visualSearchImage) return null;
 
     return (
-        <div className="mb-8 bg-white dark:bg-slate-900 rounded-sm border border-indigo-100 dark:border-indigo-900 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
+        <div className="mb-8 bg-white dark:bg-slate-900 rounded-sm border border-primary/30 dark:border-primary/30 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
             {showAi && !visualSearchImage && (
                 <div className="bg-gradient-to-r from-indigo-600 to-violet-600 p-4 text-white flex justify-between items-center">
                     <div className="flex items-center gap-2">
@@ -44,8 +44,8 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
                 {visualSearchImage && (
                     <div className="flex items-center gap-6 mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
                         <div className="relative group">
-                            <img src={visualSearchImage} alt="Visual Search" className="w-24 h-24 object-cover rounded-xl border-2 border-indigo-500 shadow-md" />
-                            <button onClick={clearAi} className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600 transition-colors"><X className="w-3 h-3" /></button>
+                            <img src={visualSearchImage} alt="Visual Search" className="w-24 h-24 object-cover rounded-xl border-2 border-primary shadow-md" />
+                            <button onClick={clearAi} className="absolute -top-2 -right-2 bg-danger text-white p-1 rounded-full shadow-md hover:bg-danger/90 transition-colors"><X className="w-3 h-3" /></button>
                         </div>
                         <div>
                             <h3 className="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2">
@@ -71,7 +71,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
                         <button
                             onClick={handleAiSearch}
                             disabled={!aiQuery.trim()}
-                            className="absolute right-3 bottom-3 p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition-all"
+                            className="absolute right-3 bottom-3 p-2 bg-primary text-white rounded-lg hover:bg-primary disabled:opacity-50 transition-all"
                         >
                             <Send className="w-4 h-4" />
                         </button>
@@ -80,7 +80,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
 
                 {aiThinking && (
                     <div className="flex flex-col items-center justify-center py-6 text-center">
-                        <div className="w-12 h-12 border-4 border-indigo-100 dark:border-indigo-900 border-t-indigo-600 rounded-full animate-spin mb-3"></div>
+                        <div className="w-12 h-12 border-4 border-primary/30 dark:border-primary/30 border-t-indigo-600 rounded-full animate-spin mb-3"></div>
                         <p className="text-slate-800 dark:text-white font-bold animate-pulse">Thinking...</p>
                     </div>
                 )}
@@ -88,7 +88,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
                 {aiResult && (
                     <div className="animate-in fade-in">
                         <div className="flex gap-4">
-                            <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-primary-soft dark:bg-primary-soft flex items-center justify-center shrink-0">
                                 <Bot className="w-6 h-6 text-primary dark:text-primary" />
                             </div>
                             <div className="flex-1">
@@ -96,7 +96,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
                                     {aiResult.text}
                                 </div>
                                 <div className="mt-3 flex items-center gap-2">
-                                    <span className="text-xs font-bold bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded-full">
+                                    <span className="text-xs font-bold bg-primary-soft dark:bg-primary-soft text-primary dark:text-primary px-2 py-1 rounded-full">
                                         {aiResult.ids.length} Results
                                     </span>
                                     <button onClick={clearAi} className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 font-bold flex items-center gap-1">

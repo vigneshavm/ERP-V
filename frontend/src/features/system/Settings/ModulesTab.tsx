@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { ShoppingCart, Package, CreditCard, Users, Truck, BarChart3, ChevronRight, CheckCircle2, Zap, LucideIcon, Briefcase, FileText, History, ClipboardList, Store } from 'lucide-react';
 import { ModulesTabProps } from './types';
+import { getColorClasses } from '../../../utils/tailwindColorClasses';
 
 interface ModuleDef {
     id: string;
@@ -32,7 +33,7 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                 <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
                     <Zap className="w-48 h-48 text-primary" />
                 </div>
-                <div className="relative z-10 w-20 h-20 rounded-sm bg-indigo-600 flex items-center justify-center shrink-0 shadow-xl shadow-indigo-500/20">
+                <div className="relative z-10 w-20 h-20 rounded-sm bg-primary flex items-center justify-center shrink-0 shadow-xl shadow-indigo-500/20">
                     <Zap className="w-10 h-10 text-white" />
                 </div>
                 <div className="relative z-10 flex-1 text-center md:text-left">
@@ -62,13 +63,13 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                     const isEnabled = !!modules[mod.id];
                     return (
                         <div key={mod.id} className={`group p-6 rounded-sm border transition-all duration-300 flex flex-col justify-between h-full ${isEnabled
-                            ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:border-indigo-300 dark:hover:border-indigo-500'
+                            ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary/30 dark:hover:border-primary'
                             : 'bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700 opacity-60 grayscale hover:grayscale-0 transition-all'
                             }`}>
                             <div>
                                 <div className="flex items-center justify-between mb-6">
                                     <div className={`w-14 h-14 rounded-sm flex items-center justify-center transition-colors shadow-sm ${isEnabled
-                                        ? `bg-${mod.color}-50 dark:bg-${mod.color}-900/20 text-${mod.color}-600 dark:text-${mod.color}-400`
+                                        ? `${getColorClasses(mod.color).surface} ${getColorClasses(mod.color).icon}`
                                         : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
                                         }`}>
                                         <Icon className="w-7 h-7" />
@@ -80,7 +81,7 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
                                             checked={isEnabled}
                                             onChange={() => handleModuleToggle(mod.id)}
                                         />
-                                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                     </label>
                                 </div>
                                 <h4 className={`text-base font-black leading-none mb-2 ${isEnabled ? 'text-slate-800 dark:text-white' : 'text-slate-500'}`}>{mod.name}</h4>
@@ -106,7 +107,7 @@ const ModulesTab: React.FC<ModulesTabProps> = ({ modules, handleModuleToggle }) 
             </div>
 
             {/* Capability Limitation Alert */}
-            <div className="p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 rounded-sm flex items-center justify-between text-amber-800 dark:text-amber-300">
+            <div className="p-4 bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning-line rounded-sm flex items-center justify-between text-warning dark:text-warning">
                 <div className="flex items-center gap-3">
                     <Zap className="w-5 h-5 text-warning" />
                     <p className="text-xs font-bold uppercase tracking-wide">Enterprise Feature Control</p>

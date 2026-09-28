@@ -60,7 +60,7 @@ const OutstandingPayables: React.FC = () => {
                         <div className="flex gap-2">
                             <button
                                 onClick={exportToExcel}
-                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-600 transition-all shadow-sm"
+                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-600 hover:text-success transition-all shadow-sm"
                             >
                                 <FileSpreadsheet size={16} /> Export
                             </button>
@@ -122,7 +122,7 @@ const OutstandingPayables: React.FC = () => {
                             </div>
                             <button
                                 onClick={() => { setSearchTerm(''); setStatusFilter('All'); setVendorFilter(''); }}
-                                className="text-[10px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest px-4 py-2 border border-emerald-200 rounded-lg"
+                                className="text-[10px] font-black text-success hover:text-success uppercase tracking-widest px-4 py-2 border border-success-line rounded-lg"
                             >
                                 Reset All Filters
                             </button>

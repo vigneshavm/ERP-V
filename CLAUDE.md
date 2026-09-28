@@ -27,6 +27,19 @@ centralized folders above, not copied between features.
 There is no `pages/` directory anymore — it was migrated into `features/` domain by domain, verified
 with `tsc --noEmit` and ESLint after each move (2026-09-03).
 
+## Reports (Business Intelligence)
+
+Every report page is a `ReportPageShell` (`features/reports/components/`) with its business content as children.
+- `features/reports/config/reportRegistry.ts` is the single source of truth for which reports exist: title,
+  category, which hub view renders it, global views that open it, data source and `implementationStatus`
+  (`live` / `validation` / `coming-soon`). The catalog and the pages both read it; never hard-code report lists.
+- `coming-soon` reports render no figures. Never fall back to sample/mock data; show the error state instead.
+- Data: `useServerReport` (server-paged, sorted, searchable lists) or `useReportData`; export every matching row,
+  not the visible page. Pass the API's `source` and `asOf` as `meta` so the audit footer is accurate.
+- UI: `ReportKpiGrid`, `ReportAnalysisCard` (+ `ReportRankList` for ranked bars), `ReportTable`, filter fields from
+  `ReportFilterFields`. Charts use `components/reportChart.ts` styles and `ReportChartTooltip`; one y-axis per chart.
+- Formatting only via `utils/formatters.ts` (Indian grouping; bad values show "—", never ₹0).
+
 ## Purpose
 
 These rules apply to Claude Code and other AI coding agents working in this repository.

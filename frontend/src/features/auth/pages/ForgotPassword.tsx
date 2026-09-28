@@ -7,9 +7,8 @@ import AuthInput from '../components/AuthInput';
 import { useForgotPasswordForm } from '../hooks/useForgotPasswordForm';
 
 const ForgotPassword: React.FC = () => {
-    const { form, onSubmit, isLoading } = useForgotPasswordForm();
+    const { form, onSubmit, isLoading, isError, isSuccess, message } = useForgotPasswordForm();
     const { register, formState: { errors } } = form;
-    const { isError, isSuccess, message } = form as any;
 
     return (
         <AuthLayout
@@ -27,7 +26,7 @@ const ForgotPassword: React.FC = () => {
                 />
             )}
 
-            <form className="mt-8 space-y-6" onSubmit={onSubmit}>
+            <form className="mt-8 space-y-6" onSubmit={onSubmit} noValidate>
                 <AuthInput
                     id="email"
                     label="Registered Identity (Email)"
@@ -53,7 +52,7 @@ const ForgotPassword: React.FC = () => {
 
             <div className="mt-8 pt-8 border-t border-default text-center">
                 <div className="space-y-4">
-                    <p className="text-[10px] font-bold text-secondary uppercase tracking-widest opacity-60">
+                    <p className="text-[10px] font-bold text-muted uppercase tracking-widest ">
                         Remembered your Key?
                     </p>
                     <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-primary/80 transition-colors">
@@ -67,7 +66,7 @@ const ForgotPassword: React.FC = () => {
                     <LifeBuoy className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                    <p className="text-[10px] font-bold text-secondary uppercase tracking-widest opacity-60">Need Support?</p>
+                    <p className="text-[10px] font-bold text-muted uppercase tracking-widest ">Need Support?</p>
                     <p className="text-xs text-secondary font-medium">Contact our enterprise desk for further assistance.</p>
                 </div>
             </div>

@@ -29,13 +29,13 @@ const PayablesFilters: React.FC<PayablesFiltersProps> = ({
             <div className="flex gap-2 bg-slate-100 dark:bg-slate-800/50 p-1 rounded-xl">
                 <button
                     onClick={() => onViewModeChange('bill-wise')}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'bill-wise' ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'bill-wise' ? 'bg-white dark:bg-slate-900 text-success shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                     Bill-wise
                 </button>
                 <button
                     onClick={() => onViewModeChange('vendor-wise')}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'vendor-wise' ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'vendor-wise' ? 'bg-white dark:bg-slate-900 text-success shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                     Vendor-wise
                 </button>

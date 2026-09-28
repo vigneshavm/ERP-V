@@ -8,6 +8,8 @@ import { IInvoice } from "../../../interfaces/IInvoice.js"; // assuming interfac
 import { info } from "../../../config/logger.js";
 import BankAccount from "../../finance/models/BankAccount.js";
 import CashbankTransaction from "../../finance/models/CashbankTransaction.js";
+import { isSqlItemSource } from "../../../config/itemDataSource.js";
+import { isSqlId, sqlInvoiceById } from "../../../integrations/textilesoft/sqlSales.js";
 
 @injectable()
 export class SalesService {
@@ -42,6 +44,18 @@ export class SalesService {
     }
 
     async getInvoiceById(invoiceId: string, userId: string): Promise<any> {
+        // Bills from the shop's Textilesoft database use ids like "sql:10212257" -- never a valid
+        // Mongo ObjectId, so they must be handled before any Invoice.findOne/findById call, which
+        // would otherwise throw a CastError (as it did here: this path is the one actually wired to
+        // GET /api/sales-invoice/invoice/:id via SalesController/sales.routes.ts).
+        if (isSqlId(invoiceId)) {
+            const shopInvoice = isSqlItemSource() ? await sqlInvoiceById(invoiceId) : undefined;
+            if (!shopInvoice) {
+                throw new AppError("Invoice not found or unauthorized", 404);
+            }
+            return shopInvoice;
+        }
+
         const invoice = await this.invoiceRepository.findById(invoiceId, userId);
         if (!invoice) {
             throw new AppError("Invoice not found or unauthorized", 404);

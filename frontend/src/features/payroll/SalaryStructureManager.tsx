@@ -8,6 +8,16 @@ import { fetchSalaryComponents, fetchSalaryStructure, saveSalaryStructure, creat
 import { Plus, Save, User, Users } from 'lucide-react';
 import api from '../../services/api';
 
+// Component id -> amount for a saved salary structure (empty when there is none yet).
+const toStructureValues = (struct?: { components: any[] }): Record<string, number> => {
+    const values: Record<string, number> = {};
+    struct?.components.forEach((c: any) => {
+        const cId = typeof c.componentId === 'string' ? c.componentId : c.componentId._id;
+        values[cId] = c.amount;
+    });
+    return values;
+};
+
 const SalaryStructureManager = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { components, structures, loading } = useSelector((state: RootState) => state.payroll);
@@ -40,20 +50,15 @@ const SalaryStructureManager = () => {
         }
     }, [selectedEmployeeId, dispatch]);
 
-    useEffect(() => {
-        if (selectedEmployeeId && structures[selectedEmployeeId]) {
-            const struct = structures[selectedEmployeeId];
-            const values: Record<string, number> = {};
-            struct.components.forEach((c: any) => {
-                const cId = typeof c.componentId === 'string' ? c.componentId : c.componentId._id;
-                values[cId] = c.amount;
-            });
-            setStructureValues(values);
-        } else {
-            // Reset or set defaults
-            setStructureValues({});
-        }
-    }, [structures, selectedEmployeeId]);
+    // Load the selected employee's saved structure into the editable values when the employee or
+    // their saved structure changes; adjusted during render (tracking the previous inputs) instead
+    // of setState in an effect.
+    const savedStructure = selectedEmployeeId ? structures[selectedEmployeeId] : undefined;
+    const [loadedFrom, setLoadedFrom] = useState({ selectedEmployeeId, savedStructure });
+    if (loadedFrom.selectedEmployeeId !== selectedEmployeeId || loadedFrom.savedStructure !== savedStructure) {
+        setLoadedFrom({ selectedEmployeeId, savedStructure });
+        setStructureValues(toStructureValues(savedStructure));
+    }
 
     const handleSave = () => {
         if (!selectedEmployeeId) return;
@@ -149,7 +154,7 @@ const SalaryStructureManager = () => {
                                 checked={bulkData.confirm}
                                 onChange={e => setBulkData({ ...bulkData, confirm: e.target.checked })}
                             />
-                            <label htmlFor="confirmBulk" className="text-xs text-gray-600">
+                            <label htmlFor="confirmBulk" className="text-xs text-slate-600">
                                 I confirm that I want to update/add this component for <strong>ALL active employees</strong>. This cannot be undone easily.
                             </label>
                         </div>
@@ -157,14 +162,14 @@ const SalaryStructureManager = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setIsBulkMode(false)}
-                                className="px-3 py-1 text-gray-500 hover:text-gray-700"
+                                className="px-3 py-1 text-slate-500 hover:text-slate-700"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleBulkUpdate}
                                 disabled={!bulkData.confirm}
-                                className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+                                className="px-3 py-1 bg-primary text-white rounded hover:bg-primary-hover disabled:opacity-50"
                             >
                                 Apply to All
                             </button>
@@ -185,20 +190,20 @@ const SalaryStructureManager = () => {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => dispatch(fetchSalaryComponents())}
-                                className="px-3 py-2 text-primary hover:bg-indigo-50 rounded-lg text-sm font-medium border border-transparent hover:border-indigo-100"
+                                className="px-3 py-2 text-primary hover:bg-primary-soft rounded-lg text-sm font-medium border border-transparent hover:border-primary/30"
                                 title="Refresh Components"
                             >
                                 🔄 Refresh
                             </button>
                             <button
                                 onClick={() => setIsBulkMode(true)}
-                                className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg hover:bg-indigo-100 text-sm font-medium flex items-center gap-2"
+                                className="px-4 py-2 bg-primary-soft border border-primary/30 text-primary rounded-lg hover:bg-primary-soft text-sm font-medium flex items-center gap-2"
                             >
                                 <Users size={16} /> Bulk Assign
                             </button>
                             <button
                                 onClick={() => setIsConfigMode(!isConfigMode)}
-                                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                                className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium"
                             >
                                 {isConfigMode ? 'Done Configuring' : 'Manage Components'}
                             </button>
@@ -208,10 +213,10 @@ const SalaryStructureManager = () => {
 
                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Sidebar / Employee Selection */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Select Employee</label>
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Select Employee</label>
                         <select
-                            className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="w-full p-2 border border-slate-300 rounded-md mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-primary"
                             value={selectedEmployeeId}
                             onChange={(e) => setSelectedEmployeeId(e.target.value)}
                         >
@@ -220,23 +225,23 @@ const SalaryStructureManager = () => {
                         </select>
 
                         {selectedEmployeeId && (
-                            <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                            <div className="p-4 bg-primary-soft rounded-lg border border-primary/30">
                                 <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-10 h-10 bg-indigo-200 rounded-full flex items-center justify-center text-indigo-700">
+                                    <div className="w-10 h-10 bg-primary-soft rounded-full flex items-center justify-center text-primary">
                                         <User size={20} />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">{employees.find(e => e._id === selectedEmployeeId)?.name}</p>
-                                        <p className="text-xs text-gray-500">{employees.find(e => e._id === selectedEmployeeId)?.role}</p>
+                                        <p className="font-medium text-slate-900">{employees.find(e => e._id === selectedEmployeeId)?.name}</p>
+                                        <p className="text-xs text-slate-500">{employees.find(e => e._id === selectedEmployeeId)?.role}</p>
                                     </div>
                                 </div>
-                                <div className="mt-4 pt-4 border-t border-indigo-100">
+                                <div className="mt-4 pt-4 border-t border-primary/30">
                                     <div className="flex justify-between items-center text-sm mb-1">
-                                        <span className="text-gray-600">Estimated Gross</span>
-                                        <span className="font-bold text-gray-900">₹{calculateGross().toLocaleString()}</span>
+                                        <span className="text-slate-600">Estimated Gross</span>
+                                        <span className="font-bold text-slate-900">₹{calculateGross().toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between items-center text-sm">
-                                        <span className="text-gray-600">Components</span>
+                                        <span className="text-slate-600">Components</span>
                                         <span className="font-medium">{Object.keys(structureValues).length}</span>
                                     </div>
                                 </div>
@@ -247,21 +252,21 @@ const SalaryStructureManager = () => {
                     {/* Main Structure Form */}
                     <div className="lg:col-span-2 space-y-6">
                         {isConfigMode ? (
-                            <div className="bg-white rounded-xl shadow-sm border border-orange-200 p-6 animate-in fade-in">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <Plus className="w-5 h-5 text-orange-500" />
+                            <div className="bg-white rounded-xl shadow-sm border border-warning-line p-6 animate-in fade-in">
+                                <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                                    <Plus className="w-5 h-5 text-warning" />
                                     Add New Salary Component
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-xs font-medium text-gray-500 uppercase">Name</label>
+                                        <label className="text-xs font-medium text-slate-500 uppercase">Name</label>
                                         <input
                                             value={newComponent.name} onChange={e => setNewComponent({ ...newComponent, name: e.target.value })}
                                             className="w-full mt-1 p-2 border rounded" placeholder="e.g. Basic, HRA"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-medium text-gray-500 uppercase">Type</label>
+                                        <label className="text-xs font-medium text-slate-500 uppercase">Type</label>
                                         <select
                                             value={newComponent.type} onChange={e => setNewComponent({ ...newComponent, type: e.target.value as any })}
                                             className="w-full mt-1 p-2 border rounded"
@@ -271,7 +276,7 @@ const SalaryStructureManager = () => {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="text-xs font-medium text-gray-500 uppercase">Default Value</label>
+                                        <label className="text-xs font-medium text-slate-500 uppercase">Default Value</label>
                                         <input
                                             type="number"
                                             value={newComponent.defaultValue} onChange={e => setNewComponent({ ...newComponent, defaultValue: parseFloat(e.target.value) })}
@@ -281,28 +286,28 @@ const SalaryStructureManager = () => {
                                 </div>
                                 <button
                                     onClick={handleCreateComponent}
-                                    className="mt-4 w-full py-2 bg-orange-600 text-white rounded hover:bg-orange-700 font-medium"
+                                    className="mt-4 w-full py-2 bg-warning text-white rounded hover:bg-warning/90 font-medium"
                                 >
                                     Create Component
                                 </button>
                             </div>
                         ) : (
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
                                 {selectedEmployeeId ? (
                                     <>
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-6">Salary Breakdown</h3>
+                                        <h3 className="text-lg font-semibold text-slate-900 mb-6">Salary Breakdown</h3>
 
                                         <div className="space-y-6">
                                             <div>
-                                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Earnings</h4>
+                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Earnings</h4>
                                                 <div className="space-y-3">
                                                     {components.filter(c => c.type === 'EARNING').map(c => (
                                                         <div key={c._id} className="flex items-center gap-4">
-                                                            <div className="w-1/3 text-sm font-medium text-gray-700">
+                                                            <div className="w-1/3 text-sm font-medium text-slate-700">
                                                                 {c.name} {c.calculationType === 'PERCENTAGE' && <span className="text-[10px] text-primary">(%)</span>}
                                                             </div>
                                                             <div className="flex-1 relative">
-                                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                                                                     {c.calculationType === 'PERCENTAGE' ? '%' : '₹'}
                                                                 </span>
                                                                 <input
@@ -310,7 +315,7 @@ const SalaryStructureManager = () => {
                                                                     value={structureValues[c._id] || ''}
                                                                     onChange={(e) => setStructureValues({ ...structureValues, [c._id]: parseFloat(e.target.value) })}
                                                                     placeholder={c.defaultValue.toString()}
-                                                                    className="w-full pl-8 py-2 border border-gray-200 rounded bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-mono text-sm"
+                                                                    className="w-full pl-8 py-2 border border-slate-200 rounded bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-primary transition-all font-mono text-sm"
                                                                 />
                                                             </div>
                                                         </div>
@@ -318,16 +323,16 @@ const SalaryStructureManager = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="pt-4 border-t border-dashed border-gray-200">
-                                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Deductions</h4>
+                                            <div className="pt-4 border-t border-dashed border-slate-200">
+                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Deductions</h4>
                                                 <div className="space-y-3">
                                                     {components.filter(c => c.type === 'DEDUCTION').map(c => (
                                                         <div key={c._id} className="flex items-center gap-4">
-                                                            <div className="w-1/3 text-sm font-medium text-gray-700">
+                                                            <div className="w-1/3 text-sm font-medium text-slate-700">
                                                                 {c.name} {c.calculationType === 'PERCENTAGE' && <span className="text-[10px] text-danger">(%)</span>}
                                                             </div>
                                                             <div className="flex-1 relative">
-                                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                                                                     {c.calculationType === 'PERCENTAGE' ? '%' : '₹'}
                                                                 </span>
                                                                 <input
@@ -335,7 +340,7 @@ const SalaryStructureManager = () => {
                                                                     value={structureValues[c._id] || ''}
                                                                     onChange={(e) => setStructureValues({ ...structureValues, [c._id]: parseFloat(e.target.value) })}
                                                                     placeholder={c.defaultValue.toString()}
-                                                                    className="w-full pl-8 py-2 border border-gray-200 rounded bg-gray-50 focus:bg-white focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-mono text-sm"
+                                                                    className="w-full pl-8 py-2 border border-slate-200 rounded bg-slate-50 focus:bg-white focus:ring-2 focus:ring-red-500 focus:border-primary transition-all font-mono text-sm"
                                                                 />
                                                             </div>
                                                         </div>
@@ -344,17 +349,17 @@ const SalaryStructureManager = () => {
                                             </div>
                                         </div>
 
-                                        <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3">
+                                        <div className="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
                                             <button
                                                 onClick={() => setSelectedEmployeeId('')}
-                                                className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                                                className="px-4 py-2 text-slate-600 hover:text-slate-900"
                                             >
                                                 Cancel
                                             </button>
                                             <button
                                                 onClick={handleSave}
                                                 disabled={loading}
-                                                className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 shadow-sm"
+                                                className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50 shadow-sm"
                                             >
                                                 <Save size={18} />
                                                 {loading ? 'Saving...' : 'Save Structure'}
@@ -362,8 +367,8 @@ const SalaryStructureManager = () => {
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-                                        <Users className="w-12 h-12 mb-3 text-gray-200" />
+                                    <div className="flex flex-col items-center justify-center h-64 text-slate-400">
+                                        <Users className="w-12 h-12 mb-3 text-slate-200" />
                                         <p>Select an employee to configure their salary structure.</p>
                                     </div>
                                 )}

@@ -182,7 +182,7 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
                 {/* Content Area */}
                 <div className="relative flex-1 bg-black overflow-hidden flex flex-col items-center justify-center min-h-[400px]">
                     {error ? (
-                        <div className="text-red-400 p-6 text-center">
+                        <div className="text-danger p-6 text-center">
                             {error}
                         </div>
                     ) : (
@@ -197,10 +197,10 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
                                     />
                                     {/* AI Viewfinder */}
                                     <div className="absolute inset-0 border-2 border-white/20 m-8 rounded-lg pointer-events-none">
-                                        <div className="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-indigo-500 rounded-tl-lg"></div>
-                                        <div className="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-indigo-500 rounded-tr-lg"></div>
-                                        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-indigo-500 rounded-bl-lg"></div>
-                                        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-indigo-500 rounded-br-lg"></div>
+                                        <div className="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-primary rounded-tl-lg"></div>
+                                        <div className="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-primary rounded-tr-lg"></div>
+                                        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-primary rounded-bl-lg"></div>
+                                        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-primary rounded-br-lg"></div>
                                     </div>
                                 </div>
                             ) : (
@@ -220,13 +220,13 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
                     <div className="flex p-1 bg-slate-800 rounded-lg self-center">
                         <button
                             onClick={() => setMode('AI_IDENTIFY')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${mode === 'AI_IDENTIFY' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${mode === 'AI_IDENTIFY' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
                         >
                             <ImageIcon className="w-4 h-4" /> AI Photo
                         </button>
                         <button
                             onClick={() => setMode('QR_BARCODE')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${mode === 'QR_BARCODE' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${mode === 'QR_BARCODE' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
                         >
                             <Scan className="w-4 h-4" /> Scanner
                         </button>
@@ -236,7 +236,7 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({ onCapture, onScan,
                         <div className="flex justify-center">
                             <button
                                 onClick={handleCapture}
-                                className="w-16 h-16 rounded-full bg-indigo-600 hover:bg-indigo-500 border-4 border-indigo-400/30 flex items-center justify-center transition-all shadow-lg shadow-indigo-500/30 active:scale-95 group"
+                                className="w-16 h-16 rounded-full bg-primary hover:bg-primary border-4 border-primary/30 flex items-center justify-center transition-all shadow-lg shadow-indigo-500/30 active:scale-95 group"
                             >
                                 <Aperture className="w-8 h-8 text-white group-hover:rotate-45 transition-transform duration-300" />
                             </button>

@@ -8,7 +8,9 @@ import Customer from '../../crm/models/Customer.js';
 import CashbankTransaction from '../../finance/models/CashbankTransaction.js';
 
 import BankAccount from '../../finance/models/BankAccount.js';
-import { info, error } from '../../../config/logger.js';
+import { info, error, warn } from '../../../config/logger.js';
+import { isSqlItemSource } from '../../../config/itemDataSource.js';
+import { isSqlId, sqlInvoiceById, sqlInvoiceList, sqlInvoiceTotals } from '../../../integrations/textilesoft/sqlSales.js';
 
 /**
  * Request interface with authenticated user
@@ -42,9 +44,21 @@ export const getSalesInvoiceSummary = async (req: AuthenticatedRequest, res: Res
         const invoices = await Invoice.find({ tenantId: tenantId });
 
         // Calculate invoice totals
-        const totalInvoices = invoices.length;
-        const totalSales = invoices.reduce((sum: number, inv: any) => sum + inv.totalAmount, 0);
-        const totalPaid = invoices.reduce((sum: number, inv: any) => sum + inv.paidAmount, 0);
+        let totalInvoices = invoices.length;
+        let totalSales = invoices.reduce((sum: number, inv: any) => sum + inv.totalAmount, 0);
+        let totalPaid = invoices.reduce((sum: number, inv: any) => sum + inv.paidAmount, 0);
+
+        // SQL mode: the shop's own bills count too (read-only from the Textilesoft database).
+        if (isSqlItemSource()) {
+            try {
+                const shop = await sqlInvoiceTotals();
+                totalInvoices += shop.totalInvoices;
+                totalSales += shop.totalSales;
+                totalPaid += shop.totalPaid;
+            } catch (e) {
+                warn(`[sql-sales] invoice totals unavailable, showing ERP invoices only - ${(e as Error).message}`);
+            }
+        }
 
         // Get actual customer dues (source of truth)
         // Sum all positive dues (customers who owe money)
@@ -92,6 +106,19 @@ export const getAllSalesInvoices = async (req: AuthenticatedRequest, res: Respon
             .populate('customer', 'name phone')
             .populate('createdBy', 'name')
             .sort({ createdAt: -1 });
+
+        if (isSqlItemSource()) {
+            try {
+                const search = typeof req.query.search === 'string' ? req.query.search.trim().slice(0, 60) : '';
+                const shop = await sqlInvoiceList(search || undefined);
+                const merged = [...invoices.map((i: any) => i.toObject()), ...shop];
+                merged.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                res.status(200).json(merged);
+                return;
+            } catch (e) {
+                warn(`[sql-sales] shop invoices unavailable, showing ERP invoices only - ${(e as Error).message}`);
+            }
+        }
         res.status(200).json(invoices);
     } catch (err) {
         error(`Get all sales invoices failed: ${(err as Error).message}`);
@@ -118,6 +145,17 @@ export const getAllSalesInvoices = async (req: AuthenticatedRequest, res: Respon
  */
 export const getSalesInvoiceById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        const rawId = req.params.id as unknown as string;
+        if (isSqlId(rawId)) {
+            const shopInvoice = isSqlItemSource() ? await sqlInvoiceById(rawId) : undefined;
+            if (!shopInvoice) {
+                res.status(404).json({ message: 'Invoice not found or unauthorized' });
+                return;
+            }
+            res.status(200).json(shopInvoice);
+            return;
+        }
+
         // Validate ObjectId format
         if (!mongoose.Types.ObjectId.isValid(req.params.id as string)) {
             res.status(400).json({ message: 'Invalid invoice ID format' });

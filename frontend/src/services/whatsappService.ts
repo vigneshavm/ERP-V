@@ -204,29 +204,6 @@ export const WhatsAppService = {
         return WhatsAppService.sendTemplateMessage(integrations, toMobile, templateMap[eventType] || 'hello_world');
     },
 
-    /**
-     * [PART A - MARKETING] Fetches campaign-specific ROI data
-     */
-    getMarketingAnalytics: async (__integrations: Integrations) => {
-        return {
-            openRate: "82%",
-            conversion: "4.8%",
-            revenue: "₹12.4L",
-            costPerMsg: "₹0.45"
-        };
-    },
-
-    /**
-     * [PART B - ENGAGEMENT] Fetches CRM-specific operational data
-     */
-    getEngagementAnalytics: async (__integrations: Integrations) => {
-        return {
-            avgResponseTime: "4m 20s",
-            csat: "4.8/5.0",
-            returnsPrevented: 142,
-            revenueRecovered: "₹4.8L"
-        };
-    }
 };
 
 

@@ -46,9 +46,9 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
             <div className="bg-white dark:bg-[rgb(var(--color-card))] rounded-sm shadow-2xl max-w-md w-full p-6 border dark:border-[rgb(var(--color-border))]">
                 {/* Icon */}
                 <div className="flex justify-center mb-4">
-                    <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                    <div className="p-3 bg-warning-soft dark:bg-warning-soft rounded-full">
                         <svg
-                            className="w-8 h-8 text-yellow-600 dark:text-yellow-500"
+                            className="w-8 h-8 text-warning dark:text-warning"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -64,19 +64,19 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
                 </div>
 
                 {/* Title */}
-                <h2 className="text-xl font-bold text-center text-gray-900 dark:text-[rgb(var(--color-text))] mb-2">
+                <h2 className="text-xl font-bold text-center text-slate-900 dark:text-[rgb(var(--color-text))] mb-2">
                     Device Already Logged In
                 </h2>
 
                 {/* Message */}
-                <p className="text-center text-gray-600 dark:text-[rgb(var(--color-text-secondary))] mb-6">
+                <p className="text-center text-slate-600 dark:text-[rgb(var(--color-text-secondary))] mb-6">
                     This account is currently active on another device.
                 </p>
 
                 {/* Error Message */}
                 {error && (
-                    <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                        <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
+                    <div className="mb-4 p-3 bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger-line rounded-lg">
+                        <p className="text-danger dark:text-danger text-sm text-center">{error}</p>
                     </div>
                 )}
 
@@ -85,7 +85,7 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
                     <button
                         onClick={handleForceLogout}
                         disabled={isLoading || isProcessing}
-                        className="w-full bg-indigo-600 dark:bg-[rgb(var(--color-primary))] text-white py-3 rounded-lg font-medium hover:bg-indigo-700 dark:hover:bg-[rgb(var(--color-primary-hover))] focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:ring-offset-2 dark:focus:ring-offset-[rgb(var(--color-card))] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-primary dark:bg-[rgb(var(--color-primary))] text-white py-3 rounded-lg font-medium hover:bg-primary-hover dark:hover:bg-[rgb(var(--color-primary-hover))] focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:ring-offset-2 dark:focus:ring-offset-[rgb(var(--color-card))] transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading || isProcessing ? (
                             <span className="flex items-center justify-center">
@@ -118,7 +118,7 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
                     <button
                         onClick={handleCancel}
                         disabled={isLoading || isProcessing}
-                        className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-[rgb(var(--color-card))] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 py-3 rounded-lg font-medium hover:bg-slate-300 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:ring-offset-2 dark:focus:ring-offset-[rgb(var(--color-card))] transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Cancel
                     </button>

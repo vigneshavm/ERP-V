@@ -57,19 +57,13 @@ export const useBranchResolver = () => {
                 setError(null);
                 return branchList;
             } catch (err: any) {
+                // No fallback list: invented branches would be shown as real and their ids saved on
+                // records (e.g. ExpenseForm's branch_id). Nothing is cached, so refetch() retries.
                 console.error('Error fetching branches:', err);
                 setError(err.message);
-                // Return mock data for development
-                const mockBranches: Branch[] = [
-                    { id: 'B001', name: 'Main Branch', code: 'MAIN', address: '123 Main St', is_active: true },
-                    { id: 'B002', name: 'Chennai - OMR', code: 'CHN-OMR', address: 'OMR Road, Chennai', is_active: true },
-                    { id: 'B003', name: 'Coimbatore - RS Puram', code: 'CBE-RSP', address: 'RS Puram, Coimbatore', is_active: true },
-                    { id: 'B004', name: 'Bangalore - HSR', code: 'BLR-HSR', address: 'HSR Layout, Bangalore', is_active: true },
-                ];
-                branchCache = mockBranches;
-                setBranches(mockBranches);
-                setCurrentBranch(mockBranches[0]);
-                return mockBranches;
+                setBranches([]);
+                setCurrentBranch(null);
+                return [];
             } finally {
                 setLoading(false);
                 fetchPromise = null;
@@ -96,7 +90,7 @@ export const useBranchResolver = () => {
     };
 
     const getBranchName = (branchId: string | undefined | null): string => {
-        if (!branchId) return 'Main Branch';
+        if (!branchId) return '—';
         const branch = resolveBranch(branchId);
         return branch?.name || branchId || 'Unknown Branch';
     };

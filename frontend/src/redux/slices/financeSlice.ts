@@ -137,8 +137,12 @@ const financeSlice = createSlice({
         setCheques: (state, action: PayloadAction<Cheque[]>) => {
             state.cheques = action.payload;
         },
+        // Server records replace the list, but entries saved locally and not yet synced are kept:
+        // the 30s refresh would otherwise drop them before the offline queue sends them.
         setDailyRecords: (state, action: PayloadAction<any[]>) => {
-            state.dailyFinanceRecords = action.payload;
+            const serverIds = new Set(action.payload.map(r => r.id));
+            const pending = state.dailyFinanceRecords.filter(r => r.synced === false && !serverIds.has(r.id));
+            state.dailyFinanceRecords = [...pending, ...action.payload];
         },
         addDailyRecord: (state, action: PayloadAction<any>) => {
             state.dailyFinanceRecords.unshift(action.payload);

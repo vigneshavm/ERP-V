@@ -14,9 +14,8 @@ const ResetPassword: React.FC = () => {
     const email = params.get('email') || '';
     const token = params.get('token') || '';
 
-    const { form, onSubmit, isLoading } = useResetPasswordForm(email, token);
+    const { form, onSubmit, isLoading, isError, isSuccess, message } = useResetPasswordForm(email, token);
     const { register, formState: { errors } } = form;
-    const { isError, isSuccess, message, validationError } = form as any;
 
     useEffect(() => {
         if (isSuccess) {
@@ -33,9 +32,9 @@ const ResetPassword: React.FC = () => {
                 secondarySubtitle="The request could not be verified"
                 description="This reset link is either invalid or has expired. For security reasons, please request a new one."
             >
-                <div className="mt-8 bg-red-500/10 border border-red-500/20 p-6 rounded-sm flex flex-col gap-4 text-center">
-                    <ShieldAlert className="w-12 h-12 text-red-400 mx-auto" />
-                    <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Security Link Compromised</p>
+                <div className="mt-8 bg-danger/10 border border-danger/20 p-6 rounded-sm flex flex-col gap-4 text-center">
+                    <ShieldAlert className="w-12 h-12 text-danger mx-auto" />
+                    <p className="text-[10px] font-black text-danger uppercase tracking-widest">Security Link Compromised</p>
                     <Link to="/forgot-password" university-anchor="forgot-password" className="w-full h-14 bg-white text-slate-950 rounded-sm font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 transition-all">
                         Request New Key
                     </Link>
@@ -52,15 +51,15 @@ const ResetPassword: React.FC = () => {
             description="Create a strong, unique security key to protect your enterprise workspace and professional data."
         >
             {/* Alerts: Validation / Error / Success */}
-            {(validationError || isError || isSuccess) && (
+            {(isError || isSuccess) && (
                 <AuthAlert
                     type={isSuccess ? 'success' : 'error'}
                     title={isSuccess ? 'Frequency Updated' : 'Reset Error'}
-                    message={validationError || message || 'Security key successfully updated! Redirecting to secure login...'}
+                    message={message || 'Security key successfully updated! Redirecting to secure login...'}
                 />
             )}
 
-            <form className="mt-8 space-y-6" onSubmit={onSubmit}>
+            <form className="mt-8 space-y-6" onSubmit={onSubmit} noValidate>
                 <div className="space-y-5">
                     <SecurePasswordInput
                         id="password"
@@ -95,7 +94,7 @@ const ResetPassword: React.FC = () => {
             </form>
 
             <div className="mt-8 pt-8 border-t border-slate-800/50 text-center">
-                <Link to="/login" className="text-[10px] font-bold text-secondary hover:text-main uppercase tracking-widest transition-colors flex items-center justify-center gap-2 opacity-60 hover:opacity-100">
+                <Link to="/login" className="text-[10px] font-bold text-muted hover:text-main uppercase tracking-widest transition-colors flex items-center justify-center gap-2 hover:opacity-100">
                     <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Abort and Return to Login
                 </Link>
             </div>

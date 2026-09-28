@@ -100,17 +100,17 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
                     id={id}
                     {...registration}
                     {...props}
-                    onCopy={handlePreventAction ? (e) => handlePreventAction(e, 'copying') : undefined}
-                    onPaste={handlePreventAction ? (e) => handlePreventAction(e, 'pasting') : undefined}
-                    onCut={handlePreventAction ? (e) => handlePreventAction(e, 'cutting') : undefined}
-                    onDragStart={handlePreventAction ? (e) => handlePreventAction(e, 'dragging') : undefined}
-                    onDrop={handlePreventAction ? (e) => handlePreventAction(e, 'dropping') : undefined}
+                    onCopy={(e) => handlePreventAction(e, 'copying')}
+                    onPaste={(e) => handlePreventAction(e, 'pasting')}
+                    onCut={(e) => handlePreventAction(e, 'cutting')}
+                    onDragStart={(e) => handlePreventAction(e, 'dragging')}
+                    onDrop={(e) => handlePreventAction(e, 'dropping')}
                     onContextMenu={handleContextMenu}
                     onKeyDown={handleKeyDown}
                     autoComplete="new-password"
                     data-lpignore="true"
-                    className={`w-full h-14 bg-slate-900 border ${error ? 'border-red-500/50' : 'border-slate-800'
-                        } rounded-sm ${icon ? 'pl-12' : 'pl-4'} pr-12 text-white font-medium outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600 ${className}`}
+                    className={`w-full h-14 bg-slate-900 border ${error ? 'border-danger/50' : 'border-slate-800'
+                        } rounded-sm ${icon ? 'pl-12' : 'pl-4'} pr-12 text-white font-medium outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-primary transition-all placeholder:text-slate-600 ${className}`}
                     placeholder={placeholder}
                     aria-label={placeholder}
                     aria-describedby={showTooltip ? `${id}-security-message` : undefined}
@@ -127,7 +127,7 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
             </div>
 
             {error && (
-                <p className="mt-1 text-xs text-red-500 font-medium ml-1 animate-in fade-in slide-in-from-top-1">
+                <p className="mt-1 text-xs text-danger font-medium ml-1 animate-in fade-in slide-in-from-top-1">
                     {error}
                 </p>
             )}
@@ -140,7 +140,7 @@ const SecurePasswordInput: React.FC<SecurePasswordInputProps> = ({
                     role="alert"
                 >
                     <div className="bg-slate-800 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl py-2 px-3 shadow-2xl flex items-center gap-2">
-                        <AlertCircle className="w-3.5 h-3.5 text-red-400" />
+                        <AlertCircle className="w-3.5 h-3.5 text-danger" />
                         <span>{tooltipMessage}</span>
                     </div>
                 </div>

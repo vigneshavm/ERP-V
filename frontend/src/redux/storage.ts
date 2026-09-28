@@ -1,5 +1,3 @@
-import { APP_CONFIG } from "../config";
-
 export const loadState = <T>(key: string, defaultState: T, tenantId?: string): T => {
     try {
         const partitionKey = tenantId ? `${tenantId}_${key}` : key;
@@ -8,10 +6,7 @@ export const loadState = <T>(key: string, defaultState: T, tenantId?: string): T
             const loadedState = JSON.parse(serialized);
             return { ...defaultState, ...loadedState };
         }
-        // If no local storage, and DEMO mode is on, return mock data merged with default structure
-        if (APP_CONFIG.IS_DEMO) {
-            return defaultState;
-        }
+        // Nothing saved yet: start from the empty default state (never sample data, in demo mode or not).
         return defaultState;
     } catch {
         return defaultState;

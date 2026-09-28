@@ -95,7 +95,7 @@ export const BrandingTab: React.FC<{
                 </div>
             </div>
 
-            <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex gap-3 text-indigo-900">
+            <div className="bg-primary-soft p-4 rounded-xl border border-primary/30 flex gap-3 text-primary">
                 <ShieldCheck className="w-5 h-5 shrink-0 mt-0.5" />
                 <div>
                     <p className="text-sm font-bold">Login Page Customization</p>

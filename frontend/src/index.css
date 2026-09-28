@@ -1,6 +1,68 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
-@tailwind utilities;
+/* Tailwind v4 does not read tailwind.config.js without @config. Register the
+   semantic colours here so text-danger, bg-success/10, border-primary etc.
+   actually generate CSS. "reference" keeps Tailwind from re-declaring the
+   runtime --color-* variables (they hold "r g b" triplets set in @layer base);
+   "inline" makes utilities use rgb(var(...)) directly. "secondary" is left out
+   on purpose: .text-secondary is the grey secondary-text class below. */
+@theme inline reference {
+  --color-primary: rgb(var(--color-primary));
+  --color-success: rgb(var(--color-success));
+  --color-danger: rgb(var(--color-error));
+  --color-error: rgb(var(--color-error));
+  --color-warning: rgb(var(--color-warning));
+  --color-warning-fg: rgb(var(--warning-fg));
+  --color-info: rgb(var(--color-info));
+  --color-accent: rgb(var(--color-accent));
+  --color-main: rgb(var(--color-text));
+  --color-card: rgb(var(--color-card));
+  --color-input: rgb(var(--color-input));
+  --color-sidebar: rgb(var(--color-sidebar));
+  --color-default: rgb(var(--color-border));
+  --color-primary-foreground: rgb(var(--color-primary-foreground));
+  --color-primary-hover: rgb(var(--color-primary-hover));
+  --color-primary-soft: rgb(var(--color-primary-soft));
+  --color-success-soft: rgb(var(--color-success-soft));
+  --color-success-line: rgb(var(--color-success-line));
+  --color-warning-soft: rgb(var(--color-warning-soft));
+  --color-warning-line: rgb(var(--color-warning-line));
+  --color-danger-soft: rgb(var(--color-error-soft));
+  --color-danger-line: rgb(var(--color-error-line));
+  --color-danger-foreground: rgb(var(--color-error-foreground));
+  --color-info-soft: rgb(var(--color-info-soft));
+  --color-info-line: rgb(var(--color-info-line));
+  /* brand-* is used by the Purchase bills / payments screens but was never
+     defined, so e.g. bg-brand-600 buttons had no background. Alias to indigo,
+     which matches --color-primary. */
+  --color-brand-50: var(--color-indigo-50);
+  --color-brand-100: var(--color-indigo-100);
+  --color-brand-200: var(--color-indigo-200);
+  --color-brand-300: var(--color-indigo-300);
+  --color-brand-400: var(--color-indigo-400);
+  --color-brand-500: var(--color-indigo-500);
+  --color-brand-600: var(--color-indigo-600);
+  --color-brand-700: var(--color-indigo-700);
+  --color-brand-800: var(--color-indigo-800);
+  --color-brand-900: var(--color-indigo-900);
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 16px;
+  --radius-metric: 32px;
+}
+
+/* Safelist for colour classes that components build at runtime, e.g.
+   `bg-${color}-50` in MetricCard, Customers, DailyAttendanceBoard,
+   InventoryManager, PurchaseReturn, IntegrationsTab, ModulesTab, PaymentInList,
+   ReturnedItems. Tailwind cannot see interpolated class names, so without this
+   those highlights/badges render with no colour. Prefer full class names in a
+   lookup object for new code. */
+@source inline("{,dark:,group-hover:}{bg,text,border}-{slate,gray,red,rose,pink,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple}-{50,100,200,400,500,600,800,900}");
+@source inline("{,dark:,group-hover:}bg-{slate,gray,red,rose,pink,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple}-{500,900}/{10,20,30}");
+@source inline("{bg,text,border}-{primary,success,danger,warning,info,accent}{,/10,/20}");
+@source inline("text-{left,right,center}");
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -101,28 +163,52 @@
     --color-border: 226 232 240; /* slate-200 */
     --color-border-light: 241 245 249;
 
-    /* Primary Accent - Cyber Indigo */
-    --color-primary: 99 102 241;
-    --color-primary-hover: 79 70 229;
+    /* Brand (indigo) - actions, links, selected, focus. Never a status. */
+    --color-primary: 79 70 229;          /* #4F46E5 */
+    --color-primary-hover: 67 56 202;    /* #4338CA */
+    --color-primary-foreground: 255 255 255;
+    --color-primary-soft: 238 242 255;   /* #EEF2FF */
 
-    /* Secondary Accent - Emerald Precision */
-    --color-secondary: 16 185 129;
+    /* Secondary = neutral. tailwind.config maps text-secondary to this
+       variable, so it must match --color-text-secondary. */
+    --color-secondary: 71 85 105;        /* #475569 */
 
-    /* Semantic Colors */
-    --color-error: 244 63 94;
-    --color-success: 16 185 129;
-    --color-warning: 245 158 11;
-    --color-info: 56 189 248;
-    --color-accent: 139 92 246;
+    /* Status colours - text-grade (>= 4.5:1 on white), each with a soft
+       fill and a line for badges. See utils/statusTone.ts for meanings. */
+    --color-success: 4 120 87;           /* #047857 paid, received, in stock */
+    --color-success-soft: 236 253 245;
+    --color-success-line: 167 243 208;
+    --color-warning: 180 83 9;           /* #B45309 part paid, low stock */
+    --color-warning-soft: 255 251 235;
+    --color-warning-line: 253 230 138;
+    --color-error: 190 18 60;            /* #BE123C overdue, out of stock */
+    --color-error-soft: 255 241 242;
+    --color-error-line: 254 205 211;
+    --color-error-foreground: 255 255 255;
+    --color-info: 3 105 161;             /* #0369A1 in transit, syncing */
+    --color-info-soft: 240 249 255;
+    --color-info-line: 186 230 253;
+    --color-accent: 124 58 237;          /* #7C3AED loyalty / offers only */
 
     /* Glow Tokens - Subtle for Light Mode */
-    --glow-primary: 0 4px 12px rgba(var(--color-primary), 0.15);
-    --glow-success: 0 4px 12px rgba(var(--color-success), 0.15);
-    --glow-error: 0 4px 12px rgba(var(--color-error), 0.15);
+    --glow-primary: 0 4px 12px rgb(var(--color-primary) / 0.15);
+    --glow-success: 0 4px 12px rgb(var(--color-success) / 0.15);
+    --glow-error: 0 4px 12px rgb(var(--color-error) / 0.15);
 
     /* Fonts */
     --font-display: 'Outfit', sans-serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
+
+    /* Shared UI geometry and layering */
+    --radius-panel: 1rem;
+    --radius-control: 0.5rem;
+    --z-base: 0;
+    --z-sticky: 20;
+    --z-header: 30;
+    --z-dropdown: 40;
+    --z-popover: 50;
+    --z-modal: 100;
+    --z-toast: 110;
 
     /* Base Colors for Compatibility */
     --primary: rgb(var(--color-primary));
@@ -146,30 +232,42 @@
 
     /* Text - High-Contrast Cyber */
     --color-text: 230 237 243;
-    --color-text-secondary: 139 148 158;
-    --color-text-muted: 110 118 129;
+    --color-text-secondary: 163 174 187; /* #A3AEBB */
+    --color-text-muted: 138 148 163;     /* #8A94A3, was 4.0:1 */
     --color-placeholder: 72 82 92;
 
     /* Borders - Industrial */
     --color-border: 48 54 61;
     --color-border-light: 33 38 45;
 
-    /* Primary Accent - Neon Indigo/Emerald (Emerald looks more 'cyber') */
-    --color-primary: 52 211 153; /* emerald-400 */
-    --color-primary-hover: 16 185 129;
+    /* Brand stays indigo in dark mode (was emerald, same as "Paid") */
+    --color-primary: 129 140 248;        /* #818CF8 */
+    --color-primary-hover: 165 180 252;  /* #A5B4FC */
+    --color-primary-foreground: 11 15 20;
+    --color-primary-soft: 30 31 75;
 
-    /* Secondary Accent */
-    --color-secondary: 245 158 11;
+    --color-secondary: 163 174 187;      /* neutral, matches text-secondary */
 
-    /* Semantic Overrides */
-    --color-error: 251 113 133;
+    /* Status colours */
     --color-success: 52 211 153;
+    --color-success-soft: 11 42 34;
+    --color-success-line: 17 94 71;
     --color-warning: 251 191 36;
+    --color-warning-soft: 46 33 6;
+    --color-warning-line: 107 74 12;
+    --color-error: 251 113 133;
+    --color-error-soft: 51 18 27;
+    --color-error-line: 122 34 54;
+    --color-error-foreground: 11 15 20;
+    --color-info: 56 189 248;
+    --color-info-soft: 10 37 54;
+    --color-info-line: 18 80 122;
+    --color-accent: 167 139 250;
 
     /* Glow Tokens - Intense for Dark Mode */
-    --glow-primary: 0 0 20px rgba(var(--color-primary), 0.3);
-    --glow-success: 0 0 20px rgba(var(--color-success), 0.3);
-    --glow-error: 0 0 20px rgba(var(--color-error), 0.3);
+    --glow-primary: 0 0 20px rgb(var(--color-primary) / 0.3);
+    --glow-success: 0 0 20px rgb(var(--color-success) / 0.3);
+    --glow-error: 0 0 20px rgb(var(--color-error) / 0.3);
 
     /* Base Colors for Compatibility */
     --primary: rgb(var(--color-primary));
@@ -199,10 +297,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-image:
-      radial-gradient(circle at 100% 0%, rgba(var(--color-primary), 0.05) 0%, transparent 40%),
-      radial-gradient(circle at 0% 100%, rgba(var(--color-accent), 0.04) 0%, transparent 40%),
-      linear-gradient(rgba(var(--color-border), 0.1) 1.5px, transparent 1.5px),
-      linear-gradient(90deg, rgba(var(--color-border), 0.1) 1.5px, transparent 1.5px);
+      radial-gradient(circle at 100% 0%, rgb(var(--color-primary) / 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 0% 100%, rgb(var(--color-accent) / 0.04) 0%, transparent 40%),
+      linear-gradient(rgb(var(--color-border) / 0.1) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgb(var(--color-border) / 0.1) 1.5px, transparent 1.5px);
     background-size: 100% 100%, 100% 100%, 80px 80px, 80px 80px;
     background-attachment: fixed;
     position: relative;
@@ -212,10 +310,10 @@
 
   .dark body {
     background-image:
-      radial-gradient(circle at 100% 0%, rgba(var(--color-primary), 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 0% 100%, rgba(var(--color-accent), 0.06) 0%, transparent 40%),
-      linear-gradient(rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px),
-      linear-gradient(90deg, rgba(var(--color-border), 0.15) 1.5px, transparent 1.5px);
+      radial-gradient(circle at 100% 0%, rgb(var(--color-primary) / 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 0% 100%, rgb(var(--color-accent) / 0.06) 0%, transparent 40%),
+      linear-gradient(rgb(var(--color-border) / 0.15) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgb(var(--color-border) / 0.15) 1.5px, transparent 1.5px);
   }
 
 
@@ -244,9 +342,8 @@
     /* Scanline Texture Overlay */
     background: linear-gradient(rgba(18, 16, 16, 0) 50%,
         rgba(0, 0, 0, 0.05) 50%);
-    background-size: 100% 4px;
     /* High Precision Micron Grid */
-    background-image: radial-gradient(rgba(var(--color-primary), 0.1) 0.5px, transparent 0);
+    background-image: radial-gradient(rgb(var(--color-primary) / 0.1) 0.5px, transparent 0);
     background-size: 20px 20px;
     pointer-events: none;
     z-index: -1;
@@ -254,16 +351,136 @@
 }
 
 @layer components {
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    line-height: 2.25rem;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+  }
+
+  .heading {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+  }
+
+  .metric-value {
+    font-family: var(--font-display);
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 900;
+    font-style: italic;
+  }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+  }
+
+  .label,
+  .label-sm,
+  .overline,
+  .micro {
+    font-family: var(--font-body);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .label { font-size: 0.875rem; line-height: 1.25rem; }
+  .label-sm { font-size: 0.75rem; line-height: 1rem; }
+  .overline { font-size: 0.625rem; line-height: 0.875rem; }
+  .micro { font-size: 0.5625rem; line-height: 0.75rem; font-weight: 900; }
+
+  .bg-surface {
+    background-color: rgb(var(--color-table-header));
+  }
+
+  .ui-panel {
+    border: 1px solid rgb(var(--color-border));
+    border-radius: var(--radius-panel);
+    background-color: rgb(var(--color-card));
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
+  }
+
+  .ui-label {
+    color: rgb(var(--color-text-muted));
+    font-size: 0.75rem;
+    font-weight: 800;
+    line-height: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .ui-button-primary {
+    background-color: rgb(var(--color-primary));
+    color: rgb(var(--color-primary-foreground));
+    border-radius: var(--radius-control);
+    font-weight: 700;
+    transition: background-color 150ms ease, transform 150ms ease;
+  }
+
+  .ui-button-primary:hover {
+    background-color: rgb(var(--color-primary-hover));
+  }
+
+  .dark .bg-primary.text-white,
+  .dark .bg-primary-hover.text-white {
+    color: rgb(var(--color-primary-foreground));
+  }
+
+  .ui-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: rgb(0 0 0 / 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .ui-dropdown {
+    z-index: var(--z-dropdown);
+  }
+
+  .ui-sticky {
+    z-index: var(--z-sticky);
+  }
+
+  .ui-popover {
+    z-index: var(--z-popover);
+  }
+
+  .ui-toast {
+    z-index: var(--z-toast);
+  }
+
+  .table-cell {
+    padding: 0.75rem 1rem;
+  }
+
+  .table-cell-right {
+    padding: 0.75rem 1rem;
+    text-align: right;
+  }
+
+  .table-cell-center {
+    padding: 0.75rem 1rem;
+    text-align: center;
+  }
+
   .bg-app {
     background-color: rgb(var(--color-bg));
   }
 
   .bg-card {
     background-color: rgb(var(--color-card));
-  }
-
-  .bg-surface {
-    background-color: rgb(var(--color-table-header));
   }
 
   .bg-input {
@@ -308,23 +525,23 @@
 
   /* Premium Glassmorphism */
   .glass-panel {
-    background-color: rgba(var(--color-card), 0.8);
+    background-color: rgb(var(--color-card) / 0.8);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(var(--color-border), 0.5);
+    border: 1px solid rgb(var(--color-border) / 0.5);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   }
 
   .dark .glass-panel {
-    background-color: rgba(var(--color-card), 0.6);
+    background-color: rgb(var(--color-card) / 0.6);
     border-color: rgba(255, 255, 255, 0.05);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
   }
 
   /* EXPANAGER Premium Styles */
   .expanager-glass {
-    background: rgba(var(--color-card), 0.7);
+    background: rgb(var(--color-card) / 0.7);
     backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(var(--color-border), 0.2);
+    border: 1px solid rgb(var(--color-border) / 0.2);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
   }
 
@@ -335,7 +552,7 @@
   }
 
   .expanager-card-gradient {
-    background: linear-gradient(135deg, rgba(var(--color-primary), 0.05) 0%, transparent 100%);
+    background: linear-gradient(135deg, rgb(var(--color-primary) / 0.05) 0%, transparent 100%);
   }
 
   .expanager-glow-border {
@@ -385,14 +602,14 @@
   }
 
   .btn-cyber-primary {
-    background-color: rgba(var(--color-primary), 0.2);
-    border-color: rgba(var(--color-primary), 0.5);
-    color: rgb(var(--color-primary));
+    background-color: rgb(var(--color-primary) / 0.2);
+    border-color: rgb(var(--color-primary) / 0.5);
+    color: rgb(var(--color-primary-foreground));
   }
 
   .btn-cyber-primary:hover {
     background-color: rgb(var(--color-primary));
-    color: white;
+    color: rgb(var(--color-primary-foreground));
   }
 
   .btn-cyber-outline {
@@ -402,7 +619,7 @@
   }
 
   .btn-cyber-outline:hover {
-    background-color: rgba(var(--color-primary), 0.1);
+    background-color: rgb(var(--color-primary) / 0.1);
   }
 
   /* Glow Utilities */
@@ -420,22 +637,22 @@
 
   /* Metric Gradients */
   .grad-primary {
-    background: linear-gradient(135deg, rgba(var(--color-primary), 0.15) 0%, transparent 100%);
+    background: linear-gradient(135deg, rgb(var(--color-primary) / 0.15) 0%, transparent 100%);
   }
 
   .grad-success {
-    background: linear-gradient(135deg, rgba(var(--color-success), 0.15) 0%, transparent 100%);
+    background: linear-gradient(135deg, rgb(var(--color-success) / 0.15) 0%, transparent 100%);
   }
 
   .grad-error {
-    background: linear-gradient(135deg, rgba(var(--color-error), 0.15) 0%, transparent 100%);
+    background: linear-gradient(135deg, rgb(var(--color-error) / 0.15) 0%, transparent 100%);
   }
 
   /* Interactive Cards */
   .card-interactive {
-    background-color: rgba(var(--color-card), 0.6);
+    background-color: rgb(var(--color-card) / 0.6);
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(var(--color-border), 0.5);
+    border: 1px solid rgb(var(--color-border) / 0.5);
     padding: 1.5rem;
     border-radius: 0.125rem;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -448,8 +665,8 @@
   }
 
   .card-interactive:hover {
-    border-color: rgba(var(--color-primary), 0.5);
-    box-shadow: 0 25px 50px -12px rgba(var(--color-primary), 0.2);
+    border-color: rgb(var(--color-primary) / 0.5);
+    box-shadow: 0 25px 50px -12px rgb(var(--color-primary) / 0.2);
     transform: translateY(-0.25rem);
   }
 
@@ -460,7 +677,7 @@
     left: 0;
     width: 100%;
     height: 0.25rem;
-    background: linear-gradient(to right, transparent, rgba(var(--color-primary), 0.6), transparent);
+    background: linear-gradient(to right, transparent, rgb(var(--color-primary) / 0.6), transparent);
     opacity: 0;
     transition: opacity 0.5s;
   }
@@ -482,7 +699,7 @@
   }
 
   .input-refined:focus {
-    box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.2);
+    box-shadow: 0 0 0 2px rgb(var(--color-primary) / 0.2);
     border-color: rgb(var(--color-primary));
   }
 }
@@ -548,9 +765,9 @@ button {
   .bg-surface,
   .bg-input,
   .bg-sidebar,
-  .bg-gray-50,
-  .bg-gray-100,
-  .bg-gray-900,
+  .bg-slate-50,
+  .bg-slate-100,
+  .bg-slate-900,
   div,
   section,
   main,
@@ -681,4 +898,12 @@ button {
     background: white !important;
     background-color: white !important;
   }
+}
+
+/* Dark mode: the solid brand and status fills are light colours there
+   (#818CF8, #34D399, #FB7185, #FBBF24, #38BDF8), so white text on them is
+   about 2:1. Swap to dark ink. Kept outside @layer on purpose: layered rules
+   lose to the text-white utility no matter how specific they are. */
+.dark :is(.bg-primary, .bg-success, .bg-danger, .bg-warning, .bg-info).text-white {
+  color: rgb(11 15 20);
 }

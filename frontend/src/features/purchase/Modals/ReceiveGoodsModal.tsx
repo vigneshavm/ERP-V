@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, CheckCircle, Package, Loader2, AlertTriangle } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../../types/purchase";
 
@@ -29,23 +29,30 @@ const resolveProductId = (item: any): string => {
     return pid || '';
 };
 
-const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, order, onConfirm, isSubmitting = false, error = null }) => {
-    const [items, setItems] = useState<{ productId: string; name: string; ordered: number; received: number; rejected: number }[]>([]);
+interface ReceiveRow { productId: string; name: string; ordered: number; received: number; rejected: number }
 
-    useEffect(() => {
-        if (order && order.items) {
-            setItems(order.items.map((i: PurchaseOrderItem) => {
-                const outstanding = Math.max(0, (i.quantity || 0) - (i.received_quantity || 0));
-                return {
-                    productId: resolveProductId(i),
-                    name: i.product_name,
-                    ordered: outstanding,
-                    received: outstanding, // Default to receiving everything still outstanding
-                    rejected: 0
-                };
-            }));
-        }
-    }, [order]);
+// One row per PO line, defaulting to receiving everything still outstanding.
+const toReceiveRows = (order?: { items?: PurchaseOrderItem[] } | null): ReceiveRow[] =>
+    (order?.items || []).map((i: PurchaseOrderItem) => {
+        const outstanding = Math.max(0, (i.quantity || 0) - (i.received_quantity || 0));
+        return {
+            productId: resolveProductId(i),
+            name: i.product_name,
+            ordered: outstanding,
+            received: outstanding,
+            rejected: 0
+        };
+    });
+
+const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, order, onConfirm, isSubmitting = false, error = null }) => {
+    const [items, setItems] = useState(() => toReceiveRows(order));
+    // Re-initialize when given a different order; adjusted during render (tracking the previous
+    // prop) instead of setState in an effect.
+    const [prevOrder, setPrevOrder] = useState(order);
+    if (order !== prevOrder) {
+        setPrevOrder(order);
+        if (order?.items) setItems(toReceiveRows(order));
+    }
 
     const handleReceivedChange = (idx: number, val: string) => {
         const qty = Math.max(0, parseInt(val) || 0);
@@ -80,26 +87,26 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-sm w-full max-w-2xl shadow-2xl border dark:border-neutral-700 flex flex-col max-h-[90vh]">
-                <div className="p-6 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
+            <div className="bg-white dark:bg-slate-800 rounded-sm w-full max-w-2xl shadow-2xl border dark:border-slate-700 flex flex-col max-h-[90vh]">
+                <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-bold mb-1">Receive Goods</h2>
-                        <p className="text-sm text-neutral-500">PO #{order.po_number}</p>
+                        <p className="text-sm text-slate-500">PO #{order.po_number}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full">
+                    <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                     {error && (
-                        <div className="mb-4 p-3 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-lg text-sm font-medium flex items-start gap-2">
+                        <div className="mb-4 p-3 bg-danger-soft dark:bg-danger-soft text-danger dark:text-danger rounded-lg text-sm font-medium flex items-start gap-2">
                             <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
                             <span>{error}</span>
                         </div>
                     )}
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-neutral-50 dark:bg-neutral-700/50">
+                        <thead className="bg-slate-50 dark:bg-slate-700/50">
                             <tr>
                                 <th className="p-3 rounded-l-lg">Product</th>
                                 <th className="p-3 text-right">Outstanding</th>
@@ -107,7 +114,7 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
                                 <th className="p-3 text-right rounded-r-lg">Damaged/Rejected</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                             {items.map((item, idx) => (
                                 <tr key={idx}>
                                     <td className="p-3 font-medium">
@@ -118,14 +125,14 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
                                             {item.name}
                                         </div>
                                     </td>
-                                    <td className="p-3 text-right text-neutral-500 font-medium">{item.ordered}</td>
+                                    <td className="p-3 text-right text-slate-500 font-medium">{item.ordered}</td>
                                     <td className="p-3 text-right">
                                         <input
                                             type="number"
                                             min="0"
                                             max={item.ordered}
                                             disabled={isSubmitting}
-                                            className="w-20 px-2 py-1 text-right bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+                                            className="w-20 px-2 py-1 text-right bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
                                             value={item.received}
                                             onChange={(e) => handleReceivedChange(idx, e.target.value)}
                                         />
@@ -136,7 +143,7 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
                                             min="0"
                                             max={item.received}
                                             disabled={isSubmitting}
-                                            className="w-20 px-2 py-1 text-right bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+                                            className="w-20 px-2 py-1 text-right bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
                                             value={item.rejected}
                                             onChange={(e) => handleRejectedChange(idx, e.target.value)}
                                         />
@@ -147,11 +154,11 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
                     </table>
                 </div>
 
-                <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-b-2xl">
+                <div className="p-6 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900/50 rounded-b-2xl">
                     <button
                         onClick={onClose}
                         disabled={isSubmitting}
-                        className="px-6 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl font-medium hover:bg-white dark:hover:bg-neutral-700 transition-colors disabled:opacity-60"
+                        className="px-6 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl font-medium hover:bg-white dark:hover:bg-slate-700 transition-colors disabled:opacity-60"
                     >
                         Cancel
                     </button>

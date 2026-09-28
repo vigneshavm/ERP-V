@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 import { toast } from "react-toastify";
 import Layout from "../../../components/shared/Layout/Layout";
+import PageHeader from "../../../components/shared/Layout/PageHeader";
 import {
   RotateCcw,
   FileText,
@@ -350,16 +351,10 @@ const Return = () => {
   return (
     <Layout>
       <div className="space-y-6 animate-fade-in pb-10">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-main tracking-tight flex items-center gap-2">
-              <RotateCcw className="w-6 h-6 text-primary" />
-              Process Return
-            </h1>
-            <p className="text-sm text-secondary opacity-70 mt-1">Create a new customer return and issue credits</p>
-          </div>
-          <div className="flex gap-3">
+        <PageHeader
+          title="Process Return"
+          description="Create a new customer return and issue credits"
+          actions={<div className="flex gap-3">
             {formData.selectedInvoice && (
               <button
                 onClick={clearDraft}
@@ -375,24 +370,24 @@ const Return = () => {
             >
               <Save className="w-4 h-4" /> {loading ? "Processing..." : "Save Return"}
             </button>
-          </div>
-        </div>
+          </div>}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             {/* Invoice Selection */}
             <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden">
               <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
-                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider flex items-center gap-2">
+                <h2 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                   <FileText className="w-4 h-4" /> Select Invoice
                 </h2>
               </div>
               <div className="p-6">
                 {formData.selectedInvoice ? (
-                  <div className="p-4 bg-primary/10 border border-indigo-200 rounded-xl">
+                  <div className="p-4 bg-primary/10 border border-primary/30 rounded-xl">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-bold text-indigo-800">
+                        <p className="font-bold text-primary">
                           {formData.selectedInvoice.invoiceNo}
                         </p>
                         <p className="text-sm text-secondary mt-1">
@@ -404,7 +399,7 @@ const Return = () => {
                           selectedInvoice: null, customer: null, items: [],
                           refundMethod: "credit", originalPaymentInfo: null, notes: "",
                         })}
-                        className="text-danger hover:text-red-700 text-sm font-bold"
+                        className="text-danger hover:text-danger text-sm font-bold"
                       >
                         Change
                       </button>
@@ -413,7 +408,7 @@ const Return = () => {
                 ) : (
                   <button
                     onClick={() => setShowInvoiceModal(true)}
-                    className="w-full px-4 py-4 border-2 border-dashed border-default/40 rounded-xl text-secondary opacity-70 hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
+                    className="w-full px-4 py-4 border-2 border-dashed border-default/40 rounded-xl text-muted hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
                   >
                     <FileText className="w-5 h-5" /> Click to select invoice
                   </button>
@@ -425,7 +420,7 @@ const Return = () => {
             {formData.customer && (
               <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden">
                 <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
-                  <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider flex items-center gap-2">
+                  <h2 className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <User className="w-4 h-4" /> Customer
                   </h2>
                 </div>
@@ -448,8 +443,8 @@ const Return = () => {
                   </div>
                   {/* Credit Balance Display */}
                   {formData.customer?.dues < 0 && (
-                    <div className="mt-4 p-3 bg-success/10 border border-emerald-200 rounded-xl flex items-center justify-between">
-                      <span className="text-sm font-medium text-emerald-700 flex items-center gap-2">
+                    <div className="mt-4 p-3 bg-success/10 border border-success-line rounded-xl flex items-center justify-between">
+                      <span className="text-sm font-medium text-success flex items-center gap-2">
                         <CheckCircle className="w-4 h-4" /> Available Credit
                       </span>
                       <span className="text-lg font-bold text-success">₹{Math.abs(formData.customer.dues).toFixed(2)}</span>
@@ -457,8 +452,8 @@ const Return = () => {
                   )}
                   {/* Pending Dues Display */}
                   {formData.customer?.dues > 0 && (
-                    <div className="mt-4 p-3 bg-danger/10 border border-red-200 rounded-xl flex items-center justify-between">
-                      <span className="text-sm font-medium text-red-700 flex items-center gap-2">
+                    <div className="mt-4 p-3 bg-danger/10 border border-danger-line rounded-xl flex items-center justify-between">
+                      <span className="text-sm font-medium text-danger flex items-center gap-2">
                         <AlertCircle className="w-4 h-4" /> Pending Dues
                       </span>
                       <span className="text-lg font-bold text-danger">₹{formData.customer.dues?.toFixed(2) || '0.00'}</span>
@@ -472,12 +467,12 @@ const Return = () => {
             {formData.items.length > 0 && (
               <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden">
                 <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
-                  <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Return Items</h2>
+                  <h2 className="text-xs font-bold text-muted uppercase tracking-wider">Return Items</h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead className="bg-surface/40 border-b border-default/30">
-                      <tr className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">
+                      <tr className="text-xs font-bold text-muted uppercase tracking-wider">
                         <th className="px-4 py-3">Item</th>
                         <th className="px-4 py-3 text-right">Original</th>
                         <th className="px-4 py-3 text-right">Returned</th>
@@ -494,16 +489,16 @@ const Return = () => {
                           <td className="px-4 py-3 text-main">
                             {item.productName}
                           </td>
-                          <td className="px-4 py-3 text-secondary">
+                          <td className="table-cell-right text-secondary">
                             {item.originalQty}
                           </td>
-                          <td className="px-4 py-3 text-orange-600 dark:text-orange-400 font-medium">
+                          <td className="table-cell-right text-warning dark:text-warning font-medium">
                             {item.alreadyReturned || 0}
                           </td>
-                          <td className="px-4 py-3 text-green-600 dark:text-green-400 font-medium">
+                          <td className="table-cell-right text-success dark:text-success font-medium">
                             {item.remainingQty}
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="table-cell-center">
                             <input
                               type="number"
                               value={item.returnedQty}
@@ -522,7 +517,7 @@ const Return = () => {
                               max={item.remainingQty}
                             />
                           </td>
-                          <td className="px-4 py-3 text-main">
+                          <td className="table-cell-right text-main">
                             ₹{item.rate.toFixed(2)}
                           </td>
                           <td className="px-4 py-3">
@@ -586,8 +581,8 @@ const Return = () => {
                               setFormData({ ...formData, refundMethod: method })
                             }
                             className={`p-3 border-2 rounded-lg transition ${formData.refundMethod === method
-                              ? "border-primary bg-primary/10 dark:bg-indigo-900/40"
-                              : "border-default hover:border-indigo-300"
+                              ? "border-primary bg-primary/10 dark:bg-primary-soft"
+                              : "border-default hover:border-primary/30"
                               }`}
                           >
                             <div className="text-sm font-medium text-main capitalize">
@@ -600,8 +595,8 @@ const Return = () => {
 
                     {/* Display Original Payment Info if 'original_payment' selected */}
                     {formData.refundMethod === 'original_payment' && formData.originalPaymentInfo && (
-                      <div className="mt-4 p-4 bg-info/10 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-lg">
-                        <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-3 flex items-center space-x-2">
+                      <div className="mt-4 p-4 bg-info/10 dark:bg-primary-soft border border-primary/30 dark:border-primary/50 rounded-lg">
+                        <h4 className="font-medium text-primary dark:text-primary mb-3 flex items-center space-x-2">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -609,31 +604,31 @@ const Return = () => {
                         </h4>
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between items-center">
-                            <span className="text-blue-700 dark:text-blue-300">Payment Method:</span>
-                            <span className="font-semibold text-blue-900 dark:text-blue-100 capitalize">
+                            <span className="text-primary dark:text-primary">Payment Method:</span>
+                            <span className="font-semibold text-primary dark:text-primary capitalize">
                               {formData.originalPaymentInfo.method.replace('_', ' ')}
                             </span>
                           </div>
 
                           {formData.originalPaymentInfo.method === 'split' && (
-                            <div className="mt-2 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded">
-                              <p className="text-xs text-amber-800 dark:text-amber-200">
+                            <div className="mt-2 p-2 bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning/50 rounded">
+                              <p className="text-xs text-warning dark:text-warning">
                                 ⚠️ Split payment detected. Refund will be processed as customer credit.
                               </p>
                             </div>
                           )}
 
                           {formData.originalPaymentInfo.method === 'bank_transfer' && (
-                            <div className="mt-2 p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded">
-                              <p className="text-xs text-green-800 dark:text-green-200">
+                            <div className="mt-2 p-2 bg-success-soft dark:bg-success-soft border border-success-line dark:border-success/50 rounded">
+                              <p className="text-xs text-success dark:text-success">
                                 ✓ Bank refund will be processed to the same account used for payment.
                               </p>
                             </div>
                           )}
 
                           {(formData.originalPaymentInfo.method === 'upi' || formData.originalPaymentInfo.method === 'card') && (
-                            <div className="mt-2 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded">
-                              <p className="text-xs text-amber-800 dark:text-amber-200">
+                            <div className="mt-2 p-2 bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning/50 rounded">
+                              <p className="text-xs text-warning dark:text-warning">
                                 ℹ️ {formData.originalPaymentInfo.method.toUpperCase()} payments cannot be directly refunded.
                                 Refund will be processed as customer credit.
                               </p>
@@ -641,8 +636,8 @@ const Return = () => {
                           )}
 
                           {formData.originalPaymentInfo.method === 'cash' && (
-                            <div className="mt-2 p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded">
-                              <p className="text-xs text-green-800 dark:text-green-200">
+                            <div className="mt-2 p-2 bg-success-soft dark:bg-success-soft border border-success-line dark:border-success/50 rounded">
+                              <p className="text-xs text-success dark:text-success">
                                 ✓ Cash refund will be processed.
                               </p>
                             </div>
@@ -653,8 +648,8 @@ const Return = () => {
 
                     {/* Validation message if original_payment selected without info */}
                     {formData.refundMethod === 'original_payment' && !formData.originalPaymentInfo && (
-                      <div className="mt-4 p-4 bg-danger/10 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg">
-                        <p className="text-sm text-red-800 dark:text-red-200">
+                      <div className="mt-4 p-4 bg-danger/10 dark:bg-danger-soft border border-danger-line dark:border-danger/50 rounded-lg">
+                        <p className="text-sm text-danger dark:text-danger">
                           ⚠️ Cannot detect original payment method. Please select an invoice first.
                         </p>
                       </div>
@@ -681,17 +676,17 @@ const Return = () => {
 
           {/* Summary Sidebar */}
           <div className="lg:col-span-1">
-            <div className="glass-panel border border-indigo-100 rounded-sm shadow-sm overflow-hidden sticky top-4">
-              <div className="bg-primary/10/50 px-6 py-3 border-b border-indigo-100">
-                <h2 className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Return Summary</h2>
+            <div className="glass-panel border border-primary/30 rounded-sm shadow-sm overflow-hidden sticky top-4">
+              <div className="bg-primary/10/50 px-6 py-3 border-b border-primary/30">
+                <h2 className="text-xs font-bold text-primary uppercase tracking-wider">Return Summary</h2>
               </div>
               <div className="p-6 space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-secondary opacity-70 font-medium">Subtotal</span>
+                  <span className="text-muted font-medium">Subtotal</span>
                   <span className="font-bold text-main">₹{calculateSubtotal().toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-secondary opacity-70 font-medium">Tax</span>
+                  <span className="text-muted font-medium">Tax</span>
                   <span className="font-bold text-main">₹{calculateTax().toFixed(2)}</span>
                 </div>
               </div>
@@ -702,7 +697,7 @@ const Return = () => {
                 </div>
               </div>
               <div className="p-6 space-y-3">
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+                <div className="p-3 bg-warning-soft border border-warning-line rounded-xl text-sm text-warning">
                   <strong>Note:</strong> This amount will be credited or refunded via the selected method.
                 </div>
                 <button
@@ -789,10 +784,10 @@ const Return = () => {
                           </p>
                           <span
                             className={`inline-block px-2 py-1 rounded text-xs font-medium ${invoice.paymentStatus === "paid"
-                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                              ? "bg-success-soft text-success dark:bg-success-soft dark:text-success"
                               : invoice.paymentStatus === "partial"
-                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                                : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                                ? "bg-warning-soft text-warning dark:bg-warning-soft dark:text-warning"
+                                : "bg-danger-soft text-danger dark:bg-danger-soft dark:text-danger"
                               }`}
                           >
                             {invoice.paymentStatus}

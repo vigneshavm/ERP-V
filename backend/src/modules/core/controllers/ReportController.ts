@@ -11,7 +11,13 @@ import Expense from '../../expense/models/Expense.js';
 import { generateAIReport } from '../../../utils/aiReportHelper.js';
 
 import { checkStockAlerts } from '../../../utils/stockAlert.js';
-import { info, error } from '../../../config/logger.js';
+import { info, error, warn } from '../../../config/logger.js';
+import { isSqlItemSource } from '../../../config/itemDataSource.js';
+import * as sqlItems from '../../../integrations/textilesoft/sqlItemSource.js';
+import { hasSqlDashboard, sqlDashboardStats, type SqlDashboardStats } from '../../../integrations/textilesoft/sqlDashboard.js';
+import { isSalesReportDim, sqlSalesReport, sqlStatusDebug, sqlSalesIntelligence } from '../../../integrations/textilesoft/sqlSalesReports.js';
+import { sqlInvoiceListByDate } from '../../../integrations/textilesoft/sqlSales.js';
+import { erpDayBills, erpSalesReport } from '../services/ErpSalesReportService.js';
 
 /**
  * Request interface with authenticated user
@@ -82,6 +88,25 @@ export const getSalesReport = async (req: AuthenticatedRequest, res: Response): 
  */
 export const getStockReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        // ITEM_DATA_SOURCE=sql: totals and the low-stock list come from the shop DB.
+        if (isSqlItemSource() && req.user?.tenantId) {
+            const tenantId = String(req.user.tenantId);
+            sqlItems.ensureMirror(tenantId);
+            try {
+                const [stats, lowStock] = await Promise.all([sqlItems.inventoryStats(), sqlItems.lowStockItems(tenantId, 50)]);
+                res.status(200).json({
+                    totalItems: stats.totalItems,
+                    totalStockQuantity: stats.totalStockQuantity,
+                    totalValuation: stats.totalValuation,
+                    lowStockCount: stats.lowStockCount,
+                    lowStock,
+                    source: 'sql'
+                });
+                return;
+            } catch (sqlErr) {
+                warn(`Stock report: shop DB read failed, using MongoDB - ${(sqlErr as Error).message}`);
+            }
+        }
         const items = await Item.find({ tenantId: req.user?.tenantId }).sort({ stockQty: 1 });
         const lowStock = items.filter((i: any) => i.stockQty <= i.lowStockLimit);
         res.status(200).json({ totalItems: items.length, lowStock });
@@ -141,6 +166,17 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
         // has no tenantId on its schema (only createdBy) - see the monthlyExpenses aggregate
         // below - so that one stays per-user until Expense is given a tenant field.
         const tenantId = req.user?.tenantId;
+
+        // ITEM_DATA_SOURCE=sql (with a `dashboard` section in the mapping): revenue, sales trend, payment
+        // mix, purchases (and expenses when mapped) come from the shop DB. Customers and dues stay on MongoDB.
+        let sql: SqlDashboardStats | undefined;
+        if (isSqlItemSource()) {
+            try {
+                if (hasSqlDashboard()) sql = await sqlDashboardStats();
+            } catch (sqlErr) {
+                warn(`Dashboard: shop DB read failed, using MongoDB - ${(sqlErr as Error).message}`);
+            }
+        }
 
         // 0. Summary metrics
         const allInvoices = await Invoice.find({ tenantId, isDeleted: { $ne: true } });
@@ -245,6 +281,35 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
             .limit(5)
             .select('name dues');
 
+        if (sql) {
+            // Revenue side from SQL; expenses from SQL when mapped, otherwise the MongoDB expenses above.
+            const sqlMonths = Array.from(new Set([...sql.monthlyRevenue.map((r) => r.month), ...(sql.monthlyExpenses ?? monthlyExpenses.map((e: any) => ({ month: e._id }))).map((e: any) => e.month)])).sort();
+            const expenseFor = (month: string): number =>
+                sql!.monthlyExpenses
+                    ? sql!.monthlyExpenses.find((e) => e.month === month)?.expenses || 0
+                    : monthlyExpenses.find((e: any) => e._id === month)?.expenses || 0;
+            res.status(200).json({
+                totalInvoices: sql.totalInvoices,
+                totalRevenue: sql.totalRevenue,
+                totalCollected,
+                totalOutstanding,
+                dailySales: sql.dailySales,
+                revenueVsExpenses: sqlMonths.map((month) => ({
+                    month,
+                    revenue: sql!.monthlyRevenue.find((r) => r.month === month)?.revenue || 0,
+                    expenses: expenseFor(month)
+                })),
+                paymentMethods: sql.paymentMethods,
+                topCustomersWithDues,
+                recentPurchases: sql.recentPurchases,
+                expenseByCategory: sql.expenseByCategory,
+                ...(sql.totalExpenses !== undefined ? { totalExpenses: sql.totalExpenses } : {}),
+                asOf: sql.asOf,
+                source: 'sql'
+            });
+            return;
+        }
+
         res.status(200).json({
             totalInvoices,
             totalRevenue,
@@ -261,9 +326,120 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
     }
 };
 
+const SHOP_DB_DOWN = 'The shop database could not be reached, so this report cannot be shown right now. Try again in a moment.';
+
+/**
+ * GET /api/reports/shop-sales?dim=brand|category|counter|salesCounter|hour|day|product&range=TODAY|WEEK|MONTH|CUSTOM&from=&to=
+ * Sales breakdown for the Detailed Analytics reports: from the shop database in SQL mode, else from the ERP's POS
+ * invoices (all of them for the period, computed here; the pages no longer aggregate whatever sales the browser
+ * happens to hold). In SQL mode a shop-database failure is a 503: ERP-only figures would silently undercount.
+ */
+export const getShopSalesReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const q = req.query as Record<string, string | undefined>;
+    if (!isSalesReportDim(q.dim)) {
+        res.status(400).json({ message: 'dim must be brand, category, counter, salesCounter, hour, day or product' });
+        return;
+    }
+    if (!isSqlItemSource()) {
+        const tenantId = req.user?.tenantId;
+        if (!tenantId) {
+            res.status(403).json({ message: 'No shop is linked to this account' });
+            return;
+        }
+        try {
+            res.status(200).json(await erpSalesReport(q.dim, String(tenantId), q.range, q.from, q.to));
+        } catch (err) {
+            error(`[reports] ERP sales breakdown (${q.dim}) failed - ${(err as Error).message}`);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+        }
+        return;
+    }
+    try {
+        res.status(200).json(await sqlSalesReport(q.dim, q.range, q.from, q.to, req.user?.tenantId));
+    } catch (err) {
+        warn(`[sql-reports] shop sales report (${q.dim}) failed - ${(err as Error).message}`);
+        res.status(503).json({ message: SHOP_DB_DOWN });
+    }
+};
+
+/**
+ * Bills for one calendar day, for the Daily Sales Report's drill-down (click a ledger row -> see every bill).
+ * GET /api/reports/shop-sales/day-bills?date=YYYY-MM-DD
+ */
+export const getShopSalesDayBills = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const date = req.query.date;
+    if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        res.status(400).json({ message: 'date must be YYYY-MM-DD' });
+        return;
+    }
+    if (!isSqlItemSource()) {
+        const tenantId = req.user?.tenantId;
+        if (!tenantId) {
+            res.status(403).json({ message: 'No shop is linked to this account' });
+            return;
+        }
+        try {
+            res.status(200).json({ source: 'mongo', date, rows: await erpDayBills(String(tenantId), date) });
+        } catch (err) {
+            error(`[reports] ERP day bills failed for ${date} - ${(err as Error).message}`);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+        }
+        return;
+    }
+    try {
+        const rows = await sqlInvoiceListByDate(date);
+        res.status(200).json({ source: 'sql', date, rows });
+    } catch (err) {
+        warn(`[sql-reports] day bills failed for ${date} - ${(err as Error).message}`);
+        res.status(503).json({ message: SHOP_DB_DOWN });
+    }
+};
+
+/**
+ * TEMPORARY DIAGNOSTIC route -- see sqlStatusDebug() in sqlSalesReports.ts for why this exists.
+ * GET /api/reports/shop-sales/debug-status?from=&to=
+ */
+export const getShopSalesStatusDebug = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    if (!isSqlItemSource()) {
+        res.status(200).json({ source: 'mongo' });
+        return;
+    }
+    try {
+        const q = req.query as Record<string, string | undefined>;
+        const result = await sqlStatusDebug(q.from, q.to);
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+    }
+};
+
+/**
+ * Real Gross/Net Sales, GST collected, cash/bank split and a revenue trend for the "Sales
+ * Intelligence" report page (previously hardcoded mock numbers in useBusinessReports.ts).
+ * GET /api/reports/shop-sales/intelligence?from=&to=
+ */
+export const getShopSalesIntelligence = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    if (!isSqlItemSource()) {
+        res.status(200).json({ source: 'mongo' });
+        return;
+    }
+    try {
+        const q = req.query as Record<string, string | undefined>;
+        const result = await sqlSalesIntelligence(q.from, q.to);
+        res.status(200).json(result);
+    } catch (err) {
+        warn(`[sql-reports] sales intelligence failed, no SQL figures returned - ${(err as Error).message}`);
+        res.status(200).json({ source: 'mongo' });
+    }
+};
+
 export default {
     getSalesReport,
     getStockReport,
     getCustomerReport,
     getDashboardStats,
+    getShopSalesReport,
+    getShopSalesDayBills,
+    getShopSalesStatusDebug,
+    getShopSalesIntelligence,
 };

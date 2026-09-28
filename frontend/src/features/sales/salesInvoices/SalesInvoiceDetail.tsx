@@ -82,7 +82,7 @@ const SalesInvoiceDetail = () => {
         if (!invoice?.invoiceNo || isPrintingReceipt) return;
         setIsPrintingReceipt(true);
         try {
-            const { sale, tenant, branch } = await receiptDataService.fetchReceiptContext(invoice.invoiceNo, { strict: true });
+            const { sale, tenant, branch } = await receiptDataService.fetchReceiptContext(invoice.invoiceNo);
             printSaleReceipt(sale, tenant, branch);
         } catch (error) {
             console.error('Failed to print receipt', error);
@@ -159,9 +159,9 @@ const SalesInvoiceDetail = () => {
 
     const getStatusConfig = (status: string) => {
         const configs: Record<string, any> = {
-            'paid': { color: 'from-emerald-500 to-emerald-600', icon: CheckCircle, text: 'Paid in Full', badge: 'bg-emerald-100 text-emerald-800' },
-            'partial': { color: 'from-amber-500 to-amber-600', icon: Clock, text: 'Partially Paid', badge: 'bg-amber-100 text-amber-800' },
-            'unpaid': { color: 'from-red-500 to-red-600', icon: AlertCircle, text: 'Payment Due', badge: 'bg-red-100 text-red-800' }
+            'paid': { color: 'from-emerald-500 to-emerald-600', icon: CheckCircle, text: 'Paid in Full', badge: 'bg-success-soft text-success' },
+            'partial': { color: 'from-amber-500 to-amber-600', icon: Clock, text: 'Partially Paid', badge: 'bg-warning-soft text-warning' },
+            'unpaid': { color: 'from-red-500 to-red-600', icon: AlertCircle, text: 'Payment Due', badge: 'bg-danger-soft text-danger' }
         };
         return configs[status] || configs['unpaid'];
     };
@@ -175,7 +175,7 @@ const SalesInvoiceDetail = () => {
             <Layout>
                 <div className="flex flex-col items-center justify-center py-20">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
-                    <p className="text-secondary opacity-70 font-medium">Loading invoice...</p>
+                    <p className="text-muted font-medium">Loading invoice...</p>
                 </div>
             </Layout>
         );
@@ -185,9 +185,9 @@ const SalesInvoiceDetail = () => {
         return (
             <Layout>
                 <div className="max-w-4xl mx-auto">
-                    <div className="p-4 bg-danger/10 border border-red-200 rounded-lg flex items-center gap-3">
-                        <AlertCircle className="w-5 h-5 text-red-500" />
-                        <p className="text-red-700">{message}</p>
+                    <div className="p-4 bg-danger/10 border border-danger-line rounded-lg flex items-center gap-3">
+                        <AlertCircle className="w-5 h-5 text-danger" />
+                        <p className="text-danger">{message}</p>
                     </div>
                     <button
                         onClick={() => navigate('/sales/invoice')}
@@ -254,7 +254,7 @@ const SalesInvoiceDetail = () => {
                                 {invoice.paymentStatus !== 'paid' && (
                                     <button
                                         onClick={() => setShowPaymentModal(true)}
-                                        className="px-4 py-2.5 glass-panel text-emerald-700 rounded-xl text-sm font-bold shadow-lg hover:bg-success/10 transition-all flex items-center gap-2"
+                                        className="px-4 py-2.5 glass-panel text-success rounded-xl text-sm font-bold shadow-lg hover:bg-success/10 transition-all flex items-center gap-2"
                                     >
                                         <CreditCard className="w-4 h-4" /> Record Payment
                                     </button>
@@ -270,7 +270,7 @@ const SalesInvoiceDetail = () => {
                         {invoice.customer && (
                             <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:shadow-none print:border">
                                 <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
-                                    <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Bill To</h2>
+                                    <h2 className="text-xs font-bold text-muted uppercase tracking-wider">Bill To</h2>
                                 </div>
                                 <div className="p-6 flex items-start gap-4">
                                     <div className="w-14 h-14 rounded-sm bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xl font-black shadow-lg">
@@ -293,7 +293,7 @@ const SalesInvoiceDetail = () => {
                                             )}
                                         </div>
                                         {populatedInvoice.customer?.address && (
-                                            <p className="mt-2 text-sm text-secondary opacity-70 flex items-start gap-1.5">
+                                            <p className="mt-2 text-sm text-muted flex items-start gap-1.5">
                                                 <MapPin className="w-4 h-4 text-secondary opacity-50 mt-0.5" /> {populatedInvoice.customer.address}
                                             </p>
                                         )}
@@ -305,7 +305,7 @@ const SalesInvoiceDetail = () => {
                         {/* Invoice Items */}
                         <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:shadow-none print:border">
                             <div className="bg-surface/40 px-6 py-3 border-b border-default/20 flex justify-between items-center">
-                                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Invoice Items</h2>
+                                <h2 className="text-xs font-bold text-muted uppercase tracking-wider">Invoice Items</h2>
                                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${statusConfig.badge}`}>
                                     {invoice.paymentStatus}
                                 </span>
@@ -313,7 +313,7 @@ const SalesInvoiceDetail = () => {
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead className="bg-surface/40 border-b border-default/30">
-                                        <tr className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">
+                                        <tr className="text-xs font-bold text-muted uppercase tracking-wider">
                                             <th className="px-4 py-3 text-center w-12">#</th>
                                             <th className="px-4 py-3">Item</th>
                                             <th className="px-4 py-3 text-right">Qty</th>
@@ -324,7 +324,7 @@ const SalesInvoiceDetail = () => {
                                     <tbody className="divide-y divide-default/20">
                                         {invoice.items?.map((item, index) => (
                                             <tr key={index} className="hover:bg-surface/40/80 transition-colors">
-                                                <td className="px-4 py-3 text-center text-xs text-secondary opacity-50 font-bold">{index + 1}</td>
+                                                <td className="px-4 py-3 text-center text-xs text-muted font-bold">{index + 1}</td>
                                                 <td className="px-4 py-3 font-medium text-main">{item.name || 'Item'}</td>
                                                 <td className="px-4 py-3 text-right font-medium">{item.quantity}</td>
                                                 <td className="px-4 py-3 text-right text-secondary">₹{item.price?.toFixed(2) || '0.00'}</td>
@@ -339,30 +339,30 @@ const SalesInvoiceDetail = () => {
                         {/* Invoice Info */}
                         <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:shadow-none print:border">
                             <div className="bg-surface/40 px-6 py-3 border-b border-default/20 flex justify-between items-center">
-                                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Invoice Details</h2>
+                                <h2 className="text-xs font-bold text-muted uppercase tracking-wider">Invoice Details</h2>
                                 {invoice.isEdited && (
-                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-amber-100 text-amber-800" title={invoice.lastEditReason || ''}>
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-warning-soft text-warning" title={invoice.lastEditReason || ''}>
                                         Edited
                                     </span>
                                 )}
                             </div>
                             <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
                                 <div>
-                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Invoice No</p>
+                                    <p className="text-xs font-bold text-muted uppercase tracking-wider mb-1">Invoice No</p>
                                     <p className="text-sm font-bold text-main">{invoice.invoiceNo}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Invoice Date</p>
+                                    <p className="text-xs font-bold text-muted uppercase tracking-wider mb-1">Invoice Date</p>
                                     <p className="text-sm font-medium text-main">
                                         {new Date(invoice.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Payment Method</p>
+                                    <p className="text-xs font-bold text-muted uppercase tracking-wider mb-1">Payment Method</p>
                                     <p className="text-sm font-medium text-main capitalize">{invoice.paymentMethod || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-secondary opacity-50 uppercase tracking-wider mb-1">Time</p>
+                                    <p className="text-xs font-bold text-muted uppercase tracking-wider mb-1">Time</p>
                                     <p className="text-sm font-medium text-main">
                                         {new Date(invoice.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                                     </p>
@@ -374,39 +374,39 @@ const SalesInvoiceDetail = () => {
                     {/* Sidebar */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Payment Summary */}
-                        <div className="glass-panel border border-indigo-100 rounded-sm shadow-sm overflow-hidden sticky top-4 print:shadow-none print:border">
-                            <div className="bg-primary/10/50 px-6 py-3 border-b border-indigo-100">
-                                <h2 className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Payment Summary</h2>
+                        <div className="glass-panel border border-primary/30 rounded-sm shadow-sm overflow-hidden sticky top-4 print:shadow-none print:border">
+                            <div className="bg-primary/10/50 px-6 py-3 border-b border-primary/30">
+                                <h2 className="text-xs font-bold text-primary uppercase tracking-wider">Payment Summary</h2>
                             </div>
                             <div className="p-6 space-y-4">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-secondary opacity-70 font-medium">Subtotal</span>
+                                    <span className="text-muted font-medium">Subtotal</span>
                                     <span className="font-bold text-main">₹{invoice.subtotal?.toFixed(2) || '0.00'}</span>
                                 </div>
                                 {(invoice.tax || 0) > 0 && (
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-secondary opacity-70 font-medium">Tax</span>
+                                        <span className="text-muted font-medium">Tax</span>
                                         <span className="font-bold text-main">+₹{invoice.tax?.toFixed(2) || '0.00'}</span>
                                     </div>
                                 )}
                                 {(invoice.discount || 0) > 0 && (
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-secondary opacity-70 font-medium">Discount</span>
+                                        <span className="text-muted font-medium">Discount</span>
                                         <span className="font-bold text-danger">-₹{invoice.discount?.toFixed(2) || '0.00'}</span>
                                     </div>
                                 )}
                                 <div className="border-t pt-4">
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-secondary opacity-70 font-medium">Total Amount</span>
+                                        <span className="text-muted font-medium">Total Amount</span>
                                         <span className="font-bold text-main">₹{invoice.totalAmount?.toFixed(2) || '0.00'}</span>
                                     </div>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-secondary opacity-70 font-medium">Paid Amount</span>
+                                    <span className="text-muted font-medium">Paid Amount</span>
                                     <span className="font-bold text-success">₹{invoice.paidAmount?.toFixed(2) || '0.00'}</span>
                                 </div>
                             </div>
-                            <div className={`px-6 py-5 flex justify-between items-center text-white ${balanceDue > 0 ? 'bg-red-600' : 'bg-emerald-600'
+                            <div className={`px-6 py-5 flex justify-between items-center text-white ${balanceDue > 0 ? 'bg-danger' : 'bg-success'
                                 }`}>
                                 <span className="text-lg font-bold tracking-tight">
                                     {balanceDue > 0 ? 'Balance Due' : 'Fully Paid'}
@@ -420,13 +420,13 @@ const SalesInvoiceDetail = () => {
                         {/* Quick Actions */}
                         <div className="glass-panel border border-default/30 rounded-sm shadow-sm overflow-hidden print:hidden">
                             <div className="bg-surface/40 px-6 py-3 border-b border-default/20">
-                                <h2 className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">Quick Actions</h2>
+                                <h2 className="text-xs font-bold text-muted uppercase tracking-wider">Quick Actions</h2>
                             </div>
                             <div className="p-4 space-y-2">
                                 {invoice.paymentStatus !== 'paid' && (
                                     <button
                                         onClick={() => setShowPaymentModal(true)}
-                                        className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
+                                        className="w-full py-3 bg-success text-white rounded-xl font-bold hover:bg-success/90 transition-all flex items-center justify-center gap-2"
                                     >
                                         <CreditCard className="w-4 h-4" /> Record Payment
                                     </button>
@@ -468,7 +468,7 @@ const SalesInvoiceDetail = () => {
                 </div>
 
                 {/* Print Footer */}
-                <div className="hidden print:block mt-12 pt-6 border-t text-center text-secondary opacity-70 text-sm">
+                <div className="hidden print:block mt-12 pt-6 border-t text-center text-muted text-sm">
                     <p>Thank you for your business!</p>
                     <p className="mt-1">This is a computer-generated invoice.</p>
                 </div>
@@ -503,19 +503,19 @@ const SalesInvoiceDetail = () => {
                     <div className="bg-white rounded-sm shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                         <div className="px-6 py-4 border-b border-default/20 flex justify-between items-center sticky top-0 bg-white z-10">
                             <h2 className="text-lg font-bold text-main">Edit Invoice {invoice.invoiceNo}</h2>
-                            <button onClick={() => setShowEditModal(false)} className="text-secondary opacity-60 hover:opacity-100">
+                            <button onClick={() => setShowEditModal(false)} className="text-muted hover:opacity-100">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
                         <div className="p-6 space-y-4">
-                            <p className="text-xs text-secondary opacity-70">
+                            <p className="text-xs text-muted ">
                                 Correct quantity, price, or discount on existing lines. Lines cannot be added or removed here,
                                 and stock will be adjusted for any quantity change.
                             </p>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm">
                                     <thead className="border-b border-default/30">
-                                        <tr className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider">
+                                        <tr className="text-xs font-bold text-muted uppercase tracking-wider">
                                             <th className="py-2 pr-2">Item</th>
                                             <th className="py-2 px-2 text-right w-24">Qty</th>
                                             <th className="py-2 px-2 text-right w-28">Price</th>
@@ -562,7 +562,7 @@ const SalesInvoiceDetail = () => {
                             </div>
 
                             <div>
-                                <label className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider mb-1 block">
+                                <label className="text-xs font-bold text-muted uppercase tracking-wider mb-1 block">
                                     Bill-level Discount (₹)
                                 </label>
                                 <input
@@ -576,7 +576,7 @@ const SalesInvoiceDetail = () => {
                             </div>
 
                             <div>
-                                <label className="text-xs font-bold text-secondary opacity-70 uppercase tracking-wider mb-1 block">
+                                <label className="text-xs font-bold text-muted uppercase tracking-wider mb-1 block">
                                     Reason for Edit (required)
                                 </label>
                                 <textarea
@@ -589,7 +589,7 @@ const SalesInvoiceDetail = () => {
                             </div>
 
                             {editError && (
-                                <p className="text-sm text-red-600">{editError}</p>
+                                <p className="text-sm text-danger">{editError}</p>
                             )}
                         </div>
                         <div className="px-6 py-4 border-t border-default/20 flex justify-end gap-3 sticky bottom-0 bg-white">

@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { validateEnv } from "./config/validateEnv.js";
 import { verifyEmailTransport } from "./utils/emailService.js";
+import { getItemDataSource } from "./config/itemDataSource.js";
 
 // robust .env loading
 const result = dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -16,6 +17,9 @@ if (result.error) {
 
 // Environment Validation
 validateEnv();
+
+// Item/stock read source: "mongo" (default) or "sql" (Textilesoft SQL Server, read-only).
+logger.info(`📦 Item data source: ${getItemDataSource()}`);
 
 const PORT = process.env.PORT || 5000;
 

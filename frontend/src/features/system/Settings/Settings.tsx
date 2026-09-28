@@ -397,7 +397,7 @@ const Settings: React.FC = () => {
 
             <div className="flex flex-col gap-6">
                 {/* Horizontal Navigation Bar */}
-                <div className="w-full bg-white dark:bg-neutral-900 rounded-sm shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+                <div className="w-full bg-white dark:bg-slate-900 rounded-sm shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                     <div className="flex overflow-x-auto custom-scrollbar">
                         {tabs.map((t) => {
                             const Icon = t.icon;
@@ -409,10 +409,10 @@ const Settings: React.FC = () => {
                                     className={`flex items-center gap-2.5 px-6 py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
                                         isActive 
                                         ? 'border-primary text-primary bg-primary/5' 
-                                        : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-50 dark:hover:bg-neutral-800/50'
+                                        : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50'
                                     }`}
                                 >
-                                    <Icon className={`w-4 h-4 ${isActive ? 'text-primary' : 'text-neutral-400'}`} />
+                                    <Icon className={`w-4 h-4 ${isActive ? 'text-primary' : 'text-slate-400'}`} />
                                     {t.label}
                                 </button>
                             );
@@ -421,8 +421,8 @@ const Settings: React.FC = () => {
                 </div>
 
                 {/* Main Content Area */}
-                <div className="w-full min-h-[calc(100vh-250px)] bg-white dark:bg-neutral-900 rounded-sm shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col">
-                    <div className="border-b border-neutral-100 dark:border-neutral-800 px-8 py-6 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-950/50 backdrop-blur-sm">
+                <div className="w-full min-h-[calc(100vh-250px)] bg-white dark:bg-slate-900 rounded-sm shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col">
+                    <div className="border-b border-slate-100 dark:border-slate-800 px-8 py-6 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/50 backdrop-blur-sm">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center">
                                 {(() => {
@@ -431,10 +431,10 @@ const Settings: React.FC = () => {
                                 })()}
                             </div>
                             <div>
-                                <h2 className="text-xl font-black text-neutral-900 dark:text-white leading-none">
+                                <h2 className="text-xl font-black text-slate-900 dark:text-white leading-none">
                                     {tabs.find(t => t.id === activeTab)?.label} Settings
                                 </h2>
-                                <p className="text-[10px] text-neutral-500 font-bold mt-1 uppercase tracking-widest">
+                                <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-widest">
                                     System / Configuration / {activeTab}
                                 </p>
                             </div>
@@ -442,14 +442,14 @@ const Settings: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={handleReset}
-                                className="px-4 py-2 text-neutral-500 hover:text-error dark:text-neutral-400 font-bold flex items-center gap-2 transition-colors"
+                                className="px-4 py-2 text-slate-500 hover:text-error dark:text-slate-400 font-bold flex items-center gap-2 transition-colors"
                             >
                                 <RotateCcw className="w-4 h-4" /> Reset
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className={`px-6 py-2.5 bg-neutral-900 dark:bg-primary text-white rounded-xl text-sm font-bold shadow-sm active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 ${isSaved ? 'bg-success dark:bg-success' : 'hover:bg-neutral-800 dark:hover:bg-primary/90'}`}
+                                className={`px-6 py-2.5 bg-slate-900 dark:bg-primary text-white rounded-xl text-sm font-bold shadow-sm active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 ${isSaved ? 'bg-success dark:bg-success' : 'hover:bg-slate-800 dark:hover:bg-primary/90'}`}
                             >
                                 {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                                 {isSaved ? <CheckCircle className="w-4 h-4" /> : !isSaving && <Save className="w-4 h-4" />}

@@ -1,4 +1,5 @@
 import React from 'react';
+import PageContainer from './PageContainer';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -13,9 +14,9 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children, fullWidth = false }) => {
     return (
         <div className="w-full min-h-full animate-in fade-in duration-500">
-            <div className={`${fullWidth ? 'w-full' : 'max-w-7xl mx-auto px-4 lg:px-8'} w-full h-full pb-10`}>
+            <PageContainer fullWidth={fullWidth} className="h-full pb-10">
                 {children}
-            </div>
+            </PageContainer>
         </div>
     );
 };

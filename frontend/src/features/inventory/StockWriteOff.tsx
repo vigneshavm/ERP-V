@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { AlertTriangle, Search, Package, Loader2, CheckCircle2 } from 'lucide-react';
+import { Search, Package, Loader2, CheckCircle2 } from 'lucide-react';
 import api from '@/services/api';
+import PageHeader from '@/components/shared/Layout/PageHeader';
 
 interface ItemOption {
     _id: string;
@@ -97,13 +98,7 @@ const StockWriteOff: React.FC = () => {
 
     return (
         <div className="space-y-6 pb-12 animate-in fade-in duration-300">
-            <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-sm bg-rose-600 flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-white" /></div>
-                <div>
-                    <h1 className="text-2xl font-black text-slate-900 dark:text-white">Damage / Loss Write-Off</h1>
-                    <p className="text-xs text-slate-500">Record stock lost to damage or unexplained shrinkage</p>
-                </div>
-            </div>
+            <PageHeader title="Damage / Loss Write-Off" description="Record stock lost to damage or unexplained shrinkage" />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 p-6 space-y-4">
@@ -168,7 +163,7 @@ const StockWriteOff: React.FC = () => {
                                         type="button"
                                         key={c}
                                         onClick={() => setCause(c)}
-                                        className={`flex-1 px-3 py-2 rounded-xl text-xs font-bold transition-all ${cause === c ? 'bg-rose-600 text-white' : 'bg-slate-50 dark:bg-slate-900 text-slate-500 border border-slate-200 dark:border-slate-700'}`}
+                                        className={`flex-1 px-3 py-2 rounded-xl text-xs font-bold transition-all ${cause === c ? 'bg-danger text-white' : 'bg-slate-50 dark:bg-slate-900 text-slate-500 border border-slate-200 dark:border-slate-700'}`}
                                     >
                                         {c === 'DAMAGE' ? 'Damage' : 'Missing / Shrinkage'}
                                     </button>
@@ -188,12 +183,12 @@ const StockWriteOff: React.FC = () => {
                         />
                     </div>
 
-                    {error && <p className="text-xs font-bold text-rose-600">{error}</p>}
+                    {error && <p className="text-xs font-bold text-danger">{error}</p>}
 
                     <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all"
+                        className="w-full py-2.5 bg-danger hover:bg-danger/90 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all"
                     >
                         {submitting ? 'Recording...' : 'Record Write-Off'}
                     </button>
@@ -207,9 +202,9 @@ const StockWriteOff: React.FC = () => {
                         <div className="space-y-3">
                             {recent.map((r, i) => (
                                 <div key={i} className="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-xl">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                                    <CheckCircle2 className="w-4 h-4 text-success mt-0.5 shrink-0" />
                                     <div className="flex-1">
-                                        <p className="text-sm font-bold text-slate-900 dark:text-white">{r.itemName} <span className="text-rose-600">-{r.quantity}</span></p>
+                                        <p className="text-sm font-bold text-slate-900 dark:text-white">{r.itemName} <span className="text-danger">-{r.quantity}</span></p>
                                         <p className="text-xs text-slate-500">{r.cause === 'DAMAGE' ? 'Damage' : 'Missing / Shrinkage'} · {r.at}</p>
                                         {r.reason && <p className="text-xs text-slate-400 mt-0.5">{r.reason}</p>}
                                     </div>

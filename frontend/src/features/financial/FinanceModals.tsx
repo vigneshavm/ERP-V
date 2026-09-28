@@ -23,17 +23,17 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             {showExpenseModal && (
-                <div className="bg-white dark:bg-neutral-800 rounded-sm shadow-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-700 animate-in zoom-in-95 duration-200">
-                    <div className="flex items-center justify-between p-6 border-b border-neutral-100 dark:border-neutral-700">
+                <div className="bg-white dark:bg-slate-800 rounded-sm shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 animate-in zoom-in-95 duration-200">
+                    <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-700">
                         <h3 className="text-xl font-bold">Log New Expense</h3>
-                        <button onClick={() => setShowExpenseModal(false)} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition"><X className="w-5 h-5" /></button>
+                        <button onClick={() => setShowExpenseModal(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition"><X className="w-5 h-5" /></button>
                     </div>
                     <form onSubmit={handleAddExpense} className="p-6 space-y-4">
                         <div>
-                            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Category</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Category</label>
                             <input
                                 type="text"
-                                className="w-full p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
+                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
                                 placeholder="e.g. Marketing, Utilities"
                                 value={newExpense.category}
                                 onChange={e => setNewExpense({ ...newExpense, category: e.target.value })}
@@ -41,12 +41,12 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Amount</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Amount</label>
                             <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-neutral-400">₹</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">₹</span>
                                 <input
                                     type="number"
-                                    className="w-full pl-8 p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-bold"
+                                    className="w-full pl-8 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-bold"
                                     placeholder="0.00"
                                     value={newExpense.amount}
                                     onChange={e => setNewExpense({ ...newExpense, amount: e.target.value })}
@@ -55,9 +55,9 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
                             </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Payment Method</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Payment Method</label>
                             <select
-                                className="w-full p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
+                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
                                 value={newExpense.paymentMethod || 'Cash'}
                                 onChange={e => setNewExpense({ ...newExpense, paymentMethod: e.target.value })}
                             >
@@ -68,9 +68,9 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
                             </select>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Description</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Description</label>
                             <textarea
-                                className="w-full p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
+                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
                                 placeholder="Details..."
                                 rows={3}
                                 value={newExpense.description}
@@ -85,18 +85,18 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
             )}
 
             {showChequeModal && (
-                <div className="bg-white dark:bg-neutral-800 rounded-sm shadow-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-700 animate-in zoom-in-95 duration-200">
-                    <div className="flex items-center justify-between p-6 border-b border-neutral-100 dark:border-neutral-700">
+                <div className="bg-white dark:bg-slate-800 rounded-sm shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 animate-in zoom-in-95 duration-200">
+                    <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-700">
                         <h3 className="text-xl font-bold">Register Cheque</h3>
-                        <button onClick={() => setShowChequeModal(false)} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-full transition"><X className="w-5 h-5" /></button>
+                        <button onClick={() => setShowChequeModal(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition"><X className="w-5 h-5" /></button>
                     </div>
                     <form onSubmit={handleAddCheque} className="p-6 space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Cheque No</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Cheque No</label>
                                 <input
                                     type="text"
-                                    className="w-full p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-mono font-medium"
+                                    className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-mono font-medium"
                                     placeholder="XXXXXX"
                                     value={newCheque.number}
                                     onChange={e => setNewCheque({ ...newCheque, number: e.target.value })}
@@ -104,10 +104,10 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Date</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Date</label>
                                 <input
                                     type="date"
-                                    className="w-full p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
+                                    className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
                                     value={newCheque.date}
                                     onChange={e => setNewCheque({ ...newCheque, date: e.target.value })}
                                     required
@@ -115,10 +115,10 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
                             </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Bank Name</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Bank Name</label>
                             <input
                                 type="text"
-                                className="w-full p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
+                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
                                 placeholder="Bank Name"
                                 value={newCheque.bankName}
                                 onChange={e => setNewCheque({ ...newCheque, bankName: e.target.value })}
@@ -126,12 +126,12 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Amount</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Amount</label>
                             <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-neutral-400">₹</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">₹</span>
                                 <input
                                     type="number"
-                                    className="w-full pl-8 p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-bold"
+                                    className="w-full pl-8 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-bold"
                                     placeholder="0.00"
                                     value={newCheque.amount}
                                     onChange={e => setNewCheque({ ...newCheque, amount: e.target.value })}
@@ -140,10 +140,10 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
                             </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Payee</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Payee</label>
                             <input
                                 type="text"
-                                className="w-full p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
+                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
                                 placeholder="Payee Name"
                                 value={newCheque.payee}
                                 onChange={e => setNewCheque({ ...newCheque, payee: e.target.value })}

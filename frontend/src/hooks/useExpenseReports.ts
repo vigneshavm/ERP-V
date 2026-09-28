@@ -3,14 +3,39 @@ import { useSelector } from 'react-redux';
 import api from "../services/api.js";
 import { RootState } from "../redux/store";
 
+export interface ExpenseCategoryStat {
+    category: string;
+    amount: number;
+    budget: number;
+    variance: number;
+    variancePercentage: number;
+    percentage: string;
+    type: 'FIXED' | 'VARIABLE';
+    status: 'OVER' | 'UNDER' | 'NONE';
+}
+
+export interface ExpenseMonthlyTrend {
+    month: string;
+    year: number;
+    expense: number;
+    /** Invoiced sales that month; null when it couldn't be computed. */
+    income: number | null;
+    /** Spend as a % of the total monthly category budget; null when no budgets are set. */
+    budget_utilization: number | null;
+    budget: number | null;
+    label: string;
+}
+
+// Shape returned by GET /api/expense-reports (ExpenseReportController.getExpenseReport).
 export interface ExpenseReportStats {
     total_expense: number;
     report_period: string;
-    by_category: { category: string; amount: number; percentage: number; type?: string }[];
-    by_branch: { branch: string; amount: number; percentage: number; risk: 'HIGH' | 'LOW' | 'MEDIUM' }[];
-    by_payment_mode: { mode: string; amount: number; percentage: number }[];
+    by_category: ExpenseCategoryStat[];
+    by_branch: { branch: string; amount: number; risk: 'HIGH' | 'LOW' | 'MEDIUM' }[];
+    by_payment_mode: { mode: string; amount: number }[];
     audit_flags: string[];
     recommendations: string[];
+    monthly_trends: ExpenseMonthlyTrend[];
 }
 
 interface AuthState {
@@ -30,17 +55,14 @@ export const useExpenseReports = () => {
     const fetchReport = async (startDate?: string, endDate?: string) => {
         try {
             setLoading(true);
-            const token = localStorage.getItem('token');
-            let url = '/expense-reports';
+            let url = '/api/expense-reports';
             if (startDate || endDate) {
                 const params = new URLSearchParams();
                 if (startDate) params.append('startDate', startDate);
                 if (endDate) params.append('endDate', endDate);
                 url += `?${params.toString()}`;
             }
-            const response = await api.get(url, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get(url);
             const data = response.data;
             if (data && typeof data === 'object' && 'total_expense' in data) {
                 setReport(data);
@@ -50,17 +72,9 @@ export const useExpenseReports = () => {
             setError(null);
         } catch (err: any) {
             console.error('Error fetching expense reports:', err);
-            setError(err.message);
-            // Return empty report structure
-            setReport({
-                report_period: new Date().toLocaleString('default', { month: 'long', year: 'numeric' }),
-                total_expense: 0,
-                by_category: [],
-                by_branch: [],
-                by_payment_mode: [],
-                audit_flags: [],
-                recommendations: ['Add expenses to generate insights'],
-            });
+            // No stand-in report: an all-zero report would read as "you spent ₹0".
+            setError(err.message || 'Failed to load the expense report');
+            setReport(null);
         } finally {
             setLoading(false);
         }

@@ -13,24 +13,24 @@ const GrowthHub: React.FC = () => {
             description: 'Manage your digital storefront, products, and online orders.',
             icon: Globe,
             path: 'GROW_STORE',
-            color: 'text-blue-600',
-            bg: 'bg-blue-100 dark:bg-blue-900/20'
+            color: 'text-primary',
+            bg: 'bg-primary-soft dark:bg-primary-soft'
         },
         {
             title: 'Marketing',
             description: 'Run campaigns, manage social media, and WhatsApp marketing.',
             icon: Zap,
             path: 'GROW_MARKETING',
-            color: 'text-amber-600',
-            bg: 'bg-amber-100 dark:bg-amber-900/20'
+            color: 'text-warning',
+            bg: 'bg-warning-soft dark:bg-warning-soft'
         },
         {
             title: 'Google Business',
             description: 'Sync and manage your Google Business Profile and reviews.',
             icon: Globe,
             path: 'GROW_GOOGLE',
-            color: 'text-green-600',
-            bg: 'bg-green-100 dark:bg-green-900/20'
+            color: 'text-success',
+            bg: 'bg-success-soft dark:bg-success-soft'
         },
         {
             title: 'Data & Sync',
@@ -45,8 +45,8 @@ const GrowthHub: React.FC = () => {
             description: 'Advanced business intelligence, sales, and inventory analytics.',
             icon: BarChart,
             path: 'PROFIT_PULSE',
-            color: 'text-rose-600',
-            bg: 'bg-rose-100 dark:bg-rose-900/20'
+            color: 'text-danger',
+            bg: 'bg-danger-soft dark:bg-danger-soft'
         },
         {
             title: 'Business Health',
@@ -54,15 +54,15 @@ const GrowthHub: React.FC = () => {
             icon: Rocket,
             path: 'GROW_ARCHITECTURE',
             color: 'text-primary',
-            bg: 'bg-indigo-100 dark:bg-indigo-900/20'
+            bg: 'bg-primary-soft dark:bg-primary-soft'
         }
     ];
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Growth Hub</h1>
+                    <h1 className="page-title text-slate-900 dark:text-white">Growth Hub</h1>
                     <p className="text-slate-500 dark:text-slate-400 font-medium">Select a tool to scale and manage your business presence.</p>
                 </div>
                 <button
@@ -79,13 +79,13 @@ const GrowthHub: React.FC = () => {
                     <div
                         key={card.path}
                         onClick={() => dispatch(setActiveTab(card.path as any))}
-                        className="group bg-white dark:bg-neutral-800 p-6 rounded-[2rem] border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-xl hover:border-indigo-500 dark:hover:border-indigo-500 transition-all cursor-pointer"
+                        className="group bg-white dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-primary dark:hover:border-primary transition-all cursor-pointer"
                     >
                         <div className={`w-14 h-14 ${card.bg} rounded-sm flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                             <card.icon className={`w-7 h-7 ${card.color}`} />
                         </div>
-                        <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">{card.title}</h3>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4 h-10">{card.description}</p>
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{card.title}</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 h-10">{card.description}</p>
                         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary dark:text-primary group-hover:gap-3 transition-all">
                             Open Tool <ArrowRight className="w-3 h-3" />
                         </div>

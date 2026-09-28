@@ -74,24 +74,24 @@ beforeEach(() => {
 describe('PurchaseOrderDetails - lifecycle button gating (matches backend Purchase.status enum)', () => {
     test('DRAFT order shows Submit and nothing else', () => {
         render(<PurchaseOrderDetails order={makeOrder({ status: 'DRAFT' })} />);
-        expect(screen.getByText(/Submit Protocol/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Authorize Node/i)).not.toBeInTheDocument();
+        expect(screen.getByText(/^Submit$/i)).toBeInTheDocument();
+        expect(screen.queryByText(/^Approve$/i)).not.toBeInTheDocument();
         expect(screen.queryByText(/Send to Vendor/i)).not.toBeInTheDocument();
-        expect(screen.queryByText(/Initialize Receipt/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/^Receive goods$/i)).not.toBeInTheDocument();
         expect(screen.queryByText(/Generate Invoice/i)).not.toBeInTheDocument();
     });
 
     test('SUBMITTED order shows Approve/Reject to an Owner', () => {
         render(<PurchaseOrderDetails order={makeOrder({ status: 'SUBMITTED' })} />);
-        expect(screen.getByText(/Authorize Node/i)).toBeInTheDocument();
-        expect(screen.getByText(/Reject Node/i)).toBeInTheDocument();
+        expect(screen.getByText(/^Approve$/i)).toBeInTheDocument();
+        expect(screen.getByText(/^Reject$/i)).toBeInTheDocument();
     });
 
     test('SUBMITTED order hides Approve/Reject from a non-Owner', () => {
         setState('Staff');
         render(<PurchaseOrderDetails order={makeOrder({ status: 'SUBMITTED' })} />);
-        expect(screen.queryByText(/Authorize Node/i)).not.toBeInTheDocument();
-        expect(screen.queryByText(/Reject Node/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/^Approve$/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/^Reject$/i)).not.toBeInTheDocument();
     });
 
     test('APPROVED order shows Send to Vendor, which reports SENT_TO_VENDOR via onUpdateStatus', () => {
@@ -104,27 +104,27 @@ describe('PurchaseOrderDetails - lifecycle button gating (matches backend Purcha
         expect(onUpdateStatus).toHaveBeenCalledWith('PO_1', 'SENT_TO_VENDOR');
     });
 
-    test('SENT_TO_VENDOR order shows Initialize Receipt but not Send to Vendor', () => {
+    test('SENT_TO_VENDOR order shows Receive goods but not Send to Vendor', () => {
         render(<PurchaseOrderDetails order={makeOrder({ status: 'SENT_TO_VENDOR' })} />);
-        expect(screen.getByText(/Initialize Receipt/i)).toBeInTheDocument();
+        expect(screen.getByText(/^Receive goods$/i)).toBeInTheDocument();
         expect(screen.queryByText(/Send to Vendor/i)).not.toBeInTheDocument();
     });
 
     test('PARTIALLY_RECEIVED order can both receive more AND bill (matches backend PARTIALLY_RECEIVED semantics)', () => {
         render(<PurchaseOrderDetails order={makeOrder({ status: 'PARTIALLY_RECEIVED' })} />);
-        expect(screen.getByText(/Initialize Receipt/i)).toBeInTheDocument();
+        expect(screen.getByText(/^Receive goods$/i)).toBeInTheDocument();
         expect(screen.getByText(/Generate Invoice/i)).toBeInTheDocument();
     });
 
     test('COMPLETED order can bill but can no longer receive', () => {
         render(<PurchaseOrderDetails order={makeOrder({ status: 'COMPLETED' })} />);
         expect(screen.getByText(/Generate Invoice/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Initialize Receipt/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/^Receive goods$/i)).not.toBeInTheDocument();
     });
 
     test('CANCELLED order shows no lifecycle action buttons', () => {
         render(<PurchaseOrderDetails order={makeOrder({ status: 'CANCELLED' })} />);
-        for (const label of [/Submit Protocol/i, /Authorize Node/i, /Send to Vendor/i, /Initialize Receipt/i, /Generate Invoice/i]) {
+        for (const label of [/^Submit$/i, /^Approve$/i, /Send to Vendor/i, /^Receive goods$/i, /Generate Invoice/i]) {
             expect(screen.queryByText(label)).not.toBeInTheDocument();
         }
     });
@@ -147,7 +147,7 @@ describe('PurchaseOrderDetails + ReceiveGoodsModal - real receive-goods integrat
         const onAfterReceive = vi.fn();
         render(<PurchaseOrderDetails order={order} onAfterReceive={onAfterReceive} />);
 
-        fireEvent.click(screen.getByText(/Initialize Receipt/i));
+        fireEvent.click(screen.getByText(/^Receive goods$/i));
         expect(screen.getByText(/Receive Goods/i)).toBeInTheDocument();
         expect(screen.getByText(/PO #PUR-20260820-001/i)).toBeInTheDocument();
 
@@ -192,7 +192,7 @@ describe('PurchaseOrderDetails + ReceiveGoodsModal - real receive-goods integrat
         mockCreateGRN.mockResolvedValueOnce({ grn: { _id: 'GRN_2', purchaseId: 'PO_1', status: 'ACCEPTED', items: [] } });
 
         render(<PurchaseOrderDetails order={order} />);
-        fireEvent.click(screen.getByText(/Initialize Receipt/i));
+        fireEvent.click(screen.getByText(/^Receive goods$/i));
         fireEvent.click(screen.getByText(/Confirm Receipt/i));
 
         await waitFor(() => expect(mockCreateGRN).toHaveBeenCalledTimes(1));
@@ -208,7 +208,7 @@ describe('PurchaseOrderDetails + ReceiveGoodsModal - real receive-goods integrat
             items: [{ product_id: 'ITEM_1', product_name: 'Cotton Roll', quantity: 100, rate: 50, tax_percent: 5, discount_amount: 0, line_total: 5000, received_quantity: 100 }],
         });
         render(<PurchaseOrderDetails order={order} />);
-        fireEvent.click(screen.getByText(/Initialize Receipt/i));
+        fireEvent.click(screen.getByText(/^Receive goods$/i));
         fireEvent.click(screen.getByText(/Confirm Receipt/i));
 
         await waitFor(() => expect(screen.queryByText(/Receive Goods/i)).not.toBeInTheDocument());
@@ -224,7 +224,7 @@ describe('PurchaseOrderDetails + ReceiveGoodsModal - real receive-goods integrat
         const onAfterReceive = vi.fn();
 
         render(<PurchaseOrderDetails order={order} onAfterReceive={onAfterReceive} />);
-        fireEvent.click(screen.getByText(/Initialize Receipt/i));
+        fireEvent.click(screen.getByText(/^Receive goods$/i));
         fireEvent.click(screen.getByText(/Confirm Receipt/i));
 
         await waitFor(() => expect(screen.getByText('Insufficient stock ledger')).toBeInTheDocument());
@@ -241,7 +241,7 @@ describe('PurchaseOrderDetails + ReceiveGoodsModal - real receive-goods integrat
         mockCreateGRN.mockRejectedValueOnce(new Error('Network Error'));
 
         render(<PurchaseOrderDetails order={order} />);
-        fireEvent.click(screen.getByText(/Initialize Receipt/i));
+        fireEvent.click(screen.getByText(/^Receive goods$/i));
         fireEvent.click(screen.getByText(/Confirm Receipt/i));
 
         await waitFor(() => expect(screen.getByText('Network Error')).toBeInTheDocument());

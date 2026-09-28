@@ -11,7 +11,7 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
             {/* Tax & Pricing Section */}
             <section>
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-primary-soft dark:bg-primary-soft flex items-center justify-center">
                         <Calculator className="w-5 h-5 text-primary dark:text-primary" />
                     </div>
                     <div>
@@ -28,14 +28,14 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                             <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                                 <button
                                     onClick={() => setTaxMode('EXCLUSIVE')}
-                                    className={`flex-1 flex flex-col items-center py-4 rounded-xl transition-all ${taxMode === 'EXCLUSIVE' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'}`}
+                                    className={`flex-1 flex flex-col items-center py-4 rounded-xl transition-all ${taxMode === 'EXCLUSIVE' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'}`}
                                 >
                                     <span className="text-xs font-black">EXCLUSIVE</span>
                                     <span className={`text-[9px] mt-0.5 opacity-60 ${taxMode === 'EXCLUSIVE' ? 'text-white' : ''}`}>+ Tax on Price</span>
                                 </button>
                                 <button
                                     onClick={() => setTaxMode('INCLUSIVE')}
-                                    className={`flex-1 flex flex-col items-center py-4 rounded-xl transition-all ${taxMode === 'INCLUSIVE' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'}`}
+                                    className={`flex-1 flex flex-col items-center py-4 rounded-xl transition-all ${taxMode === 'INCLUSIVE' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 font-bold'}`}
                                 >
                                     <span className="text-xs font-black">INCLUSIVE</span>
                                     <span className={`text-[9px] mt-0.5 opacity-60 ${taxMode === 'INCLUSIVE' ? 'text-white' : ''}`}>Inc. Tax in Price</span>
@@ -60,7 +60,7 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                                 type="text"
                                 value={gstin || ''}
                                 onChange={e => setGstin?.(e.target.value)}
-                                className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-black text-sm text-slate-700 dark:text-white"
+                                className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-primary font-black text-sm text-slate-700 dark:text-white"
                                 placeholder="e.g. 29ABCDE1234F1Z5"
                             />
                         </div>
@@ -72,13 +72,13 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                                 type="text"
                                 value={pan || ''}
                                 onChange={e => setPan?.(e.target.value)}
-                                className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-black text-sm text-slate-700 dark:text-white"
+                                className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-primary font-black text-sm text-slate-700 dark:text-white"
                                 placeholder="e.g. ABCDE1234F"
                             />
                         </div>
                         <div className="md:col-span-2 pt-4">
-                            <div className="p-4 bg-indigo-50/50 dark:bg-indigo-900/20 border border-indigo-100/50 dark:border-indigo-800 rounded-sm">
-                                <p className="text-[10px] text-primary dark:text-indigo-300 font-bold leading-relaxed">
+                            <div className="p-4 bg-primary/50 dark:bg-primary-soft border border-primary/50 dark:border-primary/30 rounded-sm">
+                                <p className="text-[10px] text-primary dark:text-primary font-bold leading-relaxed">
                                     REGISTRATION NOTE: These IDs are critical for B2B billing and tax filing. Ensure they are correct as per your legal documents.
                                 </p>
                             </div>
@@ -90,8 +90,8 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
             {/* Banking Details Section */}
             <section>
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
-                        <Landmark className="w-5 h-5 text-amber-600 dark:text-warning" />
+                    <div className="w-10 h-10 rounded-xl bg-warning-soft dark:bg-warning-soft flex items-center justify-center">
+                        <Landmark className="w-5 h-5 text-warning dark:text-warning" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Settlement Banking</h3>
@@ -103,26 +103,26 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                     <div className="space-y-6">
                         <div className="space-y-1">
                             <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Official Bank Name</label>
-                            <input type="text" value={bankName || ''} onChange={e => setBankName?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-slate-800 dark:text-white" placeholder="e.g. HDFC Bank" />
+                            <input type="text" value={bankName || ''} onChange={e => setBankName?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-primary font-bold text-slate-800 dark:text-white" placeholder="e.g. HDFC Bank" />
                         </div>
                         <div className="space-y-1">
                             <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">IFSC / Routing Code</label>
-                            <input type="text" value={ifsc || ''} onChange={e => setIfsc?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-slate-800 dark:text-white" placeholder="e.g. HDFC0001234" />
+                            <input type="text" value={ifsc || ''} onChange={e => setIfsc?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-primary font-bold text-slate-800 dark:text-white" placeholder="e.g. HDFC0001234" />
                         </div>
                     </div>
                     <div className="space-y-6">
                         <div className="space-y-1">
                             <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Account Holder Name</label>
-                            <input type="text" value={accountHolderName || ''} onChange={e => setAccountHolderName?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-slate-800 dark:text-white" />
+                            <input type="text" value={accountHolderName || ''} onChange={e => setAccountHolderName?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-primary font-bold text-slate-800 dark:text-white" />
                         </div>
                         <div className="space-y-1">
                             <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Corporate Account Number</label>
-                            <input type="text" value={accNo || ''} onChange={e => setAccNo?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-bold text-slate-800 dark:text-white tracking-widest" placeholder="e.g. 50100..." />
+                            <input type="text" value={accNo || ''} onChange={e => setAccNo?.(e.target.value)} className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-primary font-bold text-slate-800 dark:text-white tracking-widest" placeholder="e.g. 50100..." />
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-8 p-6 bg-amber-50/30 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 rounded-[2rem] flex flex-col md:flex-row items-center gap-6">
+                <div className="mt-8 p-6 bg-warning/30 dark:bg-warning-soft border border-warning-line dark:border-warning-line rounded-[2rem] flex flex-col md:flex-row items-center gap-6">
                     <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-sm shadow-sm flex items-center justify-center shrink-0">
                         <Landmark className="w-8 h-8 text-warning" />
                     </div>
@@ -132,7 +132,7 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                     </div>
                     <div className="flex items-center gap-3 bg-white dark:bg-slate-800 p-1.5 rounded-xl border border-slate-100 dark:border-slate-700">
                         <span className="text-[10px] font-black text-slate-400 ml-3">STATUS</span>
-                        <div className="px-4 py-1.5 bg-emerald-500 text-white rounded-lg text-[10px] font-black tracking-widest">ENABLED</div>
+                        <div className="px-4 py-1.5 bg-success text-white rounded-lg text-[10px] font-black tracking-widest">ENABLED</div>
                     </div>
                 </div>
             </section>

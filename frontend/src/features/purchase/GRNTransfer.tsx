@@ -173,10 +173,10 @@ const GRNTransfer: React.FC = () => {
                     }
                 />
 
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-neutral-50 dark:bg-neutral-900 text-xs font-bold text-neutral-500 uppercase tracking-wider border-b border-neutral-200 dark:border-neutral-700">
+                            <thead className="bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
                                 <tr>
                                     <th className="px-6 py-3">Transfer #</th>
                                     <th className="px-6 py-3">Source GRN</th>
@@ -185,27 +185,27 @@ const GRNTransfer: React.FC = () => {
                                     <th className="px-6 py-3">Date</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {transfers.map(t => (
-                                    <tr key={t._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40">
-                                        <td className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white">{t.transferNumber}</td>
-                                        <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-300">
+                                    <tr key={t._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40">
+                                        <td className="px-6 py-4 text-sm font-bold text-slate-900 dark:text-white">{t.transferNumber}</td>
+                                        <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
                                             {typeof t.sourceGrnId === 'object' ? t.sourceGrnId?.grnNumber : t.sourceGrnId}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-300">
+                                        <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
                                             <span className="inline-flex items-center gap-1">
-                                                {warehouseName(t.fromWarehouseId)} <ArrowRightLeft className="w-3 h-3 text-neutral-400" /> {warehouseName(t.toWarehouseId)}
+                                                {warehouseName(t.fromWarehouseId)} <ArrowRightLeft className="w-3 h-3 text-slate-400" /> {warehouseName(t.toWarehouseId)}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-xs text-neutral-500">
+                                        <td className="px-6 py-4 text-xs text-slate-500">
                                             {t.items.map(i => `${i.productName} (${i.quantity})`).join(', ')}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-neutral-500">{formatDate(t.transferDate)}</td>
+                                        <td className="px-6 py-4 text-sm text-slate-500">{formatDate(t.transferDate)}</td>
                                     </tr>
                                 ))}
                                 {!isLoading && transfers.length === 0 && (
                                     <tr>
-                                        <td colSpan={5} className="px-6 py-16 text-center text-neutral-400">
+                                        <td colSpan={5} className="px-6 py-16 text-center text-slate-400">
                                             <Package className="w-10 h-10 mx-auto mb-3 opacity-40" />
                                             No transfers yet. Move GRN-received stock between warehouses to see it here.
                                         </td>
@@ -219,20 +219,20 @@ const GRNTransfer: React.FC = () => {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
                             <h3 className="text-lg font-bold">New GRN Transfer</h3>
-                            <button onClick={() => { setIsModalOpen(false); resetForm(); }} className="text-neutral-400 hover:text-neutral-700">
+                            <button onClick={() => { setIsModalOpen(false); resetForm(); }} className="text-slate-400 hover:text-slate-700">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
                         <div className="p-6 space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">Source GRN</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Source GRN</label>
                                 <select
                                     value={sourceGrnId}
                                     onChange={(e) => handleGrnSelect(e.target.value)}
-                                    className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                                    className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary outline-none"
                                 >
                                     <option value="">Select GRN...</option>
                                     {grns.map(g => <option key={g.id} value={g.id}>{g.grnNumber} — {g.vendorName}</option>)}
@@ -240,22 +240,22 @@ const GRNTransfer: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">From Warehouse</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">From Warehouse</label>
                                     <select
                                         value={fromWarehouseId}
                                         onChange={(e) => setFromWarehouseId(e.target.value)}
-                                        className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                                        className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary outline-none"
                                     >
                                         <option value="">Select...</option>
                                         {(warehouses as any[]).map((w: any) => <option key={w._id} value={w._id}>{w.name}</option>)}
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">To Warehouse</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">To Warehouse</label>
                                     <select
                                         value={toWarehouseId}
                                         onChange={(e) => setToWarehouseId(e.target.value)}
-                                        className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                                        className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary outline-none"
                                     >
                                         <option value="">Select...</option>
                                         {(warehouses as any[]).map((w: any) => <option key={w._id} value={w._id}>{w.name}</option>)}
@@ -264,9 +264,9 @@ const GRNTransfer: React.FC = () => {
                             </div>
 
                             {selectedGrn && (
-                                <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden">
+                                <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
                                     <table className="w-full text-left text-sm">
-                                        <thead className="bg-neutral-50 dark:bg-neutral-900 text-xs font-bold text-neutral-500 uppercase">
+                                        <thead className="bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-500 uppercase">
                                             <tr>
                                                 <th className="px-4 py-2">Item</th>
                                                 <th className="px-4 py-2">Batch</th>
@@ -274,19 +274,19 @@ const GRNTransfer: React.FC = () => {
                                                 <th className="px-4 py-2 w-28">Transfer Qty</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                             {draftItems.map(item => (
                                                 <tr key={item.productId}>
                                                     <td className="px-4 py-2">{item.productName}</td>
-                                                    <td className="px-4 py-2 text-xs text-neutral-400">{item.batchNumber || '—'}</td>
-                                                    <td className="px-4 py-2 text-neutral-500">{item.availableInGrn}</td>
+                                                    <td className="px-4 py-2 text-xs text-slate-400">{item.batchNumber || '—'}</td>
+                                                    <td className="px-4 py-2 text-slate-500">{item.availableInGrn}</td>
                                                     <td className="px-4 py-2">
                                                         <input
                                                             type="number"
                                                             min="0"
                                                             value={item.quantity || ''}
                                                             onChange={(e) => updateDraftQty(item.productId, parseFloat(e.target.value) || 0)}
-                                                            className="w-24 px-2 py-1 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded text-sm"
+                                                            className="w-24 px-2 py-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-sm"
                                                         />
                                                     </td>
                                                 </tr>
@@ -297,19 +297,19 @@ const GRNTransfer: React.FC = () => {
                             )}
 
                             <div>
-                                <label className="text-xs font-bold text-neutral-500 uppercase mb-1 block">Notes</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Notes</label>
                                 <textarea
                                     value={notes}
                                     onChange={(e) => setNotes(e.target.value)}
-                                    className="w-full px-4 py-2 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg resize-none h-20"
+                                    className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg resize-none h-20"
                                     placeholder="Reason for transfer..."
                                 />
                             </div>
                         </div>
-                        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-200 dark:border-neutral-700">
+                        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-700">
                             <button
                                 onClick={() => { setIsModalOpen(false); resetForm(); }}
-                                className="px-4 py-2 text-sm font-bold text-neutral-500 hover:text-neutral-800"
+                                className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800"
                             >
                                 Cancel
                             </button>

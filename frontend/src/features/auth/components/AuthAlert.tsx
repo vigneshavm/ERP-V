@@ -10,11 +10,11 @@ const AuthAlert: React.FC<AuthAlertProps> = ({ type, title, message }) => {
     if (!message) return null;
 
     const isError = type === 'error';
-    const bgColor = isError ? 'bg-red-50 dark:bg-red-900/10' : 'bg-green-50 dark:bg-green-900/10';
-    const borderColor = isError ? 'border-red-500 dark:border-red-800' : 'border-green-500 dark:border-green-800';
-    const textColor = isError ? 'text-red-800 dark:text-red-200' : 'text-green-800 dark:text-green-200';
-    const subTextColor = isError ? 'text-red-700 dark:text-red-300' : 'text-green-700 dark:text-green-300';
-    const iconColor = isError ? 'text-red-400 dark:text-red-500' : 'text-green-400 dark:text-green-500';
+    const bgColor = isError ? 'bg-danger-soft dark:bg-danger-soft' : 'bg-success-soft dark:bg-success-soft';
+    const borderColor = isError ? 'border-danger dark:border-danger-line' : 'border-success dark:border-success-line';
+    const textColor = isError ? 'text-danger dark:text-danger' : 'text-success dark:text-success';
+    const subTextColor = isError ? 'text-danger dark:text-danger' : 'text-success dark:text-success';
+    const iconColor = isError ? 'text-danger dark:text-danger' : 'text-success dark:text-success';
 
     return (
         <div className={`rounded-md ${bgColor} p-4 border-l-4 ${borderColor}`}>

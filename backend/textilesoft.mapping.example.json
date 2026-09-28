@@ -1,0 +1,30 @@
+{
+  "_comment": "EXAMPLE ONLY - table/column names below are placeholders. Run `npm run discover:textilesoft` to find the real ones, copy this to textilesoft.mapping.json and edit.",
+  "source": {
+    "table": "dbo.ItemMaster",
+    "filters": [{ "column": "Active", "op": "=", "value": 1 }]
+  },
+  "columns": {
+    "name": "ItemName",
+    "sku": "ItemCode",
+    "barcode": "Barcode",
+    "category": "CategoryName",
+    "brand": "BrandName",
+    "size": "SizeName",
+    "color": "ColorName",
+    "hsnCode": "HSNCode",
+    "gstRate": "GSTPer",
+    "unit": "UnitName",
+    "costPrice": "PurchaseRate",
+    "sellingPrice": "SaleRate",
+    "wholesaleRate": "WholesaleRate",
+    "isActive": "Active"
+  },
+  "stock": {
+    "table": "dbo.StockTable",
+    "keyColumn": "ItemCode",
+    "sourceKeyColumn": "ItemCode",
+    "qtyColumn": "Qty"
+  },
+  "defaults": { "unit": "pcs", "lowStockLimit": 5 }
+}

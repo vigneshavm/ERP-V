@@ -7,71 +7,66 @@ import { lazy } from 'react';
  * 2. Proactive pre-fetching on hover or expected navigation.
  */
 
+/**
+ * Screens with no live data behind them yet. They used to render hardcoded sample figures (the *MockUI files);
+ * now they open an explicit "not connected yet" page with no numbers on it.
+ */
+const notConnected = (title: string, detail?: string) => () =>
+    import('../components/shared/Layout/notConnected').then(m => ({ default: m.notConnected({ title, detail }) }));
+
+const CAMPAIGNS_DETAIL = 'Engagement and conversion per campaign need sales linked to the campaign that drove them, which the ERP doesn\'t record. WhatsApp campaigns you\'ve created are listed under WhatsApp Marketing.';
+
 export const Modules = {
     Dashboard: () => import("../features/dashboard/Dashboard"),
-    DashboardMockUI: () => import("../features/dashboard/DashboardMockUI"),
-    Finance: () => import("../features/financial/FinanceMockUI"),
-    FinanceMockUI: () => import("../features/financial/FinanceMockUI"),
+    Finance: () => import("../features/financial/Journal/JournalEntries"),
     AgedStockManager: () => import("../features/inventory/AgedStockManager"),
-    // "Inventory" now points at the real, data-backed manager (see LazyModules.Inventory
-    // below) instead of the static InventoryMockUI demo it used to point to, so the
-    // Items tab actually loads real data and its search/category filters work.
+    // "Inventory" is the real, data-backed manager.
     Inventory: () => import("../features/inventory/InventoryManager"),
-    InventoryMockUI: () => import("../features/inventory/InventoryMockUI"),
-    POS: () => import("../features/pos/POSMockUI"),
-    POSMockUI: () => import("../features/pos/POSMockUI"),
+    POS: () => import("../features/pos/POSModule"),
     Reports: () => import("../features/reports/index"),
-    Purchase: () => import("../features/purchase/PurchaseMockUI"),
-    PurchaseMockUI: () => import("../features/purchase/PurchaseMockUI"),
+    Purchase: () => import("../features/purchase/PurchaseRegister"),
     PurchaseEntry: () => import("../features/purchase/PurchaseEntry"),
-    VendorManager: () => import("../features/purchase/PurchaseMockUI"),
-    Sales: () => import("../features/sales/SalesMockUI"),
-    SalesMockUI: () => import("../features/sales/SalesMockUI"),
-    Expenses: () => import("../features/expenses/ExpensesMockUI"),
-    ExpensesMockUI: () => import("../features/expenses/ExpensesMockUI"),
-    MarketingMockUI: () => import("../features/marketing/MarketingMockUI"),
-    SuppliersMockUI: () => import("../features/suppliers/SuppliersMockUI"),
-    SupplierLedgerMockUI: () => import("../features/suppliers/SupplierLedgerMockUI"),
-    HRMockUI: () => import("../features/employees/HRMockUI"),
-    ReportsMockUI: () => import("../features/reports/ReportsMockUI"),
-    CustomerEngagementMockUI: () => import("../features/customer-engagement/CustomerEngagementMockUI"),
+    VendorManager: () => import("../features/suppliers/Suppliers"),
+    Sales: () => import("../features/sales/salesInvoices/SalesInvoice"),
+    Expenses: () => import("../features/expenses/ExpenseTrackerPage"),
     Settings: () => import("../features/system/Settings/Settings"),
-    SettingsMockUI: () => import("../features/system/Settings/SettingsMockUI"),
-    GrowMockUI: () => import("../features/dashboard/GrowMockUI"),
-    SystemMockUI: () => import("../features/system/SystemMockUI"),
-    Storefront: () => import("../features/dashboard/GrowMockUI"),
-    GrowDashboard: () => import("../features/dashboard/DashboardMockUI"),
+    Storefront: notConnected('Online storefront'),
+    GrowDashboard: notConnected('Growth dashboard'),
     GrowthHub: () => import("../features/dashboard/GrowthHub"),
-    OnlinePerformance: () => import("../features/dashboard/OnlinePerformance"),
-    MarketingMetrics: () => import("../features/dashboard/MarketingMetrics"),
-    MarketingCampaigns: () => import("../features/marketing/MarketingCampaigns"),
-    MarketingTemplates: () => import("../features/marketing/MarketingTemplates"),
-    EmailMarketing: () => import("../features/marketing/EmailMarketing"),
-    EmailEngagement: () => import("../features/customer-engagement/EmailEngagement"),
-    WhatsAppMarketing: () => import("../features/marketing/WhatsAppMarketing"),
-    SocialMediaMarketing: () => import("../features/marketing/SocialMediaMarketing"),
-    MarketingCoupons: () => import("../features/marketing/MarketingCoupons"),
-    MarketingOffers: () => import("../features/marketing/MarketingOffers"),
+    OnlinePerformance: notConnected('Online performance', 'Conversion rate, sessions, bounce rate and device mix need a web analytics integration for the online store, which isn\'t connected.'),
+    // Growth screens below had hardcoded members, campaigns, reviews and ROI; they now read ERP records, or say
+    // plainly that an integration isn't connected.
+    MarketingMetrics: () => import("../features/engagement/MarketingMetricsPage"),
+    MarketingCampaigns: notConnected('Marketing campaigns', CAMPAIGNS_DETAIL),
+    MarketingTemplates: notConnected('Marketing templates', 'Template usage and return figures need campaigns that record which template they used and the sales they led to; the ERP doesn\'t record either yet.'),
+    EmailMarketing: notConnected('Email marketing', 'Subscriber counts, open and click rates need an email provider that records sends; the ERP doesn\'t send or track marketing email yet.'),
+    EmailEngagement: notConnected('Email inbox', 'Customer email threads need a connected mailbox that the ERP reads and stores; no mailbox is connected.'),
+    WhatsAppMarketing: () => import("../features/engagement/WhatsAppCampaignsPage"),
+    SocialMediaMarketing: notConnected('Social media', 'Reach, followers and post performance need connected Instagram, Facebook or LinkedIn business accounts; the ERP doesn\'t read social media data.'),
+    MarketingCoupons: notConnected('Coupons', 'Redemptions and revenue per coupon need the coupon used to be recorded on each sale; invoices don\'t record coupons yet.'),
+    MarketingOffers: notConnected('Offer performance', 'Sales lift and discount analysis need each sale to record the offer that applied, which invoices don\'t yet. Your combo offers themselves are managed under Inventory → Combo Offers.'),
     OnlineStore: () => import("../features/commercial/OnlineStore/OnlineStore"),
-    Marketing: () => import("../features/marketing/MarketingMockUI"),
+    Marketing: notConnected('Marketing campaigns', CAMPAIGNS_DETAIL),
     MarketingTools: () => import("../features/business/MarketingTools"),
-    GoogleBusiness: () => import("../features/business/GoogleBusiness"),
-    Sync: () => import("../features/system/SystemMockUI"),
+    GoogleBusiness: notConnected('Google Business Profile', 'Reviews, posts and insights need the Google Business Profile API, which isn\'t connected; the ERP\'s Google sync is not implemented yet.'),
+    Sync: notConnected('Sync & backup'),
     DeviceIntelligence: () => import("../features/system/Sync/DeviceIntelligence"),
-    Data: () => import("../features/system/SystemMockUI"),
-    GrowReports: () => import("../features/dashboard/GrowMockUI"),
-    Architecture: () => import("../features/system/SystemMockUI"),
+    Data: () => import("../features/system/Data/index"),
+    GrowReports: notConnected('Growth reports'),
+    Architecture: notConnected('Tenant architect'),
     Login: () => import("../features/auth/pages/Login"),
-    SMSMarketing: () => import("../features/marketing/SMSMarketing"),
-    WhatsAppEngagement: () => import("../features/customer-engagement/WhatsAppEngagement"),
-    LoyaltyEngagement: () => import("../features/customer-engagement/LoyaltyEngagement"),
-    FeedbackEngagement: () => import("../features/customer-engagement/FeedbackEngagement"),
-    SuperAdminGrowthConsole: () => import("../features/dashboard/GrowMockUI"),
-    TenantManagement: () => import("../features/system/SystemMockUI"),
-    GSTReconciliation: () => import("../features/finance/GST/GSTReconciliation"),
+    SMSMarketing: notConnected('SMS marketing', 'Sent, delivered and click counts need an SMS provider (such as MSG91) that the ERP sends through and records; no SMS provider is connected and the ERP doesn\'t send marketing SMS yet.'),
+    WhatsAppEngagement: notConnected('WhatsApp conversations', 'Customer chats need a connected WhatsApp Business account that stores incoming messages; the ERP doesn\'t receive or store WhatsApp messages yet.'),
+    LoyaltyEngagement: () => import("../features/engagement/LoyaltyReportPage"),
+    FeedbackEngagement: notConnected('Customer feedback', 'Satisfaction scores, detractor rate and resolution times need customer feedback records; the ERP only stores staff feedback about the app.'),
+    SuperAdminGrowthConsole: notConnected('Platform admin console'),
+    TenantManagement: notConnected('Tenant management'),
+    // The old GST reconciliation page showed made-up match counts. Matching GSTR-2B needs the portal download imported
+    // and compared with shop (Textilesoft) purchases as well as ERP bills, which isn't built yet.
+    GSTReconciliation: notConnected('GSTR-2B reconciliation', 'Matching your purchases to GSTR-2B needs the GST portal download to be imported, which isn\'t built yet. Input tax credit from your purchases is in Insights › Reports › GST › Purchase GST Register (ITC).'),
     ReprintQueue: () => import("../features/inventory/ReprintQueue"),
-    TenantGrowthSettings: () => import("../features/dashboard/GrowMockUI"),
-    TenantArchitect: () => import("../features/system/SystemMockUI"),
+    TenantGrowthSettings: notConnected('Growth settings'),
+    TenantArchitect: notConnected('Tenant architect'),
     AuditLogs: () => import("../features/system/Audit/AuditLogViewer"),
     SalesInvoiceRegister: () => import("../features/sales/salesInvoices/SalesInvoice"),
     EstimateCreator: () => import("../features/sales/estimates/Estimate"),
@@ -86,10 +81,9 @@ export const Modules = {
     PaymentInCreator: () => import("../features/sales/payments/PaymentInCreator"),
     PaymentInList: () => import("../features/sales/payments/PaymentInList"),
     ReturnedItemsManager: () => import("../features/sales/returns/ReturnedItems"),
-    CustomerCredits: () => import("../features/sales/payments/CustomerCreditsMockUI"),
-    OutstandingDues: () => import("../features/sales/payments/OutstandingDuesMockUI"),
+    CustomerCredits: notConnected('Customer credits', 'Customers who owe you money are listed under Sales › Dues.'),
+    OutstandingDues: () => import("../features/customers/CustomersWithDues"),
     MrpPendingInvoices: () => import("../features/sales/MrpPendingInvoices"),
-    SalesModulePlaceholder: () => import("../features/sales/SalesModulePlaceholderMockUI"),
     SalesInvoiceForm: () => import("../features/sales/salesInvoices/SalesInvoiceForm"),
     SalesInvoiceDetail: () => import("../features/sales/salesInvoices/SalesInvoiceDetail"),
     PurchaseOrdersModule: () => import("../features/purchase/PurchaseOrdersModule"),
@@ -109,20 +103,19 @@ export const Modules = {
     PurchaseOrderDetails: () => import("../features/purchase/PurchaseOrderDetails"),
     PurchaseOrderForm: () => import("../features/purchase/PurchaseOrderForm"),
     PurchaseOrderList: () => import("../features/purchase/PurchaseOrderList"),
-    PurchaseReturnModule: () => import("../features/purchase/PurchaseMockUI"),
+    PurchaseReturnModule: () => import("../features/purchase/PurchaseReturns"),
     PurchaseReturns: () => import("../features/purchase/PurchaseReturns"),
     PurchaseReturnForm: () => import("../features/purchase/PurchaseReturnForm"),
     PurchaseUpload: () => import("../features/purchase/PurchaseUpload"),
     VendorInflowOutflow: () => import("../features/purchase/VendorInflowOutflow"),
     CustomerList: () => import("../features/customers/CustomerList"),
-    CustomerMockUI: () => import("../features/customers/CustomerMockUI"),
     CustomerLedger: () => import("../features/customers/CustomerLedger"),
     CustomerStatements: () => import("../features/customers/CustomerStatements"),
     CustomerGroups: () => import("../features/customers/CustomerGroups"),
     LoyaltyPoints: () => import("../features/customers/LoyaltyPoints"),
     AddCustomer: () => import("../features/customers/AddCustomer"),
     CustomerDetail: () => import("../features/customers/CustomerDetail"),
-    CustomersPortfolio: () => import("../features/customers/CustomerMockUI"),
+    CustomersPortfolio: () => import("../features/customers/CustomerList"),
     CustomersWithDues: () => import("../features/customers/CustomersWithDues"),
     EditCustomer: () => import("../features/customers/EditCustomer"),
     SupplierLedger: () => import("../features/suppliers/SupplierLedger"),
@@ -131,29 +124,30 @@ export const Modules = {
     Agents: () => import("../features/suppliers/Agents"),
     SupplierAgeing: () => import("../features/purchase/SupplierAgeing"),
     EditSupplier: () => import("../features/suppliers/EditSupplier"),
-    // Was pointing at InventoryMockUI (the same generic demo table used for the
-    // old Items page) — the real CategoryManager already existed and is wired
-    // to the real /api/inventory/categories endpoint, it just wasn't used here.
+    // The real CategoryManager, on /api/inventory/categories.
     ItemCategories: () => import("../features/inventory/CategoryManager"),
     ComboOffers: () => import("../features/combo-offers/ComboOfferManager"),
     SerializedUnits: () => import("../features/inventory/SerializedUnitLookup"),
     StockWriteOff: () => import("../features/inventory/StockWriteOff"),
     StockTransfer: () => import("../features/inventory/StockTransfer"),
-    StockSummary: () => import("../features/inventory/InventoryMockUI"),
-    StockMovement: () => import("../features/inventory/InventoryMockUI"),
-    LowStockAlerts: () => import("../features/inventory/InventoryMockUI"),
-    UnitsHSNAgent: () => import("../features/inventory/InventoryMockUI"),
-    WarehouseIntelligence: () => import("../features/inventory/InventoryMockUI"),
-    BatchExpiryIntelligence: () => import("../features/inventory/InventoryMockUI"),
-    FinanceAgentDashboard: () => import("../features/financial/FinanceAgentDashboard"),
-    DailyFinanceTracker: () => import("../features/financial/FinanceMockUI"),
-    CashBankIntelligence: () => import("../features/financial/Cashbank/CashBankIntelligence"),
+    StockSummary: () => import("../features/inventory/StockSummaryPage"),
+    StockMovement: notConnected('Stock movement'),
+    LowStockAlerts: () => import("../features/inventory/LowStockAlertsPage"),
+    // Units and HSN codes are MasterEntry types (UNIT, PRODUCT_HSN), managed in MasterDataManager.
+    UnitsHSNAgent: () => import("../features/system/MasterDataManager"),
+    WarehouseIntelligence: notConnected('Warehouses'),
+    BatchExpiryIntelligence: notConnected('Batches & expiry'),
+    // Finance pages below were hardcoded demo screens; each key now opens a page backed by /api/reports/finance/*
+    // or an existing API-backed Cashbank page.
+    FinanceAgentDashboard: () => import("../features/financial/overview/CashBankOverview"),
+    DailyFinanceTracker: notConnected("Today's summary", "For today's sales, receipts and payments, open Insights › Reports › Day Book."),
+    CashBankIntelligence: () => import("../features/financial/Cashbank/CashInHand"),
     PettyCashIntelligence: () => import("../features/financial/Cashbank/PettyCashClose"),
     MasterDataManager: () => import("../features/system/MasterDataManager"),
     DiscountPermissions: () => import("../features/system/DiscountPermissions"),
-    BankIntelligence: () => import("../features/financial/Cashbank/BankIntelligence"),
-    BankReconciliationIntelligence: () => import("../features/financial/Cashbank/BankReconciliation"),
-    FundTransferIntelligence: () => import("../features/financial/Cashbank/FundTransfer"),
+    BankIntelligence: () => import("../features/financial/Cashbank/BankAccounts"),
+    BankReconciliationIntelligence: () => import("../features/financial/overview/BankReconciliationPage"),
+    FundTransferIntelligence: () => import("../features/financial/Cashbank/Transfers"),
     BankAccounts: () => import("../features/financial/Cashbank/BankAccounts"),
     JournalEntries: () => import("../features/financial/Journal/JournalEntries"),
     JournalEntryForm: () => import("../features/financial/Journal/JournalEntryForm"),
@@ -167,21 +161,20 @@ export const Modules = {
     EMIPlans: () => import("../features/finance/EMIPlans"),
     CardTerminals: () => import("../features/finance/CardTerminals"),
     BudgetTrackerPage: () => import("../features/finance/BudgetTrackerPage"),
-    LoanAccounts: () => import("../features/financial/Cashbank/LoanAccounts"),
-    FinancialGoals: () => import("../features/financial/Cashbank/FinancialGoals"),
-    ExpenseIntelligence: () => import("../features/expenses/ExpenseIntelligence"),
+    LoanAccounts: () => import("../features/financial/overview/LoansPage"),
+    FinancialGoals: notConnected('Financial goals'),
+    ExpenseIntelligence: () => import("../features/expenses/ExpenseTrackerPage"),
     ExpenseCategoriesManager: () => import("../features/expenses/ExpenseCategoriesManager"),
-    ExpensesModuleFeature: () => import("../features/expenses/ExpensesMockUI"),
+    ExpensesModuleFeature: () => import("../features/expenses/ExpenseTrackerPage"),
     RecurringExpensesIntelligence: () => import("../features/expenses/RecurringExpensesIntelligence"),
     ExpenseReportsIntelligence: () => import("../features/expenses/ExpenseReportsIntelligence"),
     // POS Intelligence
     POSOrdersIntelligence: () => import("../features/pos/POSOrdersIntelligence"),
-    POSReturnsIntelligence: () => import("../features/pos/POSReturnsIntelligenceMockUI"),
-    ShiftManagementIntelligence: () => import("../features/pos/ShiftManagementIntelligenceMockUI"),
-    CashDrawerIntelligence: () => import("../features/pos/CashDrawerIntelligenceMockUI"),
+    // Returns & Refund Audit (live ERP returns). The old POSReturnsIntelligence fell back to six hardcoded returns.
+    POSReturnsIntelligence: () => import("../features/pos/POSReturnsPage"),
+    ShiftManagementIntelligence: notConnected('Shift management'),
+    CashDrawerIntelligence: notConnected('Cash drawer', 'For cash in and out, use Insights › Reports › Day Book or Cash Flow.'),
     LaborManager: () => import("../features/employees/LaborManager"),
-    LaborAdd: () => import("../features/employees/LaborAddMockUI"),
-    LaborDetail: () => import("../features/employees/LaborDetailMockUI"),
     StaffManager: () => import("../features/employees/StaffManager"),
     AllowanceManager: () => import("../features/employees/AllowanceManager"),
     PayrollDashboard: () => import("../features/payroll/PayrollDashboard"),
@@ -199,7 +192,6 @@ export const Modules = {
     DailyFinance: () => import("../features/expenses/DailyFinance"),
     POSModule: () => import("../features/pos/POSModule"),
     Suppliers: () => import("../features/suppliers/Suppliers"),
-    PurchaseRegisterMockUI: () => import("../features/purchase/PurchaseRegisterMockUI"),
     PurchaseExpress: () => import("../features/purchase/PurchaseExpress"),
     // Wholesale/Retail (WR) Billing
     WRCounter: () => import("../features/wholesale/WRCounterPicker"),
@@ -218,23 +210,7 @@ export const Modules = {
  * unmount/remount when navigating between aliased routes.
  */
 const _lazyDashboard = lazy(Modules.Dashboard);
-const _lazyDashboardMockUI = lazy(Modules.DashboardMockUI);
-const _lazyFinanceMockUI = lazy(Modules.FinanceMockUI);
-const _lazyInventoryMockUI = lazy(Modules.InventoryMockUI);
 const _lazyInventoryManager = lazy(Modules.InventoryManager);
-const _lazyPOSMockUI = lazy(Modules.POSMockUI);
-const _lazyReportsMockUI = lazy(Modules.ReportsMockUI);
-const _lazyPurchaseMockUI = lazy(Modules.PurchaseMockUI);
-const _lazySalesMockUI = lazy(Modules.SalesMockUI);
-const _lazyExpensesMockUI = lazy(Modules.ExpensesMockUI);
-const _lazyMarketingMockUI = lazy(Modules.MarketingMockUI);
-const _lazySuppliersMockUI = lazy(Modules.SuppliersMockUI);
-const _lazySupplierLedgerMockUI = lazy(Modules.SupplierLedgerMockUI);
-const _lazyHRMockUI = lazy(Modules.HRMockUI);
-const _lazyCustomerEngagementMockUI = lazy(Modules.CustomerEngagementMockUI);
-const _lazySettingsMockUI = lazy(Modules.SettingsMockUI);
-const _lazyGrowMockUI = lazy(Modules.GrowMockUI);
-const _lazySystemMockUI = lazy(Modules.SystemMockUI);
 const _lazyOnlineStore = lazy(Modules.OnlineStore);
 const _lazyGoogleBusiness = lazy(Modules.GoogleBusiness);
 const _lazyDeviceIntelligence = lazy(Modules.DeviceIntelligence);
@@ -255,17 +231,13 @@ const _lazyReturnedItemsManager = lazy(Modules.ReturnedItemsManager);
 const _lazyCustomerCredits = lazy(Modules.CustomerCredits);
 const _lazyOutstandingDues = lazy(Modules.OutstandingDues);
 const _lazyMrpPendingInvoices = lazy(Modules.MrpPendingInvoices);
-const _lazySalesModulePlaceholder = lazy(Modules.SalesModulePlaceholder);
 const _lazySalesInvoiceForm = lazy(Modules.SalesInvoiceForm);
 const _lazySalesInvoiceDetail = lazy(Modules.SalesInvoiceDetail);
 const _lazyGoodsReceived = lazy(Modules.GoodsReceived);
 const _lazyGRNTransfer = lazy(Modules.GRNTransfer);
-const _lazyCustomerMockUI = lazy(Modules.CustomerMockUI);
 const _lazyTransfers = lazy(Modules.Transfers);
 const _lazyFinancialGoals = lazy(Modules.FinancialGoals);
 const _lazyLaborManager = lazy(Modules.LaborManager);
-const _lazyLaborAdd = lazy(Modules.LaborAdd);
-const _lazyLaborDetail = lazy(Modules.LaborDetail);
 const _lazyStaffManager = lazy(Modules.StaffManager);
 const _lazyAllowanceManager = lazy(Modules.AllowanceManager);
 const _lazyPayrollDashboard = lazy(Modules.PayrollDashboard);
@@ -279,7 +251,6 @@ const _lazyPOSOrdersIntelligence = lazy(Modules.POSOrdersIntelligence);
 const _lazyPOSReturnsIntelligence = lazy(Modules.POSReturnsIntelligence);
 const _lazyShiftManagementIntelligence = lazy(Modules.ShiftManagementIntelligence);
 const _lazyCashDrawerIntelligence = lazy(Modules.CashDrawerIntelligence);
-// Upgraded from MockUI
 const _lazyPurchaseEntry = lazy(Modules.PurchaseEntry);
 const _lazyGrowthHub = lazy(Modules.GrowthHub);
 const _lazyOnlinePerformance = lazy(Modules.OnlinePerformance);
@@ -370,7 +341,6 @@ const _lazyAddSupplier = lazy(Modules.VendorForm);
 const _lazySupplierDetail = lazy(Modules.VendorDetails);
 const _lazyPOSModule = lazy(Modules.POSModule);
 const _lazySuppliers = lazy(Modules.Suppliers);
-const _lazyPurchaseRegisterMockUI = lazy(Modules.PurchaseRegisterMockUI);
 const _lazyPurchaseExpress = lazy(Modules.PurchaseExpress);
 // Wholesale/Retail (WR) Billing
 const _lazyWRCounter = lazy(Modules.WRCounter);
@@ -387,36 +357,20 @@ const _lazyStockTransfer = lazy(Modules.StockTransfer);
 
 export const LazyModules = {
     Dashboard: _lazyDashboard,
-    DashboardMockUI: _lazyDashboardMockUI,
-    Finance: _lazyFinanceMockUI,
-    FinanceMockUI: _lazyFinanceMockUI,
+    Finance: lazy(Modules.Finance),
     AgedStockManager: _lazyAgedStockManager,
     Inventory: _lazyInventoryManager,
-    InventoryMockUI: _lazyInventoryMockUI,
     InventoryManager: _lazyInventoryManager,
-    POS: _lazyPOSMockUI,
-    POSMockUI: _lazyPOSMockUI,
+    POS: lazy(Modules.POS),
     Reports: _lazyReports,
-    Purchase: _lazyPurchaseMockUI,
-    PurchaseMockUI: _lazyPurchaseMockUI,
+    Purchase: lazy(Modules.Purchase),
     PurchaseEntry: _lazyPurchaseEntry,
-    VendorManager: _lazyPurchaseMockUI,
-    Sales: _lazySalesMockUI,
-    SalesMockUI: _lazySalesMockUI,
-    Expenses: _lazyExpensesMockUI,
-    ExpensesMockUI: _lazyExpensesMockUI,
-    MarketingMockUI: _lazyMarketingMockUI,
-    SuppliersMockUI: _lazySuppliersMockUI,
-    SupplierLedgerMockUI: _lazySupplierLedgerMockUI,
-    HRMockUI: _lazyHRMockUI,
-    ReportsMockUI: _lazyReportsMockUI,
-    CustomerEngagementMockUI: _lazyCustomerEngagementMockUI,
+    VendorManager: lazy(Modules.VendorManager),
+    Sales: lazy(Modules.Sales),
+    Expenses: lazy(Modules.Expenses),
     Settings: _lazySettings,
-    SettingsMockUI: _lazySettingsMockUI,
-    GrowMockUI: _lazyGrowMockUI,
-    SystemMockUI: _lazySystemMockUI,
-    Storefront: _lazyGrowMockUI,
-    GrowDashboard: _lazyDashboardMockUI,
+    Storefront: lazy(Modules.Storefront),
+    GrowDashboard: lazy(Modules.GrowDashboard),
     GrowthHub: _lazyGrowthHub,
     OnlinePerformance: _lazyOnlinePerformance,
     MarketingMetrics: _lazyMarketingMetrics,
@@ -429,25 +383,25 @@ export const LazyModules = {
     MarketingCoupons: _lazyMarketingCoupons,
     MarketingOffers: _lazyMarketingOffers,
     OnlineStore: _lazyOnlineStore,
-    Marketing: _lazyMarketingMockUI,
+    Marketing: lazy(Modules.Marketing),
     MarketingTools: _lazyMarketingTools,
     GoogleBusiness: _lazyGoogleBusiness,
-    Sync: _lazySystemMockUI,
+    Sync: lazy(Modules.Sync),
     DeviceIntelligence: _lazyDeviceIntelligence,
-    Data: _lazySystemMockUI,
-    GrowReports: _lazyGrowMockUI,
-    Architecture: _lazySystemMockUI,
+    Data: lazy(Modules.Data),
+    GrowReports: lazy(Modules.GrowReports),
+    Architecture: lazy(Modules.Architecture),
     Login: _lazyLogin,
     SMSMarketing: _lazySMSMarketing,
     WhatsAppEngagement: _lazyWhatsAppEngagement,
     LoyaltyEngagement: _lazyLoyaltyEngagement,
     FeedbackEngagement: _lazyFeedbackEngagement,
-    SuperAdminGrowthConsole: _lazyGrowMockUI,
-    TenantManagement: _lazySystemMockUI,
+    SuperAdminGrowthConsole: lazy(Modules.SuperAdminGrowthConsole),
+    TenantManagement: lazy(Modules.TenantManagement),
     GSTReconciliation: _lazyGSTReconciliation,
     ReprintQueue: _lazyReprintQueue,
-    TenantGrowthSettings: _lazyGrowMockUI,
-    TenantArchitect: _lazySystemMockUI,
+    TenantGrowthSettings: lazy(Modules.TenantGrowthSettings),
+    TenantArchitect: lazy(Modules.TenantArchitect),
     AuditLogs: _lazyAuditLogs,
     SalesInvoiceRegister: _lazySalesInvoiceRegister,
     EstimateCreator: _lazyEstimateCreator,
@@ -465,7 +419,6 @@ export const LazyModules = {
     CustomerCredits: _lazyCustomerCredits,
     OutstandingDues: _lazyOutstandingDues,
     MrpPendingInvoices: _lazyMrpPendingInvoices,
-    SalesModulePlaceholder: _lazySalesModulePlaceholder,
     SalesInvoiceForm: _lazySalesInvoiceForm,
     SalesInvoiceDetail: _lazySalesInvoiceDetail,
     PurchaseOrdersModule: _lazyPurchaseOrdersModule,
@@ -485,20 +438,19 @@ export const LazyModules = {
     PurchaseOrderDetails: _lazyPurchaseOrderDetails,
     PurchaseOrderForm: _lazyPurchaseOrderForm,
     PurchaseOrderList: _lazyPurchaseOrderList,
-    PurchaseReturnModule: _lazyPurchaseMockUI,
+    PurchaseReturnModule: lazy(Modules.PurchaseReturnModule),
     PurchaseReturns: _lazyPurchaseReturns,
     PurchaseReturnForm: _lazyPurchaseReturnForm,
     PurchaseUpload: _lazyPurchaseUpload,
     VendorInflowOutflow: _lazyVendorInflowOutflow,
     CustomerList: _lazyCustomerList,
-    CustomerMockUI: _lazyCustomerMockUI,
     CustomerLedger: _lazyCustomerLedger,
     CustomerStatements: _lazyCustomerStatements,
     CustomerGroups: _lazyCustomerGroups,
     LoyaltyPoints: _lazyLoyaltyPoints,
     AddCustomer: _lazyAddCustomer,
     CustomerDetail: _lazyCustomerDetail,
-    CustomersPortfolio: _lazyCustomerMockUI,
+    CustomersPortfolio: lazy(Modules.CustomersPortfolio),
     CustomersWithDues: _lazyCustomersWithDues,
     EditCustomer: _lazyEditCustomer,
     SupplierLedger: _lazySupplierLedger,
@@ -512,14 +464,14 @@ export const LazyModules = {
     SerializedUnits: _lazySerializedUnitLookup,
     StockWriteOff: _lazyStockWriteOff,
     StockTransfer: _lazyStockTransfer,
-    StockSummary: _lazyInventoryMockUI,
-    StockMovement: _lazyInventoryMockUI,
-    LowStockAlerts: _lazyInventoryMockUI,
-    UnitsHSNAgent: _lazyInventoryMockUI,
-    WarehouseIntelligence: _lazyInventoryMockUI,
-    BatchExpiryIntelligence: _lazyInventoryMockUI,
+    StockSummary: lazy(Modules.StockSummary),
+    StockMovement: lazy(Modules.StockMovement),
+    LowStockAlerts: lazy(Modules.LowStockAlerts),
+    UnitsHSNAgent: _lazyMasterDataManager,
+    WarehouseIntelligence: lazy(Modules.WarehouseIntelligence),
+    BatchExpiryIntelligence: lazy(Modules.BatchExpiryIntelligence),
     FinanceAgentDashboard: _lazyFinanceAgentDashboard,
-    DailyFinanceTracker: _lazyFinanceMockUI,
+    DailyFinanceTracker: lazy(Modules.DailyFinanceTracker),
     CashBankIntelligence: _lazyCashBankIntelligence,
     PettyCashIntelligence: _lazyPettyCashClose,
     MasterDataManager: _lazyMasterDataManager,
@@ -544,7 +496,7 @@ export const LazyModules = {
     FinancialGoals: _lazyFinancialGoals,
     ExpenseIntelligence: _lazyExpenseIntelligence,
     ExpenseCategoriesManager: _lazyExpenseCategoriesManager,
-    ExpensesModuleFeature: _lazyExpensesMockUI,
+    ExpensesModuleFeature: lazy(Modules.ExpensesModuleFeature),
     RecurringExpensesIntelligence: _lazyRecurringExpensesIntelligence,
     ExpenseReportsIntelligence: _lazyExpenseReportsIntelligence,
     POSOrdersIntelligence: _lazyPOSOrdersIntelligence,
@@ -552,8 +504,6 @@ export const LazyModules = {
     ShiftManagementIntelligence: _lazyShiftManagementIntelligence,
     CashDrawerIntelligence: _lazyCashDrawerIntelligence,
     LaborManager: _lazyLaborManager,
-    LaborAdd: _lazyLaborAdd,
-    LaborDetail: _lazyLaborDetail,
     StaffManager: _lazyStaffManager,
     AllowanceManager: _lazyAllowanceManager,
     PayrollDashboard: _lazyPayrollDashboard,
@@ -570,7 +520,6 @@ export const LazyModules = {
     DailyFinance: _lazyDailyFinance,
     POSModule: _lazyPOSModule,
     Suppliers: _lazySuppliers,
-    PurchaseRegisterMockUI: _lazyPurchaseRegisterMockUI,
     PurchaseExpress: _lazyPurchaseExpress,
     // Wholesale/Retail (WR) Billing
     WRCounter: _lazyWRCounter,

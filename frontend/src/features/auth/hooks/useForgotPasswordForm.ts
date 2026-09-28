@@ -6,7 +6,7 @@ import { useAuthActions } from './useAuthActions';
 import { useEffect } from 'react';
 
 export const useForgotPasswordForm = () => {
-    const { dispatch, isLoading, reset } = useAuthActions();
+    const { dispatch, isLoading, isError, isSuccess, message, deviceConflict, reset } = useAuthActions();
 
     const form = useForm<ForgotPasswordInput>({
         resolver: zodResolver(forgotPasswordSchema),
@@ -29,5 +29,11 @@ export const useForgotPasswordForm = () => {
         form,
         onSubmit: form.handleSubmit(onSubmit),
         isLoading,
+        // Outcome of the auth request, for the page's error/success alerts.
+        isError,
+        isSuccess,
+        message,
+        deviceConflict,
+        reset,
     };
 };

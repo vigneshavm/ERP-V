@@ -7,7 +7,9 @@ import {
     getBackups,
     triggerBackup,
     restoreBackup,
-    getConflicts
+    getConflicts,
+    uploadLedgerEvents,
+    getLedgerEvents
 } from "../controllers/SyncController.js";
 import { protect } from "../../../middlewares/authMiddleware.js";
 
@@ -24,5 +26,8 @@ router.post("/backups", protect, triggerBackup);
 router.post("/restore", protect, restoreBackup);
 
 router.get("/conflicts", protect, getConflicts);
+
+router.get("/ledger", protect, getLedgerEvents);
+router.post("/ledger", protect, uploadLedgerEvents);
 
 export default router;

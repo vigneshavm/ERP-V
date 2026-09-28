@@ -97,13 +97,13 @@ const SmsTrackerPage: React.FC = () => {
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsExpenseFormOpen(true)}
-                                className="px-5 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-neutral-50 shadow-sm transition active:scale-95 uppercase tracking-widest"
+                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest"
                             >
                                 <Plus className="w-4 h-4" /> Manual Record
                             </button>
                             <button
                                 onClick={() => setShowTestInput(!showTestInput)}
-                                className="px-5 py-2.5 bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-xl text-xs font-black shadow-xl flex items-center gap-2 hover:opacity-90 transition active:scale-95 uppercase tracking-widest"
+                                className="px-5 py-2.5 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-xl text-xs font-black shadow-xl flex items-center gap-2 hover:opacity-90 transition active:scale-95 uppercase tracking-widest"
                             >
                                 <MessageSquare className="w-4 h-4" /> Capture SMS
                             </button>
@@ -120,7 +120,7 @@ const SmsTrackerPage: React.FC = () => {
 
                 {/* Manual Capture Console */}
                 {showTestInput && (
-                    <div className="bg-neutral-950 text-white p-8 rounded-[3rem] border border-neutral-800 shadow-2xl animate-in slide-in-from-top-6 duration-700 relative overflow-hidden group">
+                    <div className="bg-slate-950 text-white p-8 rounded-xl border border-slate-800 shadow-2xl animate-in slide-in-from-top-6 duration-700 relative overflow-hidden group">
                         <Zap className="absolute -top-10 -right-10 w-48 h-48 text-primary opacity-5 group-hover:scale-110 transition duration-1000" />
                         <div className="relative z-10 space-y-8">
                             <div className="flex items-center gap-4">
@@ -128,35 +128,35 @@ const SmsTrackerPage: React.FC = () => {
                                     <MessageSquare className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-black uppercase tracking-[0.2em]">Manual SMS Capture Protocol</h3>
-                                    <p className="text-[10px] text-neutral-400 font-bold italic mt-1">Directly inject transaction strings for intelligence processing.</p>
+                                    <h3 className="text-sm font-black uppercase tracking-[0.2em]">Add SMS manually</h3>
+                                    <p className="text-[10px] text-slate-400 font-bold italic mt-1">Directly inject transaction strings for intelligence processing.</p>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 <div className="md:col-span-1">
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-3">Institutional Sender</label>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Sender</label>
                                     <input
                                         type="text"
                                         value={testSender}
                                         onChange={(e) => setTestSender(e.target.value)}
                                         placeholder="e.g., HDFCBK"
-                                        className="w-full bg-neutral-900 border border-neutral-800 rounded-sm px-5 py-3 text-sm focus:ring-2 focus:ring-primary/40 transition-all font-mono font-bold tracking-tighter uppercase"
+                                        className="w-full bg-slate-900 border border-slate-800 rounded-sm px-5 py-3 text-sm focus:ring-2 focus:ring-primary/40 transition-all font-mono font-bold tracking-tighter uppercase"
                                     />
                                 </div>
                                 <div className="md:col-span-3">
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-3">Transaction SMS Payload</label>
+                                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Transaction SMS Payload</label>
                                     <textarea
                                         value={testSms}
                                         onChange={(e) => setTestSms(e.target.value)}
                                         placeholder="Paste the bank transaction string here..."
-                                        className="w-full bg-neutral-900 border border-neutral-800 rounded-sm px-5 py-3 text-sm focus:ring-2 focus:ring-primary/40 transition-all font-bold italic h-16"
+                                        className="w-full bg-slate-900 border border-slate-800 rounded-sm px-5 py-3 text-sm focus:ring-2 focus:ring-primary/40 transition-all font-bold italic h-16"
                                     />
                                 </div>
                             </div>
                             <div className="flex justify-end gap-4">
-                                <button onClick={() => setShowTestInput(false)} className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">Abort Capture</button>
-                                <button onClick={handleTestSubmit} className="px-8 py-2.5 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Execute Capture Node</button>
+                                <button onClick={() => setShowTestInput(false)} className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Abort Capture</button>
+                                <button onClick={handleTestSubmit} className="px-8 py-2.5 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Save SMS</button>
                             </div>
                         </div>
                     </div>
@@ -164,49 +164,49 @@ const SmsTrackerPage: React.FC = () => {
 
                 {/* KPI Pulse Node Row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-warning/30 transition-all duration-500">
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6 group hover:border-warning/30 transition-all duration-500">
                         <div className="w-16 h-16 bg-warning/10 text-warning rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                             <Layers className="w-8 h-8" />
                         </div>
                         <div>
-                            <div className="text-4xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">
+                            <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
                                 {transactions.filter((t: any) => t.status === 'pending').length}
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mt-1 italic">Pending Resolution</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Pending</div>
                         </div>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-success/30 transition-all duration-500">
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6 group hover:border-success/30 transition-all duration-500">
                         <div className="w-16 h-16 bg-success/10 text-success rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                             <CheckCircle2 className="w-8 h-8" />
                         </div>
                         <div>
-                            <div className="text-4xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">
+                            <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
                                 {transactions.filter((t: any) => t.status === 'converted').length}
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mt-1 italic">Resolved Nodes</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Resolved Nodes</div>
                         </div>
                     </div>
-                    <div className="bg-white dark:bg-neutral-800 p-8 rounded-[3rem] border border-neutral-200 dark:border-neutral-700 shadow-sm flex items-center gap-6 group hover:border-primary/30 transition-all duration-500">
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6 group hover:border-primary/30 transition-all duration-500">
                         <div className="w-16 h-16 bg-primary/10 text-primary rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                             <History className="w-8 h-8" />
                         </div>
                         <div>
-                            <div className="text-4xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">
+                            <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
                                 {transactions.length}
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mt-1 italic">Total Synchronized</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Total Synchronized</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Resolution Workspace */}
                 <div className="space-y-8">
-                    <div className="flex gap-4 p-1.5 bg-neutral-50 dark:bg-neutral-900 rounded-sm border border-neutral-100 dark:border-neutral-800 self-start">
+                    <div className="flex gap-4 p-1.5 bg-slate-50 dark:bg-slate-900 rounded-sm border border-slate-100 dark:border-slate-800 self-start">
                         <button
                             onClick={() => setFilter('pending')}
                             className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === 'pending'
-                                ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-xl'
-                                : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'
+                                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xl'
+                                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                                 }`}
                         >
                             Resolution Queue
@@ -214,8 +214,8 @@ const SmsTrackerPage: React.FC = () => {
                         <button
                             onClick={() => setFilter('converted')}
                             className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === 'converted'
-                                ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-xl'
-                                : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'
+                                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xl'
+                                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
                                 }`}
                         >
                             Audit History
@@ -239,13 +239,13 @@ const SmsTrackerPage: React.FC = () => {
                         </div>
                     ) : (
                         <div className="py-32 flex flex-col items-center justify-center text-center max-w-md mx-auto opacity-40">
-                            <div className="w-24 h-24 bg-neutral-100 dark:bg-neutral-900 rounded-[2.5rem] flex items-center justify-center text-neutral-400 mb-8">
+                            <div className="w-24 h-24 bg-slate-100 dark:bg-slate-900 rounded-[2.5rem] flex items-center justify-center text-slate-400 mb-8">
                                 {filter === 'pending' ? <CheckCircle2 className="w-12 h-12" /> : <AlertCircle className="w-12 h-12" />}
                             </div>
-                            <h3 className="text-xl font-black text-neutral-900 dark:text-white uppercase tracking-tighter italic">
+                            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">
                                 {filter === 'pending' ? 'Zero Pending Node Alerts' : 'Empty Audit Trail'}
                             </h3>
-                            <p className="text-xs font-bold text-neutral-500 mt-3 italic leading-relaxed uppercase tracking-widest">
+                            <p className="text-xs font-bold text-slate-500 mt-3 italic leading-relaxed uppercase tracking-widest">
                                 {filter === 'pending'
                                     ? 'All institutional banking SMS have been securely resolved into our records.'
                                     : 'No previously converted nodes found in the audit history.'}
@@ -255,13 +255,13 @@ const SmsTrackerPage: React.FC = () => {
                 </div>
 
                 {/* Intelligence Advisory Footer */}
-                <div className="bg-neutral-900 dark:bg-neutral-100 p-10 rounded-[3rem] shadow-2xl flex items-center gap-8 group">
+                <div className="bg-slate-900 dark:bg-slate-100 p-10 rounded-xl shadow-2xl flex items-center gap-8 group">
                     <div className="w-14 h-14 rounded-sm bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
                         <Zap className="w-7 h-7 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-xs font-black text-white dark:text-neutral-900 uppercase tracking-widest italic">SMS Extraction Intelligence Pulse Active</p>
-                        <p className="text-[10px] text-neutral-400 dark:text-neutral-500 font-bold mt-2 italic leading-relaxed">
+                        <p className="text-xs font-black text-white dark:text-slate-900 uppercase tracking-widest italic">Reading bank SMS</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold mt-2 italic leading-relaxed">
                             Command Engine: <span className="text-primary underline underline-offset-4 decoration-2">sms-intel-v1</span> · 
                             Status: monitoring inbound institutional banking nodes 24/7
                         </p>

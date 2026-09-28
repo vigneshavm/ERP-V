@@ -1,8 +1,6 @@
 import { Sale } from "../types/sales";
 import { Tenant, Branch } from "../types/tenant";
 import { generateReceiptJSON } from './receiptGenerator';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 // Helper to generate HTML string (shared between print and download)
 const generateReceiptHTML = (sale: Sale, tenant: Tenant, branch: Branch): string => {
@@ -220,6 +218,8 @@ export const downloadSaleReceiptPDF = async (sale: Sale, tenant: Tenant, branch:
     document.body.appendChild(container);
 
     try {
+      // Loaded on demand: html2canvas + jspdf are ~600 KB and only needed for PDF download
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')]);
       const canvas = await html2canvas(container, {
         scale: 2, // Improve quality
         useCORS: true,

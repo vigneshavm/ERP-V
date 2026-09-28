@@ -6,7 +6,7 @@ import { useAuthActions } from './useAuthActions';
 import { useEffect } from 'react';
 
 export const useResetPasswordForm = (email: string, token: string) => {
-    const { dispatch, isLoading, reset } = useAuthActions();
+    const { dispatch, isLoading, isError, isSuccess, message, deviceConflict, reset } = useAuthActions();
 
     const form = useForm<ResetPasswordInput>({
         resolver: zodResolver(resetPasswordSchema),
@@ -30,5 +30,11 @@ export const useResetPasswordForm = (email: string, token: string) => {
         form,
         onSubmit: form.handleSubmit(onSubmit),
         isLoading,
+        // Outcome of the auth request, for the page's error/success alerts.
+        isError,
+        isSuccess,
+        message,
+        deviceConflict,
+        reset,
     };
 };

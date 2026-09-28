@@ -30,6 +30,7 @@ import {
 } from "../../redux/slices/payrollSlice";
 import { getAccounts } from '../../redux/slices/cashbankSlice';
 import api from "../../services/api";
+import PageHeader from "../../components/shared/Layout/PageHeader";
 
 const AllowanceManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -160,27 +161,24 @@ const AllowanceManager: React.FC = () => {
 
     return (
         <div className="space-y-10 animate-in fade-in duration-500">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Allowance Management</h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Define earnings and deductions for your staff payroll.</p>
-                </div>
-                <button
+            <PageHeader
+                title="Allowance Management"
+                description="Define earnings and deductions for your staff payroll."
+                actions={<button
                     onClick={handleOpenAdd}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow-sm transition-all"
+                    className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg font-bold shadow-sm transition-all"
                 >
                     <PlusCircle className="w-5 h-5" />
                     Add New Component
-                </button>
-            </div>
+                </button>}
+            />
 
             {/* Tabs */}
             <div className="flex border-b border-slate-200 dark:border-slate-700">
                 <button
                     onClick={() => setActiveTab('breakdown')}
                     className={`px-6 py-3 text-sm font-bold transition-all border-b-2 ${activeTab === 'breakdown'
-                        ? 'border-blue-600 text-blue-600'
+                        ? 'border-primary text-primary'
                         : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                 >
@@ -189,7 +187,7 @@ const AllowanceManager: React.FC = () => {
                 <button
                     onClick={() => setActiveTab('list')}
                     className={`px-6 py-3 text-sm font-bold transition-all border-b-2 ${activeTab === 'list'
-                        ? 'border-blue-600 text-blue-600'
+                        ? 'border-primary text-primary'
                         : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                 >
@@ -199,7 +197,7 @@ const AllowanceManager: React.FC = () => {
 
             {loading && components.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 border-dashed">
-                    <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-4" />
+                    <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
                     <p className="text-slate-500 dark:text-slate-400 font-bold">Synchronizing Components...</p>
                 </div>
             ) : (
@@ -216,7 +214,7 @@ const AllowanceManager: React.FC = () => {
 
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
-                                        <CalendarIcon className="w-4 h-4 text-blue-500" />
+                                        <CalendarIcon className="w-4 h-4 text-primary" />
                                         <select
                                             className="bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
                                             value={selectedDate.month}
@@ -236,7 +234,7 @@ const AllowanceManager: React.FC = () => {
                                     </div>
 
                                     <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
-                                        <Users className="w-4 h-4 text-blue-500" />
+                                        <Users className="w-4 h-4 text-primary" />
                                         <select
                                             className="bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
                                             value={selectedEmployeeId}
@@ -266,13 +264,13 @@ const AllowanceManager: React.FC = () => {
                                     <div className="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-lg">
                                         <button
                                             onClick={() => setPayoutFrequency('Monthly')}
-                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${payoutFrequency === 'Monthly' ? 'bg-white dark:bg-slate-600 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${payoutFrequency === 'Monthly' ? 'bg-white dark:bg-slate-600 shadow text-primary dark:text-primary' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
                                         >
                                             Monthly
                                         </button>
                                         <button
                                             onClick={() => setPayoutFrequency('Weekly')}
-                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${payoutFrequency === 'Weekly' ? 'bg-white dark:bg-slate-600 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
+                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${payoutFrequency === 'Weekly' ? 'bg-white dark:bg-slate-600 shadow text-primary dark:text-primary' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}`}
                                         >
                                             Weekly
                                         </button>
@@ -286,16 +284,16 @@ const AllowanceManager: React.FC = () => {
                                         <tr className="bg-slate-50 dark:bg-slate-900/50">
                                             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Employee</th>
                                             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Worked Days</th>
-                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Prorated Basic</th>}
+                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Prorated Basic</th>}
                                             {earnings.filter(c => selectedBenefitId === 'ALL' || c._id === selectedBenefitId).map(c => (
-                                                <th key={c._id} className="px-6 py-4 text-[10px] font-bold text-success uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                                                <th key={c._id} className="px-6 py-4 text-right text-[10px] font-bold text-success uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                                                     {c.name} {isTeaAllowanceSelected && '(Rate)'}
                                                 </th>
                                             ))}
-                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-blue-50/30 dark:bg-blue-900/10">Selection Total</th>}
-                                            {isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-blue-50/30 dark:bg-blue-900/10">Total Amount</th>}
-                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/50">Total Payout</th>}
-                                            <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Actions</th>
+                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-right text-[10px] font-bold text-primary dark:text-primary uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-primary/30 dark:bg-primary-soft">Selection Total</th>}
+                                            {isTeaAllowanceSelected && <th className="px-6 py-4 text-right text-[10px] font-bold text-primary dark:text-primary uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-primary/30 dark:bg-primary-soft">Total Amount</th>}
+                                            {!isTeaAllowanceSelected && <th className="px-6 py-4 text-right text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/50">Total Payout</th>}
+                                            <th className="px-6 py-4 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -344,7 +342,7 @@ const AllowanceManager: React.FC = () => {
 
                                             return (
                                                 <tr key={emp._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
-                                                    <td className="px-6 py-4">
+                                                    <td className="px-6 py-4 text-right">
                                                         <div className="font-bold text-slate-800 dark:text-white whitespace-nowrap">{emp.name}</div>
                                                         <div className="text-[10px] font-medium text-slate-500 uppercase flex items-center gap-2 mt-0.5">
                                                             <Shield className="w-2.5 h-2.5" /> {emp.role}
@@ -352,7 +350,7 @@ const AllowanceManager: React.FC = () => {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-2">
-                                                            <span className={`px-2 py-0.5 rounded text-xs font-bold ${displayDays < daysInMonth ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                                                            <span className={`px-2 py-0.5 rounded text-xs font-bold ${displayDays < daysInMonth ? 'bg-warning-soft text-warning' : 'bg-success-soft text-success'}`}>
                                                                 {displayDays} {payoutFrequency === 'Monthly' ? `/ ${daysInMonth - displayDays}` : '(Fixed)'}
                                                             </span>
                                                             <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">P / L</span>
@@ -361,7 +359,7 @@ const AllowanceManager: React.FC = () => {
                                                     {!isTeaAllowanceSelected && (
                                                         <td className="px-6 py-4">
                                                             <div className="font-mono text-sm font-bold text-slate-600 dark:text-slate-400">₹{Math.round(basic).toLocaleString()}</div>
-                                                            {displayDays < daysInMonth && <div className="text-[9px] font-bold text-orange-500 uppercase tracking-tighter">Prorated</div>}
+                                                            {displayDays < daysInMonth && <div className="text-[9px] font-bold text-warning uppercase tracking-tighter">Prorated</div>}
                                                         </td>
                                                     )}
                                                     {earnings.filter(c => selectedBenefitId === 'ALL' || c._id === selectedBenefitId).map(c => {
@@ -384,28 +382,28 @@ const AllowanceManager: React.FC = () => {
                                                         }
 
                                                         return (
-                                                            <td key={c._id} className="px-6 py-4 font-mono text-sm text-emerald-600 dark:text-success whitespace-nowrap">
+                                                            <td key={c._id} className="px-6 py-4 text-right font-mono text-sm text-success dark:text-success whitespace-nowrap">
                                                                 {amount > 0 ? `₹${Math.round(amount).toLocaleString()}` : '-'}
                                                             </td>
                                                         );
                                                     })}
-                                                    <td className="px-6 py-4 font-bold text-blue-600 dark:text-blue-400 bg-blue-50/30 dark:bg-blue-900/10">
+                                                    <td className="px-6 py-4 text-right font-bold text-primary dark:text-primary bg-primary/30 dark:bg-primary-soft">
                                                         <div className="font-mono">₹{Math.round(isTeaAllowanceSelected ? selectedEarningsSum : selectedEarningsSum + basic).toLocaleString()}</div>
-                                                        <div className="text-[9px] text-blue-400 font-medium uppercase mt-0.5 tracking-tighter whitespace-nowrap">
+                                                        <div className="text-[9px] text-primary font-medium uppercase mt-0.5 tracking-tighter whitespace-nowrap">
                                                             {isTeaAllowanceSelected ? 'Total Amount' : 'Selection Total'}
                                                         </div>
                                                     </td>
                                                     {!isTeaAllowanceSelected && (
-                                                        <td className="px-6 py-4 font-bold text-slate-800 dark:text-white bg-slate-50/50 dark:bg-slate-900/10">
-                                                            <div className="text-blue-600 dark:text-blue-400">₹{Math.round(totalEarningsSum + basic).toLocaleString()}</div>
+                                                        <td className="px-6 py-4 text-right font-bold text-slate-800 dark:text-white bg-slate-50/50 dark:bg-slate-900/10">
+                                                            <div className="text-primary dark:text-primary">₹{Math.round(totalEarningsSum + basic).toLocaleString()}</div>
                                                             <div className="text-[9px] text-slate-400 font-medium uppercase mt-0.5 tracking-tighter whitespace-nowrap">Gross Estimate</div>
                                                         </td>
                                                     )}
-                                                    <td className="px-6 py-4">
+                                                    <td className="px-6 py-4 text-center">
                                                         <div className="flex items-center gap-2">
                                                             <button
                                                                 onClick={() => handlePayment(emp._id, accounts[0]?.bankName || 'Cash', effectiveWorkedDays)}
-                                                                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-blue-500/20"
+                                                                className="flex items-center gap-1.5 bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-blue-500/20"
                                                             >
                                                                 <Banknote className="w-3.5 h-3.5" />
                                                                 Pay
@@ -451,12 +449,12 @@ const AllowanceManager: React.FC = () => {
                                                 }, 0);
 
                                                 return (
-                                                    <td key={c._id} className="px-6 py-4 text-emerald-600 dark:text-success font-mono">
+                                                    <td key={c._id} className="text-right tabular-nums px-6 py-4 text-main font-mono">
                                                         ₹{Math.round(total).toLocaleString()}
                                                     </td>
                                                 );
                                             })}
-                                            <td className="px-6 py-4 text-blue-600 dark:text-blue-400 font-mono bg-blue-50/30 dark:bg-blue-900/10">
+                                            <td className="px-6 py-4 text-primary dark:text-primary font-mono bg-primary/30 dark:bg-primary-soft">
                                                 ₹{Math.round(employees.filter(e => selectedEmployeeId === 'ALL' || e._id === selectedEmployeeId).reduce((sum, emp) => {
                                                     const structure = structures[emp._id];
                                                     const attRecord = attendance.find((a: any) => (typeof a.employeeId === 'string' ? a.employeeId : a.employeeId._id) === emp._id);
@@ -486,7 +484,7 @@ const AllowanceManager: React.FC = () => {
                                                 }, 0)).toLocaleString()}
                                             </td>
                                             {!isTeaAllowanceSelected && (
-                                                <td className="px-6 py-4 text-blue-600 dark:text-blue-400 font-mono bg-slate-100/50 dark:bg-slate-800/50">
+                                                <td className="px-6 py-4 text-primary dark:text-primary font-mono bg-slate-100/50 dark:bg-slate-800/50">
                                                     ₹{Math.round(employees.filter(e => selectedEmployeeId === 'ALL' || e._id === selectedEmployeeId).reduce((sum, emp) => {
                                                         const structure = structures[emp._id];
                                                         const attRecord = attendance.find((a: any) => (typeof a.employeeId === 'string' ? a.employeeId : a.employeeId._id) === emp._id);
@@ -520,9 +518,9 @@ const AllowanceManager: React.FC = () => {
                                 </table>
                             </div>
                             {attendance.length === 0 && (
-                                <div className="p-4 bg-blue-50 dark:bg-blue-900/10 border-t border-blue-100 dark:border-blue-900/20 flex items-center gap-3">
-                                    <Info className="w-5 h-5 text-blue-500 shrink-0" />
-                                    <div className="text-xs text-blue-700 dark:text-blue-400 font-medium">
+                                <div className="p-4 bg-primary-soft dark:bg-primary-soft border-t border-primary/30 dark:border-primary/20 flex items-center gap-3">
+                                    <Info className="w-5 h-5 text-primary shrink-0" />
+                                    <div className="text-xs text-primary dark:text-primary font-medium">
                                         No attendance summaries found for this month. Calculations are shown based on full working days ({new Date(selectedDate.year, selectedDate.month + 1, 0).getDate()} days).
                                     </div>
                                 </div>
@@ -534,7 +532,7 @@ const AllowanceManager: React.FC = () => {
                         <div className="grid lg:grid-cols-2 gap-8 animate-in slide-in-from-bottom-4 duration-500">
                             {/* Earnings Section */}
                             <div className="space-y-4">
-                                <div className="flex items-center gap-2 text-emerald-600 dark:text-success font-bold uppercase tracking-wider text-sm px-1">
+                                <div className="flex items-center gap-2 text-success dark:text-success font-bold uppercase tracking-wider text-sm px-1">
                                     <TrendingUp className="w-4 h-4" />
                                     Earnings (Allowances)
                                 </div>
@@ -558,7 +556,7 @@ const AllowanceManager: React.FC = () => {
 
                             {/* Deductions Section */}
                             <div className="space-y-4">
-                                <div className="flex items-center gap-2 text-rose-600 dark:text-danger font-bold uppercase tracking-wider text-sm px-1">
+                                <div className="flex items-center gap-2 text-danger dark:text-danger font-bold uppercase tracking-wider text-sm px-1">
                                     <TrendingDown className="w-4 h-4" />
                                     Deductions
                                 </div>
@@ -590,7 +588,7 @@ const AllowanceManager: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 rounded-sm shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700">
                         <div className="p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
                             <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                                {editingId ? <Pencil className="w-5 h-5 text-blue-600" /> : <PlusCircle className="w-5 h-5 text-blue-600" />}
+                                {editingId ? <Pencil className="w-5 h-5 text-primary" /> : <PlusCircle className="w-5 h-5 text-primary" />}
                                 {editingId ? 'Edit Component' : 'New Salary Component'}
                             </h3>
                             <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
@@ -649,7 +647,7 @@ const AllowanceManager: React.FC = () => {
                                 <label className="flex items-center gap-2 cursor-pointer group">
                                     <input
                                         type="checkbox"
-                                        className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                        className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-blue-500"
                                         checked={formData.isTaxable}
                                         onChange={e => setFormData({ ...formData, isTaxable: e.target.checked })}
                                     />
@@ -658,7 +656,7 @@ const AllowanceManager: React.FC = () => {
                                 <label className="flex items-center gap-2 cursor-pointer group">
                                     <input
                                         type="checkbox"
-                                        className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                        className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-blue-500"
                                         checked={formData.isActive}
                                         onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
                                     />
@@ -676,7 +674,7 @@ const AllowanceManager: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-sm transition-all shadow-blue-500/20 flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold shadow-sm transition-all shadow-blue-500/20 flex items-center justify-center gap-2"
                                 >
                                     {editingId ? <Save className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                                     {editingId ? 'Save Changes' : 'Create Component'}
@@ -703,8 +701,8 @@ const ComponentCard = ({
         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 group hover:shadow-md transition-all flex items-center justify-between">
             <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-colors ${component.type === 'EARNING'
-                    ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-success group-hover:bg-emerald-100'
-                    : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-danger group-hover:bg-rose-100'
+                    ? 'bg-success-soft dark:bg-success-soft text-success dark:text-success group-hover:bg-success-soft'
+                    : 'bg-danger-soft dark:bg-danger-soft text-danger dark:text-danger group-hover:bg-danger-soft'
                     }`}>
                     {component.name.charAt(0)}
                 </div>
@@ -719,7 +717,7 @@ const ComponentCard = ({
                         </span>
                         {component.calculationType === 'FLAT' && <span>₹{component.defaultValue.toLocaleString()}</span>}
                         <span className="text-slate-300 dark:text-slate-700">|</span>
-                        <span className={`flex items-center gap-1 ${component.isTaxable ? 'text-amber-600 dark:text-warning' : 'text-slate-400'}`}>
+                        <span className={`flex items-center gap-1 ${component.isTaxable ? 'text-warning dark:text-warning' : 'text-slate-400'}`}>
                             <CheckCircle2 className="w-3 h-3" />
                             {component.isTaxable ? 'Taxable' : 'Non-Taxable'}
                         </span>
@@ -729,13 +727,13 @@ const ComponentCard = ({
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                     onClick={onEdit}
-                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all"
+                    className="p-2 text-slate-300 hover:text-primary hover:bg-primary-soft dark:hover:bg-primary-soft rounded-lg transition-all"
                 >
                     <Pencil className="w-4 h-4" />
                 </button>
                 <button
                     onClick={onDelete}
-                    className="p-2 text-slate-300 hover:text-danger hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all"
+                    className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all"
                 >
                     <Trash2 className="w-4 h-4" />
                 </button>

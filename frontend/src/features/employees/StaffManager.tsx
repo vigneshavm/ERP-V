@@ -7,6 +7,7 @@ import api from "../../services/api.js";
 
 import { Tenant } from "../../types/tenant/index";
 import { formatDate } from '../../utils/helpers';
+import PageHeader from '../../components/shared/Layout/PageHeader';
 
 const StaffManager: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
@@ -151,23 +152,21 @@ const StaffManager: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Staff Management</h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Manage users, roles, and terminal assignments.</p>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-slate-900 rounded-lg border border-blue-100 dark:border-slate-800">
-                    <Users className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs font-bold text-blue-700">{tenantEmployees.length} Active Staff</span>
-                </div>
-            </div>
+            <PageHeader
+                title="Staff Management"
+                description="Manage users, roles, and terminal assignments."
+                actions={<div className="flex items-center gap-2 px-3 py-1.5 bg-primary-soft dark:bg-slate-900 rounded-lg border border-primary/30 dark:border-slate-800">
+                    <Users className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-bold text-primary">{tenantEmployees.length} Active Staff</span>
+                </div>}
+            />
 
             <div className="grid lg:grid-cols-3 gap-6">
                 {/* Form Section */}
                 <div className="lg:col-span-1">
                     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden sticky top-24">
                         <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                            {editingEmpId ? <Pencil className="w-4 h-4 text-blue-600" /> : <Plus className="w-4 h-4 text-blue-600" />}
+                            {editingEmpId ? <Pencil className="w-4 h-4 text-primary" /> : <Plus className="w-4 h-4 text-primary" />}
                             {editingEmpId ? 'Edit Staff Member' : 'Add New Staff'}
                         </div>
                         <form onSubmit={handleAddEmployee} className="p-4 space-y-4">
@@ -268,10 +267,10 @@ const StaffManager: React.FC = () => {
 
                             {/* Counter Assignment */}
                             {newEmp.branchId && (
-                                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg animate-in fade-in slide-in-from-top-2">
-                                    <label className="block text-xs font-bold text-indigo-700 dark:text-primary uppercase mb-1">Terminal Assignment</label>
+                                <div className="p-3 bg-primary-soft dark:bg-primary-soft border border-primary/30 dark:border-primary/30 rounded-lg animate-in fade-in slide-in-from-top-2">
+                                    <label className="block text-xs font-bold text-primary dark:text-primary uppercase mb-1">Terminal Assignment</label>
                                     <select
-                                        className="w-full px-3 py-2 border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-indigo-900 dark:text-indigo-300"
+                                        className="w-full px-3 py-2 border border-primary/30 dark:border-primary/30 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-primary dark:text-primary"
                                         value={newEmp.assignedCounterId}
                                         onChange={e => setNewEmp({ ...newEmp, assignedCounterId: e.target.value })}
                                     >
@@ -296,7 +295,7 @@ const StaffManager: React.FC = () => {
                                         checked={newEmp.is2faEnabled}
                                         onChange={e => setNewEmp({ ...newEmp, is2faEnabled: e.target.checked })}
                                     />
-                                    <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-success"></div>
                                 </label>
                             </div>
 
@@ -312,7 +311,7 @@ const StaffManager: React.FC = () => {
                                 )}
                                 <button
                                     type="submit"
-                                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-sm border border-blue-700"
+                                    className="flex-1 bg-primary text-white py-2 rounded-lg font-bold hover:bg-primary-hover transition shadow-sm border border-primary"
                                 >
                                     {editingEmpId ? 'Update Staff' : 'Add Staff'}
                                 </button>
@@ -325,7 +324,7 @@ const StaffManager: React.FC = () => {
                 <div className="lg:col-span-2 space-y-4">
                     {isLoadingEmployees ? (
                         <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 border-dashed">
-                            <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-4" />
+                            <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
                             <p className="text-slate-500 dark:text-slate-400 font-bold">Synchronizing Staff Members...</p>
                         </div>
                     ) : tenantEmployees.length === 0 ? (
@@ -339,13 +338,13 @@ const StaffManager: React.FC = () => {
                             {tenantEmployees.map(emp => (
                                 <div key={emp.id} className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all flex items-center justify-between group">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 transition-colors">
+                                        <div className="w-10 h-10 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold group-hover:bg-primary-soft dark:group-hover:bg-primary-soft group-hover:text-primary transition-colors">
                                             {emp.name.charAt(0)}
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <h4 className="font-bold text-slate-800 dark:text-white">{emp.name}</h4>
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === SystemRole.OWNER ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-accent border-purple-200 dark:border-purple-800' : emp.system_role === SystemRole.ADMIN ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${emp.system_role === SystemRole.OWNER ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-accent border-purple-200 dark:border-purple-800' : emp.system_role === SystemRole.ADMIN ? 'bg-primary-soft dark:bg-primary-soft text-primary dark:text-primary border-primary/30 dark:border-primary/30' : 'bg-slate-50 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'} `}>
                                                     {emp.system_role}
                                                 </span>
                                             </div>
@@ -356,7 +355,7 @@ const StaffManager: React.FC = () => {
                                                 {emp.branch_id && (
                                                     <>
                                                         <span className="text-slate-300 dark:text-slate-700">|</span>
-                                                        <span className="text-blue-600 dark:text-blue-400 font-medium">{branches.find((b: any) => b.id === emp.branch_id)?.name || 'Unknown Branch'}</span>
+                                                        <span className="text-primary dark:text-primary font-medium">{branches.find((b: any) => b.id === emp.branch_id)?.name || 'Unknown Branch'}</span>
                                                     </>
                                                 )}
                                                 {emp.assigned_counter_id && (
@@ -366,7 +365,7 @@ const StaffManager: React.FC = () => {
                                                     </>
                                                 )}
                                                 <span className="text-slate-300 dark:text-slate-700">|</span>
-                                                <span className={`font-bold flex items-center gap-1 ${emp.is2faEnabled ? 'text-emerald-600 dark:text-success' : 'text-slate-400'}`}>
+                                                <span className={`font-bold flex items-center gap-1 ${emp.is2faEnabled ? 'text-success dark:text-success' : 'text-slate-400'}`}>
                                                     <ShieldCheck className="w-3 h-3" />
                                                     {emp.is2faEnabled ? '2FA ON' : '2FA OFF'}
                                                 </span>
@@ -384,13 +383,13 @@ const StaffManager: React.FC = () => {
                                     <div className="flex items-center gap-2">
                                         <button
                                             onClick={() => handleStartEditEmp(emp)}
-                                            className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all"
+                                            className="p-2 text-slate-300 hover:text-primary hover:bg-primary-soft dark:hover:bg-primary-soft rounded-lg transition-all"
                                         >
                                             <Pencil className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => handleDeleteEmployee(emp.id)}
-                                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                                            className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>

@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import {
     Building2,
     Users,
@@ -32,7 +32,8 @@ import {
 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
-import { toggleTenantStatus } from "../../redux/slices/tenantSlice";
+import { setTenants, toggleTenantStatus } from "../../redux/slices/tenantSlice";
+import { currentAdminSession, listTenants, setTenantStatus, type AdminTenant } from "../../services/adminTenants";
 import { setActiveTab } from "../../redux/slices/uiSlice";
 import { Tenant } from "../../types/tenant";
 import { useTenantForm } from "../../hooks/useTenantForm";
@@ -52,9 +53,29 @@ interface TenantManagementProps {
 
 type TabType = 'fleet' | 'control';
 
+/** A platform tenant (GET /api/admin/tenants) in the shape the console's table uses. Modules and region aren't
+ * returned by the admin API, so they stay empty rather than being guessed. */
+const toTenant = (t: AdminTenant): Tenant => ({
+    id: t.id, _id: t.id, name: t.name, subdomain: t.slug, businessType: t.businessType,
+    sector: (t.sector || t.businessType || 'RETAIL') as Tenant['sector'], isActive: t.status === 'ACTIVE', modules: [],
+    subscriptionEndDate: t.subscriptionEndDate ?? undefined,
+});
+
 const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
     const dispatch = useDispatch();
     const { tenants } = useSelector((state: RootState) => state.tenant);
+    // Real tenants from the admin API (the list used to be only the signed-in shop's own profile, always "active").
+    const [loadError, setLoadError] = useState('');
+    const [statusError, setStatusError] = useState('');
+    const [busyId, setBusyId] = useState<string | null>(null);
+    useEffect(() => {
+        if (!currentAdminSession()) { setLoadError('Sign in to the administrator console to load tenants.'); return; }
+        let cancelled = false;
+        listTenants()
+            .then(list => { if (!cancelled) { dispatch(setTenants(list.map(toTenant))); setLoadError(''); } })
+            .catch((err: Error) => { if (!cancelled) setLoadError(err.message); });
+        return () => { cancelled = true; };
+    }, [dispatch]);
 
     // Tab state
     const [activeTab, setActiveTabLocal] = useState<TabType>('fleet');
@@ -174,10 +195,19 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
         };
     }, [tenants]);
 
+    // The row changes only after the server saves the new status; a refusal is shown and nothing changes.
     const handleToggleStatus = async (tenant: Tenant) => {
-        // const newStatus = !tenant.isActive;
-        // TODO: Integrate with Backend API
-        dispatch(toggleTenantStatus(tenant.id));
+        if (busyId) return;
+        setBusyId(tenant.id);
+        setStatusError('');
+        try {
+            const saved = await setTenantStatus(tenant.id, tenant.isActive ? 'SUSPENDED' : 'ACTIVE');
+            if ((saved === 'ACTIVE') !== Boolean(tenant.isActive)) dispatch(toggleTenantStatus(tenant.id));
+        } catch (err) {
+            setStatusError(`${tenant.name}: ${(err as Error).message}`);
+        } finally {
+            setBusyId(null);
+        }
     };
 
     // State for full-page view toggle
@@ -232,7 +262,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                         </button>
                         <div>
                             <div className="flex items-center gap-2 mb-1">
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${tenantForm.editingTenant ? 'bg-blue-50 text-blue-700' : 'bg-green-50 text-green-700'}`}>
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${tenantForm.editingTenant ? 'bg-primary-soft text-primary' : 'bg-success-soft text-success'}`}>
                                     {tenantForm.editingTenant ? 'Edit Mode' : 'Creation Mode'}
                                 </span>
                             </div>
@@ -254,7 +284,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                             form="tenant-full-form"
                             type="submit"
                             disabled={!tenantForm.newTenant.name || !tenantForm.newTenant.subdomain || tenantForm.isSaving}
-                            className="px-8 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-md shadow-indigo-500/20 hover:bg-indigo-700 transition-all disabled:opacity-50 flex items-center gap-2"
+                            className="px-8 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-md shadow-indigo-500/20 hover:bg-primary-hover transition-all disabled:opacity-50 flex items-center gap-2"
                         >
                             {tenantForm.isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                             {tenantForm.editingTenant ? 'Save Changes' : 'Create Tenant'}
@@ -282,7 +312,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     <button
                                         key={tab.id}
                                         onClick={() => tenantForm.setFormTab(tab.id as any)}
-                                        className={`w-full px-4 py-3 rounded-xl text-xs font-bold text-left transition-all flex items-center gap-3 ${tenantForm.activeTab === tab.id ? 'bg-indigo-50 text-indigo-700 dark:bg-slate-800 dark:text-primary' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                                        className={`w-full px-4 py-3 rounded-xl text-xs font-bold text-left transition-all flex items-center gap-3 ${tenantForm.activeTab === tab.id ? 'bg-primary-soft text-primary dark:bg-slate-800 dark:text-primary' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                     >
                                         <tab.icon className={`w-4 h-4 ${tenantForm.activeTab === tab.id ? 'text-primary' : 'text-slate-400'}`} />
                                         <span>{tab.label}</span>
@@ -348,14 +378,14 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
             {/* Standard Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-6 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md">
+                    <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white shadow-md">
                         <Building2 className="w-6 h-6" />
                     </div>
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-primary text-xs font-bold uppercase tracking-wider rounded">Super Admin</span>
+                            <span className="px-2 py-0.5 bg-primary-soft dark:bg-primary-soft text-primary dark:text-primary text-xs font-bold uppercase tracking-wider rounded">Super Admin</span>
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        <h1 className="page-title text-slate-900 dark:text-white">
                             Tenant Operation Center
                         </h1>
                         <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
@@ -375,12 +405,18 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1 hidden lg:block"></div>
                     <button
                         onClick={handleOpenProvisionPanel}
-                        className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition-all active:scale-95"
+                        className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition-all active:scale-95"
                     >
                         <Plus className="w-4 h-4" /> Provision Tenant
                     </button>
                 </div>
             </div>
+
+            {(loadError || statusError) && (
+                <p role="alert" className="rounded-md border border-danger-line bg-danger-soft px-4 py-3 text-sm font-medium text-danger dark:border-danger/50 dark:bg-danger-soft dark:text-danger">
+                    {statusError || loadError}
+                </p>
+            )}
 
             {/* Tab Navigation */}
             <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 w-fit">
@@ -405,11 +441,11 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         {[
-                            { label: 'Total Tenants', value: metrics.total, icon: Building2, color: 'text-primary', bg: 'bg-indigo-50', trend: 'Total Fleet' },
-                            { label: 'Active', value: metrics.active, icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', trend: 'Operational' },
-                            { label: 'Suspended', value: metrics.suspended, icon: AlertTriangle, color: 'text-rose-600', bg: 'bg-rose-50', trend: 'Restricted' },
+                            { label: 'Total Tenants', value: metrics.total, icon: Building2, color: 'text-primary', bg: 'bg-primary-soft', trend: 'Total Fleet' },
+                            { label: 'Active', value: metrics.active, icon: CheckCircle2, color: 'text-success', bg: 'bg-success-soft', trend: 'Operational' },
+                            { label: 'Suspended', value: metrics.suspended, icon: AlertTriangle, color: 'text-danger', bg: 'bg-danger-soft', trend: 'Restricted' },
                             { label: 'Growth Enabled', value: metrics.growthEnabled, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50', trend: 'Integrated' },
-                            { label: 'System Health', value: `${metrics.healthScore}%`, icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50', trend: 'Score' }
+                            { label: 'System Health', value: `${metrics.healthScore}%`, icon: Activity, color: 'text-primary', bg: 'bg-primary-soft', trend: 'Score' }
                         ].map((kpi, idx) => (
                             <div key={idx} className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
                                 <div className="flex justify-between items-start mb-4">
@@ -447,7 +483,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                             <select
                                 value={advancedFilters.sector}
                                 onChange={(e) => setAdvancedFilters(prev => ({ ...prev, sector: e.target.value }))}
-                                className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium outline-none focus:border-indigo-500 cursor-pointer min-w-[140px]"
+                                className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium outline-none focus:border-primary cursor-pointer min-w-[140px]"
                             >
                                 {sectors.map(s => <option key={s} value={s}>{s === 'ALL' ? 'All Sectors' : s}</option>)}
                             </select>
@@ -455,7 +491,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                             <select
                                 value={advancedFilters.region}
                                 onChange={(e) => setAdvancedFilters(prev => ({ ...prev, region: e.target.value }))}
-                                className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium outline-none focus:border-indigo-500 cursor-pointer min-w-[140px]"
+                                className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium outline-none focus:border-primary cursor-pointer min-w-[140px]"
                             >
                                 {regions.map(r => <option key={r} value={r}>{r === 'ALL' ? 'All Regions' : r}</option>)}
                             </select>
@@ -483,7 +519,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                 <thead>
                                     <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                                         <th className="px-6 py-4 w-10">
-                                            <button onClick={toggleAllSelection} className={`w-5 h-5 rounded border transition-colors flex items-center justify-center ${selectedTenants.length === paginatedTenants.length ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 dark:border-slate-600'}`}>
+                                            <button onClick={toggleAllSelection} className={`w-5 h-5 rounded border transition-colors flex items-center justify-center ${selectedTenants.length === paginatedTenants.length ? 'bg-primary border-primary' : 'border-slate-300 dark:border-slate-600'}`}>
                                                 {selectedTenants.length === paginatedTenants.length && <CheckCircle className="w-3.5 h-3.5 text-white" />}
                                             </button>
                                         </th>
@@ -521,7 +557,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                         paginatedTenants.map(tenant => (
                                             <tr key={tenant.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                                 <td className="px-6 py-4">
-                                                    <button onClick={() => toggleTenantSelection(tenant.id)} className={`w-5 h-5 rounded border transition-colors flex items-center justify-center ${selectedTenants.includes(tenant.id) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200 dark:border-slate-700 group-hover:border-indigo-400'}`}>
+                                                    <button onClick={() => toggleTenantSelection(tenant.id)} className={`w-5 h-5 rounded border transition-colors flex items-center justify-center ${selectedTenants.includes(tenant.id) ? 'bg-primary border-primary' : 'border-slate-200 dark:border-slate-700 group-hover:border-primary'}`}>
                                                         {selectedTenants.includes(tenant.id) && <CheckCircle className="w-3.5 h-3.5 text-white" />}
                                                     </button>
                                                 </td>
@@ -553,9 +589,11 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                                 <td className="px-6 py-4">
                                                     <button
                                                         onClick={() => handleToggleStatus(tenant)}
-                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${tenant.isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}
+                                                        disabled={busyId === tenant.id}
+                                                        aria-label={`${tenant.isActive ? 'Suspend' : 'Activate'} ${tenant.name}`}
+                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all disabled:opacity-50 ${tenant.isActive ? 'bg-success-soft text-success border border-success-line' : 'bg-danger-soft text-danger border border-danger-line'}`}
                                                     >
-                                                        <div className={`w-1.5 h-1.5 rounded-full ${tenant.isActive ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${tenant.isActive ? 'bg-success' : 'bg-danger'}`}></div>
                                                         {tenant.isActive ? 'Active' : 'Suspended'}
                                                     </button>
                                                 </td>
@@ -577,14 +615,14 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <button
                                                             onClick={() => onLoginAs?.(tenant)}
-                                                            className="p-2 text-slate-400 hover:text-primary hover:bg-indigo-50 rounded-lg transition-colors"
+                                                            className="p-2 text-slate-400 hover:text-primary hover:bg-primary-soft rounded-lg transition-colors"
                                                             title="Login as System Admin"
                                                         >
                                                             <LogIn className="w-4 h-4" />
                                                         </button>
                                                         <button
                                                             onClick={() => handleOpenEditPanel(tenant)}
-                                                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                            className="p-2 text-slate-400 hover:text-primary hover:bg-primary-soft rounded-lg transition-colors"
                                                             title="Edit Configuration"
                                                         >
                                                             <Pencil className="w-4 h-4" />
@@ -616,7 +654,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     <button
                                         key={i}
                                         onClick={() => setCurrentPage(i + 1)}
-                                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
+                                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-primary text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}`}
                                     >
                                         {i + 1}
                                     </button>
@@ -640,7 +678,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     {/* Platform Health */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="bg-white dark:bg-slate-900 p-6 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-                            <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-xl">
+                            <div className="p-3 bg-success-soft dark:bg-success-soft text-success rounded-xl">
                                 <Activity className="w-6 h-6" />
                             </div>
                             <div>
@@ -649,7 +687,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                             </div>
                         </div>
                         <div className="bg-white dark:bg-slate-900 p-6 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-                            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl">
+                            <div className="p-3 bg-primary-soft dark:bg-primary-soft text-primary rounded-xl">
                                 <Server className="w-6 h-6" />
                             </div>
                             <div>
@@ -683,7 +721,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     </div>
                                     <button
                                         onClick={() => setSysConfig(prev => ({ ...prev, allowProvisioning: !prev.allowProvisioning }))}
-                                        className={`w-12 h-6 rounded-full transition-colors relative ${sysConfig.allowProvisioning ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}`}
+                                        className={`w-12 h-6 rounded-full transition-colors relative ${sysConfig.allowProvisioning ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700'}`}
                                     >
                                         <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${sysConfig.allowProvisioning ? 'translate-x-6' : ''}`} />
                                     </button>
@@ -695,7 +733,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     </div>
                                     <button
                                         onClick={() => setSysConfig(prev => ({ ...prev, maintenanceMode: !prev.maintenanceMode }))}
-                                        className={`w-12 h-6 rounded-full transition-colors relative ${sysConfig.maintenanceMode ? 'bg-rose-600' : 'bg-slate-200 dark:bg-slate-700'}`}
+                                        className={`w-12 h-6 rounded-full transition-colors relative ${sysConfig.maintenanceMode ? 'bg-danger' : 'bg-slate-200 dark:bg-slate-700'}`}
                                     >
                                         <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${sysConfig.maintenanceMode ? 'translate-x-6' : ''}`} />
                                     </button>
@@ -729,7 +767,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                     </div>
                                     <button
                                         onClick={() => setSysConfig(prev => ({ ...prev, enforceMFA: !prev.enforceMFA }))}
-                                        className={`w-12 h-6 rounded-full transition-colors relative ${sysConfig.enforceMFA ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}`}
+                                        className={`w-12 h-6 rounded-full transition-colors relative ${sysConfig.enforceMFA ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700'}`}
                                     >
                                         <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${sysConfig.enforceMFA ? 'translate-x-6' : ''}`} />
                                     </button>
@@ -773,7 +811,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                 className="flex-1 p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 min-h-[100px] resize-none"
                             />
                             <div className="flex flex-col gap-2">
-                                <button className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all">
+                                <button className="px-6 py-3 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/20 hover:bg-primary-hover transition-all">
                                     Send Broadcast
                                 </button>
                                 <button

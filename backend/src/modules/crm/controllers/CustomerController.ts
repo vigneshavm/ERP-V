@@ -16,6 +16,8 @@ interface AuthenticatedRequest extends Request {
         name?: string;
         [key: string]: any;
     };
+    /** Set by `protect` from the logged-in user's shop. */
+    tenantId?: string;
     originalEntity?: any;
     updatedEntity?: any;
     deletedEntity?: any;
@@ -68,10 +70,16 @@ export class CustomerController {
                 return;
             }
 
-            // Check for duplicate phone
+            if (!req.tenantId) {
+                res.status(400).json({ message: 'No shop is linked to this user' });
+                return;
+            }
+
+            // Customers belong to the shop (tenant), not the individual user; the model has a
+            // unique (phone, tenantId) index, so check duplicates at the same scope.
             const existingPhone = await Customer.findOne({
                 phone,
-                owner: req.user?._id,
+                tenantId: req.tenantId,
             });
 
             if (existingPhone) {
@@ -83,7 +91,7 @@ export class CustomerController {
             if (email) {
                 const existingEmail = await Customer.findOne({
                     email,
-                    owner: req.user?._id,
+                    tenantId: req.tenantId,
                 });
 
                 if (existingEmail) {
@@ -100,12 +108,53 @@ export class CustomerController {
                 address,
                 referredBy: referredBy || null,
                 owner: req.user?._id,
+                tenantId: req.tenantId,
             });
 
             info(`New customer added by ${req.user?.name}: ${name} (${email || 'no email'})`);
             res.status(201).json(customer);
         } catch (err) {
             error(`Add Customer Error: ${(err as Error).message}`);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
+        }
+    };
+
+    /**
+     * GET /api/customers/search?phone=9876543210
+     * Finds this shop's customer by mobile number (used by the POS "Identify Customer" box).
+     * Responds `{ data: customer }`, or `{ data: null }` when there is no match.
+     */
+    public searchByPhone = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const phone = String(req.query.phone ?? '').trim();
+            if (!/^\d{10}$/.test(phone)) {
+                res.status(400).json({ message: 'Phone must be 10 digits' });
+                return;
+            }
+            if (!req.tenantId) {
+                res.status(400).json({ message: 'No shop is linked to this user' });
+                return;
+            }
+
+            const customer = await Customer.findOne({ phone, tenantId: req.tenantId })
+                .select('name phone points dues tier tenantId')
+                .lean();
+
+            res.status(200).json({
+                data: customer
+                    ? {
+                          id: String(customer._id),
+                          name: customer.name,
+                          phone: customer.phone,
+                          points: customer.points ?? 0,
+                          dues: customer.dues ?? 0,
+                          tier: customer.tier,
+                          tenantId: String(customer.tenantId),
+                      }
+                    : null,
+            });
+        } catch (err) {
+            error(`Customer Search Error: ${(err as Error).message}`);
             res.status(500).json({ message: 'Server Error', error: (err as Error).message });
         }
     };

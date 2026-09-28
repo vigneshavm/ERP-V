@@ -25,7 +25,7 @@ const GoodsReceived: React.FC = () => {
                     description={`Track incoming shipments and receiving verification • ${getBranchName(currentBranch)}`}
                     actions={
                         <>
-                            <button className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
+                            <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
                                 <Download className="w-4 h-4" /> Export
                             </button>
                             <button
@@ -43,12 +43,12 @@ const GoodsReceived: React.FC = () => {
                 {/* Receipt Progress */}
                 <div className="bg-gradient-to-r from-success/10 to-primary/10 p-4 rounded-xl border border-success/20">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Overall Receipt Progress</span>
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Overall Receipt Progress</span>
                         <span className="text-sm font-bold text-success">
                             {stats.totalExpected > 0 ? Math.round((stats.totalReceived / stats.totalExpected) * 100) : 0}%
                         </span>
                     </div>
-                    <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                         <div
                             className="h-full bg-gradient-to-r from-success to-primary rounded-full transition-all duration-500"
                             style={{ width: `${stats.totalExpected > 0 ? (stats.totalReceived / stats.totalExpected) * 100 : 0}%` }}

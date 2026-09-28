@@ -48,6 +48,46 @@ describe('buildPosInvoicePayload', () => {
         expect(payload.items[0].tax).toBe(0);
     });
 
+    test('an item with neither gstRate nor gstPercentage set defaults to 5%, matching usePOSTotals and receiptGenerator', () => {
+        const sale = makeSale({
+            items: [{ id: 'ITEM_UNCONFIGURED', name: 'Unconfigured Item', price: 100, qty: 1, unit: 'Pcs' } as any],
+        });
+
+        const payload = buildPosInvoicePayload(sale);
+
+        expect(payload.items[0].tax).toBe(5);
+    });
+
+    test('gstRate takes precedence over gstPercentage when both are set on a line', () => {
+        const sale = makeSale({
+            items: [{ id: 'ITEM_1', name: 'Basmati Rice 5kg', price: 200, qty: 3, gstRate: 5, gstPercentage: 18, unit: 'Pcs' } as any],
+        });
+
+        const payload = buildPosInvoicePayload(sale);
+
+        expect(payload.items[0].tax).toBe(5);
+    });
+
+    test('a line-level gstRate of 0 stays 0% even if the product default gstPercentage is nonzero', () => {
+        const sale = makeSale({
+            items: [{ id: 'ITEM_1', name: 'Basmati Rice 5kg', price: 200, qty: 3, gstRate: 0, gstPercentage: 18, unit: 'Pcs' } as any],
+        });
+
+        const payload = buildPosInvoicePayload(sale);
+
+        expect(payload.items[0].tax).toBe(0);
+    });
+
+    test('falls back to gstPercentage when gstRate is not set on the line', () => {
+        const sale = makeSale({
+            items: [{ id: 'ITEM_1', name: 'Basmati Rice 5kg', price: 200, qty: 3, gstPercentage: 12, unit: 'Pcs' } as any], // gstRate omitted
+        });
+
+        const payload = buildPosInvoicePayload(sale);
+
+        expect(payload.items[0].tax).toBe(12);
+    });
+
     test('meter-based items bill by cut length, not unit count', () => {
         const sale = makeSale({
             items: [{ id: 'ITEM_CLOTH', name: 'Cotton Fabric', price: 50, qty: 1, cutLength: 4.5, gstPercentage: 5, unit: 'Meter' } as any],

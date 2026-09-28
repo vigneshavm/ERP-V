@@ -4,6 +4,11 @@ import Purchase from "../../purchase/models/Purchase.js";
 import { info, error } from "../../../config/logger.js";
 import { AppError } from "../../../utils/AppError.js";
 import { IItem } from "../../../interfaces/IItem.js";
+import mongoose from "mongoose";
+import Item from "../models/Item.js";
+import StockLog from "../models/StockLog.js";
+import { applyStockFilters, deadStock, lowStock, stockFilterOptions, stockStatus } from "./stockReports.js";
+import { classifyLots, filterByPurchaseDate, pageRows, summarize, summarizeMonths, type StockAgeLot, type StockAgeQuery } from "./stockAgeBuckets.js";
 
 @injectable()
 export class StockAgingService {
@@ -34,10 +39,9 @@ export class StockAgingService {
                 // Fetch purchases containing this item, sorted by date DESC (Newest first)
                 // We assume 'status: COMPLETED' implies stock was added.
                 const purchases = await Purchase.find({
+                    tenantId, // was missing: without it another tenant's purchases of the same item id could set the age
                     'items.productId': item._id,
                     status: 'COMPLETED',
-                    // tenantId check is implicit if we filter by purchases created by user or linked to tenant
-                    // Purchase model has tenantId.
                 }).sort({ date: -1 }).lean();
 
                 let accumulatedQty = 0;
@@ -72,6 +76,7 @@ export class StockAgingService {
                         _id: item._id,
                         name: item.name,
                         sku: item.sku,
+                        barcode: (item as any).barcode,
                         category: item.category,
                         stockQty: item.stockQty,
                         costPrice: item.costPrice,
@@ -79,6 +84,11 @@ export class StockAgingService {
                         valuation: item.stockQty * item.costPrice,
                         oldestStockDate,
                         ageInDays,
+                        // fields the aged-stock page reads
+                        daysSinceLastSold: ageInDays,
+                        lastSoldDate: oldestStockDate,
+                        stock: item.stockQty,
+                        value: item.stockQty * item.costPrice,
                         status: "DEAD_STOCK"
                     });
                 }
@@ -89,6 +99,101 @@ export class StockAgingService {
         }
 
         return deadStock.sort((a, b) => b.ageInDays - a.ageInDays);
+    }
+
+    /**
+     * Month-bucket report for Mongo mode (same response shape as sqlStockAgeBuckets). Approximate: ERP items are
+     * not guaranteed to be one-purchase-per-barcode, so each item's whole stock takes the date of the oldest
+     * purchase still covering it (see getAgingAnalysis). A true FIFO split per purchase is a follow-up.
+     */
+    async getStockAgeBuckets(tenantId: string, q: StockAgeQuery): Promise<any> {
+        const asOf = new Date().toISOString().slice(0, 10);
+        const aged = await this.getAgingAnalysis(tenantId, -1);
+        const lots: StockAgeLot[] = aged.map((a: any) => ({
+            barcode: String(a.barcode ?? a.sku ?? a._id),
+            name: String(a.name ?? ""),
+            purchaseDate: a.oldestStockDate ? new Date(a.oldestStockDate).toISOString().slice(0, 10) : null,
+            supplier: "",
+            purchasedQty: 0,
+            soldQty: 0,
+            returnedQty: 0,
+            remainingQty: Number(a.stockQty) || 0,
+            costPrice: Number(a.costPrice) || 0,
+        }));
+        const byBarcode = new Map(aged.map((a: any) => [String(a.barcode ?? a.sku ?? a._id), a]));
+        const { rows, from, to } = filterByPurchaseDate(classifyLots(lots, asOf), q);
+        const { buckets, totals } = summarize(rows, asOf);
+        const { items, pagination, bucket, selection, detail } = pageRows(rows, q);
+        return {
+            asOf,
+            buckets,
+            totals,
+            bucket,
+            selection,
+            detail,
+            months: summarizeMonths(rows),
+            items: items.map((r) => {
+                const a: any = byBarcode.get(r.barcode);
+                return { ...r, _id: String(a?._id ?? r.barcode), category: a?.category ?? null, sellingPrice: a?.sellingPrice ?? null, inMirror: true };
+            }),
+            pagination,
+            range: { from, to },
+            checks: { multiPurchaseBarcodes: 0 },
+            source: "mongo",
+            approximate: true,
+        };
+    }
+
+    /**
+     * Mongo-mode snapshot for the stock reports: one row per in-stock Item. Purchase date = item creation
+     * (approximate), last sale = newest SALES/SALE stock log for the item.
+     */
+    private async mongoReportRows(tenantId: string) {
+        const tenant = new mongoose.Types.ObjectId(String(tenantId));
+        const asOf = new Date().toISOString().slice(0, 10);
+        const items: any[] = await Item.find({ tenantId: tenant, stockQty: { $gt: 0 } }, { name: 1, barcode: 1, sku: 1, category: 1, brand: 1, costPrice: 1, sellingPrice: 1, stockQty: 1, lowStockLimit: 1, createdAt: 1 }).lean();
+        const sales: { _id: any; last: Date }[] = await StockLog.aggregate([
+            { $match: { tenantId: tenant, type: { $in: ["SALES", "SALE"] } } },
+            { $group: { _id: "$itemId", last: { $max: "$createdAt" } } },
+        ]);
+        const lastSale = new Map(sales.map((x) => [String(x._id), x.last]));
+        const iso = (d: any): string | null => (d ? new Date(d).toISOString().slice(0, 10) : null);
+        const lots: StockAgeLot[] = items.map((i) => ({
+            barcode: String(i.barcode || i.sku || i._id),
+            name: String(i.name ?? ""),
+            purchaseDate: iso(i.createdAt),
+            supplier: "",
+            purchasedQty: 0,
+            soldQty: 0,
+            returnedQty: 0,
+            remainingQty: Number(i.stockQty) || 0,
+            costPrice: Number(i.costPrice) || 0,
+            category: i.category || null,
+            brand: i.brand || null,
+            sellingPrice: Number(i.sellingPrice) || 0,
+            lastSoldDate: iso(lastSale.get(String(i._id))),
+        }));
+        return { asOf, rows: classifyLots(lots, asOf) };
+    }
+
+    async getStockStatusReport(tenantId: string, q: any = {}): Promise<any> {
+        const { asOf, rows } = await this.mongoReportRows(tenantId);
+        return { asOf, source: "mongo", approximate: true, ...stockStatus(applyStockFilters(rows, q)) };
+    }
+
+    async getLowStockReport(tenantId: string, q: any): Promise<any> {
+        const { asOf, rows } = await this.mongoReportRows(tenantId);
+        return { asOf, source: "mongo", approximate: true, ...lowStock(applyStockFilters(rows, q), q) };
+    }
+
+    async getDeadStockReport(tenantId: string, q: any): Promise<any> {
+        const { asOf, rows } = await this.mongoReportRows(tenantId);
+        return { asOf, source: "mongo", approximate: true, ...deadStock(applyStockFilters(rows, q), asOf, q) };
+    }
+
+    async getStockFilterOptions(tenantId: string): Promise<any> {
+        const { asOf, rows } = await this.mongoReportRows(tenantId);
+        return { asOf, source: "mongo", approximate: true, ...stockFilterOptions(rows) };
     }
 
     async applyAction(itemId: string, tenantId: string, actionType: 'CLEARANCE' | 'REDUCE_MARGIN', value?: number): Promise<any> {

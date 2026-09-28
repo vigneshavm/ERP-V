@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IDailyFinance extends Document {
     tenantId: string;
+    clientId: string;
     date: Date;
     cashSales: number;
     onlineSales: number;
@@ -21,6 +22,12 @@ const dailyFinanceSchema = new Schema<IDailyFinance>(
             type: String, // keeping as String for now to match other loose references, or Schema.Types.ObjectId if strict
             required: true,
             index: true
+        },
+        // Id the browser generated for the record; the API addresses records by it so offline
+        // creates/updates replay idempotently.
+        clientId: {
+            type: String,
+            required: true
         },
         date: {
             type: Date,
@@ -63,6 +70,7 @@ const dailyFinanceSchema = new Schema<IDailyFinance>(
 
 // Compound index to ensure one record per day per tenant
 dailyFinanceSchema.index({ tenantId: 1, date: 1 }, { unique: true });
+dailyFinanceSchema.index({ tenantId: 1, clientId: 1 }, { unique: true });
 
 const DailyFinance = mongoose.model<IDailyFinance>("DailyFinance", dailyFinanceSchema);
 export default DailyFinance;

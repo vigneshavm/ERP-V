@@ -197,13 +197,13 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                         {[1, 2, 3].map((s) => (
                             <div key={s} className="flex items-center gap-2">
                                 <div className={`w-10 h-10 rounded-sm flex items-center justify-center font-black text-sm transition-all ${step >= s
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+                                    ? 'bg-primary text-white shadow-lg shadow-indigo-600/30'
                                     : 'bg-white/10 text-slate-500'
                                     }`}>
                                     {step > s ? <CheckCircle2 className="w-5 h-5" /> : s}
                                 </div>
                                 {s < 3 && (
-                                    <div className={`w-12 h-1 rounded-full transition-all ${step > s ? 'bg-indigo-600' : 'bg-white/10'
+                                    <div className={`w-12 h-1 rounded-full transition-all ${step > s ? 'bg-primary' : 'bg-white/10'
                                         }`} />
                                 )}
                             </div>
@@ -242,7 +242,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                                 type="button"
                                                 onClick={() => setSector(s.id)}
                                                 className={`p-4 rounded-sm border text-left transition-all ${sector === s.id
-                                                    ? 'bg-primary/20 border-indigo-500 text-white'
+                                                    ? 'bg-primary/20 border-primary text-white'
                                                     : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
                                                     }`}
                                             >
@@ -433,7 +433,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                 </div>
 
                                 <div className="border-t border-white/10 pt-4 flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-emerald-600/20 rounded-sm flex items-center justify-center text-success">
+                                    <div className="w-12 h-12 bg-success/20 rounded-sm flex items-center justify-center text-success">
                                         <User className="w-6 h-6" />
                                     </div>
                                     <div>
@@ -462,7 +462,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
 
                     {/* Error Display */}
                     {error && (
-                        <div className="flex items-center gap-3 text-xs font-bold p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-sm mt-6 animate-in zoom-in-95">
+                        <div className="flex items-center gap-3 text-xs font-bold p-4 bg-danger/10 border border-danger/20 text-danger rounded-sm mt-6 animate-in zoom-in-95">
                             <AlertCircle className="w-5 h-5 shrink-0" />
                             <span>{error}</span>
                         </div>

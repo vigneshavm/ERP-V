@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from "../../../services/api";
 import Layout from "../../../components/shared/Layout/Layout";
+import { getColorClasses } from "../../../utils/tailwindColorClasses";
+import StatusBadge from '@/components/shared/UI/StatusBadge';
 import {
     RotateCcw,
     Plus,
@@ -105,7 +107,7 @@ const ReturnedItems = () => {
             <Layout>
                 <div className="flex flex-col items-center justify-center py-20 min-h-[60vh]">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
-                    <p className="text-secondary opacity-70 font-black uppercase tracking-widest text-[10px]">Synchronizing Reverse Logistics...</p>
+                    <p className="text-muted font-black uppercase tracking-widest text-[10px]">Synchronizing Reverse Logistics...</p>
                 </div>
             </Layout>
         );
@@ -113,11 +115,11 @@ const ReturnedItems = () => {
 
     return (
         <Layout>
-            <div className="flex-1 w-full bg-app text-main font-sans selection:bg-rose-500/30 relative">
+            <div className="flex-1 w-full bg-app text-main font-sans selection:bg-danger/30 relative">
                 {/* Ambient Background Blobs */}
                 <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-                    <div className="absolute top-[-15%] left-[5%] w-[55%] h-[55%] bg-rose-500/10 rounded-full blur-[160px] animate-aura opacity-60" />
-                    <div className="absolute bottom-[-10%] right-[5%] w-[40%] h-[40%] bg-orange-500/10 rounded-full blur-[140px] animate-aura opacity-50" style={{ animationDelay: '7s' }} />
+                    <div className="absolute top-[-15%] left-[5%] w-[55%] h-[55%] bg-danger/10 rounded-full blur-[160px] animate-aura opacity-60" />
+                    <div className="absolute bottom-[-10%] right-[5%] w-[40%] h-[40%] bg-warning/10 rounded-full blur-[140px] animate-aura opacity-50" style={{ animationDelay: '7s' }} />
                     <div className="absolute top-[40%] right-[20%] w-[25%] h-[25%] bg-danger/5 rounded-full blur-[100px] animate-aura opacity-40" style={{ animationDelay: '3s' }} />
                 </div>
 
@@ -126,14 +128,14 @@ const ReturnedItems = () => {
                     <header className="flex justify-between items-end">
                         <div className="relative pl-5">
                             <div className="absolute left-0 top-0 bottom-0 w-1 bg-danger rounded-full shadow-[0_0_15px_rgba(var(--color-danger),0.5)]" />
-                            <h1 className="text-3xl font-display font-black tracking-tighter text-main flex items-center gap-3">
+                            <h1 className="page-title text-main flex items-center gap-3">
                                 Sales <span className="text-danger">Returns</span>
                                 <span className="px-3 py-1 bg-danger/10 border border-danger/20 text-danger rounded-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                    <RotateCcw className="w-3 h-3" /> Ledger Reversal
+                                    <RotateCcw className="w-3 h-3" /> Returned
                                 </span>
                             </h1>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="flex h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+                                <span className="flex h-2 w-2 rounded-full bg-danger animate-pulse" />
                                 <p className="text-[10px] uppercase tracking-[0.2em] font-black text-secondary">Monitoring Inventory Backflow</p>
                             </div>
                         </div>
@@ -160,7 +162,7 @@ const ReturnedItems = () => {
                         ].map((stat, i) => (
                             <div key={i} className="glass-panel border border-default rounded-sm p-6 group hover:border-danger/30 transition-all">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className={`p-3 bg-${stat.color}/10 text-${stat.color} rounded-sm`}>
+                                    <div className={`p-3 ${getColorClasses(stat.color).surface} ${getColorClasses(stat.color).text} rounded-sm`}>
                                         <stat.icon className="w-5 h-5" />
                                     </div>
                                     <span className={`text-[10px] font-black text-main bg-app px-2 py-1 rounded-full border border-default`}>
@@ -260,7 +262,7 @@ const ReturnedItems = () => {
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <span className={`px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest ${
-                                                        rec.returnType === 'full' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                                                        rec.returnType === 'full' ? 'bg-purple-100 text-purple-800' : 'bg-primary-soft text-primary'
                                                     }`}>
                                                         {rec.returnType}
                                                     </span>
@@ -271,13 +273,7 @@ const ReturnedItems = () => {
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <div className="flex items-center justify-center">
-                                                        <span className={`px-3 py-1 rounded-sm text-[9px] font-black uppercase tracking-widest border ${
-                                                            rec.status === 'processed' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 
-                                                            rec.status === 'pending' ? 'bg-amber-100 text-amber-800 border-amber-200' : 
-                                                            'bg-blue-100 text-blue-800 border-blue-200'
-                                                        }`}>
-                                                            {rec.status}
-                                                        </span>
+                                                        <StatusBadge status={rec.status} />
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-5 text-right">

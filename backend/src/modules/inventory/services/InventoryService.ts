@@ -10,12 +10,19 @@ import Size from "../models/Size.js";
 import Color from "../models/Color.js";
 import Shelf from "../models/Shelf.js";
 import mongoose from "mongoose";
+import { isSqlItemSource } from "../../../config/itemDataSource.js";
+import * as sqlItems from "../../../integrations/textilesoft/sqlItemSource.js";
 
 @injectable()
 export class InventoryService {
     constructor(
         @inject(InventoryRepository) private inventoryRepository: InventoryRepository
     ) { }
+
+    /** SQL mode: make sure the shop catalogue has been (or is being) mirrored into MongoDB for screens that read Mongo directly. */
+    private mirrorIfSql(tenantId: string): void {
+        if (isSqlItemSource()) sqlItems.ensureMirror(tenantId);
+    }
 
     async addItem(itemData: any, tenantId: string, user: any): Promise<{ item: IItem, alerts: any[] }> {
         if (!itemData.name || !itemData.costPrice || !itemData.sellingPrice) {
@@ -53,6 +60,19 @@ export class InventoryService {
     }
 
     async getAllItemsWithPagination(tenantId: string, queryParams: any): Promise<any> {
+        // ITEM_DATA_SOURCE=sql: catalogue + stock come from the shop's SQL Server DB.
+        if (isSqlItemSource()) {
+            sqlItems.ensureMirror(tenantId);
+            return sqlItems.withMongoFallback(
+                "list items",
+                () => sqlItems.listItems(tenantId, queryParams),
+                () => this.getAllItemsFromMongo(tenantId, queryParams)
+            );
+        }
+        return this.getAllItemsFromMongo(tenantId, queryParams);
+    }
+
+    private async getAllItemsFromMongo(tenantId: string, queryParams: any): Promise<any> {
         const page = parseInt(queryParams.page as string) || 1;
         const limit = parseInt(queryParams.limit as string) || 20;
         const skip = (page - 1) * limit;
@@ -147,6 +167,11 @@ export class InventoryService {
     }
 
     async getSingleItem(itemId: string, tenantId: string): Promise<IItem> {
+        if (isSqlItemSource()) {
+            sqlItems.ensureMirror(tenantId);
+            const fresh = await sqlItems.withMongoFallback("get item", () => sqlItems.refreshById(itemId, tenantId), async () => null);
+            if (fresh) return fresh as unknown as IItem;
+        }
         const item = await this.inventoryRepository.findById(itemId, tenantId);
         if (!item) {
             throw new AppError("Item not found or unauthorized", 404);
@@ -155,6 +180,12 @@ export class InventoryService {
     }
 
     async getItemByBarcode(barcode: string, tenantId: string): Promise<IItem> {
+        if (isSqlItemSource()) {
+            sqlItems.ensureMirror(tenantId);
+            const fromShop = await sqlItems.withMongoFallback("barcode lookup", () => sqlItems.findByKey(tenantId, { barcode }), async () => undefined);
+            if (fromShop) return fromShop as unknown as IItem;
+            // Not in the shop DB (or shop DB unreachable): fall through to ERP-only items in MongoDB.
+        }
         const items = await this.inventoryRepository.findByQuery({ barcode, tenantId });
         if (!items || items.length === 0) {
             throw new AppError("Item not found for this barcode", 404);
@@ -211,10 +242,26 @@ export class InventoryService {
     }
 
     async getLowStockItems(tenantId: string): Promise<IItem[]> {
+        if (isSqlItemSource()) {
+            sqlItems.ensureMirror(tenantId);
+            return sqlItems.withMongoFallback(
+                "low stock",
+                async () => (await sqlItems.lowStockItems(tenantId)) as unknown as IItem[],
+                () => this.inventoryRepository.getLowStockItems(tenantId)
+            );
+        }
         return this.inventoryRepository.getLowStockItems(tenantId);
     }
 
     async getInventoryStats(tenantId: string): Promise<any> {
+        if (isSqlItemSource()) {
+            sqlItems.ensureMirror(tenantId);
+            return sqlItems.withMongoFallback("inventory stats", () => sqlItems.inventoryStats(), () => this.getInventoryStatsFromMongo(tenantId));
+        }
+        return this.getInventoryStatsFromMongo(tenantId);
+    }
+
+    private async getInventoryStatsFromMongo(tenantId: string): Promise<any> {
         const stats = await Item.aggregate([
             { $match: { tenantId } },
             {
@@ -247,6 +294,7 @@ export class InventoryService {
     // Store.city). Store already has a city field (used for GST/address purposes), so this
     // reuses existing data rather than introducing a new location dimension.
     async getStockByCity(tenantId: string): Promise<any[]> {
+        this.mirrorIfSql(tenantId);
         return Item.aggregate([
             { $match: { tenantId } },
             { $unwind: { path: "$storeLevels", preserveNullAndEmptyArrays: false } },
@@ -285,6 +333,7 @@ export class InventoryService {
     // Groups current stock by physical shelf/rack location, using the item's own shelfCode
     // (falling back to binLocation) -- both already exist on Item for warehouse bin partitioning.
     async getStockByRack(tenantId: string): Promise<any[]> {
+        this.mirrorIfSql(tenantId);
         return Item.aggregate([
             { $match: { tenantId } },
             {
@@ -380,6 +429,7 @@ export class InventoryService {
     }
 
     async getDistinctCategories(tenantId: string): Promise<string[]> {
+        this.mirrorIfSql(tenantId);
         try {
             const categories = await Item.distinct('category', { tenantId, category: { $exists: true, $nin: [null, ''] } });
             if (categories && Array.isArray(categories)) {
@@ -410,6 +460,7 @@ export class InventoryService {
         colors: string[];
         shelves: { shelfCode: string; shelfType: string }[];
     }> {
+        this.mirrorIfSql(tenantId);
         try {
             const [catalogBrands, catalogSizes, catalogColors, catalogShelves, itemBrands, itemSizes, itemColors, itemShelfDocs] = await Promise.all([
                 Brand.find({ isActive: true }).select('name').lean(),

@@ -1,4 +1,3 @@
-import jsPDF from 'jspdf';
 import JsBarcode from 'jsbarcode';
 
 export interface LabelData {
@@ -10,7 +9,8 @@ export interface LabelData {
     washingInstructions?: string;
 }
 
-export const printBarcodeLabels = (items: LabelData[]) => {
+export const printBarcodeLabels = async (items: LabelData[]) => {
+    const { jsPDF } = await import('jspdf');
     // Standard 50mm x 25mm (2x1 inch) label
     const doc = new jsPDF({
         orientation: 'landscape',

@@ -5,12 +5,12 @@ import { PrintSettingsTabProps } from './types';
 const PrintSettingsTab: React.FC<PrintSettingsTabProps> = ({ printSettings, setPrintSettings }) => {
     return (
         <div className="p-6 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="p-6 bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800 rounded-sm flex items-start gap-5">
+            <div className="p-6 bg-primary/50 dark:bg-primary-soft border border-primary/30 dark:border-primary/30 rounded-sm flex items-start gap-5">
                 <div className="w-12 h-12 rounded-sm bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0">
                     <Printer className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                    <p className="text-sm font-black text-indigo-800 dark:text-indigo-200">Bill / Receipt Print Layout</p>
+                    <p className="text-sm font-black text-primary dark:text-primary">Bill / Receipt Print Layout</p>
                     <p className="text-xs text-primary dark:text-primary mt-1 leading-relaxed max-w-2xl">
                         Controls the header and footer text printed on every bill/receipt, and how Goods Receipt Note (GRN) numbers are generated.
                     </p>
@@ -19,8 +19,8 @@ const PrintSettingsTab: React.FC<PrintSettingsTabProps> = ({ printSettings, setP
 
             <section>
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <div className="w-10 h-10 rounded-xl bg-primary-soft dark:bg-primary-soft flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-primary dark:text-primary" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">Bill Header & Footer</h3>
@@ -53,8 +53,8 @@ const PrintSettingsTab: React.FC<PrintSettingsTabProps> = ({ printSettings, setP
 
             <section>
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
-                        <Hash className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                    <div className="w-10 h-10 rounded-xl bg-warning-soft dark:bg-warning-soft flex items-center justify-center">
+                        <Hash className="w-5 h-5 text-warning dark:text-warning" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-none">GRN Numbering</h3>

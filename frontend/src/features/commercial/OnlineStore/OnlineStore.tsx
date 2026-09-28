@@ -22,30 +22,30 @@ const OnlineStoreSetup: React.FC<{
 }> = ({ isLoading, onActivate, currentPlan }) => {
     return (
         <div className="space-y-12 pb-20">
-            <header className="relative overflow-hidden bg-[#020617] border-b border-slate-800 pt-20 pb-40 px-6 lg:px-12 text-center lg:text-left rounded-b-[4rem] shadow-2xl">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4F46E5]/10 blur-[120px] rounded-full -mr-48 -mt-48 motion-safe:animate-pulse transition-opacity duration-300" aria-hidden="true" />
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#22C55E]/5 blur-[100px] rounded-full -ml-32 -mb-32 transition-opacity duration-300" aria-hidden="true" />
+            <header className="relative overflow-hidden bg-slate-950 border-b border-slate-800 pt-20 pb-40 px-6 lg:px-12 text-center lg:text-left rounded-b-[4rem] shadow-2xl">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full -mr-48 -mt-48 motion-safe:animate-pulse transition-opacity duration-300" aria-hidden="true" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-success/5 blur-[100px] rounded-full -ml-32 -mb-32 transition-opacity duration-300" aria-hidden="true" />
 
                 <div className="relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-16">
                     <div className="max-w-3xl">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#4F46E5]/10 rounded-full border border-[#4F46E5]/20 text-[#4F46E5] dark:text-indigo-300 text-xs font-black uppercase tracking-widest mb-8">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full border border-primary/20 text-primary dark:text-primary text-xs font-black uppercase tracking-widest mb-8">
                             <Rocket className="w-4 h-4" aria-hidden="true" />
                             Used by Global Stores
                         </div>
 
-                        <h1 className="text-5xl lg:text-[4.5rem] font-black text-[#F8FAFC] tracking-tight leading-[1.1] mb-8">
+                        <h1 className="text-5xl lg:text-[4.5rem] font-black text-slate-50 tracking-tight leading-[1.1] mb-8">
                             Launch Your <br />
-                            <span className="text-[#4F46E5]">Digital Empire</span>
+                            <span className="text-primary">Digital Empire</span>
                         </h1>
 
-                        <p className="text-[#64748B] text-xl lg:text-2xl font-medium leading-relaxed max-w-xl mb-12">
+                        <p className="text-slate-500 text-xl lg:text-2xl font-medium leading-relaxed max-w-xl mb-12">
                             Turn your store into a 24×7 online business in minutes. Reach global customers with integrated POS and inventory management.
                         </p>
 
                         <button
                             onClick={onActivate}
                             disabled={isLoading}
-                            className="w-full sm:w-auto px-10 py-5 bg-[#4F46E5] text-white rounded-xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all duration-200 focus:ring-4 focus:ring-[#4F46E5]/40 focus:outline-none flex items-center justify-center gap-4 group"
+                            className="w-full sm:w-auto px-10 py-5 bg-primary text-white rounded-xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all duration-200 focus:ring-4 focus:ring-primary/40 focus:outline-none flex items-center justify-center gap-4 group"
                         >
                             {isLoading ? 'Activating...' : 'Start Free Trial'}
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" aria-hidden="true" />
@@ -53,10 +53,10 @@ const OnlineStoreSetup: React.FC<{
                     </div>
 
                     <div className="hidden xl:block w-full max-w-md">
-                        <div className="relative aspect-square bg-[#020617] rounded-[3rem] border border-slate-800 p-8 shadow-inner overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#4F46E5]/20 to-transparent" />
+                        <div className="relative aspect-square bg-slate-950 rounded-xl border border-slate-800 p-8 shadow-inner overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
                             <div className="relative h-full flex flex-col justify-center items-center text-center">
-                                <ShoppingBag className="w-24 h-24 text-[#F8FAFC] mb-8" />
+                                <ShoppingBag className="w-24 h-24 text-slate-50 mb-8" />
                             </div>
                         </div>
                     </div>
@@ -234,7 +234,7 @@ const OnlineStore: React.FC = () => {
                 <div className="flex items-center gap-2 ml-auto">
                     <button
                         onClick={() => setShowAi(!showAi)}
-                        className={`hidden md:flex items-center gap-2 px-6 py-3 rounded-sm font-black text-xs uppercase tracking-widest transition-all border ${showAi ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 text-primary dark:text-primary border-indigo-200 dark:border-indigo-900'}`}
+                        className={`hidden md:flex items-center gap-2 px-6 py-3 rounded-sm font-black text-xs uppercase tracking-widest transition-all border ${showAi ? 'bg-primary text-white border-primary' : 'bg-white dark:bg-slate-800 text-primary dark:text-primary border-primary/30 dark:border-primary/30'}`}
                     >
                         <Sparkles className="w-4 h-4" />
                         <span>AI Assistant</span>
@@ -255,7 +255,7 @@ const OnlineStore: React.FC = () => {
                             <div className="space-y-3">
                                 {availableCategories.map(cat => (
                                     <label key={cat} className="flex items-center gap-3 cursor-pointer group">
-                                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedCategories.includes(cat) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'}`}>
+                                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedCategories.includes(cat) ? 'bg-primary border-primary' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'}`}>
                                             {selectedCategories.includes(cat) && <Check className="w-3.5 h-3.5 text-white" />}
                                         </div>
                                         <input type="checkbox" className="hidden" onChange={() => toggleCategory(cat)} checked={selectedCategories.includes(cat)} />
@@ -271,7 +271,7 @@ const OnlineStore: React.FC = () => {
                 <main className="flex-1 overflow-y-auto p-6 md:p-10">
                     {/* ... (AI Feedback Area - same as Storefront.tsx) ... */}
                     {(showAi || aiResult || visualSearchImage) && (
-                        <div className="mb-8 bg-white dark:bg-slate-900 rounded-[2rem] border border-indigo-100 dark:border-indigo-900 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
+                        <div className="mb-8 bg-white dark:bg-slate-900 rounded-[2rem] border border-primary/30 dark:border-primary/30 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
                             {/* ... Content ... */}
                             <div className="p-6">
                                 {showAi && !visualSearchImage && !aiResult && !aiThinking && (
@@ -283,7 +283,7 @@ const OnlineStore: React.FC = () => {
                                             className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-sm p-6 pr-14 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none h-24 text-slate-900 dark:text-white placeholder:text-slate-400 font-medium"
                                             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAiSearch(); } }}
                                         />
-                                        <button onClick={handleAiSearch} disabled={!aiQuery.trim()} className="absolute right-4 bottom-4 p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-indigo-500/20">
+                                        <button onClick={handleAiSearch} disabled={!aiQuery.trim()} className="absolute right-4 bottom-4 p-3 bg-primary text-white rounded-xl hover:bg-primary disabled:opacity-50 transition-all shadow-lg shadow-indigo-500/20">
                                             <Send className="w-4 h-4" />
                                         </button>
                                     </div>
@@ -299,15 +299,15 @@ const OnlineStore: React.FC = () => {
                             <div key={product.id} className="group bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
                                 <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-700 relative overflow-hidden">
                                     <img src={getProductImage(product)} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                    <div className="absolute top-4 right-4 p-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur rounded-full shadow-sm cursor-pointer hover:text-red-500 transition-colors">
-                                        <Heart className="w-5 h-5 text-slate-400 hover:text-red-500" />
+                                    <div className="absolute top-4 right-4 p-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur rounded-full shadow-sm cursor-pointer hover:text-danger transition-colors">
+                                        <Heart className="w-5 h-5 text-slate-400 hover:text-danger" />
                                     </div>
                                 </div>
                                 <div className="p-6 flex flex-col flex-1">
                                     <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2 leading-tight line-clamp-2">{product.name}</h3>
                                     <div className="mt-auto flex items-center justify-between">
                                         <span className="block text-2xl font-black text-slate-900 dark:text-white">₹{product.sellingPrice.toLocaleString()}</span>
-                                        <button onClick={() => dispatch(addToCart({ ...product, qty: 1, price: product.sellingPrice }))} disabled={product.stockQty <= 0} className="p-4 bg-[#020617] dark:bg-[#4F46E5] text-white rounded-sm hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-xl">
+                                        <button onClick={() => dispatch(addToCart({ ...product, qty: 1, price: product.sellingPrice }))} disabled={product.stockQty <= 0} className="p-4 bg-slate-950 dark:bg-primary text-white rounded-sm hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-xl">
                                             <ShoppingCart className="w-5 h-5" />
                                         </button>
                                     </div>

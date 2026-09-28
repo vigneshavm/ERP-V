@@ -1,6 +1,7 @@
 import Dexie, { Table } from 'dexie';
 import { Product } from "../types/product";
 import { Customer, Sale } from "../types/sales";
+import { SyncLedgerEntry } from "../types/tenant";
 
 export interface OfflineSale extends Sale {
     localId?: number;
@@ -30,6 +31,7 @@ export class AppDatabase extends Dexie {
     offlineSales!: Table<OfflineSale>;
     syncMetadata!: Table<SyncMetadata>;
     dailyFinanceQueue!: Table<DailyFinanceQueueItem>;
+    syncLedger!: Table<SyncLedgerEntry>;
 
     constructor() {
         super('ERPOfflineDB');
@@ -39,6 +41,10 @@ export class AppDatabase extends Dexie {
             offlineSales: '++localId, id, date, customerId, tenantId, synced',
             syncMetadata: 'key',
             dailyFinanceQueue: '++localId, recordId, synced, operation'
+        });
+        // v2 adds this device's sync event log (SyncIntelligenceService.logEvent); existing tables unchanged.
+        this.version(2).stores({
+            syncLedger: 'id, timestamp, status'
         });
     }
 }

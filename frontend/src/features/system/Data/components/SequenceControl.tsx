@@ -46,7 +46,7 @@ const SequenceControl: React.FC = () => {
                     </h2>
                     <p className="text-xs text-slate-500 font-medium">The legal document backbone. Branch-wise isolated, GST compliant.</p>
                 </div>
-                <button className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all active:scale-95">
+                <button className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-primary-hover shadow-lg shadow-indigo-600/20 transition-all active:scale-95">
                     <Plus className="w-4 h-4" /> New Sequence
                 </button>
             </div>
@@ -54,23 +54,23 @@ const SequenceControl: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <div className="lg:col-span-3 space-y-4">
                     {series.map((s) => (
-                        <div key={s.id} className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 p-5 flex flex-col md:flex-row items-center justify-between gap-4 group hover:border-indigo-500/50 transition-all shadow-sm">
+                        <div key={s.id} className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 p-5 flex flex-col md:flex-row items-center justify-between gap-4 group hover:border-primary/50 transition-all shadow-sm">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/20 transition-colors">
+                                <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-primary-soft dark:group-hover:bg-primary-soft transition-colors">
                                     {s.status === 'LOCKED' ? <Lock className="w-5 h-5 text-slate-400" /> : <Settings2 className="w-5 h-5 text-primary" />}
                                 </div>
                                 <div>
                                     <h4 className="font-black text-sm uppercase tracking-tight">{s.documentType} Series</h4>
                                     <div className="flex items-center gap-2 mt-1">
                                         <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-900 text-[10px] font-bold text-slate-500 uppercase">{s.branchId}</span>
-                                        <span className="px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-[10px] font-bold text-primary uppercase">FY-{s.year}</span>
+                                        <span className="px-1.5 py-0.5 rounded bg-primary-soft dark:bg-primary-soft text-[10px] font-bold text-primary uppercase">FY-{s.year}</span>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex-1 flex flex-col items-center md:items-end">
                                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Preview</p>
-                                <code className="text-lg font-black tracking-tighter text-primary dark:text-primary bg-indigo-50/50 dark:bg-indigo-900/30 px-3 py-1 rounded-lg">
+                                <code className="text-lg font-black tracking-tighter text-primary dark:text-primary bg-primary/50 dark:bg-primary-soft px-3 py-1 rounded-lg">
                                     {formatNumber(s)}
                                 </code>
                             </div>
@@ -91,7 +91,7 @@ const SequenceControl: React.FC = () => {
                 <div className="space-y-6">
                     <div className="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
                         <ShieldCheck className="absolute -top-10 -right-10 w-40 h-40 opacity-5 group-hover:rotate-12 transition-all duration-1000" />
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-6 italic">Sequence Intelligence</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-6 italic">Number series</h4>
 
                         <ul className="space-y-4">
                             <li className="flex gap-3">
@@ -109,7 +109,7 @@ const SequenceControl: React.FC = () => {
                         </ul>
 
                         <div className="mt-8 pt-6 border-t border-white/10 space-y-4">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Validation Protocol</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Checks</p>
                             {[
                                 { label: 'Zero-Gap Check', status: 'PASS' },
                                 { label: 'Branch Isolation', status: 'ACTIVE' },
@@ -122,7 +122,7 @@ const SequenceControl: React.FC = () => {
                             ))}
                         </div>
 
-                        <button className="w-full mt-6 py-3 bg-indigo-500 text-white rounded-sm font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all">
+                        <button className="w-full mt-6 py-3 bg-primary text-white rounded-sm font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all">
                             Run Full Audit Trace
                         </button>
                     </div>

@@ -10,6 +10,9 @@ const router = express.Router();
 router.use(protect);
 router.use(authorize('superadmin'));
 
+router.get('/session', adminController.getSession);
 router.get('/users', adminController.getAllUsersAcrossTenants);
+router.get('/tenants', adminController.getTenants);
+router.patch('/tenants/:id/status', adminController.updateTenantStatus);
 
 export default router;

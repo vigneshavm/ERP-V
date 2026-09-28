@@ -19,5 +19,8 @@ export default defineConfig({
         setupFiles: ['./src/setupTests.ts'],
         globals: true,
         exclude: ['**/node_modules/**', '**/e2e/**'],
+        // These are hoisted to the repo-root node_modules, where plain Node resolution can't find
+        // frontend's react; inlining them makes the react aliases above apply to them too.
+        server: { deps: { inline: ['react-hook-form', '@hookform/resolvers'] } },
     },
 });

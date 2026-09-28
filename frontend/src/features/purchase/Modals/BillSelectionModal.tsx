@@ -125,7 +125,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
                 <div className="flex-1 overflow-y-auto p-6">
                     {loading ? (
                         <div className="flex items-center justify-center h-40">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         </div>
                     ) : bills.length === 0 ? (
                         <div className="text-center py-12 text-slate-400">
@@ -172,7 +172,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
                                     const due = (bill.amount || 0) - (bill.paidAmount || 0) - (bill.discountReceived || 0);
 
                                     return (
-                                        <tr key={billId} className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isSelected ? 'bg-indigo-50/30 dark:bg-indigo-900/10' : ''}`}>
+                                        <tr key={billId} className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isSelected ? 'bg-primary/30 dark:bg-primary-soft' : ''}`}>
                                             <td className="px-4 py-3">
                                                 <input
                                                     type="checkbox"
@@ -193,7 +193,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
                                                     disabled={!isSelected}
                                                     value={allocations[billId] || ''}
                                                     onChange={(e) => handleAllocationChange(billId, parseFloat(e.target.value))}
-                                                    className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-right focus:border-indigo-500 outline-none disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-900 transition-all font-medium"
+                                                    className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-right focus:border-primary outline-none disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-900 transition-all font-medium"
                                                     placeholder="0.00"
                                                 />
                                             </td>
@@ -203,7 +203,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
                                                     disabled={!isSelected}
                                                     value={discounts[billId] || ''}
                                                     onChange={(e) => handleDiscountChange(billId, parseFloat(e.target.value))}
-                                                    className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-right text-sm focus:border-indigo-500 outline-none disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-900 transition-all"
+                                                    className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-right text-sm focus:border-primary outline-none disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-900 transition-all"
                                                     placeholder="0"
                                                 />
                                             </td>
@@ -236,7 +236,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
                         <button
                             onClick={handleConfirm}
                             disabled={selectedBillIds.size === 0}
-                            className="px-8 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="px-8 py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-primary-hover active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                             <CheckCircle size={18} />
                             Confim Selection

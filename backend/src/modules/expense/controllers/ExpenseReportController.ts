@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 
 import Expense from '../models/Expense.js';
 import ExpenseCategory from '../models/ExpenseCategory.js';
+import Invoice from '../../sales/models/Invoice.js';
 import { error } from '../../../config/logger.js';
 
 /**
@@ -132,10 +134,9 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
             .map(([mode, amount]) => ({ mode, amount }))
             .sort((a, b) => b.amount - a.amount);
 
-        // Branch analysis (placeholder)
-        const by_branch = [
-            { branch: 'Main Branch', amount: total_expense, risk: total_expense > 200000 ? 'HIGH' : 'LOW' }
-        ];
+        // Expenses aren't recorded against a branch (the Expense model has no branch field), so there
+        // is no per-branch breakdown to report; an invented single-branch row used to stand in here.
+        const by_branch: { branch: string; amount: number; risk: string }[] = [];
 
         // Generate audit flags
         const audit_flags: string[] = [];
@@ -195,27 +196,48 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
             recommendations.push('Regularly review expense patterns to identify cost optimization opportunities');
         }
 
-        // Calculate monthly trends for the last 6 months
+        // Monthly trends for the last 6 months (current month first).
+        // income: invoiced sales for the user's tenant, the same definition the dashboard uses
+        //   (sum of totalAmount over non-deleted invoices); null when there's no tenant to scope by.
+        // budget_utilization: that month's spend as a % of the total monthly budget set on the
+        //   expense categories; null when no budgets are set.
+        const trendStart = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+        const trendEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+        const monthKey = (y: number, m: number) => `${y}-${m}`;
+        // Group in the server's time zone, the same one the month keys below are built in.
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const toObjectId = (id: unknown) => new mongoose.Types.ObjectId(String(id));
+        const byMonth = (rows: { _id: { y: number; m: number }; total: number }[]) =>
+            new Map(rows.map(r => [monthKey(r._id.y, r._id.m), r.total]));
+
+        const expenseRows = await Expense.aggregate([
+            { $match: { createdBy: toObjectId(userId), date: { $gte: trendStart, $lte: trendEnd } } },
+            { $group: { _id: { y: { $year: { date: '$date', timezone } }, m: { $month: { date: '$date', timezone } } }, total: { $sum: '$amount' } } }
+        ]);
+        const tenantId = req.user?.tenantId;
+        const incomeRows = tenantId
+            ? await Invoice.aggregate([
+                { $match: { tenantId: toObjectId(tenantId), isDeleted: { $ne: true }, createdAt: { $gte: trendStart, $lte: trendEnd } } },
+                { $group: { _id: { y: { $year: { date: '$createdAt', timezone } }, m: { $month: { date: '$createdAt', timezone } } }, total: { $sum: '$totalAmount' } } }
+            ])
+            : null;
+        const expenseByMonth = byMonth(expenseRows);
+        const incomeByMonth = incomeRows ? byMonth(incomeRows) : null;
+        const totalMonthlyBudget = categoriesWithBudgets.reduce((sum, c) => sum + (c.monthly_budget || 0), 0);
+
         const monthly_trends = [];
         for (let i = 0; i < 6; i++) {
             const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            const mStart = new Date(d.getFullYear(), d.getMonth(), 1);
-            const mEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
-
-            const mExpenses = await Expense.find({
-                createdBy: userId,
-                date: { $gte: mStart, $lte: mEnd }
-            });
-
-            const mTotal = mExpenses.reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
-            const mIncome = mTotal * 1.5; // Mock income for visual consistency with screenshot
+            const key = monthKey(d.getFullYear(), d.getMonth() + 1);
+            const mTotal = expenseByMonth.get(key) || 0;
 
             monthly_trends.push({
                 month: monthNames[d.getMonth()],
                 year: d.getFullYear(),
                 expense: mTotal,
-                income: mIncome,
-                budget_utilization: 75, // Placeholder
+                income: incomeByMonth ? (incomeByMonth.get(key) || 0) : null,
+                budget_utilization: totalMonthlyBudget > 0 ? Math.round((mTotal / totalMonthlyBudget) * 100) : null,
+                budget: totalMonthlyBudget > 0 ? totalMonthlyBudget : null,
                 label: `${monthNames[d.getMonth()]} ${d.getFullYear()}`
             });
         }

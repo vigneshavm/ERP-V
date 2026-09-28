@@ -35,14 +35,14 @@ export const POSCustomerDisplay: React.FC = () => {
     return (
         <div className="h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 overflow-hidden font-sans">
             {/* Header */}
-            <div className="bg-indigo-600 text-white p-6 shadow-lg">
+            <div className="bg-primary text-white p-6 shadow-lg">
                 <h1 className="text-3xl font-bold flex items-center gap-3">
                     <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                         <ShoppingCart className="w-8 h-8" />
                     </div>
                     <span>My Store Name</span>
                 </h1>
-                <p className="text-indigo-200 mt-1 ml-15">Welcome, {state.customerName}</p>
+                <p className="text-primary mt-1 ml-15">Welcome, {state.customerName}</p>
             </div>
 
             <div className="flex-1 flex overflow-hidden">
@@ -79,8 +79,8 @@ export const POSCustomerDisplay: React.FC = () => {
                 {/* Right Side: Totals & Ads */}
                 <div className="w-1/3 flex flex-col gap-4 p-4 pl-0">
                     {/* Total Card */}
-                    <div className="bg-indigo-600 text-white rounded-sm p-8 shadow-xl flex flex-col items-center justify-center text-center">
-                        <span className="text-indigo-200 uppercase tracking-widest font-bold mb-2">Total Amount</span>
+                    <div className="bg-primary text-white rounded-sm p-8 shadow-xl flex flex-col items-center justify-center text-center">
+                        <span className="text-primary uppercase tracking-widest font-bold mb-2">Total Amount</span>
                         <div className="text-6xl font-extrabold font-mono tracking-tight">
                             ₹{state.total.toFixed(2)}
                         </div>

@@ -32,18 +32,18 @@ const PayablesAgingProfile: React.FC<PayablesAgingProfileProps> = ({
                 </div>
             </div>
             <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full flex overflow-hidden">
-                <div className="h-full bg-emerald-500 transition-all duration-500" style={{ width: `${(agingAnalysis.current / totalPayable) * 100}%` }} title="Current" />
-                <div className="h-full bg-amber-400 transition-all duration-500" style={{ width: `${(agingAnalysis['1-30'] / totalPayable) * 100}%` }} title="1-30 Days" />
-                <div className="h-full bg-orange-500 transition-all duration-500" style={{ width: `${(agingAnalysis['31-60'] / totalPayable) * 100}%` }} title="31-60 Days" />
-                <div className="h-full bg-rose-500 transition-all duration-500" style={{ width: `${(agingAnalysis['61-90'] / totalPayable) * 100}%` }} title="61-90 Days" />
+                <div className="h-full bg-success transition-all duration-500" style={{ width: `${(agingAnalysis.current / totalPayable) * 100}%` }} title="Current" />
+                <div className="h-full bg-warning transition-all duration-500" style={{ width: `${(agingAnalysis['1-30'] / totalPayable) * 100}%` }} title="1-30 Days" />
+                <div className="h-full bg-warning transition-all duration-500" style={{ width: `${(agingAnalysis['31-60'] / totalPayable) * 100}%` }} title="31-60 Days" />
+                <div className="h-full bg-danger transition-all duration-500" style={{ width: `${(agingAnalysis['61-90'] / totalPayable) * 100}%` }} title="61-90 Days" />
                 <div className="h-full bg-slate-900 transition-all duration-500" style={{ width: `${(agingAnalysis['90+'] / totalPayable) * 100}%` }} title="90+ Days" />
             </div>
             <div className="mt-4 flex justify-center gap-6">
                 {[
-                    { label: 'Current', color: 'bg-emerald-500' },
-                    { label: '1-30 Days', color: 'bg-amber-400' },
-                    { label: '31-60 Days', color: 'bg-orange-500' },
-                    { label: '61-90 Days', color: 'bg-rose-500' },
+                    { label: 'Current', color: 'bg-success' },
+                    { label: '1-30 Days', color: 'bg-warning' },
+                    { label: '31-60 Days', color: 'bg-warning' },
+                    { label: '61-90 Days', color: 'bg-danger' },
                     { label: '90+ Days', color: 'bg-slate-900' }
                 ].map(item => (
                     <div key={item.label} className="flex items-center gap-1.5">

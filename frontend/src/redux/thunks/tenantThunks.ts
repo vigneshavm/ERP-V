@@ -1,5 +1,4 @@
 import { AppDispatch, RootState } from "../store";
-// import { supabase } from '../../lib/supabase'; // Removed
 import { updateTenantEcommerce, updateGoogleBusinessProfile, setEcommerceEnabled } from '../slices/tenantSlice';
 import { GoogleBusinessConfig } from "../../types/tenant";
 
@@ -39,7 +38,7 @@ export const syncGoogleProfile = (tenantId: string) => async (dispatch: AppDispa
         });
 
         // Call Backend API
-        const { data } = await api.post('/business/google/sync', {}, getConfig(token));
+        const { data } = await api.post('/api/business/google/sync', {}, getConfig(token));
 
         if (data && data.success && data.data) {
             dispatch(updateGoogleBusinessProfile({ tenantId, config: mapProfileToConfig(data.data) }));
@@ -57,7 +56,7 @@ export const updateEcommerceSettings = (tenantId: string, settings: any) => asyn
 
         // Assuming backend accepts partial updates to profile including settings
         // If not, this might need a specific endpoint
-        await api.put('/business/profile', { ecommerceSettings: settings }, getConfig(token));
+        await api.put('/api/business/profile', { ecommerceSettings: settings }, getConfig(token));
         dispatch(updateTenantEcommerce(settings));
     } catch (err) {
         console.error('Failed to update ecommerce settings:', err);
@@ -84,7 +83,7 @@ export const activateEcommerce = (tenantId: string) => async (dispatch: AppDispa
             inventorySyncEnabled: true
         };
 
-        await api.put('/business/profile', { ecommerceConfig }, getConfig(token));
+        await api.put('/api/business/profile', { ecommerceConfig }, getConfig(token));
         dispatch(setEcommerceEnabled({ tenantId, config: ecommerceConfig }));
     } catch (err) {
         console.error('Failed to activate ecommerce:', err);

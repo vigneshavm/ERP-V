@@ -23,35 +23,6 @@ const PurchaseOrdersModule: React.FC = () => {
     const dispatch = useDispatch();
     const activeTab = useSelector((state: RootState) => state.ui.activeTab);
 
-    useEffect(() => {
-        if (id) {
-            if (id === 'new') {
-                setView('FORM');
-                setSelectedOrder(null);
-                setSelectedItems([]);
-            } else {
-                handleView(id);
-            }
-            return;
-        }
-
-        if (activeTab === 'PURCHASE_ORDER_FORM') {
-            setView('FORM');
-            setSelectedOrder(null);
-            setSelectedItems([]);
-        } else if (activeTab === 'PURCHASE_ORDER_LIST' || activeTab === 'PURCHASE_ORDER') {
-            setView('LIST');
-        }
-    }, [activeTab, id]);
-
-    useEffect(() => {
-        fetchOrders();
-    }, [fetchOrders]);
-
-    const handleCreate = () => {
-        navigate('/purchase/orders/new');
-    };
-
     const handleView = async (id: string) => {
         const fullDetails = await fetchOrderDetails(id);
         if (fullDetails) {
@@ -59,6 +30,43 @@ const PurchaseOrdersModule: React.FC = () => {
             setSelectedItems(fullDetails.items || []);
             setView('DETAILS');
         }
+    };
+
+
+    // Which view the route or menu tab asks for; applied during render when either changes
+    // (tracking the previous values) instead of setState in an effect.
+    const [prevRoute, setPrevRoute] = useState<{ id?: string; activeTab: string } | null>(null);
+    if (!prevRoute || prevRoute.id !== id || prevRoute.activeTab !== activeTab) {
+        setPrevRoute({ id, activeTab });
+        if (id === 'new' || (!id && activeTab === 'PURCHASE_ORDER_FORM')) {
+            setView('FORM');
+            setSelectedOrder(null);
+            setSelectedItems([]);
+        } else if (!id && (activeTab === 'PURCHASE_ORDER_LIST' || activeTab === 'PURCHASE_ORDER')) {
+            setView('LIST');
+        }
+    }
+
+    // An existing order's id in the route: load its details and show them. The cancelled flag
+    // stops a slow response for a previous id from overwriting the current one.
+    useEffect(() => {
+        if (!id || id === 'new') return;
+        let cancelled = false;
+        fetchOrderDetails(id).then(fullDetails => {
+            if (cancelled || !fullDetails) return;
+            setSelectedOrder(fullDetails);
+            setSelectedItems(fullDetails.items || []);
+            setView('DETAILS');
+        });
+        return () => { cancelled = true; };
+    }, [id, fetchOrderDetails]);
+
+    useEffect(() => {
+        fetchOrders();
+    }, [fetchOrders]);
+
+    const handleCreate = () => {
+        navigate('/purchase/orders/new');
     };
 
     const handleSave = async (order: Partial<PurchaseOrder>, items: PurchaseOrderItem[]) => {
@@ -119,7 +127,7 @@ const PurchaseOrdersModule: React.FC = () => {
                 <div className="flex justify-center items-center py-40">
                     <div className="flex flex-col items-center gap-6">
                         <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] animate-pulse">Synchronizing Purchase Nodes...</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Synchronizing Purchase Nodes...</p>
                     </div>
                 </div>
             );
@@ -149,41 +157,41 @@ const PurchaseOrdersModule: React.FC = () => {
 
                         {/* Stats Node Row */}
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-blue-500/20 transition-all duration-500">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="p-3 bg-blue-50 text-blue-500 dark:bg-blue-900/20 rounded-sm group-hover:scale-110 transition-transform shadow-sm">
+                                    <div className="p-3 bg-primary-soft text-primary dark:bg-primary-soft rounded-sm group-hover:scale-110 transition-transform shadow-sm">
                                         <ClipboardList className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Total Orders</h3>
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Orders</h3>
                                 </div>
-                                <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">{stats.total}</p>
+                                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">{stats.total}</p>
                             </div>
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-warning/20 transition-all duration-500">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-warning/20 transition-all duration-500">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="p-3 bg-amber-50 text-warning dark:bg-amber-900/20 rounded-sm group-hover:scale-110 transition-transform shadow-sm">
+                                    <div className="p-3 bg-warning-soft text-warning dark:bg-warning-soft rounded-sm group-hover:scale-110 transition-transform shadow-sm">
                                         <Clock className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Awaiting Review</h3>
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Awaiting Review</h3>
                                 </div>
-                                <p className="text-3xl font-black text-amber-600 dark:text-warning tracking-tighter tabular-nums">{stats.pending}</p>
+                                <p className="text-3xl font-black text-warning dark:text-warning tracking-tighter tabular-nums">{stats.pending}</p>
                             </div>
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-success/20 transition-all duration-500">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-success/20 transition-all duration-500">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="p-3 bg-emerald-50 text-success dark:bg-emerald-900/20 rounded-sm group-hover:scale-110 transition-transform shadow-sm">
+                                    <div className="p-3 bg-success-soft text-success dark:bg-success-soft rounded-sm group-hover:scale-110 transition-transform shadow-sm">
                                         <CheckCircle className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Approved Nodes</h3>
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Approved Nodes</h3>
                                 </div>
-                                <p className="text-3xl font-black text-emerald-600 dark:text-success tracking-tighter tabular-nums">{stats.approved}</p>
+                                <p className="text-3xl font-black text-success dark:text-success tracking-tighter tabular-nums">{stats.approved}</p>
                             </div>
-                            <div className="bg-white dark:bg-neutral-800 p-8 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-700 shadow-sm group hover:border-neutral-400/20 transition-all duration-500">
+                            <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-slate-400/20 transition-all duration-500">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="p-3 bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 rounded-sm group-hover:scale-110 transition-transform shadow-sm">
+                                    <div className="p-3 bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 rounded-sm group-hover:scale-110 transition-transform shadow-sm">
                                         <Lock className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">Fulfilled</h3>
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Fulfilled</h3>
                                 </div>
-                                <p className="text-3xl font-black text-neutral-900 dark:text-white tracking-tighter tabular-nums">{stats.converted}</p>
+                                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">{stats.converted}</p>
                             </div>
                         </div>
 

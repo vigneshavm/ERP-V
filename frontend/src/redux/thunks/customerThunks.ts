@@ -1,6 +1,5 @@
 import { AppDispatch, RootState } from "../store";
 import { Customer } from "../../types/sales";
-// import { supabase } from '../../lib/supabase'; // Removed
 import { setCustomer, addCustomer } from '../slices/posSlice';
 import api from "../../services/api.js";
 
@@ -31,7 +30,7 @@ export const lookupOrCreateCustomer = (phone: string, name?: string) => async (d
     // 2. Check Backend API
     // Always check API if not found locally
     try {
-        const { data: searchResult } = await api.get(`/customers/search?phone=${phone}`);
+        const { data: searchResult } = await api.get('/api/customers/search', { params: { phone } });
         const dbCust = searchResult?.data;
 
         if (dbCust) {
@@ -59,12 +58,13 @@ export const lookupOrCreateCustomer = (phone: string, name?: string) => async (d
 
         alert(`Creating new profile for ${phone}: ${newCustData.name}`);
 
-        const { data: createResult } = await api.post('/customers', newCustData);
-        const createdCust = createResult?.data;
+        const { data: createResult } = await api.post('/api/customers', newCustData);
+        // POST /api/customers returns the saved customer document itself (no `data` wrapper).
+        const createdCust = createResult?.data ?? createResult;
 
-        if (createdCust) {
+        if (createdCust?._id || createdCust?.id) {
             const customer: Customer = {
-                id: createdCust.id,
+                id: String(createdCust.id ?? createdCust._id),
                 name: createdCust.name,
                 phone: createdCust.phone,
                 points: createdCust.points || 0,
@@ -80,7 +80,7 @@ export const lookupOrCreateCustomer = (phone: string, name?: string) => async (d
         console.error('Customer lookup/creation failed:', err);
     }
 
-    // Fallback: Create local-only temp customer if Supabase fails or is disabled
+    // Fallback: Create local-only temp customer if the API lookup/creation fails
     const tempCustomer: Customer = {
         id: `temp-${Date.now()}`,
         name: name || 'Walk-in Customer',

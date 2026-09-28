@@ -34,7 +34,7 @@ const WRCounterPicker: React.FC = () => {
                 />
 
                 {loading ? (
-                    <div className="flex items-center justify-center py-20 text-neutral-400">
+                    <div className="flex items-center justify-center py-20 text-slate-400">
                         <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading counters...
                     </div>
                 ) : (
@@ -43,20 +43,20 @@ const WRCounterPicker: React.FC = () => {
                             <button
                                 key={branch.id}
                                 onClick={() => selectCounter(branch.id, branch.name)}
-                                className="group flex items-center gap-4 p-6 bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 hover:border-primary hover:shadow-md transition-all text-left"
+                                className="group flex items-center gap-4 p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-primary hover:shadow-md transition-all text-left"
                             >
                                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                                     <Building2 className="w-6 h-6" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="font-bold text-neutral-900 dark:text-white truncate">{branch.name}</p>
-                                    <p className="text-xs text-neutral-400 truncate">{branch.code}{branch.address ? ` · ${branch.address}` : ''}</p>
+                                    <p className="font-bold text-slate-900 dark:text-white truncate">{branch.name}</p>
+                                    <p className="text-xs text-slate-400 truncate">{branch.code}{branch.address ? ` · ${branch.address}` : ''}</p>
                                 </div>
-                                <ArrowRight className="w-4 h-4 text-neutral-300 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+                                <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
                             </button>
                         ))}
                         {branches.length === 0 && (
-                            <div className="col-span-full py-12 text-center text-neutral-400">
+                            <div className="col-span-full py-12 text-center text-slate-400">
                                 No counters/branches configured yet.
                             </div>
                         )}

@@ -192,6 +192,10 @@ export const getSupplierAnalytics = createAsyncThunk<Supplier[], void, { state: 
             const message = (error.response?.data?.message) || error.message || error.toString();
             return thunkAPI.rejectWithValue(message);
         }
+    },
+    {
+        // Skip a second identical request while one is in flight (React.StrictMode double-mount, rapid Refresh clicks).
+        condition: (_, { getState }) => !getState().suppliers.isLoading,
     }
 );
 

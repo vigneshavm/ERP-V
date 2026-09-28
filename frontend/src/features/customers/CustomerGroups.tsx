@@ -14,7 +14,6 @@ import {
     FolderPlus,
     Edit,
     Trash2,
-    Tag,
     Percent,
     ChevronDown,
     ChevronUp,
@@ -24,7 +23,9 @@ import {
     Star,
     X,
     Loader2,
+    Tag,
 } from 'lucide-react';
+import PageHeader from '../../components/shared/Layout/PageHeader';
 
 interface GroupFormState {
     name: string;
@@ -133,74 +134,68 @@ const CustomerGroups: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-                        <Tag className="w-6 h-6 text-primary" />
-                        Customer Groups
-                    </h2>
-                    <p className="text-neutral-500 text-sm mt-1">Organize customers into groups with custom pricing and terms</p>
-                </div>
-                <button
+            <PageHeader
+                title="Customer Groups"
+                description="Organize customers into groups with custom pricing and terms"
+                actions={<button
                     onClick={openCreateModal}
                     className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2"
                 >
                     <FolderPlus className="w-4 h-4" /> Create Group
-                </button>
-            </div>
+                </button>}
+            />
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                    <p className="text-xs font-medium text-neutral-500 uppercase">Total Groups</p>
-                    <p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">{groups.length}</p>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <p className="text-xs font-medium text-slate-500 uppercase">Total Groups</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{groups.length}</p>
                 </div>
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                    <p className="text-xs font-medium text-neutral-500 uppercase">Total Customers</p>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <p className="text-xs font-medium text-slate-500 uppercase">Total Customers</p>
                     <p className="text-2xl font-bold text-primary mt-1">{totalCustomers}</p>
                 </div>
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                    <p className="text-xs font-medium text-neutral-500 uppercase">Assigned</p>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <p className="text-xs font-medium text-slate-500 uppercase">Assigned</p>
                     <p className="text-2xl font-bold text-success mt-1">{assignedCustomers}</p>
                 </div>
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                    <p className="text-xs font-medium text-neutral-500 uppercase">Unassigned</p>
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <p className="text-xs font-medium text-slate-500 uppercase">Unassigned</p>
                     <p className="text-2xl font-bold text-warning mt-1">{totalCustomers - assignedCustomers}</p>
                 </div>
             </div>
 
             {/* Search */}
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
                 <div className="relative max-w-md">
                     <input
                         type="text"
                         placeholder="Search groups..."
-                        className="w-full pl-9 pr-4 py-2 bg-neutral-100 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-white text-sm"
+                        className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
+                    <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                 </div>
             </div>
 
             {/* Groups List */}
             <div className="space-y-4">
                 {isLoading && groups.length === 0 ? (
-                    <div className="bg-white dark:bg-neutral-800 p-12 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center">
+                    <div className="bg-white dark:bg-slate-800 p-12 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
                         <Loader2 className="w-8 h-8 mx-auto animate-spin text-primary" />
                     </div>
                 ) : filteredGroups.length === 0 ? (
-                    <div className="bg-white dark:bg-neutral-800 p-12 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center">
-                        <Tag className="w-12 h-12 mx-auto mb-4 text-neutral-300" />
-                        <p className="text-neutral-500">No customer groups found</p>
+                    <div className="bg-white dark:bg-slate-800 p-12 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
+                        <Tag className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                        <p className="text-slate-500">No customer groups found</p>
                     </div>
                 ) : (
                     filteredGroups.map((group) => (
-                        <div key={group._id} className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                        <div key={group._id} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
                             {/* Group Header */}
                             <div
-                                className="p-4 flex justify-between items-center cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700/50"
+                                className="p-4 flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50"
                                 onClick={() => setExpandedGroup(expandedGroup === group._id ? null : group._id)}
                             >
                                 <div className="flex items-center gap-4">
@@ -211,61 +206,61 @@ const CustomerGroups: React.FC = () => {
                                         {getGroupIcon(group.name)}
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-neutral-900 dark:text-white">{group.name}</h3>
-                                        <p className="text-sm text-neutral-500">{group.description}</p>
+                                        <h3 className="font-bold text-slate-900 dark:text-white">{group.name}</h3>
+                                        <p className="text-sm text-slate-500">{group.description}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-6">
                                     <div className="text-center hidden md:block">
-                                        <p className="text-xs text-neutral-500">Members</p>
+                                        <p className="text-xs text-slate-500">Members</p>
                                         <p className="font-bold text-primary">{group.memberCount}</p>
                                     </div>
                                     <div className="text-center hidden md:block">
-                                        <p className="text-xs text-neutral-500">Discount</p>
+                                        <p className="text-xs text-slate-500">Discount</p>
                                         <p className="font-bold text-success">{group.meta?.discountPercent ?? 0}%</p>
                                     </div>
                                     <div className="text-center hidden md:block">
-                                        <p className="text-xs text-neutral-500">Credit Limit</p>
-                                        <p className="font-bold text-neutral-700 dark:text-neutral-300">₹{(group.meta?.creditLimit ?? 0).toLocaleString()}</p>
+                                        <p className="text-xs text-slate-500">Credit Limit</p>
+                                        <p className="font-bold text-slate-700 dark:text-slate-300">₹{(group.meta?.creditLimit ?? 0).toLocaleString()}</p>
                                     </div>
                                     {expandedGroup === group._id ? (
-                                        <ChevronUp className="w-5 h-5 text-neutral-400" />
+                                        <ChevronUp className="w-5 h-5 text-slate-400" />
                                     ) : (
-                                        <ChevronDown className="w-5 h-5 text-neutral-400" />
+                                        <ChevronDown className="w-5 h-5 text-slate-400" />
                                     )}
                                 </div>
                             </div>
 
                             {/* Expanded Details */}
                             {expandedGroup === group._id && (
-                                <div className="border-t border-neutral-100 dark:border-neutral-700 p-4 bg-neutral-50 dark:bg-neutral-900">
+                                <div className="border-t border-slate-100 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-900">
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                                        <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
-                                            <p className="text-xs text-neutral-500 flex items-center gap-1">
+                                        <div className="bg-white dark:bg-slate-800 p-3 rounded-lg">
+                                            <p className="text-xs text-slate-500 flex items-center gap-1">
                                                 <Users className="w-3 h-3" /> Members
                                             </p>
                                             <p className="text-lg font-bold text-primary">{group.memberCount}</p>
                                         </div>
-                                        <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
-                                            <p className="text-xs text-neutral-500 flex items-center gap-1">
+                                        <div className="bg-white dark:bg-slate-800 p-3 rounded-lg">
+                                            <p className="text-xs text-slate-500 flex items-center gap-1">
                                                 <Percent className="w-3 h-3" /> Default Discount
                                             </p>
                                             <p className="text-lg font-bold text-success">{group.meta?.discountPercent ?? 0}%</p>
                                         </div>
-                                        <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
-                                            <p className="text-xs text-neutral-500">Credit Limit</p>
-                                            <p className="text-lg font-bold text-neutral-700 dark:text-neutral-300">₹{(group.meta?.creditLimit ?? 0).toLocaleString()}</p>
+                                        <div className="bg-white dark:bg-slate-800 p-3 rounded-lg">
+                                            <p className="text-xs text-slate-500">Credit Limit</p>
+                                            <p className="text-lg font-bold text-slate-700 dark:text-slate-300">₹{(group.meta?.creditLimit ?? 0).toLocaleString()}</p>
                                         </div>
-                                        <div className="bg-white dark:bg-neutral-800 p-3 rounded-lg">
-                                            <p className="text-xs text-neutral-500">Payment Terms</p>
-                                            <p className="text-lg font-bold text-neutral-700 dark:text-neutral-300">{group.meta?.paymentTermsDays ?? 0} days</p>
+                                        <div className="bg-white dark:bg-slate-800 p-3 rounded-lg">
+                                            <p className="text-xs text-slate-500">Payment Terms</p>
+                                            <p className="text-lg font-bold text-slate-700 dark:text-slate-300">{group.meta?.paymentTermsDays ?? 0} days</p>
                                         </div>
                                     </div>
 
                                     <div className="flex gap-2">
                                         <button
                                             onClick={(e) => { e.stopPropagation(); openEditModal(group); }}
-                                            className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center gap-2"
+                                            className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2"
                                         >
                                             <Edit className="w-4 h-4" /> Edit Group
                                         </button>
@@ -285,10 +280,10 @@ const CustomerGroups: React.FC = () => {
 
             {/* Quick Tips */}
             <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 rounded-xl border border-primary/20">
-                <h4 className="font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                <h4 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Star className="w-4 h-4 text-primary" /> Tips for Customer Groups
                 </h4>
-                <ul className="text-sm text-neutral-600 dark:text-neutral-400 mt-2 space-y-1">
+                <ul className="text-sm text-slate-600 dark:text-slate-400 mt-2 space-y-1">
                     <li>• Set different discount rates for wholesale vs retail customers</li>
                     <li>• Define credit limits based on customer reliability</li>
                     <li>• Use payment terms to manage cash flow expectations</li>
@@ -299,74 +294,74 @@ const CustomerGroups: React.FC = () => {
             {/* Create / Edit Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl max-w-md w-full border border-neutral-200 dark:border-neutral-800">
-                        <div className="p-6 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-                            <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{editingGroup ? 'Edit Group' : 'Create Group'}</h3>
-                            <button onClick={() => setShowModal(false)} className="text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-800">
+                        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingGroup ? 'Edit Group' : 'Create Group'}</h3>
+                            <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
                         <div className="p-6 space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-neutral-500 uppercase">Name</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase">Name</label>
                                 <input
                                     type="text"
                                     value={form.name}
                                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                    className="w-full mt-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm"
+                                    className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
                                     placeholder="e.g. Wholesale"
                                 />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-neutral-500 uppercase">Description</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
                                 <input
                                     type="text"
                                     value={form.description}
                                     onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                    className="w-full mt-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm"
+                                    className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
                                 />
                             </div>
                             <div className="grid grid-cols-3 gap-3">
                                 <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase">Discount %</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Discount %</label>
                                     <input
                                         type="number"
                                         value={form.discountPercent}
                                         onChange={(e) => setForm({ ...form, discountPercent: e.target.value })}
-                                        className="w-full mt-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm"
+                                        className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase">Credit Limit</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Credit Limit</label>
                                     <input
                                         type="number"
                                         value={form.creditLimit}
                                         onChange={(e) => setForm({ ...form, creditLimit: e.target.value })}
-                                        className="w-full mt-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm"
+                                        className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-neutral-500 uppercase">Terms (days)</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Terms (days)</label>
                                     <input
                                         type="number"
                                         value={form.paymentTermsDays}
                                         onChange={(e) => setForm({ ...form, paymentTermsDays: e.target.value })}
-                                        className="w-full mt-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm"
+                                        className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
                                     />
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-neutral-500 uppercase">Color</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase">Color</label>
                                 <input
                                     type="color"
                                     value={form.color}
                                     onChange={(e) => setForm({ ...form, color: e.target.value })}
-                                    className="w-full mt-1 h-10 rounded-lg border border-neutral-200 dark:border-neutral-700"
+                                    className="w-full mt-1 h-10 rounded-lg border border-slate-200 dark:border-slate-700"
                                 />
                             </div>
                         </div>
-                        <div className="p-6 border-t border-neutral-200 dark:border-neutral-800 flex justify-end gap-3">
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 text-neutral-600 dark:text-neutral-400 font-bold text-sm">Cancel</button>
+                        <div className="p-6 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
+                            <button onClick={() => setShowModal(false)} className="px-4 py-2 text-slate-600 dark:text-slate-400 font-bold text-sm">Cancel</button>
                             <button
                                 onClick={handleSave}
                                 disabled={saving || !form.name.trim()}

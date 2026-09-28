@@ -3,9 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from "../../../redux/store";
 import { getAllBills } from "../../../redux/slices/billSlice";
 import { getAllSuppliers } from "../../../redux/slices/supplierSlice";
-import * as XLSX from 'xlsx';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
@@ -138,7 +135,8 @@ export const useOutstandingPayables = () => {
     const totalOverdue = useMemo(() => processedBills.filter(b => b.daysOverdue > 0).reduce((acc, b) => acc + b.outstandingAmount, 0), [processedBills]);
 
     // Export Functions
-    const exportToExcel = () => {
+    const exportToExcel = async () => {
+        const XLSX = await import('xlsx');
         const data = filteredBills.map(b => ({
             'Vendor Name': b.vendorName,
             'Bill Number': b.billNumber,
@@ -157,7 +155,9 @@ export const useOutstandingPayables = () => {
         toast.info("Excel report generated successfully");
     };
 
-    const printReport = () => {
+    const printReport = async () => {
+        const { jsPDF } = await import('jspdf');
+        await import('jspdf-autotable');
         const doc = new jsPDF() as any;
         doc.setFontSize(18);
         doc.text('Outstanding Payables Report', 14, 22);

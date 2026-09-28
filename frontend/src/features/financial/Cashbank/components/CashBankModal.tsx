@@ -26,11 +26,11 @@ const CashBankModal: React.FC<ModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-            <div className={`bg-white dark:bg-slate-900 w-full ${maxWidth} rounded-[3rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-slide-up`}>
+            <div className={`bg-white dark:bg-slate-900 w-full ${maxWidth} rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-slide-up`}>
                 <div className="p-8 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         {Icon && (
-                            <div className="w-12 h-12 rounded-sm bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-primary">
+                            <div className="w-12 h-12 rounded-sm bg-primary-soft dark:bg-primary-soft flex items-center justify-center text-primary">
                                 <Icon className="w-6 h-6" />
                             </div>
                         )}

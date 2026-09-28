@@ -10,6 +10,7 @@ import {
 import { setActiveTab } from "../../../redux/slices/uiSlice";
 import { getTable } from "../../../services/dataSource";
 import Layout from "../../../components/shared/Layout/index";
+import { getColorClasses } from "../../../utils/tailwindColorClasses";
 
 // Demo Data Interface
 interface PaymentRecord {
@@ -86,7 +87,8 @@ const PaymentInList: React.FC = () => {
     const metrics = useMemo(() => {
         const totalValue = payments.reduce((sum, p) => sum + p.amount, 0);
         const creditCount = payments.filter(p => (p.excessAmount || 0) > 0).length;
-        const todayCollections = payments.slice(0, 5).reduce((sum, p) => sum + p.amount, 0); // Mocking today's collections
+        const today = new Date().toDateString();
+        const todayCollections = payments.filter(p => p.date && new Date(p.date).toDateString() === today).reduce((sum, p) => sum + p.amount, 0);
         return {
             totalValue,
             count: payments.length,
@@ -103,7 +105,7 @@ const PaymentInList: React.FC = () => {
             <Layout>
                 <div className="flex flex-col items-center justify-center py-20 min-h-[60vh]">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
-                    <p className="text-secondary opacity-70 font-black uppercase tracking-widest text-[10px]">Reconciling Ledgers...</p>
+                    <p className="text-muted font-black uppercase tracking-widest text-[10px]">Reconciling Ledgers...</p>
                 </div>
             </Layout>
         );
@@ -124,8 +126,8 @@ const PaymentInList: React.FC = () => {
                     <header className="flex justify-between items-end">
                         <div className="relative pl-5">
                             <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--color-primary),0.5)]" />
-                            <h1 className="text-3xl font-display font-black tracking-tighter text-main flex items-center gap-3">
-                                Payment <span className="text-primary">Intelligence</span>
+                            <h1 className="page-title text-main flex items-center gap-3">
+                                Payment <span className="text-primary">Insights</span>
                                 <span className="px-3 py-1 bg-success/10 border border-success/20 text-success rounded-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
                                     <ArrowUpRight className="w-3 h-3" /> Collections
                                 </span>
@@ -158,7 +160,7 @@ const PaymentInList: React.FC = () => {
                         ].map((stat, i) => (
                             <div key={i} className="glass-panel border border-default rounded-sm p-6 group hover:border-primary/30 transition-all">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className={`p-3 bg-${stat.color}/10 text-${stat.color} rounded-sm`}>
+                                    <div className={`p-3 ${getColorClasses(stat.color).surface} ${getColorClasses(stat.color).text} rounded-sm`}>
                                         <stat.icon className="w-5 h-5" />
                                     </div>
                                     <span className={`text-[10px] font-black ${stat.trend.includes('+') ? 'text-success bg-success/10' : 'text-primary bg-primary/10'} px-2 py-1 rounded-full`}>
@@ -242,7 +244,7 @@ const PaymentInList: React.FC = () => {
                                                                 {payment.allocatedCount} Invoices
                                                             </span>
                                                         ) : (
-                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-200">
+                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest bg-warning-soft text-warning border border-warning-line">
                                                                 Advance
                                                             </span>
                                                         )}

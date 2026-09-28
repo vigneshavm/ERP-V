@@ -16,7 +16,7 @@ export const bankStatementService = {
         const formData = new FormData();
         formData.append('statement', file);
 
-        const response = await api.post('/finance/bank-statement/upload', formData, {
+        const response = await api.post('/api/bank-statement/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -28,7 +28,7 @@ export const bankStatementService = {
 
     getTransactions: async (status?: string) => {
         const params = status ? { status } : {};
-        const response = await api.get('/finance/bank-statement/transactions', { params });
+        const response = await api.get('/api/bank-statement/transactions', { params });
         return response.data;
     }
 };

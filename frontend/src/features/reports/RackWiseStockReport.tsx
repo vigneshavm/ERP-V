@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { LayoutGrid, Boxes, Download } from 'lucide-react';
-import api from '@/services/api';
+import React from 'react';
+import { Boxes, IndianRupee, LayoutGrid, Package } from 'lucide-react';
+import { formatCurrency, formatNumber, formatQuantity } from '@/utils/formatters';
+import { ReportAnalysisCard, ReportKpiGrid, ReportPageShell, ReportRankList, useReportData } from './components';
+import type { ReportColumn, ResolvedSource } from './components';
+import { StockFilterFields } from './stock/StockFilterFields';
+import { StockGroupTable } from './stock/StockGroupTable';
+import { useStockFilters } from './stock/useStockFilters';
 
 interface RackStockRow {
     rack: string;
@@ -10,111 +14,77 @@ interface RackStockRow {
     itemCount: number;
 }
 
-// Stock-position report sliced by physical shelf/rack (Item.shelfCode / binLocation), covering
-// the Textilesoft "FloorRackNowiseStockReport" gap. Groups on fields the Item model already
-// carries for warehouse bin partitioning -- no new location dimension is introduced.
+interface RackCoverage {
+    racks: number;
+    lots: number;
+    lotsWithRack: number;
+    valueWithRackPct: number;
+}
+
+/** SQL mode: { asOf, source, rows, coverage } from the shared stock snapshot (rack = Textilesoft stockdetails.rackno). Mongo mode: rows only. */
+type RackStockResponse = RackStockRow[] | { asOf: string | null; source?: ResolvedSource; rows: RackStockRow[]; coverage?: RackCoverage };
+
+const rupees0 = (v: number) => formatCurrency(v, { fractionDigits: 0 });
+
+const EXPORT_COLUMNS: ReportColumn<RackStockRow>[] = [
+    { key: 'rack', header: 'Rack', value: r => r.rack },
+    { key: 'itemCount', header: 'Lots', value: r => r.itemCount },
+    { key: 'totalQty', header: 'Pieces', value: r => r.totalQty },
+    { key: 'totalValue', header: 'Value (cost)', value: r => r.totalValue },
+];
+
+/** Floor/Rack-Wise Stock: current stock (shop + ERP movements, same as the other stock reports) grouped by rack. */
 const RackWiseStockReport: React.FC = () => {
-    const [rows, setRows] = useState<RackStockRow[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    const f = useStockFilters();
+    const { data, loading, error, reload } = useReportData<RackStockResponse>('/api/inventory/reports/stock-by-rack', f.params);
 
-    useEffect(() => {
-        let cancelled = false;
-        (async () => {
-            try {
-                const res = await api.get('/api/inventory/reports/stock-by-rack');
-                if (!cancelled) setRows(res.data || []);
-            } catch (err: any) {
-                if (!cancelled) setError(err?.response?.data?.message || 'Failed to load rack-wise stock report');
-            } finally {
-                if (!cancelled) setLoading(false);
-            }
-        })();
-        return () => { cancelled = true; };
-    }, []);
-
-    const totalValue = rows.reduce((acc, r) => acc + r.totalValue, 0);
-    const totalQty = rows.reduce((acc, r) => acc + r.totalQty, 0);
-
-    if (loading) {
-        return <div className="py-20 text-center text-slate-400 text-sm font-bold">Loading rack-wise stock…</div>;
-    }
-
-    if (error) {
-        return <div className="p-6 bg-rose-50 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/20 rounded-lg text-rose-700 dark:text-danger">{error}</div>;
-    }
+    const rows = !data ? [] : Array.isArray(data) ? data : data.rows;
+    const asOf = data && !Array.isArray(data) ? data.asOf : null;
+    const coverage = data && !Array.isArray(data) ? data.coverage : undefined;
+    const source: ResolvedSource | undefined = !data ? undefined : Array.isArray(data) ? 'mongo' : data.source ?? 'sql';
+    const totalValue = rows.reduce((a, r) => a + r.totalValue, 0);
+    const totalQty = rows.reduce((a, r) => a + r.totalQty, 0);
+    const racks = coverage?.racks ?? rows.filter(r => r.rack !== 'Unassigned').length;
+    const ranked = rows.filter(r => r.rack !== 'Unassigned').slice().sort((a, b) => b.totalValue - a.totalValue).slice(0, 15);
+    const note = !data ? undefined : coverage
+        ? coverage.lotsWithRack === 0
+            ? 'No rack is recorded for any barcode in the shop data (Textilesoft stockdetails.rackno is empty), so all stock is under Unassigned. Enter rack numbers in Textilesoft to use this report.'
+            : `${formatNumber(coverage.lotsWithRack)} of ${formatNumber(coverage.lots)} lots (${coverage.valueWithRackPct}% of stock value) have a rack recorded. The rest is under Unassigned.`
+        : 'Rack = shelf code / bin location on the ERP item.';
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <div className="p-2 bg-indigo-50 dark:bg-primary/10 rounded-lg text-primary w-fit mb-2">
-                        <LayoutGrid className="w-5 h-5" />
-                    </div>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Racks / Shelves Used</p>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{rows.length}</h3>
-                </div>
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <div className="p-2 bg-emerald-50 dark:bg-success/10 rounded-lg text-emerald-600 dark:text-success w-fit mb-2">
-                        <Boxes className="w-5 h-5" />
-                    </div>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Units in Stock</p>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{totalQty.toLocaleString()}</h3>
-                </div>
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Stock Value</p>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹{totalValue.toLocaleString()}</h3>
-                </div>
-            </div>
-
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm">
-                <h4 className="font-bold text-slate-900 dark:text-white mb-6">Units in Stock by Rack / Shelf</h4>
-                <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={rows.slice(0, 20)} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                            <XAxis dataKey="rack" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10, fontWeight: 600 }} />
-                            <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} />
-                            <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
-                            <Bar dataKey="totalQty" fill="#10b981" radius={[4, 4, 0, 0]} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-
-            <div className="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-                <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/20">
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">Stock Position by Rack / Shelf</h4>
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-primary bg-indigo-50 dark:bg-primary/10 rounded-lg hover:bg-indigo-100 dark:hover:bg-primary/20 transition-all">
-                        <Download className="w-3.5 h-3.5" /> Export Data
-                    </button>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
-                            <tr>
-                                <th className="px-6 py-3">Rack / Shelf</th>
-                                <th className="px-6 py-3 text-center">Items</th>
-                                <th className="px-6 py-3 text-center">Units in Stock</th>
-                                <th className="px-6 py-3 text-right">Stock Value</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                            {rows.length === 0 ? (
-                                <tr><td colSpan={4} className="px-6 py-8 text-center text-slate-400">No rack/shelf stock data found</td></tr>
-                            ) : rows.map((r) => (
-                                <tr key={r.rack} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-white font-mono">{r.rack}</td>
-                                    <td className="px-6 py-4 text-center font-mono text-slate-600 dark:text-slate-400">{r.itemCount}</td>
-                                    <td className="px-6 py-4 text-center font-mono text-slate-600 dark:text-slate-400">{r.totalQty.toLocaleString()}</td>
-                                    <td className="px-6 py-4 text-right font-bold text-slate-900 dark:text-white font-mono">₹{r.totalValue.toLocaleString()}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <ReportPageShell<RackStockRow>
+            reportId="rack-wise-stock"
+            filters={{ activeCount: f.active, onClear: f.clear, content: <StockFilterFields filters={f.filters} set={f.set} /> }}
+            note={note}
+            onRefresh={() => reload(true)}
+            loading={loading}
+            error={error}
+            isEmpty={Boolean(data && rows.length === 0 && f.active === 0)}
+            meta={{ resolvedSource: source, asOf, recordCount: rows.length }}
+            export={{ columns: EXPORT_COLUMNS, fetchRows: () => rows, filterSummary: f.summary }}
+        >
+            {data && (
+                <>
+                    <ReportKpiGrid items={[
+                        { label: 'Racks', value: formatNumber(racks), sub: coverage ? `${formatNumber(coverage.lotsWithRack)} lots with a rack` : undefined, icon: <LayoutGrid className="w-4 h-4" /> },
+                        { label: 'Lots in stock', value: formatNumber(coverage?.lots ?? rows.reduce((a, r) => a + r.itemCount, 0)), icon: <Package className="w-4 h-4" /> },
+                        { label: 'Pieces in stock', value: formatQuantity(totalQty), icon: <Boxes className="w-4 h-4" /> },
+                        { label: 'Value at cost', value: rupees0(totalValue), icon: <IndianRupee className="w-4 h-4" /> },
+                    ]} />
+                    {ranked.length > 0 && (
+                        <ReportAnalysisCard title="Stock distribution" subtitle={`Value at cost, top ${ranked.length} racks (Unassigned excluded)`} autoHeight>
+                            <ReportRankList items={ranked.map(r => ({ label: r.rack, value: r.totalValue, display: rupees0(r.totalValue) }))} />
+                        </ReportAnalysisCard>
+                    )}
+                    <StockGroupTable
+                        title="Stock by rack"
+                        label="Rack"
+                        groups={rows.map(r => ({ key: r.rack, lots: r.itemCount, qty: r.totalQty, costValue: r.totalValue, mrpValue: 0 }))}
+                    />
+                </>
+            )}
+        </ReportPageShell>
     );
 };
 
