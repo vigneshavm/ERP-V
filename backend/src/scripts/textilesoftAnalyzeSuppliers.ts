@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import { loadDbConfig, openPool, queryAll, type ShopDbPool } from "../integrations/textilesoft/shopDbReader.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -44,8 +45,8 @@ async function main() {
     const dir = path.resolve(process.cwd(), "textilesoft-discovery");
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, "analysis-suppliers.json"), JSON.stringify(out, null, 1));
-    console.log(`Wrote ${path.join(dir, "analysis-suppliers.json")}`);
-    console.log("Done. Tell Claude it is ready.");
+    info(`Wrote ${path.join(dir, "analysis-suppliers.json")}`);
+    info("Done. Tell Claude it is ready.");
 }
 
 main().catch((e) => {

@@ -4,7 +4,8 @@ import { ArrowRight, ShieldAlert } from 'lucide-react';
 import SecurePasswordInput from '../components/SecurePasswordInput';
 import AuthLayout from '../components/AuthLayout';
 import AuthAlert from '../components/AuthAlert';
-import { useResetPasswordForm } from '../hooks/useResetPasswordForm';
+import { useResetPasswordForm } from '../hooks/useResetPasswordForm';import { Button } from '@/components/shared/Button';
+
 
 const ResetPassword: React.FC = () => {
     const location = useLocation();
@@ -35,7 +36,7 @@ const ResetPassword: React.FC = () => {
                 <div className="mt-8 bg-danger/10 border border-danger/20 p-6 rounded-sm flex flex-col gap-4 text-center">
                     <ShieldAlert className="w-12 h-12 text-danger mx-auto" />
                     <p className="text-[10px] font-black text-danger uppercase tracking-widest">Security Link Compromised</p>
-                    <Link to="/forgot-password" university-anchor="forgot-password" className="w-full h-14 bg-white text-slate-950 rounded-sm font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 transition-all">
+                    <Link to="/forgot-password" university-anchor="forgot-password" className="w-full h-14 bg-white dark:bg-slate-800 text-slate-950 dark:text-white rounded-sm font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
                         Request New Key
                     </Link>
                 </div>

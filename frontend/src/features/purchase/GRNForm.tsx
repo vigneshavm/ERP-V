@@ -37,7 +37,7 @@ const GRNForm: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => navigate('/purchase/grn')}
-                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm transition active:scale-95"
+                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm transition active:scale-95 text-slate-700 dark:text-slate-200"
                             >
                                 <ArrowLeft className="w-4 h-4 mr-2 inline" /> Abort
                             </button>
@@ -62,7 +62,7 @@ const GRNForm: React.FC = () => {
 
                 {/* Logistics Context Node */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6 group hover:border-primary/20 transition-all">
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6 group hover:border-primary/20 transition-all">
                         <div className="p-4 bg-primary/10 text-primary rounded-sm group-hover:rotate-12 transition-transform">
                             <Truck className="w-6 h-6" />
                         </div>

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { singleton } from 'tsyringe';
 import SubscriptionPlan from '../models/SubscriptionPlan.js';
+import { error } from '../../../config/logger.js';
 
 @singleton()
 export class SubscriptionPlanController {
@@ -18,9 +19,9 @@ export class SubscriptionPlanController {
         try {
             const plans = await SubscriptionPlan.find({ isActive: true }).sort({ price: 1 });
             res.status(200).json({ success: true, data: plans });
-        } catch (error) {
-            console.error('Get Subscription Plans Error:', error);
-            res.status(500).json({ success: false, message: 'Server Error', error: (error as Error).message });
+        } catch (err) {
+            error('Get Subscription Plans Error:', err);
+            res.status(500).json({ success: false, message: 'Server Error', error: (err as Error).message });
         }
     };
 }

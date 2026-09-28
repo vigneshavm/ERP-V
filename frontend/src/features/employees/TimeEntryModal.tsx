@@ -1,7 +1,8 @@
 ﻿import React, { useState } from 'react';
 import { X, Clock, CheckCircle2, XCircle, PieChart, AlertCircle, Trash2, LucideIcon } from 'lucide-react';
 import { DailyLog } from "../../types/hr";
-import { AttendanceStatus } from "../../types/common";
+import { AttendanceStatus } from "../../types/common";import { Button } from '@/components/shared/Button';
+
 
 interface TimeEntryModalProps {
     isOpen: boolean;
@@ -120,18 +121,8 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ isOpen, date, on
                         <div></div>
                     )}
                     <div className="flex gap-2">
-                        <button
-                            onClick={onClose}
-                            className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg font-bold transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold shadow-lg shadow-indigo-500/30 transition-all"
-                        >
-                            Save Entry
-                        </button>
+                        <Button onClick={onClose} className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg font-bold transition-colors">Cancel</Button>
+                        <Button onClick={handleSave} className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold shadow-lg shadow-indigo-500/30 transition-all">Save Entry</Button>
                     </div>
                 </div>
             </div>

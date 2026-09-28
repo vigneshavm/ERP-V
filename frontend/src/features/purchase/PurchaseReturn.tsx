@@ -11,7 +11,8 @@ import { Save, Printer, FileText, User, Phone, X,
 } from 'lucide-react';
 import PageHeader from "../../components/shared/Layout/PageHeader.js";
 import { Supplier } from "../../redux/slices/supplierSlice.js";
-import { getColorClasses } from "../../utils/tailwindColorClasses";
+import { getColorClasses } from "../../utils/tailwindColorClasses";import { Button } from '@/components/shared/Button';
+
 
 interface ReturnItem {
     name: string;
@@ -237,15 +238,10 @@ const PurchaseReturn: React.FC = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <button
-                                    onClick={() => setShowSupplierModal(true)}
-                                    className="w-full px-4 py-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-sm text-slate-500 hover:border-danger hover:text-danger hover:bg-danger/50 dark:hover:bg-danger-soft transition-all flex flex-col items-center justify-center gap-3"
-                                >
-                                    <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                                <Button onClick={() => setShowSupplierModal(true)} className="w-full px-4 py-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-sm text-slate-500 hover:border-danger hover:text-danger hover:bg-danger/50 dark:hover:bg-danger-soft transition-all flex flex-col items-center justify-center gap-3"><div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center">
                                         <Plus className="w-6 h-6 text-danger" />
                                     </div>
-                                    <span className="font-medium">Click to select supplier</span>
-                                </button>
+                                    <span className="font-medium">Click to select supplier</span></Button>
                             )}
                         </div>
 
@@ -258,13 +254,8 @@ const PurchaseReturn: React.FC = () => {
                                     </div>
                                     <h2 className="text-base font-semibold text-slate-900 dark:text-white">Return Items</h2>
                                 </div>
-                                <button
-                                    onClick={addItem}
-                                    className="btn btn-secondary py-2 border-success-line text-success hover:bg-success-soft"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    Add Item
-                                </button>
+                                <Button onClick={addItem} className="btn btn-secondary py-2 border-success-line text-success hover:bg-success-soft"><Plus className="w-4 h-4" />
+                                    Add Item</Button>
                             </div>
                             <div className="overflow-x-auto -mx-6">
                                 <table className="w-full text-left text-sm whitespace-nowrap">

@@ -3,6 +3,8 @@ import { Wallet, IndianRupee } from 'lucide-react';
 import { Card } from "../../components/core/Display/Card";
 import { LaborPayment } from "../../types/hr";
 import { formatCurrency, formatDate} from "../../utils/helpers";
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface PaymentHistoryProps {
     payments: LaborPayment[];
@@ -70,21 +72,9 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({
                     <div className="flex gap-2">
                         <div className="relative flex-1">
                             <IndianRupee className="absolute left-2 top-2 text-slate-400 w-3.5 h-3.5" />
-                            <input
-                                type="number"
-                                value={paymentAmount}
-                                onChange={(e) => setPaymentAmount(e.target.value)}
-                                placeholder="Amount"
-                                className="w-full pl-7 pr-2 py-1.5 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white rounded text-sm outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                            <Input type="number" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} placeholder="Amount" className="w-full pl-7 pr-2 py-1.5 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white rounded text-sm outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
-                        <button
-                            onClick={onAddPayment}
-                            disabled={!paymentAmount}
-                            className="bg-slate-800 dark:bg-slate-700 text-white px-3 py-1.5 rounded text-sm font-bold hover:bg-slate-900 dark:hover:bg-slate-600 disabled:opacity-50 transition-colors"
-                        >
-                            Add
-                        </button>
+                        <Button onClick={onAddPayment} disabled={!paymentAmount} className="bg-slate-800 dark:bg-slate-700 text-white px-3 py-1.5 rounded text-sm font-bold hover:bg-slate-900 dark:hover:bg-slate-600 disabled:opacity-50 transition-colors">Add</Button>
                     </div>
                 </div>
             </Card>

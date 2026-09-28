@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import { Sector } from "../../types/common";
 import api from "../../services/api.js";
+import { Button } from "../../components/shared/Button";
+import { Input } from "../../components/shared/Input";
 
 // Use native crypto.randomUUID() for generating UUIDs
 const _generateId = () => crypto.randomUUID();
@@ -177,7 +179,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
 
             {/* Sign Up Card */}
             <div className="relative z-10 w-full max-w-2xl animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-[2.5rem] shadow-2xl p-8 md:p-12">
+                <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl p-8 md:p-12">
 
                     {/* Header */}
                     <div className="text-center mb-10">
@@ -223,7 +225,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Business Name</label>
                                     <div className="relative">
                                         <Store className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
-                                        <input
+                                        <Input
                                             type="text"
                                             value={businessName}
                                             onChange={(e) => handleBusinessNameChange(e.target.value)}
@@ -237,7 +239,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Industry Sector</label>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                         {SECTORS.map((s) => (
-                                            <button
+                                            <Button
                                                 key={s.id}
                                                 type="button"
                                                 onClick={() => setSector(s.id)}
@@ -248,7 +250,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                             >
                                                 <span className="text-2xl mb-2 block">{s.icon}</span>
                                                 <span className="text-xs font-bold">{s.name}</span>
-                                            </button>
+                                            </Button>
                                         ))}
                                     </div>
                                 </div>
@@ -260,7 +262,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="group">
-                                        <input
+                                        <Input
                                             type="text"
                                             value={address}
                                             onChange={(e) => setAddress(e.target.value)}
@@ -269,7 +271,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                         />
                                     </div>
                                     <div className="group">
-                                        <input
+                                        <Input
                                             type="text"
                                             value={city}
                                             onChange={(e) => setCity(e.target.value)}
@@ -278,7 +280,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                         />
                                     </div>
                                     <div className="group">
-                                        <input
+                                        <Input
                                             type="text"
                                             value={state}
                                             onChange={(e) => setState(e.target.value)}
@@ -287,7 +289,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                         />
                                     </div>
                                     <div className="group">
-                                        <input
+                                        <Input
                                             type="text"
                                             value={zipCode}
                                             onChange={(e) => setZipCode(e.target.value)}
@@ -299,7 +301,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="group">
-                                        <input
+                                        <Input
                                             type="text"
                                             value={gstIn}
                                             onChange={(e) => setGstIn(e.target.value.toUpperCase())}
@@ -308,7 +310,7 @@ const TenantSignUp: React.FC<TenantSignUpProps> = ({ onComplete, onBackToLogin }
                                         />
                                     </div>
                                     <div className="group">
-                                        <input
+                                        <Input
                                             type="text"
                                             value={pan}
                                             onChange={(e) => setPan(e.target.value.toUpperCase())}

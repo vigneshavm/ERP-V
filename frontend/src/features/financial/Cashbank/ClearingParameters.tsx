@@ -1,8 +1,10 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { X, RefreshCw, Zap, ShieldCheck } from 'lucide-react';
+import { RefreshCw, Zap, ShieldCheck } from 'lucide-react';
 import api from '../../../services/api'; // Direct API import since no slice action exists yet
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
+import { Button, Modal } from '@/components/shared';import { Input } from '@/components/shared/Input';
+
 
 interface ClearingParametersProps {
     onClose: () => void;
@@ -54,18 +56,13 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative">
-                <div className="p-10">
-                    <div className="flex items-center justify-between mb-10">
-                        <div>
-                            <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Unit Parameters</h3>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Clearing Configuration for {currentSector}</p>
-                        </div>
-                        <button onClick={onClose} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-full text-slate-400 hover:text-error transition">
-                            <X size={20} />
-                        </button>
-                    </div>
+        <Modal
+            isOpen
+            onClose={onClose}
+            title="Unit Parameters"
+            size="lg"
+        >
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic -mt-4 mb-4">Clearing Configuration for {currentSector}</p>
 
                     {loading ? (
                         <div className="text-center py-20">Loading Configuration...</div>
@@ -78,19 +75,21 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
                             <p className="text-sm text-slate-500 max-w-md mx-auto">
                                 This unit ({currentSector}) does not have clearing parameters defined. Initialize to set defaults.
                             </p>
-                            <button
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                icon={<RefreshCw className={`w-4 h-4 ${initializing ? 'animate-spin' : ''}`} />}
                                 onClick={handleInitialize}
                                 disabled={initializing}
-                                className="px-8 py-4 bg-primary text-white rounded-sm text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition shadow-lg shadow-primary/20 flex items-center gap-2 mx-auto disabled:opacity-50"
+                                className="mx-auto"
                             >
-                                <RefreshCw className={`w-4 h-4 ${initializing ? 'animate-spin' : ''}`} />
-                                {initializing ? 'Initializing...' : 'Initialize Unit Protocols'}
-                            </button>
+                                Initialize Unit Protocols
+                            </Button>
                         </div>
                     ) : (
                         <div className="space-y-6">
                             {parameters.map((param) => (
-                                <div key={param._id} className="p-6 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-700 flex items-center justify-between group hover:border-primary/20 transition-all">
+                                <div key={param._id} className="p-6 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center justify-between group hover:border-primary/20 transition-all">
                                     <div>
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Clearing Type</p>
                                         <h4 className="text-lg font-black italic uppercase tracking-tight">{param.type}</h4>
@@ -130,9 +129,7 @@ const ClearingParameters: React.FC<ClearingParametersProps> = ({ onClose }) => {
                             </div>
                         </div>
                     )}
-                </div>
-            </div>
-        </div>
+        </Modal>
     );
 };
 

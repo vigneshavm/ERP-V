@@ -5,6 +5,8 @@ import PageHeader from '../../components/shared/Layout/PageHeader';
 import { Save, Calculator, AlertCircle, Info, ArrowLeft, Activity, ShieldCheck } from 'lucide-react';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface Supplier {
     _id: string;
@@ -101,12 +103,7 @@ const RateRevisionForm: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex items-center gap-3">
-                            <button
-                                onClick={() => navigate('/purchase/rate-revisions')}
-                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm transition active:scale-95"
-                            >
-                                <ArrowLeft className="w-4 h-4 mr-2 inline" /> Abort
-                            </button>
+                            <Button onClick={() => navigate('/purchase/rate-revisions')} className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm transition active:scale-95"><ArrowLeft className="w-4 h-4 mr-2 inline" /> Abort</Button>
                             <button
                                 onClick={handleSubmit}
                                 disabled={isSaving}
@@ -186,7 +183,7 @@ const RateRevisionForm: React.FC = () => {
                                         value={reason}
                                         onChange={e => setReason(e.target.value)}
                                         rows={4}
-                                        className="w-full px-8 py-6 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-[2rem] text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                        className="w-full px-8 py-6 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-xl text-xs font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
                                         placeholder="Retrospective cost adjustment rationale..."
                                     />
                                 </div>
@@ -197,7 +194,7 @@ const RateRevisionForm: React.FC = () => {
                     {/* Impact Workspace */}
                     <div className="lg:col-span-5 space-y-10">
                         {selectedBatch ? (
-                            <div className="bg-slate-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group animate-in fade-in zoom-in-95 duration-700">
+                            <div className="bg-slate-900 p-10 rounded-full text-white shadow-2xl space-y-10 relative overflow-hidden group animate-in fade-in zoom-in-95 duration-700">
                                 <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-1000">
                                     <Calculator className="w-48 h-48" />
                                 </div>

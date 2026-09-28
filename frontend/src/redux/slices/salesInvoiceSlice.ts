@@ -11,10 +11,18 @@ const getConfig = (token: string) => ({
     },
 });
 
+export interface SalesInvoicePagination {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+}
+
 interface SalesInvoiceState {
     invoices: Invoice[];
     invoice: Invoice | null;
     summary: any | null; // Define InvoiceSummary if available
+    pagination: SalesInvoicePagination | null;
     isLoading: boolean;
     isSuccess: boolean;
     isError: boolean;
@@ -25,11 +33,20 @@ const initialState: SalesInvoiceState = {
     invoices: [],
     invoice: null,
     summary: null,
+    pagination: null,
     isLoading: false,
     isSuccess: false,
     isError: false,
     message: '',
 };
+
+export interface GetSalesInvoicesParams {
+    search?: string;
+    status?: string;
+    customerId?: string;
+    page?: number;
+    pageSize?: number;
+}
 
 // Get sales invoice summary
 export const getSalesInvoiceSummary = createAsyncThunk(
@@ -51,16 +68,19 @@ export const getSalesInvoiceSummary = createAsyncThunk(
     }
 );
 
-// Get all sales invoices
+// Get all sales invoices. Pass nothing (or a bare search string, kept for back-compat) for the
+// full unpaginated list (e.g. EMIPlans.tsx); pass { page, pageSize, ... } for the paginated,
+// server-filtered Sales Invoices page.
 export const getAllSalesInvoices = createAsyncThunk(
     'salesInvoice/getAll',
-    async (search: string | undefined, thunkAPI) => {
+    async (params: string | GetSalesInvoicesParams | undefined, thunkAPI) => {
         try {
             const state = thunkAPI.getState() as any;
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
-            const response = await api.get(`${API_URL}/invoices`, { ...getConfig(token), params: search ? { search } : undefined });
-            return response.data;
+            const query = typeof params === "string" ? { search: params } : params;
+            const response = await api.get(`${API_URL}/invoices`, { ...getConfig(token), params: query });
+            return response.data as { success: boolean; data: Invoice[]; pagination?: SalesInvoicePagination };
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -205,11 +225,12 @@ export const salesInvoiceSlice = createSlice({
             // Get sales invoice summary
             .addCase(getSalesInvoiceSummary.pending, (state) => {
                 state.isLoading = true;
+                state.isError = false;
             })
-            .addCase(getSalesInvoiceSummary.fulfilled, (state, action: PayloadAction<any>) => {
+            .addCase(getSalesInvoiceSummary.fulfilled, (state, action: PayloadAction<{ success: boolean; data: any }>) => {
                 state.isLoading = false;
                 state.isSuccess = true;
-                state.summary = action.payload;
+                state.summary = action.payload?.data ?? null;
             })
             .addCase(getSalesInvoiceSummary.rejected, (state, action) => {
                 state.isLoading = false;
@@ -219,11 +240,13 @@ export const salesInvoiceSlice = createSlice({
             // Get all sales invoices
             .addCase(getAllSalesInvoices.pending, (state) => {
                 state.isLoading = true;
+                state.isError = false;
             })
-            .addCase(getAllSalesInvoices.fulfilled, (state, action: PayloadAction<Invoice[]>) => {
+            .addCase(getAllSalesInvoices.fulfilled, (state, action: PayloadAction<{ success: boolean; data: Invoice[]; pagination?: SalesInvoicePagination }>) => {
                 state.isLoading = false;
                 state.isSuccess = true;
-                state.invoices = action.payload;
+                state.invoices = Array.isArray(action.payload?.data) ? action.payload.data : [];
+                state.pagination = action.payload?.pagination ?? null;
             })
             .addCase(getAllSalesInvoices.rejected, (state, action) => {
                 state.isLoading = false;
@@ -233,11 +256,12 @@ export const salesInvoiceSlice = createSlice({
             // Create sales invoice
             .addCase(createSalesInvoice.pending, (state) => {
                 state.isLoading = true;
+                state.isError = false;
             })
-            .addCase(createSalesInvoice.fulfilled, (state, action: PayloadAction<Invoice>) => {
+            .addCase(createSalesInvoice.fulfilled, (state, action: PayloadAction<{ success: boolean; data: Invoice }>) => {
                 state.isLoading = false;
                 state.isSuccess = true;
-                state.invoices.push(action.payload);
+                if (action.payload?.data) state.invoices.push(action.payload.data);
             })
             .addCase(createSalesInvoice.rejected, (state, action) => {
                 state.isLoading = false;
@@ -247,11 +271,12 @@ export const salesInvoiceSlice = createSlice({
             // Get sales invoice by ID
             .addCase(getSalesInvoiceById.pending, (state) => {
                 state.isLoading = true;
+                state.isError = false;
             })
-            .addCase(getSalesInvoiceById.fulfilled, (state, action: PayloadAction<Invoice>) => {
+            .addCase(getSalesInvoiceById.fulfilled, (state, action: PayloadAction<{ success: boolean; data: Invoice }>) => {
                 state.isLoading = false;
                 state.isSuccess = true;
-                state.invoice = action.payload;
+                state.invoice = action.payload?.data ?? null;
             })
             .addCase(getSalesInvoiceById.rejected, (state, action) => {
                 state.isLoading = false;
@@ -261,6 +286,7 @@ export const salesInvoiceSlice = createSlice({
             // Delete sales invoice
             .addCase(deleteSalesInvoice.pending, (state) => {
                 state.isLoading = true;
+                state.isError = false;
             })
             .addCase(deleteSalesInvoice.fulfilled, (state, action: PayloadAction<string>) => {
                 state.isLoading = false;
@@ -275,18 +301,21 @@ export const salesInvoiceSlice = createSlice({
             // Mark sales invoice as paid
             .addCase(markSalesInvoiceAsPaid.pending, (state) => {
                 state.isLoading = true;
+                state.isError = false;
             })
-            .addCase(markSalesInvoiceAsPaid.fulfilled, (state, action: PayloadAction<{ invoice: Invoice }>) => { // Assuming response has { success, invoice: ... }
+            .addCase(markSalesInvoiceAsPaid.fulfilled, (state, action: PayloadAction<{ success: boolean; data: { message: string; invoice: Invoice } }>) => {
                 state.isLoading = false;
                 state.isSuccess = true;
+                const updated = action.payload?.data?.invoice;
+                if (!updated) return;
                 // Update the invoice in the list if it exists
-                const index = state.invoices.findIndex(inv => inv._id === action.payload.invoice._id);
+                const index = state.invoices.findIndex(inv => inv._id === updated._id);
                 if (index !== -1) {
-                    state.invoices[index] = action.payload.invoice;
+                    state.invoices[index] = updated;
                 }
                 // Update the current invoice if it's the same one
-                if (state.invoice && state.invoice._id === action.payload.invoice._id) {
-                    state.invoice = action.payload.invoice;
+                if (state.invoice && state.invoice._id === updated._id) {
+                    state.invoice = updated;
                 }
             })
             .addCase(markSalesInvoiceAsPaid.rejected, (state, action) => {
@@ -297,6 +326,7 @@ export const salesInvoiceSlice = createSlice({
             // Edit sales invoice
             .addCase(editSalesInvoice.pending, (state) => {
                 state.isLoading = true;
+                state.isError = false;
             })
             .addCase(editSalesInvoice.fulfilled, (state, action: PayloadAction<{ invoice: Invoice }>) => {
                 state.isLoading = false;

@@ -3,6 +3,8 @@
  * Fails fast if critical variables are missing
  */
 
+import { error, info } from './logger.js';
+
 // Extend global type for EMAIL_ENABLED flag
 declare global {
     var EMAIL_ENABLED: boolean;
@@ -22,16 +24,16 @@ export const validateEnv = (): void => {
     const missing = required.filter(key => !process.env[key]);
 
     if (missing.length > 0) {
-        console.error('❌ FATAL: Missing required environment variables:');
-        missing.forEach(key => console.error(`   - ${key}`));
-        console.error('\nServer cannot start without these variables.');
+        error('❌ FATAL: Missing required environment variables:');
+        missing.forEach(key => error(`   - ${key}`));
+        error('\nServer cannot start without these variables.');
         process.exit(1);
     }
 
     // Validate email configuration (non-fatal)
     validateEmailConfig();
 
-    console.log('✅ Environment validation passed');
+    info('✅ Environment validation passed');
 };
 
 /**

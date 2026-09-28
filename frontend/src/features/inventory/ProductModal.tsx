@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { X, Save, Box, Shirt } from 'lucide-react';
 import { Product } from '../../types/product';
 import { AppDispatch, RootState } from '../../redux/store';
-import { fetchMasterEntries } from '../../redux/slices/masterDataSlice';
+import { fetchMasterEntries } from '../../redux/slices/masterDataSlice';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface ProductModalProps {
     isOpen: boolean;
@@ -148,9 +150,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                             </p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-danger rounded-full transition-all">
-                        <X className="w-5 h-5" />
-                    </button>
+                    <Button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-danger rounded-full transition-all"><X className="w-5 h-5" /></Button>
                 </div>
 
                 {/* Form Body */}
@@ -472,12 +472,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
 
                 {/* Footer */}
                 <div className="px-8 py-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-700/50 flex justify-end gap-3">
-                    <button
-                        onClick={onClose}
-                        className="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
-                    >
-                        Discard
-                    </button>
+                    <Button onClick={onClose} className="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">Discard</Button>
                     <button
                         onClick={handleSubmit}
                         disabled={isLoading}

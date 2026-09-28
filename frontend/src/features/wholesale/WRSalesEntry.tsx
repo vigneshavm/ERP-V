@@ -10,7 +10,9 @@ import { buildPosInvoicePayload } from '../../services/posInvoiceMapper';
 import { Sale } from '../../types/sales';
 import api from '../../services/api';
 import Layout from '../../components/shared/Layout/index';
-import PageHeader from '../../components/shared/Layout/PageHeader';
+import PageHeader from '../../components/shared/Layout/PageHeader';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface WRCartRow {
     id: string; // temp row id
@@ -248,12 +250,7 @@ const WRSalesEntry: React.FC = () => {
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                     <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
                         <h3 className="font-bold text-slate-700 dark:text-slate-300">Items List</h3>
-                        <button
-                            onClick={addRow}
-                            className="text-xs font-bold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex items-center gap-1"
-                        >
-                            <Plus className="w-3 h-3" /> Add Item
-                        </button>
+                        <Button onClick={addRow} className="text-xs font-bold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex items-center gap-1"><Plus className="w-3 h-3" /> Add Item</Button>
                     </div>
                     <div className="overflow-x-auto min-h-[240px]">
                         <table className="w-full text-left text-sm">
@@ -348,12 +345,7 @@ const WRSalesEntry: React.FC = () => {
                                                 ₹{lineTotal.toFixed(2)}
                                             </td>
                                             <td className="px-4 py-4 text-center">
-                                                <button
-                                                    onClick={() => removeRow(idx)}
-                                                    className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                <Button onClick={() => removeRow(idx)} className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4" /></Button>
                                             </td>
                                         </tr>
                                     );

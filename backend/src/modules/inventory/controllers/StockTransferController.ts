@@ -19,11 +19,10 @@ export const createTransfer = async (req: AuthenticatedRequest, res: Response): 
     session.startTransaction();
 
     try {
-        const tenantId = req.user?.tenantId;
-        const userId = req.user?._id;
+        const tenantId = req.user.tenantId;
         const { fromWarehouseId, toWarehouseId, items, notes } = req.body;
 
-        if (!tenantId || !userId) throw new AppError("Unauthorized", 401);
+        if (!tenantId) throw new AppError("Unauthorized", 401);
         if (!fromWarehouseId || !toWarehouseId) throw new AppError("Both a from and to warehouse are required", 400);
         if (fromWarehouseId === toWarehouseId) throw new AppError("Source and destination warehouse must be different", 400);
         if (!items || items.length === 0) throw new AppError("At least one item is required", 400);
@@ -72,7 +71,7 @@ export const createTransfer = async (req: AuthenticatedRequest, res: Response): 
                 delta: 0,
                 finalQty: item.stockQty,
                 reason: `Stock Transfer: ${fromWarehouseId} -> ${toWarehouseId}`,
-                performedBy: userId
+                performedBy: req.user.name || req.user._id
             }], { session });
 
             processedItems.push({
@@ -98,7 +97,7 @@ export const createTransfer = async (req: AuthenticatedRequest, res: Response): 
             toWarehouseId,
             items: processedItems,
             notes,
-            createdBy: userId
+            createdBy: req.user.name || req.user._id
         }], { session });
 
         await session.commitTransaction();

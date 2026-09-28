@@ -1,22 +1,25 @@
 import express from 'express';
-import purchaseRoutes from './purchaseRoutes.js';
-import purchaseReturnRoutes from './purchaseReturnRoutes.js';
-import supplierRoutes from './supplierRoutes.js';
-import supplierGroupRoutes from './supplierGroupRoutes.js';
-import agentRoutes from './agentRoutes.js';
-import extractionRoutes from './extractionRoutes.js';
-import debitNoteRoutes from './debitNoteRoutes.js';
-import reconciliationRoutes from './reconciliationRoutes.js';
+import purchaseOrder from './purchaseOrder.routes.js';
+import purchaseReturn from './purchaseReturn.routes.js';
+import supplier from './supplier.routes.js';
+import supplierGroup from './supplierGroup.routes.js';
+import agent from './agent.routes.js';
+import extraction from './extraction.routes.js';
+import debitNote from './debitNote.routes.js';
+import reconciliation from './reconciliation.routes.js';
+import rateRevision from './rateRevision.routes.js';
 
 const router = express.Router();
 
-router.use('/returns', purchaseReturnRoutes);
-router.use('/suppliers', supplierRoutes);
-router.use('/supplier-groups', supplierGroupRoutes);
-router.use('/agents', agentRoutes);
-router.use('/extraction', extractionRoutes);
-router.use('/debit-notes', debitNoteRoutes);
-router.use('/reconciliation', reconciliationRoutes);
-router.use('/', purchaseRoutes);
+router.use('/returns', purchaseReturn);
+router.use('/suppliers', supplier);
+router.use('/supplier-groups', supplierGroup);
+router.use('/agents', agent);
+router.use('/extraction', extraction);
+router.use('/debit-notes', debitNote);
+router.use('/reconciliation', reconciliation);
+// Before '/': otherwise /rate-revisions would be treated as a purchase id.
+router.use('/rate-revisions', rateRevision);
+router.use('/', purchaseOrder);
 
 export default router;

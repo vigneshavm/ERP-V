@@ -11,6 +11,7 @@ import { AppDispatch } from '../../redux/store';
 import { fetchPurchaseById, addGRN } from '../../redux/slices/purchaseSlice';
 import { createGRN, mapGrnToFrontendGRN } from '../../services/grnService';
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button } from '@/components/shared/Button';
 
 interface Props {
     order?: PurchaseOrder;
@@ -129,7 +130,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                 </div>
                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Not found</h3>
                 <p className="text-xs font-bold text-slate-500 mt-2 italic leading-relaxed">The requested procurement node does not exist in the institutional archive.</p>
-                <button onClick={handleBack} className="mt-8 text-primary font-black uppercase tracking-widest text-[10px] hover:underline">Return to Register</button>
+                <Button onClick={handleBack} className="mt-8 text-primary font-black uppercase tracking-widest text-[10px] hover:underline">Return to Register</Button>
             </div>
         );
     }
@@ -162,9 +163,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
             {/* Context Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
-                    <button onClick={handleBack} className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm hover:bg-slate-50 shadow-sm transition active:scale-95">
-                        <ArrowLeft className="w-5 h-5 text-slate-500" />
-                    </button>
+                    <Button onClick={handleBack} className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm transition active:scale-95 text-slate-600 dark:text-slate-300"><ArrowLeft className="w-5 h-5 text-slate-500" /></Button>
                     <div>
                         <div className="flex items-center gap-3">
                             <h2 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white uppercase">
@@ -182,65 +181,30 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
                     </button>
 
                     {canSubmit && (
-                        <button
-                            onClick={() => onUpdateStatus?.(order.id, 'SUBMITTED')}
-                            className="px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
-                        >
-                            <Zap className="w-4 h-4" /> Submit
-                        </button>
+                        <Button onClick={() => onUpdateStatus?.(order.id, 'SUBMITTED')} className="px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"><Zap className="w-4 h-4" /> Submit</Button>
                     )}
 
                     {canApprove && (
                         <div className="flex gap-3">
-                            <button
-                                onClick={() => onUpdateStatus?.(order.id, 'DRAFT')}
-                                className="px-6 py-3 bg-danger-soft text-danger dark:bg-danger-soft rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-danger-soft transition-all active:scale-95 flex items-center gap-2"
-                            >
-                                <XCircle className="w-4 h-4" /> Reject
-                            </button>
-                            <button
-                                onClick={() => onUpdateStatus?.(order.id, 'APPROVED')}
-                                className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-success/90 transition hover:scale-105 active:scale-95"
-                            >
-                                <CheckCircle2 className="w-4 h-4" /> Approve
-                            </button>
+                            <Button onClick={() => onUpdateStatus?.(order.id, 'DRAFT')} className="px-6 py-3 bg-danger-soft text-danger dark:bg-danger-soft rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-danger-soft transition-all active:scale-95 flex items-center gap-2"><XCircle className="w-4 h-4" /> Reject</Button>
+                            <Button onClick={() => onUpdateStatus?.(order.id, 'APPROVED')} className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-success/90 transition hover:scale-105 active:scale-95"><CheckCircle2 className="w-4 h-4" /> Approve</Button>
                         </div>
                     )}
 
                     {canSendToVendor && (
-                        <button
-                            onClick={() => onUpdateStatus?.(order.id, 'SENT_TO_VENDOR')}
-                            className="px-6 py-3 bg-info text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-sky-500/20 flex items-center gap-2 hover:bg-info/90 transition hover:scale-105 active:scale-95"
-                        >
-                            <Truck className="w-4 h-4" /> Send to Vendor
-                        </button>
+                        <Button onClick={() => onUpdateStatus?.(order.id, 'SENT_TO_VENDOR')} className="px-6 py-3 bg-info text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-sky-500/20 flex items-center gap-2 hover:bg-info/90 transition hover:scale-105 active:scale-95"><Truck className="w-4 h-4" /> Send to Vendor</Button>
                     )}
 
                     {canReceive && (
-                        <button
-                            onClick={() => setShowReceiveModal(true)}
-                            className="px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:bg-primary transition hover:scale-105 active:scale-95"
-                        >
-                            <FileOutput className="w-4 h-4" /> Receive goods
-                        </button>
+                        <Button onClick={() => setShowReceiveModal(true)} className="px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:bg-primary transition hover:scale-105 active:scale-95"><FileOutput className="w-4 h-4" /> Receive goods</Button>
                     )}
 
                     {canBill && (
-                        <button
-                            onClick={() => setShowBillModal(true)}
-                            className="px-6 py-3 bg-purple-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-purple-500/20 flex items-center gap-2 hover:bg-purple-600 transition hover:scale-105 active:scale-95"
-                        >
-                            <FileText className="w-4 h-4" /> Generate Invoice
-                        </button>
+                        <Button onClick={() => setShowBillModal(true)} className="px-6 py-3 bg-purple-500 text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-purple-500/20 flex items-center gap-2 hover:bg-purple-600 transition hover:scale-105 active:scale-95"><FileText className="w-4 h-4" /> Generate Invoice</Button>
                     )}
 
                     {canPay && (
-                        <button
-                            onClick={() => onUpdateStatus?.(order.id, 'Paid')}
-                            className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-success/90 transition hover:scale-105 active:scale-95"
-                        >
-                            <ShieldCheck className="w-4 h-4" /> Resolve Settlement
-                        </button>
+                        <Button onClick={() => onUpdateStatus?.(order.id, 'Paid')} className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-success/90 transition hover:scale-105 active:scale-95"><ShieldCheck className="w-4 h-4" /> Resolve Settlement</Button>
                     )}
                 </div>
             </div>
@@ -366,7 +330,7 @@ const PurchaseOrderDetails: React.FC<Props> = ({ order: propOrder, items: propIt
 
                 <div className="lg:col-span-4 space-y-8">
                     {/* Institutional Intelligence */}
-                    <div className="bg-slate-900 dark:bg-slate-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group">
+                    <div className="bg-slate-900 dark:bg-slate-900 p-10 rounded-full text-white shadow-2xl space-y-10 relative overflow-hidden group">
                         <div className="absolute -top-10 -right-10 opacity-10 group-hover:scale-110 transition-transform duration-1000">
                             <ShieldCheck className="w-48 h-48" />
                         </div>

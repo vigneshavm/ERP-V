@@ -16,6 +16,7 @@ import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import { toast } from 'react-toastify';
 import { fetchMasterEntries } from '../../redux/slices/masterDataSlice';
+import { Button, Input, Modal, Select, Textarea } from '../../components/shared';
 
 interface Supplier {
     _id: string;
@@ -913,150 +914,118 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
 
 
                 {/* Design Set Modal - Updated UI */}
-                {showDesignSetModal && (
-                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in zoom-in-95 duration-200">
-                        <div className="bg-white dark:bg-slate-800 rounded-sm shadow-2xl w-full max-w-3xl overflow-hidden border border-slate-100 dark:border-slate-700" onClick={e => e.stopPropagation()}>
-                            <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
-                                <div>
-                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">Add Design Set</h2>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">Generates variants (Size/Color) automatically</p>
-                                </div>
-                                <button onClick={() => setShowDesignSetModal(false)} className="p-2 hover:bg-white/50 rounded-full transition-colors text-slate-500">&times;</button>
-                            </div>
-                            <div className="p-8 space-y-6">
+                <Modal
+                    isOpen={showDesignSetModal}
+                    onClose={() => setShowDesignSetModal(false)}
+                    title="Add Design Set"
+                    size="lg"
+                    footer={
+                        <div className="flex justify-end gap-3">
+                            <Button variant="secondary" size="md" onClick={() => setShowDesignSetModal(false)}>
+                                Cancel
+                            </Button>
+                            <Button variant="primary" size="md" onClick={expandDesignSet}>
+                                Generate {designSet.colors.filter(c => c.trim()).length * designSet.sizes.filter(s => s.trim()).length} Items
+                            </Button>
+                        </div>
+                    }
+                >
+                    <p className="text-sm text-slate-500 dark:text-slate-400 -mt-4 mb-4">Generates variants (Size/Color) automatically</p>
+                    <div className="space-y-6">
                                 <div className="grid grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Base Name</label>
-                                        <input
-                                            type="text"
-                                            value={designSet.name}
-                                            onChange={e => setDesignSet({ ...designSet, name: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                                            placeholder="e.g. Silk Saree"
+                                    <Input
+                                        label="Base Name"
+                                        type="text"
+                                        value={designSet.name}
+                                        onChange={e => setDesignSet({ ...designSet, name: e.target.value })}
+                                        placeholder="e.g. Silk Saree"
+                                    />
+                                    <div>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide block mb-2">Category</label>
+                                        <Select
+                                            options={[{ value: '', label: 'Select Category' }, ...categories.map(c => ({ value: c.id, label: c.name }))]}
+                                            value={designSet.category?.id || ''}
+                                            onChange={(value) => {
+                                                const id = typeof value === 'string' ? value : value[0];
+                                                const cat = categories.find(c => c.id === id);
+                                                setDesignSet({ ...designSet, category: cat || null });
+                                            }}
                                         />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Category</label>
-                                        <div className="relative">
-                                            <select
-                                                onChange={e => {
-                                                    const cat = categories.find(c => c.id === e.target.value);
-                                                    setDesignSet({ ...designSet, category: cat || null });
-                                                }}
-                                                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 appearance-none focus:ring-2 focus:ring-primary outline-none transition-all"
-                                            >
-                                                <option value="">Select Category</option>
-                                                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                            </select>
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
-                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Colors <span className="font-normal text-slate-400 normal-case">(Comma separated)</span></label>
-                                        <input
-                                            type="text"
-                                            value={designSet.colors.join(', ')}
-                                            onChange={e => setDesignSet({ ...designSet, colors: e.target.value.split(',').map(s => s.trim()) })}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none transition-all"
-                                            placeholder="Red, Blue, Green"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Sizes <span className="font-normal text-slate-400 normal-case">(Comma separated)</span></label>
-                                        <input
-                                            type="text"
-                                            value={designSet.sizes.join(', ')}
-                                            onChange={e => setDesignSet({ ...designSet, sizes: e.target.value.split(',').map(s => s.trim()) })}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none transition-all"
-                                            placeholder="S, M, L, XL"
-                                        />
-                                    </div>
+                                    <Input
+                                        label="Colors (Comma separated)"
+                                        type="text"
+                                        value={designSet.colors.join(', ')}
+                                        onChange={e => setDesignSet({ ...designSet, colors: e.target.value.split(',').map(s => s.trim()) })}
+                                        placeholder="Red, Blue, Green"
+                                    />
+                                    <Input
+                                        label="Sizes (Comma separated)"
+                                        type="text"
+                                        value={designSet.sizes.join(', ')}
+                                        onChange={e => setDesignSet({ ...designSet, sizes: e.target.value.split(',').map(s => s.trim()) })}
+                                        placeholder="S, M, L, XL"
+                                    />
                                 </div>
 
                                 <div className="grid grid-cols-4 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Cost Price</label>
-                                        <div className="relative">
-                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
-                                            <input
-                                                type="number"
-                                                value={designSet.rate}
-                                                onChange={e => setDesignSet({ ...designSet, rate: parseFloat(e.target.value) || 0 })}
-                                                className="w-full pl-8 pr-3 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Margin %</label>
-                                        <input
-                                            type="number"
-                                            value={designSet.margin}
-                                            onChange={e => {
-                                                const margin = parseFloat(e.target.value) || 0;
-                                                setDesignSet({ ...designSet, margin, sellingPrice: designSet.rate * (1 + margin / 100) });
-                                            }}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Selling Price</label>
-                                        <div className="relative">
-                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-success font-bold">₹</span>
-                                            <input
-                                                type="number"
-                                                value={designSet.sellingPrice}
-                                                onChange={e => {
-                                                    const sp = parseFloat(e.target.value) || 0;
-                                                    setDesignSet({ ...designSet, sellingPrice: sp, margin: designSet.rate > 0 ? ((sp / designSet.rate) - 1) * 100 : 0 });
-                                                }}
-                                                className="w-full pl-8 pr-3 py-3 rounded-xl border border-success-line dark:border-success/30 bg-success-soft dark:bg-success-soft text-success font-bold focus:ring-2 focus:ring-emerald-500 outline-none"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Tax %</label>
-                                        <input
-                                            type="number"
-                                            value={designSet.taxPercent}
-                                            onChange={e => setDesignSet({ ...designSet, taxPercent: parseFloat(e.target.value) || 0 })}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Washing Instructions</label>
-                                    <input
-                                        type="text"
-                                        value={designSet.washingInstructions}
-                                        onChange={e => setDesignSet({ ...designSet, washingInstructions: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
-                                        placeholder="e.g. Dry Clean Only, Hand Wash"
+                                    <Input
+                                        label="Cost Price"
+                                        type="number"
+                                        value={designSet.rate}
+                                        onChange={e => setDesignSet({ ...designSet, rate: parseFloat(e.target.value) || 0 })}
+                                        icon={<span className="text-slate-400">₹</span>}
+                                    />
+                                    <Input
+                                        label="Margin %"
+                                        type="number"
+                                        value={designSet.margin}
+                                        onChange={e => {
+                                            const margin = parseFloat(e.target.value) || 0;
+                                            setDesignSet({ ...designSet, margin, sellingPrice: designSet.rate * (1 + margin / 100) });
+                                        }}
+                                    />
+                                    <Input
+                                        label="Selling Price"
+                                        type="number"
+                                        value={designSet.sellingPrice}
+                                        onChange={e => {
+                                            const sp = parseFloat(e.target.value) || 0;
+                                            setDesignSet({ ...designSet, sellingPrice: sp, margin: designSet.rate > 0 ? ((sp / designSet.rate) - 1) * 100 : 0 });
+                                        }}
+                                        icon={<span className="text-success font-bold">₹</span>}
+                                    />
+                                    <Input
+                                        label="Tax %"
+                                        type="number"
+                                        value={designSet.taxPercent}
+                                        onChange={e => setDesignSet({ ...designSet, taxPercent: parseFloat(e.target.value) || 0 })}
                                     />
                                 </div>
-                            </div>
-                            <div className="px-8 py-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3">
-                                <button onClick={() => setShowDesignSetModal(false)} className="px-6 py-2.5 rounded-xl text-slate-600 font-medium hover:bg-slate-200 transition-colors">Cancel</button>
-                                <button
-                                    onClick={expandDesignSet}
-                                    className="px-6 py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 transition-all shadow-sm"
-                                >
-                                    Generate {designSet.colors.filter(c => c.trim()).length * designSet.sizes.filter(s => s.trim()).length} Items
-                                </button>
-                            </div>
-                        </div>
+
+                                <Textarea
+                                    label="Washing Instructions"
+                                    value={designSet.washingInstructions}
+                                    onChange={e => setDesignSet({ ...designSet, washingInstructions: e.target.value })}
+                                    placeholder="e.g. Dry Clean Only, Hand Wash"
+                                    minRows={1}
+                                />
                     </div>
-                )}
+                </Modal>
 
                 <PageHeader
                     title={isWholesale ? "Wholesale Purchase Entry" : "Purchase Entry"}
                     description={isWholesale ? "Wholesale/Retail Billing / Bulk Purchase Intake" : "Inventory Management / New Inward"}
                     actions={
                         <div className="flex items-center gap-2">
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                icon={<Printer className="w-4 h-4" />}
+                                className="hidden md:flex"
                                 onClick={() => {
                                     const labelItems = items
                                         .filter(i => i.product_name || i.productName)
@@ -1077,27 +1046,29 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                     if (labelItems.length === 0) return toast.info('No items to print');
                                     printBarcodeLabels(labelItems);
                                 }}
-                                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700"
                             >
-                                <Printer className="w-4 h-4" />
-                                <span>Labels</span>
-                            </button>
-                            <button
+                                Labels
+                            </Button>
+                            <Button
+                                variant="tertiary"
+                                size="md"
+                                icon={<FileText className="w-4 h-4" />}
+                                className="hidden sm:flex"
                                 onClick={() => handleSave('DRAFT')}
                                 disabled={isProcessing}
-                                className="items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:text-primary-foreground transition-all active:scale-95 hidden sm:flex"
                             >
-                                <FileText className="w-4 h-4" />
-                                <span>Save Draft</span>
-                            </button>
-                            <button
+                                Save Draft
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                icon={<Save className="w-4 h-4" />}
                                 onClick={() => handleSave('COMPLETED')}
                                 disabled={isProcessing}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 shadow-sm transition-all active:scale-95 transform"
+                                loading={isProcessing}
                             >
-                                {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                                <span>Complete Purchase</span>
-                            </button>
+                                Complete Purchase
+                            </Button>
                         </div>
                     }
                 />
@@ -1115,10 +1086,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Select Supplier</label>
                                 <div className="relative group/input">
-                                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/input:text-primary transition-colors">
-                                        <Search className="w-4 h-4" />
-                                    </div>
-                                    <input
+                                    <Input
                                         type="text"
                                         placeholder="Type to search..."
                                         value={supplierName || supplierSearch}
@@ -1129,7 +1097,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                             setShowSupplierDropdown(true);
                                         }}
                                         onFocus={() => setShowSupplierDropdown(true)}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                                        icon={<Search className="w-4 h-4" />}
                                     />
                                     {/* Dropdown */}
                                     {showSupplierDropdown && (supplierSearch || suppliers.length > 0) && (
@@ -1177,50 +1145,41 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Invoice Number</label>
-                                <input
+                                <Input
                                     type="text"
                                     value={invoiceNo}
                                     onChange={e => setInvoiceNo(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all uppercase placeholder:normal-case"
+                                    className="uppercase placeholder:normal-case"
                                     placeholder="e.g. INV-8823"
                                 />
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Date</label>
-                                <div className="flex gap-4">
-                                    <div className="relative flex-1 group/date">
-                                        <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/date:text-primary transition-colors" />
-                                        <input
-                                            type="date"
-                                            value={purchaseDate}
-                                            onChange={e => setPurchaseDate(e.target.value)}
-                                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
-                                        />
-                                    </div>
-                                </div>
+                                <Input
+                                    type="date"
+                                    value={purchaseDate}
+                                    onChange={e => setPurchaseDate(e.target.value)}
+                                    icon={<Calendar className="w-4 h-4" />}
+                                />
                             </div>
                             <div className="md:col-span-2 space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Remarks / Terms</label>
-                                <input
+                                <Input
                                     type="text"
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
                                     placeholder="Add payment terms or delivery notes..."
                                 />
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Manual Total Amount</label>
-                                <div className="relative group/manual">
-                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold group-focus-within/manual:text-primary transition-colors">₹</span>
-                                    <input
-                                        type="number"
-                                        value={manualTotalAmount}
-                                        onChange={e => setManualTotalAmount(e.target.value === '' ? '' : parseFloat(e.target.value))}
-                                        className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
-                                        placeholder="Auto-calculated if empty"
-                                    />
-                                </div>
+                                <Input
+                                    type="number"
+                                    value={manualTotalAmount}
+                                    onChange={e => setManualTotalAmount(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                                    placeholder="Auto-calculated if empty"
+                                    icon={<span className="text-slate-400 font-bold">₹</span>}
+                                />
                                 <p className="text-[10px] text-slate-400">Overrides calculated total if set</p>
                             </div>
                         </div>
@@ -1235,47 +1194,48 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Receipt Mode</label>
                                 <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-xl">
-                                    <button
+                                    <Button
+                                        variant={receiptStatus === 'Received' ? 'secondary' : 'tertiary'}
+                                        size="sm"
                                         onClick={() => setReceiptStatus('Received')}
-                                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${receiptStatus === 'Received' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-500'}`}
+                                        fullWidth
                                     >
                                         Immediate
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
+                                        variant={receiptStatus === 'Pending' ? 'secondary' : 'tertiary'}
+                                        size="sm"
                                         onClick={() => setReceiptStatus('Pending')}
-                                        className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${receiptStatus === 'Pending' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-500'}`}
+                                        fullWidth
                                     >
                                         Pending
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
 
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Payment Terms</label>
-                                <select
+                                <Select
+                                    options={[
+                                        { value: 'COD', label: 'COD (Cash on Delivery)' },
+                                        { value: 'Net 15', label: 'Net 15 Days' },
+                                        { value: 'Net 30', label: 'Net 30 Days' },
+                                        { value: 'Net 60', label: 'Net 60 Days' },
+                                    ]}
                                     value={paymentTerms}
-                                    onChange={e => setPaymentTerms(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
-                                >
-                                    <option value="COD">COD (Cash on Delivery)</option>
-                                    <option value="Net 15">Net 15 Days</option>
-                                    <option value="Net 30">Net 30 Days</option>
-                                    <option value="Net 60">Net 60 Days</option>
-                                </select>
+                                    onChange={(value) => setPaymentTerms(typeof value === 'string' ? value : value[0])}
+                                />
                             </div>
 
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Ref Document</label>
-                                <div className="relative group/ref">
-                                    <FileCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/ref:text-success transition-colors" />
-                                    <input
-                                        type="text"
-                                        value={referenceDoc}
-                                        onChange={e => setReferenceDoc(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
-                                        placeholder="PO#, Email Date..."
-                                    />
-                                </div>
+                                <Input
+                                    type="text"
+                                    value={referenceDoc}
+                                    onChange={e => setReferenceDoc(e.target.value)}
+                                    placeholder="PO#, Email Date..."
+                                    icon={<FileCheck className="w-4 h-4" />}
+                                />
                             </div>
 
                             <div className="space-y-1.5">
@@ -1305,7 +1265,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                         {attachments.map((file, i) => (
                                             <div key={i} className="flex items-center gap-1 px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg text-[10px] text-slate-500 max-w-[120px] truncate">
                                                 <Paperclip className="w-3 h-3" /> {file.name}
-                                                <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="ml-1 hover:text-danger">&times;</button>
+                                                <Button variant="tertiary" size="sm" className="ml-1 hover:text-danger p-0.5" onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))}>&times;</Button>
                                             </div>
                                         ))}
                                     </div>
@@ -1321,37 +1281,41 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                         <div className="flex items-center gap-3">
                             <h3 className="font-bold text-slate-700 dark:text-slate-300">Items List</h3>
                             <div className="flex bg-slate-100 dark:bg-slate-900 p-0.5 rounded-lg">
-                                <button
+                                <Button
+                                    variant={!showPdfPanel ? 'secondary' : 'tertiary'}
+                                    size="sm"
                                     onClick={() => setShowPdfPanel(false)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
-                                        !showPdfPanel ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400 hover:text-slate-600'
-                                    }`}
                                 >
                                     Manual Entry
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                    variant={showPdfPanel ? 'secondary' : 'tertiary'}
+                                    size="sm"
+                                    icon={<FileUp className="w-3 h-3" />}
                                     onClick={() => setShowPdfPanel(true)}
-                                    className={`px-3 py-1 text-xs font-bold rounded-md transition-all flex items-center gap-1 ${
-                                        showPdfPanel ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-400 hover:text-slate-600'
-                                    }`}
                                 >
-                                    <FileUp className="w-3 h-3" /> PDF Import
-                                </button>
+                                    PDF Import
+                                </Button>
                             </div>
                         </div>
                         <div className="flex gap-3">
-                            <button
+                            <Button
+                                variant="tertiary"
+                                size="sm"
+                                icon={<Plus className="w-3 h-3" />}
+                                className="bg-pink-50 text-pink-600 hover:bg-pink-100"
                                 onClick={() => setShowDesignSetModal(true)}
-                                className="text-xs font-bold px-3 py-1.5 rounded-lg bg-pink-50 text-pink-600 hover:bg-pink-100 transition-colors flex items-center gap-1"
                             >
-                                <Plus className="w-3 h-3" /> Design Set
-                            </button>
-                            <button
+                                Design Set
+                            </Button>
+                            <Button
+                                variant="tertiary"
+                                size="sm"
+                                icon={<Plus className="w-3 h-3" />}
                                 onClick={addEmptyRow}
-                                className="text-xs font-bold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex items-center gap-1"
                             >
-                                <Plus className="w-3 h-3" /> Add Item
-                            </button>
+                                Add Item
+                            </Button>
                         </div>
                     </div>
 
@@ -1415,12 +1379,16 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                     </div>
                                                 ))}
                                             </div>
-                                            <button
+                                            <Button
+                                                variant="primary"
+                                                size="md"
+                                                icon={<CheckCircle2 className="w-4 h-4" />}
                                                 onClick={applyPdfItems}
-                                                className="mt-3 w-full py-2 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+                                                fullWidth
+                                                className="mt-3"
                                             >
-                                                <CheckCircle2 className="w-4 h-4" /> Import {pdfParseResult.items.length} Items into Table
-                                            </button>
+                                                Import {pdfParseResult.items.length} Items into Table
+                                            </Button>
                                         </div>
                                     )}
                                 </div>
@@ -1746,12 +1714,13 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                             ₹{item.line_total.toFixed(2)}
                                         </td>
                                         <td className="px-4 py-4 text-center">
-                                            <button
+                                            <Button
+                                                variant="tertiary"
+                                                size="sm"
+                                                icon={<Trash2 className="w-4 h-4" />}
+                                                className="text-slate-300 hover:text-danger opacity-0 group-hover:opacity-100"
                                                 onClick={() => removeItem(idx)}
-                                                className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
+                                            />
                                         </td>
                                     </tr>
                                 ))}
@@ -1763,7 +1732,7 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                                                     <ShoppingBag className="w-6 h-6" />
                                                 </div>
                                                 <p className="text-slate-500 font-medium">No items added yet</p>
-                                                <button onClick={addEmptyRow} className="text-primary text-sm font-bold hover:underline">Start adding items</button>
+                                                <Button variant="tertiary" size="sm" onClick={addEmptyRow}>Start adding items</Button>
                                             </div>
                                         </td>
                                     </tr>
@@ -1809,20 +1778,20 @@ const PurchaseEntry: React.FC<PurchaseEntryProps> = ({ channel = 'RETAIL' }) => 
                             )}
                             <div className="flex justify-between items-center text-sm">
                                 <span className="text-slate-500 flex items-center gap-2"><Truck className="w-3 h-3" /> Shipping</span>
-                                <input
+                                <Input
                                     type="number"
                                     value={shippingAmount}
                                     onChange={e => setShippingAmount(parseFloat(e.target.value) || 0)}
-                                    className="w-24 text-right bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-primary"
+                                    className="w-24 text-right"
                                 />
                             </div>
                             <div className="flex justify-between items-center text-sm">
                                 <span className="text-slate-500">Discount</span>
-                                <input
+                                <Input
                                     type="number"
                                     value={discountAmount}
                                     onChange={e => setDiscountAmount(parseFloat(e.target.value) || 0)}
-                                    className="w-24 text-right bg-danger-soft dark:bg-danger-soft border border-danger-line dark:border-danger/30 text-danger rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-red-500"
+                                    className="w-24 text-right"
                                 />
                             </div>
                         </div>

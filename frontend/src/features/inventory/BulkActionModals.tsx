@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { X, Tag, CheckSquare, AlertTriangle } from 'lucide-react';
+import { X, Tag, CheckSquare, AlertTriangle } from 'lucide-react';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface BulkCategoryModalProps {
     isOpen: boolean;
@@ -35,9 +37,7 @@ export const BulkCategoryModal: React.FC<BulkCategoryModalProps> = ({ isOpen, on
                     <h3 className="text-lg font-black italic flex items-center gap-2 uppercase tracking-tight">
                         <Tag className="w-5 h-5 text-primary" /> Migrate Category
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 rounded-full transition-all">
-                        <X className="w-5 h-5" />
-                    </button>
+                    <Button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 rounded-full transition-all"><X className="w-5 h-5" /></Button>
                 </div>
                 <div className="p-8 space-y-6">
                     <div className="p-4 bg-primary/5 border border-primary/20 rounded-sm flex items-start gap-4">
@@ -62,14 +62,8 @@ export const BulkCategoryModal: React.FC<BulkCategoryModalProps> = ({ isOpen, on
                     </div>
                 </div>
                 <div className="px-8 py-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-700/50 flex justify-end gap-3">
-                    <button onClick={onClose} className="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-main transition-all">Discard</button>
-                    <button
-                        onClick={handleConfirm}
-                        disabled={!targetCategory || isSubmitting}
-                        className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
-                    >
-                        {isSubmitting ? 'Updating...' : 'Commit Batch'}
-                    </button>
+                    <Button onClick={onClose} className="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-main transition-all">Discard</Button>
+                    <Button onClick={handleConfirm} disabled={!targetCategory || isSubmitting} className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50">{isSubmitting ? 'Updating...' : 'Commit Batch'}</Button>
                 </div>
             </div>
         </div>
@@ -109,9 +103,7 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
                     <h3 className="text-lg font-black italic flex items-center gap-2 uppercase tracking-tight">
                         <CheckSquare className="w-5 h-5 text-success" /> Stock Audit Adjustment
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 rounded-full transition-all">
-                        <X className="w-5 h-5" />
-                    </button>
+                    <Button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 rounded-full transition-all"><X className="w-5 h-5" /></Button>
                 </div>
                 <div className="p-8 space-y-6">
                     <div className="p-4 bg-success/5 border border-success/20 rounded-sm">
@@ -142,14 +134,8 @@ export const BulkAdjustmentModal: React.FC<BulkAdjustmentModalProps> = ({ isOpen
                     </div>
                 </div>
                 <div className="px-8 py-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-700/50 flex justify-end gap-3">
-                    <button onClick={onClose} className="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-main transition-all">Discard</button>
-                    <button
-                        onClick={handleConfirm}
-                        disabled={isSubmitting}
-                        className="px-6 py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
-                    >
-                        {isSubmitting ? 'Processing...' : 'Execute Audit'}
-                    </button>
+                    <Button onClick={onClose} className="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-main transition-all">Discard</Button>
+                    <Button onClick={handleConfirm} disabled={isSubmitting} className="px-6 py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50">{isSubmitting ? 'Processing...' : 'Execute Audit'}</Button>
                 </div>
             </div>
         </div>

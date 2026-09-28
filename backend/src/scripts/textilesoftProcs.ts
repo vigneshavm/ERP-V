@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import { loadDbConfig, openPool, queryAll } from "../integrations/textilesoft/shopDbReader.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -33,9 +34,9 @@ async function main() {
     const file = path.join(dir, "procs.json");
     fs.writeFileSync(file, JSON.stringify(list, null, 2), "utf8");
     if (list.length === 0) {
-        console.log("Found 0 procedures/views (or the login cannot see them). In SSMS, run once:\n  USE SSS_copy; GRANT VIEW DEFINITION TO erp_readonly;\nthen re-run this command.");
+        info("Found 0 procedures/views (or the login cannot see them). In SSMS, run once:\n  USE SSS_copy; GRANT VIEW DEFINITION TO erp_readonly;\nthen re-run this command.");
     } else {
-        console.log(`Found ${list.length} objects: ${list.map((l) => l.name).join(", ")}`);
+        info(`Found ${list.length} objects: ${list.map((l) => l.name).join(", ")}`);
     }
     console.log(`\nDone. Report written to ${file}\nTell Claude it is ready.`);
 }

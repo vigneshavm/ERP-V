@@ -26,44 +26,44 @@ async function run() {
         const tenant = await Tenant.findOne({ name: { $regex: /Vijaya Laxmi/i } });
         if (!tenant) throw new Error("Tenant not found");
 
-        console.log(`Tenant: ${tenant.name}`);
-        console.log(`Tenant ID: ${tenant._id} (Type: ${typeof tenant._id})`);
+        info(`Tenant: ${tenant.name}`);
+        info(`Tenant ID: ${tenant._id} (Type: ${typeof tenant._id})`);
 
         // Try finding specific user
         const specificUser = await User.findOne({ email: 'vignesh@bizzai.com' });
         if (specificUser) {
-            console.log(`Found 'vignesh@bizzai.com':`);
-            console.log(`- TenantID: ${specificUser.tenantId} (Type: ${typeof specificUser.tenantId})`);
-            console.log(`- Role: ${specificUser.role}`);
+            info(`Found 'vignesh@bizzai.com':`);
+            info(`- TenantID: ${specificUser.tenantId} (Type: ${typeof specificUser.tenantId})`);
+            info(`- Role: ${specificUser.role}`);
 
             // Compare
-            console.log(`Match? ${specificUser.tenantId == tenant._id}`);
+            info(`Match? ${specificUser.tenantId == tenant._id}`);
         } else {
-            console.log("Could not find 'vignesh@bizzai.com'");
+            info("Could not find 'vignesh@bizzai.com'");
         }
 
-        console.log("Checking specific emails:");
+        info("Checking specific emails:");
         const emails = ['vignesh@bizzai.com', 'madhan@bizzai.com', 'manikandan@bizzai.com'];
 
         for (const email of emails) {
             const u = await User.findOne({ email });
             if (u) {
-                console.log(`- ${u.email}: Role=${u.systemRole}/${u.role}, TenantID=${u.tenantId}`);
-                console.log(`  Match Tenant? ${u.tenantId == tenant._id}`);
+                info(`- ${u.email}: Role=${u.systemRole}/${u.role}, TenantID=${u.tenantId}`);
+                info(`  Match Tenant? ${u.tenantId == tenant._id}`);
             } else {
-                console.log(`- ${email}: NOT FOUND`);
+                info(`- ${email}: NOT FOUND`);
             }
         }
 
-        console.log(`Querying users with tenantId: ${tenant._id.toString()}`);
+        info(`Querying users with tenantId: ${tenant._id.toString()}`);
         const users = await User.find({ tenantId: tenant._id.toString() });
-        console.log(`\nUsers found: ${users.length}`);
+        info(`\nUsers found: ${users.length}`);
 
         users.forEach(u => {
-            console.log(`- Name: ${u.name}`);
-            console.log(`  Email: ${u.email}`);
-            console.log(`  Role: ${u.systemRole} / ${u.role}`);
-            console.log('---');
+            info(`- Name: ${u.name}`);
+            info(`  Email: ${u.email}`);
+            info(`  Role: ${u.systemRole} / ${u.role}`);
+            info('---');
         });
 
         process.exit(0);

@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import WhatsAppTemplate from "../models/WhatsAppTemplate.js";
 import WhatsAppCampaign from "../models/WhatsAppCampaign.js";
+import { AuthenticatedRequest } from "../../../middlewares/authMiddleware.js";
 
 /**
  * @swagger
@@ -14,10 +15,10 @@ import WhatsAppCampaign from "../models/WhatsAppCampaign.js";
  *       200:
  *         description: List of templates retrieved
  */
-export const getTemplates = async (req: Request, res: Response) => {
+export const getTemplates = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
-        const templates = await WhatsAppTemplate.find({ userId });
+        const tenantId = req.user.tenantId;
+        const templates = await WhatsAppTemplate.find({ tenantId });
         res.status(200).json({
             success: true,
             data: templates
@@ -53,13 +54,13 @@ export const getTemplates = async (req: Request, res: Response) => {
  *       201:
  *         description: Template created successfully
  */
-export const createTemplate = async (req: Request, res: Response) => {
+export const createTemplate = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const tenantId = req.user.tenantId;
         const { name, content, category } = req.body;
 
         const template = await WhatsAppTemplate.create({
-            userId,
+            tenantId,
             name,
             content,
             category
@@ -77,10 +78,10 @@ export const createTemplate = async (req: Request, res: Response) => {
     }
 };
 
-export const getCampaigns = async (req: Request, res: Response) => {
+export const getCampaigns = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
-        const campaigns = await WhatsAppCampaign.find({ userId }).sort({ createdAt: -1 });
+        const tenantId = req.user.tenantId;
+        const campaigns = await WhatsAppCampaign.find({ tenantId }).sort({ createdAt: -1 });
         res.status(200).json({
             success: true,
             data: campaigns
@@ -93,14 +94,14 @@ export const getCampaigns = async (req: Request, res: Response) => {
     }
 };
 
-export const createCampaign = async (req: Request, res: Response) => {
+export const createCampaign = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const tenantId = req.user.tenantId;
         const campaignData = req.body;
 
         const campaign = await WhatsAppCampaign.create({
             ...campaignData,
-            userId
+            tenantId
         });
 
         res.status(201).json({
@@ -127,10 +128,10 @@ export const createCampaign = async (req: Request, res: Response) => {
  *       200:
  *         description: Statistics retrieved successfully
  */
-export const getStats = async (req: Request, res: Response) => {
+export const getStats = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
-        const campaigns = await WhatsAppCampaign.find({ userId });
+        const tenantId = req.user.tenantId;
+        const campaigns = await WhatsAppCampaign.find({ tenantId });
 
         const stats = campaigns.reduce((acc, curr) => {
             acc.sent += curr.sent;

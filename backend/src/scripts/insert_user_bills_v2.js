@@ -62,12 +62,12 @@ const Item = mongoose.model('Item', itemSchema);
 
 async function run() {
     try {
-        console.log("Connecting to MongoDB (Forcing Google DNS)...");
+        info("Connecting to MongoDB (Forcing Google DNS)...");
         await mongoose.connect(MONGO_URI, {
             serverSelectionTimeoutMS: 60000,
             connectTimeoutMS: 60000
         });
-        console.log("✅ Connected to MongoDB");
+        info("✅ Connected to MongoDB");
 
         const templateSupplier = await Supplier.findOne({ businessName: "Zara" }) || await Supplier.findOne({});
         if (!templateSupplier) throw new Error("No suppliers found to use as template");
@@ -159,10 +159,10 @@ async function run() {
                     total: entry.amount
                 }]
             });
-            console.log(`✅ [${i + 1}/17] Created bill for ${bizName}`);
+            info(`✅ [${i + 1}/17] Created bill for ${bizName}`);
         }
 
-        console.log("✅ All bills inserted successfully.");
+        info("✅ All bills inserted successfully.");
         await mongoose.disconnect();
         process.exit(0);
     } catch (err) {

@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import dotenv from "dotenv";
+import { info, error as logError } from "../config/logger.js";
 import { SESSION_PREFIX } from "../integrations/textilesoft/mapping.js";
 import { getPool } from "../integrations/textilesoft/sqlItemSource.js";
 import { shopBillCosts, shopPurchases, shopSalesBills } from "../integrations/textilesoft/sqlFinance.js";
@@ -37,15 +38,15 @@ async function main() {
     const to = arg("to", today);
     const range = `s.[date] >= CAST(@from AS date) AND s.[date] < DATEADD(day, 1, CAST(@to AS date))`;
     const F = (c: string) => `ISNULL(SUM(TRY_CAST(s.[${c}] AS float)), 0)`;
-    console.log(`Finance check ${from} to ${to} (shop database, read-only)\n`);
+    info(`Finance check ${from} to ${to} (shop database, read-only)\n`);
 
     const [p] = await raw(
         `SELECT COUNT(*) AS bills, ${F("tot_netamnt")} AS total, ${F("s_recevied_cashamt")} AS cashRecorded, ${F("s_card_amt")} AS card, ` +
             `${F("s_googlepay")} AS upi, ${F("s_credit_amt")} AS creditAmt, ${F("s_selfamt")} AS self FROM dbo.[sales2] AS s WHERE ISNULL(s.[status], '') <> '1' AND ${range}`,
         from, to,
     );
-    console.log("1. Payment columns on live bills (as stored):");
-    for (const [k, v] of Object.entries(p)) console.log(`   ${k.padEnd(14)} ${typeof v === "number" && k !== "bills" ? inr(v) : v}`);
+    info("1. Payment columns on live bills (as stored):");
+    for (const [k, v] of Object.entries(p)) info(`   ${k.padEnd(14)} ${typeof v === "number" && k !== "bills" ? inr(v) : v}`);
 
     const bills = await shopSalesBills({ from, to });
     let cash = 0, bank = 0, overpaid = 0;
@@ -53,11 +54,11 @@ async function main() {
         const sp = shopBillSplit(b.total, b.card, b.upi, b.creditAmt, b.self);
         cash += sp.cash; bank += sp.bank; if (sp.overpaid) overpaid += 1;
     }
-    console.log("\n2. Split the reports use (cash = bill total minus card, UPI, s_credit_amt and s_selfamt):");
-    console.log(`   cash ${inr(cash)}   bank ${inr(bank)}   bills whose split exceeds the total: ${overpaid}`);
-    console.log(`   s_recevied_cashamt totals ${inr(Number(p.cashRecorded))}; a large gap suggests it holds the tendered amount (with change).`);
+    info("\n2. Split the reports use (cash = bill total minus card, UPI, s_credit_amt and s_selfamt):");
+    info(`   cash ${inr(cash)}   bank ${inr(bank)}   bills whose split exceeds the total: ${overpaid}`);
+    info(`   s_recevied_cashamt totals ${inr(Number(p.cashRecorded))}; a large gap suggests it holds the tendered amount (with change).`);
 
-    console.log("\n3. GRN pay_type values (CASH = paid when received; anything else is treated as not yet paid):");
+    info("\n3. GRN pay_type values (CASH = paid when received; anything else is treated as not yet paid):");
     for (const r of await raw(
         `SELECT UPPER(LTRIM(RTRIM(ISNULL(g.[pay_type], '')))) AS v, COUNT(DISTINCT g.[grn_no]) AS n FROM dbo.[purgrnentry] AS g ` +
             `WHERE g.[entry_date] >= CAST(@from AS date) AND g.[entry_date] < DATEADD(day, 1, CAST(@to AS date)) GROUP BY UPPER(LTRIM(RTRIM(ISNULL(g.[pay_type], ''))))`,
@@ -72,14 +73,14 @@ async function main() {
         const c = costs.get(b.id) ?? { lineValue: 0, uncosted: 0, cost: 0 };
         return billProfit(b.total, b.gst, c.lineValue, c.uncosted, c.cost);
     }));
-    console.log("\n4. Gross profit (Party P&L rule: qty × lot purchase rate; uncosted lines left out):");
-    console.log(`   net sales ${inr(t.netSales)}   costed ${inr(t.costedSales)} (${t.coveragePct}%)   cost ${inr(t.cost)}   gross profit ${inr(t.grossProfit)}   margin ${t.marginPct ?? "—"}%`);
+    info("\n4. Gross profit (Party P&L rule: qty × lot purchase rate; uncosted lines left out):");
+    info(`   net sales ${inr(t.netSales)}   costed ${inr(t.costedSales)} (${t.coveragePct}%)   cost ${inr(t.cost)}   gross profit ${inr(t.grossProfit)}   margin ${t.marginPct ?? "—"}%`);
 
-    console.log("\nDone. Nothing was written.");
+    info("\nDone. Nothing was written.");
     process.exit(0);
 }
 
 main().catch((err) => {
-    console.error("Finance check failed:", err instanceof Error ? err.message : String(err));
+    logError("Finance check failed:", err instanceof Error ? err.message : String(err));
     process.exit(1);
 });

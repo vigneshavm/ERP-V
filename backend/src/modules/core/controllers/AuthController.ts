@@ -8,18 +8,9 @@ import RefreshToken from '../models/RefreshToken.js';
 import { generateToken, generateRandomToken } from '../../../config/jwt.js';
 import { sendHtmlEmail, generatePasswordResetEmail } from '../../../utils/emailService.js';
 import { generateDeviceId, setDeviceIdCookie, getDeviceIdFromCookie } from '../../../utils/deviceUtils.js';
-import { info } from '../../../config/logger.js';
+import { info, error, warn } from '../../../config/logger.js';
 import mongoose from 'mongoose';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 // Simple password strength check for registration
 const isStrongPassword = (password: string): boolean => {
@@ -217,9 +208,9 @@ export class AuthController {
                 session.endSession();
                 throw err;
             }
-        } catch (error) {
-            console.error('Register Error:', error);
-            res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+        } catch (err) {
+            error('Register Error:', err);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
         }
     };
 
@@ -374,9 +365,9 @@ export class AuthController {
                 token: accessToken,
                 refreshToken: refreshToken,
             });
-        } catch (error) {
-            console.error('Login Error:', error);
-            res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+        } catch (err) {
+            error('Login Error:', err);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
         }
     };
 
@@ -467,10 +458,7 @@ export class AuthController {
 
             // DEV MODE: Log reset URL to console for easy testing
             if (process.env.NODE_ENV !== 'production') {
-                console.log('---------------------------------------------------');
-                console.log('🔐 PASSWORD RESET LINK (Dev Mode):');
-                console.log(resetUrl);
-                console.log('---------------------------------------------------');
+                info('🔐 PASSWORD RESET LINK (Dev Mode):', { resetUrl });
             }
 
             const mailSent = await sendHtmlEmail(
@@ -481,13 +469,13 @@ export class AuthController {
             );
 
             if (!mailSent) {
-                console.error('Failed to send password reset email to:', email);
+                error('Failed to send password reset email to:', { email });
             }
 
             // Always return generic success message (security best practice)
             res.status(200).json({ message: 'If this email exists, a reset link has been sent' });
-        } catch (error) {
-            console.error('Forgot Password Error:', error);
+        } catch (err) {
+            error('Forgot Password Error:', err);
             res.status(500).json({ message: 'Unable to process request. Please try again later.' });
         }
     };
@@ -549,7 +537,7 @@ export class AuthController {
                 userAgent: req.headers['user-agent'],
                 timestamp: new Date(),
             };
-            console.warn('SECURITY AUDIT - Force Logout:', JSON.stringify(auditData));
+            warn('SECURITY AUDIT - Force Logout:', auditData);
 
             // Revoke all refresh tokens for this user
             await RefreshToken.updateMany(
@@ -574,8 +562,8 @@ export class AuthController {
             res.status(200).json({
                 message: 'All sessions revoked successfully. You can now log in from this device.'
             });
-        } catch (error) {
-            console.error('Force Logout Error:', error);
+        } catch (err) {
+            error('Force Logout Error:', err);
             res.status(500).json({ message: 'Unable to process request' });
         }
     };
@@ -637,9 +625,9 @@ export class AuthController {
             await user.save();
 
             res.status(200).json({ message: 'Password reset successful. Please log in.' });
-        } catch (error) {
-            console.error('Reset Password Error:', error);
-            res.status(500).json({ message: 'Server Error', error: (error as Error).message });
+        } catch (err) {
+            error('Reset Password Error:', err);
+            res.status(500).json({ message: 'Server Error', error: (err as Error).message });
         }
     };
 }

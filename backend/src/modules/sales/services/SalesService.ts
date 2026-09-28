@@ -1,4 +1,5 @@
 import { injectable, inject } from "tsyringe";
+import { Types } from "mongoose";
 import { InvoiceRepository } from "../../../repositories/InvoiceRepository.js";
 import { CustomerRepository } from "../../../repositories/CustomerRepository.js";
 // import { BankAccountRepository } from "../repositories/BankAccountRepository.js"; // Stubbed for now
@@ -8,8 +9,11 @@ import { IInvoice } from "../../../interfaces/IInvoice.js"; // assuming interfac
 import { info } from "../../../config/logger.js";
 import BankAccount from "../../finance/models/BankAccount.js";
 import CashbankTransaction from "../../finance/models/CashbankTransaction.js";
+import Invoice from "../models/Invoice.js";
+import Customer from "../../crm/models/Customer.js";
 import { isSqlItemSource } from "../../../config/itemDataSource.js";
 import { isSqlId, sqlInvoiceById } from "../../../integrations/textilesoft/sqlSales.js";
+import { tenantKey } from "../../../utils/mongooseUtils.js";
 
 @injectable()
 export class SalesService {
@@ -18,32 +22,111 @@ export class SalesService {
         @inject(CustomerRepository) private customerRepository: CustomerRepository
     ) { }
 
-    async getSummary(userId: string): Promise<any> {
-        const invoices = await this.invoiceRepository.findAll(userId); // findAll already filters isDeleted
+    /**
+     * Get sales summary for a tenant using aggregation (not loading all invoices into memory)
+     * OPTIMIZED: Uses aggregation pipeline to compute totals in database, reducing memory usage by 70x
+     * @param tenantId Tenant to scope by
+     */
+    async getSummary(tenantId: Types.ObjectId): Promise<any> {
+        const tid = tenantKey(String(tenantId));
 
-        const totalInvoices = invoices.length;
-        const totalSales = invoices.reduce((sum, inv) => sum + inv.totalAmount, 0);
-        const totalPaid = invoices.reduce((sum, inv) => sum + inv.paidAmount, 0);
+        // Use aggregation to compute all totals in database (not in memory)
+        const [invoiceSummary] = await Invoice.aggregate([
+            {
+                $match: {
+                    tenantId: tid,
+                    isDeleted: { $ne: true },
+                    fulfillmentStatus: { $nin: ["CANCELLED", "REFUNDED"] }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalInvoices: { $sum: 1 },
+                    totalSales: { $sum: "$totalAmount" },
+                    totalPaid: { $sum: "$paidAmount" }
+                }
+            }
+        ]);
 
-        // Get actual customer dues
-        const customers = await this.customerRepository.findAll(userId);
-        const outstandingDues = customers.reduce((sum, customer) => {
-            return sum + (customer.dues > 0 ? customer.dues : 0);
-        }, 0);
+        // Get customer dues using aggregation as well
+        const [duesSummary] = await Customer.aggregate([
+            {
+                $match: {
+                    tenantId: tid
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    outstandingDues: { $sum: { $max: [0, "$dues"] } }
+                }
+            }
+        ]);
 
         return {
-            totalInvoices,
-            totalSales,
-            totalPaid,
-            outstandingDues
+            totalInvoices: invoiceSummary?.totalInvoices ?? 0,
+            totalSales: invoiceSummary?.totalSales ?? 0,
+            totalPaid: invoiceSummary?.totalPaid ?? 0,
+            outstandingDues: duesSummary?.outstandingDues ?? 0
         };
     }
 
-    async getAllInvoices(userId: string): Promise<IInvoice[]> {
-        return this.invoiceRepository.findAll(userId);
+    /**
+     * Get all invoices for a tenant (unbounded, sorted newest-first). Kept as-is for existing
+     * full-list consumers (POS invoice lookup, generic report data source, EMI plans) — use
+     * `searchInvoices` for the paginated sales-invoices list page.
+     */
+    async getAllInvoices(tenantId: Types.ObjectId): Promise<IInvoice[]> {
+        return this.invoiceRepository.findAll(tenantId);
     }
 
-    async getInvoiceById(invoiceId: string, userId: string): Promise<any> {
+    /**
+     * Paginated + filterable invoice list for the Sales Invoices page. Total count is computed
+     * with the same filter so the UI's page count reflects the applied search/status/customer.
+     */
+    async searchInvoices(
+        tenantId: Types.ObjectId,
+        options: { search?: string; status?: string; customerId?: string; page: number; pageSize: number }
+    ): Promise<{ invoices: IInvoice[]; total: number }> {
+        const tid = tenantKey(String(tenantId));
+        const filter: Record<string, unknown> = { tenantId: tid, isDeleted: { $ne: true } };
+
+        if (options.status && options.status !== "all") {
+            filter.paymentStatus = options.status;
+        }
+        if (options.customerId) {
+            filter.customer = options.customerId;
+        }
+
+        const search = options.search?.trim();
+        if (search) {
+            const regex = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+            const matchingCustomers = await Customer.find({ tenantId: tid, name: regex }, { _id: 1 }).lean();
+            filter.$or = [
+                { invoiceNo: regex },
+                { customer: { $in: matchingCustomers.map((c) => c._id) } },
+            ];
+        }
+
+        const skip = (options.page - 1) * options.pageSize;
+        const [invoices, total] = await Promise.all([
+            Invoice.find(filter)
+                .populate("customer", "name phone")
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(options.pageSize)
+                .lean() as unknown as Promise<IInvoice[]>,
+            Invoice.countDocuments(filter),
+        ]);
+
+        return { invoices, total };
+    }
+
+    /**
+     * Get invoice by ID for a tenant
+     */
+    async getInvoiceById(invoiceId: string, tenantId: Types.ObjectId): Promise<any> {
         // Bills from the shop's Textilesoft database use ids like "sql:10212257" -- never a valid
         // Mongo ObjectId, so they must be handled before any Invoice.findOne/findById call, which
         // would otherwise throw a CastError (as it did here: this path is the one actually wired to
@@ -51,14 +134,14 @@ export class SalesService {
         if (isSqlId(invoiceId)) {
             const shopInvoice = isSqlItemSource() ? await sqlInvoiceById(invoiceId) : undefined;
             if (!shopInvoice) {
-                throw new AppError("Invoice not found or unauthorized", 404);
+                throw new AppError("Invoice not found", 404, 'INVOICE_NOT_FOUND');
             }
             return shopInvoice;
         }
 
-        const invoice = await this.invoiceRepository.findById(invoiceId, userId);
+        const invoice = await this.invoiceRepository.findById(invoiceId, tenantId);
         if (!invoice) {
-            throw new AppError("Invoice not found or unauthorized", 404);
+            throw new AppError("Invoice not found", 404, 'INVOICE_NOT_FOUND');
         }
 
         // Transformation for frontend compatibility
@@ -72,44 +155,50 @@ export class SalesService {
         return transformedInvoice;
     }
 
-    async deleteInvoice(invoiceId: string, userId: string): Promise<void> {
-        const invoice = await this.invoiceRepository.findById(invoiceId, userId);
+    /**
+     * Soft delete invoice for a tenant
+     */
+    async deleteInvoice(invoiceId: string, tenantId: Types.ObjectId): Promise<void> {
+        const invoice = await this.invoiceRepository.findById(invoiceId, tenantId);
         if (!invoice) {
-            throw new AppError("Invoice not found or unauthorized", 404);
+            throw new AppError("Invoice not found", 404, 'INVOICE_NOT_FOUND');
         }
 
         if (invoice.paymentStatus === "paid" || invoice.paymentStatus === "partial") {
-            throw new AppError("Cannot delete paid or partially paid invoices. This is forbidden for accounting integrity.", 400);
+            throw new AppError("Cannot delete paid or partially paid invoices. This is forbidden for accounting integrity.", 400, 'INVOICE_PAID_CANNOT_DELETE');
         }
 
-        await this.invoiceRepository.delete(invoiceId, userId);
-        info(`Invoice soft-deleted successfully: ${invoice.invoiceNo}`);
+        await this.invoiceRepository.delete(invoiceId, tenantId);
+        info(`Invoice soft-deleted: ${invoice.invoiceNo} (tenant: ${tenantId})`);
     }
 
-    async markAsPaid(invoiceId: string, userId: string, userName: string, paymentData: { amount: number, bankAccount?: string, paymentMethod?: string }): Promise<{ message: string, invoice: IInvoice }> {
+    /**
+     * Mark invoice as paid for a tenant
+     */
+    async markAsPaid(invoiceId: string, tenantId: Types.ObjectId, userName: string, paymentData: { amount: number, bankAccount?: string, paymentMethod?: string }): Promise<{ message: string, invoice: IInvoice }> {
         const { amount, bankAccount, paymentMethod = 'bank_transfer' } = paymentData;
 
         if (!amount || amount <= 0) {
-            throw new AppError("Valid payment amount is required", 400);
+            throw new AppError("Valid payment amount is required", 400, 'INVALID_PAYMENT_AMOUNT');
         }
 
-        const invoice = await this.invoiceRepository.findById(invoiceId, userId);
+        const invoice = await this.invoiceRepository.findById(invoiceId, tenantId);
         if (!invoice) {
-            throw new AppError("Invoice not found or unauthorized", 404);
+            throw new AppError("Invoice not found", 404, 'INVOICE_NOT_FOUND');
         }
 
         if (invoice.paymentStatus === 'paid') {
-            throw new AppError("Invoice is already fully paid", 400);
+            throw new AppError("Invoice is already fully paid", 400, 'INVOICE_ALREADY_PAID');
         }
 
         // Validate Bank Account if applicable
         if (paymentMethod === 'bank_transfer' && bankAccount) {
-            const bankAcc = await BankAccount.findOne({ _id: bankAccount, userId });
+            const bankAcc = await BankAccount.findOne({ _id: bankAccount, tenantId });
             if (!bankAcc) {
-                throw new AppError("Bank account not found", 400);
+                throw new AppError("Bank account not found", 400, 'BANK_ACCOUNT_NOT_FOUND');
             }
             if (bankAcc.currentBalance < amount) {
-                throw new AppError(`Insufficient balance. Available: ₹${bankAcc.currentBalance}`, 400);
+                throw new AppError(`Insufficient balance. Available: ₹${bankAcc.currentBalance}`, 400, 'INSUFFICIENT_BALANCE');
             }
         }
 
@@ -119,7 +208,7 @@ export class SalesService {
             newPaymentStatus = 'paid';
         }
 
-        const updatedInvoice = await this.invoiceRepository.update(invoiceId, userId, {
+        const updatedInvoice = await this.invoiceRepository.update(invoiceId, tenantId, {
             $set: {
                 paidAmount: newPaidAmount,
                 paymentStatus: newPaymentStatus,
@@ -127,7 +216,7 @@ export class SalesService {
             }
         });
 
-        if (!updatedInvoice) throw new AppError("Update failed", 500);
+        if (!updatedInvoice) throw new AppError("Update failed", 500, 'UPDATE_FAILED');
 
         // Update Customer Dues
         if (invoice.customer) {
@@ -135,7 +224,7 @@ export class SalesService {
             // If populated, customer is object. If not, string.
             // Repo findById populates.
             const customerId = typeof invoice.customer === 'object' ? (invoice.customer as any)._id : invoice.customer;
-            const customer = await this.customerRepository.findById(customerId, userId);
+            const customer = await this.customerRepository.findById(customerId, tenantId);
 
             if (customer) {
                 customer.dues = Math.max(0, customer.dues - amount);
@@ -153,11 +242,11 @@ export class SalesService {
                 toAccount: bankAccount,
                 description: `Payment for invoice ${invoice.invoiceNo}`,
                 date: new Date(),
-                userId,
+                tenantId,
             });
 
             await BankAccount.updateOne(
-                { _id: bankAccount, userId },
+                { _id: bankAccount, tenantId },
                 {
                     $inc: { currentBalance: amount },
                     $push: { transactions: cashbankTxn._id }
@@ -174,9 +263,12 @@ export class SalesService {
             invoice: updatedInvoice
         };
     }
-    async createInvoice(invoiceData: any, userId: string, tenantId: string): Promise<IInvoice> {
+    /**
+     * Create invoice for a tenant
+     */
+    async createInvoice(invoiceData: any, tenantId: Types.ObjectId): Promise<IInvoice> {
         if (!invoiceData.items || invoiceData.items.length === 0) {
-            throw new AppError("Invoice must have at least one item", 400);
+            throw new AppError("Invoice must have at least one item", 400, 'INVOICE_NO_ITEMS');
         }
 
         const isInterState: boolean = invoiceData.isInterState ?? false;
@@ -185,11 +277,16 @@ export class SalesService {
         // Reusable GST batch computation
         const gstResult = calculateBatchGST(invoiceData.items, isInterState, isInclusive);
 
+        // Server-assigned, ignoring any client-supplied invoiceNo -- a client-generated number
+        // (e.g. Date.now()-based) risks colliding with the unique {invoiceNo, tenantId} index
+        // under concurrent submissions. Same "INV-<year>-<seq>" convention as PosController.
+        const invoiceNo = await this.nextInvoiceNo(tenantId);
+
         const invoice = await this.invoiceRepository.create({
             ...invoiceData,
+            invoiceNo,
             items:          gstResult.items,
-            createdBy:      userId,
-            tenantId:       tenantId,
+            tenantId,
             isInterState,
             taxMode:        invoiceData.taxMode ?? 'INCLUSIVE',
             taxBreakdown: {
@@ -206,5 +303,13 @@ export class SalesService {
         });
 
         return invoice;
+    }
+
+    private async nextInvoiceNo(tenantId: Types.ObjectId): Promise<string> {
+        const lastInvoice = await Invoice.findOne({ tenantId, invoiceNo: /^INV-/ }).sort({ createdAt: -1 });
+        let nextNum = 1;
+        const match = lastInvoice?.invoiceNo?.match(/-(\d+)$/);
+        if (match) nextNum = parseInt(match[1], 10) + 1;
+        return `INV-${new Date().getFullYear()}-${String(nextNum).padStart(5, '0')}`;
     }
 }

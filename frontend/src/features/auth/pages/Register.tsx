@@ -5,7 +5,8 @@ import SecurePasswordInput from '../components/SecurePasswordInput';
 import AuthLayout from '../components/AuthLayout';
 import AuthAlert from '../components/AuthAlert';
 import AuthInput from '../components/AuthInput';
-import { useRegisterForm } from '../hooks/useRegisterForm';
+import { useRegisterForm } from '../hooks/useRegisterForm';import { Button } from '@/components/shared/Button';
+
 
 const Register: React.FC = () => {
     const { form, onSubmit, isLoading, isError, message } = useRegisterForm();
@@ -118,7 +119,7 @@ const Register: React.FC = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full h-14 bg-white text-slate-950 rounded-sm font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-white/5"
+                        className="w-full h-14 bg-white dark:bg-slate-800 text-slate-950 dark:text-white rounded-sm font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-white/5 dark:shadow-black/20"
                     >
                         {isLoading ? (
                             <div className="w-5 h-5 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" />

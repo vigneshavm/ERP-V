@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
-import { Eye, EyeOff, AlertCircle, Lock } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, Lock } from 'lucide-react';import { Button } from '@/components/shared/Button';
+
 
 interface SecurePasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;

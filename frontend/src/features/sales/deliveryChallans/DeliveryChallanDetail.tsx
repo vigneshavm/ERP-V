@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { RootState } from "../../../redux/store";
 import { formatDate } from '../../../utils/helpers';
+import { Button } from '@/components/shared/Button';
 
 const DeliveryChallanDetail = () => {
     const { id } = useParams();
@@ -98,12 +99,7 @@ const DeliveryChallanDetail = () => {
                 {/* Modern Header - Hidden on print */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 print:hidden">
                     <div className="flex items-center gap-6">
-                        <button 
-                            onClick={() => navigate('/sales/challans')}
-                            className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:scale-110 transition-transform text-slate-500 hover:text-warning shadow-sm"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </button>
+                        <Button onClick={() => navigate('/sales/challans')} className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:scale-110 transition-transform text-slate-500 hover:text-warning shadow-sm"><ArrowLeft className="w-5 h-5" /></Button>
                         <div className="relative">
                             <div className="absolute -left-4 top-0 bottom-0 w-1 bg-warning rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
                             <h1 className="page-title text-slate-900 dark:text-white flex items-center gap-3">
@@ -120,19 +116,9 @@ const DeliveryChallanDetail = () => {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button 
-                            onClick={handlePrint}
-                            className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:text-warning transition-colors shadow-sm group"
-                        >
-                            <Printer className="w-4 h-4" />
-                        </button>
+                        <Button onClick={handlePrint} className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:text-warning transition-colors shadow-sm group"><Printer className="w-4 h-4" /></Button>
                         {challan.status !== 'Converted' && (
-                            <button 
-                                onClick={() => setConvertConfirm(true)}
-                                className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-success/90 transition-all shadow-lg shadow-emerald-500/20"
-                            >
-                                <Receipt className="w-4 h-4 inline-block mr-2" /> Transition to Invoice
-                            </button>
+                            <Button onClick={() => setConvertConfirm(true)} className="px-6 py-3 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-success/90 transition-all shadow-lg shadow-emerald-500/20"><Receipt className="w-4 h-4 inline-block mr-2" /> Transition to Invoice</Button>
                         )}
                         <button className="hidden md:flex items-center gap-2 px-6 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20">
                             <Download className="w-4 h-4" /> Export Manifest
@@ -141,7 +127,7 @@ const DeliveryChallanDetail = () => {
                 </header>
 
                 {/* Progress Timeline - Hidden on print */}
-                <div className="bg-white dark:bg-slate-900 rounded-[40px] border border-slate-200 dark:border-slate-800 p-8 shadow-sm print:hidden">
+                <div className="bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 p-8 shadow-sm print:hidden">
                     <div className="flex items-center justify-between gap-4 max-w-2xl mx-auto">
                         {lifecycleStages.map((stage, index) => (
                             <div key={stage.name} className="flex-1 flex items-center gap-4 last:flex-none">
@@ -283,7 +269,7 @@ const DeliveryChallanDetail = () => {
                     {/* Sidebar: Financials & History */}
                     <div className="space-y-8 sticky top-8 print:hidden">
                         {/* Fulfillment Summary */}
-                        <div className="bg-slate-900 dark:bg-white rounded-[40px] p-8 text-white dark:text-slate-900 shadow-2xl relative overflow-hidden">
+                        <div className="bg-slate-900 dark:bg-white rounded-full p-8 text-white dark:text-slate-900 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-bl-[100px]" />
                             <h3 className="text-[10px] font-black opacity-50 uppercase tracking-[0.3em] mb-8">Dispatch Summary</h3>
                             <div className="space-y-4 relative z-10">
@@ -369,18 +355,8 @@ const DeliveryChallanDetail = () => {
                                 Transition this dispatch protocol to a Fiscal Invoice? This will lock the logistical matrix and initiate billing.
                             </p>
                             <div className="grid grid-cols-2 gap-4">
-                                <button 
-                                    onClick={() => setConvertConfirm(false)}
-                                    className="px-6 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    onClick={handleConvert}
-                                    className="px-6 py-4 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-success/90 transition-all shadow-lg shadow-emerald-500/20"
-                                >
-                                    Transition
-                                </button>
+                                <Button onClick={() => setConvertConfirm(false)} className="px-6 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Cancel</Button>
+                                <Button onClick={handleConvert} className="px-6 py-4 bg-success text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-success/90 transition-all shadow-lg shadow-emerald-500/20">Transition</Button>
                             </div>
                         </div>
                     </div>

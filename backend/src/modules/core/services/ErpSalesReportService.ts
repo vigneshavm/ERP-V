@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
 import Invoice from "../../sales/models/Invoice.js";
 import { ERP_BASIS, addDays, aggregateErpSales, istDate, type ErpInvoice, type SalesDim } from "./erpSalesMath.js";
+import { dateRangeQuery as between } from "../../../utils/dateUtils.js";
+import { tenantKey } from "../../../utils/mongooseUtils.js";
 
 /**
  * Detailed Analytics from the ERP's own POS invoices, for when the shop database is not the item source
@@ -12,10 +13,6 @@ import { ERP_BASIS, addDays, aggregateErpSales, istDate, type ErpInvoice, type S
 
 const LINE_DIMS = new Set<SalesDim>(["brand", "category", "product", "salesCounter"]);
 const validDate = (v: unknown): string | undefined => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : undefined);
-const tenantKey = (tenantId: string) => (mongoose.Types.ObjectId.isValid(tenantId) ? new mongoose.Types.ObjectId(tenantId) : tenantId);
-const istStart = (d: string) => new Date(`${d}T00:00:00+05:30`);
-const istEndExclusive = (d: string) => new Date(istStart(d).getTime() + 86_400_000);
-const between = (from: string, to: string) => ({ $gte: istStart(from), $lt: istEndExclusive(to) });
 
 const LIVE = { isDeleted: { $ne: true }, fulfillmentStatus: { $nin: ["CANCELLED", "REFUNDED"] } };
 const CANCELLED = { isDeleted: { $ne: true }, fulfillmentStatus: "CANCELLED" };
@@ -40,7 +37,7 @@ export function resolveRange(range: string | undefined, fromQ?: string, toQ?: st
 export async function erpSalesReport(dim: SalesDim, tenantId: string, range: string | undefined, fromQ?: string, toQ?: string): Promise<ErpSalesReportResult> {
     const { from, to } = resolveRange(range, fromQ, toQ);
     const tid = tenantKey(tenantId);
-    const createdAt = between(from, to);
+    const createdAt = between({ from, to });
     const liveQuery = Invoice.find({ tenantId: tid, ...LIVE, createdAt }, LINE_DIMS.has(dim) ? { ...INVOICE_FIELDS, items: 1 } : INVOICE_FIELDS);
     if (LINE_DIMS.has(dim)) liveQuery.populate("items.item", "name brand category");
     const [live, cancelled] = await Promise.all([
@@ -64,7 +61,7 @@ export interface DayBill {
 /** Every ERP bill on one India-time day (cancelled ones flagged), in the shape the SQL day-bills list uses. */
 export async function erpDayBills(tenantId: string, date: string): Promise<DayBill[]> {
     const docs = await Invoice.find(
-        { tenantId: tenantKey(tenantId), isDeleted: { $ne: true }, fulfillmentStatus: { $ne: "REFUNDED" }, createdAt: between(date, date) },
+        { tenantId: tenantKey(tenantId), isDeleted: { $ne: true }, fulfillmentStatus: { $ne: "REFUNDED" }, createdAt: between({ from: date, to: date }) },
         { invoiceNo: 1, createdAt: 1, customer: 1, paymentMethod: 1, totalAmount: 1, fulfillmentStatus: 1 },
     ).populate("customer", "name phone").sort({ createdAt: 1 }).lean();
     return docs.map((d) => {

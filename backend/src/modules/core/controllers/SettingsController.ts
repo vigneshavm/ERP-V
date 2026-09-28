@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import Tenant from "../models/Tenant.js";
-
-// Extend Request type to include tenantId (added by middleware)
-interface AuthenticatedRequest extends Request {
-    tenantId?: string;
-}
+import { AuthenticatedRequest } from "../../../middlewares/authMiddleware.js";
+import { error } from '../../../config/logger.js';
 
 // Top-level Tenant fields the Settings page is allowed to update directly.
 // Kept as an explicit allow-list so an update request can never smuggle in
@@ -114,9 +111,9 @@ export const getSettings = async (req: AuthenticatedRequest, res: Response) => {
         }
 
         res.status(200).json({ success: true, data: serializeTenant(tenant) });
-    } catch (error) {
-        console.error("Get Settings Error:", error);
-        res.status(500).json({ success: false, message: "Server Error", error: (error as Error).message });
+    } catch (err) {
+        error('Get Settings Error:', err);
+        res.status(500).json({ success: false, message: 'Server Error', error: (err as Error).message });
     }
 };
 
@@ -212,9 +209,9 @@ export const updateSettings = async (req: AuthenticatedRequest, res: Response) =
             message: "Settings updated successfully",
             data: serializeTenant(tenant)
         });
-    } catch (error) {
-        console.error("Update Settings Error:", error);
-        res.status(500).json({ success: false, message: "Server Error", error: (error as Error).message });
+    } catch (err) {
+        error('Update Settings Error:', err);
+        res.status(500).json({ success: false, message: 'Server Error', error: (err as Error).message });
     }
 };
 

@@ -8,6 +8,7 @@ import api from "../../services/api.js";
 import { Tenant } from "../../types/tenant/index";
 import { formatDate } from '../../utils/helpers';
 import PageHeader from '../../components/shared/Layout/PageHeader';
+import { Button } from '@/components/shared/Button';
 
 const StaffManager: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
@@ -301,20 +302,9 @@ const StaffManager: React.FC = () => {
 
                             <div className="flex gap-2 pt-2">
                                 {editingEmpId && (
-                                    <button
-                                        type="button"
-                                        onClick={handleCancelEditEmp}
-                                        className="flex-1 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 py-2 rounded-lg font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition"
-                                    >
-                                        Cancel
-                                    </button>
+                                    <Button type="button" onClick={handleCancelEditEmp} className="flex-1 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 py-2 rounded-lg font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition">Cancel</Button>
                                 )}
-                                <button
-                                    type="submit"
-                                    className="flex-1 bg-primary text-white py-2 rounded-lg font-bold hover:bg-primary-hover transition shadow-sm border border-primary"
-                                >
-                                    {editingEmpId ? 'Update Staff' : 'Add Staff'}
-                                </button>
+                                <Button type="submit" className="flex-1 bg-primary text-white py-2 rounded-lg font-bold hover:bg-primary-hover transition shadow-sm border border-primary">{editingEmpId ? 'Update Staff' : 'Add Staff'}</Button>
                             </div>
                         </form>
                     </div>
@@ -381,18 +371,8 @@ const StaffManager: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={() => handleStartEditEmp(emp)}
-                                            className="p-2 text-slate-300 hover:text-primary hover:bg-primary-soft dark:hover:bg-primary-soft rounded-lg transition-all"
-                                        >
-                                            <Pencil className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDeleteEmployee(emp.id)}
-                                            className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        <Button onClick={() => handleStartEditEmp(emp)} className="p-2 text-slate-300 hover:text-primary hover:bg-primary-soft dark:hover:bg-primary-soft rounded-lg transition-all"><Pencil className="w-4 h-4" /></Button>
+                                        <Button onClick={() => handleDeleteEmployee(emp.id)} className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all"><Trash2 className="w-4 h-4" /></Button>
                                     </div>
                                 </div>
                             ))}

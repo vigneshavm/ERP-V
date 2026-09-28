@@ -3,7 +3,8 @@ import React from 'react';
 import { Maximize2, Minimize2, Wifi, WifiOff, Plus, X, Languages } from 'lucide-react';
 import { Session } from "../../types/sales";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../contexts/LanguageContext";import { Button } from '@/components/shared/Button';
+
 
 interface POSHeaderProps {
     sessions: Session[];
@@ -88,7 +89,7 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                 {sessions.length < 4 && (
                     <button
                         onClick={onAddSession}
-                        className="p-3 bg-white dark:bg-slate-800 text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700 rounded-t-lg transition-all border-b-2 border-transparent self-end"
+                        className="p-3 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700 rounded-t-lg transition-all border-b-2 border-transparent self-end"
                         title="Add New Billing Tab"
                     >
                         <Plus className="w-4 h-4" />

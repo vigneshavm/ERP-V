@@ -41,6 +41,7 @@ vi.mock('../../services/grnService', () => ({
 }));
 
 import PurchaseOrderDetails from './PurchaseOrderDetails';
+import { Input } from '@/components/shared/Input';
 
 const makeOrder = (overrides: any = {}) => ({
     id: 'PO_1',

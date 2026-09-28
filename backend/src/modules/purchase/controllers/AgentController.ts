@@ -1,101 +1,58 @@
 import { Response } from 'express';
-import Agent from '../models/Agent.js';
+import { singleton, inject } from 'tsyringe';
+import { AgentService } from '../services/AgentService.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { error } from '../../../config/logger.js';
 
-export const createAgent = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const {
-            name, phone, email, address, commissionPercent,
-            linkedSupplierId, bankAccountNumber, bankName, ifsc, notes, status
-        } = req.body;
-        const tenantId = req.user?.tenantId;
+@singleton()
+export class AgentController {
+    constructor(
+        @inject(AgentService) private agentService: AgentService
+    ) { }
 
-        if (!tenantId) {
-            return res.status(401).json({ success: false, message: 'Unauthorized access' });
+    public createAgent = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const tenantId = req.tenantId.toString();
+            const agent = await this.agentService.createAgent(tenantId, req.body);
+            res.status(201).json({ success: true, data: agent });
+        } catch (err: any) {
+            error(`Create Agent Error: ${(err as Error).message}`);
+            res.status(err.statusCode || 500).json({ success: false, message: err.message });
         }
+    };
 
-        if (!name) {
-            return res.status(400).json({ success: false, message: 'Agent name is required' });
+    public getAgents = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const tenantId = req.tenantId.toString();
+            const agents = await this.agentService.getAgents(tenantId);
+            res.status(200).json({ success: true, data: agents });
+        } catch (err: any) {
+            error(`Get Agents Error: ${(err as Error).message}`);
+            res.status(err.statusCode || 500).json({ success: false, message: err.message });
         }
+    };
 
-        const existingAgent = await Agent.findOne({ tenantId, name });
-        if (existingAgent) {
-            return res.status(400).json({ success: false, message: 'Agent with this name already exists' });
+    public updateAgent = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const { id } = req.params as { id: string };
+            const tenantId = req.tenantId.toString();
+            const agent = await this.agentService.updateAgent(id, tenantId, req.body);
+            res.status(200).json({ success: true, data: agent });
+        } catch (err: any) {
+            error(`Update Agent Error: ${(err as Error).message}`);
+            res.status(err.statusCode || 500).json({ success: false, message: err.message });
         }
+    };
 
-        const agent = await Agent.create({
-            tenantId,
-            name,
-            phone,
-            email,
-            address,
-            commissionPercent,
-            linkedSupplierId: linkedSupplierId || undefined,
-            bankAccountNumber,
-            bankName,
-            ifsc,
-            notes,
-            status
-        });
-
-        res.status(201).json({ success: true, data: agent });
-    } catch (error: any) {
-        console.error('Create Agent Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
-    }
-};
-
-export const getAgents = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const tenantId = req.user?.tenantId;
-        if (!tenantId) {
-            return res.status(401).json({ success: false, message: 'Unauthorized access' });
+    public deleteAgent = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        try {
+            const { id } = req.params as { id: string };
+            const tenantId = req.tenantId.toString();
+            await this.agentService.deleteAgent(id, tenantId);
+            res.status(200).json({ success: true, message: 'Agent deleted successfully' });
+        } catch (err: any) {
+            error(`Delete Agent Error: ${(err as Error).message}`);
+            res.status(err.statusCode || 500).json({ success: false, message: err.message });
         }
-
-        const agents = await Agent.find({ tenantId }).sort({ name: 1 });
-        res.status(200).json({ success: true, data: agents });
-    } catch (error: any) {
-        console.error('Get Agents Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
-    }
-};
-
-export const updateAgent = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const { id } = req.params;
-        const tenantId = req.user?.tenantId;
-
-        const agent = await Agent.findOneAndUpdate(
-            { _id: id, tenantId },
-            req.body,
-            { new: true, runValidators: true }
-        );
-
-        if (!agent) {
-            return res.status(404).json({ success: false, message: 'Agent not found' });
-        }
-
-        res.status(200).json({ success: true, data: agent });
-    } catch (error: any) {
-        console.error('Update Agent Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
-    }
-};
-
-export const deleteAgent = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const { id } = req.params;
-        const tenantId = req.user?.tenantId;
-
-        const agent = await Agent.findOneAndDelete({ _id: id, tenantId });
-
-        if (!agent) {
-            return res.status(404).json({ success: false, message: 'Agent not found' });
-        }
-
-        res.status(200).json({ success: true, message: 'Agent deleted successfully' });
-    } catch (error: any) {
-        console.error('Delete Agent Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
-    }
-};
+    };
+}

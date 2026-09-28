@@ -161,6 +161,11 @@ const billSchema = new Schema<IBill>(
 billSchema.index({ billNo: 1, createdBy: 1 }, { unique: true });
 billSchema.index({ tenantId: 1, branchId: 1 });
 billSchema.index({ gstReconciliationStatus: 1 });
+// Performance optimization: Compound indexes for common filter patterns
+billSchema.index({ tenantId: 1, status: 1, date: -1 });
+billSchema.index({ tenantId: 1, paymentStatus: 1, date: -1 });
+billSchema.index({ tenantId: 1, supplier: 1, date: -1 });
+billSchema.index({ tenantId: 1, date: -1 });
 
 const Bill = mongoose.model<IBill>("Bill", billSchema);
 export default Bill;

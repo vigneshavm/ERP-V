@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { Types } from "mongoose";
 import Tenant, { ITenant } from "../modules/core/models/Tenant.js";
 // AppError import removed as it was unused
 import { info, warn } from "../config/logger.js";
@@ -7,7 +8,9 @@ declare global {
     namespace Express {
         interface Request {
             tenant?: ITenant;
-            tenantId?: string;
+            /** Resolved tenant. Set by `tenantResolver` (from the host) and overwritten by `protect`
+             *  (from the signed-in user); both store the ObjectId. */
+            tenantId: Types.ObjectId;
             tenantSlug?: string;
         }
     }
@@ -64,7 +67,7 @@ export const tenantResolver = async (req: Request, _res: Response, next: NextFun
         if (tenant) {
             // Attach tenant info to request
             req.tenant = tenant;
-            req.tenantId = tenant._id.toString();
+            req.tenantId = new Types.ObjectId(String(tenant._id));
             req.tenantSlug = tenant.slug;
 
             if (process.env.NODE_ENV !== 'production') {

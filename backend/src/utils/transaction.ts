@@ -11,7 +11,7 @@
  */
 
 import mongoose, { ClientSession, Model } from "mongoose";
-import { error as logError, warn } from "./logger.js";
+import { error as logError, warn, info } from "./logger.js";
 
 interface TransactionOptions {
     maxRetries?: number;
@@ -191,12 +191,12 @@ export const validateDatabaseSafety = async () => {
                 'This is acceptable for development but NOT for production.'
             );
         } else {
-            console.log(`✅ Database safety: Replica set '${serverStatus.repl.setName}' detected`);
+            info(`✅ Database safety: Replica set '${serverStatus.repl.setName}' detected`);
         }
 
         // Check write concern
         const dbStats = await mongoose.connection.db!.stats();
-        console.log(`✅ Database safety: Connected to ${dbStats.db}`);
+        info(`✅ Database safety: Connected to ${dbStats.db}`);
 
     } catch (err: any) {
         warn('Database safety check failed (non-blocking):', err.message);
@@ -217,7 +217,7 @@ export const validateIndexes = async (models: Model<any>[]) => {
                 // Only _id index exists
                 warn(`INDEX WARNING: Model ${Model.modelName} has no custom indexes. Performance may be degraded.`);
             } else {
-                console.log(`✅ Indexes: ${Model.modelName} has ${indexCount} indexes`);
+                info(`✅ Indexes: ${Model.modelName} has ${indexCount} indexes`);
             }
         } catch (err: any) {
             warn(`Index validation failed for ${Model.modelName}:`, err.message);

@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
-import { X, CheckCircle, Package, Loader2, AlertTriangle } from 'lucide-react';
+import { CheckCircle, Package, AlertTriangle } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../../types/purchase";
+import { Button, Modal } from '../../../components/shared';import { Input } from '@/components/shared/Input';
+
 
 // Payload shape sent up to the caller, which POSTs it to /api/grn via grnService.createGRN.
 export interface ReceiveGoodsItem {
@@ -86,19 +88,30 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-sm w-full max-w-2xl shadow-2xl border dark:border-slate-700 flex flex-col max-h-[90vh]">
-                <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                    <div>
-                        <h2 className="text-xl font-bold mb-1">Receive Goods</h2>
-                        <p className="text-sm text-slate-500">PO #{order.po_number}</p>
-                    </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
-                        <X className="w-5 h-5" />
-                    </button>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Receive Goods"
+            size="lg"
+            footer={
+                <div className="flex justify-end gap-3">
+                    <Button variant="secondary" size="md" onClick={onClose} disabled={isSubmitting}>
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="primary"
+                        size="md"
+                        icon={<CheckCircle className="w-4 h-4" />}
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                        loading={isSubmitting}
+                    >
+                        Confirm Receipt
+                    </Button>
                 </div>
-
-                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+            }
+        >
+            <p className="text-sm text-slate-500 -mt-4 mb-4">PO #{order.po_number}</p>
                     {error && (
                         <div className="mb-4 p-3 bg-danger-soft dark:bg-danger-soft text-danger dark:text-danger rounded-lg text-sm font-medium flex items-start gap-2">
                             <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
@@ -152,27 +165,7 @@ const ReceiveGoodsModal: React.FC<ReceiveGoodsModalProps> = ({ isOpen, onClose, 
                             ))}
                         </tbody>
                     </table>
-                </div>
-
-                <div className="p-6 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900/50 rounded-b-2xl">
-                    <button
-                        onClick={onClose}
-                        disabled={isSubmitting}
-                        className="px-6 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl font-medium hover:bg-white dark:hover:bg-slate-700 transition-colors disabled:opacity-60"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                        className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center gap-2 disabled:opacity-60"
-                    >
-                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-                        {isSubmitting ? 'Recording...' : 'Confirm Receipt'}
-                    </button>
-                </div>
-            </div>
-        </div>
+        </Modal>
     );
 };
 

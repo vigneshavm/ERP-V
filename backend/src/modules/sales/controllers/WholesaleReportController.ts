@@ -1,19 +1,7 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import Invoice from '../models/Invoice.js';
 import { error } from '../../../config/logger.js';
-
-/**
- * Wholesale/Retail (WR) Billing: reporting endpoints.
- *
- * WR sales are ordinary Invoice documents tagged `saleChannel: 'WHOLESALE'` (see IInvoice.ts) --
- * these two endpoints just aggregate that same collection filtered on the flag, rather than
- * introducing a parallel WR sale/report data model. Mirrors the read-only aggregation style
- * already used by getSupplierTotals (PurchaseController.ts).
- */
-
-interface AuthenticatedRequest extends Request {
-    tenantId?: string;
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * @swagger

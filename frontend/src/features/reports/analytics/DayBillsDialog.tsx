@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import api from '@/services/api';
 import { formatCurrency, formatReportDate } from '@/utils/formatters';
+import { Button } from '@/components/shared/Button';
 
 interface BillRow {
     id: string;
@@ -85,7 +86,8 @@ const BillDetailDialog: React.FC<{ billId: string; onClose: () => void }> = ({ b
         api.get(`/api/sales-invoice/invoice/${billId}`)
             .then(res => {
                 if (cancelled) return;
-                const inv = res.data || {};
+                // { success, data } envelope from the sales-invoice API; fall back to a bare body.
+                const inv = res.data?.data || res.data || {};
                 setState({
                     done: true, error: '',
                     detail: {

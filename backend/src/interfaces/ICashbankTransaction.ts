@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 export interface ICashbankTransaction extends Document {
     type: "transfer" | "in" | "out";
@@ -12,6 +12,7 @@ export interface ICashbankTransaction extends Document {
     reconciledBy?: string; // ObjectId
     reference?: string;
     userId: string; // ObjectId
+    tenantId: Types.ObjectId;
 
     createdAt: Date;
     updatedAt: Date;

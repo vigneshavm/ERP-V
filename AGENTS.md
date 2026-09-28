@@ -1,7 +1,7 @@
 # AGENTS.md — Repository-Wide Coding Agent Rules
 
-> See also: `ARCHITECTURE.md` (full repo structure) and `CODING_PRINCIPLES.md` (mandatory coding
-> standards) at the repo root — read both before creating or modifying code.
+> See also: `docs/ARCHITECTURE.md` (full repo structure), `docs/CODING_PRINCIPLES.md` (mandatory coding
+> standards), and `docs/BACKEND_STANDARDS.md` (backend consistency & architecture standard) — read before creating or modifying code.
 
 ## Priority
 

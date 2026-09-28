@@ -3,6 +3,8 @@
  * GROUP BY (e.g. one row per supplier or customer). Pure -- no DB access.
  */
 
+import { resolveTablePagination } from "../../../utils/paginationUtils.js";
+
 export interface TableQuery {
     search?: string;
     sort?: string;
@@ -41,9 +43,7 @@ export function tableQuery<T>(rows: T[], q: TableQuery, spec: TableSpec<T>) {
             : (a, b) => spec.fallback(a, b) || spec.tieBreak(a).localeCompare(spec.tieBreak(b)),
     );
 
-    const limit = Math.min(200, Math.max(1, parseInt(String(q.limit)) || 50));
-    const pages = Math.max(1, Math.ceil(sorted.length / limit));
-    const page = Math.min(pages, Math.max(1, parseInt(String(q.page)) || 1));
+    const { page, limit, pages } = resolveTablePagination(sorted.length, q);
     return {
         matched: sorted,
         items: sorted.slice((page - 1) * limit, page * limit),

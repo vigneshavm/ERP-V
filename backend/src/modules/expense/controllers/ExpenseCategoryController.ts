@@ -1,18 +1,9 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 
 import ExpenseCategory from '../models/ExpenseCategory.js';
 import { info, error } from '../../../config/logger.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * Expense category response interface
@@ -34,7 +25,7 @@ interface CategoryResponse {
  */
 export const getAllCategories = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const categories = await ExpenseCategory.find({ createdBy: req.user?._id })
+        const categories = await ExpenseCategory.find({ createdBy: req.user.tenantId })
             .sort({ name: 1 });
 
         // Transform for frontend compatibility

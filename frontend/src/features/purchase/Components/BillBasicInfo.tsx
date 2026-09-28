@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { FileText } from 'lucide-react';
-import { PurchaseBill } from "../../../types/purchase";
+import { PurchaseBill } from "../../../types/purchase";import { Input } from '@/components/shared/Input';
+
 
 interface BillBasicInfoProps {
     bill: Partial<PurchaseBill>;
@@ -29,31 +30,15 @@ const BillBasicInfo: React.FC<BillBasicInfoProps> = ({ bill, vendors, onVendorCh
                 </div>
                 <div>
                     <label className="block text-xs font-bold text-slate-500 mb-2">Bill Number</label>
-                    <input
-                        type="text"
-                        value={bill.bill_number || ''}
-                        onChange={(e) => onBillChange('bill_number', e.target.value)}
-                        placeholder="INV-2024-001"
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
-                    />
+                    <Input type="text" value={bill.bill_number || ''} onChange={(e) => onBillChange('bill_number', e.target.value)} placeholder="INV-2024-001" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20" />
                 </div>
                 <div>
                     <label className="block text-xs font-bold text-slate-500 mb-2">Bill Date</label>
-                    <input
-                        type="date"
-                        value={bill.bill_date}
-                        onChange={(e) => onBillChange('bill_date', e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
-                    />
+                    <Input type="date" value={bill.bill_date} onChange={(e) => onBillChange('bill_date', e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20" />
                 </div>
                 <div>
                     <label className="block text-xs font-bold text-slate-500 mb-2">Due Date</label>
-                    <input
-                        type="date"
-                        value={bill.due_date || ''}
-                        onChange={(e) => onBillChange('due_date', e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20"
-                    />
+                    <Input type="date" value={bill.due_date || ''} onChange={(e) => onBillChange('due_date', e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20" />
                 </div>
             </div>
         </div>

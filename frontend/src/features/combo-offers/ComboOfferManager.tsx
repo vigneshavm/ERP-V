@@ -12,7 +12,9 @@ import {
     ComboOfferInput,
 } from '../../redux/slices/comboOfferSlice';
 import Layout from "../../components/shared/Layout/index";
-import PageHeader from "../../components/shared/Layout/PageHeader";
+import PageHeader from "../../components/shared/Layout/PageHeader";import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 import {
     Package2,
     Plus,
@@ -148,26 +150,15 @@ const ComboOfferManager: React.FC = () => {
                 <PageHeader
                     title="Combo Offers"
                     description="Bundle pricing across multiple items, with an auto-generated combo barcode."
-                    actions={<button
-                        onClick={startNew}
-                        className="px-6 py-3 bg-primary text-white rounded-sm font-black text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"
-                    >
-                        <Plus className="w-5 h-5" />
-                        <span>New Combo</span>
-                    </button>}
+                    actions={<Button onClick={startNew} className="px-6 py-3 bg-primary text-white rounded-sm font-black text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"><Plus className="w-5 h-5" />
+                        <span>New Combo</span></Button>}
                 />
 
                 <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="relative w-full md:w-96">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Search combo name or code..."
-                                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border-none rounded-sm text-sm focus:ring-2 focus:ring-primary/20"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                            <Input type="text" placeholder="Search combo name or code..." className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border-none rounded-sm text-sm focus:ring-2 focus:ring-primary/20" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                     </div>
 
@@ -223,12 +214,8 @@ const ComboOfferManager: React.FC = () => {
                                         </td>
                                         <td className="p-6 text-right">
                                             <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button onClick={() => startEdit(combo)} className="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all">
-                                                    <Edit3 className="w-4 h-4" />
-                                                </button>
-                                                <button onClick={() => handleDelete(combo._id)} className="p-2 text-slate-400 hover:text-error hover:bg-error/5 rounded-lg transition-all">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                <Button onClick={() => startEdit(combo)} className="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"><Edit3 className="w-4 h-4" /></Button>
+                                                <Button onClick={() => handleDelete(combo._id)} className="p-2 text-slate-400 hover:text-error hover:bg-error/5 rounded-lg transition-all"><Trash2 className="w-4 h-4" /></Button>
                                             </div>
                                         </td>
                                     </tr>
@@ -243,9 +230,7 @@ const ComboOfferManager: React.FC = () => {
                         <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
                             <div className="p-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                                 <h3 className="text-xl font-black tracking-tight">{editingId ? 'Edit Combo Offer' : 'New Combo Offer'}</h3>
-                                <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
-                                    <X className="w-6 h-6" />
-                                </button>
+                                <Button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors"><X className="w-6 h-6" /></Button>
                             </div>
                             <form onSubmit={handleSave} className="p-8 space-y-5 overflow-y-auto">
                                 <div className="grid grid-cols-2 gap-4">
@@ -332,19 +317,8 @@ const ComboOfferManager: React.FC = () => {
                                 </div>
 
                                 <div className="pt-2 flex gap-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsModalOpen(false)}
-                                        className="flex-1 px-6 py-4 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm font-black text-sm hover:bg-slate-50 transition-all"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="flex-1 px-6 py-4 bg-primary text-white rounded-sm font-black text-sm shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
-                                    >
-                                        {editingId ? 'Save Changes' : 'Create Combo'}
-                                    </button>
+                                    <Button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-6 py-4 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm font-black text-sm hover:bg-slate-50 transition-all">Cancel</Button>
+                                    <Button type="submit" className="flex-1 px-6 py-4 bg-primary text-white rounded-sm font-black text-sm shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">{editingId ? 'Save Changes' : 'Create Combo'}</Button>
                                 </div>
                             </form>
                         </div>

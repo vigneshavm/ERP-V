@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-
+import { error as logError } from "../config/logger.js";
 /**
  * Request timeout middleware
  * Prevents requests from hanging indefinitely
@@ -17,7 +17,7 @@ export const requestTimeout = (timeout = DEFAULT_TIMEOUT) => {
             error.code = "REQUEST_TIMEOUT";
 
             // Log timeout
-            console.error(`Request timeout: ${req.method} ${req.originalUrl}`);
+            logError(`Request timeout: ${req.method} ${req.originalUrl}`);
 
             // Send timeout response if headers not sent
             if (!res.headersSent) {
@@ -31,7 +31,7 @@ export const requestTimeout = (timeout = DEFAULT_TIMEOUT) => {
 
         // Set response timeout
         res.setTimeout(timeout, () => {
-            console.error(`Response timeout: ${req.method} ${req.originalUrl}`);
+            logError(`Response timeout: ${req.method} ${req.originalUrl}`);
         });
 
         next();

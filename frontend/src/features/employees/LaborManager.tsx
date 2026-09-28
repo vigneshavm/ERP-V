@@ -20,6 +20,7 @@ import AddLaborerForm from './AddLaborerForm';
 import LaborStats from './LaborStats';
 import AttendanceCalendar from './AttendanceCalendar';
 import PaymentHistory from './PaymentHistory';
+import { Button } from '@/components/shared/Button';
 
 export const LaborManager = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -414,7 +415,7 @@ export const LaborManager = () => {
             )}
           </div>
 
-          <div className="flex-1 min-w-0 flex flex-col gap-6 bg-white rounded-xl shadow-sm border border-slate-100 p-6 overflow-hidden">
+          <div className="flex-1 min-w-0 flex flex-col gap-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 overflow-hidden">
             {selectedLaborer ? (
               <div className="flex flex-col h-full gap-6">
                 {activeTab === 'STATS' && (

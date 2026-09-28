@@ -2,6 +2,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { forceLogout, login, resetAuthState } from "../../../redux/slices/authSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
+import Button from '@/components/shared/UI/Button';
+
 
 interface DeviceConflictModalProps {
     email: string;
@@ -115,13 +117,7 @@ const DeviceConflictModal: React.FC<DeviceConflictModalProps> = ({ email, passwo
                         )}
                     </button>
 
-                    <button
-                        onClick={handleCancel}
-                        disabled={isLoading || isProcessing}
-                        className="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 py-3 rounded-lg font-medium hover:bg-slate-300 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:ring-offset-2 dark:focus:ring-offset-[rgb(var(--color-card))] transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        Cancel
-                    </button>
+                    <Button onClick={handleCancel} disabled={isLoading || isProcessing} className="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 py-3 rounded-lg font-medium hover:bg-slate-300 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:ring-offset-2 dark:focus:ring-offset-[rgb(var(--color-card))] transition disabled:opacity-50 disabled:cursor-not-allowed">Cancel</Button>
                 </div>
             </div>
         </div>

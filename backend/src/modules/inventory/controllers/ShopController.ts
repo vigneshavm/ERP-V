@@ -1,14 +1,15 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import ShopSettings from "../models/ShopSettings.js";
+import { AuthenticatedRequest } from "../../../middlewares/authMiddleware.js";
 
-export const getShopSettings = async (req: Request, res: Response) => {
+export const getShopSettings = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
-        let settings = await ShopSettings.findOne({ userId });
+        const tenantId = req.user.tenantId;
+        let settings = await ShopSettings.findOne({ tenantId });
 
         if (!settings) {
             settings = await ShopSettings.create({
-                userId,
+                tenantId,
                 shopEnabled: false,
                 plan: 'Starter',
                 productsLimit: 50
@@ -27,13 +28,13 @@ export const getShopSettings = async (req: Request, res: Response) => {
     }
 };
 
-export const updateShopSettings = async (req: Request, res: Response) => {
+export const updateShopSettings = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const tenantId = req.user.tenantId;
         const settingsData = req.body;
 
         const settings = await ShopSettings.findOneAndUpdate(
-            { userId },
+            { tenantId },
             { $set: settingsData },
             { new: true, runValidators: true, upsert: true }
         );

@@ -8,7 +8,9 @@ import PaymentModal from "../../../components/shared/Modals/PaymentModal";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Customer, PopulatedInvoice } from "@/types/sales";
 import receiptDataService from "@/services/receiptDataService";
-import { printSaleReceipt } from "@/utils/printService";
+import { printSaleReceipt } from "@/utils/printService";import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 import {
     CheckCircle,
     Clock,
@@ -92,11 +94,11 @@ const SalesInvoiceDetail = () => {
         }
     };
 
-    const handlePayment = async (paymentData: any) => {
+    const handlePayment = async (paymentData: { amount: number; paymentMethod: string; bankAccount?: string; paymentDate: string; notes?: string }) => {
         if (!invoice) return;
         const result = await dispatch(markSalesInvoiceAsPaid({
             id: (invoice._id || invoice.id) as string,
-            amount: paymentData.paidAmount,
+            amount: paymentData.amount,
             bankAccount: paymentData.bankAccount,
             paymentMethod: paymentData.paymentMethod
         }));
@@ -189,12 +191,7 @@ const SalesInvoiceDetail = () => {
                         <AlertCircle className="w-5 h-5 text-danger" />
                         <p className="text-danger">{message}</p>
                     </div>
-                    <button
-                        onClick={() => navigate('/sales/invoice')}
-                        className="mt-4 text-primary hover:text-primary font-medium flex items-center gap-2"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> Back to Sales Invoices
-                    </button>
+                    <Button onClick={() => navigate('/sales/invoice')} className="mt-4 text-primary hover:text-primary font-medium flex items-center gap-2"><ArrowLeft className="w-4 h-4" /> Back to Sales Invoices</Button>
                 </div>
             </Layout>
         );
@@ -209,17 +206,12 @@ const SalesInvoiceDetail = () => {
         <Layout>
             <div className="space-y-6 animate-fade-in pb-10">
                 {/* Immersive Status Banner */}
-                <div className={`bg-gradient-to-r ${statusConfig.color} rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden print:hidden`}>
+                <div className={`bg-gradient-to-r ${statusConfig.color} rounded-xl p-8 text-white shadow-xl relative overflow-hidden print:hidden`}>
                     <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
                         <Receipt className="w-48 h-48" />
                     </div>
                     <div className="relative z-10">
-                        <button
-                            onClick={() => navigate('/sales')}
-                            className="flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium mb-6 transition-colors"
-                        >
-                            <ArrowLeft className="w-4 h-4" /> Back to Invoices
-                        </button>
+                        <Button onClick={() => navigate('/sales')} className="flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium mb-6 transition-colors"><ArrowLeft className="w-4 h-4" /> Back to Invoices</Button>
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                             <div>
                                 <div className="flex items-center gap-3 mb-2">
@@ -237,12 +229,7 @@ const SalesInvoiceDetail = () => {
                                 )}
                             </div>
                             <div className="flex flex-wrap gap-3">
-                                <button
-                                    onClick={handlePrint}
-                                    className="px-4 py-2.5 glass-panel/10 backdrop-blur-md border border-white/20 text-white rounded-xl text-sm font-bold hover:glass-panel/20 transition-all flex items-center gap-2"
-                                >
-                                    <Printer className="w-4 h-4" /> Print
-                                </button>
+                                <Button onClick={handlePrint} className="px-4 py-2.5 glass-panel/10 backdrop-blur-md border border-white/20 text-white rounded-xl text-sm font-bold hover:glass-panel/20 transition-all flex items-center gap-2"><Printer className="w-4 h-4" /> Print</Button>
                                 <button
                                     onClick={handlePrintReceipt}
                                     disabled={isPrintingReceipt}
@@ -252,12 +239,7 @@ const SalesInvoiceDetail = () => {
                                     <Receipt className="w-4 h-4" /> {isPrintingReceipt ? 'Printing...' : 'Print Receipt'}
                                 </button>
                                 {invoice.paymentStatus !== 'paid' && (
-                                    <button
-                                        onClick={() => setShowPaymentModal(true)}
-                                        className="px-4 py-2.5 glass-panel text-success rounded-xl text-sm font-bold shadow-lg hover:bg-success/10 transition-all flex items-center gap-2"
-                                    >
-                                        <CreditCard className="w-4 h-4" /> Record Payment
-                                    </button>
+                                    <Button onClick={() => setShowPaymentModal(true)} className="px-4 py-2.5 glass-panel text-success rounded-xl text-sm font-bold shadow-lg hover:bg-success/10 transition-all flex items-center gap-2"><CreditCard className="w-4 h-4" /> Record Payment</Button>
                                 )}
                             </div>
                         </div>
@@ -424,27 +406,12 @@ const SalesInvoiceDetail = () => {
                             </div>
                             <div className="p-4 space-y-2">
                                 {invoice.paymentStatus !== 'paid' && (
-                                    <button
-                                        onClick={() => setShowPaymentModal(true)}
-                                        className="w-full py-3 bg-success text-white rounded-xl font-bold hover:bg-success/90 transition-all flex items-center justify-center gap-2"
-                                    >
-                                        <CreditCard className="w-4 h-4" /> Record Payment
-                                    </button>
+                                    <Button onClick={() => setShowPaymentModal(true)} className="w-full py-3 bg-success text-white rounded-xl font-bold hover:bg-success/90 transition-all flex items-center justify-center gap-2"><CreditCard className="w-4 h-4" /> Record Payment</Button>
                                 )}
                                 {canEditInvoice && (
-                                    <button
-                                        onClick={openEditModal}
-                                        className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"
-                                    >
-                                        <Pencil className="w-4 h-4" /> Edit Invoice
-                                    </button>
+                                    <Button onClick={openEditModal} className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"><Pencil className="w-4 h-4" /> Edit Invoice</Button>
                                 )}
-                                <button
-                                    onClick={handlePrint}
-                                    className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"
-                                >
-                                    <Printer className="w-4 h-4" /> Print Invoice
-                                </button>
+                                <Button onClick={handlePrint} className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"><Printer className="w-4 h-4" /> Print Invoice</Button>
                                 <button
                                     onClick={handlePrintReceipt}
                                     disabled={isPrintingReceipt}
@@ -503,9 +470,7 @@ const SalesInvoiceDetail = () => {
                     <div className="bg-white rounded-sm shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                         <div className="px-6 py-4 border-b border-default/20 flex justify-between items-center sticky top-0 bg-white z-10">
                             <h2 className="text-lg font-bold text-main">Edit Invoice {invoice.invoiceNo}</h2>
-                            <button onClick={() => setShowEditModal(false)} className="text-muted hover:opacity-100">
-                                <X className="w-5 h-5" />
-                            </button>
+                            <Button onClick={() => setShowEditModal(false)} className="text-muted hover:opacity-100"><X className="w-5 h-5" /></Button>
                         </div>
                         <div className="p-6 space-y-4">
                             <p className="text-xs text-muted ">

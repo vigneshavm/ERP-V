@@ -2,7 +2,8 @@
 import { Search, Save, AlertCircle, Package, ArrowRight, Printer } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useConfig } from "@/contexts/ConfigContext";
+import { useConfig } from "@/contexts/ConfigContext";import { Button } from '@/components/shared/Button';
+
 
 interface Item {
     _id: string;
@@ -147,7 +148,7 @@ const BatchPriceUpdate: React.FC = () => {
                             <div>
                                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">{item.name}</h3>
                                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                                    SKU: <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded">{item.sku}</span>
+                                    SKU: <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-slate-900 dark:text-slate-100">{item.sku}</span>
                                 </p>
                             </div>
                             <div className="text-right">

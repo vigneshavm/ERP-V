@@ -4,6 +4,8 @@ import { formatNumber, formatReportDate } from '@/utils/formatters';
 import { ReportKpiGrid, ReportPageShell, ReportTable, useClientReportTable, useReportData } from '../components';
 import { ENTRY_COLUMNS, ENTRY_EXPORT_COLUMNS, TYPE_SUMMARY_COLUMNS, financeNotes, rupees, rupees0 } from './financeFormat';
 import type { DayBookData, FinanceEntry } from './financeTypes';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 const shiftDay = (iso: string, days: number): string => {
     const [y, m, d] = iso.split('-').map(Number);
@@ -32,19 +34,12 @@ const DayBookReport: React.FC = () => {
             <button type="button" className={dayBtn} onClick={() => day && setDate(shiftDay(day, -1))} disabled={!day || loading} aria-label="Previous day">
                 <ChevronLeft className="w-4 h-4" />
             </button>
-            <input
-                type="date"
-                value={day}
-                onChange={e => e.target.value && setDate(e.target.value)}
-                className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200"
-            />
+            <Input type="date" value={day} onChange={e => e.target.value && setDate(e.target.value)} className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200" />
             <button type="button" className={dayBtn} onClick={() => day && setDate(shiftDay(day, 1))} disabled={!day || loading} aria-label="Next day">
                 <ChevronRight className="w-4 h-4" />
             </button>
             {data?.asOf && day !== data.asOf && (
-                <button type="button" onClick={() => setDate(data.asOf ?? '')} className="text-xs font-bold text-primary hover:underline">
-                    Latest shop day ({formatReportDate(data.asOf)})
-                </button>
+                <Button type="button" onClick={() => setDate(data.asOf ?? '')} className="text-xs font-bold text-primary hover:underline">Latest shop day ({formatReportDate(data.asOf)})</Button>
             )}
         </div>
     );

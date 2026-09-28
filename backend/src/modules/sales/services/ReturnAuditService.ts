@@ -8,20 +8,16 @@ import {
     CASH_REFUND_LIMIT, CASHIER_DAILY_LIMIT, FLAG_LABEL, FLAG_LEVEL, REPEAT_CUSTOMER_COUNT, REPEAT_WINDOW_DAYS,
     auditReturn, summarize, type AuditRow, type ReturnDoc,
 } from "./returnAudit.js";
+import { istStart, istEndExclusive, todayIst } from "../../../utils/dateUtils.js";
+import { tenantKey } from "../../../utils/mongooseUtils.js";
 
 /**
- * GET /api/reports/returns-audit?from&to — every sales return in the shop for the period (all users of the tenant;
- * GET /api/returns only lists the caller's own), with risk flags from returnAudit.ts.
+ * GET /api/reports/returns-audit?from&to — every sales return in the shop for the period (all users of the
+ * tenant; GET /api/returns only lists the caller's own), with risk flags from returnAudit.ts.
  *
  * Returns are recorded only in the ERP: the Textilesoft sales-return tables are empty in the shop database. If they
  * ever hold rows, `shopReturnRows` says so, so the page can warn that those returns aren't included.
  */
-
-const tenantKey = (tenantId: string) => (mongoose.Types.ObjectId.isValid(tenantId) ? new mongoose.Types.ObjectId(tenantId) : tenantId);
-const istStart = (d: string) => new Date(`${d}T00:00:00+05:30`);
-const istEndExclusive = (d: string) => new Date(istStart(d).getTime() + 86_400_000);
-const IST_OFFSET_MS = 5.5 * 3_600_000;
-const todayIst = () => new Date(Date.now() + IST_OFFSET_MS).toISOString().slice(0, 10);
 
 export async function buildReturnsAudit(tenantId: string, range: { from: string; to: string }) {
     const users = (await User.find({ tenantId: tenantKey(tenantId) }, { _id: 1 }).lean()).map((u) => u._id);

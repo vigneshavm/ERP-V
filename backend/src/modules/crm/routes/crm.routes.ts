@@ -1,12 +1,12 @@
 import express from 'express';
-import customerRoutes from './customerRoutes.js';
-import supplierRoutes from './supplierRoutes.js';
-import whatsappRoutes from './whatsappRoutes.js';
+import customer from './customer.routes.js';
+import supplier from './supplier.routes.js';
+import whatsapp from './whatsapp.routes.js';
 
 const router = express.Router();
 
-router.use('/customers', customerRoutes);
-router.use('/suppliers', supplierRoutes);
-router.use('/whatsapp', whatsappRoutes);
+router.use('/customers', customer);
+router.use('/suppliers', supplier);
+router.use('/whatsapp', whatsapp);
 
 export default router;

@@ -2,6 +2,8 @@
 import { Users, Plus, Search, ChevronRight, Loader2, AlertTriangle } from 'lucide-react';
 import { Employee } from "../../types/hr";
 import { formatCurrency } from "../../utils/helpers";
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface LaborSidebarProps {
     employees: Employee[];
@@ -101,12 +103,7 @@ const LaborSidebar: React.FC<LaborSidebarProps> = ({
                         <AlertTriangle className="w-8 h-8 text-danger dark:text-danger mx-auto mb-2" />
                         <p className="text-xs font-semibold text-danger dark:text-danger">Unable to load staff</p>
                         <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 mb-3">{loadError}</p>
-                        <button
-                            onClick={onRetry}
-                            className="text-xs font-bold text-primary hover:underline"
-                        >
-                            Retry
-                        </button>
+                        <Button onClick={onRetry} className="text-xs font-bold text-primary hover:underline">Retry</Button>
                     </div>
                 ) : filteredEmployees.length === 0 && (
                     <div className="text-center py-8">

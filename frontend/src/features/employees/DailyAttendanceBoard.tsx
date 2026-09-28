@@ -17,6 +17,7 @@ import PageHeader from "../../components/shared/Layout/PageHeader";
 import api from "../../services/api.js";
 import { AttendanceStatus } from "../../types/common";
 import { TONE_CLASSES, getStatusTone } from '@/utils/statusTone';
+import { Input } from '@/components/shared/Input';
 
 const DailyAttendanceBoard: React.FC = () => {
     const { user: _user } = useSelector((state: RootState) => state.auth);
@@ -145,12 +146,7 @@ const DailyAttendanceBoard: React.FC = () => {
                             </button>
                             <div className="px-4 py-1.5 flex items-center gap-2">
                                 <Calendar size={16} className="text-primary" />
-                                <input
-                                    type="date"
-                                    value={selectedDate}
-                                    onChange={(e) => setSelectedDate(e.target.value)}
-                                    className="bg-transparent border-none outline-none font-bold text-sm text-slate-700 dark:text-slate-200"
-                                />
+                                <Input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="bg-transparent border-none outline-none font-bold text-sm text-slate-700 dark:text-slate-200" />
                             </div>
                             <button
                                 onClick={() => changeDate(1)}

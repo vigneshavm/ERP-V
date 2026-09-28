@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Columns3, Search } from 'lucide-react'
 import { ReportPagination, ReportPaginationProps } from './ReportPagination';
 import { useDismiss } from './useDismiss';
 import { formatCell, isNumericColumn } from './reportHelpers';
+import { Input } from '@/components/shared/Input';
 
 export type ReportColumnType = 'text' | 'currency' | 'number' | 'quantity' | 'percent' | 'date' | 'datetime' | 'status';
 export type StatusTone = 'success' | 'warning' | 'danger' | 'info' | 'neutral';

@@ -23,6 +23,8 @@ import type { ReportId } from './config/reportRegistry';
 import { ReportPageShell } from './components';
 
 import BusinessReportsHub from './BusinessReportsHub';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 /**
  * What a global view means for this module: which catalog tab to show and, when the view opens a
@@ -68,13 +70,8 @@ const ReportsModule: React.FC = () => {
 
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
-                <button
-                    onClick={() => setSelectedReportSlug(null)}
-                    className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors text-xs font-black uppercase tracking-widest group"
-                >
-                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                    Back to Catalog
-                </button>
+                <Button onClick={() => setSelectedReportSlug(null)} className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors text-xs font-black uppercase tracking-widest group"><ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                    Back to Catalog</Button>
 
                 {hubView ? (
                     <BusinessReportsHub view={hubView} />
@@ -238,7 +235,7 @@ const ReportsModule: React.FC = () => {
                                 </div>
 
                                 <div className="flex-shrink-0">
-                                    <button className="px-12 py-6 bg-white text-slate-900 rounded-[2.5rem] font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/10 flex items-center gap-4 group">
+                                    <button className="px-12 py-6 bg-white text-slate-900 rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/10 flex items-center gap-4 group">
                                         Request Report
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                                     </button>

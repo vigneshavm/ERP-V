@@ -1,109 +1,74 @@
-import { Response } from 'express';
-import SupplierGroup from '../models/SupplierGroup.js';
-import Supplier from '../models/Supplier.js';
-import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { Response } from "express";
+import { injectable, inject } from "tsyringe";
+import { SupplierGroupService } from "../services/SupplierGroupService.js";
+import { AppError } from "../../../utils/AppError.js";
+import { AuthenticatedRequest } from "../../../middlewares/authMiddleware.js";
 
-export const createGroup = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const {
-            name, description, color, nature, region,
-            financialCategory, priority, taxType,
-            paymentTerms, creditLimit, discountPercent, icon
-        } = req.body;
-        const tenantId = req.user?.tenantId;
+@injectable()
+export class SupplierGroupController {
+    constructor(
+        @inject(SupplierGroupService) private supplierGroupService: SupplierGroupService
+    ) { }
 
-        if (!tenantId) {
-            return res.status(401).json({ success: false, message: 'Unauthorized access' });
+    public createGroup = async (req: AuthenticatedRequest, res: Response) => {
+        try {
+            const tenantId = req.tenantId.toString();
+
+            const group = await this.supplierGroupService.createGroup(tenantId, req.body);
+            res.status(201).json({ success: true, data: group });
+        } catch (err) {
+            if (err instanceof AppError) {
+                res.status(err.statusCode).json({ success: false, message: err.message });
+            } else {
+                res.status(500).json({ success: false, message: (err as Error).message });
+            }
         }
+    };
 
-        const existingGroup = await SupplierGroup.findOne({ tenantId, name });
-        if (existingGroup) {
-            return res.status(400).json({ success: false, message: 'Group with this name already exists' });
+    public getGroups = async (req: AuthenticatedRequest, res: Response) => {
+        try {
+            const tenantId = req.tenantId.toString();
+
+            const groups = await this.supplierGroupService.getGroups(tenantId);
+            res.status(200).json({ success: true, data: groups });
+        } catch (err) {
+            if (err instanceof AppError) {
+                res.status(err.statusCode).json({ success: false, message: err.message });
+            } else {
+                res.status(500).json({ success: false, message: (err as Error).message });
+            }
         }
+    };
 
-        const group = await SupplierGroup.create({
-            tenantId,
-            name,
-            description,
-            color,
-            nature,
-            region,
-            financialCategory,
-            priority,
-            taxType,
-            paymentTerms,
-            creditLimit,
-            discountPercent,
-            icon
-        });
+    public updateGroup = async (req: AuthenticatedRequest, res: Response) => {
+        try {
+            const { id } = req.params;
+            const tenantId = req.tenantId.toString();
 
-        res.status(201).json({ success: true, data: group });
-    } catch (error: any) {
-        console.error('Create Group Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
-    }
-};
-
-export const getGroups = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const tenantId = req.user?.tenantId;
-        if (!tenantId) {
-            return res.status(401).json({ success: false, message: 'Unauthorized access' });
+            const group = await this.supplierGroupService.updateGroup(String(id), tenantId, req.body);
+            res.status(200).json({ success: true, data: group });
+        } catch (err) {
+            if (err instanceof AppError) {
+                res.status(err.statusCode).json({ success: false, message: err.message });
+            } else {
+                res.status(500).json({ success: false, message: (err as Error).message });
+            }
         }
+    };
 
-        const groups = await SupplierGroup.find({ tenantId }).sort({ name: 1 });
-        res.status(200).json({ success: true, data: groups });
-    } catch (error: any) {
-        console.error('Get Groups Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
-    }
-};
+    public deleteGroup = async (req: AuthenticatedRequest, res: Response) => {
+        try {
+            const { id } = req.params;
+            const tenantId = req.tenantId.toString();
 
-export const updateGroup = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const { id } = req.params;
-        const tenantId = req.user?.tenantId;
-
-        const group = await SupplierGroup.findOneAndUpdate(
-            { _id: id, tenantId },
-            req.body,
-            { new: true, runValidators: true }
-        );
-
-        if (!group) {
-            return res.status(404).json({ success: false, message: 'Group not found' });
+            await this.supplierGroupService.deleteGroup(String(id), tenantId);
+            res.status(200).json({ success: true, message: "Group deleted successfully" });
+        } catch (err) {
+            if (err instanceof AppError) {
+                res.status(err.statusCode).json({ success: false, message: err.message });
+            } else {
+                res.status(500).json({ success: false, message: (err as Error).message });
+            }
         }
-
-        res.status(200).json({ success: true, data: group });
-    } catch (error: any) {
-        console.error('Update Group Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
-    }
-};
-
-export const deleteGroup = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const { id } = req.params;
-        const tenantId = req.user?.tenantId;
-
-        // Check if group is used by any suppliers
-        const isUsed = await Supplier.findOne({ groupId: id, tenantId });
-        if (isUsed) {
-            return res.status(400).json({
-                success: false,
-                message: 'Cannot delete group that is currently assigned to suppliers. Please reassign suppliers first.'
-            });
-        }
-
-        const group = await SupplierGroup.findOneAndDelete({ _id: id, tenantId });
-
-        if (!group) {
-            return res.status(404).json({ success: false, message: 'Group not found' });
-        }
-
-        res.status(200).json({ success: true, message: 'Group deleted successfully' });
-    } catch (error: any) {
-        console.error('Delete Group Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
-    }
-};
+    };
+}

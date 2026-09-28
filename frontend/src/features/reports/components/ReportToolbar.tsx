@@ -3,6 +3,7 @@ import { RefreshCw, SlidersHorizontal, X } from 'lucide-react';
 import { UseReportPeriod } from '../hooks/useReportPeriod';
 import { ReportPeriodPicker } from './ReportPeriodPicker';
 import { ReportExportButton } from './ReportExportButton';
+import { Button } from '@/components/shared/Button';
 
 export interface ReportFiltersConfig {
     /** The report's own filter controls (customer, supplier, rack, …), shown in the filter panel. */

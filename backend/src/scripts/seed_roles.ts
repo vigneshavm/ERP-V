@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Role from '../modules/core/models/Role.js';
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -82,7 +83,7 @@ const seedRoles = async () => {
                 role,
                 { upsert: true, new: true }
             );
-            console.log(`Seeded role: ${role.name}`);
+            info(`Seeded role: ${role.name}`);
         }
 
         console.log('Role seeding completed.');

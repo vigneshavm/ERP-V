@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { singleton, inject } from "tsyringe";
 import { SerializedUnitService } from "../services/SerializedUnitService.js";
 import { error } from "../../../config/logger.js";
+import { AuthenticatedRequest } from "../../../middlewares/authMiddleware.js";
 
 @singleton()
 export class SerializedUnitController {
@@ -9,11 +10,10 @@ export class SerializedUnitController {
         @inject(SerializedUnitService) private serializedUnitService: SerializedUnitService
     ) { }
 
-    public addUnits = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public addUnits = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const { itemId, units } = authReq.body;
-            const result = await this.serializedUnitService.addUnits(itemId, authReq.tenantId, units, authReq.user._id);
+            const { itemId, units } = req.body;
+            const result = await this.serializedUnitService.addUnits(itemId, req.tenantId.toString(), units, req.user._id.toString());
             res.status(201).json(result);
         } catch (err: any) {
             error(`Add Serialized Units Error: ${err.message}`);
@@ -21,10 +21,9 @@ export class SerializedUnitController {
         }
     };
 
-    public getUnitsByItem = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getUnitsByItem = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const result = await this.serializedUnitService.getUnitsByItem(authReq.params.itemId, authReq.tenantId, req.query.status as string);
+            const result = await this.serializedUnitService.getUnitsByItem(req.params.itemId as string, req.tenantId.toString(), req.query.status as string);
             res.status(200).json(result);
         } catch (err: any) {
             error(`Get Serialized Units Error: ${err.message}`);
@@ -32,10 +31,9 @@ export class SerializedUnitController {
         }
     };
 
-    public lookup = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public lookup = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const result = await this.serializedUnitService.lookup(authReq.params.value, authReq.tenantId);
+            const result = await this.serializedUnitService.lookup(req.params.value as string, req.tenantId.toString());
             res.status(200).json(result);
         } catch (err: any) {
             error(`Serialized Unit Lookup Error: ${err.message}`);
@@ -43,11 +41,10 @@ export class SerializedUnitController {
         }
     };
 
-    public updateStatus = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public updateStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const { status, soldInvoiceId } = authReq.body;
-            const result = await this.serializedUnitService.updateStatus(authReq.params.id, authReq.tenantId, status, soldInvoiceId);
+            const { status, soldInvoiceId } = req.body;
+            const result = await this.serializedUnitService.updateStatus(req.params.id as string, req.tenantId.toString(), status, soldInvoiceId);
             res.status(200).json(result);
         } catch (err: any) {
             error(`Update Unit Status Error: ${err.message}`);
@@ -55,10 +52,9 @@ export class SerializedUnitController {
         }
     };
 
-    public deleteUnit = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public deleteUnit = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            await this.serializedUnitService.deleteUnit(authReq.params.id, authReq.tenantId);
+            await this.serializedUnitService.deleteUnit(req.params.id as string, req.tenantId.toString());
             res.status(200).json({ message: "Unit deleted" });
         } catch (err: any) {
             error(`Delete Unit Error: ${err.message}`);
@@ -66,3 +62,4 @@ export class SerializedUnitController {
         }
     };
 }
+

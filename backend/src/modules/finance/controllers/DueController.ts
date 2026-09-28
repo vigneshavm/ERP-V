@@ -6,17 +6,7 @@ import DueAdjustment from '../models/DueAdjustment.js';
 import Customer from '../../crm/models/Customer.js';
 import Transaction from '../../sales/models/Transaction.js';
 import { info, error } from '../../../config/logger.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * @swagger

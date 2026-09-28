@@ -3,17 +3,7 @@ import { Request, Response } from 'express';
 import User from '../models/User.js';
 import BusinessProfile from '../models/BusinessProfile.js';
 import { seedInventory } from '../services/inventorySeeder.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        [key: string]: any;
-    };
-    tenantId?: string; // Injected by Auth Middleware
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * User update data interface

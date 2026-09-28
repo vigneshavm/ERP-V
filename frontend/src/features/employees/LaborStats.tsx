@@ -27,7 +27,7 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
                 <div>
                     <h1 className="page-title text-slate-900">{selectedLaborer.name}</h1>
                     <div className="flex items-center gap-2 mt-1">
-                        <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-semibold rounded uppercase tracking-wide">
+                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded uppercase tracking-wide">
                             {selectedLaborer.role}
                         </span>
                         <span className="text-sm text-slate-500">
@@ -37,7 +37,7 @@ const LaborStats: React.FC<LaborStatsProps> = ({ selectedLaborer, currentMonthNa
                 </div>
 
                 <div className="flex items-center gap-1 bg-slate-50 rounded-lg p-1 border border-slate-200">
-                    <button onClick={() => onMonthChange(-1)} className="p-1.5 hover:bg-white hover:text-primary hover:shadow-sm rounded-md text-slate-500 transition-all"><ChevronLeft size={18} /></button>
+                    <button onClick={() => onMonthChange(-1)} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 hover:text-primary hover:shadow-sm rounded-md text-slate-500 dark:text-slate-400 transition-all"><ChevronLeft size={18} /></button>
                     <span className="min-w-[140px] text-center text-sm font-semibold text-slate-800 select-none">{currentMonthName}</span>
                     <button onClick={() => onMonthChange(1)} className="p-1.5 hover:bg-white hover:text-primary hover:shadow-sm rounded-md text-slate-500 transition-all"><ChevronRight size={18} /></button>
                 </div>

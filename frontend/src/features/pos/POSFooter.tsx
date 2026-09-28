@@ -4,7 +4,9 @@ import { CreditCard, Banknote, Smartphone, Check, Loader2 } from 'lucide-react';
 import { TaxMode, PaymentMethod } from "../../types/common";
 import { Customer } from "../../types/sales";
 import { LoyaltyConfig } from "../../types/tenant/index";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../contexts/LanguageContext";import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface POSFooterProps {
     cartSubtotal: number;
@@ -193,13 +195,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 {isWholesaleCustomer && wholesaleDiscountPercent > 0 && onApplyWholesaleDiscount && (
                     <div className="flex justify-between items-center text-xs gap-2 -mb-1">
                         <span className="text-primary font-bold">Wholesale customer ({wholesaleDiscountPercent}% off)</span>
-                        <button
-                            type="button"
-                            onClick={onApplyWholesaleDiscount}
-                            className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wide bg-primary/10 text-primary rounded hover:bg-primary/20"
-                        >
-                            Apply
-                        </button>
+                        <Button type="button" onClick={onApplyWholesaleDiscount} className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wide bg-primary/10 text-primary rounded hover:bg-primary/20">Apply</Button>
                     </div>
                 )}
                 {onSetDiscountAmount && (
@@ -238,13 +234,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                             <span className="text-slate-500 dark:text-slate-400 font-medium">Bill at provisional price (MRP pending)</span>
                         </label>
                         {isMrpPending && (
-                            <input
-                                type="text"
-                                value={mrpPendingNote}
-                                onChange={(e) => onSetMrpPending(true, e.target.value)}
-                                placeholder="Note (optional) — e.g. awaiting supplier price confirmation"
-                                className="w-full px-2 py-1 text-[11px] bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded font-medium focus:outline-none focus:ring-1 focus:ring-secondary"
-                            />
+                            <Input type="text" value={mrpPendingNote} onChange={(e) => onSetMrpPending(true, e.target.value)} placeholder="Note (optional) — e.g. awaiting supplier price confirmation" className="w-full px-2 py-1 text-[11px] bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded font-medium focus:outline-none focus:ring-1 focus:ring-secondary" />
                         )}
                     </div>
                 )}

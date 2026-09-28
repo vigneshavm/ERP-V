@@ -27,6 +27,7 @@ import {
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button, Input, Select } from '@/components/shared';
 
 const PurchaseRegister: React.FC = () => {
     const navigate = useNavigate();
@@ -248,21 +249,37 @@ const PurchaseRegister: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex gap-3">
-                            <button onClick={handleRefresh} disabled={isRefreshing || isProcessing} className="p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 shadow-sm transition active:scale-95">
-                                <RefreshCw className={`w-4 h-4 ${(isRefreshing || isProcessing) ? 'animate-spin' : ''}`} />
-                            </button>
-                            <button onClick={handleExportCSV} className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
-                                <FileSpreadsheet className="w-4 h-4 text-success" /> Excel
-                            </button>
-                            <button onClick={handleExportPDF} className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
-                                <FileText className="w-4 h-4 text-danger" /> PDF
-                            </button>
-                            <button
-                                onClick={() => dispatch(setActiveTab('PURCHASE_ENTRY'))}
-                                className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                icon={<RefreshCw className={`w-4 h-4 ${(isRefreshing || isProcessing) ? 'animate-spin' : ''}`} />}
+                                onClick={handleRefresh}
+                                disabled={isRefreshing || isProcessing}
+                            />
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                icon={<FileSpreadsheet className="w-4 h-4 text-success" />}
+                                onClick={handleExportCSV}
                             >
-                                <Plus className="w-4 h-4" /> New Entry
-                            </button>
+                                Excel
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                icon={<FileText className="w-4 h-4 text-danger" />}
+                                onClick={handleExportPDF}
+                            >
+                                PDF
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                icon={<Plus className="w-4 h-4" />}
+                                onClick={() => dispatch(setActiveTab('PURCHASE_ENTRY'))}
+                            >
+                                New Entry
+                            </Button>
                         </div>
                     }
                 />
@@ -315,36 +332,44 @@ const PurchaseRegister: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 <div className="md:col-span-1">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Search</label>
-                                    <div className="relative">
-                                        <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                                        <input type="text" placeholder="Search PO # or Vendor..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
-                                    </div>
+                                    <Input
+                                        type="text"
+                                        placeholder="Search PO # or Vendor..."
+                                        value={searchTerm}
+                                        onChange={e => setSearchTerm(e.target.value)}
+                                        icon={<Search className="w-4 h-4 text-slate-400" />}
+                                    />
                                 </div>
                                 <div>
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Supplier</label>
-                                    <select value={vendorFilter} onChange={e => setVendorFilter(e.target.value)} className="w-full px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
-                                        <option value="ALL">All Entities</option>
-                                        {uniqueVendors.map(v => <option key={v} value={v}>{v}</option>)}
-                                    </select>
+                                    <Select
+                                        options={[{ value: 'ALL', label: 'All Entities' }, ...uniqueVendors.map(v => ({ value: v, label: v }))]}
+                                        value={vendorFilter}
+                                        onChange={(value) => setVendorFilter(typeof value === 'string' ? value : value[0])}
+                                    />
                                 </div>
                                 <div>
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Operational Status</label>
-                                    <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all">
-                                        <option value="ALL">All Status</option>
-                                        <option value="COMPLETED">Completed</option>
-                                        <option value="Approved">Approved</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="DRAFT">Draft</option>
-                                        <option value="CANCELLED">Cancelled</option>
-                                    </select>
+                                    <Select
+                                        options={[
+                                            { value: 'ALL', label: 'All Status' },
+                                            { value: 'COMPLETED', label: 'Completed' },
+                                            { value: 'Approved', label: 'Approved' },
+                                            { value: 'Pending', label: 'Pending' },
+                                            { value: 'DRAFT', label: 'Draft' },
+                                            { value: 'CANCELLED', label: 'Cancelled' },
+                                        ]}
+                                        value={statusFilter}
+                                        onChange={(value) => setStatusFilter(typeof value === 'string' ? value : value[0])}
+                                    />
                                 </div>
                                 <div className="flex gap-3">
                                     <div className="flex-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Fiscal Range</label>
                                         <div className="flex items-center gap-2">
-                                            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
+                                            <Input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
                                             <span className="text-slate-300 font-bold">→</span>
-                                            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-[10px] font-bold focus:ring-2 focus:ring-primary/20 transition-all" />
+                                            <Input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} />
                                         </div>
                                     </div>
                                 </div>
@@ -352,17 +377,14 @@ const PurchaseRegister: React.FC = () => {
 
                             <div className="flex items-center gap-2 p-1.5 bg-slate-50 dark:bg-slate-900 rounded-sm border border-slate-100 dark:border-slate-800 self-start">
                                 {(['ALL', 'BILLED', 'UNBILLED', 'DRAFT'] as const).map(mode => (
-                                    <button
+                                    <Button
                                         key={mode}
+                                        variant={viewMode === mode ? 'secondary' : 'tertiary'}
+                                        size="sm"
                                         onClick={() => setViewMode(mode)}
-                                        className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                                            viewMode === mode
-                                                ? 'bg-white dark:bg-slate-800 text-primary shadow-sm ring-1 ring-slate-200 dark:ring-slate-700'
-                                                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
-                                        }`}
                                     >
                                         {mode} Nodes
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         </div>
@@ -457,12 +479,8 @@ const PurchaseRegister: React.FC = () => {
                                                 </td>
                                                 <td className="px-8 py-6 text-center">
                                                     <div className="flex items-center justify-center gap-2">
-                                                        <button onClick={() => handleView(order)} className="p-2.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all active:scale-95">
-                                                            <Eye className="w-4 h-4" />
-                                                        </button>
-                                                        <button className="p-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-xl transition-all">
-                                                            <MoreHorizontal className="w-4 h-4" />
-                                                        </button>
+                                                        <Button variant="secondary" size="sm" icon={<Eye className="w-4 h-4" />} onClick={() => handleView(order)} />
+                                                        <Button variant="secondary" size="sm" icon={<MoreHorizontal className="w-4 h-4" />} />
                                                     </div>
                                                 </td>
                                             </tr>
@@ -480,23 +498,23 @@ const PurchaseRegister: React.FC = () => {
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                icon={<ChevronLeft className="w-4 h-4" />}
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-white dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                            >
-                                <ChevronLeft className="w-4 h-4" />
-                            </button>
+                            />
                             <div className="px-6 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-[0.2em]">
                                 Page {currentPage} <span className="text-slate-300 mx-2">/</span> {totalPages || 1}
                             </div>
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                icon={<ChevronRight className="w-4 h-4" />}
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 disabled={currentPage === totalPages}
-                                className="p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-white dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                            >
-                                <ChevronRight className="w-4 h-4" />
-                            </button>
+                            />
                         </div>
                     </div>
                 </div>

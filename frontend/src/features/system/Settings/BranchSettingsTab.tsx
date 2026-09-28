@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Building, MapPin, Plus, Settings2, Trash2, CheckCircle2, ChevronRight, Save } from 'lucide-react';
 import api from '../../../services/api';
 import { Counter } from '../../../types/tenant/core';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 const BranchSettingsTab: React.FC = () => {
     const [branches, setBranches] = useState<any[]>([]);
@@ -75,20 +77,12 @@ const BranchSettingsTab: React.FC = () => {
                     </div>
                     {isCreating ? (
                         <div className="flex gap-2">
-                            <input 
-                                type="text" 
-                                value={newBranchName} 
-                                onChange={e => setNewBranchName(e.target.value)} 
-                                placeholder="Branch Name" 
-                                className="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 dark:bg-slate-900 dark:border-slate-700 dark:text-white"
-                            />
-                            <button onClick={handleCreateBranch} className="bg-primary text-white px-3 py-2 rounded-lg text-sm font-bold">Save</button>
-                            <button onClick={() => setIsCreating(false)} className="bg-slate-200 dark:bg-slate-800 dark:text-slate-300 px-3 py-2 rounded-lg text-sm font-bold">Cancel</button>
+                            <Input type="text" value={newBranchName} onChange={e => setNewBranchName(e.target.value)} placeholder="Branch Name" className="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 dark:bg-slate-900 dark:border-slate-700 dark:text-white" />
+                            <Button onClick={handleCreateBranch} className="bg-primary text-white px-3 py-2 rounded-lg text-sm font-bold">Save</Button>
+                            <Button onClick={() => setIsCreating(false)} className="bg-slate-200 dark:bg-slate-800 dark:text-slate-300 px-3 py-2 rounded-lg text-sm font-bold">Cancel</Button>
                         </div>
                     ) : (
-                        <button onClick={() => setIsCreating(true)} className="w-full px-4 py-3 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary-hover transition-all shadow-md shadow-indigo-500/20">
-                            <Plus className="w-4 h-4" /> Add New Branch
-                        </button>
+                        <Button onClick={() => setIsCreating(true)} className="w-full px-4 py-3 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary-hover transition-all shadow-md shadow-indigo-500/20"><Plus className="w-4 h-4" /> Add New Branch</Button>
                     )}
                 </div>
 
@@ -159,7 +153,7 @@ const BranchSettingsTab: React.FC = () => {
                                 </button>
                             </div>
 
-                            <div className="grid md:grid-cols-2 gap-6 bg-slate-50/50 dark:bg-slate-800/20 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                            <div className="grid md:grid-cols-2 gap-6 bg-slate-50/50 dark:bg-slate-800/20 p-6 rounded-xl border border-slate-100 dark:border-slate-800">
                                 <div className="space-y-1">
                                     <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-1">Display Name</label>
                                     <input 

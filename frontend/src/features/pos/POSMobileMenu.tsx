@@ -13,7 +13,8 @@ import {
     User,
     Settings
 } from 'lucide-react';
-import { POSLogic } from "../../hooks/usePOSLogic";
+import { POSLogic } from "../../hooks/usePOSLogic";import { Button } from '@/components/shared/Button';
+
 
 interface POSMobileMenuProps {
     isOpen: boolean;
@@ -44,7 +45,7 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
     return (
         <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm lg:hidden animate-in fade-in duration-200">
             <div
-                className="absolute inset-y-0 right-0 w-80 bg-white dark:bg-slate-900 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
+                className="absolute inset-y-0 right-0 w-80 bg-white dark:bg-slate-900 shadow-2xl dark:shadow-slate-900/50 flex flex-col animate-in slide-in-from-right duration-300"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -58,12 +59,7 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
                             <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{user?.systemRole || 'Staff'}</p>
                         </div>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 transition-colors"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
+                    <Button onClick={onClose} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 transition-colors"><X className="w-5 h-5" /></Button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 space-y-6">
@@ -126,12 +122,7 @@ export const POSMobileMenu: React.FC<POSMobileMenuProps> = ({ isOpen, onClose, l
                     <section>
                         <div className="flex justify-between items-center mb-3">
                             <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Billing Tabs</h4>
-                            <button
-                                onClick={addSession}
-                                className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-primary dark:text-primary-light"
-                            >
-                                <PlusCircle className="w-4 h-4" />
-                            </button>
+                            <Button onClick={addSession} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-primary dark:text-primary-light"><PlusCircle className="w-4 h-4" /></Button>
                         </div>
                         <div className="space-y-2">
                             {sessions.map((session, index) => (

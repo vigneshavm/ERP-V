@@ -1,1 +1,2 @@
-console.log("HELLO WORLD FROM NODE");
+const { info } = require('../config/logger.js');
+info("HELLO WORLD FROM NODE");

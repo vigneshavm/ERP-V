@@ -3,6 +3,7 @@ import { parseArgs } from "util";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { closeSqlItemSource, mirrorAll } from "../integrations/textilesoft/sqlItemSource.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ async function main() {
     await mongoose.connect(process.env.MONGO_URI);
     try {
         const result = await mirrorAll(values.tenant);
-        console.log(result.error ? `Mirror failed: ${result.error}` : `Mirrored ${result.items} items (${result.skipped} skipped) in ${result.seconds}s.`);
+        info(result.error ? `Mirror failed: ${result.error}` : `Mirrored ${result.items} items (${result.skipped} skipped) in ${result.seconds}s.`);
         if (result.error) process.exitCode = 1;
     } finally {
         await closeSqlItemSource();

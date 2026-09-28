@@ -5,7 +5,8 @@ import FormInput from "../../components/core/Form/Input.tsx";
 import { getAllExpenses, createExpense, deleteExpense, reset } from "../../redux/slices/expenseSlice.ts";
 import { getAccounts } from "../../redux/slices/cashbankSlice.ts";
 import { Receipt, Plus, Wallet, Calendar, FileText, TrendingDown, Search, Trash2, CreditCard, Banknote, Building2 } from 'lucide-react';
-import { formatDate } from '../../utils/helpers';
+import { formatDate } from '../../utils/helpers';import { Button } from '@/components/shared/Button';
+
 
 const Expenses = () => {
     const dispatch = useDispatch();
@@ -139,13 +140,8 @@ const Expenses = () => {
                         <p className="text-slate-500 text-sm">Track and manage business expenses</p>
                     </div>
                 </div>
-                <button
-                    onClick={() => setShowAddExpense(true)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-rose-600 to-rose-700 text-white text-sm font-medium rounded-xl hover:from-rose-700 hover:to-rose-800 transition-all shadow-lg shadow-rose-500/25"
-                >
-                    <Plus className="w-4 h-4" />
-                    Add Expense
-                </button>
+                <Button onClick={() => setShowAddExpense(true)} className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-rose-600 to-rose-700 text-white text-sm font-medium rounded-xl hover:from-rose-700 hover:to-rose-800 transition-all shadow-lg shadow-rose-500/25"><Plus className="w-4 h-4" />
+                    Add Expense</Button>
             </div>
 
             {/* Error Message */}
@@ -408,13 +404,7 @@ const Expenses = () => {
                                 >
                                     {isLoading ? 'Saving...' : 'Save Expense'}
                                 </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowAddExpense(false)}
-                                    className="px-4 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors"
-                                >
-                                    Cancel
-                                </button>
+                                <Button type="button" onClick={() => setShowAddExpense(false)} className="px-4 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors">Cancel</Button>
                             </div>
                         </form>
                     </div>
@@ -435,18 +425,8 @@ const Expenses = () => {
                             Are you sure you want to delete this expense? This action cannot be undone.
                         </p>
                         <div className="flex gap-3">
-                            <button
-                                onClick={() => setDeleteConfirm(null)}
-                                className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => handleDelete(deleteConfirm)}
-                                className="flex-1 px-4 py-2.5 bg-red-600 text-white text-sm font-medium rounded-xl hover:bg-red-700 transition-colors"
-                            >
-                                Delete
-                            </button>
+                            <Button onClick={() => setDeleteConfirm(null)} className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors">Cancel</Button>
+                            <Button onClick={() => handleDelete(deleteConfirm)} className="flex-1 px-4 py-2.5 bg-red-600 text-white text-sm font-medium rounded-xl hover:bg-red-700 transition-colors">Delete</Button>
                         </div>
                     </div>
                 </div>

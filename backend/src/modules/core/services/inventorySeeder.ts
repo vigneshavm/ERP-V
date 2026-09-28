@@ -1,5 +1,6 @@
 import Item from "../../inventory/models/Item.js";
 import { SECTOR_SEEDS } from "../../../utils/sectorSeeds.js";
+import { info, error } from '../../../config/logger.js';
 
 /**
  * Seeds inventory items for a user based on their business sector/category.
@@ -12,7 +13,7 @@ export const seedInventory = async (userId: string, sector: string) => {
         // Check if user already has items
         const existingItemsCount = await Item.countDocuments({ addedBy: userId });
         if (existingItemsCount > 0) {
-            console.log(`User ${userId} already has inventory items. Skipping seed.`);
+            info(`User ${userId} already has inventory items. Skipping seed.`);
             return;
         }
 
@@ -34,7 +35,7 @@ export const seedInventory = async (userId: string, sector: string) => {
         const seeds = SECTOR_SEEDS[seedKey];
 
         if (!seeds || seeds.length === 0) {
-            console.log(`No seeds found for sector: ${sector}`);
+            info(`No seeds found for sector: ${sector}`);
             return;
         }
 
@@ -46,10 +47,10 @@ export const seedInventory = async (userId: string, sector: string) => {
         }));
 
         await Item.insertMany(itemsToInsert);
-        console.log(`Seeded ${itemsToInsert.length} items for user ${userId} in sector ${sector}`);
+        info(`Seeded ${itemsToInsert.length} items for user ${userId} in sector ${sector}`);
 
-    } catch (error) {
-        console.error("Error seeding inventory:", error);
+    } catch (err) {
+        error('Error seeding inventory:', err);
         // Do not throw, seeding is a background enhancement
     }
 };

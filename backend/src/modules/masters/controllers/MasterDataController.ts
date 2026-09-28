@@ -3,6 +3,7 @@ import { singleton, inject } from "tsyringe";
 import { MasterDataService } from "../services/MasterDataService.js";
 import { MASTER_TYPES } from "../masterTypes.js";
 import { error } from "../../../config/logger.js";
+import { AuthenticatedRequest } from "../../../middlewares/authMiddleware.js";
 
 @singleton()
 export class MasterDataController {
@@ -14,11 +15,10 @@ export class MasterDataController {
         res.status(200).json(MASTER_TYPES);
     };
 
-    public list = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public list = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const rows = await this.masterDataService.listByType(
-                authReq.tenantId as string,
+                req.tenantId.toString(),
                 req.params.type as string,
                 req.query.parentId as string | undefined
             );
@@ -29,14 +29,13 @@ export class MasterDataController {
         }
     };
 
-    public create = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public create = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const entry = await this.masterDataService.create(
-                authReq.tenantId as string,
+                req.tenantId.toString(),
                 req.params.type as string,
-                authReq.body,
-                authReq.user?._id
+                req.body,
+                req.user._id.toString()
             );
             res.status(201).json(entry);
         } catch (err: any) {
@@ -45,10 +44,9 @@ export class MasterDataController {
         }
     };
 
-    public update = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public update = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const entry = await this.masterDataService.update(req.params.id as string, authReq.tenantId as string, authReq.body);
+            const entry = await this.masterDataService.update(req.params.id as string, req.tenantId.toString(), req.body);
             res.status(200).json(entry);
         } catch (err: any) {
             error(`Master Data Update Error: ${err.message}`);
@@ -56,10 +54,9 @@ export class MasterDataController {
         }
     };
 
-    public remove = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public remove = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            await this.masterDataService.remove(req.params.id as string, authReq.tenantId as string);
+            await this.masterDataService.remove(req.params.id as string, req.tenantId.toString());
             res.status(200).json({ message: "Deleted" });
         } catch (err: any) {
             error(`Master Data Delete Error: ${err.message}`);
@@ -67,3 +64,4 @@ export class MasterDataController {
         }
     };
 }
+

@@ -6,7 +6,9 @@ import api from "../../services/api";
 import { toast } from 'react-toastify';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
-import { formatDate } from '../../utils/helpers';
+import { formatDate } from '../../utils/helpers';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface Props {
     onBack?: () => void;
@@ -45,7 +47,9 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
         if (id) {
             const fetchReturn = async () => {
                 try {
-                    const { data } = await api.get(`/api/purchase-returns/${id}`);
+                    const { data: body } = await api.get(`/api/purchase-returns/${id}`);
+                    // { success, data } envelope from the purchase-return API; fall back to a bare body.
+                    const data = body?.data ?? body;
                     setReturnData({
                         return_number: data.returnId,
                         return_date: data.returnDate?.slice(0, 10),
@@ -273,12 +277,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                     ]}
                     actions={
                         <div className="flex items-center gap-3">
-                            <button
-                                onClick={handleBack}
-                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95"
-                            >
-                                <ArrowLeft className="w-4 h-4" /> Abort
-                            </button>
+                            <Button onClick={handleBack} className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95"><ArrowLeft className="w-4 h-4" /> Abort</Button>
                             {/* No update endpoint exists server-side yet -- an existing return
                                 (id present) is view-only, so Save only renders for a new one. */}
                             {!id && (
@@ -429,7 +428,7 @@ const PurchaseReturnForm: React.FC<Props> = ({ onBack, onSave = async () => { },
                     {/* Operational Intel Sidebar */}
                     <div className="lg:col-span-4 space-y-10">
                         {/* Financial Aggregate */}
-                        <div className="bg-slate-900 dark:bg-slate-900 p-10 rounded-[3.5rem] text-white shadow-2xl space-y-10 relative overflow-hidden group">
+                        <div className="bg-slate-900 dark:bg-slate-900 p-10 rounded-full text-white shadow-2xl space-y-10 relative overflow-hidden group">
                             <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-1000">
                                 <Zap className="w-48 h-48" />
                             </div>

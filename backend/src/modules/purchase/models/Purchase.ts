@@ -120,6 +120,10 @@ const purchaseSchema = new Schema({
 }, { timestamps: true });
 
 purchaseSchema.index({ tenantId: 1, date: -1 });
+// Performance optimization: Compound indexes for common filter patterns
+purchaseSchema.index({ tenantId: 1, status: 1, date: -1 });
+purchaseSchema.index({ tenantId: 1, vendorId: 1, date: -1 });
+purchaseSchema.index({ 'items.productId': 1, tenantId: 1, status: 1 });
 
 const Purchase = mongoose.model<IPurchase>("Purchase", purchaseSchema);
 export default Purchase;

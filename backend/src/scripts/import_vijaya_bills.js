@@ -70,12 +70,12 @@ async function run() {
     try {
         if (!process.env.MONGO_URI) throw new Error("No Mongo URI");
         await mongoose.connect(process.env.MONGO_URI);
-        console.log("Connected to MongoDB");
+        info("Connected to MongoDB");
 
         // 1. Get Tenant
         const tenant = await Tenant.findOne({ name: { $regex: /Vijaya Laxmi/i } });
         if (!tenant) throw new Error("Tenant 'Vijaya Laxmi' not found");
-        console.log(`Found Tenant: ${tenant.name} (${tenant._id})`);
+        info(`Found Tenant: ${tenant.name} (${tenant._id})`);
 
         // 2. Get User (Creator) - Try by email first
         let user = await User.findOne({ email: 'vignesh@bizzai.com' });
@@ -127,7 +127,7 @@ async function run() {
                     contactNo: dummyContact, // Unique dummy contact
                     email: `vendor.${supplierId.toLowerCase()}@example.com` // Unique dummy email
                 });
-                console.log(`Created Vendor: ${supplier.businessName} (Contact: ${dummyContact})`);
+                info(`Created Vendor: ${supplier.businessName} (Contact: ${dummyContact})`);
             } else {
                 console.log(`Found Vendor: ${supplier.businessName}`);
             }

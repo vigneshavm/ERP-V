@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Search, Plus, Edit, Trash2, Download } from 'lucide-react';
 import PageHeader from '@/components/shared/Layout/PageHeader';
+import { Button } from '@/components/shared/Button';
 
 const UNITS = [
     { id: 'U001', name: 'PCS', fullName: 'Pieces', type: 'Count', hsn: '' },
@@ -28,7 +29,7 @@ const UnitsHSNAgent: React.FC = () => {
                 title="Units & HSN Agent"
                 description="Manage measurement units and GST HSN codes."
                 actions={<div className="flex gap-2">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all dark:text-slate-100">
                         <Download className="w-4 h-4" /> Export
                     </button>
                     <button className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20">

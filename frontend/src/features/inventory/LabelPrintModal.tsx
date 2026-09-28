@@ -1,7 +1,9 @@
 ﻿import React, { useRef, useState } from 'react';
 import { X, Printer, Download } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { PRINTER_PROFILES, PrinterBrand, generateBatchCommands, printFileExtension } from '@/utils/labelPrinterFormats';
+import { PRINTER_PROFILES, PrinterBrand, generateBatchCommands, printFileExtension } from '@/utils/labelPrinterFormats';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface LabelPrintModalProps {
     isOpen: boolean;
@@ -77,9 +79,7 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                         <Printer className="w-6 h-6 text-success" />
                         Print Labels ({products.length})
                     </h2>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
-                        <X className="w-5 h-5" />
-                    </button>
+                    <Button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"><X className="w-5 h-5" /></Button>
                 </div>
 
                 <div className="p-6 max-h-[60vh] overflow-y-auto">
@@ -143,20 +143,10 @@ export const LabelPrintModal: React.FC<LabelPrintModalProps> = ({ isOpen, onClos
                 </div>
 
                 <div className="p-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
-                    <button
-                        onClick={onClose}
-                        className="px-6 py-2 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                    >
-                        Cancel
-                    </button>
+                    <Button onClick={onClose} className="px-6 py-2 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">Cancel</Button>
                     {profile.protocol === 'pdf' ? (
-                        <button
-                            onClick={handleDownloadPDF}
-                            className="bg-success hover:bg-success/90 text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all transform active:scale-95"
-                        >
-                            <Download className="w-5 h-5" />
-                            Download Labels PDF
-                        </button>
+                        <Button onClick={handleDownloadPDF} className="bg-success hover:bg-success/90 text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all transform active:scale-95"><Download className="w-5 h-5" />
+                            Download Labels PDF</Button>
                     ) : (
                         <button
                             onClick={handleDownloadPrintFile}

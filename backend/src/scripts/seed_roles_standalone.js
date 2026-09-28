@@ -96,15 +96,15 @@ const SYSTEM_ROLES = [
 
 const seedRoles = async () => {
     try {
-        console.log('Connecting to MongoDB...');
-        // console.log('URI:', process.env.MONGO_URI); // Debug only
+        info('Connecting to MongoDB...');
+        // info('URI:', process.env.MONGO_URI); // Debug only
 
         if (!process.env.MONGO_URI) {
             throw new Error("MONGO_URI is missing from environment variables");
         }
 
         await mongoose.connect(process.env.MONGO_URI);
-        console.log('Connected to MongoDB');
+        info('Connected to MongoDB');
 
         for (const role of SYSTEM_ROLES) {
             await Role.findOneAndUpdate(
@@ -112,7 +112,7 @@ const seedRoles = async () => {
                 role,
                 { upsert: true, new: true }
             );
-            console.log(`Seeded role: ${role.name}`);
+            info(`Seeded role: ${role.name}`);
         }
 
         console.log('Role seeding completed.');

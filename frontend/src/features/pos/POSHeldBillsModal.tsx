@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { HeldBill } from '../../redux/slices/posSlice';
-import { Clock, Trash2, ArrowRightCircle, ShoppingCart } from 'lucide-react';
+import { Clock, Trash2, ArrowRightCircle, ShoppingCart } from 'lucide-react';import { Button } from '@/components/shared/Button';
+
 
 interface POSHeldBillsModalProps {
     isOpen: boolean;
@@ -36,12 +37,7 @@ export const POSHeldBillsModal: React.FC<POSHeldBillsModalProps> = ({
                             {heldBills.length}
                         </span>
                     </h2>
-                    <button
-                        onClick={onClose}
-                        className="text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                    >
-                        Close
-                    </button>
+                    <Button onClick={onClose} className="text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">Close</Button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 space-y-3">

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 import SmsTransaction from '../models/SmsTransaction.js';
 import { SmsParserService } from '../services/SmsParserService.js';
@@ -6,13 +6,7 @@ import Expense from '../../expense/models/Expense.js';
 import BankAccount from '../../finance/models/BankAccount.js';
 import CashbankTransaction from '../../finance/models/CashbankTransaction.js';
 import { error } from '../../../config/logger.js';
-
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 export const receiveSms = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
@@ -28,8 +22,8 @@ export const receiveSms = async (req: AuthenticatedRequest, res: Response): Prom
             rawText: text,
             sender,
             parsedData,
-            userId: req.user?._id,
-            tenantId: (req as any).tenantId,
+            userId: req.user.tenantId,
+            tenantId: req.user.tenantId,
             status: 'pending'
         });
 
@@ -43,7 +37,7 @@ export const receiveSms = async (req: AuthenticatedRequest, res: Response): Prom
 export const getSmsTransactions = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const transactions = await SmsTransaction.find({
-            userId: req.user?._id,
+            userId: req.user.tenantId,
             status: { $ne: 'ignored' }
         }).sort({ createdAt: -1 });
         res.status(200).json(transactions);
@@ -60,7 +54,7 @@ export const convertToExpense = async (req: AuthenticatedRequest, res: Response)
         const { id } = req.params;
         const { category, description, expenseNo } = req.body;
 
-        const smsTxn = await SmsTransaction.findOne({ _id: id, userId: req.user?._id }).session(session);
+        const smsTxn = await SmsTransaction.findOne({ _id: id, userId: req.user.tenantId }).session(session);
         if (!smsTxn) {
             res.status(404).json({ message: 'SMS transaction not found' });
             return;
@@ -73,7 +67,7 @@ export const convertToExpense = async (req: AuthenticatedRequest, res: Response)
 
         // Try to find matching bank account
         const bankAccount = await BankAccount.findOne({
-            userId: req.user?._id,
+            userId: req.user.tenantId,
             accountNumber: { $regex: smsTxn.parsedData.accountNumber + '$' }
         }).session(session);
 
@@ -87,7 +81,7 @@ export const convertToExpense = async (req: AuthenticatedRequest, res: Response)
             paymentMethod: bankAccount ? 'bank_transfer' : 'cash',
             bankAccount: bankAccount ? bankAccount._id : null,
             description: description || smsTxn.parsedData.merchant || smsTxn.rawText,
-            createdBy: req.user?._id
+            createdBy: req.user.tenantId
         }], { session });
 
         // Update bank balance if applicable (following ExpenseController logic)
@@ -99,7 +93,8 @@ export const convertToExpense = async (req: AuthenticatedRequest, res: Response)
                 toAccount: 'expense',
                 description: `SMS Expense: ${category} - ${description || smsTxn.rawText}`,
                 date: smsTxn.parsedData.date || new Date(),
-                userId: req.user?._id,
+                userId: req.user.tenantId,
+                tenantId: req.user.tenantId,
             }], { session });
 
             await BankAccount.updateOne(
@@ -130,7 +125,7 @@ export const ignoreSms = async (req: AuthenticatedRequest, res: Response): Promi
     try {
         const { id } = req.params;
         const smsTxn = await SmsTransaction.findOneAndUpdate(
-            { _id: id, userId: req.user?._id },
+            { _id: id, userId: req.user.tenantId },
             { status: 'ignored' },
             { new: true }
         );

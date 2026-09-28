@@ -1,14 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { CreditCard, Plus, X, CheckCircle2, Search } from 'lucide-react';
+import { CreditCard, Plus, X, CheckCircle2 } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import { Button, Card, Input, Select } from "../../components/shared";
 import { AppDispatch, RootState } from "../../redux/store";
 import { getEMIPlans, createEMIPlan, recordInstallmentPayment, EMIPlan } from "../../redux/slices/emiPlanSlice";
 import { getAllCustomers } from "../../redux/slices/customerSlice";
 import { getAllSalesInvoices } from "../../redux/slices/salesInvoiceSlice";
-import { formatDate } from '../../utils/helpers';
+import { formatDate } from '../../utils/helpers';
+
 import StatusBadge from '@/components/shared/UI/StatusBadge';
 
 // Textilesoft's "EMIMasterEntry" -- installment plans against a sale, tracked separately from
@@ -95,29 +97,37 @@ const EMIPlans: React.FC = () => {
                 title="EMI Plans"
                 description="Installment plans against a sale, tracked separately from the normal credit-sale ledger."
                 actions={
-                    <button
+                    <Button
+                        variant="success"
+                        size="md"
+                        icon={<Plus className="w-4 h-4" />}
                         onClick={() => setIsModalOpen(true)}
-                        className="px-4 py-2 bg-success text-white rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"
                     >
-                        <Plus className="w-4 h-4" /> New EMI Plan
-                    </button>
+                        New EMI Plan
+                    </Button>
                 }
             />
 
             <div className="space-y-6 animate-fade-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-5 shadow-sm">
-                        <p className="text-xs font-bold text-primary uppercase tracking-wide mb-1">Active Plans</p>
-                        <span className="text-3xl font-black text-slate-900 dark:text-white">{summary.active}</span>
-                    </div>
-                    <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-5 shadow-sm">
-                        <p className="text-xs font-bold text-success uppercase tracking-wide mb-1">Completed</p>
-                        <span className="text-3xl font-black text-slate-900 dark:text-white">{summary.completed}</span>
-                    </div>
-                    <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-5 shadow-sm">
-                        <p className="text-xs font-bold text-danger uppercase tracking-wide mb-1">Overdue Installments</p>
-                        <span className="text-3xl font-black text-slate-900 dark:text-white">{summary.overdue}</span>
-                    </div>
+                    <Card variant="default" size="md">
+                        <Card.Body>
+                            <p className="text-xs font-bold text-primary uppercase tracking-wide mb-1">Active Plans</p>
+                            <span className="text-3xl font-black text-slate-900 dark:text-white">{summary.active}</span>
+                        </Card.Body>
+                    </Card>
+                    <Card variant="default" size="md">
+                        <Card.Body>
+                            <p className="text-xs font-bold text-success uppercase tracking-wide mb-1">Completed</p>
+                            <span className="text-3xl font-black text-slate-900 dark:text-white">{summary.completed}</span>
+                        </Card.Body>
+                    </Card>
+                    <Card variant="default" size="md">
+                        <Card.Body>
+                            <p className="text-xs font-bold text-danger uppercase tracking-wide mb-1">Overdue Installments</p>
+                            <span className="text-3xl font-black text-slate-900 dark:text-white">{summary.overdue}</span>
+                        </Card.Body>
+                    </Card>
                 </div>
 
                 <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
@@ -153,12 +163,13 @@ const EMIPlans: React.FC = () => {
                                                 ) : (
                                                     <div className="flex items-center gap-2">
                                                         <span>{formatDate(plan.installments[nextPending].dueDate)} · ₹{plan.installments[nextPending].amount.toLocaleString()}</span>
-                                                        <button
+                                                        <Button
+                                                            variant="secondary"
+                                                            size="sm"
                                                             onClick={() => handleRecordPayment(plan, nextPending)}
-                                                            className="px-2 py-1 bg-slate-900 dark:bg-primary text-white rounded-lg text-[10px] font-bold hover:bg-slate-800"
                                                         >
                                                             Mark Paid
-                                                        </button>
+                                                        </Button>
                                                     </div>
                                                 )}
                                             </td>
@@ -189,49 +200,82 @@ const EMIPlans: React.FC = () => {
                             </button>
                         </div>
                         <div className="p-6 space-y-4">
-                            <div>
-                                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Customer</label>
-                                <select value={customerId} onChange={(e) => setCustomerId(e.target.value)} className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
-                                    <option value="">Select customer...</option>
-                                    {(customers || []).map((c: any) => <option key={c._id} value={c._id}>{c.name}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Invoice</label>
-                                <select value={invoiceId} onChange={(e) => setInvoiceId(e.target.value)} className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
-                                    <option value="">Select invoice...</option>
-                                    {(invoices || []).map((i: any) => <option key={i._id} value={i._id}>{i.invoiceNo} — ₹{(i.totalAmount || 0).toLocaleString()}</option>)}
-                                </select>
+                            <Select
+                                label="Customer"
+                                placeholder="Select customer..."
+                                options={(customers || []).map((c: any) => ({
+                                    value: c._id,
+                                    label: c.name
+                                }))}
+                                value={customerId}
+                                onChange={(val) => setCustomerId(typeof val === 'string' ? val : val[0])}
+                                required
+                            />
+                            <Select
+                                label="Invoice"
+                                placeholder="Select invoice..."
+                                options={(invoices || []).map((i: any) => ({
+                                    value: i._id,
+                                    label: `${i.invoiceNo} — ₹${(i.totalAmount || 0).toLocaleString()}`
+                                }))}
+                                value={invoiceId}
+                                onChange={(val) => setInvoiceId(typeof val === 'string' ? val : val[0])}
+                                required
+                            />
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input
+                                    type="number"
+                                    label="Total Amount"
+                                    min="0"
+                                    placeholder="₹0"
+                                    value={totalAmount}
+                                    onChange={(e) => setTotalAmount(e.target.value)}
+                                    required
+                                />
+                                <Input
+                                    type="number"
+                                    label="# Installments"
+                                    min="1"
+                                    value={numberOfInstallments}
+                                    onChange={(e) => setNumberOfInstallments(e.target.value)}
+                                    required
+                                />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Total Amount</label>
-                                    <input type="number" min="0" value={totalAmount} onChange={(e) => setTotalAmount(e.target.value)} className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none" />
-                                </div>
-                                <div>
-                                    <label className="text-xs font-bold text-slate-500 uppercase mb-1 block"># Installments</label>
-                                    <input type="number" min="1" value={numberOfInstallments} onChange={(e) => setNumberOfInstallments(e.target.value)} className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none" />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Frequency</label>
-                                    <select value={frequency} onChange={(e) => setFrequency(e.target.value as 'MONTHLY' | 'WEEKLY')} className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
-                                        <option value="MONTHLY">Monthly</option>
-                                        <option value="WEEKLY">Weekly</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Start Date</label>
-                                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none" />
-                                </div>
+                                <Select
+                                    label="Frequency"
+                                    options={[
+                                        { value: 'MONTHLY', label: 'Monthly' },
+                                        { value: 'WEEKLY', label: 'Weekly' }
+                                    ]}
+                                    value={frequency}
+                                    onChange={(val) => setFrequency(val as 'MONTHLY' | 'WEEKLY')}
+                                />
+                                <Input
+                                    type="date"
+                                    label="Start Date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    required
+                                />
                             </div>
                         </div>
                         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-700">
-                            <button onClick={() => { setIsModalOpen(false); resetForm(); }} className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800">Cancel</button>
-                            <button onClick={handleSubmit} disabled={isSaving} className="px-5 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 disabled:opacity-60">
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                onClick={() => { setIsModalOpen(false); resetForm(); }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                onClick={handleSubmit}
+                                disabled={isSaving}
+                            >
                                 {isSaving ? 'Creating...' : 'Create Plan'}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

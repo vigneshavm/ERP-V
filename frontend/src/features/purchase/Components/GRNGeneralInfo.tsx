@@ -2,7 +2,8 @@
 import { Truck } from 'lucide-react';
 import FormField from "../../../components/shared/Form/FormField";
 import { PurchaseOrder } from "../../../types/purchase";
-import { MasterEntry } from "../../../redux/slices/masterDataSlice";
+import { MasterEntry } from "../../../redux/slices/masterDataSlice";import { Input } from '@/components/shared/Input';
+
 
 interface GRNGeneralInfoProps {
     poId?: string;
@@ -38,7 +39,7 @@ const GRNGeneralInfo: React.FC<GRNGeneralInfoProps> = ({
                 {!poId && (
                     <FormField label="Select Purchase Order" required>
                         <select
-                            className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary outline-none"
+                            className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary dark:focus:ring-indigo-400 outline-none"
                             onChange={(e) => onPOSelect(e.target.value)}
                         >
                             <option value="">Choose a PO...</option>

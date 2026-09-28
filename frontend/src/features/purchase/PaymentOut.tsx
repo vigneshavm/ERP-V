@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import api from "../../services/api";
 import { toast } from 'react-toastify';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 /** A supplier bill still (partly) unpaid, as returned by GET /api/bills. */
 interface OutstandingBill { id: string; billNo: string; date: string; due: string; balance: number }
@@ -140,12 +142,7 @@ const PaymentOut: React.FC = () => {
             <div className="w-full space-y-6 animate-in fade-in duration-500 pb-20">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => navigate(-1)}
-                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </button>
+                        <Button onClick={() => navigate(-1)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"><ArrowLeft className="w-5 h-5" /></Button>
                         <div>
                             <h1 className="page-title text-slate-900 dark:text-white flex items-center gap-2">
                                 <CreditCard className="w-6 h-6 text-brand-600" />
@@ -192,12 +189,7 @@ const PaymentOut: React.FC = () => {
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Payment Date</label>
-                                    <input
-                                        type="date"
-                                        value={paymentDate}
-                                        onChange={(e) => setPaymentDate(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
-                                    />
+                                    <Input type="date" value={paymentDate} onChange={(e) => setPaymentDate(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Payment Method</label>
@@ -224,19 +216,13 @@ const PaymentOut: React.FC = () => {
                                 {mode === 'Cheque' && (
                                     <div className="space-y-1.5">
                                         <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Cheque Date</label>
-                                        <input type="date" value={chequeDate} onChange={(e) => setChequeDate(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none" />
+                                        <Input type="date" value={chequeDate} onChange={(e) => setChequeDate(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none" />
                                     </div>
                                 )}
                                 <div className="space-y-1.5">
                                     <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Reference ID / Cheque #</label>
                                     <div className="relative">
-                                        <input
-                                            type="text"
-                                            value={referenceNo}
-                                            onChange={(e) => setReferenceNo(e.target.value)}
-                                            placeholder="Enter Transaction Ref"
-                                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
-                                        />
+                                        <Input type="text" value={referenceNo} onChange={(e) => setReferenceNo(e.target.value)} placeholder="Enter Transaction Ref" className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 outline-none" />
                                         <Tag className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                                     </div>
                                 </div>

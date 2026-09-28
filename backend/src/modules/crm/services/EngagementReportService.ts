@@ -1,13 +1,15 @@
-import mongoose from "mongoose";
+                                                                                                                                                                                                                                    import mongoose from "mongoose";
 import Customer from "../models/Customer.js";
 import LoyaltyTransaction from "../models/LoyaltyTransaction.js";
 import WhatsAppCampaign from "../models/WhatsAppCampaign.js";
 import Invoice from "../../sales/models/Invoice.js";
 import Expense from "../../expense/models/Expense.js";
-import User from "../../core/models/User.js";
 import { MetaIntegration } from "../../marketing/models/MetaIntegration.js";
 import ConfigService from "../../core/services/ConfigService.js";
 import { summarizeLoyalty, type MemberInput } from "./loyaltyReportMath.js";
+import { istDate, dateOf, dateRangeQuery as between } from "../../../utils/dateUtils.js";
+import { toNumber as n, round2 } from "../../../utils/typeConversion.js";
+import { tenantKey, tenantUserIds } from "../../../utils/mongooseUtils.js";
 
 /**
  * Customer-engagement pages (Growth > Loyalty, WhatsApp marketing, Marketing metrics) from the ERP's own records,
@@ -15,26 +17,7 @@ import { summarizeLoyalty, type MemberInput } from "./loyaltyReportMath.js";
  * the result says so instead of showing a number.
  */
 
-const IST_OFFSET_MS = 5.5 * 3_600_000;
-const istDate = (d: Date): string => new Date(d.getTime() + IST_OFFSET_MS).toISOString().slice(0, 10);
-const istStart = (d: string) => new Date(`${d}T00:00:00+05:30`);
-const istEndExclusive = (d: string) => new Date(istStart(d).getTime() + 86_400_000);
-const between = (r: { from: string; to: string }) => ({ $gte: istStart(r.from), $lt: istEndExclusive(r.to) });
-const tenantKey = (tenantId: string) => (mongoose.Types.ObjectId.isValid(tenantId) ? new mongoose.Types.ObjectId(tenantId) : tenantId);
-const n = (v: unknown): number => {
-    const x = Number(v);
-    return Number.isFinite(x) ? x : 0;
-};
-const round2 = (v: number) => Math.round(v * 100) / 100;
-const dateOf = (v: unknown): string | null => {
-    const d = v instanceof Date ? v : v ? new Date(String(v)) : null;
-    return d && !Number.isNaN(d.getTime()) ? istDate(d) : null;
-};
 const LIVE_INVOICE = { isDeleted: { $ne: true }, fulfillmentStatus: { $nin: ["CANCELLED", "REFUNDED"] } };
-
-async function tenantUserIds(tenantId: string) {
-    return (await User.find({ tenantId: tenantKey(tenantId) }, { _id: 1 }).lean()).map((u) => u._id as mongoose.Types.ObjectId);
-}
 
 /* ---------------------------------------------------------------------------------------------------- Loyalty */
 

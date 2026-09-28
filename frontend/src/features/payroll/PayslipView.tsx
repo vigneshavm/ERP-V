@@ -5,6 +5,7 @@ import PageHeader from '../../components/shared/Layout/PageHeader';
 import { Printer, Mail } from 'lucide-react';
 import { formatDateISO } from '../../utils/helpers';
 import api from '../../services/api';
+import { Button } from '@/components/shared/Button';
 const PayslipView = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ const PayslipView = () => {
             <Layout>
                 <div className="flex flex-col items-center justify-center h-screen">
                     <p className="text-slate-500 mb-4">No Payslip Data Found</p>
-                    <button onClick={() => navigate(-1)} className="text-primary hover:underline">Go Back</button>
+                    <Button onClick={() => navigate(-1)} className="text-primary hover:underline">Go Back</Button>
                 </div>
             </Layout>
         );

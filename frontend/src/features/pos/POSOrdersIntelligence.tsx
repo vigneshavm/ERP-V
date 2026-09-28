@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout/index";
 import MetricCard from "../../components/shared/UI/MetricCard";
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 // --- Types ---
 
@@ -168,7 +170,7 @@ const POSOrdersIntelligence: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-slate-50 transition-all active:scale-95">
+                        <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all active:scale-95">
                             <Download className="w-4 h-4 text-primary" /> Export Audit Log
                         </button>
                         <button className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">
@@ -272,13 +274,7 @@ const POSOrdersIntelligence: React.FC = () => {
                             <div className="space-y-4">
                                 <div className="relative mb-6">
                                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <input
-                                        type="text"
-                                        placeholder="Search Bill ID, Branch or Risk..."
-                                        className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
+                                    <Input type="text" placeholder="Search Bill ID, Branch or Risk..." className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 shadow-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
 
                                 <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
@@ -362,9 +358,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                                             )}
                                                         </td>
                                                         <td className="p-5 text-right">
-                                                            <button className="px-4 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm">
-                                                                Investigate
-                                                            </button>
+                                                            <Button className="px-4 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm">Investigate</Button>
                                                         </td>
                                                     </tr>
                                                 ))
@@ -425,9 +419,7 @@ const POSOrdersIntelligence: React.FC = () => {
                                             <p className="text-[11px] font-bold leading-relaxed text-slate-700 dark:text-slate-300">
                                                 {alert.description}
                                             </p>
-                                            <button className="mt-3 text-[9px] font-black text-primary uppercase tracking-widest hover:underline underline-offset-4">
-                                                Investigate Bill
-                                            </button>
+                                            <Button className="mt-3 text-[9px] font-black text-primary uppercase tracking-widest hover:underline underline-offset-4">Investigate Bill</Button>
                                         </div>
                                     ))
                                 )}

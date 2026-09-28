@@ -3,7 +3,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Printer, Trash2, RefreshCw } from 'lucide-react';
 import { useConfig } from "@/contexts/ConfigContext";
-import { LabelPrintModal } from "./LabelPrintModal";
+import { LabelPrintModal } from "./LabelPrintModal";import { Button } from '@/components/shared/Button';
+
 
 interface QueueItem {
     itemId: string;
@@ -102,13 +103,8 @@ const ReprintQueue: React.FC = () => {
                     </button>
                     {safeQueue.length > 0 && (
                         <>
-                            <button
-                                onClick={handleClearQueue}
-                                className="px-4 py-2 text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg flex items-center gap-2 transition-colors border border-transparent hover:border-danger-line"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                                Clear Queue
-                            </button>
+                            <Button onClick={handleClearQueue} className="px-4 py-2 text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg flex items-center gap-2 transition-colors border border-transparent hover:border-danger-line"><Trash2 className="w-4 h-4" />
+                                Clear Queue</Button>
                             <button
                                 onClick={() => setIsPrintModalOpen(true)}
                                 className="bg-success hover:bg-success/90 text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 transform active:scale-95 transition-all"

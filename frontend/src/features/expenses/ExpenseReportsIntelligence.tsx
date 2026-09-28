@@ -16,7 +16,8 @@ import {
     Target,
     Info,
 } from 'lucide-react';
-import Layout from "../../components/shared/Layout/index";
+import Layout from "../../components/shared/Layout/index";import { Button } from '@/components/shared/Button';
+
 
 interface AuthState {
     user: any;
@@ -38,7 +39,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
             <Layout>
                 <div role="alert" className="flex flex-col items-center justify-center h-96 gap-4 text-center">
                     <p className="text-sm font-black text-error">Could not load the expense report.</p>
-                    <button onClick={() => refetch()} className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest">Retry</button>
+                    <Button onClick={() => refetch()} className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest">Retry</Button>
                 </div>
             </Layout>
         );
@@ -235,9 +236,7 @@ const ExpenseReportsIntelligence: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
-                            <button className="w-full mt-8 py-4 bg-primary text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                                Apply Optimized Policies
-                            </button>
+                            <Button className="w-full mt-8 py-4 bg-primary text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">Apply Optimized Policies</Button>
                         </div>
 
                         <div className="p-6 rounded-sm bg-slate-900 text-white relative overflow-hidden">

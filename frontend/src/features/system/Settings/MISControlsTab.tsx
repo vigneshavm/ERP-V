@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { AlertTriangle, DollarSign, FileText, Shield, CheckCircle2, LucideIcon } from 'lucide-react';
 import { MISControlsTabProps, MISConfig } from './types';
+import { Input } from '@/components/shared/Input';
 
 // Moved to module scope (was defined inside MISControlsTab's render body, which recreated this
 // component - and reset its DOM/state - on every render). misConfig/onToggle are now passed in

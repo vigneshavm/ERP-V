@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Search, Download } from 'lucide-react';
 import api from '@/services/api';
 import PageHeader from '@/components/shared/Layout/PageHeader';
+import { Button } from '@/components/shared/Button';
 
 interface StockRow {
     _id: string;
@@ -80,7 +81,7 @@ const StockSummary: React.FC = () => {
             <PageHeader
                 title="Stock Summary"
                 description="Current inventory position across all items"
-                actions={<button onClick={exportCsv} disabled={rows.length === 0} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all disabled:opacity-50">
+                actions={<button onClick={exportCsv} disabled={rows.length === 0} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all disabled:opacity-50 dark:text-slate-100">
                     <Download className="w-4 h-4" /> Export page
                 </button>}
             />

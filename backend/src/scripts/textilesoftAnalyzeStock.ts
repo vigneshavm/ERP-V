@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import { loadDbConfig, openPool, queryAll, type ShopDbPool } from "../integrations/textilesoft/shopDbReader.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ async function safe<T>(label: string, fn: () => Promise<T>): Promise<T | { error
     try {
         return await fn();
     } catch (e) {
-        console.log(`  ! ${label}: ${(e as Error).message}`);
+        info(`  ! ${label}: ${(e as Error).message}`);
         return { error: (e as Error).message };
     }
 }
@@ -39,14 +40,14 @@ const lot = (table: string) => `(SELECT barcode, SUM(TRY_CAST(qty AS float)) AS 
 async function main() {
     const pool = await openPool(loadDbConfig());
     try {
-        console.log("1/4 sampling ledger tables ...");
+        info("1/4 sampling ledger tables ...");
         const samples: Record<string, unknown> = {};
         for (const t of ["purentrydetails", "salsntry", "superbill1", "salsntryReturn", "purretrun", "sales2", "purgrnentry"]) {
             samples[t] = await safe(`sample ${t}`, () => sample(pool, t));
         }
         out.samples = samples;
 
-        console.log("2/4 stockdetails qty distribution ...");
+        info("2/4 stockdetails qty distribution ...");
         out.stockQtyDistribution = await safe("distribution", () =>
             q(pool, `SELECT COUNT(*) AS lots, SUM(CASE WHEN TRY_CAST(qty AS float)>0 THEN 1 ELSE 0 END) AS qtyPositive,
               SUM(CASE WHEN TRY_CAST(qty AS float)=0 THEN 1 ELSE 0 END) AS qtyZero, SUM(CASE WHEN TRY_CAST(qty AS float)<0 THEN 1 ELSE 0 END) AS qtyNegative,
@@ -54,7 +55,7 @@ async function main() {
               SUM(TRY_CAST(qty AS float)) AS sumQty FROM dbo.stockdetails`),
         );
 
-        console.log("3/4 stockdetails vs purchases ...");
+        info("3/4 stockdetails vs purchases ...");
         out.stockVsPurchases = await safe("stock vs purchases", () =>
             q(pool, `SELECT COUNT(*) AS matchedLots, SUM(CASE WHEN s.q < p.q THEN 1 ELSE 0 END) AS stockLower, SUM(CASE WHEN s.q = p.q THEN 1 ELSE 0 END) AS stockEqual,
               SUM(CASE WHEN s.q > p.q THEN 1 ELSE 0 END) AS stockHigher, SUM(s.q) AS sumStock, SUM(p.q) AS sumPurchased

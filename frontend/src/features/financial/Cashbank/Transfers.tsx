@@ -11,7 +11,6 @@ import {
     Building2,
     Wallet,
     IndianRupee,
-    FileText,
     Zap,
     Info,
     Activity,
@@ -19,6 +18,7 @@ import {
     AlertCircle,
     Plus
 } from 'lucide-react';
+import { Button, Input, Textarea } from '@/components/shared';
 
 interface AccountOption {
     value: string;
@@ -47,8 +47,8 @@ const AccountPulse: React.FC<AccountPulseProps> = ({ account, label, value, onCh
             {label} Node
         </h3>
         <div className={`relative group transition-all duration-300 ${account ? 'scale-105' : ''}`}>
-            <div className={`absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity ${account ? 'opacity-50' : 'hidden'}`}></div>
-            <div className={`relative bg-white dark:bg-slate-900 border-2 rounded-[2.5rem] p-8 transition-all ${account ? 'border-primary shadow-2xl shadow-indigo-100 dark:shadow-none' : 'border-slate-200 dark:border-slate-800 border-dashed'}`}>
+            <div className={`absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity ${account ? 'opacity-50' : 'hidden'}`}></div>
+            <div className={`relative bg-white dark:bg-slate-900 border-2 rounded-2xl p-8 transition-all ${account ? 'border-primary shadow-2xl shadow-indigo-100 dark:shadow-none' : 'border-slate-200 dark:border-slate-800 border-dashed'}`}>
                 <select
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
@@ -187,19 +187,17 @@ const Transfers: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Transfer Volume (₹)</label>
-                                    <div className="relative group">
-                                        <IndianRupee className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-300 group-hover:text-primary transition-colors" />
-                                        <input
-                                            type="number"
-                                            value={formData.amount}
-                                            onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
-                                            className={`w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 transition-all text-2xl font-black ${insufficientBalance ? 'border-danger-line text-danger' : 'border-slate-100 dark:border-slate-700 focus:border-primary'}`}
-                                            placeholder="0.00"
-                                            required
-                                            min="0.01"
-                                            step="0.01"
-                                        />
-                                    </div>
+                                    <Input
+                                        type="number"
+                                        value={formData.amount}
+                                        onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
+                                        icon={<IndianRupee className="w-5 h-5" />}
+                                        status={insufficientBalance ? 'error' : 'default'}
+                                        placeholder="0.00"
+                                        required
+                                        min="0.01"
+                                        step="0.01"
+                                    />
                                     {insufficientBalance && (
                                         <p className="flex items-center gap-1.5 text-[10px] font-bold text-danger ml-1 uppercase leading-none">
                                             <AlertCircle className="w-3 h-3" /> Volume exceeds source unit reserve
@@ -209,16 +207,12 @@ const Transfers: React.FC = () => {
 
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Narrative Log</label>
-                                    <div className="relative group h-full">
-                                        <FileText className="absolute left-6 top-7 w-6 h-6 text-slate-300 group-hover:text-primary transition-colors" />
-                                        <textarea
-                                            value={formData.description}
-                                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                            rows={2}
-                                            className="w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-[2rem] outline-none focus:ring-8 focus:ring-indigo-500/5 focus:border-primary transition-all font-bold text-sm leading-relaxed"
-                                            placeholder="Internal transfer purpose..."
-                                        />
-                                    </div>
+                                    <Textarea
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        minRows={2}
+                                        placeholder="Internal transfer purpose..."
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -248,21 +242,18 @@ const Transfers: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <button
+                                    <Button
                                         type="submit"
+                                        variant="secondary"
+                                        size="lg"
+                                        icon={<CheckCircle2 className="w-4 h-4" />}
                                         disabled={isLoading || !formData.fromAccount || !formData.toAccount || formData.amount <= 0 || insufficientBalance || formData.fromAccount === formData.toAccount}
-                                        className="w-full py-5 bg-white text-primary rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        loading={isLoading}
+                                        fullWidth
+                                        className="bg-white text-primary"
                                     >
-                                        {isLoading ? (
-                                            <>
-                                                <Activity className="w-4 h-4 animate-spin" /> Committing...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <CheckCircle2 className="w-4 h-4" /> Execute Transfer
-                                            </>
-                                        )}
-                                    </button>
+                                        Execute Transfer
+                                    </Button>
                                 </div>
                             </div>
 

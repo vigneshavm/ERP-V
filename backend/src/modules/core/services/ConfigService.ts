@@ -2,6 +2,7 @@ import SystemConfig from "../models/SystemConfig.js";
 import TaxMaster from "../models/TaxMaster.js";
 import LoyaltyRule from "../models/LoyaltyRule.js";
 import SegmentRule from "../models/SegmentRule.js";
+import type { TenantRef } from '../../../interfaces/TenantRef.js';
 
 export class ConfigService {
     private static cache = new Map<string, { value: any; timestamp: number }>();
@@ -17,7 +18,7 @@ export class ConfigService {
     /**
      * Get a dynamic system configuration value by key from DB
      */
-    static async get<T = any>(tenantId: string, key: string, fallbackValue: T): Promise<T> {
+    static async get<T = any>(tenantId: TenantRef, key: string, fallbackValue: T): Promise<T> {
         const cacheKey = `${tenantId}:${key}`;
         const cached = this.cache.get(cacheKey);
 
@@ -56,7 +57,7 @@ export class ConfigService {
     /**
      * Get dynamic Loyalty Rule configuration from DB (LoyaltyRule table or SystemConfig fallback)
      */
-    static async getLoyaltyRuleConfig(tenantId: string): Promise<{ spendPerPoint: number; rupeesPer100Points: number }> {
+    static async getLoyaltyRuleConfig(tenantId: TenantRef): Promise<{ spendPerPoint: number; rupeesPer100Points: number }> {
         try {
             const activeRule = (await LoyaltyRule.findOne({ tenantId, isActive: true }).sort({ createdAt: -1 }).lean()) as any;
             if (activeRule) {

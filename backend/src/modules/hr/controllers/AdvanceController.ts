@@ -1,10 +1,11 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import SalaryAdvance from '../models/SalaryAdvance.js';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
-export const createAdvance = async (req: Request, res: Response) => {
+export const createAdvance = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { employeeId, amount, date, type, notes } = req.body;
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.user.tenantId;
 
         const advance = await SalaryAdvance.create({
             tenantId,
@@ -22,10 +23,10 @@ export const createAdvance = async (req: Request, res: Response) => {
     }
 };
 
-export const getEmployeeAdvances = async (req: Request, res: Response) => {
+export const getEmployeeAdvances = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { employeeId } = req.params;
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.user.tenantId;
 
         const advances = await SalaryAdvance.find({ tenantId, employeeId }).sort({ date: -1 });
         res.status(200).json({ success: true, data: advances });
@@ -34,9 +35,9 @@ export const getEmployeeAdvances = async (req: Request, res: Response) => {
     }
 };
 
-export const getAllAdvances = async (req: Request, res: Response) => {
+export const getAllAdvances = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.user.tenantId;
         const advances = await SalaryAdvance.find({ tenantId }).populate('employeeId', 'name role').sort({ date: -1 });
         res.status(200).json({ success: true, data: advances });
     } catch (error: any) {

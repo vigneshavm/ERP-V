@@ -19,6 +19,8 @@ import Layout from '../../components/shared/Layout/index';
 import SupplierSubNav from '../suppliers/SupplierSubNav';
 import SupplierStatsCards from '../suppliers/components/SupplierStatsCards';
 import SupplierFilterBar from '../suppliers/components/SupplierFilterBar';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface VendorRow {
     _id: string;
@@ -306,14 +308,8 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                                 className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-500">
                                 <RefreshCw className={`w-4 h-4 ${(isRefreshing || isLoading) ? 'animate-spin' : ''}`} />
                             </button>
-                            <button onClick={handleExportCSV}
-                                className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                                <FileSpreadsheet className="w-4 h-4 text-success" /> Excel
-                            </button>
-                            <button onClick={handleExportPDF}
-                                className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                                <FileText className="w-4 h-4 text-danger" /> PDF
-                            </button>
+                            <Button onClick={handleExportCSV} className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-600 dark:text-slate-300"><FileSpreadsheet className="w-4 h-4 text-success" /> Excel</Button>
+                            <Button onClick={handleExportPDF} className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-600 dark:text-slate-300"><FileText className="w-4 h-4 text-danger" /> PDF</Button>
                         </div>
                     </div>
                 </div>
@@ -328,14 +324,8 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                             className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                             <RefreshCw className={`w-4 h-4 ${(isRefreshing || isLoading) ? 'animate-spin' : ''}`} />
                         </button>
-                        <button onClick={handleExportCSV}
-                            className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                            <FileSpreadsheet className="w-4 h-4 text-success" /> Excel
-                        </button>
-                        <button onClick={handleExportPDF}
-                            className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                            <FileText className="w-4 h-4 text-danger" /> PDF
-                        </button>
+                        <Button onClick={handleExportCSV} className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-slate-300"><FileSpreadsheet className="w-4 h-4 text-success" /> Excel</Button>
+                        <Button onClick={handleExportPDF} className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 text-slate-600 dark:text-slate-300"><FileText className="w-4 h-4 text-danger" /> PDF</Button>
                     </div>
                 </div>
             )}
@@ -372,19 +362,9 @@ const VendorInflowOutflow: React.FC<VendorInflowOutflowProps> = ({ embedded = fa
                             ))}
                         </select>
 
-                        <button
-                            onClick={handleApplyFilters}
-                            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary-hover shadow-sm transition-colors"
-                        >
-                            Apply
-                        </button>
+                        <Button onClick={handleApplyFilters} className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary-hover shadow-sm transition-colors">Apply</Button>
                         {(vendorFilter !== 'ALL' || dateFrom || dateTo) && (
-                            <button
-                                onClick={handleClearFilters}
-                                className="px-3 py-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium"
-                            >
-                                Clear
-                            </button>
+                            <Button onClick={handleClearFilters} className="px-3 py-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium">Clear</Button>
                         )}
                     </div>
                 </SupplierFilterBar>

@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/node";
 // 
 // import SentryProfiling from "@sentry/profiling-node";
 import type { Express } from "express";
+import { info } from './logger.js';
 
 // Coerce the import to handle potential CJS/ESM interop issues
 // 
@@ -15,7 +16,7 @@ export const initSentry = (app: Express): void => {
     const sentryDsn = process.env.SENTRY_DSN;
 
     if (!sentryDsn || sentryDsn.trim() === "") {
-        console.log("⚠️  Sentry not configured (SENTRY_DSN not set)");
+        info("⚠️  Sentry not configured (SENTRY_DSN not set)");
         return;
     }
 
@@ -51,7 +52,7 @@ export const initSentry = (app: Express): void => {
         },
     });
 
-    console.log("✅ Sentry initialized for error tracking");
+    info("✅ Sentry initialized for error tracking");
 };
 
 /**

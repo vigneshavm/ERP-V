@@ -1,10 +1,7 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { buildGSTR1Report } from '../services/GSTR1Service.js';
 import { error } from '../../../config/logger.js';
-
-interface AuthenticatedRequest extends Request {
-    tenantId?: string;
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * GET /api/gst/gstr1?period=2024-03
@@ -12,7 +9,7 @@ interface AuthenticatedRequest extends Request {
  */
 export const getGSTR1Report = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const { tenantId } = req;
+        const tenantId = req.tenantId;
         const period = req.query.period as string;
 
         if (!period || !/^\d{4}-\d{2}$/.test(period)) {
@@ -20,7 +17,7 @@ export const getGSTR1Report = async (req: AuthenticatedRequest, res: Response): 
             return;
         }
 
-        const report = await buildGSTR1Report(tenantId!, period);
+        const report = await buildGSTR1Report(tenantId, period);
         res.status(200).json(report);
     } catch (err) {
         error(`GSTR-1 Report Error: ${(err as Error).message}`);

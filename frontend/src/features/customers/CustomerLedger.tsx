@@ -15,6 +15,8 @@ import {
     RotateCcw
 } from 'lucide-react';
 import { formatDate } from '../../utils/helpers';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface LedgerEntry {
     id: string;
@@ -230,13 +232,7 @@ const CustomerLedgerPage: React.FC = () => {
                 <div className="flex-1 min-w-[250px]">
                     <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Search Customer</label>
                     <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="Name or phone..."
-                            className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
-                            value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
-                        />
+                        <Input type="text" placeholder="Name or phone..." className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                         <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                     </div>
                 </div>

@@ -3,7 +3,9 @@ import Layout from '../../../components/shared/Layout/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { Filter, Shield, Eye, Calendar, Clock, Database, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../../../services/api';
-import { formatDateISO } from '../../../utils/helpers';
+import { formatDateISO } from '../../../utils/helpers';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 const AuditLogViewer = () => {
     const [logs, setLogs] = useState([]);
@@ -276,9 +278,7 @@ const AuditLogViewer = () => {
                                     </div>
                                     Audit Log Details
                                 </h3>
-                                <button onClick={() => setSelectedLog(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                </button>
+                                <Button onClick={() => setSelectedLog(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></Button>
                             </div>
                             
                             <div className="p-6 overflow-y-auto custom-scrollbar">
@@ -348,12 +348,7 @@ const AuditLogViewer = () => {
                             </div>
                             
                             <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 flex justify-end">
-                                <button
-                                    onClick={() => setSelectedLog(null)}
-                                    className="px-5 py-2.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
-                                >
-                                    Close Details
-                                </button>
+                                <Button onClick={() => setSelectedLog(null)} className="px-5 py-2.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">Close Details</Button>
                             </div>
                         </div>
                     </div>

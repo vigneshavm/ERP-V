@@ -12,7 +12,9 @@ import {
     reset,
     SerializedUnitStatus,
 } from '../../redux/slices/serializedUnitSlice';
-import Layout from "../../components/shared/Layout/index";
+import Layout from "../../components/shared/Layout/index";import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 import {
     Fingerprint,
     Search,
@@ -136,9 +138,7 @@ const SerializedUnitLookup: React.FC = () => {
                                 onChange={e => { setLookupValue(e.target.value); if (!e.target.value) dispatch(clearLookup()); }}
                             />
                         </div>
-                        <button type="submit" className="px-6 py-3 bg-primary text-white rounded-sm font-black text-sm hover:bg-primary/90 transition-all">
-                            Find
-                        </button>
+                        <Button type="submit" className="px-6 py-3 bg-primary text-white rounded-sm font-black text-sm hover:bg-primary/90 transition-all">Find</Button>
                     </form>
                     {lookupResult && (
                         <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-sm flex items-center justify-between">
@@ -254,9 +254,7 @@ const SerializedUnitLookup: React.FC = () => {
                                     <h3 className="text-xl font-black tracking-tight">Add Units</h3>
                                     <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">{selectedItem?.name}</p>
                                 </div>
-                                <button onClick={() => setIsAddOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
-                                    <X className="w-6 h-6" />
-                                </button>
+                                <Button onClick={() => setIsAddOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors"><X className="w-6 h-6" /></Button>
                             </div>
                             <form onSubmit={handleAddUnits} className="p-8 space-y-4 overflow-y-auto">
                                 {draftUnits.map((unit, index) => (
@@ -296,19 +294,8 @@ const SerializedUnitLookup: React.FC = () => {
                                     <Plus className="w-3.5 h-3.5" /> Add another unit
                                 </button>
                                 <div className="pt-2 flex gap-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsAddOpen(false)}
-                                        className="flex-1 px-6 py-4 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm font-black text-sm hover:bg-slate-50 transition-all"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="flex-1 px-6 py-4 bg-primary text-white rounded-sm font-black text-sm shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
-                                    >
-                                        Save Units
-                                    </button>
+                                    <Button type="button" onClick={() => setIsAddOpen(false)} className="flex-1 px-6 py-4 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm font-black text-sm hover:bg-slate-50 transition-all">Cancel</Button>
+                                    <Button type="submit" className="flex-1 px-6 py-4 bg-primary text-white rounded-sm font-black text-sm shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">Save Units</Button>
                                 </div>
                             </form>
                         </div>

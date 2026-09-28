@@ -77,34 +77,48 @@ logger.stream = {
 };
 
 /**
+ * Normalises the optional second argument of the log helpers into a metadata object.
+ * Callers pass objects, caught errors (`unknown`) or plain strings; winston needs an object.
+ */
+const toMeta = (meta: unknown): Record<string, unknown> => {
+    if (meta === undefined || meta === null) return {};
+    if (meta instanceof Error) {
+        const code = (meta as Error & { code?: unknown }).code;
+        return { error: meta.message, stack: meta.stack, ...(code !== undefined ? { code } : {}) };
+    }
+    if (typeof meta === "object") return meta as Record<string, unknown>;
+    return { detail: meta };
+};
+
+/**
  * Enhanced logging functions with request context
  */
-export const logEvent = (level: string, message: string, meta: object = {}) => {
-    logger.log(level, message, meta);
+export const logEvent = (level: string, message: string, meta: unknown = {}) => {
+    logger.log(level, message, toMeta(meta));
 };
 
-export const info = (message: string, meta: object = {}) => {
-    logger.info(message, meta);
+export const info = (message: string, meta: unknown = {}) => {
+    logger.info(message, toMeta(meta));
 };
 
-export const warn = (message: string, meta: object = {}) => {
-    logger.warn(message, meta);
+export const warn = (message: string, meta: unknown = {}) => {
+    logger.warn(message, toMeta(meta));
 };
 
-export const error = (message: string, meta: object = {}) => {
-    logger.error(message, meta);
+export const error = (message: string, meta: unknown = {}) => {
+    logger.error(message, toMeta(meta));
 };
 
-export const debug = (message: string, meta: object = {}) => {
-    logger.debug(message, meta);
+export const debug = (message: string, meta: unknown = {}) => {
+    logger.debug(message, toMeta(meta));
 };
 
 /**
  * Log with request context (correlation ID)
  */
-export const logWithContext = (req: Request, level: string, message: string, meta: object = {}) => {
+export const logWithContext = (req: Request, level: string, message: string, meta: unknown = {}) => {
     const contextMeta = {
-        ...meta,
+        ...toMeta(meta),
         requestId: (req as any).id || req.headers["x-request-id"],
         userId: (req as any).user?._id,
         method: req.method,

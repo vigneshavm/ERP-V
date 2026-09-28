@@ -1,4 +1,7 @@
 import { erpInvoiceSplit } from "../../finance/services/financeMath.js";
+import { istDate, istHour, addDays, IST_OFFSET_MS } from "../../../utils/dateUtils.js";
+import { toNumber as n } from "../../../utils/typeConversion.js";
+import { round2 } from "../../../utils/typeConversion.js";
 
 /**
  * Detailed Analytics breakdowns (brand, category, billing counter, sales counter, product, hour, day) computed from
@@ -37,26 +40,19 @@ export interface DayRow {
     cash: number; card: number; credit: number; upi: number;
 }
 
-const IST_OFFSET_MS = 5.5 * 3_600_000;
-const n = (v: unknown): number => {
-    const x = Number(v);
-    return Number.isFinite(x) ? x : 0;
-};
-const round2 = (v: number): number => Math.round(v * 100) / 100;
+// Re-export date helpers for services that consume this module.
+export { istDate, istHour, addDays, IST_OFFSET_MS };
+
+/**
+ * Helper for text conversion (compatibility with local usage).
+ */
 const text = (v: unknown): string => (typeof v === "string" ? v.trim() : "");
-const asDate = (d: Date | string): Date => (d instanceof Date ? d : new Date(d));
 
-/** Calendar date (YYYY-MM-DD) and hour of a timestamp in India time, the shop's day. */
-export const istDate = (d: Date | string): string => new Date(asDate(d).getTime() + IST_OFFSET_MS).toISOString().slice(0, 10);
-export const istHour = (d: Date | string): number => new Date(asDate(d).getTime() + IST_OFFSET_MS).getUTCHours();
-
+/**
+ * Format hour as "12 AM", "1 AM", etc.
+ */
 export const hourLabel = (h: number): string => (h === 0 ? "12 AM" : h < 12 ? `${h} AM` : h === 12 ? "12 PM" : `${h - 12} PM`);
 
-export const addDays = (iso: string, days: number): string => {
-    const d = new Date(`${iso}T00:00:00Z`);
-    d.setUTCDate(d.getUTCDate() + days);
-    return d.toISOString().slice(0, 10);
-};
 const daySpan = (from: string, to: string): number =>
     Math.round((new Date(`${to}T00:00:00Z`).getTime() - new Date(`${from}T00:00:00Z`).getTime()) / 86_400_000) + 1;
 

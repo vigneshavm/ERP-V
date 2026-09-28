@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import { SyncIntelligenceService } from "../../../services/SyncIntelligenceService";
 import { DeviceRegistryEntry, SyncLedgerEntry } from "../../../types/tenant/index";
+import { Button } from "../../../components/shared";
+import { Input } from '@/components/shared/Input';
 
 const SyncIntelligence: React.FC = () => {
     const [devices, setDevices] = useState<DeviceRegistryEntry[]>([]);
@@ -87,14 +89,18 @@ const SyncIntelligence: React.FC = () => {
                         </span>
                         <span className="text-xs text-slate-500 font-medium">Auto-refreshing every 5s</span>
                     </div>
-                    <button className="flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary text-white rounded-sm font-black text-xs uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95">
-                        <ShieldCheck className="w-4 h-4" /> Global Force Resync
-                    </button>
+                    <Button
+                        variant="primary"
+                        size="lg"
+                        icon={<ShieldCheck className="w-4 h-4" />}
+                    >
+                        Global Force Resync
+                    </Button>
                 </div>
             </div>
 
             {loadError && (
-                <div role="alert" className="p-6 bg-danger/10 border border-danger/30 rounded-[2rem] flex items-center gap-4 text-danger text-sm font-bold">
+                <div role="alert" className="p-6 bg-danger/10 border border-danger/30 rounded-xl flex items-center gap-4 text-danger text-sm font-bold">
                     <AlertTriangle className="w-5 h-5 shrink-0" /> {loadError}
                 </div>
             )}
@@ -192,9 +198,13 @@ const SyncIntelligence: React.FC = () => {
                                         <AlertTriangle className="w-5 h-5 text-danger shrink-0 mt-0.5" />
                                         <div>
                                             <p className="text-xs font-bold text-white leading-tight mb-2 uppercase italic tracking-tight">{alert}</p>
-                                            <button className="text-[9px] font-black text-primary uppercase tracking-widest hover:text-primary transition-colors">
+                                            <Button
+                                                type="button"
+                                                variant="primary"
+                                                size="sm"
+                                            >
                                                 Resolve Now →
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 ))}
@@ -222,7 +232,12 @@ const SyncIntelligence: React.FC = () => {
                                 <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
                                 <input type="text" placeholder="Search devices..." className="pl-12 pr-6 py-4 bg-slate-950 border border-slate-800 rounded-sm text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-primary transition-all w-72" />
                             </div>
-                            <button className="p-4 bg-slate-950 border border-slate-800 rounded-sm text-slate-400 hover:text-white transition-all"><Filter className="w-5 h-5" /></button>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="md"
+                                icon={<Filter className="w-5 h-5" />}
+                            />
                         </div>
                     </div>
 
@@ -287,15 +302,27 @@ const SyncIntelligence: React.FC = () => {
                                         </td>
                                         <td className="px-10 py-8 text-right">
                                             <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
-                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-primary hover:border-primary/30 transition-all shadow-sm" title="Force Resync">
-                                                    <RefreshCcw className="w-4 h-4" />
-                                                </button>
-                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-danger hover:border-danger/30 transition-all shadow-sm" title="Freeze Device">
-                                                    <Power className="w-4 h-4" />
-                                                </button>
-                                                <button className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 hover:text-white transition-all shadow-sm" title="Manage Diagnostics">
-                                                    <MoreHorizontal className="w-4 h-4" />
-                                                </button>
+                                                <Button
+                                                    type="button"
+                                                    variant="tertiary"
+                                                    size="sm"
+                                                    icon={<RefreshCcw className="w-4 h-4" />}
+                                                    title="Force Resync"
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    variant="danger"
+                                                    size="sm"
+                                                    icon={<Lock className="w-4 h-4" />}
+                                                    title="Freeze Device"
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    icon={<MoreHorizontal className="w-4 h-4" />}
+                                                    title="Manage Diagnostics"
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -351,9 +378,13 @@ const SyncIntelligence: React.FC = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <button className="flex items-center gap-3 px-6 py-3 bg-slate-950 border border-slate-800 hover:border-primary/30 hover:text-primary text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        size="md"
+                                    >
                                         View Payload
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         ))}
@@ -368,12 +399,20 @@ const SyncIntelligence: React.FC = () => {
                     <p className="text-sm text-slate-400 font-medium">Powering zero-loss retail operations with transaction-level auditing and anomaly detection.</p>
                 </div>
                 <div className="flex gap-4">
-                    <button className="px-8 py-4 bg-slate-950 border border-slate-800 rounded-sm text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-white transition-all shadow-xl">
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        size="lg"
+                    >
                         View Audit Log
-                    </button>
-                    <button className="px-8 py-4 bg-primary hover:bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl transition-all shadow-indigo-600/20">
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="primary"
+                        size="lg"
+                    >
                         Configuration Console
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

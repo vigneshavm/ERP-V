@@ -4,7 +4,8 @@ import { useStorefrontLogic } from "./useStorefrontLogic";
 import { StorefrontHeader } from "./StorefrontHeader";
 import { StorefrontFilters } from "./StorefrontFilters";
 import { StorefrontAiPanel } from "./StorefrontAiPanel";
-import { StorefrontProductDisplay } from "./StorefrontProductDisplay";
+import { StorefrontProductDisplay } from "./StorefrontProductDisplay";import { Button } from '@/components/shared/Button';
+
 
 const Storefront: React.FC = () => {
     const {
@@ -109,13 +110,13 @@ const Storefront: React.FC = () => {
                                 <>
                                     <Bot className="w-16 h-16 mx-auto mb-4 opacity-20" />
                                     <p className="text-lg">AI couldn't find exact matches for your request.</p>
-                                    <button onClick={clearAi} className="mt-4 text-primary font-bold hover:underline">Clear Search</button>
+                                    <Button onClick={clearAi} className="mt-4 text-primary font-bold hover:underline">Clear Search</Button>
                                 </>
                             ) : (
                                 <>
                                     <Search className="w-16 h-16 mx-auto mb-4 opacity-20" />
                                     <p className="text-lg">No products found matching your filters.</p>
-                                    <button onClick={resetFilters} className="mt-4 text-primary font-bold hover:underline">Clear Filters</button>
+                                    <Button onClick={resetFilters} className="mt-4 text-primary font-bold hover:underline">Clear Filters</Button>
                                 </>
                             )}
                         </div>

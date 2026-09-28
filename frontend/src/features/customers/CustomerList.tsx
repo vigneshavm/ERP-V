@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from "@/redux/store";
 import PageHeader from "@/components/shared/Layout/PageHeader";
 import {
-    Search,
     Phone,
     Mail,
     TrendingUp,
@@ -15,6 +14,7 @@ import {
     ShoppingBag,
     Users
 } from 'lucide-react';
+import { Button, Card, Input, Select } from '@/components/shared';
 import Customer360Modal from './Customer360Modal';
 import { formatDate } from '../../utils/helpers';
 
@@ -106,109 +106,117 @@ const CustomerList: React.FC = () => {
                 title="Customer List"
                 description="Manage your customer database"
                 actions={<div className="flex gap-2">
-                    <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
-                        <Download className="w-4 h-4" /> Export
-                    </button>
-                    <button className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2">
-                        <Plus className="w-4 h-4" /> Add Customer
-                    </button>
+                    <Button variant="secondary" size="md" icon={<Download className="w-4 h-4" />}>
+                        Export
+                    </Button>
+                    <Button variant="primary" size="md" icon={<Plus className="w-4 h-4" />}>
+                        Add Customer
+                    </Button>
                 </div>}
             />
 
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Customers</p>
-                            <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{totalCustomers}</p>
+                <Card variant="default" size="md">
+                    <Card.Body>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Customers</p>
+                                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{totalCustomers}</p>
+                            </div>
+                            <div className="p-3 bg-primary/10 rounded-xl">
+                                <Users className="w-6 h-6 text-primary" />
+                            </div>
                         </div>
-                        <div className="p-3 bg-primary/10 rounded-xl">
-                            <Users className="w-6 h-6 text-primary" />
-                        </div>
-                    </div>
-                </div>
+                    </Card.Body>
+                </Card>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Active Customers</p>
-                            <p className="text-2xl font-bold text-success mt-1">{activeCustomers}</p>
+                <Card variant="default" size="md">
+                    <Card.Body>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Active Customers</p>
+                                <p className="text-2xl font-bold text-success mt-1">{activeCustomers}</p>
+                            </div>
+                            <div className="p-3 bg-success/10 rounded-xl">
+                                <ShoppingBag className="w-6 h-6 text-success" />
+                            </div>
                         </div>
-                        <div className="p-3 bg-success/10 rounded-xl">
-                            <ShoppingBag className="w-6 h-6 text-success" />
-                        </div>
-                    </div>
-                    <p className="text-xs text-slate-400 mt-2">{Math.round((activeCustomers / Math.max(1, totalCustomers)) * 100)}% of total</p>
-                </div>
+                        <p className="text-xs text-slate-400 mt-2">{Math.round((activeCustomers / Math.max(1, totalCustomers)) * 100)}% of total</p>
+                    </Card.Body>
+                </Card>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Revenue</p>
-                            <p className="text-2xl font-bold text-primary mt-1">₹{totalRevenue.toLocaleString()}</p>
+                <Card variant="default" size="md">
+                    <Card.Body>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Revenue</p>
+                                <p className="text-2xl font-bold text-primary mt-1">₹{totalRevenue.toLocaleString()}</p>
+                            </div>
+                            <div className="p-3 bg-primary/10 rounded-xl">
+                                <TrendingUp className="w-6 h-6 text-primary" />
+                            </div>
                         </div>
-                        <div className="p-3 bg-primary/10 rounded-xl">
-                            <TrendingUp className="w-6 h-6 text-primary" />
-                        </div>
-                    </div>
-                </div>
+                    </Card.Body>
+                </Card>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Avg Transaction</p>
-                            <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹{avgPurchaseValue.toFixed(0)}</p>
+                <Card variant="default" size="md">
+                    <Card.Body>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Avg Transaction</p>
+                                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">₹{avgPurchaseValue.toFixed(0)}</p>
+                            </div>
+                            <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl">
+                                <Star className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+                            </div>
                         </div>
-                        <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl">
-                            <Star className="w-6 h-6 text-slate-600 dark:text-slate-400" />
-                        </div>
-                    </div>
-                </div>
+                    </Card.Body>
+                </Card>
             </div>
 
             {/* Filters */}
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-end">
-                <div className="flex-1 min-w-[250px]">
-                    <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Search</label>
-                    <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="Name, phone, or email..."
-                            className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
-                            value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
-                        />
-                        <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+            <Card variant="default" size="md">
+                <Card.Body>
+                    <div className="flex flex-wrap gap-4 items-end">
+                        <div className="flex-1 min-w-[250px]">
+                            <Input
+                                type="text"
+                                label="Search"
+                                placeholder="Name, phone, or email..."
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="min-w-[180px]">
+                            <Select
+                                label="Status"
+                                options={[
+                                    { value: 'all', label: 'All Customers' },
+                                    { value: 'active', label: 'Active (Has Purchases)' },
+                                    { value: 'inactive', label: 'Inactive' }
+                                ]}
+                                value={filterActive}
+                                onChange={(e) => setFilterActive(e as any)}
+                            />
+                        </div>
+
+                        <div className="min-w-[180px]">
+                            <Select
+                                label="Sort By"
+                                options={[
+                                    { value: 'name', label: 'Name (A-Z)' },
+                                    { value: 'purchases', label: 'Total Purchases' },
+                                    { value: 'recent', label: 'Most Recent' }
+                                ]}
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e as any)}
+                            />
+                        </div>
                     </div>
-                </div>
-
-                <div>
-                    <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Status</label>
-                    <select
-                        className="px-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
-                        value={filterActive}
-                        onChange={e => setFilterActive(e.target.value as any)}
-                    >
-                        <option value="all">All Customers</option>
-                        <option value="active">Active (Has Purchases)</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Sort By</label>
-                    <select
-                        className="px-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
-                        value={sortBy}
-                        onChange={e => setSortBy(e.target.value as any)}
-                    >
-                        <option value="name">Name (A-Z)</option>
-                        <option value="purchases">Total Purchases</option>
-                        <option value="recent">Most Recent</option>
-                    </select>
-                </div>
-            </div>
+                </Card.Body>
+            </Card>
 
             {/* Customer List */}
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -280,19 +288,20 @@ const CustomerList: React.FC = () => {
                                         </td>
                                         <td className="p-4">
                                             <div className="flex justify-center gap-1">
-                                                <button
+                                                <Button
+                                                    variant="secondary"
+                                                    size="sm"
                                                     onClick={() => {
                                                         setSelectedCustomer(customer);
                                                         setIsModalOpen(true);
                                                     }}
-                                                    className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
                                                     title="View"
                                                 >
-                                                    <Eye className="w-4 h-4 text-primary" />
-                                                </button>
-                                                <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg" title="Edit">
-                                                    <Edit className="w-4 h-4 text-slate-400" />
-                                                </button>
+                                                    <Eye className="w-4 h-4" />
+                                                </Button>
+                                                <Button variant="secondary" size="sm" title="Edit">
+                                                    <Edit className="w-4 h-4" />
+                                                </Button>
                                             </div>
                                         </td>
                                     </tr>

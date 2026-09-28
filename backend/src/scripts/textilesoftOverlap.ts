@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import { loadDbConfig, openPool, queryAll, type ShopDbPool } from "../integrations/textilesoft/shopDbReader.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ async function safe<T>(label: string, fn: () => Promise<T>): Promise<T | { error
     try {
         return await fn();
     } catch (e) {
-        console.log(`  ! ${label}: ${(e as Error).message}`);
+        info(`  ! ${label}: ${(e as Error).message}`);
         return { error: (e as Error).message };
     }
 }
@@ -35,14 +36,14 @@ const scenario = (name: string, expr: string) =>
 async function main() {
     const pool = await openPool(loadDbConfig());
     try {
-        console.log("1/3 stock under three formulas ...");
+        info("1/3 stock under three formulas ...");
         out.scenarios = await safe("scenarios", () =>
             q(pool, `${CTE} ${scenario("A: purchased - salsntry - returns", "ISNULL(s.q,0)-ISNULL(a.q,0)-ISNULL(r.q,0)")}
               UNION ALL ${scenario("B: A - superbill1", "ISNULL(s.q,0)-ISNULL(a.q,0)-ISNULL(b.q,0)-ISNULL(r.q,0)")}
               UNION ALL ${scenario("C: purchased - superbill1 - returns", "ISNULL(s.q,0)-ISNULL(b.q,0)-ISNULL(r.q,0)")}`),
         );
 
-        console.log("2/3 do superbill1 lines repeat salsntry lines? ...");
+        info("2/3 do superbill1 lines repeat salsntry lines? ...");
         out.overlapByBillLine = await safe("overlap by bill line", () =>
             q(pool, `SELECT COUNT(*) AS superbillLines, SUM(CASE WHEN m.k IS NOT NULL THEN 1 ELSE 0 END) AS sameBillLineInSalsntry
               FROM dbo.superbill1 b LEFT JOIN (SELECT DISTINCT cmny_bill, barcode, srl_no, 1 AS k FROM dbo.salsntry) m
@@ -57,7 +58,7 @@ async function main() {
               (SELECT MIN([No]) FROM dbo.superbill1) AS superbillMinNo, (SELECT MAX([No]) FROM dbo.superbill1) AS superbillMaxNo`),
         );
 
-        console.log("3/3 sales by year in each table ...");
+        info("3/3 sales by year in each table ...");
         out.byYear = await safe("by year", () =>
             q(pool, `SELECT 'salsntry' AS t, YEAR([date]) AS y, COUNT(*) AS lines, SUM(TRY_CAST(qty AS float)) AS qty FROM dbo.salsntry GROUP BY YEAR([date])
               UNION ALL SELECT 'superbill1', YEAR([date]), COUNT(*), SUM(TRY_CAST(qty AS float)) FROM dbo.superbill1 GROUP BY YEAR([date]) ORDER BY 1, 2`),

@@ -21,6 +21,8 @@ import {
 
 import SupplierSubNav from './SupplierSubNav';
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 const SupplierDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -222,10 +224,8 @@ const SupplierDetail: React.FC = () => {
               <h3 className="text-lg font-bold text-slate-800 dark:text-white">
                 Edit {editingField === 'invoiced' ? 'Total Invoiced' : editingField === 'paid' ? 'Total Paid' : 'Outstanding Balance'}
               </h3>
-              <button onClick={() => setEditingField(null)} className="p-1 hover:bg-slate-100 rounded-full dark:hover:bg-slate-800">
-                <span className="sr-only">Close</span>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
+              <Button onClick={() => setEditingField(null)} className="p-1 hover:bg-slate-100 rounded-full dark:hover:bg-slate-800"><span className="sr-only">Close</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></Button>
             </div>
 
             <div className="space-y-4">
@@ -261,12 +261,7 @@ const SupplierDetail: React.FC = () => {
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button
-                  onClick={() => setEditingField(null)}
-                  className="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors"
-                >
-                  Cancel
-                </button>
+                <Button onClick={() => setEditingField(null)} className="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">Cancel</Button>
                 <button
                   onClick={(e) => {
                     const input = (e.currentTarget.parentElement?.previousElementSibling?.querySelector('input') as HTMLInputElement);
@@ -380,7 +375,7 @@ const SupplierDetail: React.FC = () => {
                   <p className="text-[11px] font-bold text-slate-400 uppercase mt-1 tracking-wider">Items regularly sourced</p>
                 </div>
               </div>
-              <button className="text-[10px] font-black text-primary dark:text-primary uppercase tracking-widest hover:underline">View History</button>
+              <Button className="text-[10px] font-black text-primary dark:text-primary uppercase tracking-widest hover:underline">View History</Button>
             </div>
             {supplier.itemsSupplied && supplier.itemsSupplied.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

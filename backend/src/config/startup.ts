@@ -12,7 +12,7 @@
 
 import mongoose, { Model } from 'mongoose';
 import { Server } from 'http';
-import { error as logError, warn } from './logger.js';
+import { error as logError, warn, info } from './logger.js';
 
 // Types
 interface StartupChecks {
@@ -63,7 +63,7 @@ type ValidateIndexesFn = (models: Model<any>[]) => Promise<void>;
  * Call before starting server
  */
 export const runStartupChecks = async (): Promise<StartupChecks> => {
-    console.log('🔍 Running startup self-checks...\n');
+    info('🔍 Running startup self-checks...\n');
 
     const checks: StartupChecks = {
         environment: false,
@@ -80,7 +80,7 @@ export const runStartupChecks = async (): Promise<StartupChecks> => {
         if (missing.length > 0) {
             warn(`Environment check: Missing variables: ${missing.join(', ')}`);
         } else {
-            console.log('✅ Environment: All required variables present');
+            info('✅ Environment: All required variables present');
             checks.environment = true;
         }
     } catch (err) {
@@ -90,7 +90,7 @@ export const runStartupChecks = async (): Promise<StartupChecks> => {
     // 2. Database connection
     try {
         if (mongoose.connection.readyState === 1) {
-            console.log('✅ Database: Connected');
+            info('✅ Database: Connected');
             checks.database = true;
 
             // Run database safety checks
@@ -125,7 +125,7 @@ export const runStartupChecks = async (): Promise<StartupChecks> => {
         const cacheModule = await import('./cache.js');
         const redisClient = cacheModule.default?.redisClient || cacheModule.redisClient;
         if (redisClient?.status === 'ready') {
-            console.log('✅ Redis: Connected');
+            info('✅ Redis: Connected');
             checks.redis = true;
         } else {
             warn('Redis: Not connected (cache and queue features disabled)');
@@ -137,7 +137,7 @@ export const runStartupChecks = async (): Promise<StartupChecks> => {
     // 4. Email configuration (optional)
     try {
         if (process.env.SMTP_HOST && process.env.SMTP_USER) {
-            console.log('✅ Email: Configured');
+            info('✅ Email: Configured');
             checks.email = true;
         } else {
             warn('Email: Not configured (email features disabled)');
@@ -146,8 +146,8 @@ export const runStartupChecks = async (): Promise<StartupChecks> => {
         warn(`Email check failed: ${(err as Error).message}`);
     }
 
-    console.log('\n📊 Startup checks summary:', checks);
-    console.log('');
+    info('\n📊 Startup checks summary:', checks);
+    info('');
 
     return checks;
 };
@@ -214,17 +214,17 @@ export const setupGracefulShutdown = (server: Server): void => {
         if (isShuttingDown) return;
         isShuttingDown = true;
 
-        console.log(`\n📦 Received ${signal}, starting graceful shutdown...`);
+        info(`\n📦 Received ${signal}, starting graceful shutdown...`);
 
         // 1. Stop accepting new connections
         server.close(() => {
-            console.log('✅ HTTP server closed');
+            info('✅ HTTP server closed');
         });
 
         // 2. Close database connection
         try {
             await mongoose.connection.close();
-            console.log('✅ Database connection closed');
+            info('✅ Database connection closed');
         } catch (err) {
             logError('Error closing database:', { error: (err as Error).message });
         }
@@ -234,14 +234,14 @@ export const setupGracefulShutdown = (server: Server): void => {
             const cacheModule = await import('./cache.js');
             const redisClient = cacheModule.default?.redisClient || cacheModule.redisClient;
             await redisClient?.quit();
-            console.log('✅ Redis connection closed');
+            info('✅ Redis connection closed');
         } catch (err) {
             // Redis might not be initialized
         }
 
         // 4. Wait for in-flight requests (max 10s)
         setTimeout(() => {
-            console.log('✅ Graceful shutdown complete');
+            info('✅ Graceful shutdown complete');
             process.exit(0);
         }, 10000);
     };

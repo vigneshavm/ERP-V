@@ -66,6 +66,11 @@ export class SerializedUnitService {
         return created;
     }
 
+    /** One unit of an item, only if it belongs to the tenant (null when not found). */
+    async findUnitOfItem(unitId: string, itemId: string, tenantId: string): Promise<ISerializedUnit | null> {
+        return SerializedUnit.findOne({ _id: unitId, tenantId, itemId });
+    }
+
     async getUnitsByItem(itemId: string, tenantId: string, status?: string): Promise<ISerializedUnit[]> {
         const query: Record<string, any> = { itemId, tenantId };
         if (status) query.status = status;

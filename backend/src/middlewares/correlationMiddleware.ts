@@ -12,6 +12,7 @@
 import { Request, Response, NextFunction } from "express";
 import { v4 as uuidv4 } from 'uuid';
 import { AsyncLocalStorage } from 'async_hooks';
+import { info, error } from '../config/logger.js';
 
 // AsyncLocalStorage for request context propagation
 const asyncLocalStorage = new AsyncLocalStorage<any>();
@@ -114,24 +115,24 @@ export const trace = async <T>(operationName: string, fn: () => Promise<T>): Pro
         const result = await fn();
         const duration = Date.now() - startTime;
 
-        console.log(`[TRACE] ${operationName} completed in ${duration}ms`, {
+        info(`[TRACE] ${operationName} completed in ${duration}ms`, {
             correlationId: context?.correlationId,
             duration,
             success: true,
         });
 
         return result;
-    } catch (error: any) {
+    } catch (err: any) {
         const duration = Date.now() - startTime;
 
-        console.error(`[TRACE] ${operationName} failed in ${duration}ms`, {
+        error(`[TRACE] ${operationName} failed in ${duration}ms`, {
             correlationId: context?.correlationId,
             duration,
             success: false,
-            error: error.message,
+            error: err.message,
         });
 
-        throw error;
+        throw err;
     }
 };
 

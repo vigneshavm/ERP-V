@@ -4,8 +4,9 @@
  * Pure functions only -- no DB access.
  */
 import { filterByPurchaseDate, type StockAgeRow } from "./stockAgeBuckets.js";
+import { round2 } from "../../../utils/typeConversion.js";
+import { resolveTablePagination } from "../../../utils/paginationUtils.js";
 
-const round2 = (n: number): number => Math.round(n * 100) / 100;
 const round3 = (n: number): number => Math.round(n * 1000) / 1000;
 
 export interface StockGroup {
@@ -68,9 +69,7 @@ interface PageQuery {
 }
 
 function paginate<T>(rows: T[], q: PageQuery): { items: T[]; pagination: { page: number; limit: number; total: number; pages: number } } {
-    const limit = Math.min(200, Math.max(1, parseInt(String(q.limit)) || 50));
-    const pages = Math.max(1, Math.ceil(rows.length / limit));
-    const page = Math.min(pages, Math.max(1, parseInt(String(q.page)) || 1));
+    const { page, limit, pages } = resolveTablePagination(rows.length, q);
     return { items: rows.slice((page - 1) * limit, page * limit), pagination: { page, limit, total: rows.length, pages } };
 }
 

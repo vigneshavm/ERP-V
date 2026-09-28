@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from "../../redux/store";
 import {
-    Search,
     Gift,
     Star,
     Settings,
@@ -13,6 +12,7 @@ import {
     ArrowDownRight,
     Download
 } from 'lucide-react';
+import { Button, Card, Input } from '@/components/shared';
 import PageHeader from '../../components/shared/Layout/PageHeader';
 
 interface LoyaltyTransaction {
@@ -115,109 +115,119 @@ const LoyaltyPoints: React.FC = () => {
                 title="Loyalty Points Program"
                 description="Reward customers and build loyalty"
                 actions={<div className="flex gap-2">
-                    <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
-                        <Download className="w-4 h-4" /> Export
-                    </button>
-                    <button className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2">
-                        <Award className="w-4 h-4" /> Award Bonus Points
-                    </button>
+                    <Button variant="secondary" size="md" icon={<Download className="w-4 h-4" />}>
+                        Export
+                    </Button>
+                    <Button variant="primary" size="md" icon={<Award className="w-4 h-4" />}>
+                        Award Bonus Points
+                    </Button>
                 </div>}
             />
 
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase">Total Points Issued</p>
-                            <p className="text-2xl font-bold text-primary mt-1">{totalPointsIssued.toLocaleString()}</p>
+                <Card variant="default" size="md">
+                    <Card.Body>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-medium text-slate-500 uppercase">Total Points Issued</p>
+                                <p className="text-2xl font-bold text-primary mt-1">{totalPointsIssued.toLocaleString()}</p>
+                            </div>
+                            <div className="p-3 bg-primary/10 rounded-xl">
+                                <Coins className="w-6 h-6 text-primary" />
+                            </div>
                         </div>
-                        <div className="p-3 bg-primary/10 rounded-xl">
-                            <Coins className="w-6 h-6 text-primary" />
-                        </div>
-                    </div>
-                </div>
+                    </Card.Body>
+                </Card>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase">Points Redeemed</p>
-                            <p className="text-2xl font-bold text-success mt-1">{totalPointsRedeemed.toLocaleString()}</p>
+                <Card variant="default" size="md">
+                    <Card.Body>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-medium text-slate-500 uppercase">Points Redeemed</p>
+                                <p className="text-2xl font-bold text-success mt-1">{totalPointsRedeemed.toLocaleString()}</p>
+                            </div>
+                            <div className="p-3 bg-success/10 rounded-xl">
+                                <Gift className="w-6 h-6 text-success" />
+                            </div>
                         </div>
-                        <div className="p-3 bg-success/10 rounded-xl">
-                            <Gift className="w-6 h-6 text-success" />
-                        </div>
-                    </div>
-                </div>
+                    </Card.Body>
+                </Card>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase">Outstanding Points</p>
-                            <p className="text-2xl font-bold text-warning mt-1">{(totalPointsIssued - totalPointsRedeemed).toLocaleString()}</p>
+                <Card variant="default" size="md">
+                    <Card.Body>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-medium text-slate-500 uppercase">Outstanding Points</p>
+                                <p className="text-2xl font-bold text-warning mt-1">{(totalPointsIssued - totalPointsRedeemed).toLocaleString()}</p>
+                            </div>
+                            <div className="p-3 bg-warning/10 rounded-xl">
+                                <Star className="w-6 h-6 text-warning" />
+                            </div>
                         </div>
-                        <div className="p-3 bg-warning/10 rounded-xl">
-                            <Star className="w-6 h-6 text-warning" />
-                        </div>
-                    </div>
-                </div>
+                    </Card.Body>
+                </Card>
 
-                <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase">Active Members</p>
-                            <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{activeMembers}</p>
+                <Card variant="default" size="md">
+                    <Card.Body>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-medium text-slate-500 uppercase">Active Members</p>
+                                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{activeMembers}</p>
+                            </div>
+                            <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl">
+                                <Users className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+                            </div>
                         </div>
-                        <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl">
-                            <Users className="w-6 h-6 text-slate-600 dark:text-slate-400" />
-                        </div>
-                    </div>
-                </div>
+                    </Card.Body>
+                </Card>
             </div>
 
             {/* Tiers Overview */}
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-                <h3 className="font-bold text-slate-900 dark:text-white mb-4">Loyalty Tiers</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {LOYALTY_TIERS.map(tier => {
-                        const memberCount = customerLoyalty.filter(c => c.tier.name === tier.name).length;
-                        return (
-                            <div key={tier.name} className="p-4 rounded-xl border-2" style={{ borderColor: tier.color }}>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: tier.color }}>
-                                        <Star className="w-4 h-4 text-white" />
+            <Card variant="default" size="md">
+                <Card.Body>
+                    <h3 className="font-bold text-slate-900 dark:text-white mb-4">Loyalty Tiers</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {LOYALTY_TIERS.map(tier => {
+                            const memberCount = customerLoyalty.filter(c => c.tier.name === tier.name).length;
+                            return (
+                                <div key={tier.name} className="p-4 rounded-xl border-2" style={{ borderColor: tier.color }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: tier.color }}>
+                                            <Star className="w-4 h-4 text-white" />
+                                        </div>
+                                        <span className="font-bold" style={{ color: tier.color }}>{tier.name}</span>
                                     </div>
-                                    <span className="font-bold" style={{ color: tier.color }}>{tier.name}</span>
+                                    <div className="text-sm space-y-1">
+                                        <p className="text-slate-500">{tier.minPoints}+ points</p>
+                                        <p className="text-slate-600 dark:text-slate-400">{tier.discountPercent}% discount</p>
+                                        <p className="text-slate-600 dark:text-slate-400">{tier.pointsMultiplier}x points</p>
+                                        <p className="font-bold text-primary mt-2">{memberCount} members</p>
+                                    </div>
                                 </div>
-                                <div className="text-sm space-y-1">
-                                    <p className="text-slate-500">{tier.minPoints}+ points</p>
-                                    <p className="text-slate-600 dark:text-slate-400">{tier.discountPercent}% discount</p>
-                                    <p className="text-slate-600 dark:text-slate-400">{tier.pointsMultiplier}x points</p>
-                                    <p className="font-bold text-primary mt-2">{memberCount} members</p>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
+                            );
+                        })}
+                    </div>
+                </Card.Body>
+            </Card>
 
             {/* Search */}
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="relative max-w-md">
-                    <input
-                        type="text"
-                        placeholder="Search member by name or phone..."
-                        className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                    />
-                    <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
-                </div>
-            </div>
+            <Card variant="default" size="md">
+                <Card.Body>
+                    <div className="max-w-md">
+                        <Input
+                            type="text"
+                            placeholder="Search member by name or phone..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                </Card.Body>
+            </Card>
 
             {/* Members Table */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div className="hidden md:block overflow-x-auto">
+            <Card variant="default" size="lg">
+                <Card.Body>
                     <table className="w-full text-left text-sm">
                         <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 uppercase text-xs">
                             <tr>
@@ -268,69 +278,17 @@ const LoyaltyPoints: React.FC = () => {
                                         </td>
                                         <td className="p-4 text-right font-bold text-primary">{customer.balance.toLocaleString()}</td>
                                         <td className="p-4 text-center">
-                                            <button className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-lg hover:bg-primary/20">
+                                            <Button variant="primary" size="sm" fullWidth>
                                                 View History
-                                            </button>
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))
                             )}
                         </tbody>
                     </table>
-                </div>
-
-                {/* Mobile View */}
-                <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-                    {filteredCustomers.length === 0 ? (
-                        <div className="p-8 text-center text-slate-500">No members found</div>
-                    ) : (
-                        filteredCustomers.slice(0, 20).map(customer => (
-                            <div key={customer.id} className="p-4">
-                                <div className="flex justify-between items-center mb-2">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: customer.tier.color }}>
-                                            <span className="text-white font-bold">{customer.name.charAt(0)}</span>
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-slate-900 dark:text-white">{customer.name}</p>
-                                            <span className="text-[10px] px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: customer.tier.color }}>
-                                                {customer.tier.name}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg">
-                                    <div className="text-center">
-                                        <p className="text-[10px] text-slate-500">Earned</p>
-                                        <p className="font-bold text-success">{customer.earned}</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-[10px] text-slate-500">Redeemed</p>
-                                        <p className="font-bold text-error">{customer.redeemed}</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-[10px] text-slate-500">Balance</p>
-                                        <p className="font-bold text-primary">{customer.balance}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-            </div>
-
-            {/* Program Rules */}
-            <div className="bg-gradient-to-r from-primary/10 to-warning/10 p-4 rounded-xl border border-primary/20">
-                <h4 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <Settings className="w-4 h-4 text-primary" /> Program Rules
-                </h4>
-                <ul className="text-sm text-slate-600 dark:text-slate-400 mt-2 space-y-1">
-                    <li>• Earn <strong>1 point for every ₹100</strong> spent</li>
-                    <li>• Points can be redeemed at <strong>1 point = ₹1</strong></li>
-                    <li>• Points expire after <strong>12 months</strong> of inactivity</li>
-                    <li>• Higher tiers earn bonus multipliers on all purchases</li>
-                </ul>
-            </div>
+                </Card.Body>
+            </Card>
         </div>
     );
 };

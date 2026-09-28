@@ -10,6 +10,7 @@
 import mongoose from 'mongoose';
 import { Application } from 'express';
 import { Server } from 'http';
+import { info, error as logError } from './logger.js';
 
 // Types
 interface CheckResult {
@@ -64,7 +65,7 @@ type ValidateLoggingConfigurationFn = () => boolean;
  * @returns Check results
  */
 export const runPreDeployChecks = async (app: Application): Promise<PreDeployResults> => {
-    console.log('\n🔍 Running pre-deploy safety checks...\n');
+    info('\n🔍 Running pre-deploy safety checks...\n');
 
     const results: PreDeployResults = {
         passed: true,
@@ -84,7 +85,7 @@ export const runPreDeployChecks = async (app: Application): Promise<PreDeployRes
             results.passed = false;
         } else {
             results.checks.environment = { passed: true };
-            console.log('✅ Environment variables validated');
+            info('✅ Environment variables validated');
         }
     } catch (err) {
         results.checks.environment = { passed: false, error: (err as Error).message };
@@ -106,7 +107,7 @@ export const runPreDeployChecks = async (app: Application): Promise<PreDeployRes
         }
 
         results.checks.database = { passed: true };
-        console.log('✅ Database connection validated');
+        info('✅ Database connection validated');
     } catch (err) {
         results.checks.database = { passed: false, error: (err as Error).message };
         results.passed = false;
@@ -126,7 +127,7 @@ export const runPreDeployChecks = async (app: Application): Promise<PreDeployRes
             results.passed = false;
         } else {
             results.checks.authorization = { passed: true };
-            console.log('✅ Authorization coverage validated');
+            info('✅ Authorization coverage validated');
         }
     } catch (err) {
         results.checks.authorization = { passed: false, error: (err as Error).message };
@@ -146,7 +147,7 @@ export const runPreDeployChecks = async (app: Application): Promise<PreDeployRes
             results.passed = false;
         } else {
             results.checks.audit = { passed: true };
-            console.log('✅ Audit logging validated');
+            info('✅ Audit logging validated');
         }
     } catch (err) {
         results.checks.audit = { passed: false, error: (err as Error).message };
@@ -167,19 +168,19 @@ export const runPreDeployChecks = async (app: Application): Promise<PreDeployRes
             results.passed = false;
         } else {
             results.checks.logging = { passed: true };
-            console.log('✅ Logging configuration validated');
+            info('✅ Logging configuration validated');
         }
     } catch (err) {
         results.checks.logging = { passed: false, error: (err as Error).message };
         results.passed = false;
     }
 
-    console.log('\n📊 Pre-deploy checks summary:');
-    console.log(`  Passed: ${Object.values(results.checks).filter(c => c?.passed).length}`);
-    console.log(`  Failed: ${Object.values(results.checks).filter(c => !c?.passed).length}\n`);
+    info('\n📈 Pre-deploy checks summary:');
+    info(`  Passed: ${Object.values(results.checks).filter(c => c?.passed).length}`);
+    info(`  Failed: ${Object.values(results.checks).filter(c => !c?.passed).length}\n`);
 
     if (!results.passed && process.env.NODE_ENV === 'production') {
-        console.error('❌ DEPLOYMENT BLOCKED: Pre-deploy checks failed\n');
+        logError('❌ DEPLOYMENT BLOCKED: Pre-deploy checks failed\n');
         throw new Error('Pre-deploy checks failed');
     }
 
@@ -194,7 +195,7 @@ export const runPreDeployChecks = async (app: Application): Promise<PreDeployRes
  * @returns Test results
  */
 export const runPostDeploySmokeTests = async (baseUrl: string): Promise<PostDeployResults> => {
-    console.log('\n🔍 Running post-deploy smoke tests...\n');
+    info('\n🔍 Running post-deploy smoke tests...\n');
 
     const results: PostDeployResults = {
         passed: true,
@@ -211,7 +212,7 @@ export const runPostDeploySmokeTests = async (baseUrl: string): Promise<PostDepl
         }
 
         results.tests.health = { passed: true, status: data.status };
-        console.log(`✅ Health check passed (${data.status})`);
+        info(`✅ Health check passed (${data.status})`);
     } catch (err) {
         results.tests.health = { passed: false, error: (err as Error).message };
         results.passed = false;
@@ -224,7 +225,7 @@ export const runPostDeploySmokeTests = async (baseUrl: string): Promise<PostDepl
         if (response.status === 401) {
             // Expected - requires auth
             results.tests.csrf = { passed: true };
-            console.log('✅ CSRF endpoint accessible');
+            info('✅ CSRF endpoint accessible');
         } else {
             throw new Error(`Unexpected status: ${response.status}`);
         }
@@ -240,7 +241,7 @@ export const runPostDeploySmokeTests = async (baseUrl: string): Promise<PostDepl
 
             if (response.status === 200) {
                 results.tests.metrics = { passed: true };
-                console.log('✅ Metrics endpoint accessible');
+                info('✅ Metrics endpoint accessible');
             } else {
                 throw new Error(`Metrics endpoint failed: ${response.status}`);
             }
@@ -252,12 +253,12 @@ export const runPostDeploySmokeTests = async (baseUrl: string): Promise<PostDepl
         results.passed = false;
     }
 
-    console.log('\n📊 Post-deploy smoke tests summary:');
-    console.log(`  Passed: ${Object.values(results.tests).filter(t => t?.passed).length}`);
-    console.log(`  Failed: ${Object.values(results.tests).filter(t => !t?.passed).length}\n`);
+    info('\n📈 Post-deploy smoke tests summary:');
+    info(`  Passed: ${Object.values(results.tests).filter(t => t?.passed).length}`);
+    info(`  Failed: ${Object.values(results.tests).filter(t => !t?.passed).length}\n`);
 
     if (!results.passed) {
-        console.error('❌ POST-DEPLOY VALIDATION FAILED\n');
+        logError('❌ POST-DEPLOY VALIDATION FAILED\n');
     }
 
     return results;
@@ -286,8 +287,8 @@ export const validateGracefulShutdown = (server: Server): Promise<ShutdownResult
         // Initiate shutdown
         server.close(() => {
             const duration = Date.now() - startTime;
-            console.log(`✅ Graceful shutdown completed in ${duration}ms`);
-            console.log(`   In-flight requests at shutdown: ${requestsInFlight}`);
+            info(`✅ Graceful shutdown completed in ${duration}ms`);
+            info(`   In-flight requests at shutdown: ${requestsInFlight}`);
             resolve({ duration, requestsInFlight });
         });
 

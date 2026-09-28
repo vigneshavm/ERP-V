@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Palette, Sun, Moon, Shield, Upload, User, Layout as LayoutIcon, Camera, Languages } from 'lucide-react';
-import { PersonalizationTabProps } from './types';
+import { PersonalizationTabProps } from './types';import { Button } from '@/components/shared/Button';
+
 
 const COLORS = [
     { name: 'Indigo Signature', hex: '#4f46e5' },
@@ -126,7 +127,7 @@ const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
                     </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row items-center gap-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-sm">
+                <div className="flex flex-col md:flex-row items-center gap-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-sm">
                     <div className="relative group">
                         <div className="w-32 h-32 bg-slate-100 dark:bg-slate-800 rounded-full border-4 border-slate-50 dark:border-slate-700 shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:rotate-6">
                             {userLogo ? (
@@ -153,9 +154,7 @@ const PersonalizationTab: React.FC<PersonalizationTabProps> = ({
                             <label htmlFor="user-logo-upload" className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-primary text-white rounded-sm text-xs font-black tracking-widest transition-all shadow-lg active:scale-95">
                                 <Upload className="w-4 h-4" /> UPLOAD IMAGE
                             </label>
-                            <button className="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 rounded-sm text-xs font-black tracking-widest hover:text-danger transition-colors">
-                                RESET
-                            </button>
+                            <Button className="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 rounded-sm text-xs font-black tracking-widest hover:text-danger transition-colors">RESET</Button>
                         </div>
                     </div>
                 </div>

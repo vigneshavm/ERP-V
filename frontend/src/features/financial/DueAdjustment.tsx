@@ -13,6 +13,7 @@ import {
 } from "../../redux/slices/dueSlice";
 import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import { Button, Input, Select, Textarea } from '@/components/shared';
 
 import { RootState } from "../../redux/store";
 
@@ -140,12 +141,9 @@ const DueAdjustment = () => {
                     <p className="text-slate-500 dark:text-[rgb(var(--color-text-secondary))]">
                         Customer not found
                     </p>
-                    <button
-                        onClick={() => navigate("/customers")}
-                        className="mt-4 text-primary dark:text-[rgb(var(--color-primary))] hover:text-primary dark:hover:text-[rgb(var(--color-primary-hover))]"
-                    >
+                    <Button variant="tertiary" size="md" onClick={() => navigate("/customers")} className="mt-4">
                         Back to Customers
-                    </button>
+                    </Button>
                 </div>
             </Layout>
         );
@@ -191,37 +189,21 @@ const DueAdjustment = () => {
                     <form onSubmit={handleSubmit}>
                         {/* Adjustment Amount */}
                         <div className="mb-6">
-                            <label
-                                htmlFor="adjustmentAmount"
-                                className="block text-sm font-medium text-slate-700 dark:text-[rgb(var(--color-text))] mb-2"
-                            >
-                                Adjustment Amount <span className="text-danger">*</span>
-                            </label>
-                            <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-[rgb(var(--color-text-secondary))]">
-                                    ₹
-                                </span>
-                                <input
-                                    type="number"
-                                    id="adjustmentAmount"
-                                    name="adjustmentAmount"
-                                    value={formData.adjustmentAmount}
-                                    onChange={handleChange}
-                                    step="0.01"
-                                    min="0"
-                                    max={customer.dues}
-                                    className={`w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))] ${errors.adjustmentAmount
-                                        ? "border-danger"
-                                        : "border-slate-300"
-                                        }`}
-                                    placeholder="0.00"
-                                />
-                            </div>
-                            {errors.adjustmentAmount && (
-                                <p className="mt-1 text-sm text-danger dark:text-danger">
-                                    {errors.adjustmentAmount}
-                                </p>
-                            )}
+                            <Input
+                                label="Adjustment Amount"
+                                required
+                                type="number"
+                                id="adjustmentAmount"
+                                name="adjustmentAmount"
+                                value={formData.adjustmentAmount}
+                                onChange={handleChange}
+                                step="0.01"
+                                min="0"
+                                max={customer.dues}
+                                error={errors.adjustmentAmount}
+                                icon={<span className="text-slate-500 dark:text-[rgb(var(--color-text-secondary))]">₹</span>}
+                                placeholder="0.00"
+                            />
                             <p className="mt-1 text-xs text-slate-500 dark:text-[rgb(var(--color-text-secondary))]">
                                 Maximum: ₹{customer.dues.toFixed(2)}
                             </p>
@@ -235,19 +217,17 @@ const DueAdjustment = () => {
                             >
                                 Adjustment Method <span className="text-danger">*</span>
                             </label>
-                            <select
-                                id="adjustmentMethod"
-                                name="adjustmentMethod"
+                            <Select
+                                options={[
+                                    { value: 'cash', label: 'Cash' },
+                                    { value: 'bank', label: 'Bank Transfer' },
+                                    { value: 'credit', label: 'Credit' },
+                                    { value: 'original_payment', label: 'Original Payment Method' },
+                                ]}
                                 value={formData.adjustmentMethod}
-                                onChange={handleChange}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))] ${errors.adjustmentMethod ? "border-danger" : "border-slate-300"
-                                    }`}
-                            >
-                                <option value="cash">Cash</option>
-                                <option value="bank">Bank Transfer</option>
-                                <option value="credit">Credit</option>
-                                <option value="original_payment">Original Payment Method</option>
-                            </select>
+                                onChange={(value) => handleChange({ target: { name: 'adjustmentMethod', value: typeof value === 'string' ? value : value[0] } } as any)}
+                                status={errors.adjustmentMethod ? 'error' : 'default'}
+                            />
                             {errors.adjustmentMethod && (
                                 <p className="mt-1 text-sm text-danger dark:text-danger">
                                     {errors.adjustmentMethod}
@@ -257,65 +237,38 @@ const DueAdjustment = () => {
 
                         {/* Notes */}
                         <div className="mb-6">
-                            <label
-                                htmlFor="notes"
-                                className="block text-sm font-medium text-slate-700 dark:text-[rgb(var(--color-text))] mb-2"
-                            >
-                                Notes (Optional)
-                            </label>
-                            <textarea
+                            <Textarea
+                                label="Notes (Optional)"
                                 id="notes"
                                 name="notes"
                                 value={formData.notes}
                                 onChange={handleChange}
-                                rows={3}
-                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-[rgb(var(--color-primary))] focus:border-transparent dark:bg-[rgb(var(--color-input))] dark:border-[rgb(var(--color-border))] dark:text-[rgb(var(--color-text))]"
+                                minRows={3}
                                 placeholder="Add any additional notes..."
                             />
                         </div>
 
                         {/* Action Buttons */}
                         <div className="flex gap-4">
-                            <button
+                            <Button
                                 type="button"
+                                variant="secondary"
+                                size="lg"
                                 onClick={() => navigate(`/customers/${id}`)}
-                                className="flex-1 px-6 py-3 border border-slate-300 dark:border-[rgb(var(--color-border))] text-slate-700 dark:text-[rgb(var(--color-text))] rounded-lg hover:bg-slate-50 dark:hover:bg-[rgb(var(--color-input))] transition-colors"
+                                fullWidth
                             >
                                 Cancel
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 type="submit"
+                                variant="primary"
+                                size="lg"
                                 disabled={dueLoading || customer.dues <= 0}
-                                className="flex-1 px-6 py-3 bg-primary dark:bg-[rgb(var(--color-primary))] text-white rounded-lg hover:bg-primary-hover dark:hover:bg-[rgb(var(--color-primary-hover))] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                                loading={dueLoading}
+                                fullWidth
                             >
-                                {dueLoading ? (
-                                    <>
-                                        <svg
-                                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <circle
-                                                className="opacity-25"
-                                                cx="12"
-                                                cy="12"
-                                                r="10"
-                                                stroke="currentColor"
-                                                strokeWidth="4"
-                                            ></circle>
-                                            <path
-                                                className="opacity-75"
-                                                fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                            ></path>
-                                        </svg>
-                                        Processing...
-                                    </>
-                                ) : (
-                                    "Submit Adjustment"
-                                )}
-                            </button>
+                                Submit Adjustment
+                            </Button>
                         </div>
                     </form>
                 </div>

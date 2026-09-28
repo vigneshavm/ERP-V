@@ -5,6 +5,7 @@ import path from 'path';
 
 // Fix for referenced imports in models
 import { fileURLToPath } from 'url';
+import { info } from '../config/logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -25,19 +26,19 @@ const Bill = mongoose.model('Bill', BillSchema);
 
 async function checkDiscrepancy() {
     try {
-        console.log("Current Dir:", __dirname);
-        console.log("Env Path:", path.resolve(__dirname, '../../.env'));
+        info("Current Dir:", __dirname);
+        info("Env Path:", path.resolve(__dirname, '../../.env'));
 
         if (!process.env.MONGO_URI) {
             console.error("❌ MONGO_URI is missing!");
             process.exit(1);
         } else {
-            console.log("✅ MONGO_URI found (starts with):", process.env.MONGO_URI.substring(0, 15) + "...");
+            info("✅ MONGO_URI found (starts with):", process.env.MONGO_URI.substring(0, 15) + "...");
         }
 
-        console.log("Connecting to DB...");
+        info("Connecting to DB...");
         await mongoose.connect(process.env.MONGO_URI);
-        console.log("Connected to DB");
+        info("Connected to DB");
 
 
         // Find Bills without purchaseOrderId
@@ -49,17 +50,17 @@ async function checkDiscrepancy() {
             status: { $nin: ['draft', 'rejected', 'cancelled'] }
         }).populate('supplier');
 
-        console.log(`Found ${directBills.length} Direct Bills (No PO Linked)`);
+        info(`Found ${directBills.length} Direct Bills (No PO Linked)`);
 
         let totalDirectValue = 0;
         directBills.forEach(b => {
             const supName = (b.supplier as any)?.businessName || 'Unknown';
-            console.log(`- Bill: ${b.billNo} | Amount: ${b.amount} | Supplier: ${supName}`);
+            info(`- Bill: ${b.billNo} | Amount: ${b.amount} | Supplier: ${supName}`);
             totalDirectValue += b.amount || 0;
         });
 
-        console.log(`Total Value of Direct Bills: ${totalDirectValue}`);
-        console.log("These amounts appear in Supplier Directory but NOT in Purchase Register.");
+        info(`Total Value of Direct Bills: ${totalDirectValue}`);
+        info("These amounts appear in Supplier Directory but NOT in Purchase Register.");
 
         process.exit(0);
     } catch (error) {

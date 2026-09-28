@@ -5,6 +5,7 @@ import { getAllCustomers, reset } from "../../redux/slices/customerSlice";
 import Layout from "../../components/shared/Layout/index";
 import { RootState, AppDispatch } from "../../redux/store";
 import { Customer } from "./types";
+import { Input } from '@/components/shared/Input';
 
 const CustomersWithDues = () => {
     const navigate = useNavigate();

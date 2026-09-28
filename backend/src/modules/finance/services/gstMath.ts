@@ -6,6 +6,10 @@
  * report total equals the sum of its unrounded lines, not the sum of rounded sub-totals.
  */
 
+import { toNumber, round2 } from "../../../utils/typeConversion.js";
+
+export { round2 };
+
 export type GstSource = "shop" | "erp";
 
 /** GST slabs in force; anything else is treated as a data problem, not a rate. */
@@ -40,13 +44,6 @@ export interface TaxTotals {
     igst: number;
     tax: number;
 }
-
-export const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
-
-const num = (v: unknown): number => {
-    const n = typeof v === "number" ? v : Number(String(v ?? "").trim());
-    return Number.isFinite(n) ? n : 0;
-};
 
 /**
  * The line's GST rate. Prefers the stored rate when it is a real slab; otherwise infers it from the
@@ -83,8 +80,8 @@ export function bucketFromTaxInclusive(input: {
     source: GstSource; month: string; storedRate: unknown; hsn: unknown; interState: boolean;
     lines: unknown; qty: unknown; value: unknown; tax: unknown;
 }): TaxBucket {
-    const value = num(input.value);
-    const tax = num(input.tax);
+    const value = toNumber(input.value);
+    const tax = toNumber(input.tax);
     const taxable = value - tax;
     return {
         source: input.source,
@@ -92,8 +89,8 @@ export function bucketFromTaxInclusive(input: {
         rate: resolveRate(input.storedRate, taxable, tax),
         hsn: normaliseHsn(input.hsn),
         interState: input.interState,
-        lines: num(input.lines),
-        qty: num(input.qty),
+        lines: toNumber(input.lines),
+        qty: toNumber(input.qty),
         value,
         taxable,
         ...splitTax(tax, input.interState),

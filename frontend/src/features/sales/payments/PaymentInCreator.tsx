@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
+import { Button, Card, Input, Select } from '../../../components/shared';
 import {
     Receipt, Search, Plus, Trash2,
     Calendar, User, CreditCard, Banknote, Smartphone, Building2,
@@ -215,33 +216,33 @@ const PaymentInCreator: React.FC = () => {
     return (
         <div className="h-full flex flex-col glass-panel dark:bg-slate-900">
             {/* Header */}
-            <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
-                <div className="flex flex-wrap items-center justify-between gap-4">
+            <Card variant="default" size="lg" className="border-b border-slate-200 dark:border-slate-800 rounded-none">
+              <Card.Body className="flex flex-wrap items-center justify-between gap-4 p-4">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <Receipt className="w-5 h-5 text-success" />
                             <span className="font-bold text-lg">Receipt</span>
                         </div>
-                        <span className="px-2 py-1 rounded-full text-xs font-bold bg-success-soft text-success dark:bg-success-soft dark:text-success">
+                        <span className="px-2 py-1 rounded-full text-xs font-bold bg-success/10 text-success dark:bg-success/10 dark:text-success">
                             New Receipt
                         </span>
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4 text-secondary opacity-50" />
-                            <input
+                            <Input
                                 type="date"
                                 value={receiptDate}
                                 onChange={e => setReceiptDate(e.target.value)}
-                                className="input text-sm w-36"
+                                className="w-36"
                             />
                         </div>
                         <div className="text-muted">
                             <span className="font-medium">By:</span> {user?.name || 'Admin'}
                         </div>
                     </div>
-                </div>
-            </div>
+              </Card.Body>
+            </Card>
 
             <div className="flex-1 overflow-auto p-4">
                 {loadError && (
@@ -251,258 +252,305 @@ const PaymentInCreator: React.FC = () => {
                     {/* Left Column */}
                     <div className="space-y-4">
                         {/* Customer Section */}
-                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-bold text-sm flex items-center gap-2">
-                                    <User className="w-4 h-4" /> Customer
-                                </h3>
-                                {customer && !isCustomerLocked && (
-                                    <button onClick={() => setCustomer(null)} className="text-xs text-danger hover:underline">
-                                        Change
-                                    </button>
-                                )}
-                            </div>
-
-                            {customer ? (
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="font-bold text-lg">{customer.name}</p>
-                                            <p className="text-sm text-muted ">{customer.phone}</p>
-                                        </div>
-                                        {isCustomerLocked && (
-                                            <span className="text-xs text-warning bg-warning-soft dark:bg-warning-soft px-2 py-1 rounded">
-                                                Locked
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div className="p-3 bg-danger/10 dark:bg-danger-soft rounded-lg">
-                                            <p className="text-xs text-danger dark:text-danger font-medium">Outstanding</p>
-                                            <p className="text-lg font-bold text-danger dark:text-danger">
-                                                {formatCurrency(customer.outstandingBalance)}
-                                            </p>
-                                        </div>
-                                        <div className="p-3 bg-success-soft dark:bg-success-soft rounded-lg">
-                                            <p className="text-xs text-success dark:text-success font-medium">Advance</p>
-                                            <p className="text-lg font-bold text-success dark:text-success">
-                                                {formatCurrency(customer.advanceBalance)}
-                                            </p>
-                                        </div>
-                                    </div>
+                        <Card variant="default" size="md">
+                            <Card.Body>
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="font-bold text-sm flex items-center gap-2">
+                                        <User className="w-4 h-4" /> Customer
+                                    </h3>
+                                    {customer && !isCustomerLocked && (
+                                        <Button
+                                            variant="danger"
+                                            size="sm"
+                                            onClick={() => setCustomer(null)}
+                                        >
+                                            Change
+                                        </Button>
+                                    )}
                                 </div>
-                            ) : (
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary opacity-50" />
-                                    <input
+
+                                {customer ? (
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="font-bold text-lg">{customer.name}</p>
+                                                <p className="text-sm text-muted ">{customer.phone}</p>
+                                            </div>
+                                            {isCustomerLocked && (
+                                                <span className="text-xs text-warning bg-warning/10 dark:bg-warning/10 px-2 py-1 rounded">
+                                                    Locked
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="p-3 bg-danger/10 dark:bg-danger/10 rounded-lg">
+                                                <p className="text-xs text-danger dark:text-danger font-medium">Outstanding</p>
+                                                <p className="text-lg font-bold text-danger dark:text-danger">
+                                                    {formatCurrency(customer.outstandingBalance)}
+                                                </p>
+                                            </div>
+                                            <div className="p-3 bg-success/10 dark:bg-success/10 rounded-lg">
+                                                <p className="text-xs text-success dark:text-success font-medium">Advance</p>
+                                                <p className="text-lg font-bold text-success dark:text-success">
+                                                    {formatCurrency(customer.advanceBalance)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <Input
                                         type="text"
                                         placeholder="Search customer by name or phone..."
                                         value={customerSearch}
                                         onChange={e => { setCustomerSearch(e.target.value); setShowCustomerDropdown(true); }}
                                         onFocus={() => setShowCustomerDropdown(true)}
-                                        className="input pl-10"
+                                        icon={<Search className="w-4 h-4" />}
                                     />
-                                    {showCustomerDropdown && filteredCustomers.length > 0 && (
-                                        <div className="absolute top-full left-0 right-0 glass-panel border border-default/30 rounded-lg shadow-xl mt-1 max-h-48 overflow-auto z-20">
-                                            {filteredCustomers.map(c => (
-                                                <button
-                                                    key={c.id}
-                                                    onClick={() => selectCustomer(c)}
-                                                    className="w-full text-left px-4 py-3 hover:bg-surface/60 border-b border-slate-100 dark:border-slate-700 last:border-0"
-                                                >
-                                                    <div className="flex justify-between">
-                                                        <span className="font-medium">{c.name}</span>
-                                                        <span className="text-xs text-danger">Due: {formatCurrency(c.outstandingBalance)}</span>
-                                                    </div>
+                                )}
+                                {showCustomerDropdown && filteredCustomers.length > 0 && (
+                                    <div className="absolute top-full left-0 right-0 glass-panel border border-default/30 rounded-lg shadow-xl mt-1 max-h-48 overflow-auto z-20">
+                                        {filteredCustomers.map(c => (
+                                            <Button
+                                                key={c.id}
+                                                variant="secondary"
+                                                size="md"
+                                                onClick={() => selectCustomer(c)}
+                                                className="w-full justify-between"
+                                            >
+                                                <div className="flex flex-col items-start">
+                                                    <span className="font-medium">{c.name}</span>
                                                     <span className="text-xs text-muted ">{c.phone}</span>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                                                </div>
+                                                <span className="text-xs text-danger">Due: {formatCurrency(c.outstandingBalance)}</span>
+                                            </Button>
+                                        ))}
+                                    </div>
+                                )}
+                            </Card.Body>
+                        </Card>
 
                         {/* Payment Methods */}
-                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-bold text-sm flex items-center gap-2">
-                                    <CreditCard className="w-4 h-4" /> Payment Methods
-                                </h3>
-                                <button onClick={addPaymentMethod} className="btn btn-sm btn-secondary">
-                                    <Plus className="w-4 h-4" /> Add
-                                </button>
-                            </div>
+                        <Card variant="default" size="md">
+                            <Card.Body>
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="font-bold text-sm flex items-center gap-2">
+                                        <CreditCard className="w-4 h-4" /> Payment Methods
+                                    </h3>
+                                    <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        icon={<Plus className="w-4 h-4" />}
+                                        onClick={addPaymentMethod}
+                                    >
+                                        Add
+                                    </Button>
+                                </div>
 
-                            <div className="space-y-3">
-                                {paymentMethods.map((pm, __idx) => {
-                                    const config = methodConfig[pm.method];
-                                    const Icon = config.icon;
-                                    return (
-                                        <div key={pm.id} className="grid grid-cols-12 gap-2 items-center p-3 glass-panel rounded-lg border border-default/30">
-                                            <div className="col-span-3">
-                                                <select
-                                                    value={pm.method}
-                                                    onChange={e => updatePaymentMethod(pm.id, 'method', e.target.value)}
-                                                    className="select text-sm"
-                                                >
-                                                    {Object.entries(methodConfig).map(([key, val]) => (
-                                                        <option key={key} value={key}>{val.label}</option>
-                                                    ))}
-                                                </select>
+                                <div className="space-y-3">
+                                    {paymentMethods.map((pm) => {
+                                        return (
+                                            <div key={pm.id} className="grid grid-cols-12 gap-2 items-center p-3 glass-panel rounded-lg border border-default/30">
+                                                <div className="col-span-3">
+                                                    <Select
+                                                        value={pm.method}
+                                                        onChange={(val) => updatePaymentMethod(pm.id, 'method', val as PaymentMethod['method'])}
+                                                        options={Object.entries(methodConfig).map(([key, val]) => ({
+                                                            label: val.label,
+                                                            value: key
+                                                        }))}
+                                                        size="sm"
+                                                    />
+                                                </div>
+                                                <div className="col-span-3">
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Amount"
+                                                        value={pm.amount || ''}
+                                                        onChange={e => updatePaymentMethod(pm.id, 'amount', parseFloat(e.target.value) || 0)}
+                                                        className="text-right"
+                                                    />
+                                                </div>
+                                                <div className="col-span-5">
+                                                    <Input
+                                                        type="text"
+                                                        placeholder="Reference (UTR, cheque no.)"
+                                                        value={pm.reference}
+                                                        onChange={e => updatePaymentMethod(pm.id, 'reference', e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="col-span-1 text-center">
+                                                    {paymentMethods.length > 1 && (
+                                                        <Button
+                                                            variant="danger"
+                                                            size="sm"
+                                                            icon={<Trash2 className="w-4 h-4" />}
+                                                            onClick={() => removePaymentMethod(pm.id)}
+                                                        />
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="col-span-3">
-                                                <input
-                                                    type="number"
-                                                    placeholder="Amount"
-                                                    value={pm.amount || ''}
-                                                    onChange={e => updatePaymentMethod(pm.id, 'amount', parseFloat(e.target.value) || 0)}
-                                                    className="input text-right"
-                                                />
-                                            </div>
-                                            <div className="col-span-5">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Reference (UTR, cheque no.)"
-                                                    value={pm.reference}
-                                                    onChange={e => updatePaymentMethod(pm.id, 'reference', e.target.value)}
-                                                    className="input text-sm"
-                                                />
-                                            </div>
-                                            <div className="col-span-1 text-center">
-                                                {paymentMethods.length > 1 && (
-                                                    <button onClick={() => removePaymentMethod(pm.id)} className="text-danger hover:text-danger">
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                                        );
+                                    })}
+                                </div>
 
-                            <label className="mt-3 flex items-center justify-between gap-3 text-sm">
-                                <span className="font-medium">Deposit to</span>
-                                <select value={depositAccount} onChange={e => setDepositAccount(e.target.value)} className="select text-sm w-56">
-                                    <option value="cash">Cash</option>
-                                    {banks.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-                                </select>
-                            </label>
+                                <div className="mt-3 flex items-center justify-between gap-3 text-sm">
+                                    <span className="font-medium">Deposit to</span>
+                                    <Select
+                                        label="Deposit Account"
+                                        value={depositAccount}
+                                        onChange={(value) => setDepositAccount(typeof value === 'string' ? value : value[0])}
+                                        options={[
+                                            { label: 'Cash', value: 'cash' },
+                                            ...banks.map(b => ({ label: b.name, value: b.id }))
+                                        ]}
+                                        size="sm"
+                                    />
+                                </div>
 
-                            <div className="mt-4 p-3 bg-success-soft dark:bg-success-soft rounded-lg flex justify-between items-center">
-                                <span className="font-bold text-success dark:text-success">Total Payment</span>
-                                <span className="text-xl font-bold text-success dark:text-success">
-                                    {formatCurrency(totalPayment)}
-                                </span>
-                            </div>
-                        </div>
+                                <Card variant="default" size="md" className="mt-4">
+                                    <Card.Body className="flex justify-between items-center">
+                                        <span className="font-bold text-success dark:text-success">Total Payment</span>
+                                        <span className="text-xl font-bold text-success dark:text-success">
+                                            {formatCurrency(totalPayment)}
+                                        </span>
+                                    </Card.Body>
+                                </Card>
+                            </Card.Body>
+                        </Card>
                     </div>
 
                     {/* Right Column - Invoice Allocation */}
                     <div className="space-y-4">
-                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 h-full">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-bold text-sm flex items-center gap-2">
-                                    <Receipt className="w-4 h-4" /> Invoice Allocation
-                                </h3>
-                                {customer && invoices.length > 0 && (
-                                    <button onClick={autoAllocate} className="btn btn-sm btn-secondary">
-                                        Auto-Allocate
-                                    </button>
-                                )}
-                            </div>
-
-                            {!customer ? (
-                                <div className="text-center py-12 text-muted">
-                                    <User className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                                    <p>Select a customer to see open invoices</p>
-                                </div>
-                            ) : invoicesLoading ? (
-                                <div className="text-center py-12 text-muted"><p>Loading invoices…</p></div>
-                            ) : invoices.length === 0 ? (
-                                <div className="text-center py-12 text-muted">
-                                    <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50 text-success" />
-                                    <p>No outstanding invoices</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-2">
-                                    {invoices.map(inv => (
-                                        <div key={inv.id} className="p-3 glass-panel rounded-lg border border-default/30">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <div>
-                                                    <span className="font-medium text-brand-600">{inv.invoiceNo}</span>
-                                                    <span className="text-xs text-muted ml-2">{inv.date}</span>
-                                                </div>
-                                                <span className="text-sm font-medium">{formatCurrency(inv.totalAmount)}</span>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex-1">
-                                                    <div className="flex justify-between text-xs text-muted mb-1">
-                                                        <span>Balance Due</span>
-                                                        <span className="text-danger font-medium">{formatCurrency(inv.balanceDue)}</span>
-                                                    </div>
-                                                </div>
-                                                <div className="w-32">
-                                                    <input
-                                                        type="number"
-                                                        placeholder="Allocate"
-                                                        value={inv.allocatedAmount || ''}
-                                                        onChange={e => updateAllocation(inv.id, parseFloat(e.target.value) || 0)}
-                                                        max={inv.balanceDue}
-                                                        className="input text-right text-sm"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            {/* Summary */}
-                            {customer && (
-                                <div className="mt-4 p-4 glass-panel rounded-lg border border-default/30 space-y-2">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted">Total Payment</span>
-                                        <span className="font-medium">{formatCurrency(totalPayment)}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-muted">Allocated to Invoices</span>
-                                        <span className="font-medium text-success">{formatCurrency(totalAllocated)}</span>
-                                    </div>
-                                    {advanceCreated > 0 && (
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-info">Advance Created</span>
-                                            <span className="font-medium text-info">{formatCurrency(advanceCreated)}</span>
-                                        </div>
+                        <Card variant="default" size="md" className="h-full flex flex-col">
+                            <Card.Body className="flex flex-col flex-1">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="font-bold text-sm flex items-center gap-2">
+                                        <Receipt className="w-4 h-4" /> Invoice Allocation
+                                    </h3>
+                                    {customer && invoices.length > 0 && (
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={autoAllocate}
+                                        >
+                                            Auto-Allocate
+                                        </Button>
                                     )}
-                                    <div className="border-t border-default/30 pt-2">
-                                        <div className="flex justify-between font-bold">
-                                            <span>Remaining</span>
-                                            <span className={remainingUnallocated > 0 ? 'text-warning' : 'text-success'}>
-                                                {formatCurrency(remainingUnallocated)}
-                                            </span>
+                                </div>
+
+                                {!customer ? (
+                                    <div className="text-center py-12 text-muted flex-1 flex items-center justify-center">
+                                        <div>
+                                            <User className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                                            <p>Select a customer to see open invoices</p>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                        </div>
+                                ) : invoicesLoading ? (
+                                    <div className="text-center py-12 text-muted flex-1 flex items-center justify-center"><p>Loading invoices…</p></div>
+                                ) : invoices.length === 0 ? (
+                                    <div className="text-center py-12 text-muted flex-1 flex items-center justify-center">
+                                        <div>
+                                            <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50 text-success" />
+                                            <p>No outstanding invoices</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-2 flex-1">
+                                        {invoices.map(inv => (
+                                            <Card key={inv.id} variant="default" size="sm">
+                                                <Card.Body>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <div>
+                                                            <span className="font-medium text-brand-600">{inv.invoiceNo}</span>
+                                                            <span className="text-xs text-muted ml-2">{inv.date}</span>
+                                                        </div>
+                                                        <span className="text-sm font-medium">{formatCurrency(inv.totalAmount)}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex-1">
+                                                            <div className="flex justify-between text-xs text-muted mb-1">
+                                                                <span>Balance Due</span>
+                                                                <span className="text-danger font-medium">{formatCurrency(inv.balanceDue)}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-32">
+                                                            <Input
+                                                                type="number"
+                                                                placeholder="Allocate"
+                                                                value={inv.allocatedAmount || ''}
+                                                                onChange={e => updateAllocation(inv.id, parseFloat(e.target.value) || 0)}
+                                                                max={inv.balanceDue}
+                                                                className="text-right text-sm"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </Card.Body>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Summary */}
+                                {customer && (
+                                    <Card variant="default" size="sm" className="mt-4">
+                                        <Card.Body className="space-y-2">
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-muted">Total Payment</span>
+                                                <span className="font-medium">{formatCurrency(totalPayment)}</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-muted">Allocated to Invoices</span>
+                                                <span className="font-medium text-success">{formatCurrency(totalAllocated)}</span>
+                                            </div>
+                                            {advanceCreated > 0 && (
+                                                <div className="flex justify-between text-sm">
+                                                    <span className="text-info">Advance Created</span>
+                                                    <span className="font-medium text-info">{formatCurrency(advanceCreated)}</span>
+                                                </div>
+                                            )}
+                                            <div className="border-t border-default/30 pt-2">
+                                                <div className="flex justify-between font-bold">
+                                                    <span>Remaining</span>
+                                                    <span className={remainingUnallocated > 0 ? 'text-warning' : 'text-success'}>
+                                                        {formatCurrency(remainingUnallocated)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                )}
+                            </Card.Body>
+                        </Card>
                     </div>
                 </div>
             </div>
 
             {/* Actions */}
-            <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-3 justify-between">
-                <div className="flex gap-2">
-                    <button onClick={handleClear} className="btn btn-ghost text-danger">
-                        <RefreshCw className="w-4 h-4" /> Clear
-                    </button>
-                </div>
-                <div className="flex gap-2">
-                    <button className="btn btn-primary" disabled={totalPayment === 0 || !customer || saving} onClick={handleSave}>
-                        <Save className="w-4 h-4" /> {saving ? 'Saving…' : 'Save Payment'}
-                    </button>
-                </div>
-            </div>
+            <Card variant="default" size="lg" className="border-t border-slate-200 dark:border-slate-800 rounded-none">
+              <Card.Body className="flex flex-wrap gap-3 justify-between p-4">
+                    <div className="flex gap-2">
+                        <Button
+                            variant="secondary"
+                            size="md"
+                            icon={<RefreshCw className="w-4 h-4" />}
+                            onClick={handleClear}
+                        >
+                            Clear
+                        </Button>
+                    </div>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="primary"
+                            size="md"
+                            icon={<Save className="w-4 h-4" />}
+                            disabled={totalPayment === 0 || !customer || saving}
+                            onClick={handleSave}
+                        >
+                            {saving ? 'Saving…' : 'Save Payment'}
+                        </Button>
+                    </div>
+              </Card.Body>
+            </Card>
         </div>
     );
 };

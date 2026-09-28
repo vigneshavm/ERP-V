@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import DailyAttendance, { IDailyAttendance } from '../models/DailyAttendance.js';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 const FRONTEND_TO_BACKEND_STATUS: Record<string, string> = {
     'PRESENT': 'PRESENT',
@@ -43,9 +44,9 @@ const parseDateKey = (dateKey: string) => new Date(`${dateKey}T00:00:00.000Z`);
 
 // Mark/update attendance for one employee on one date (used by the calendar's
 // day-click -> TimeEntryModal flow).
-export const markAttendance = async (req: Request, res: Response) => {
+export const markAttendance = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user?.tenantId || (req as any).tenantId;
+        const tenantId = req.user.tenantId;
         const { employeeId, date, status, inTime, outTime, advanceTaken } = req.body;
 
         if (!employeeId || !date || !status) {
@@ -72,9 +73,9 @@ export const markAttendance = async (req: Request, res: Response) => {
 
 // Marks the same status across multiple dates for one employee at once
 // (the calendar's multi-select "Full/Half/Qtr/Abs" bulk actions).
-export const bulkMarkAttendance = async (req: Request, res: Response) => {
+export const bulkMarkAttendance = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user?.tenantId || (req as any).tenantId;
+        const tenantId = req.user.tenantId;
         const { employeeId, dates, status } = req.body;
 
         if (!employeeId || !Array.isArray(dates) || dates.length === 0 || !status) {
@@ -110,9 +111,9 @@ export const bulkMarkAttendance = async (req: Request, res: Response) => {
 // Attendance Board's "pick a date, mark everyone, save" flow). Shares the
 // same DailyAttendance collection as markAttendance/bulkMarkAttendance, so
 // this stays in sync with the per-employee calendar in Staff Management.
-export const markAttendanceForDate = async (req: Request, res: Response) => {
+export const markAttendanceForDate = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user?.tenantId || (req as any).tenantId;
+        const tenantId = req.user.tenantId;
         const { date, attendance } = req.body;
 
         if (!date || !Array.isArray(attendance) || attendance.length === 0) {
@@ -149,9 +150,9 @@ export const markAttendanceForDate = async (req: Request, res: Response) => {
 // (0-indexed, matching JS Date.getMonth() — Staff Management's calendar,
 // hydrated whenever the displayed month changes). Optionally scoped to one
 // employee either way.
-export const getAttendance = async (req: Request, res: Response) => {
+export const getAttendance = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user?.tenantId || (req as any).tenantId;
+        const tenantId = req.user.tenantId;
         const { month, year, date, employeeId } = req.query;
 
         const filter: Record<string, any> = { tenantId };

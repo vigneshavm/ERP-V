@@ -6,6 +6,8 @@ import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
 import { CheckCircle, XCircle, Clock, Calendar, Search, AlertTriangle, ShieldCheck, Zap, Activity, ArrowUpRight, CheckCircle2, RefreshCcw, Filter } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 const UnclearedCheques: React.FC = () => {
     const _dispatch = useDispatch<AppDispatch>();
@@ -87,7 +89,7 @@ const UnclearedCheques: React.FC = () => {
                         { label: 'Due Today', val: filteredCheques.filter(c => new Date(c.chequeDate) <= new Date()).length, icon: Clock, color: 'text-danger', bg: 'bg-danger-soft' },
                         { label: 'Operational Nodes', val: cheques.length, icon: Activity, color: 'text-primary', bg: 'bg-primary-soft' }
                     ].map((card, i) => (
-                        <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
+                        <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
                                 <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />

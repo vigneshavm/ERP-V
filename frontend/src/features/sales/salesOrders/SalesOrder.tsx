@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import api from "@/services/api";
 import { toast } from 'react-toastify';
+import { Button, Input, Textarea } from '@/components/shared';
 import {
     User,
     Plus,
@@ -196,17 +197,18 @@ const SalesOrderPage = () => {
             {/* Top Command Bar */}
             <header className="relative z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-8 py-4 flex items-center justify-between shadow-sm transition-all">
                 <div className="flex items-center gap-6">
-                    <button 
+                    <Button 
+                        variant="secondary"
+                        size="md"
+                        icon={<ArrowLeft className="w-4 h-4" />}
                         onClick={() => navigate('/sales/orders')}
-                        className="p-3 bg-slate-100 dark:bg-slate-800 rounded-sm hover:scale-110 transition-transform text-slate-500 hover:text-warning"
-                    >
-                        <ArrowLeft className="w-5 h-5" />
-                    </button>
+                    />
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="page-title text-slate-900 dark:text-white">
                                 Order <span className="text-warning">Initialization</span>
-                            </h1>
+                            </h1>
+
                         </div>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 flex items-center gap-2">
                             <Globe className="w-3 h-3" /> Sales order
@@ -215,21 +217,26 @@ const SalesOrderPage = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button 
+                    <Button 
+                        variant="secondary"
+                        size="md"
+                        icon={<Save className="w-4 h-4" />}
                         onClick={handleSaveDraft}
                         disabled={loading}
-                        className="hidden md:flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm disabled:opacity-50"
+                        className="hidden md:flex"
                     >
-                        <Save className="w-4 h-4" /> Save Manifest
-                    </button>
-                    <button 
+                        Save Manifest
+                    </Button>
+                    <Button 
+                        variant="warning"
+                        size="md"
+                        icon={loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                         onClick={handleConfirmOrder}
                         disabled={loading}
-                        className="flex items-center gap-2 px-8 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                        fullWidth={false}
                     >
-                        {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                         Finalize Protocol
-                    </button>
+                    </Button>
                 </div>
             </header>
 
@@ -257,15 +264,15 @@ const SalesOrderPage = () => {
                         </div>
 
                         {/* Items Data Matrix */}
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[40px] shadow-sm overflow-hidden flex flex-col transition-all">
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full shadow-sm overflow-hidden flex flex-col transition-all">
                             <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/50">
                                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Manifest Ledger</h3>
-                                <button 
+                                <Button
+                                    variant="warning"
+                                    size="md"
+                                    icon={<Plus className="w-4 h-4" />}
                                     onClick={() => setShowItemModal(true)}
-                                    className="p-3 bg-warning text-white rounded-sm hover:scale-110 transition-transform shadow-lg shadow-amber-500/20"
-                                >
-                                    <Plus className="w-5 h-5" />
-                                </button>
+                                />
                             </div>
 
                             <div className="overflow-x-auto">
@@ -306,37 +313,35 @@ const SalesOrderPage = () => {
                                                     </td>
                                                     <td className="px-8 py-6 text-right">
                                                         <div className="inline-flex items-center bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-1">
-                                                            <button 
+                                                            <Button
+                                                                variant="secondary"
+                                                                size="sm"
+                                                                icon={<Minus className="w-3 h-3" />}
                                                                 onClick={() => updateItem(index, 'quantity', Math.max(1, item.quantity - 1))}
-                                                                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 transition-colors"
-                                                            >
-                                                                <Minus className="w-3 h-3" />
-                                                            </button>
+                                                            />
                                                             <input
                                                                 type="number"
                                                                 value={item.quantity}
                                                                 onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
                                                                 className="w-12 text-center bg-transparent text-xs font-black outline-none dark:text-white"
                                                             />
-                                                            <button 
+                                                            <Button
+                                                                variant="secondary"
+                                                                size="sm"
+                                                                icon={<Plus className="w-3 h-3" />}
                                                                 onClick={() => updateItem(index, 'quantity', item.quantity + 1)}
-                                                                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 transition-colors"
-                                                            >
-                                                                <Plus className="w-3 h-3" />
-                                                            </button>
+                                                            />
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-6 text-right">
                                                         <div className="flex flex-col items-end">
-                                                            <div className="flex items-center gap-2 text-sm font-mono font-black dark:text-white">
-                                                                <IndianRupee className="w-3 h-3 text-warning" />
-                                                                <input
-                                                                    type="number"
-                                                                    value={item.rate}
-                                                                    onChange={(e) => updateItem(index, 'rate', parseFloat(e.target.value) || 0)}
-                                                                    className="w-24 text-right bg-transparent outline-none focus:text-warning"
-                                                                />
-                                                            </div>
+                                                            <Input
+                                                                type="number"
+                                                                value={item.rate}
+                                                                onChange={(e) => updateItem(index, 'rate', parseFloat(e.target.value) || 0)}
+                                                                icon={<IndianRupee className="w-3 h-3 text-warning" />}
+                                                                className="text-right"
+                                                            />
                                                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Tax: {item.tax}%</span>
                                                         </div>
                                                     </td>
@@ -347,12 +352,12 @@ const SalesOrderPage = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-6 text-center">
-                                                        <button 
+                                                        <Button
+                                                            variant="danger"
+                                                            size="md"
+                                                            icon={<Trash2 className="w-4 h-4" />}
                                                             onClick={() => removeItem(index)}
-                                                            className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-danger rounded-xl hover:bg-danger/90 hover:text-white transition-all shadow-sm"
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
+                                                        />
                                                     </td>
                                                 </tr>
                                             ))
@@ -367,11 +372,11 @@ const SalesOrderPage = () => {
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
                                 <Info className="w-4 h-4 text-warning" /> Operational Directives
                             </h3>
-                            <textarea 
+                            <Textarea
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm p-6 text-xs font-bold outline-none focus:border-warning/30 transition-all dark:text-white placeholder:text-slate-500 min-h-[120px] shadow-inner"
                                 placeholder="Enter specific logistical protocols or terms..."
+                                minRows={6}
                             />
                         </div>
                     </div>
@@ -394,12 +399,12 @@ const SalesOrderPage = () => {
                                             <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight truncate">{formData.customer.name}</p>
                                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">{formData.customer.phone}</p>
                                         </div>
-                                        <button 
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            icon={<RefreshCw className="w-4 h-4" />}
                                             onClick={() => setFormData({ ...formData, customer: null })}
-                                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 hover:text-danger transition-colors"
-                                        >
-                                            <RefreshCw className="w-4 h-4" />
-                                        </button>
+                                        />
                                     </div>
                                     <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
@@ -411,15 +416,16 @@ const SalesOrderPage = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <button 
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    icon={<Search className="w-8 h-8" />}
                                     onClick={() => setShowCustomerModal(true)}
-                                    className="w-full bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-sm p-8 flex flex-col items-center gap-4 hover:border-warning/50 transition-all group shadow-sm"
+                                    fullWidth
+                                    className="dashed-border flex-col gap-4 h-auto p-8"
                                 >
-                                    <div className="w-16 h-16 rounded-sm bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 group-hover:bg-warning/90 group-hover:text-white transition-all shadow-inner">
-                                        <Search className="w-8 h-8" />
-                                    </div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-warning transition-colors">Search customer</p>
-                                </button>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">Search customer</span>
+                                </Button>
                             )}
                         </div>
 
@@ -429,27 +435,21 @@ const SalesOrderPage = () => {
                             <div className="space-y-4">
                                 <div>
                                     <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Date</label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warning" />
-                                        <input
-                                            type="date"
-                                            value={formData.orderDate}
-                                            onChange={(e) => setFormData({ ...formData, orderDate: e.target.value })}
-                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-warning/30 transition-all dark:text-white"
-                                        />
-                                    </div>
+                                    <Input
+                                        type="date"
+                                        value={formData.orderDate}
+                                        onChange={(e) => setFormData({ ...formData, orderDate: e.target.value })}
+                                        icon={<Calendar className="w-4 h-4 text-warning" />}
+                                    />
                                 </div>
                                 <div>
                                     <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">SLA Delivery Date</label>
-                                    <div className="relative">
-                                        <Truck className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warning" />
-                                        <input
-                                            type="date"
-                                            value={formData.expectedDeliveryDate}
-                                            onChange={(e) => setFormData({ ...formData, expectedDeliveryDate: e.target.value })}
-                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-warning/30 transition-all dark:text-white shadow-inner"
-                                        />
-                                    </div>
+                                    <Input
+                                        type="date"
+                                        value={formData.expectedDeliveryDate}
+                                        onChange={(e) => setFormData({ ...formData, expectedDeliveryDate: e.target.value })}
+                                        icon={<Truck className="w-4 h-4 text-warning" />}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -474,15 +474,14 @@ const SalesOrderPage = () => {
                                 <div className="pt-4 border-t border-white/10 dark:border-slate-200">
                                     <div className="flex justify-between items-center mb-6">
                                         <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Custom Offset</span>
-                                        <div className="relative">
-                                            <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-warning" />
-                                            <input
-                                                type="number"
-                                                value={formData.discount}
-                                                onChange={(e) => setFormData({ ...formData, discount: parseFloat(e.target.value) || 0 })}
-                                                className="w-24 bg-white/5 dark:bg-slate-100 border border-white/10 dark:border-slate-200 rounded-xl py-2 pl-8 pr-3 text-right text-xs font-black outline-none focus:border-primary/50 transition-all dark:text-slate-900 shadow-inner"
-                                            />
-                                        </div>
+                                        <Input
+                                            type="number"
+                                            value={formData.discount}
+                                            onChange={(e) => setFormData({ ...formData, discount: parseFloat(e.target.value) || 0 })}
+                                            icon={<IndianRupee className="w-3 h-3 text-warning" />}
+                                            size="sm"
+                                            className="w-24"
+                                        />
                                     </div>
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Net Operational Value</span>

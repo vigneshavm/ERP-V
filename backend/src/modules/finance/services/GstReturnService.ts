@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import Invoice from "../../sales/models/Invoice.js";
 import Bill from "../models/Bill.js";
 import { decomposeGST } from "../../../utils/gstUtils.js";
@@ -6,9 +5,12 @@ import { isSqlItemSource } from "../../../config/itemDataSource.js";
 import { shopHsnMaster, shopInward, shopOutward, type GstRange, type ShopOutward } from "../../../integrations/textilesoft/sqlGstReports.js";
 import { tableQuery, type TableQuery } from "../../core/services/tableQuery.js";
 import {
-    byHsn, byMonth, byRate, financialYear, monthsBetween, resolveRate, round2, setOff, totals,
+    byHsn, byMonth, byRate, financialYear, monthsBetween, resolveRate, setOff, totals,
     type GstSource, type TaxBucket, type TaxTotals,
 } from "./gstMath.js";
+import { istStart, istEndExclusive, istDate, parseISODateRange } from "../../../utils/dateUtils.js";
+import { toNumber as n, round2 } from "../../../utils/typeConversion.js";
+import { tenantKey as tenantMatch } from "../../../utils/mongooseUtils.js";
 
 /**
  * GST return reports: GSTR-1 (outward), GSTR-3B (monthly summary + ITC set-off), GSTR-9 (annual) and the
@@ -25,19 +27,6 @@ import {
  */
 
 type Source = "sql" | "mongo";
-
-const IST = "+05:30";
-const istStart = (d: string) => new Date(`${d}T00:00:00${IST}`);
-const istEndExclusive = (d: string) => new Date(istStart(d).getTime() + 86_400_000);
-const istDate = (d: Date): string => new Date(d.getTime() + 5.5 * 3_600_000).toISOString().slice(0, 10);
-
-const n = (v: unknown): number => {
-    const x = Number(v);
-    return Number.isFinite(x) ? x : 0;
-};
-
-const tenantMatch = (tenantId: string) =>
-    mongoose.Types.ObjectId.isValid(tenantId) ? new mongoose.Types.ObjectId(tenantId) : tenantId;
 
 /* ------------------------------------------------------------------------------------------------ ERP outward */
 
@@ -193,11 +182,7 @@ const rateList = (cells: TaxBucket[]): string =>
 
 const sourceOf = (): Source => (isSqlItemSource() ? "sql" : "mongo");
 
-export const parseRange = (from: unknown, to: unknown): GstRange | null => {
-    const ok = (v: unknown): v is string => typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v);
-    if (!ok(from) || !ok(to) || from > to) return null;
-    return { from, to };
-};
+export const parseRange = (from: unknown, to: unknown): GstRange | null => parseISODateRange(from, to);
 
 const EMPTY_SHOP: ShopOutward = {
     buckets: [], bills: 0, billValue: 0, headerTax: 0, cancelled: { bills: 0, value: 0 }, interStateBills: 0, documents: [], hsnViaGroupLines: 0, asOf: null,

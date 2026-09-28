@@ -1,5 +1,6 @@
 import React from 'react';
 import { Rocket, ArrowRight, ShoppingBag } from 'lucide-react';
+import { Button } from '@/components/shared/Button';
 // Adjust import if needed, assuming types exist
 
 interface GrowHeroProps {

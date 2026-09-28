@@ -5,7 +5,8 @@ import { updateEmployee } from "../../../redux/slices/laborSlice";
 import { SecurityTabProps } from './types';
 import { RootState, AppDispatch } from "../../../redux/store";
 import { AppView, SystemRole } from "../../../types/common";
-import ChangePasswordModal from '../../../components/shared/Auth/ChangePasswordModal';
+import ChangePasswordModal from '../../../components/shared/Auth/ChangePasswordModal';import { Button } from '@/components/shared/Button';
+
 
 const isSecuredIdeally = () => true;
 const securePassword = (p: string) => p;
@@ -118,7 +119,7 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
             </div>
 
             {/* Account Safeguards */}
-            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
                 <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-sm shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center">
@@ -129,12 +130,7 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ roles = [], permissions = {},
                             <p className="text-xs text-slate-500 font-bold mt-1">Manage your personal security credentials</p>
                         </div>
                     </div>
-                    <button
-                        onClick={() => setIsPasswordModalOpen(true)}
-                        className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 border border-transparent dark:border-slate-200 text-xs font-black uppercase tracking-widest rounded-sm hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-slate-200 dark:shadow-none"
-                    >
-                        Change Access Key
-                    </button>
+                    <Button onClick={() => setIsPasswordModalOpen(true)} className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 border border-transparent dark:border-slate-200 text-xs font-black uppercase tracking-widest rounded-sm hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-slate-200 dark:shadow-none">Change Access Key</Button>
                 </div>
             </div>
 

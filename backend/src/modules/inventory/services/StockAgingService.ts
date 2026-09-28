@@ -3,12 +3,12 @@ import { InventoryRepository } from "../../../repositories/InventoryRepository.j
 import Purchase from "../../purchase/models/Purchase.js";
 import { info, error } from "../../../config/logger.js";
 import { AppError } from "../../../utils/AppError.js";
-import { IItem } from "../../../interfaces/IItem.js";
 import mongoose from "mongoose";
 import Item from "../models/Item.js";
 import StockLog from "../models/StockLog.js";
 import { applyStockFilters, deadStock, lowStock, stockFilterOptions, stockStatus } from "./stockReports.js";
 import { classifyLots, filterByPurchaseDate, pageRows, summarize, summarizeMonths, type StockAgeLot, type StockAgeQuery } from "./stockAgeBuckets.js";
+import { todayIst, istDate } from "../../../utils/dateUtils.js";
 
 @injectable()
 export class StockAgingService {
@@ -19,41 +19,52 @@ export class StockAgingService {
     /**
      * Calculates the age of the oldest unit in stock for each item using FIFO logic based on Purchase history.
      * Returns items that have stock older than the specified threshold (default 180 days).
+     * 
+     * OPTIMIZED: Uses aggregation pipeline to fetch all purchases in one query instead of N+1 queries.
+     * This reduces database load from O(n) to O(1) + single aggregation.
      */
     async getAgingAnalysis(tenantId: string, thresholdDays: number = 180): Promise<any[]> {
-        const items = await this.inventoryRepository.findAll(tenantId);
-        // Filter only items with positive stock
-        const inStockItems = items.filter((item: IItem) => item.stockQty > 0);
-
-        const deadStock = [];
         const now = new Date();
+        const now_ms = now.getTime();
 
-        // Batch fetch purchases could be optimized, but for now we'll query per item or valid set
-        // Optimization: Fetch ALL purchases for this tenant once if dataset is small, or use aggregation.
-        // For robustness, let's use aggregation to get purchase history for these items.
-        // Actually, let's stick to the logic plan: Iterate for now (simpler logic, easier to debug). 
-        // If performance issues arise, we optimize to aggregation.
+        // Step 1: Fetch only items with positive stock (with field projection)
+        const inStockItems = await Item.find(
+            { tenantId, stockQty: { $gt: 0 } },
+            { _id: 1, name: 1, sku: 1, barcode: 1, category: 1, stockQty: 1, costPrice: 1, sellingPrice: 1, createdAt: 1 }
+        ).lean();
 
+        // Step 2: Get ALL purchases for this tenant and items in ONE query (not N queries)
+        const purchases = await Purchase.find(
+            {
+                tenantId,
+                'items.productId': { $in: inStockItems.map((i) => i._id) },
+                status: 'COMPLETED',
+            },
+            { items: 1, date: 1, productId: 1 }
+        ).sort({ date: -1 }).lean();
+
+        // Step 3: Build a map of item ID -> purchases for O(1) lookup
+        const purchasesByItemId = new Map<string, any[]>();
+        for (const purchase of purchases) {
+            for (const item of purchase.items || []) {
+                const itemIdStr = String(item.productId);
+                if (!purchasesByItemId.has(itemIdStr)) {
+                    purchasesByItemId.set(itemIdStr, []);
+                }
+                purchasesByItemId.get(itemIdStr)!.push(purchase);
+            }
+        }
+
+        // Step 4: Calculate aging for each item using FIFO logic
+        const deadStock = [];
         for (const item of inStockItems) {
             try {
-                // Fetch purchases containing this item, sorted by date DESC (Newest first)
-                // We assume 'status: COMPLETED' implies stock was added.
-                const purchases = await Purchase.find({
-                    tenantId, // was missing: without it another tenant's purchases of the same item id could set the age
-                    'items.productId': item._id,
-                    status: 'COMPLETED',
-                }).sort({ date: -1 }).lean();
-
+                const itemPurchases = purchasesByItemId.get(String(item._id)) || [];
                 let accumulatedQty = 0;
-                let oldestStockDate = item.createdAt; // Default to item creation if no purchase history found covers it
+                let oldestStockDate = item.createdAt;
 
-                // FIFO Logic:
-                // We walk backwards from newest purchases.
-                // The stock we have ON HAND (item.stockQty) is composed of these most recent purchases.
-                // We keep adding up purchase quantities until we match or exceed current stockQty.
-                // The purchase that tips us over the threshold contains the "oldest" unit we currently own.
-
-                for (const purchase of purchases) {
+                // FIFO Logic: Walk backwards from newest purchases
+                for (const purchase of itemPurchases) {
                     const purchaseItem = purchase.items.find((pItem: any) => pItem.productId.toString() === item._id.toString());
                     if (purchaseItem) {
                         accumulatedQty += purchaseItem.quantity;
@@ -64,19 +75,14 @@ export class StockAgingService {
                     }
                 }
 
-                // If we iterated all purchases and accumulatedQty < item.stockQty, 
-                // it means the remaining stock is from opening balance or unrecorded sources (very old).
-                // In that case, oldestStockDate remains item.createdAt (or could differ if we tracked opening stock separately).
-
-                const ageInMilliseconds = now.getTime() - new Date(oldestStockDate).getTime();
-                const ageInDays = Math.floor(ageInMilliseconds / (1000 * 60 * 60 * 24));
+                const ageInDays = Math.floor((now_ms - new Date(oldestStockDate).getTime()) / (1000 * 60 * 60 * 24));
 
                 if (ageInDays > thresholdDays) {
                     deadStock.push({
                         _id: item._id,
                         name: item.name,
                         sku: item.sku,
-                        barcode: (item as any).barcode,
+                        barcode: item.barcode,
                         category: item.category,
                         stockQty: item.stockQty,
                         costPrice: item.costPrice,
@@ -84,7 +90,6 @@ export class StockAgingService {
                         valuation: item.stockQty * item.costPrice,
                         oldestStockDate,
                         ageInDays,
-                        // fields the aged-stock page reads
                         daysSinceLastSold: ageInDays,
                         lastSoldDate: oldestStockDate,
                         stock: item.stockQty,
@@ -94,7 +99,6 @@ export class StockAgingService {
                 }
             } catch (err: any) {
                 error(`Error analyzing aging for item ${item.name}: ${err.message}`);
-                // Continue to next item
             }
         }
 
@@ -107,12 +111,12 @@ export class StockAgingService {
      * purchase still covering it (see getAgingAnalysis). A true FIFO split per purchase is a follow-up.
      */
     async getStockAgeBuckets(tenantId: string, q: StockAgeQuery): Promise<any> {
-        const asOf = new Date().toISOString().slice(0, 10);
+        const asOf = todayIst();
         const aged = await this.getAgingAnalysis(tenantId, -1);
         const lots: StockAgeLot[] = aged.map((a: any) => ({
             barcode: String(a.barcode ?? a.sku ?? a._id),
             name: String(a.name ?? ""),
-            purchaseDate: a.oldestStockDate ? new Date(a.oldestStockDate).toISOString().slice(0, 10) : null,
+            purchaseDate: a.oldestStockDate ? istDate(new Date(a.oldestStockDate)) : null,
             supplier: "",
             purchasedQty: 0,
             soldQty: 0,
@@ -150,14 +154,14 @@ export class StockAgingService {
      */
     private async mongoReportRows(tenantId: string) {
         const tenant = new mongoose.Types.ObjectId(String(tenantId));
-        const asOf = new Date().toISOString().slice(0, 10);
+        const asOf = todayIst();
         const items: any[] = await Item.find({ tenantId: tenant, stockQty: { $gt: 0 } }, { name: 1, barcode: 1, sku: 1, category: 1, brand: 1, costPrice: 1, sellingPrice: 1, stockQty: 1, lowStockLimit: 1, createdAt: 1 }).lean();
         const sales: { _id: any; last: Date }[] = await StockLog.aggregate([
             { $match: { tenantId: tenant, type: { $in: ["SALES", "SALE"] } } },
             { $group: { _id: "$itemId", last: { $max: "$createdAt" } } },
         ]);
         const lastSale = new Map(sales.map((x) => [String(x._id), x.last]));
-        const iso = (d: any): string | null => (d ? new Date(d).toISOString().slice(0, 10) : null);
+        const iso = (d: any): string | null => (d ? istDate(new Date(d)) : null);
         const lots: StockAgeLot[] = items.map((i) => ({
             barcode: String(i.barcode || i.sku || i._id),
             name: String(i.name ?? ""),

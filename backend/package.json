@@ -31,6 +31,8 @@
     "discover:textilesoft": "tsx src/scripts/textilesoftDiscover.ts",
     "sync:textilesoft": "tsx src/scripts/textilesoftSync.ts",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --selectProjects \"unit (ts)\" --runInBand",
+    "test:api": "npm run build && cross-env NODE_OPTIONS=--experimental-vm-modules jest --selectProjects \"api (dist)\" --runInBand",
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch --runInBand",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --runInBand",
     "lint": "eslint .",

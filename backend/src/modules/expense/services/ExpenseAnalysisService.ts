@@ -1,19 +1,15 @@
-import mongoose from "mongoose";
 import Expense from "../models/Expense.js";
 import ExpenseCategory from "../models/ExpenseCategory.js";
 import User from "../../core/models/User.js";
 import { EXPENSE_FLAG_LABEL, EXPENSE_RULES, flagExpenses, summarizeExpenses, type CategoryPolicy, type ExpenseDoc } from "./expenseMath.js";
+import { istDate, istStart, istEndExclusive } from "../../../utils/dateUtils.js";
+import { tenantKey } from "../../../utils/mongooseUtils.js";
 
 /**
  * Expense analysis (Expenses > Tracker): every ERP expense in the period for the whole shop (all users of the
  * tenant; the older /api/expense-reports only covers the signed-in user), with rule-based flags.
  */
 
-const IST_OFFSET_MS = 5.5 * 3_600_000;
-const istDate = (d: Date): string => new Date(d.getTime() + IST_OFFSET_MS).toISOString().slice(0, 10);
-const istStart = (d: string) => new Date(`${d}T00:00:00+05:30`);
-const istEndExclusive = (d: string) => new Date(istStart(d).getTime() + 86_400_000);
-const tenantKey = (tenantId: string) => (mongoose.Types.ObjectId.isValid(tenantId) ? new mongoose.Types.ObjectId(tenantId) : tenantId);
 /** How far back the rules look for a category's usual amount and for duplicates. */
 const HISTORY_DAYS = 180;
 

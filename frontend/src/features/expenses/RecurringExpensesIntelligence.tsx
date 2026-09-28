@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout/index";
 import { formatDate } from '../../utils/helpers';
+import { Button } from '@/components/shared/Button';
 
 interface AuthState {
     user: any;
@@ -216,9 +217,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                                     <div className="h-full bg-error" style={{ width: '30%' }} />
                                 </div>
                             </div>
-                            <button className="w-full py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all">
-                                Initiate Audit
-                            </button>
+                            <Button className="w-full py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all">Initiate Audit</Button>
                         </div>
 
                         <div className="bg-primary text-white p-6 rounded-sm shadow-xl shadow-primary/20 relative overflow-hidden group">
@@ -227,9 +226,7 @@ const RecurringExpensesIntelligence: React.FC = () => {
                             <p className="text-[11px] opacity-90 leading-relaxed mb-6 italic">
                                 "Moving Internet to a dedicated corporate plan across 3 branches could save ₹4,500/month."
                             </p>
-                            <button className="w-full py-3 bg-white text-primary font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-50 transition-all">
-                                View Bundle Options
-                            </button>
+                            <Button className="w-full py-3 bg-white text-primary font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-50 transition-all">View Bundle Options</Button>
                         </div>
 
                         <div className="p-5 rounded-sm border border-slate-100 bg-slate-50/50 flex items-start gap-4">

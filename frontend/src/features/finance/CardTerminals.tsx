@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { CreditCard, Plus, X, Trash2, Pencil } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import { Button, Input, Textarea, Checkbox, Select } from "../../components/shared";
 import { AppDispatch, RootState } from "../../redux/store";
 import {
     getCardTerminals, createCardTerminal, updateCardTerminal, deleteCardTerminal, CardTerminal
@@ -90,12 +91,14 @@ const CardTerminals: React.FC = () => {
                 title="Card / EMI Terminals"
                 description="Registry of physical card and EMI machines used at checkout, so payments can be tied to a specific terminal."
                 actions={
-                    <button
+                    <Button
+                        variant="success"
+                        size="md"
+                        icon={<Plus className="w-4 h-4" />}
                         onClick={() => { resetForm(); setIsModalOpen(true); }}
-                        className="px-4 py-2 bg-success text-white rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"
                     >
-                        <Plus className="w-4 h-4" /> Add Terminal
-                    </button>
+                        Add Terminal
+                    </Button>
                 }
             />
 
@@ -159,35 +162,60 @@ const CardTerminals: React.FC = () => {
                             </button>
                         </div>
                         <div className="p-6 space-y-4">
-                            <div>
-                                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Terminal ID</label>
-                                <input value={terminalId} onChange={(e) => setTerminalId(e.target.value)} placeholder="e.g. HDFC-POS-01" className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none" />
-                            </div>
-                            <div>
-                                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Provider</label>
-                                <input value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="e.g. HDFC Bank, Pine Labs" className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none" />
-                            </div>
-                            <div>
-                                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Store / Warehouse</label>
-                                <select value={storeId} onChange={(e) => setStoreId(e.target.value)} className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
-                                    <option value="">Unassigned</option>
-                                    {(warehouseEntries || []).map((w: any) => <option key={w._id} value={w._id}>{w.name}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Notes</label>
-                                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none resize-none" />
-                            </div>
-                            <label className="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
-                                <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} className="rounded" />
-                                Active
-                            </label>
+                            <Input
+                                type="text"
+                                label="Terminal ID"
+                                placeholder="e.g. HDFC-POS-01"
+                                value={terminalId}
+                                onChange={(e) => setTerminalId(e.target.value)}
+                                required
+                            />
+                            <Input
+                                type="text"
+                                label="Provider"
+                                placeholder="e.g. HDFC Bank, Pine Labs"
+                                value={provider}
+                                onChange={(e) => setProvider(e.target.value)}
+                            />
+                            <Select
+                                label="Store / Warehouse"
+                                placeholder="Unassigned"
+                                options={(warehouseEntries || []).map((w: any) => ({
+                                    value: w._id,
+                                    label: w.name
+                                }))}
+                                value={storeId}
+                                onChange={(val) => setStoreId(typeof val === 'string' ? val : val[0])}
+                            />
+                            <Textarea
+                                label="Notes"
+                                placeholder="Additional notes"
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                                rows={2}
+                            />
+                            <Checkbox
+                                label="Active"
+                                checked={isActive}
+                                onChange={(e) => setIsActive(e.target.checked)}
+                            />
                         </div>
                         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-700">
-                            <button onClick={() => { setIsModalOpen(false); resetForm(); }} className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800">Cancel</button>
-                            <button onClick={handleSubmit} disabled={isSaving} className="px-5 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 disabled:opacity-60">
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                onClick={() => { setIsModalOpen(false); resetForm(); }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                onClick={handleSubmit}
+                                disabled={isSaving}
+                            >
                                 {isSaving ? 'Saving...' : editingId ? 'Save Changes' : 'Add Terminal'}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

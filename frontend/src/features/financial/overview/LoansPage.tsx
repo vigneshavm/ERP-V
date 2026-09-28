@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CalendarClock, HandCoins, Plus, Wallet } from 'lucide-react';
 import api from '@/services/api';
 import { formatNumber } from '@/utils/formatters';
+import { Button, Input, Modal } from '@/components/shared';
 import { ReportKpiGrid, ReportTable, useReportData } from '../../reports/components';
 import type { ReportColumn } from '../../reports/components';
 import { FinancePage } from './FinancePage';
@@ -18,7 +19,7 @@ const Field: React.FC<{ label: string; children: React.ReactNode }> = ({ label, 
 
 const Dialog: React.FC<{ title: string; onClose: () => void; children: React.ReactNode }> = ({ title, onClose, children }) => (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-        <div role="dialog" aria-modal="true" aria-label={title} className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800" onClick={e => e.stopPropagation()}>
+        <div role="dialog" aria-modal="true" aria-label={title} className="w-full max-w-md rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-2xl" onClick={e => e.stopPropagation()}>
             <h2 className="mb-4 text-base font-bold text-slate-900 dark:text-white">{title}</h2>
             {children}
         </div>
@@ -29,8 +30,8 @@ const Actions: React.FC<{ busy: boolean; error: string; onCancel: () => void; su
     <>
         {error && <p className="text-sm font-medium text-danger">{error}</p>}
         <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={onCancel} className="rounded-md px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700">Cancel</button>
-            <button type="submit" disabled={busy} className="rounded-md bg-primary px-3 py-2 text-xs font-bold text-white disabled:opacity-50">{busy ? 'Saving…' : submit}</button>
+            <Button type="button" variant="secondary" size="md" onClick={onCancel}>Cancel</Button>
+            <Button type="submit" variant="primary" size="md" disabled={busy} loading={busy}>{submit}</Button>
         </div>
     </>
 );
@@ -145,7 +146,7 @@ const LoansPage: React.FC = () => {
             title="Loans"
             subtitle="Business loans, EMIs paid and what is due"
             basis="EMI k is due k months after the loan's start date; an EMI counts as overdue when fewer EMIs are recorded than have fallen due."
-            actions={<button type="button" onClick={() => setAdding(true)} className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-xs font-bold text-white"><Plus className="h-3.5 w-3.5" /> Add loan</button>}
+            actions={<Button type="button" variant="primary" size="md" icon={<Plus className="h-3.5 w-3.5" />} onClick={() => setAdding(true)}>Add loan</Button>}
             loading={loading}
             error={error}
             hasData={Boolean(data)}
@@ -166,7 +167,7 @@ const LoansPage: React.FC = () => {
                         rowKey={r => r.id}
                         emptyMessage="No loans recorded. Use Add loan to start tracking EMIs."
                         rowActions={r => (r.health === 'closed' ? null : (
-                            <button type="button" onClick={() => setPaying(r)} className="rounded-md border border-slate-200 px-2.5 py-1 text-[11px] font-bold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700">Record EMI</button>
+                            <Button type="button" variant="secondary" size="sm" onClick={() => setPaying(r)}>Record EMI</Button>
                         ))}
                     />
                 </>

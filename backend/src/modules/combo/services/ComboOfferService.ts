@@ -4,6 +4,7 @@ import { IComboOffer } from "../../../interfaces/IComboOffer.js";
 import { info } from "../../../config/logger.js";
 import ComboOffer from "../models/ComboOffer.js";
 import Item from "../../inventory/models/Item.js";
+import { extractPaginationParams } from "../../../utils/paginationUtils.js";
 
 interface ComboOfferInput {
     name: string;
@@ -77,9 +78,7 @@ export class ComboOfferService {
     }
 
     async getAllComboOffers(tenantId: string, queryParams: Record<string, any>): Promise<{ combos: IComboOffer[]; total: number; page: number; pages: number }> {
-        const page = parseInt(queryParams.page) || 1;
-        const limit = parseInt(queryParams.limit) || 20;
-        const skip = (page - 1) * limit;
+        const { page, limit, skip } = extractPaginationParams(queryParams, 20, 200);
 
         const query: Record<string, any> = { tenantId };
         if (queryParams.search) {

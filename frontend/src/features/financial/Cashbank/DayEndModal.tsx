@@ -1,10 +1,11 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { X, Calendar, IndianRupee, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
+import { Calendar, IndianRupee, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from "../../../redux/store";
 import { fetchDayEndSummary, saveDayEndReconciliation } from "../../../redux/slices/financeSlice";
 import { DayEndSummary } from "../../../types/finance";
 import { formatCurrency } from "../../../utils/helpers";
+import { Button, Input, Modal, Textarea } from '@/components/shared';
 
 interface DayEndModalProps {
     onClose: () => void;
@@ -58,20 +59,15 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative">
-                <div className="p-10">
-                    <div className="flex items-center justify-between mb-10">
-                        <div>
-                            <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Day End Reconciliation</h3>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
-                                <Calendar className="w-4 h-4" /> {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                            </p>
-                        </div>
-                        <button onClick={onClose} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-full text-slate-400 hover:text-error transition">
-                            <X size={20} />
-                        </button>
-                    </div>
+        <Modal
+            isOpen
+            onClose={onClose}
+            title="Day End Reconciliation"
+            size="lg"
+        >
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic flex items-center gap-2 -mt-4 mb-4">
+                        <Calendar className="w-4 h-4" /> {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    </p>
 
                     {loading ? (
                         <div className="flex items-center justify-center py-20">
@@ -101,13 +97,12 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                                     <IndianRupee className="w-12 h-12 text-slate-200 dark:text-slate-700" />
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Actual Physical Cash Count</label>
-                                    <input
+                                <div>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 block mb-2">Actual Physical Cash Count</label>
+                                    <Input
                                         type="number"
                                         value={physicalCash}
                                         onChange={e => setPhysicalCash(e.target.value)}
-                                        className="w-full px-5 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xl font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
                                         placeholder="Enter counted cash..."
                                     />
                                 </div>
@@ -138,16 +133,13 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                             )}
 
                             {/* Notes */}
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Reconciliation Notes</label>
-                                <textarea
-                                    value={notes}
-                                    onChange={e => setNotes(e.target.value)}
-                                    rows={2}
-                                    className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-bold outline-none focus:ring-4 focus:ring-primary/10 transition-all resize-none"
-                                    placeholder="Any discrepancies or notes..."
-                                />
-                            </div>
+                            <Textarea
+                                label="Reconciliation Notes"
+                                value={notes}
+                                onChange={e => setNotes(e.target.value)}
+                                minRows={2}
+                                placeholder="Any discrepancies or notes..."
+                            />
 
                             {saveError && (
                                 <div role="alert" className="p-4 rounded-xl flex items-center gap-3 bg-error/10 text-error text-sm font-bold">
@@ -156,23 +148,24 @@ const DayEndModal: React.FC<DayEndModalProps> = ({ onClose }) => {
                             )}
 
                             {/* Submit */}
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="lg"
+                                icon={<CheckCircle2 className="w-5 h-5 text-primary" />}
                                 onClick={handleSave}
                                 disabled={saving || !physicalCash}
-                                className="w-full py-5 bg-slate-950 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-slate-900 transition-all flex items-center justify-center gap-4 border border-slate-700 disabled:opacity-50"
+                                loading={saving}
+                                fullWidth
                             >
-                                <CheckCircle2 className="w-5 h-5 text-primary" />
-                                {saving ? 'Saving...' : 'Close Day & Save Reconciliation'}
-                            </button>
+                                Close Day & Save Reconciliation
+                            </Button>
                         </div>
                     ) : (
                         <div className="text-center py-20 text-slate-400">
                             Failed to load summary. Please try again.
                         </div>
                     )}
-                </div>
-            </div>
-        </div>
+        </Modal>
     );
 };
 

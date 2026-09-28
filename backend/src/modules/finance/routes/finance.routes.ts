@@ -1,40 +1,40 @@
 import express from 'express';
-import billRoutes from './billRoutes.js';
-import cashBankRoutes from './cashBankRoutes.js';
-import dueRoutes from './dueRoutes.js';
-import loyaltyRoutes from './loyaltyRoutes.js';
-import dayEndRoutes from './dayEndRoutes.js';
-import pettyCashRoutes from './pettyCashRoutes.js';
+import bill from './bill.routes.js';
+import cashBank from './cashBank.routes.js';
+import due from './due.routes.js';
+import loyalty from './loyalty.routes.js';
+import dayEnd from './dayEnd.routes.js';
+import pettyCash from './pettyCash.routes.js';
 
 const router = express.Router();
 
-router.use('/bills', billRoutes);
-router.use('/cashbank', cashBankRoutes);
-router.use('/due', dueRoutes);
-router.use('/loyalty', loyaltyRoutes);
-router.use('/day-end', dayEndRoutes);
-router.use('/petty-cash', pettyCashRoutes);
+router.use('/bills', bill);
+router.use('/cashbank', cashBank);
+router.use('/due', due);
+router.use('/loyalty', loyalty);
+router.use('/day-end', dayEnd);
+router.use('/petty-cash', pettyCash);
 
 // Bank Statement
-import bankStatementRoutes from './bankStatementRoutes.js';
-router.use('/bank-statement', bankStatementRoutes);
+import bankStatement from './bankStatement.routes.js';
+router.use('/bank-statement', bankStatement);
 
 // Loans
-import loanRoutes from './loanRoutes.js';
-router.use('/loans', loanRoutes);
+import loan from './loan.routes.js';
+router.use('/loans', loan);
 
 // Daily Finance entries (Daily Finance screen + offline queue replay)
-import dailyFinanceRoutes from './dailyFinanceRoutes.js';
+import dailyFinance from './dailyFinance.routes.js';
 import { protect } from "../../../middlewares/authMiddleware.js";
-router.use('/daily-finance', dailyFinanceRoutes);
+router.use('/daily-finance', dailyFinance);
 
 // Mount Journal Entry routes
-import journalEntryRoutes from './journalEntryRoutes.js';
-router.use('/journal', journalEntryRoutes);
+import journalEntry from './journalEntry.routes.js';
+router.use('/journal', journalEntry);
 
 // Mount Clearing Parameter routes
-import clearingParameterRoutes from './clearingParameterRoutes.js';
-router.use('/clearing', clearingParameterRoutes);
+import clearingParameter from './clearingParameter.routes.js';
+router.use('/clearing', clearingParameter);
 
 // GST Routes (GSTR-1 sales export)
 import { getGSTR1Report, exportGSTR1 } from '../controllers/GSTR1Controller.js';

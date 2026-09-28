@@ -6,7 +6,9 @@ import PageHeader from '../../components/shared/Layout/PageHeader';
 import { RootState, AppDispatch } from '../../redux/store';
 import { fetchSalaryComponents, fetchSalaryStructure, saveSalaryStructure, createSalaryComponent, bulkUpdateSalaryStructure } from '../../redux/slices/payrollSlice';
 import { Plus, Save, User, Users } from 'lucide-react';
-import api from '../../services/api';
+import api from '../../services/api';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 // Component id -> amount for a saved salary structure (empty when there is none yet).
 const toStructureValues = (struct?: { components: any[] }): Record<string, number> => {
@@ -121,7 +123,7 @@ const SalaryStructureManager = () => {
         <Layout>
             {isBulkMode && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 shadow-xl">
+                    <div className="bg-white dark:bg-slate-800 rounded-lg p-6 w-96 shadow-xl dark:shadow-slate-900/50">
                         <h3 className="text-lg font-bold mb-4">Bulk Assign Component</h3>
 
                         <div className="mb-4">
@@ -160,19 +162,8 @@ const SalaryStructureManager = () => {
                         </div>
 
                         <div className="flex justify-end gap-2">
-                            <button
-                                onClick={() => setIsBulkMode(false)}
-                                className="px-3 py-1 text-slate-500 hover:text-slate-700"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleBulkUpdate}
-                                disabled={!bulkData.confirm}
-                                className="px-3 py-1 bg-primary text-white rounded hover:bg-primary-hover disabled:opacity-50"
-                            >
-                                Apply to All
-                            </button>
+                            <Button onClick={() => setIsBulkMode(false)} className="px-3 py-1 text-slate-500 hover:text-slate-700">Cancel</Button>
+                            <Button onClick={handleBulkUpdate} disabled={!bulkData.confirm} className="px-3 py-1 bg-primary text-white rounded hover:bg-primary-hover disabled:opacity-50">Apply to All</Button>
                         </div>
                     </div>
                 </div>
@@ -201,12 +192,7 @@ const SalaryStructureManager = () => {
                             >
                                 <Users size={16} /> Bulk Assign
                             </button>
-                            <button
-                                onClick={() => setIsConfigMode(!isConfigMode)}
-                                className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium"
-                            >
-                                {isConfigMode ? 'Done Configuring' : 'Manage Components'}
-                            </button>
+                            <Button onClick={() => setIsConfigMode(!isConfigMode)} className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium">isConfigMode ? 'Done Configuring' : 'Manage Components'</Button>
                         </div>
                     }
                 />
@@ -284,12 +270,7 @@ const SalaryStructureManager = () => {
                                         />
                                     </div>
                                 </div>
-                                <button
-                                    onClick={handleCreateComponent}
-                                    className="mt-4 w-full py-2 bg-warning text-white rounded hover:bg-warning/90 font-medium"
-                                >
-                                    Create Component
-                                </button>
+                                <Button onClick={handleCreateComponent} className="mt-4 w-full py-2 bg-warning text-white rounded hover:bg-warning/90 font-medium">Create Component</Button>
                             </div>
                         ) : (
                             <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
@@ -350,12 +331,7 @@ const SalaryStructureManager = () => {
                                         </div>
 
                                         <div className="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
-                                            <button
-                                                onClick={() => setSelectedEmployeeId('')}
-                                                className="px-4 py-2 text-slate-600 hover:text-slate-900"
-                                            >
-                                                Cancel
-                                            </button>
+                                            <Button onClick={() => setSelectedEmployeeId('')} className="px-4 py-2 text-slate-600 hover:text-slate-900">Cancel</Button>
                                             <button
                                                 onClick={handleSave}
                                                 disabled={loading}

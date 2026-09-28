@@ -1,7 +1,8 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { User, Phone, Mail, MapPin, Search, X, Briefcase } from 'lucide-react';
 import { FormSection, InputWrapper } from './CustomerUI';
-import { Customer } from "../../../types/index";
+import { Customer } from "../../../types/index";import { Button } from '@/components/shared/Button';
+
 
 interface CustomerFormProps {
     initialData?: Partial<Customer>;
@@ -168,7 +169,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                                         placeholder="Search existing partners..."
                                     />
                                     {showReferralDropdown && referralSearch.length > 0 && (
-                                        <div className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
+                                        <div className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
                                             {filteredReferralCustomers.length > 0 ? (
                                                 filteredReferralCustomers.map((c) => (
                                                     <button
@@ -212,13 +213,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
             </FormSection>
 
             <div className="flex justify-end gap-3 pt-4">
-                <button
-                    type="button"
-                    onClick={onCancel}
-                    className="px-8 py-4 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all"
-                >
-                    Abort
-                </button>
+                <Button type="button" onClick={onCancel} className="px-8 py-4 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all">Abort</Button>
                 <button
                     type="submit"
                     disabled={isLoading}

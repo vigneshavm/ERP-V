@@ -9,7 +9,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import AuditLog from '../modules/core/models/AuditLog.js';
-import { error as logError } from '../utils/logger.js';
+import { error as logError, info, warn } from '../config/logger.js';
 
 /**
  * Mandatory audit logging middleware
@@ -52,7 +52,7 @@ export const mandatoryAudit = (entityType: string, action: string) => {
                             path: req.path,
                         },
                     }).then(() => {
-                        console.log(`✅ Audit log created: ${action} by user ${(req as any).user._id}`);
+                        info(`✅ Audit log created: ${action} by user ${(req as any).user._id}`);
                     }).catch(err => {
                         logError('CRITICAL: Audit logging failed', {
                             error: err.message,
@@ -145,20 +145,20 @@ export const startAuditIntegrityVerification = (intervalMinutes: number = 60) =>
 
     const verify = async () => {
         try {
-            console.log('🔍 Running audit log integrity verification...');
+            info('🔍 Running audit log integrity verification...');
 
             // Explicitly cast AuditLog to any to access the static method if TS doesn't see it (or update model definition)
             const result = await (AuditLog as any).verifyIntegrity();
 
             if (result.verified) {
-                console.log(`✅ Audit log integrity verified (${result.totalLogs} logs)`);
+                info(`✅ Audit log integrity verified (${result.totalLogs} logs)`);
             } else {
-                console.error(`❌ Audit log integrity FAILED: ${result.errors.length} errors`);
+                logError(`❌ Audit log integrity FAILED: ${result.errors.length} errors`);
                 logError('Audit log integrity check failed', result.errors);
 
                 // In production, trigger critical alert
                 if (process.env.NODE_ENV === 'production') {
-                    console.error('🚨 AUDIT INTEGRITY FAILURE - CRITICAL ALERT');
+                    logError('🚨 AUDIT INTEGRITY FAILURE - CRITICAL ALERT');
                 }
             }
         } catch (err: any) {
@@ -172,7 +172,7 @@ export const startAuditIntegrityVerification = (intervalMinutes: number = 60) =>
     // Then run periodically
     setInterval(verify, interval);
 
-    console.log(`✅ Audit integrity verification scheduled (every ${intervalMinutes} minutes)`);
+    info(`✅ Audit integrity verification scheduled (every ${intervalMinutes} minutes)`);
 };
 
 /**
@@ -188,10 +188,10 @@ export const validateAuditLoggingEnabled = () => {
                 'Set ENABLE_AUDIT_LOGGING=true or remove the variable.'
             );
         } else {
-            console.warn('⚠️  Audit logging is disabled (development mode)');
+            warn('⚠️  Audit logging is disabled (development mode)');
         }
     } else {
-        console.log('✅ Audit logging is enabled');
+        info('✅ Audit logging is enabled');
     }
 
     return enabled;

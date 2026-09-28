@@ -1,5 +1,6 @@
 import FormData from "form-data";
 import Mailgun from "mailgun.js";
+import { info, error, warn } from '../config/logger.js';
 
 declare global {
   var EMAIL_ENABLED: boolean;
@@ -33,18 +34,18 @@ export const isEmailConfigured = (): boolean => {
  */
 export const verifyEmailTransport = async (): Promise<boolean> => {
   if (process.env.EMAIL_ENABLED !== "true") {
-    console.warn('⚠️  Email transport verification skipped (not enabled)');
+    warn('⚠️  Email transport verification skipped (not enabled)');
     global.EMAIL_ENABLED = false;
     return false;
   }
 
   if (!process.env.MAILGUN_API_KEY) {
-    console.error('❌ MAILGUN_API_KEY is not set');
+    error('❌ MAILGUN_API_KEY is not set');
     global.EMAIL_ENABLED = false;
     return false;
   }
 
-  console.log('✅ Mailgun API configured');
+  info('✅ Mailgun API configured');
   global.EMAIL_ENABLED = true;
   return true;
 };
@@ -67,10 +68,10 @@ export const sendEmail = async (to: string, subject: string, text: string): Prom
       text,
     });
 
-    console.log("📨 Email sent:", data.id);
+    info("📨 Email sent:", data.id);
     return true;
   } catch (error: any) {
-    console.error("Email Error:", error.message);
+    error("Email Error:", error.message);
     return false;
   }
 };
@@ -94,10 +95,10 @@ export const sendHtmlEmail = async (to: string, subject: string, html: string, t
       text: text || html.replace(/<[^>]*>/g, ""), // Strip HTML tags for text fallback
     });
 
-    console.log("📨 HTML Email sent:", data.id);
+    info("📨 HTML Email sent:", data.id);
     return true;
   } catch (error: any) {
-    console.error("HTML Email Error:", error.message);
+    error("HTML Email Error:", error.message);
     return false;
   }
 };

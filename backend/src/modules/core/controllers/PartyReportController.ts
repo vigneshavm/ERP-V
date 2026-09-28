@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { error } from "../../../config/logger.js";
 import { isSqlItemSource } from "../../../config/itemDataSource.js";
 import { sqlAllParties, sqlPartyItems, sqlPartyPnl, sqlPartyStatement, sqlPurchaseByParty, sqlPurchaseByPartyGroup, sqlSalesByParty, sqlSalesByPartyGroup, type SalesPartyQuery } from "../../../integrations/textilesoft/sqlPartyReports.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * Party reports (Reports > Party Reports), read from the shop database. They need ITEM_DATA_SOURCE=sql: there is no
@@ -18,13 +19,13 @@ function partyQuery(req: Request): SalesPartyQuery & { key?: string } {
 }
 
 function handler(label: string, fn: (q: SalesPartyQuery & { key?: string }, tenantId: string) => Promise<unknown>) {
-    return async (req: Request, res: Response): Promise<void> => {
+    return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         if (!isSqlItemSource()) {
             res.status(501).json({ message: `${label} reads the shop database. Set ITEM_DATA_SOURCE=sql to use it.` });
             return;
         }
         try {
-            res.status(200).json(await fn(partyQuery(req), String((req as any).tenantId)));
+            res.status(200).json(await fn(partyQuery(req as Request), String(req.user.tenantId)));
         } catch (err: any) {
             error(`${label} Error: ${err.message}`);
             res.status(500).json({ message: `Unable to load ${label.toLowerCase()}`, error: err.message });

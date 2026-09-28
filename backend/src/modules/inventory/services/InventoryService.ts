@@ -2,7 +2,7 @@ import { injectable, inject } from "tsyringe";
 import { InventoryRepository } from "../../../repositories/InventoryRepository.js";
 import { AppError } from "../../../utils/AppError.js";
 import { IItem } from "../../../interfaces/IItem.js";
-import { info } from "../../../config/logger.js";
+import { info, warn } from "../../../config/logger.js";
 import StockLog from "../models/StockLog.js";
 import Item from "../models/Item.js";
 import Brand from "../models/Brand.js";
@@ -12,6 +12,8 @@ import Shelf from "../models/Shelf.js";
 import mongoose from "mongoose";
 import { isSqlItemSource } from "../../../config/itemDataSource.js";
 import * as sqlItems from "../../../integrations/textilesoft/sqlItemSource.js";
+import { extractPaginationParams } from "../../../utils/paginationUtils.js";
+import type { TenantRef, IdRef } from '../../../interfaces/TenantRef.js';
 
 @injectable()
 export class InventoryService {
@@ -73,9 +75,7 @@ export class InventoryService {
     }
 
     private async getAllItemsFromMongo(tenantId: string, queryParams: any): Promise<any> {
-        const page = parseInt(queryParams.page as string) || 1;
-        const limit = parseInt(queryParams.limit as string) || 20;
-        const skip = (page - 1) * limit;
+        const { page, limit, skip } = extractPaginationParams(queryParams, 20, 200);
         const search = queryParams.search || '';
 
         const query: any = {};
@@ -290,6 +290,41 @@ export class InventoryService {
         return stats[0] || { totalItems: 0, totalValuation: 0, lowStockCount: 0 };
     }
 
+    /**
+     * Stock movement ledger from StockLog (Mongo source): paged rows plus in/out totals.
+     * The Textilesoft equivalent is `sqlStockMovements`; callers pick the source.
+     */
+    async getStockMovements(tenantId: string, q: Record<string, string | undefined>): Promise<any> {
+        const page = Math.max(1, parseInt(q.page || '1') || 1);
+        const limit = Math.min(200, Math.max(1, parseInt(q.limit || '50') || 50));
+        const filter: Record<string, unknown> = { tenantId };
+        if (q.type === 'IN') filter.delta = { $gt: 0 };
+        if (q.type === 'OUT') filter.delta = { $lt: 0 };
+        if (q.from || q.to) filter.createdAt = { ...(q.from ? { $gte: new Date(q.from) } : {}), ...(q.to ? { $lte: new Date(`${q.to}T23:59:59Z`) } : {}) };
+        const [logs, total, agg] = await Promise.all([
+            StockLog.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).populate('itemId', 'name sku').lean(),
+            StockLog.countDocuments(filter),
+            StockLog.aggregate([{ $match: filter }, { $group: { _id: null, inQty: { $sum: { $cond: [{ $gt: ['$delta', 0] }, '$delta', 0] } }, outQty: { $sum: { $cond: [{ $lt: ['$delta', 0] }, { $abs: '$delta' }, 0] } } } }]),
+        ]);
+        return {
+            items: (logs as any[]).map((l) => ({
+                id: String(l._id),
+                date: new Date(l.createdAt).toISOString().slice(0, 10),
+                item: l.itemId?.name || 'Unknown item',
+                sku: l.itemId?.sku || '',
+                type: l.delta >= 0 ? 'IN' : 'OUT',
+                qty: Math.abs(l.delta),
+                ref: l.type,
+                party: '',
+                reason: l.reason || '',
+            })),
+            pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+            totals: { transactions: total, inQty: agg[0]?.inQty ?? 0, outQty: agg[0]?.outQty ?? 0 },
+            range: null,
+            source: 'mongo',
+        };
+    }
+
     // Groups current stock by the city of the store it's held in (via Item.storeLevels ->
     // Store.city). Store already has a city field (used for GST/address purposes), so this
     // reuses existing data rather than introducing a new location dimension.
@@ -438,7 +473,7 @@ export class InventoryService {
                     .sort((a: string, b: string) => a.localeCompare(b));
             }
         } catch (err: any) {
-            console.warn('MongoDB distinct category query error:', err.message);
+            warn('MongoDB distinct category query error:', err.message);
         }
         // No fabricated category names -- a tenant with no items yet (or a genuine
         // query failure) sees an empty list, not made-up categories that imply
@@ -508,7 +543,7 @@ export class InventoryService {
                     .sort((a, b) => a.shelfCode.localeCompare(b.shelfCode))
             };
         } catch (err: any) {
-            console.warn('Get Filter Options error:', err.message);
+            warn('Get Filter Options error:', err.message);
             return { brands: [], sizes: [], colors: [], shelves: [] };
         }
     }
@@ -705,7 +740,7 @@ export class InventoryService {
     async reduceStock(
         itemId: string,
         quantity: number,
-        tenantId: string,
+        tenantId: TenantRef,
         user: any,
         reason: string = 'SALES',
         session?: any
@@ -931,5 +966,140 @@ export class InventoryService {
             reason: `Cost Revision: Batch ${batchNumber} (${oldCost} -> ${newCost})`,
             performedBy: user._id
         });
+    }
+
+    /**
+     * Stock effect of returning one serialized unit to its supplier: stockQty - 1 and a RETURN
+     * stock-log line. (The unit's own status is set by SerializedUnitService.updateStatus.)
+     */
+    async removeReturnedUnit(itemId: string, tenantId: TenantRef, serialNumber: string, userId: IdRef): Promise<void> {
+        const currentItem: any = await Item.findOne({ _id: itemId, tenantId });
+        await Item.updateOne({ _id: itemId, tenantId }, { $inc: { stockQty: -1 } });
+        await StockLog.create({
+            itemId,
+            tenantId,
+            type: 'RETURN',
+            delta: -1,
+            finalQty: (currentItem?.stockQty || 1) - 1,
+            reason: `PURCHASE_RETURN: Unit ${serialNumber}`,
+            performedBy: userId,
+        });
+    }
+
+    /** Reverses removeReturnedUnit: the unit is back on the shelf (stockQty + 1, RETURN log line). */
+    async restoreReturnedUnit(itemId: string, tenantId: TenantRef, serialNumber: string, userId: IdRef): Promise<void> {
+        const updated: any = await Item.findOneAndUpdate({ _id: itemId, tenantId }, { $inc: { stockQty: 1 } }, { new: true });
+        if (!updated) throw new AppError("Item not found", 404, "ITEM_NOT_FOUND");
+        await StockLog.create({
+            itemId,
+            tenantId,
+            type: 'RETURN',
+            delta: 1,
+            finalQty: updated.stockQty,
+            reason: `PURCHASE_RETURN_REVERSED: Unit ${serialNumber}`,
+            performedBy: userId,
+        });
+    }
+
+    /**
+     * Reverses reduceStockFromBatch for a deleted purchase return: puts `quantity` back into the
+     * batch, re-creating the batch entry (at `costPrice`) if the return had emptied and removed it.
+     */
+    async restoreBatchFromReturn(
+        itemId: string,
+        quantity: number,
+        batchNumber: string,
+        costPrice: number,
+        supplierId: IdRef | undefined,
+        tenantId: TenantRef,
+        userId: IdRef,
+    ): Promise<void> {
+        const item: any = await Item.findOne({ _id: itemId, tenantId });
+        if (!item) throw new AppError("Item not found", 404, "ITEM_NOT_FOUND");
+        const batches = [...(item.batches || [])].map((b: any) => (b.toObject ? b.toObject() : b));
+        const index = batches.findIndex((b: any) => b.batchNumber === batchNumber);
+        if (index === -1) {
+            batches.push({ batchNumber, quantity, costPrice, supplierId, receivedDate: new Date() });
+        } else {
+            batches[index] = { ...batches[index], quantity: (batches[index].quantity || 0) + quantity };
+        }
+        await Item.updateOne({ _id: itemId, tenantId }, { $inc: { stockQty: quantity }, $set: { batches } });
+        await StockLog.create({
+            itemId,
+            tenantId,
+            type: 'RETURN',
+            delta: quantity,
+            finalQty: (item.stockQty || 0) + quantity,
+            reason: `PURCHASE_RETURN_REVERSED: Batch ${batchNumber}`,
+            performedBy: userId,
+        });
+    }
+
+    /**
+     * Throws 400 INSUFFICIENT_STOCK unless every item has at least the requested quantity
+     * (quantities for the same item are summed). Read-only: call it before any stock is moved.
+     */
+    async assertStockAvailable(lines: { itemId: string; quantity: number; label?: string }[], tenantId: TenantRef): Promise<void> {
+        const needed = new Map<string, { quantity: number; label?: string }>();
+        for (const line of lines) {
+            const prev = needed.get(line.itemId);
+            needed.set(line.itemId, { quantity: (prev?.quantity || 0) + line.quantity, label: prev?.label || line.label });
+        }
+        for (const [itemId, { quantity, label }] of needed) {
+            const item: any = await Item.findOne({ _id: itemId, tenantId }).select("name stockQty").lean();
+            if (!item) throw new AppError(`Item ${label || itemId} not found`, 404, "ITEM_NOT_FOUND");
+            if ((item.stockQty || 0) < quantity) {
+                throw new AppError(`Not enough stock of ${item.name}: need ${quantity}, have ${item.stockQty || 0}`, 400, "INSUFFICIENT_STOCK", { itemId, needed: quantity, available: item.stockQty || 0 });
+            }
+        }
+    }
+
+    /**
+     * Moves quantity between two warehouses of the same item (total stockQty unchanged) and logs a
+     * TRANSFER line. Throws 400 INSUFFICIENT_WAREHOUSE_STOCK if the source warehouse has too little.
+     */
+    async moveBetweenWarehouses(
+        itemId: string,
+        quantity: number,
+        fromWarehouseId: string,
+        toWarehouseId: string,
+        tenantId: TenantRef,
+        reason: string,
+        userId: IdRef,
+        session?: any,
+    ): Promise<void> {
+        const item: any = await Item.findOne({ _id: itemId, tenantId }).session(session || null);
+        if (!item) throw new AppError(`Item not found: ${itemId}`, 404, "ITEM_NOT_FOUND");
+
+        const levels = [...(item.warehouseLevels || [])].map((l: any) => (l.toObject ? l.toObject() : l));
+        const fromIdx = levels.findIndex((l: any) => l.warehouseId === fromWarehouseId);
+        const available = fromIdx >= 0 ? levels[fromIdx].qty : 0;
+        if (available < quantity) {
+            throw new AppError(
+                `Not enough ${item.name} in warehouse ${fromWarehouseId}: available ${available}, requested ${quantity}`,
+                400,
+                "INSUFFICIENT_WAREHOUSE_STOCK",
+                { itemId, available, requested: quantity },
+            );
+        }
+        levels[fromIdx] = { ...levels[fromIdx], qty: available - quantity };
+        const toIdx = levels.findIndex((l: any) => l.warehouseId === toWarehouseId);
+        if (toIdx >= 0) levels[toIdx] = { ...levels[toIdx], qty: levels[toIdx].qty + quantity };
+        else levels.push({ warehouseId: toWarehouseId, qty: quantity });
+
+        await Item.updateOne(
+            { _id: itemId, tenantId },
+            { $set: { warehouseLevels: levels.filter((l: any) => l.qty > 0 || l.warehouseId === toWarehouseId) } },
+            { session },
+        );
+        await StockLog.create([{
+            itemId,
+            tenantId,
+            type: 'TRANSFER',
+            delta: 0,
+            finalQty: item.stockQty,
+            reason,
+            performedBy: userId,
+        }], { session });
     }
 }

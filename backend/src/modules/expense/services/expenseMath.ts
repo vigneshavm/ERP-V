@@ -4,6 +4,8 @@
  * approval workflow on expenses, so nothing here reports "pending / approved / rejected claims".
  */
 
+import { round2 } from "../../../utils/typeConversion.js";
+
 export const EXPENSE_RULES = {
     /** Expenses at or above this should carry a receipt. */
     receiptFrom: 2000,
@@ -42,7 +44,6 @@ export interface CategoryPolicy { name: string; monthlyBudget: number; cashAllow
 
 export interface ExpenseRow extends ExpenseDoc { flags: ExpenseFlag[] }
 
-const round2 = (v: number) => Math.round(v * 100) / 100;
 const dayMs = 86_400_000;
 const dayNum = (iso: string) => Math.round(new Date(`${iso}T00:00:00Z`).getTime() / dayMs);
 const isCash = (m: string) => m.trim().toLowerCase() === "cash";

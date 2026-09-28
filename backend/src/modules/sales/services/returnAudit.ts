@@ -12,6 +12,9 @@
  * field says nothing about cash, UPI or card refunds.
  */
 
+import { istDate as istDateFromUtils, istTime as istTimeFromUtils } from "../../../utils/dateUtils.js";
+import { toNumber as n, round2 } from "../../../utils/typeConversion.js";
+
 export const CASH_REFUND_LIMIT = 1000;
 export const CASHIER_DAILY_LIMIT = 3;
 export const REPEAT_CUSTOMER_COUNT = 2;
@@ -73,16 +76,10 @@ export interface AuditRow {
     level: RiskLevel;
 }
 
-const IST_OFFSET_MS = 5.5 * 3_600_000;
-const n = (v: unknown): number => {
-    const x = Number(v);
-    return Number.isFinite(x) ? x : 0;
-};
-const round2 = (v: number): number => Math.round(v * 100) / 100;
 const idOf = (v: unknown): string => (v && typeof v === "object" && "_id" in (v as object) ? String((v as { _id: unknown })._id) : v ? String(v) : "");
 const when = (r: ReturnDoc): Date => new Date(String(r.returnDate ?? r.createdAt ?? ""));
-export const istDay = (d: Date): string => new Date(d.getTime() + IST_OFFSET_MS).toISOString().slice(0, 10);
-const istTime = (d: Date): string => new Date(d.getTime() + IST_OFFSET_MS).toISOString().slice(11, 16);
+export const istDay = (d: Date): string => istDateFromUtils(d);
+const istTime = istTimeFromUtils;
 
 /** The method the money actually went back by (actualRefundMethod once resolved, else what was asked for). */
 export function refundModeOf(r: Pick<ReturnDoc, "refundMethod" | "actualRefundMethod">): { mode: RefundMode; method: string } {

@@ -27,9 +27,9 @@ import {
     ArrowDownLeft,
     Wallet,
     History,
-    X,
     Zap
 } from 'lucide-react';
+import { Button, Input, Modal } from '@/components/shared';
 
 // A blank entry dated today (a function so "today" is when the form is opened or reset).
 const emptyCashEntry = (): Partial<Transaction> => ({
@@ -104,18 +104,22 @@ const CashInHand: React.FC = () => {
                 breadcrumbs={[{ label: 'Treasury', link: '/cashbank/position' }, { label: 'Vault' }]}
                 actions={
                     <div className="flex gap-2">
-                        <button
+                        <Button
+                            variant="success"
+                            size="md"
+                            icon={<Plus className="w-4 h-4" />}
                             onClick={() => { setFormData({ ...formData, type: 'in', toAccount: 'cash', fromAccount: '' }); setShowAddTransaction(true); }}
-                            className="px-6 py-2.5 bg-success text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-100 dark:shadow-none hover:bg-success/90 transition-all flex items-center gap-2"
                         >
-                            <Plus className="w-4 h-4" /> Capital Inflow
-                        </button>
-                        <button
+                            Capital Inflow
+                        </Button>
+                        <Button
+                            variant="danger"
+                            size="md"
+                            icon={<Minus className="w-4 h-4" />}
                             onClick={() => { setFormData({ ...formData, type: 'out', fromAccount: 'cash', toAccount: '' }); setShowAddTransaction(true); }}
-                            className="px-6 py-2.5 bg-danger text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-rose-100 dark:shadow-none hover:bg-danger/90 transition-all flex items-center gap-2"
                         >
-                            <Minus className="w-4 h-4" /> Expenses
-                        </button>
+                            Expenses
+                        </Button>
                     </div>
                 }
             />
@@ -151,15 +155,14 @@ const CashInHand: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-1.5 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-sm w-fit">
                     {(['all', 'in', 'out'] as const).map(type => (
-                        <button
+                        <Button
                             key={type}
+                            variant={filterType === type ? 'secondary' : 'tertiary'}
+                            size="sm"
                             onClick={() => setFilterType(type)}
-                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterType === type
-                                ? 'bg-white dark:bg-slate-700 text-primary shadow-md scale-105'
-                                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'}`}
                         >
                             {type === 'all' ? 'All Channels' : type === 'in' ? 'Inflows' : 'Outflows'}
-                        </button>
+                        </Button>
                     ))}
                 </div>
                 <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 py-2 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -181,20 +184,33 @@ const CashInHand: React.FC = () => {
             </div>
 
             {/* Execution Terminal */}
-            {showAddTransaction && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-                    <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-slide-up">
-                        <div className="p-8 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                            <div>
-                                <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Transfer money</h2>
-                                <p className="text-xs font-medium text-slate-400">Recording manual {formData.type === 'in' ? 'Inflow' : 'Outflow'} protocol</p>
-                            </div>
-                            <button type="button" onClick={() => setShowAddTransaction(false)} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all">
-                                <X className="w-5 h-5 text-slate-500" />
-                            </button>
-                        </div>
+            <Modal
+                isOpen={showAddTransaction}
+                onClose={() => setShowAddTransaction(false)}
+                title="Transfer money"
+                size="xl"
+                footer={
+                    <div className="flex justify-end gap-3">
+                        <Button variant="secondary" size="md" type="button" onClick={() => setShowAddTransaction(false)}>
+                            Abort
+                        </Button>
+                        <Button
+                            variant={formData.type === 'in' ? 'success' : 'danger'}
+                            size="md"
+                            type="submit"
+                            form="cash-in-hand-form"
+                            disabled={isLoading}
+                            loading={isLoading}
+                        >
+                            Commit {formData.type === 'in' ? 'Inflow' : 'Outflow'}
+                        </Button>
+                    </div>
+                }
+            >
+                    <form id="cash-in-hand-form" onSubmit={handleSubmit}>
+                        <p className="text-xs font-medium text-slate-400 -mt-4 mb-6">Recording manual {formData.type === 'in' ? 'Inflow' : 'Outflow'} protocol</p>
 
-                        <div className="p-10 space-y-8">
+                        <div className="space-y-8">
                             <CashBankFormSection title="Clearing Matrix">
                                 <CashBankInput label="Execution Date" icon={Calendar}>
                                     <input
@@ -292,16 +308,8 @@ const CashInHand: React.FC = () => {
                                 </div>
                             )}
                         </div>
-
-                        <div className="p-8 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
-                            <button type="button" onClick={() => setShowAddTransaction(false)} className="px-8 py-3.5 border border-slate-200 dark:border-slate-700 text-slate-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">Abort</button>
-                            <button type="submit" disabled={isLoading} className={`px-10 py-3.5 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl transition-all disabled:opacity-50 text-white ${formData.type === 'in' ? 'bg-success shadow-emerald-100 dark:shadow-none hover:bg-success/90' : 'bg-danger shadow-rose-100 dark:shadow-none hover:bg-danger/90'}`}>
-                                {isLoading ? 'Committing...' : `Commit ${formData.type === 'in' ? 'Inflow' : 'Outflow'}`}
-                            </button>
-                        </div>
                     </form>
-                </div>
-            )}
+            </Modal>
 
             {/* Transaction Ledger Grid */}
             <div className="grid grid-cols-1 gap-4 pb-20">

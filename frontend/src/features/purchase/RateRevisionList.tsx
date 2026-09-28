@@ -6,6 +6,9 @@ import { Plus, Check, X, Clock, AlertTriangle, ArrowRight, Zap, Activity, Shield
 import api from '../../services/api';
 import { toast } from 'react-toastify';
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+import { getApiErrorMessage } from '../../utils/apiError';
 
 const RateRevisionList: React.FC = () => {
     const navigate = useNavigate();
@@ -35,13 +38,13 @@ const RateRevisionList: React.FC = () => {
     }, []);
 
     const handleApprove = async (id: string) => {
-        if (!window.confirm("Approve this revision? This will create a Debit Note and update Inventory Cost.")) return;
+        if (!window.confirm("Approve this revision? The price difference will be added to what you owe this supplier, and the batch cost will be updated.")) return;
         try {
             await api.post(`/api/purchases/rate-revisions/${id}/approve`);
             toast.success("Revision Approved Successfully");
             fetchRevisions();
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Approval Failed");
+            toast.error(getApiErrorMessage(error, "Approval failed"));
         }
     };
 
@@ -52,7 +55,7 @@ const RateRevisionList: React.FC = () => {
             toast.info("Revision Rejected");
             fetchRevisions();
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Rejection Failed");
+            toast.error(getApiErrorMessage(error, "Rejection failed"));
         }
     };
 
@@ -95,7 +98,7 @@ const RateRevisionList: React.FC = () => {
                         { label: 'Awaiting Auth', val: stats.pending, icon: Clock, color: 'text-warning', bg: 'bg-warning-soft' },
                         { label: 'Audit Nodes', val: revisions.length, icon: Activity, color: 'text-primary', bg: 'bg-primary-soft' }
                     ].map((card, i) => (
-                        <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
+                        <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
                                 <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />

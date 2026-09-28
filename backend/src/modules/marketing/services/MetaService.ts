@@ -1,5 +1,6 @@
 // MetaIntegration model is used by MetaController, not directly here
 // import { MetaIntegration } from "../models/MetaIntegration.js";
+import { warn } from "../../../config/logger.js";
 
 const GRAPH_API_URL = "https://graph.facebook.com/v19.0";
 
@@ -14,7 +15,7 @@ export class MetaService {
         this.redirectUri = process.env.META_REDIRECT_URI || "";
 
         if (!this.appId || !this.appSecret) {
-            console.warn("Meta credentials (META_APP_ID, META_APP_SECRET) are missing.");
+            warn('Meta credentials (META_APP_ID, META_APP_SECRET) are missing.');
         }
     }
 

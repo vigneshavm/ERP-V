@@ -22,6 +22,7 @@ import {
     CheckCircle2,
     BarChart3
 } from 'lucide-react';
+import { Button } from '@/components/shared';
 
 const BankSummary: React.FC = () => {
     const navigate = useNavigate();
@@ -62,18 +63,12 @@ const BankSummary: React.FC = () => {
                 breadcrumbs={[{ label: 'Treasury', link: '/cashbank/position' }, { label: 'Intelligence' }]}
                 actions={
                     <div className="flex gap-2">
-                        <button
-                            onClick={() => navigate('/cashbank/transfers')}
-                            className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center gap-2"
-                        >
-                            <ArrowRightLeft className="w-4 h-4" /> Transfer
-                        </button>
-                        <button
-                            onClick={() => navigate('/cashbank/bank-accounts')}
-                            className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-primary-hover transition-all flex items-center gap-2"
-                        >
-                            <Settings className="w-4 h-4" /> Manage Units
-                        </button>
+                        <Button variant="secondary" size="md" icon={<ArrowRightLeft className="w-4 h-4" />} onClick={() => navigate('/cashbank/transfers')}>
+                            Transfer
+                        </Button>
+                        <Button variant="primary" size="md" icon={<Settings className="w-4 h-4" />} onClick={() => navigate('/cashbank/bank-accounts')}>
+                            Manage Units
+                        </Button>
                     </div>
                 }
             />
@@ -100,12 +95,12 @@ const BankSummary: React.FC = () => {
                 }
                 extraActions={
                     <>
-                        <button onClick={() => navigate('/cashbank/position')} className="px-6 py-4 bg-white/10 hover:bg-white/20 rounded-sm border border-white/20 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between">
-                            Treasury Command Center <ChevronRight className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => navigate('/cashbank/cash-in-hand')} className="px-6 py-4 bg-white/10 hover:bg-white/20 rounded-sm border border-white/20 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between">
-                            Account overview <ChevronRight className="w-4 h-4" />
-                        </button>
+                        <Button variant="tertiary" size="lg" iconRight={<ChevronRight className="w-4 h-4" />} onClick={() => navigate('/cashbank/position')} fullWidth className="justify-between bg-white/10 hover:bg-white/20 border border-white/20">
+                            Treasury Command Center
+                        </Button>
+                        <Button variant="tertiary" size="lg" iconRight={<ChevronRight className="w-4 h-4" />} onClick={() => navigate('/cashbank/cash-in-hand')} fullWidth className="justify-between bg-white/10 hover:bg-white/20 border border-white/20">
+                            Account overview
+                        </Button>
                     </>
                 }
             />
@@ -171,12 +166,9 @@ const BankSummary: React.FC = () => {
                         </div>
                         <h4 className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-tight">No Institutions Registered</h4>
                         <p className="text-xs font-medium text-slate-400 mt-2 mb-6">Initialize your banking portfolio by adding your first institution.</p>
-                        <button
-                            onClick={() => navigate('/cashbank/bank-accounts')}
-                            className="px-8 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-primary-hover transition-all"
-                        >
+                        <Button variant="primary" size="md" onClick={() => navigate('/cashbank/bank-accounts')}>
                             Add First Institution
-                        </button>
+                        </Button>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -209,12 +201,14 @@ const BankSummary: React.FC = () => {
                                                 ₹{(account.currentBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                             </p>
                                         </div>
-                                        <button
+                                        <Button
+                                            variant="tertiary"
+                                            size="sm"
+                                            icon={<FileText className="w-3.5 h-3.5" />}
                                             onClick={() => navigate(`/cashbank/ledger/${account._id}`)}
-                                            className="px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-primary-soft dark:hover:bg-primary-soft hover:text-primary rounded-xl text-[9px] font-black text-slate-500 uppercase tracking-widest transition-all flex items-center gap-1.5"
                                         >
-                                            <FileText className="w-3.5 h-3.5" /> Ledger
-                                        </button>
+                                            Ledger
+                                        </Button>
                                     </div>
                                 </div>
                             );

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 import { singleton } from 'tsyringe';
 
@@ -6,22 +6,7 @@ import Customer from '../models/Customer.js';
 
 import Transaction from '../../sales/models/Transaction.js';
 import { info, error } from '../../../config/logger.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-    /** Set by `protect` from the logged-in user's shop. */
-    tenantId?: string;
-    originalEntity?: any;
-    updatedEntity?: any;
-    deletedEntity?: any;
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 @singleton()
 export class CustomerController {
@@ -100,14 +85,13 @@ export class CustomerController {
                 }
             }
 
-            // Create customer with owner reference
+            // Create customer with tenant reference
             const customer = await Customer.create({
                 name,
                 phone,
                 email,
                 address,
                 referredBy: referredBy || null,
-                owner: req.user?._id,
                 tenantId: req.tenantId,
             });
 
@@ -198,7 +182,7 @@ export class CustomerController {
 
             const customer = await Customer.findOne({
                 _id: req.params.id,
-                owner: req.user?._id,
+                $or: [{tenantId: req.tenantId}, {owner: req.tenantId}],
             });
 
             if (!customer) {
@@ -210,7 +194,7 @@ export class CustomerController {
             if (req.body.phone && req.body.phone !== customer.phone) {
                 const existingPhone = await Customer.findOne({
                     phone: req.body.phone,
-                    owner: req.user?._id,
+                    $or: [{tenantId: req.tenantId}, {owner: req.tenantId}],
                     _id: { $ne: req.params.id },
                 });
 
@@ -224,7 +208,7 @@ export class CustomerController {
             if (req.body.email && req.body.email !== customer.email) {
                 const existingEmail = await Customer.findOne({
                     email: req.body.email,
-                    owner: req.user?._id,
+                    $or: [{tenantId: req.tenantId}, {owner: req.tenantId}],
                     _id: { $ne: req.params.id },
                 });
 
@@ -278,7 +262,7 @@ export class CustomerController {
     public getAllCustomers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const customers = await Customer.aggregate([
-                { $match: { owner: new mongoose.Types.ObjectId(req.user?._id) } },
+                { $match: { $or: [{tenantId: new mongoose.Types.ObjectId(req.tenantId)}, {owner: new mongoose.Types.ObjectId(req.tenantId)}] } },
                 {
                     $lookup: {
                         from: 'transactions',
@@ -375,7 +359,7 @@ export class CustomerController {
             const customerId = new mongoose.Types.ObjectId(req.params.id as string);
 
             const results = await Customer.aggregate([
-                { $match: { _id: customerId, owner: new mongoose.Types.ObjectId(req.user?._id) } },
+                { $match: { _id: customerId, $or: [{tenantId: new mongoose.Types.ObjectId(req.tenantId)}, {owner: new mongoose.Types.ObjectId(req.tenantId)}] } },
                 {
                     $lookup: {
                         from: 'transactions',
@@ -480,7 +464,7 @@ export class CustomerController {
 
             const customer = await Customer.findOne({
                 _id: req.params.id,
-                owner: req.user?._id,
+                $or: [{tenantId: req.tenantId}, {owner: req.tenantId}],
             });
 
             if (!customer) {
@@ -534,7 +518,7 @@ export class CustomerController {
 
             const customer = await Customer.findOne({
                 _id: req.params.id,
-                owner: req.user?._id,
+                $or: [{tenantId: req.tenantId}, {owner: req.tenantId}],
             });
 
             if (!customer) {

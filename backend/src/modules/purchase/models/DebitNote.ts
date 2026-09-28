@@ -11,6 +11,7 @@ export interface IDebitNote extends Document {
     noteId: string;
     debitNoteNumber?: string; // For ledger consistency
     sourceId?: string; // For ledger consistency
+    tenantId: mongoose.Types.ObjectId; // Tenant scoping for multi-tenant isolation
     date: Date;
     vendorId: mongoose.Types.ObjectId;
     vendorName: string;
@@ -28,10 +29,11 @@ export interface IDebitNote extends Document {
 
 const debitNoteSchema = new Schema<IDebitNote>(
     {
+        // Unique per tenant (index below). The old global unique index `noteId_1` is dropped by
+        // scripts/migrations/004-backfill-purchase-return-tenant.js.
         noteId: {
             type: String,
             required: true,
-            unique: true,
         },
         date: {
             type: Date,
@@ -78,6 +80,12 @@ const debitNoteSchema = new Schema<IDebitNote>(
         notes: {
             type: String,
         },
+        tenantId: {
+            type: Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true,
+            index: true
+        },
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: "User",
@@ -88,7 +96,9 @@ const debitNoteSchema = new Schema<IDebitNote>(
 );
 
 
-debitNoteSchema.index({ vendorId: 1 });
+debitNoteSchema.index({ vendorId: 1, tenantId: 1 });
+debitNoteSchema.index({ tenantId: 1, createdAt: -1 });
+debitNoteSchema.index({ tenantId: 1, noteId: 1 }, { unique: true });
 
 const DebitNote = mongoose.model<IDebitNote>("DebitNote", debitNoteSchema);
 export default DebitNote;

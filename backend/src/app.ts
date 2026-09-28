@@ -118,33 +118,33 @@ app.use("/api/stores", storeRoutes);
 import coreRoutes from "./modules/core/routes/core.routes.js";
 app.use("/api", coreRoutes);
 
-import roleRoutes from "./modules/core/routes/roleRoutes.js";
+import roleRoutes from "./modules/core/routes/./role.routes.js";
 app.use("/api/roles", roleRoutes);
 
-import syncRoutes from "./modules/core/routes/syncRoutes.js";
+import syncRoutes from "./modules/core/routes/./sync.routes.js";
 app.use("/api/sync", syncRoutes);
 
-import sectorCategoryRoutes from "./modules/core/routes/sectorCategoryRoutes.js";
+import sectorCategoryRoutes from "./modules/core/routes/./sectorCategory.routes.js";
 app.use("/api", sectorCategoryRoutes);
 
-import feedbackRoutes from "./modules/core/routes/feedbackRoutes.js";
+import feedbackRoutes from "./modules/core/routes/./feedback.routes.js";
 app.use("/api/feedback", feedbackRoutes);
 
-import notificationRoutes from "./modules/core/routes/notificationRoutes.js";
+import notificationRoutes from "./modules/core/routes/./notification.routes.js";
 app.use("/api/notifications", notificationRoutes);
 
-import auditLogRoutes from "./modules/core/routes/auditLogRoutes.js";
+import auditLogRoutes from "./modules/core/routes/./auditLog.routes.js";
 app.use("/api/audit-logs", auditLogRoutes);
 
 // Reports (dashboard-stats/stock/customers/sales) - was fully implemented but never mounted,
 // so every Shop Owner Dashboard report call was silently 404ing.
-import reportRoutes from "./modules/core/routes/reportRoutes.js";
+import reportRoutes from "./modules/core/routes/./report.routes.js";
 app.use("/api/reports", reportRoutes);
 
 // INVENTORY Module
 import inventoryRoutes from "./modules/inventory/routes/inventory.routes.js";
 app.use("/api/inventory", inventoryRoutes);
-import stockTransferRoutes from "./modules/inventory/routes/stockTransferRoutes.js";
+import stockTransferRoutes from "./modules/inventory/routes/./stockTransfer.routes.js";
 app.use("/api/stock-transfers", stockTransferRoutes);
 
 
@@ -160,19 +160,19 @@ import deliveryChallanRoutes from "./modules/sales/routes/deliveryChallan.routes
 app.use("/api/delivery-challan", deliveryChallanRoutes);
 import posRoutes from "./modules/sales/routes/pos.routes.js";
 app.use("/api/pos", posRoutes);
-import commissionRoutes from "./modules/sales/routes/commissionRoutes.js";
+import commissionRoutes from "./modules/sales/routes/./commission.routes.js";
 app.use("/api/commission-rules", commissionRoutes);
 
 // CRM & Analytics Module
-import crmAnalyticsRoutes from "./modules/crm/routes/crmAnalyticsRoutes.js";
+import crmAnalyticsRoutes from "./modules/crm/routes/./crmAnalytics.routes.js";
 app.use("/api/crm", crmAnalyticsRoutes);
 
 // PURCHASE Module
 import purchaseModuleRoutes from "./modules/purchase/routes/purchase.routes.js";
-import purchasePaymentRoutes from "./modules/purchase/routes/purchasePaymentRoutes.js";
-import purchaseReturnRoutes from "./modules/purchase/routes/purchaseReturnRoutes.js";
-import grnRoutes from "./modules/purchase/routes/grnRoutes.js";
-import grnTransferRoutes from "./modules/purchase/routes/grnTransferRoutes.js";
+import purchasePaymentRoutes from "./modules/purchase/routes/./purchasePayment.routes.js";
+import purchaseReturnRoutes from "./modules/purchase/routes/./purchaseReturn.routes.js";
+import grnRoutes from "./modules/purchase/routes/./grn.routes.js";
+import grnTransferRoutes from "./modules/purchase/routes/./grnTransfer.routes.js";
 app.use("/api/purchases", purchaseModuleRoutes);
 app.use("/api/purchase-payments", purchasePaymentRoutes);
 // Was previously mounting the WHOLE purchase.routes.ts aggregator here too, which put
@@ -187,9 +187,9 @@ app.use("/api/grn-transfers", grnTransferRoutes);
 // FINANCE Module
 import financeRoutes from "./modules/finance/routes/finance.routes.js";
 app.use("/api", financeRoutes); // Bills, Cashbank, Due, Loyalty
-import emiPlanRoutes from "./modules/finance/routes/emiPlanRoutes.js";
+import emiPlanRoutes from "./modules/finance/routes/./emiPlan.routes.js";
 app.use("/api/emi-plans", emiPlanRoutes);
-import cardTerminalRoutes from "./modules/finance/routes/cardTerminalRoutes.js";
+import cardTerminalRoutes from "./modules/finance/routes/./cardTerminal.routes.js";
 app.use("/api/card-terminals", cardTerminalRoutes);
 
 // EXPENSE Module

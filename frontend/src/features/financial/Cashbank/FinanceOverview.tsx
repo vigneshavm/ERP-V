@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { TransactionType, Sector } from "@/types/common";
 import { formatCurrency } from "@/utils/helpers";
+import { Button, Input } from '@/components/shared';
 
 // Sub-components (Upgraded UI versions)
 import FinanceOverviewCard from "@/features/financial/FinanceOverview";
@@ -136,15 +137,17 @@ const FinanceOverviewPage: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex gap-3">
-                            <button className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
-                                <Download className="w-4 h-4" /> Export Ledger
-                            </button>
-                            <button
+                            <Button variant="secondary" size="md" icon={<Download className="w-4 h-4" />}>
+                                Export Ledger
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                icon={<Plus className="w-4 h-4" />}
                                 onClick={() => activeTab === 'CHEQUES' ? setShowChequeModal(true) : setShowExpenseModal(true)}
-                                className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"
                             >
-                                <Plus className="w-4 h-4" /> Log {activeTab === 'CHEQUES' ? 'Cheque' : 'Transaction'}
-                            </button>
+                                Log {activeTab === 'CHEQUES' ? 'Cheque' : 'Transaction'}
+                            </Button>
                         </div>
                     }
                 />
@@ -213,32 +216,29 @@ const FinanceOverviewPage: React.FC = () => {
                                     { id: 'EXPENSES', label: 'Burn Manager', icon: DollarSign },
                                     { id: 'CHEQUES', label: 'Cheque Ledger', icon: Clock }
                                 ].map(tab => (
-                                    <button
+                                    <Button
                                         key={tab.id}
+                                        variant={activeTab === tab.id ? 'secondary' : 'tertiary'}
+                                        size="sm"
+                                        icon={<tab.icon className="w-4 h-4" />}
                                         onClick={() => setActiveTab(tab.id as any)}
-                                        className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab.id
-                                            ? 'bg-white dark:bg-slate-800 text-primary shadow-sm'
-                                            : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                                            }`}
+                                        fullWidth
+                                        className="md:flex-none"
                                     >
-                                        <tab.icon className="w-4 h-4" />
                                         {tab.label}
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
 
                             <div className="flex items-center gap-4 w-full md:w-auto px-2">
-                                <div className="relative flex-1 md:w-48">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <input
+                                <div className="flex-1 md:w-48">
+                                    <Input
                                         type="text"
                                         placeholder="Search Ledger..."
-                                        className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 transition font-medium"
+                                        icon={<Search className="w-4 h-4 text-slate-400" />}
                                     />
                                 </div>
-                                <button className="p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-primary transition shadow-sm">
-                                    <Filter className="w-4 h-4" />
-                                </button>
+                                <Button variant="secondary" size="md" icon={<Filter className="w-4 h-4" />} />
                             </div>
                         </div>
 
@@ -307,12 +307,12 @@ const FinanceOverviewPage: React.FC = () => {
                             </p>
                         </div>
                         <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-4">
-                            <button className="px-8 py-4 bg-white text-slate-950 rounded-sm font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all">
+                            <Button variant="secondary" size="lg">
                                 Run Audit
-                            </button>
-                            <button className="px-8 py-4 bg-primary text-white rounded-sm font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+                            </Button>
+                            <Button variant="primary" size="lg">
                                 Optimization Settings
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

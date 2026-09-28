@@ -12,6 +12,8 @@ import {
 import api from "../../services/api";
 import { PurchasePayment, PurchasePaymentStatus as PaymentStatus } from "../../types/purchase";
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 const SupplierPayments: React.FC = () => {
     const navigate = useNavigate();
@@ -104,13 +106,8 @@ const SupplierPayments: React.FC = () => {
                     title="Supplier Payments"
                     description="Process settlements for supplier bills, manage payment advice, and track clearing status."
                     actions={
-                        <button
-                            onClick={() => navigate('/purchase/payment-out')}
-                            className="btn btn-primary bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-600/20 px-6"
-                        >
-                            <CreditCard className="w-4 h-4" />
-                            Record Payment
-                        </button>
+                        <Button onClick={() => navigate('/purchase/payment-out')} className="btn btn-primary bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-600/20 px-6"><CreditCard className="w-4 h-4" />
+                            Record Payment</Button>
                     }
                 />
                 {loadError && (

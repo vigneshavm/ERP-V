@@ -1,20 +1,11 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 
 import Expense from '../models/Expense.js';
 import ExpenseCategory from '../models/ExpenseCategory.js';
 import Invoice from '../../sales/models/Invoice.js';
 import { error } from '../../../config/logger.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * Category data interface
@@ -56,7 +47,7 @@ const getWittyNudge = (category: string, amount: number, budget: number): string
  */
 export const getExpenseReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const userId = req.user?._id;
+        const tenantId = req.user.tenantId;
         const now = new Date();
 
         // Default to current month if no date range provided
@@ -74,7 +65,7 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
 
         // Get all expenses for the period
         const expenses = await Expense.find({
-            createdBy: userId,
+            createdBy: tenantId,
             date: { $gte: startDate, $lte: endDate }
         });
 
@@ -94,7 +85,7 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
         }
 
         // Fetch categories with budgets
-        const categoriesWithBudgets = await ExpenseCategory.find({ createdBy: userId });
+        const categoriesWithBudgets = await ExpenseCategory.find({ createdBy: tenantId });
         const budgetMap = new Map<string, number>();
         categoriesWithBudgets.forEach(cb => budgetMap.set(cb.name, cb.monthly_budget));
 
@@ -211,16 +202,13 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
             new Map(rows.map(r => [monthKey(r._id.y, r._id.m), r.total]));
 
         const expenseRows = await Expense.aggregate([
-            { $match: { createdBy: toObjectId(userId), date: { $gte: trendStart, $lte: trendEnd } } },
+            { $match: { createdBy: toObjectId(tenantId), date: { $gte: trendStart, $lte: trendEnd } } },
             { $group: { _id: { y: { $year: { date: '$date', timezone } }, m: { $month: { date: '$date', timezone } } }, total: { $sum: '$amount' } } }
         ]);
-        const tenantId = req.user?.tenantId;
-        const incomeRows = tenantId
-            ? await Invoice.aggregate([
-                { $match: { tenantId: toObjectId(tenantId), isDeleted: { $ne: true }, createdAt: { $gte: trendStart, $lte: trendEnd } } },
-                { $group: { _id: { y: { $year: { date: '$createdAt', timezone } }, m: { $month: { date: '$createdAt', timezone } } }, total: { $sum: '$totalAmount' } } }
-            ])
-            : null;
+        const incomeRows = await Invoice.aggregate([
+            { $match: { tenantId: toObjectId(tenantId), isDeleted: { $ne: true }, createdAt: { $gte: trendStart, $lte: trendEnd } } },
+            { $group: { _id: { y: { $year: { date: '$createdAt', timezone } }, m: { $month: { date: '$createdAt', timezone } } }, total: { $sum: '$totalAmount' } } }
+        ]);
         const expenseByMonth = byMonth(expenseRows);
         const incomeByMonth = incomeRows ? byMonth(incomeRows) : null;
         const totalMonthlyBudget = categoriesWithBudgets.reduce((sum, c) => sum + (c.monthly_budget || 0), 0);

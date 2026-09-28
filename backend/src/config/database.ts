@@ -2,9 +2,27 @@ import dns from "dns";
 import mongoose from "mongoose";
 import { info, error as logError } from "./logger.js";
 
-// Fix: Windows DNS may fail to resolve MongoDB Atlas SRV records.
-// Force Cloudflare (1.1.1.1) and Google (8.8.8.8) DNS for reliable resolution.
-dns.setServers(["1.1.1.1", "8.8.8.8"]);
+/**
+ * DNS override for resolving MongoDB Atlas SRV records (some Windows setups can't).
+ *  - MONGO_DNS_SERVERS="1.1.1.1,8.8.8.8" -> use these servers
+ *  - MONGO_DNS_SERVERS="none"             -> never override (use the system resolver)
+ *  - unset: override with Cloudflare/Google on Windows (the original dev workaround),
+ *    use the system resolver everywhere else (servers, containers).
+ */
+const configureDns = (): void => {
+    const setting = process.env.MONGO_DNS_SERVERS?.trim();
+    if (setting?.toLowerCase() === "none") return;
+    const servers = setting
+        ? setting.split(",").map((s) => s.trim()).filter(Boolean)
+        : process.platform === "win32" ? ["1.1.1.1", "8.8.8.8"] : [];
+    if (servers.length) dns.setServers(servers);
+};
+configureDns();
+
+const envInt = (name: string, fallback: number): number => {
+    const value = parseInt(process.env[name] ?? "", 10);
+    return Number.isFinite(value) && value >= 0 ? value : fallback;
+};
 
 
 const MAX_RETRIES = 5;
@@ -27,10 +45,10 @@ const connectDB = async (retryCount = 0): Promise<void> => {
 
         // Connection options with pooling
         const options: mongoose.ConnectOptions = {
-            maxPoolSize: 50, // Maximum number of connections in the pool
-            minPoolSize: 10, // Minimum number of connections in the pool
-            serverSelectionTimeoutMS: 30000, // 30 seconds
-            socketTimeoutMS: 45000, // 45 seconds
+            maxPoolSize: envInt("MONGO_MAX_POOL_SIZE", 50),
+            minPoolSize: envInt("MONGO_MIN_POOL_SIZE", 10),
+            serverSelectionTimeoutMS: envInt("MONGO_SERVER_SELECTION_TIMEOUT_MS", 30000),
+            socketTimeoutMS: envInt("MONGO_SOCKET_TIMEOUT_MS", 45000),
             family: 4, // Use IPv4, skip trying IPv6
         };
 

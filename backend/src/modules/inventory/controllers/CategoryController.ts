@@ -1,6 +1,8 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { CategoryService } from '../services/category.service.js';
 import { ICategory, IPaginatedResponse, IQueryFilters, SortDirection } from '../interfaces/category.types.js';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { error } from '../../../config/logger.js';
 
 const categoryService = new CategoryService();
 
@@ -60,8 +62,7 @@ export class CategoryController {
      *       500:
      *         description: Internal Server Error
      */
-    public getAllCategories = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getAllCategories = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             // 1. Input Sanitization & Parsing
             const page = Math.max(1, parseInt(req.query.page as string) || 1);
@@ -80,7 +81,7 @@ export class CategoryController {
             const filters: IQueryFilters = { page, limit, search, sortBy, sortOrder, sector };
 
             // 2. Call Service Layer
-            const tenantId = authReq.tenantId as string;
+            const tenantId = req.tenantId.toString();
             const { data, total } = await categoryService.findAll(tenantId, filters);
             const stats = await categoryService.getStats(tenantId, sector);
 
@@ -101,8 +102,8 @@ export class CategoryController {
 
             res.status(200).json(response);
 
-        } catch (error) {
-            console.error('Error fetching categories:', error);
+        } catch (err) {
+            error(`Error fetching categories: ${(err as Error).message}`, { stack: (err as Error).stack });
             res.status(500).json({
                 success: false,
                 message: 'Internal Server Error'
@@ -126,10 +127,9 @@ export class CategoryController {
      *       500:
      *         description: Internal Server Error
      */
-    public createCategory = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public createCategory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const category = await categoryService.createCategory(authReq.tenantId as string, authReq.body);
+            const category = await categoryService.createCategory(req.tenantId.toString(), req.body);
             res.status(201).json({ success: true, data: category });
         } catch (err: any) {
             const statusCode = err.statusCode || 500;

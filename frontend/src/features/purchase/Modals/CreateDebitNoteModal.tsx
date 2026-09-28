@@ -1,7 +1,10 @@
 ﻿import React, { useState } from 'react';
-import { XCircle, Plus, Trash2, Percent } from 'lucide-react';
+import { Plus, Trash2, Percent } from 'lucide-react';
 import { debitNoteService, DebitNote } from "../../../services/debitNoteService";
 import { toast } from 'react-toastify';
+import { Button, Modal, Select, Textarea } from '../../../components/shared';import { Input } from '@/components/shared/Input';
+import { getApiErrorMessage } from '../../../utils/apiError';
+
 
 interface CreateDebitNoteModalProps {
     isOpen: boolean;
@@ -36,15 +39,29 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
             return;
         }
 
-        const selectedVendor = vendors.find((v: any) => v._id === newNote.vendorId);
-        const finalNote = {
-            ...newNote,
-            vendorName: selectedVendor?.name || '',
-            totalAmount: newNote.items?.reduce((sum, item) => sum + item.amount, 0) || 0
+        // Lines go to the server as line totals (qty x rate + tax); the server looks up the
+        // supplier name and adds up the note total itself. Linked bill/GRN are kept as a reference.
+        const lines = (newNote.items || [])
+            .filter(item => item.name && item.qty > 0)
+            .map(item => ({
+                name: item.name,
+                qty: item.qty,
+                amount: Math.round((item.qty * item.amount + (item.taxAmount || 0)) * 100) / 100,
+            }));
+        if (lines.length === 0 || lines.some(line => line.amount <= 0)) {
+            toast.error('Add at least one line with a description, quantity and rate');
+            return;
+        }
+        const payload = {
+            vendorId: newNote.vendorId,
+            reason: newNote.reason,
+            items: lines,
+            notes: newNote.notes,
+            poReference: newNote.originalBillNumber || newNote.originalGrnNumber || undefined,
         };
 
         try {
-            await debitNoteService.createDebitNote(finalNote);
+            await debitNoteService.createDebitNote(payload as Partial<DebitNote>);
             toast.success('Debit note created successfully');
             onSuccess();
             setNewNote({
@@ -53,7 +70,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                 notes: ''
             });
         } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Failed to create debit note');
+            toast.error(getApiErrorMessage(error, 'Failed to create debit note'));
         }
     };
 
@@ -98,96 +115,83 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className="bg-white dark:bg-slate-800 rounded-sm w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-fade-in">
-                <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                    <div>
-                        <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Create Debit Note</h2>
-                        <p className="text-xs text-slate-500 font-medium">Issue a claim or return to a supplier</p>
-                    </div>
-                    <button
-                        onClick={onClose}
-                        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors"
-                    >
-                        <XCircle className="w-6 h-6 text-slate-400" />
-                    </button>
-                </div>
-
-                <form onSubmit={handleCreateNote} className="flex-1 overflow-y-auto p-6 space-y-6">
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Create Debit Note"
+            size="lg"
+        >
+            <p className="text-xs text-slate-500 font-medium -mt-4 mb-4">Issue a claim or return to a supplier</p>
+            <form onSubmit={handleCreateNote} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 block">Vendor / Supplier</label>
-                            <select
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-error/20"
+                            <Select
+                                options={vendors.map((v: any) => ({ value: v._id, label: v.businessName || v.name }))}
                                 value={newNote.vendorId}
-                                onChange={(e) => setNewNote({ ...newNote, vendorId: e.target.value })}
-                                required
-                            >
-                                <option value="">Select Vendor</option>
-                                {vendors.map((v: any) => (
-                                    <option key={v._id} value={v._id}>{v.name}</option>
-                                ))}
-                            </select>
+                                onChange={(value) => setNewNote({ ...newNote, vendorId: (typeof value === 'string' ? value : value[0]) })}
+                                placeholder="Select Vendor"
+                            />
                         </div>
 
                         <div>
                             <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 block">Reason</label>
-                            <select
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-error/20"
+                            <Select
+                                options={Object.entries(REASON_LABELS).map(([val, label]) => ({ value: val, label }))}
                                 value={newNote.reason}
-                                onChange={(e) => setNewNote({ ...newNote, reason: e.target.value as any })}
-                                required
-                            >
-                                {Object.entries(REASON_LABELS).map(([val, label]) => (
-                                    <option key={val} value={val}>{label}</option>
-                                ))}
-                            </select>
+                                onChange={(value) => setNewNote({ ...newNote, reason: (typeof value === 'string' ? value : value[0]) as any })}
+                            />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 block">Link to Bill</label>
-                            <select
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-error/20"
+                            <Select
+                                options={[
+                                    { value: '', label: 'Direct / No Bill Link' },
+                                    ...bills.filter(b => b.vendor_id === newNote.vendorId || !newNote.vendorId).map((b: any) => ({
+                                        value: b._id,
+                                        label: `${b.bill_number} (₹${(b.amount || b.total_amount).toLocaleString()})`
+                                    }))
+                                ]}
                                 value={newNote.originalBillId}
-                                onChange={(e) => {
-                                    const bill = bills.find(b => b._id === e.target.value);
+                                onChange={(value) => {
+                                    const id = typeof value === 'string' ? value : value[0];
+                                    const bill = bills.find(b => b._id === id);
                                     setNewNote({
                                         ...newNote,
-                                        originalBillId: e.target.value,
+                                        originalBillId: id,
                                         originalBillNumber: bill?.bill_number || ''
                                     });
                                 }}
-                            >
-                                <option value="">Direct / No Bill Link</option>
-                                {bills.filter(b => b.vendor_id === newNote.vendorId || !newNote.vendorId).map((b: any) => (
-                                    <option key={b._id} value={b._id}>{b.bill_number} (₹{(b.amount || b.total_amount).toLocaleString()})</option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
                         <div>
                             <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 block">Link to GRN</label>
-                            <select
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-error/20"
+                            <Select
+                                options={[
+                                    { value: '', label: 'No GRN Link' },
+                                    ...grns.filter(g => { const v: any = vendors.find(x => x._id === newNote.vendorId); return !newNote.vendorId || g.vendorName === (v?.businessName || v?.name); }).map((g: any) => ({
+                                        value: g.id,
+                                        label: `${g.grnNumber || g.id} (${g.vendorName})`
+                                    }))
+                                ]}
                                 value={newNote.originalGrnId}
-                                onChange={(e) => {
-                                    const grn = grns.find(g => g.id === e.target.value);
+                                onChange={(value) => {
+                                    const id = typeof value === 'string' ? value : value[0];
+                                    const grn = grns.find(g => g.id === id);
                                     setNewNote({
                                         ...newNote,
-                                        originalGrnId: e.target.value,
+                                        originalGrnId: id,
                                         originalGrnNumber: grn?.grnNumber || grn?.id || ''
                                     });
                                 }}
-                            >
-                                <option value="">No GRN Link</option>
-                                {grns.filter(g => g.vendorName === vendors.find(v => v._id === newNote.vendorId)?.name || !newNote.vendorId).map((g: any) => (
-                                    <option key={g.id} value={g.id}>{g.grnNumber || g.id} ({g.vendorName})</option>
-                                ))}
-                            </select>
+                            />
                         </div>
                     </div>
+
 
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
@@ -209,7 +213,7 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                                         <input
                                             type="text"
                                             placeholder="Item name or description"
-                                            className="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl text-sm"
+                                            className="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-700 dark:text-slate-200"
                                             value={item.name}
                                             onChange={(e) => updateItem(idx, 'name', e.target.value)}
                                             required
@@ -279,14 +283,13 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                         <div>
-                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 block">Notes / Observations</label>
-                            <textarea
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-error/20"
-                                rows={3}
+                            <Textarea
+                                label="Notes / Observations"
+                                minRows={3}
                                 value={newNote.notes}
                                 onChange={(e) => setNewNote({ ...newNote, notes: e.target.value })}
                                 placeholder="Add any additional details here..."
-                            ></textarea>
+                            />
                         </div>
 
                         <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-sm border border-slate-200 dark:border-slate-700 space-y-2">
@@ -306,23 +309,15 @@ const CreateDebitNoteModal: React.FC<CreateDebitNoteModalProps> = ({
                     </div>
 
                     <div className="pt-6 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-6 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-200"
-                        >
+                        <Button type="button" variant="secondary" size="md" onClick={onClose}>
                             Discard
-                        </button>
-                        <button
-                            type="submit"
-                            className="px-8 py-2 bg-error text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-error/90 shadow-lg shadow-error/20 transform active:scale-95 transition-all"
-                        >
+                        </Button>
+                        <Button type="submit" variant="danger" size="md">
                             Deploy Debit Note
-                        </button>
+                        </Button>
                     </div>
-                </form>
-            </div>
-        </div>
+            </form>
+        </Modal>
     );
 };
 

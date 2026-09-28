@@ -1,7 +1,7 @@
 # CLAUDE.md — React Project AI Coding Guidelines
 
-> See also: `ARCHITECTURE.md` (full repo structure, frontend + backend) and
-> `CODING_PRINCIPLES.md` (mandatory coding standards) at the repo root. This file focuses on
+> See also: `docs/ARCHITECTURE.md` (full repo structure, frontend + backend) and
+> `docs/CODING_PRINCIPLES.md` (mandatory coding standards). This file focuses on
 > AI-agent workflow specifics for the frontend; those two are the source of truth for structure
 > and standards.
 

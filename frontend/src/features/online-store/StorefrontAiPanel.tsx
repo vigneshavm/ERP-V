@@ -1,5 +1,6 @@
 ﻿import React from 'react';
-import { Sparkles, X, Loader2, Send, Bot, RotateCcw } from 'lucide-react';
+import { Sparkles, X, Loader2, Send, Bot, RotateCcw } from 'lucide-react';import { Button } from '@/components/shared/Button';
+
 
 interface StorefrontAiPanelProps {
     showAi: boolean;
@@ -36,7 +37,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
                         <Sparkles className="w-5 h-5" />
                         <span className="font-bold">AI Shopping Assistant</span>
                     </div>
-                    <button onClick={() => setShowAi(false)} className="p-1 hover:bg-white/20 rounded-full transition"><X className="w-4 h-4" /></button>
+                    <Button onClick={() => setShowAi(false)} className="p-1 hover:bg-white/20 rounded-full transition"><X className="w-4 h-4" /></Button>
                 </div>
             )}
 
@@ -45,7 +46,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
                     <div className="flex items-center gap-6 mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
                         <div className="relative group">
                             <img src={visualSearchImage} alt="Visual Search" className="w-24 h-24 object-cover rounded-xl border-2 border-primary shadow-md" />
-                            <button onClick={clearAi} className="absolute -top-2 -right-2 bg-danger text-white p-1 rounded-full shadow-md hover:bg-danger/90 transition-colors"><X className="w-3 h-3" /></button>
+                            <Button onClick={clearAi} className="absolute -top-2 -right-2 bg-danger text-white p-1 rounded-full shadow-md hover:bg-danger/90 transition-colors"><X className="w-3 h-3" /></Button>
                         </div>
                         <div>
                             <h3 className="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2">
@@ -99,9 +100,7 @@ export const StorefrontAiPanel: React.FC<StorefrontAiPanelProps> = ({
                                     <span className="text-xs font-bold bg-primary-soft dark:bg-primary-soft text-primary dark:text-primary px-2 py-1 rounded-full">
                                         {aiResult.ids.length} Results
                                     </span>
-                                    <button onClick={clearAi} className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 font-bold flex items-center gap-1">
-                                        <RotateCcw className="w-3 h-3" /> Clear Search
-                                    </button>
+                                    <Button onClick={clearAi} className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 font-bold flex items-center gap-1"><RotateCcw className="w-3 h-3" /> Clear Search</Button>
                                 </div>
                             </div>
                         </div>

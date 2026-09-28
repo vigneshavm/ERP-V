@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { addCustomer, reset, getAllCustomers } from "../../redux/slices/customerSlice";
 import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
-import { Info } from 'lucide-react';
+import { Button, Alert } from "../../components/shared";
 import CustomerForm from "./components/CustomerForm";
 import { RootState, AppDispatch } from "../../redux/store";
 import "react-toastify/dist/ReactToastify.css";
@@ -57,25 +57,24 @@ const AddCustomer = () => {
                 description="Register high-value partners into the global marketplace terminal"
                 breadcrumbs={[{ label: 'Portfolio', link: '/customers' }, { label: 'New Onboarding' }]}
                 actions={
-                    <button
+                    <Button
+                        variant="secondary"
+                        size="md"
                         onClick={() => navigate('/customers')}
-                        className="px-6 py-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all font-medium"
                     >
                         Abort Sync
-                    </button>
+                    </Button>
                 }
             />
 
             <div className="max-w-5xl mx-auto space-y-6">
-                <div className="bg-primary-soft dark:bg-primary-soft border border-primary/30 dark:border-primary/30 p-4 rounded-sm flex items-start gap-4">
-                    <div className="p-2 bg-primary-soft dark:bg-primary-soft rounded-xl">
-                        <Info className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                        <p className="text-xs font-black text-primary dark:text-primary uppercase tracking-widest leading-none mt-1">New customer</p>
-                        <p className="text-[11px] text-primary dark:text-primary font-medium mt-2 leading-relaxed italic">All consumer records are multi-indexed by phone number and email to prevent marketplace duplication. Ensure accuracy of contact nodes for logistics integrity.</p>
-                    </div>
-                </div>
+                <Alert
+                    variant="info"
+                    size="md"
+                    title="New customer"
+                    message="All consumer records are multi-indexed by phone number and email to prevent marketplace duplication. Ensure accuracy of contact nodes for logistics integrity."
+                    showIconPill
+                />
 
                 <CustomerForm
                     customers={customers}

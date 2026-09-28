@@ -6,6 +6,9 @@
  * plus cash withdrawn from / minus cash deposited to bank. It is an estimate until the next count.
  */
 
+import { toNumber as n, round2 } from "../../../utils/typeConversion.js";
+import { addDays, daysBetween } from "../../../utils/dateUtils.js";
+
 export const ALERT_RULES = {
     /** Days without a cash count before it is flagged. */
     staleCountDays: 2,
@@ -17,20 +20,6 @@ export const ALERT_RULES = {
     /** ERP bank entries older than this and still unreconciled. */
     unreconciledDays: 30,
 } as const;
-
-const round2 = (v: number) => Math.round(v * 100) / 100;
-const n = (v: unknown): number => {
-    const x = Number(v);
-    return Number.isFinite(x) ? x : 0;
-};
-
-export const addDays = (iso: string, days: number): string => {
-    const d = new Date(`${iso}T00:00:00Z`);
-    d.setUTCDate(d.getUTCDate() + days);
-    return d.toISOString().slice(0, 10);
-};
-export const daysBetween = (from: string, to: string): number =>
-    Math.round((new Date(`${to}T00:00:00Z`).getTime() - new Date(`${from}T00:00:00Z`).getTime()) / 86_400_000);
 
 /** Same day of month, `months` later; clamps to the month's last day (31 Jan + 1 month = 28/29 Feb). */
 export function addMonths(iso: string, months: number): string {

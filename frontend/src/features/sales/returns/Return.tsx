@@ -4,6 +4,8 @@ import api from "../../../services/api";
 import { toast } from "react-toastify";
 import Layout from "../../../components/shared/Layout/Layout";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
+import { Button, Textarea } from "../../../components/shared";
+import { Input } from '@/components/shared/Input';
 import {
   RotateCcw,
   FileText,
@@ -356,20 +358,24 @@ const Return = () => {
           description="Create a new customer return and issue credits"
           actions={<div className="flex gap-3">
             {formData.selectedInvoice && (
-              <button
+              <Button
+                variant="secondary"
+                size="md"
+                icon={<Trash2 className="w-4 h-4" />}
                 onClick={clearDraft}
-                className="flex items-center gap-2 px-4 py-2 border border-default/40 text-main opacity-90 rounded-lg hover:bg-surface/40 transition-all font-medium"
               >
-                <Trash2 className="w-4 h-4" /> Clear Draft
-              </button>
+                Clear Draft
+              </Button>
             )}
-            <button
+            <Button
+              variant="primary"
+              size="md"
+              icon={<Save className="w-4 h-4" />}
               onClick={handleSubmit}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover shadow-sm transition-all font-medium disabled:opacity-50"
             >
-              <Save className="w-4 h-4" /> {loading ? "Processing..." : "Save Return"}
-            </button>
+              {loading ? "Processing..." : "Save Return"}
+            </Button>
           </div>}
         />
 
@@ -394,24 +400,29 @@ const Return = () => {
                           {new Date(formData.selectedInvoice.createdAt).toLocaleDateString('en-IN')} • ₹{formData.selectedInvoice.totalAmount?.toFixed(2) || '0.00'}
                         </p>
                       </div>
-                      <button
+                      <Button
+                        variant="danger"
+                        size="sm"
                         onClick={() => setFormData({
                           selectedInvoice: null, customer: null, items: [],
                           refundMethod: "credit", originalPaymentInfo: null, notes: "",
                         })}
-                        className="text-danger hover:text-danger text-sm font-bold"
                       >
                         Change
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ) : (
-                  <button
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    icon={<FileText className="w-5 h-5" />}
                     onClick={() => setShowInvoiceModal(true)}
-                    className="w-full px-4 py-4 border-2 border-dashed border-default/40 rounded-xl text-muted hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2"
+                    fullWidth
+                    className="dashed-border py-4"
                   >
-                    <FileText className="w-5 h-5" /> Click to select invoice
-                  </button>
+                    Click to select invoice
+                  </Button>
                 )}
               </div>
             </div>
@@ -659,13 +670,12 @@ const Return = () => {
                     <label className="block text-sm font-medium text-secondary mb-2">
                       Notes
                     </label>
-                    <textarea
+                    <Textarea
                       value={formData.notes}
                       onChange={(e) =>
                         setFormData({ ...formData, notes: e.target.value })
                       }
-                      rows={3}
-                      className="w-full px-4 py-2 border border-default rounded-lg bg-card text-main focus:ring-2 focus:ring-primary focus:border-primary"
+                      minRows={3}
                       placeholder="Add notes about the return..."
                     />
                   </div>

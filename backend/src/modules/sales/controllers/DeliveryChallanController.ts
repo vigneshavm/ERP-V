@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 import DeliveryChallan from '../models/DeliveryChallan.js';
 import Customer from '../../crm/models/Customer.js';
@@ -10,17 +10,7 @@ import { info, error } from '../../../config/logger.js';
 import { logStockMovement } from '../../../utils/stockMovementLogger.js';
 // import { calculatePaymentStatus } from '../../../utils/paymentStatusCalculator.js';
 import { validateStockLevels, validateSalesOrderQuantities as _validateSalesOrderQuantities } from '../../../utils/inventoryValidator.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 interface ChallanItem {
     item: string;

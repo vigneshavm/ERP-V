@@ -53,6 +53,8 @@ import {
     Copy,
     Trash2,
 } from 'lucide-react';
+import { Button } from "../../components/shared";
+import { Input } from '@/components/shared/Input';
 
 const MetricCard = ({ title, value, subtext, icon: Icon, color, trend }: any) => (
     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group hover:border-primary/50 transition-all">
@@ -274,18 +276,31 @@ const InventoryManager: React.FC = () => {
                     description="Products, stock levels and prices for your shop"
                     actions={
                         <div className="flex gap-2">
-                            <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:border-primary/50 transition-all uppercase tracking-widest text-main shadow-sm">
-                                <Download className="w-4 h-4" /> Export
-                            </button>
-                            <button onClick={handleOpenAgingReport} className="px-4 py-2 bg-danger-soft dark:bg-danger-soft text-danger border border-danger-line dark:border-danger/20 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-danger/90 hover:text-white transition-all uppercase tracking-widest shadow-sm">
-                                <AlertOctagon className="w-4 h-4" /> Stock Aging
-                            </button>
-                            <button
-                                onClick={handleAddProduct}
-                                className="px-5 py-2 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/25 flex items-center gap-2 hover:bg-primary/90 transition-all uppercase tracking-widest"
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="md"
+                                icon={<Download className="w-4 h-4" />}
                             >
-                                <Plus className="w-5 h-5" /> Register SKU
-                            </button>
+                                Export
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="danger"
+                                size="md"
+                                icon={<AlertOctagon className="w-4 h-4" />}
+                                onClick={handleOpenAgingReport}
+                            >
+                                Stock Aging
+                            </Button>
+                            <Button
+                                onClick={handleAddProduct}
+                                variant="primary"
+                                size="md"
+                                icon={<Plus className="w-5 h-5" />}
+                            >
+                                Register SKU
+                            </Button>
                         </div>
                     }
                 />
@@ -367,13 +382,7 @@ const InventoryManager: React.FC = () => {
                         </div>
                         <div className="relative flex-1 xl:w-[450px]">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Search by SKU, Name or Barcode..."
-                                className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-main placeholder:text-slate-400"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                            <Input type="text" placeholder="Search by SKU, Name or Barcode..." className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-main placeholder:text-slate-400" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                         <select
                             className="px-6 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] outline-none hover:border-primary transition-all text-main cursor-pointer"

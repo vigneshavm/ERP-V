@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import asyncHandler from "express-async-handler";
 import mongoose from "mongoose";
 import SyncSettings from "../models/SyncSettings.js";
@@ -6,9 +6,10 @@ import Device from "../models/Device.js";
 import Backup from "../models/Backup.js";
 import Conflict from "../models/Conflict.js";
 import SyncLedgerEvent from "../models/SyncLedgerEvent.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
-export const getSyncConfig = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId; // Assuming middleware populates this
+export const getSyncConfig = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
 
     // Fetch real data
     const settings = await SyncSettings.findOne({ tenantId });
@@ -37,8 +38,8 @@ export const getSyncConfig = asyncHandler(async (req: Request, res: Response) =>
     });
 });
 
-export const updateSettings = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+export const updateSettings = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
     const { settings } = req.body;
 
     const updated = await SyncSettings.findOneAndUpdate(
@@ -54,13 +55,13 @@ export const updateSettings = asyncHandler(async (req: Request, res: Response) =
     });
 });
 
-export const getDevices = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+export const getDevices = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
     const devices = await Device.find({ tenantId });
     res.json({ success: true, data: devices });
 });
 
-export const addDevice = asyncHandler(async (_req: Request, res: Response) => {
+export const addDevice = asyncHandler(async (_req: AuthenticatedRequest, res: Response) => {
     // Real QR generation logic should be added here
     res.json({
         success: true,
@@ -68,8 +69,8 @@ export const addDevice = asyncHandler(async (_req: Request, res: Response) => {
     });
 });
 
-export const getBackups = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+export const getBackups = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
     const backups = await Backup.find({ tenantId }).sort({ createdAt: -1 });
 
     // Using defaults instead of hardcoded true for demo
@@ -91,16 +92,16 @@ export const getBackups = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
-export const triggerBackup = asyncHandler(async (_req: Request, res: Response) => {
+export const triggerBackup = asyncHandler(async (_req: AuthenticatedRequest, res: Response) => {
     res.json({ success: true, message: "Backup started successfully" });
 });
 
-export const restoreBackup = asyncHandler(async (_req: Request, res: Response) => {
+export const restoreBackup = asyncHandler(async (_req: AuthenticatedRequest, res: Response) => {
     res.json({ success: true, message: "Restore process initiated" });
 });
 
-export const getConflicts = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+export const getConflicts = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
     const conflicts = await Conflict.find({ tenantId });
     res.json({ success: true, data: conflicts });
 });
@@ -135,13 +136,13 @@ export const toLedgerDocs = (events: unknown, tenantId: mongoose.Types.ObjectId,
 
 // POST /api/sync/ledger { events: [...] } -- devices upload their locally recorded sync events.
 // Idempotent: events already stored (same tenant + event id) are skipped, so a retried upload is safe.
-export const uploadLedgerEvents = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+export const uploadLedgerEvents = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
     if (!tenantId) {
         res.status(400).json({ success: false, message: 'Sync ledger requires a tenant account' });
         return;
     }
-    const docs = toLedgerDocs(req.body?.events, tenantId, (req as any).user?._id);
+    const docs = toLedgerDocs(req.body?.events, tenantId, req.user._id);
     if (docs.length > 0) {
         await SyncLedgerEvent.bulkWrite(docs.map(doc => ({
             updateOne: {
@@ -155,8 +156,8 @@ export const uploadLedgerEvents = asyncHandler(async (req: Request, res: Respons
 });
 
 // GET /api/sync/ledger?limit=50 -- the tenant's sync events from all devices, newest first.
-export const getLedgerEvents = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).user?.tenantId;
+export const getLedgerEvents = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
     if (!tenantId) {
         res.status(400).json({ success: false, message: 'Sync ledger requires a tenant account' });
         return;

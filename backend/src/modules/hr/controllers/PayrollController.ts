@@ -1,5 +1,5 @@
 
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { container } from 'tsyringe';
 import { PayrollService } from '../services/PayrollService.js';
 import SalaryComponent from '../models/SalaryComponent.js';
@@ -7,12 +7,14 @@ import SalaryStructure from '../models/SalaryStructure.js';
 import PayrollRun from '../models/PayrollRun.js';
 import Payslip from '../models/Payslip.js';
 import AttendanceSummary from '../models/AttendanceSummary.js';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { error } from '../../../config/logger.js';
 
 // Salary Components
-export const createSalaryComponent = async (req: Request, res: Response) => {
+export const createSalaryComponent = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { name, type, calculationType, defaultValue, isTaxable } = req.body;
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
 
         const component = await SalaryComponent.create({
             tenantId,
@@ -29,9 +31,9 @@ export const createSalaryComponent = async (req: Request, res: Response) => {
     }
 };
 
-export const getSalaryComponents = async (req: Request, res: Response) => {
+export const getSalaryComponents = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const components = await SalaryComponent.find({ tenantId, isActive: true });
         res.status(200).json({ success: true, data: components });
     } catch (error: any) {
@@ -39,10 +41,10 @@ export const getSalaryComponents = async (req: Request, res: Response) => {
     }
 };
 
-export const updateSalaryComponent = async (req: Request, res: Response) => {
+export const updateSalaryComponent = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { id } = req.params;
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const updates = req.body;
 
         const component = await SalaryComponent.findOneAndUpdate(
@@ -61,10 +63,10 @@ export const updateSalaryComponent = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteSalaryComponent = async (req: Request, res: Response) => {
+export const deleteSalaryComponent = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { id } = req.params;
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
 
         const component = await SalaryComponent.findOneAndDelete({ _id: id, tenantId });
 
@@ -79,9 +81,9 @@ export const deleteSalaryComponent = async (req: Request, res: Response) => {
 };
 
 // Salary Structure
-export const upsertSalaryStructure = async (req: Request, res: Response) => {
+export const upsertSalaryStructure = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const { employeeId, components, effectiveFrom } = req.body;
 
         // Deactivate old active structure
@@ -101,9 +103,9 @@ export const upsertSalaryStructure = async (req: Request, res: Response) => {
     }
 };
 
-export const getSalaryStructure = async (req: Request, res: Response) => {
+export const getSalaryStructure = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const { employeeId } = req.params;
         const structure = await SalaryStructure.findOne({ tenantId, employeeId, isActive: true }).populate('components.componentId');
         res.status(200).json({ success: true, data: structure });
@@ -112,9 +114,9 @@ export const getSalaryStructure = async (req: Request, res: Response) => {
     }
 };
 
-export const getAllSalaryStructures = async (req: Request, res: Response) => {
+export const getAllSalaryStructures = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const structures = await SalaryStructure.find({ tenantId, isActive: true }).populate('components.componentId');
         res.status(200).json({ success: true, data: structures });
     } catch (error: any) {
@@ -122,9 +124,9 @@ export const getAllSalaryStructures = async (req: Request, res: Response) => {
     }
 };
 
-export const bulkUpdateSalaryStructure = async (req: Request, res: Response) => {
+export const bulkUpdateSalaryStructure = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const { componentId, amount } = req.body;
 
         if (!componentId || amount === undefined) {
@@ -135,16 +137,16 @@ export const bulkUpdateSalaryStructure = async (req: Request, res: Response) => 
         const result = await payrollService.bulkUpdateStructure(tenantId, componentId, Number(amount));
 
         res.status(200).json(result);
-    } catch (error: any) {
-        console.error(`[Bulk Update] Error:`, error);
-        res.status(error.statusCode || 500).json({ success: false, message: error.message });
+    } catch (err: any) {
+        error(`[Bulk Update] Error:`, err);
+        res.status(err.statusCode || 500).json({ success: false, message: err.message });
     }
 };
 
 // Attendance (Manual Entry)
-export const logAttendance = async (req: Request, res: Response) => {
+export const logAttendance = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const {
             employeeId, month, year, workedDays, notes,
             overtimeHours, regularHours, incentiveAmount, commissionAmount, bonusAmount, advanceRecoveryAmount,
@@ -185,9 +187,9 @@ export const logAttendance = async (req: Request, res: Response) => {
     }
 };
 
-export const getAttendanceSummary = async (req: Request, res: Response) => {
+export const getAttendanceSummary = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const { month, year } = req.query;
 
         if (month === undefined || year === undefined) {
@@ -207,10 +209,10 @@ export const getAttendanceSummary = async (req: Request, res: Response) => {
 };
 
 // Payroll Processing
-export const generatePayroll = async (req: Request, res: Response) => {
+export const generatePayroll = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
-        const userId = (req as any).user._id;
+        const tenantId = req.tenantId;
+        const userId = req.user._id;
         const { month, year, branchId } = req.body;
 
         const payrollService = container.resolve(PayrollService);
@@ -223,9 +225,9 @@ export const generatePayroll = async (req: Request, res: Response) => {
 };
 
 // Attendance
-export const getPayrollRuns = async (req: Request, res: Response) => {
+export const getPayrollRuns = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const runs = await PayrollRun.find({ tenantId }).sort({ createdAt: -1 });
         res.status(200).json({ success: true, data: runs });
     } catch (error: any) {
@@ -233,9 +235,9 @@ export const getPayrollRuns = async (req: Request, res: Response) => {
     }
 };
 
-export const getRunDetails = async (req: Request, res: Response) => {
+export const getRunDetails = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const { id } = req.params;
         const run = await PayrollRun.findOne({ _id: id, tenantId });
         if (!run) return res.status(404).json({ message: "Run not found" });
@@ -247,10 +249,10 @@ export const getRunDetails = async (req: Request, res: Response) => {
     }
 };
 
-export const approvePayroll = async (req: Request, res: Response) => {
+export const approvePayroll = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
-        const userId = (req as any).user._id;
+        const tenantId = req.tenantId;
+        const userId = req.user._id;
         const { id } = req.params;
 
         const payrollService = container.resolve(PayrollService);
@@ -262,10 +264,10 @@ export const approvePayroll = async (req: Request, res: Response) => {
     }
 };
 
-export const payPayroll = async (req: Request, res: Response) => {
+export const payPayroll = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
-        const userId = (req as any).user._id;
+        const tenantId = req.tenantId;
+        const userId = req.user._id;
         const { id } = req.params;
         const { accountId, paymentMode } = req.body; // Changed bankAccountId -> accountId
 
@@ -278,9 +280,9 @@ export const payPayroll = async (req: Request, res: Response) => {
     }
 };
 
-export const updatePayslip = async (req: Request, res: Response) => {
+export const updatePayslip = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const { id } = req.params; // Payslip ID
         const updates = req.body;
 
@@ -293,9 +295,9 @@ export const updatePayslip = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteRun = async (req: Request, res: Response) => {
+export const deleteRun = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const { id } = req.params; // Run ID
 
         const payrollService = container.resolve(PayrollService);
@@ -307,9 +309,9 @@ export const deleteRun = async (req: Request, res: Response) => {
     }
 };
 
-export const sendPayslip = async (req: Request, res: Response) => {
+export const sendPayslip = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
+        const tenantId = req.tenantId;
         const { id } = req.params; // Payslip ID
         const { channels } = req.body; // ['EMAIL', 'WHATSAPP']
 
@@ -322,10 +324,10 @@ export const sendPayslip = async (req: Request, res: Response) => {
     }
 };
 
-export const processIndividualPayout = async (req: Request, res: Response) => {
+export const processIndividualPayout = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId;
-        const userId = (req as any).user._id;
+        const tenantId = req.tenantId;
+        const userId = req.user._id;
         const { employeeId, month, year, paymentMode, accountId, overrideWorkedDays, force } = req.body;
 
         const payrollService = container.resolve(PayrollService);

@@ -16,6 +16,8 @@ import { Plus, CheckCircle2, History,
 import { formatCurrency } from "../../utils/helpers";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 import { chartSeries, chartChrome } from '@/utils/chartTheme';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 import {
     AreaChart, Area, CartesianGrid, Legend,
     ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -287,11 +289,11 @@ const DailyFinancePage: React.FC = () => {
                                 <div className="flex flex-wrap gap-4 mb-6 p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700">
                                     <div className="flex items-center gap-2">
                                         <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">From:</span>
-                                        <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-[10px] font-bold text-slate-700 dark:text-slate-200" />
+                                        <Input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-[10px] font-bold text-slate-700 dark:text-slate-200" />
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">To:</span>
-                                        <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-[10px] font-bold text-slate-700 dark:text-slate-200" />
+                                        <Input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-[10px] font-bold text-slate-700 dark:text-slate-200" />
                                     </div>
                                 </div>
                             )}
@@ -467,7 +469,7 @@ const DailyFinancePage: React.FC = () => {
 
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Notes</label>
-                                    <input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Optional notes..." className="w-full px-3 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+                                    <Input type="text" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Optional notes..." className="w-full px-3 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                                 </div>
 
                                 {/* Live Preview */}

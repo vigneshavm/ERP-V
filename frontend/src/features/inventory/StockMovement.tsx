@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Search, TrendingUp, TrendingDown, Download } from 'lucide-react';
 import api from '@/services/api';
 import PageHeader from '@/components/shared/Layout/PageHeader';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface Movement {
     id: string;
@@ -77,7 +79,7 @@ const StockMovement: React.FC = () => {
             <PageHeader
                 title="Stock Movement"
                 description={`All stock in/out transaction log${range ? ` · ${range.from} to ${range.to}` : ''}`}
-                actions={<button onClick={exportCsv} disabled={rows.length === 0} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all disabled:opacity-50">
+                actions={<button onClick={exportCsv} disabled={rows.length === 0} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all disabled:opacity-50 dark:text-slate-100">
                     <Download className="w-4 h-4" /> Export page
                 </button>}
             />

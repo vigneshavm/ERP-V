@@ -1,5 +1,7 @@
 ﻿import React from 'react';
 import { Search, RefreshCcw } from 'lucide-react';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface SupplierFilterBarProps {
     searchTerm: string;

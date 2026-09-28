@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertTriangle, Clock3, SearchX } from 'lucide-react';
 import { ReportKpiSkeleton } from './ReportKpiGrid';
+import { Button } from '@/components/shared/Button';
 
 const panel = 'bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 shadow-sm';
 
@@ -27,9 +28,7 @@ export const ReportEmpty: React.FC<{ onClearFilters?: () => void }> = ({ onClear
         <p className="mt-3 text-sm font-bold text-slate-700 dark:text-slate-200">No data found</p>
         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">There are no records for the selected period or filters.</p>
         {onClearFilters && (
-            <button type="button" onClick={onClearFilters} className="mt-4 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-primary hover:bg-slate-50 dark:hover:bg-slate-700">
-                Clear filters
-            </button>
+            <Button type="button" onClick={onClearFilters} className="mt-4 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-primary hover:bg-slate-50 dark:hover:bg-slate-700">Clear filters</Button>
         )}
     </div>
 );
@@ -41,9 +40,7 @@ export const ReportError: React.FC<{ message?: string | null; onRetry?: () => vo
         <p className="mt-3 text-sm font-bold text-danger dark:text-danger">Unable to load report</p>
         <p className="mt-1 text-xs text-danger/80 dark:text-danger/80">We couldn't retrieve the report data.{message ? ` (${message})` : ''}</p>
         {onRetry && (
-            <button type="button" onClick={onRetry} className="mt-4 px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-danger-line dark:border-danger/40 text-xs font-bold text-danger dark:text-danger hover:bg-danger-soft dark:hover:bg-slate-700">
-                Try again
-            </button>
+            <Button type="button" onClick={onRetry} className="mt-4 px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-danger-line dark:border-danger/40 text-xs font-bold text-danger dark:text-danger hover:bg-danger-soft dark:hover:bg-slate-700">Try again</Button>
         )}
     </div>
 );

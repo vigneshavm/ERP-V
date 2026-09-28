@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { getCustomerById, updateCustomer, reset, getAllCustomers } from "../../redux/slices/customerSlice";
 import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
-import { Zap } from 'lucide-react';
+import { Button, Alert } from "../../components/shared";
 import CustomerForm from "./components/CustomerForm";
 import { RootState, AppDispatch } from "../../redux/store";
 import "react-toastify/dist/ReactToastify.css";
@@ -78,25 +78,24 @@ const EditCustomer = () => {
                 description={`Updating system parameters for CID-${id?.slice(-6).toUpperCase()}`}
                 breadcrumbs={[{ label: 'Portfolio', link: '/customers' }, { label: 'Intel Modification' }]}
                 actions={
-                    <button
+                    <Button
+                        variant="secondary"
+                        size="md"
                         onClick={() => navigate('/customers')}
-                        className="px-6 py-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all font-medium"
                     >
                         Abort Modification
-                    </button>
+                    </Button>
                 }
             />
 
             <div className="max-w-5xl mx-auto space-y-6">
-                <div className="bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning/30 p-4 rounded-sm flex items-start gap-4 text-warning dark:text-warning">
-                    <div className="p-2 bg-warning-soft dark:bg-warning-soft rounded-xl">
-                        < Zap className="w-5 h-5 text-warning" />
-                    </div>
-                    <div>
-                        <p className="text-xs font-black uppercase tracking-widest leading-none mt-1">Audit Warning</p>
-                        <p className="text-[11px] font-medium mt-2 leading-relaxed italic opacity-80">Modifying contact nodes will trigger a marketplace re-indexing. Historical integrity will be updated to reflect these commercial parameters across all linked terminals.</p>
-                    </div>
-                </div>
+                <Alert
+                    variant="warning"
+                    size="md"
+                    title="Audit Warning"
+                    message="Modifying contact nodes will trigger a marketplace re-indexing. Historical integrity will be updated to reflect these commercial parameters across all linked terminals."
+                    showIconPill
+                />
 
                 <CustomerForm
                     initialData={customer || undefined}

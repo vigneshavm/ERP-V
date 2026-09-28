@@ -11,9 +11,9 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 const MONGO_URI = process.env.MONGO_URI;
 
 async function test() {
-    console.log("URI:", MONGO_URI ? "FOUND" : "NOT FOUND");
+    info("URI:", MONGO_URI ? "FOUND" : "NOT FOUND");
     try {
-        console.log("Connecting...");
+        info("Connecting...");
         await mongoose.connect(MONGO_URI, {
             serverSelectionTimeoutMS: 15000,
             connectTimeoutMS: 15000

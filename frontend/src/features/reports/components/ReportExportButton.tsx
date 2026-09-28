@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Download } from 'lucide-react';
+import { Button } from '@/components/shared/Button';
 
 /**
  * Export button with progress and failure states. `onExport` may page through the whole API

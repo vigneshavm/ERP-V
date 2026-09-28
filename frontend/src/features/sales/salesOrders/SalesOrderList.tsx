@@ -1,12 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from "../../../services/api";
 import { toast } from 'react-toastify';
 import {
     ShoppingCart,
     Package,
     Plus,
-    Search,
     Eye,
     Trash2,
     CheckCircle2,
@@ -23,6 +22,7 @@ import {
     Truck,
     ShieldCheck
 } from 'lucide-react';
+import { Button, Card, Input } from '../../../components/shared';
 import { SalesOrder } from '../../../types/sales';
 import Layout from '../../../components/shared/Layout/index';
 
@@ -123,94 +123,103 @@ const SalesOrderList = () => {
                             </div>
                         </div>
                         <div className="flex items-center gap-3 w-full md:w-auto">
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                icon={<RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />}
                                 onClick={fetchOrders}
-                                className={`p-2.5 bg-card border border-default rounded-sm hover:bg-surface transition-all ${loading ? 'animate-spin' : ''}`}
+                            />
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                icon={<Download className="w-4 h-4" />}
                             >
-                                <RefreshCw className="w-4 h-4 text-warning" />
-                            </button>
-                            <button className="flex items-center gap-2 px-5 py-2.5 bg-card border border-default rounded-sm text-xs font-black uppercase tracking-widest text-muted hover:text-main hover:border-warning/30 transition-all">
-                                <Download className="w-4 h-4" /> Export
-                            </button>
-                            <Link
-                                to="/sales/orders/new"
-                                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-warning text-warning-fg rounded-sm shadow-lg shadow-warning/20 transition-all text-xs font-black uppercase tracking-widest hover:opacity-90"
+                                Export
+                            </Button>
+                            <Button
+                                variant="warning"
+                                size="md"
+                                icon={<Plus className="w-4 h-4" />}
+                                onClick={() => navigate('/sales/orders/new')}
+                                fullWidth
+                                className="md:flex-none"
                             >
-                                <Plus className="w-4 h-4" /> New Order
-                            </Link>
+                                New Order
+                            </Button>
                         </div>
                     </header>
 
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {kpiCards.map((card, i) => (
-                            <div key={i} className="card-interactive p-6 relative overflow-hidden group bg-card/60 backdrop-blur-2xl border border-default">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className={`p-3 rounded-sm ${card.bg} ${card.color} border ${card.border}`}>
-                                        <card.icon className="w-5 h-5" />
+                        {kpiCards.map((card, i) => {
+                            const Icon = card.icon;
+                            return (
+                            <Card key={i} variant="default" size="md" className="relative overflow-hidden group">
+                                <Card.Body>
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div className={`p-3 rounded-sm ${card.bg} ${card.color} border ${card.border}`}>
+                                            <Icon className="w-5 h-5" />
+                                        </div>
+                                        <div className="text-[10px] font-black text-success bg-success/10 border border-success/30 px-2 py-1 rounded-sm uppercase tracking-widest">
+                                            +12.4%
+                                        </div>
                                     </div>
-                                    <div className="text-[10px] font-black text-success bg-success/10 border border-success/30 px-2 py-1 rounded-sm uppercase tracking-widest">
-                                        +12.4%
+                                    <h3 className={`text-2xl font-display font-black tracking-tighter tabular-nums ${card.color}`}>
+                                        {loading ? '—' : card.value}
+                                    </h3>
+                                    <p className="text-[10px] font-black text-secondary uppercase tracking-widest mt-1">{card.label}</p>
+                                    <div className="mt-3 h-1 w-full bg-border rounded-full overflow-hidden">
+                                        <div className={`h-full rounded-full w-[65%] ${card.bg.replace('/10', '')}`} />
                                     </div>
-                                </div>
-                                <h3 className={`text-2xl font-display font-black tracking-tighter tabular-nums ${card.color}`}>
-                                    {loading ? '—' : card.value}
-                                </h3>
-                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest mt-1">{card.label}</p>
-                                <div className="mt-3 h-1 w-full bg-border rounded-full overflow-hidden">
-                                    <div className={`h-full rounded-full w-[65%] ${card.bg.replace('/10', '')}`} />
-                                </div>
-                                <p className="text-[9px] font-bold text-secondary mt-2 flex items-center gap-1">
-                                    <Zap className="w-3 h-3 text-warning" /> {card.sub}
-                                </p>
-                            </div>
-                        ))}
+                                    <p className="text-[9px] font-bold text-secondary mt-2 flex items-center gap-1">
+                                        <Zap className="w-3 h-3 text-warning" /> {card.sub}
+                                    </p>
+                                </Card.Body>
+                            </Card>
+                            );
+                        })}
                     </div>
 
-                    {/* Toolbar — standalone bordered card */}
-                    <div className="glass-panel rounded-sm border border-default p-5 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div className="relative w-full md:w-96">
-                            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-warning" />
-                            <input
-                                type="text"
-                                placeholder="Search order number or customer..."
-                                value={filters.search}
-                                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                                className="w-full bg-card border border-default rounded-sm py-3 pl-12 pr-4 text-xs font-bold focus:outline-none focus:border-warning/50 focus:ring-2 focus:ring-warning/10 transition-all text-main placeholder:text-secondary"
-                            />
-                        </div>
-                        <div className="flex items-center gap-3 w-full md:w-auto">
-                            <div className="flex bg-surface p-1 rounded-sm border border-default overflow-x-auto gap-1">
-                                {['', 'Confirmed', 'Invoiced', 'Delivered', 'Cancelled'].map(s => (
-                                    <button
-                                        key={s || 'all'}
-                                        onClick={() => setFilters({ ...filters, status: s })}
-                                        className={`px-4 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                                            filters.status === s
-                                                ? 'bg-card text-warning shadow-sm border border-default'
-                                                : 'text-secondary hover:text-main'
-                                        }`}
+                    {/* Toolbar */}
+                    <Card variant="default" size="md">
+                        <Card.Body>
+                            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                                <div className="w-full md:w-96">
+                                    <Input
+                                        type="text"
+                                        placeholder="Search order number or customer..."
+                                        value={filters.search}
+                                        onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-3 w-full md:w-auto">
+                                    <div className="flex bg-surface p-1 rounded-sm border border-default overflow-x-auto gap-1">
+                                        {['', 'Confirmed', 'Invoiced', 'Delivered', 'Cancelled'].map(s => (
+                                            <Button
+                                                key={s || 'all'}
+                                                variant={filters.status === s ? 'secondary' : 'tertiary'}
+                                                size="sm"
+                                                onClick={() => setFilters({ ...filters, status: s })}
+                                            >
+                                                {s || 'All'}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                    <Button
+                                        variant={filters.overdue ? 'danger' : 'secondary'}
+                                        size="sm"
+                                        onClick={() => setFilters({ ...filters, overdue: !filters.overdue })}
                                     >
-                                        {s || 'All'}
-                                    </button>
-                                ))}
+                                        Overdue Only
+                                    </Button>
+                                </div>
                             </div>
-                            <button
-                                onClick={() => setFilters({ ...filters, overdue: !filters.overdue })}
-                                className={`px-4 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border whitespace-nowrap ${
-                                    filters.overdue
-                                        ? 'bg-danger text-white border-danger'
-                                        : 'bg-card border-default text-secondary hover:text-danger hover:border-danger/30'
-                                }`}
-                            >
-                                Overdue Only
-                            </button>
-                        </div>
-                    </div>
+                        </Card.Body>
+                    </Card>
 
-                    {/* Table — standalone bordered card */}
-                    <div className="glass-panel flex flex-col overflow-hidden rounded-sm border border-default">
-                        <div className="flex-1 overflow-auto min-h-[400px]">
+                    {/* Table */}
+                    <Card variant="default" size="lg" className="flex flex-col overflow-hidden">
+                        <Card.Body className="flex-1 overflow-auto min-h-[400px] p-0">
                             <table className="w-full text-left border-collapse">
                                 <thead className="bg-surface/50 sticky top-0 z-20 border-b border-default">
                                     <tr>
@@ -304,20 +313,22 @@ const SalesOrderList = () => {
                                                     </td>
                                                     <td className="px-6 py-5">
                                                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                                                            <button
+                                                            <Button
+                                                                variant="secondary"
+                                                                size="sm"
                                                                 onClick={(e) => { e.stopPropagation(); navigate(`/sales/sales-order/${order._id}`); }}
-                                                                className="p-2 text-secondary hover:text-warning hover:bg-warning/10 rounded-sm transition-all"
                                                                 title="View"
                                                             >
                                                                 <Eye className="w-4 h-4" />
-                                                            </button>
-                                                            <button
+                                                            </Button>
+                                                            <Button
+                                                                variant="danger"
+                                                                size="sm"
                                                                 onClick={(e) => e.stopPropagation()}
-                                                                className="p-2 text-secondary hover:text-danger hover:bg-danger/10 rounded-sm transition-all"
                                                                 title="Delete"
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
-                                                            </button>
+                                                            </Button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -326,7 +337,7 @@ const SalesOrderList = () => {
                                     )}
                                 </tbody>
                             </table>
-                        </div>
+                        </Card.Body>
 
                         {/* Footer */}
                         <div className="p-5 border-t border-default bg-surface/20 flex justify-between items-center">
@@ -338,7 +349,7 @@ const SalesOrderList = () => {
                                 <span className="text-[9px] font-black text-secondary uppercase tracking-widest">Ledger Verified</span>
                             </div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
         </Layout>

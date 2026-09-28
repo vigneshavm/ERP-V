@@ -8,7 +8,7 @@
  */
 
 import { correlationMiddleware, getCorrelationId } from './correlationMiddleware.js';
-import { warn } from '../utils/logger.js';
+import { warn, info } from '../utils/logger.js';
 
 /**
  * Global correlation ID enforcement
@@ -20,7 +20,7 @@ export const enforceGlobalCorrelation = (app: any) => {
     // Add correlation middleware globally
     app.use(correlationMiddleware);
 
-    console.log('✅ Global correlation ID enforcement enabled');
+    info('✅ Global correlation ID enforcement enabled');
 };
 
 /**
@@ -62,7 +62,7 @@ export const enforceStructuredLogging = () => {
         }
     };
 
-    console.log('✅ Structured logging enforcement enabled');
+    info('✅ Structured logging enforcement enabled');
 };
 
 /**
@@ -98,7 +98,7 @@ export const validateLoggingConfiguration = () => {
         return false;
     }
 
-    console.log('✅ Logging configuration validated');
+    info('✅ Logging configuration validated');
     return true;
 };
 

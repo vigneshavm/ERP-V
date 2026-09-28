@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import Branch from "../models/Branch.js";
 import Store from "../../store/models/Store.js";
 import { AppError } from "../../../utils/AppError.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
-export const getAllBranches = asyncHandler(async (req: Request, res: Response) => {
+export const getAllBranches = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     // tenantId added by middleware
-    const tenantId = (req as any).tenantId;
+    const tenantId = req.user.tenantId;
     if (!tenantId) {
         res.status(200).json([]);
         return;
@@ -93,8 +94,8 @@ export const getAllBranches = asyncHandler(async (req: Request, res: Response) =
     res.status(200).json(Array.from(unifiedMap.values()));
 });
 
-export const getBranch = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).tenantId;
+export const getBranch = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
     const branch = await Branch.findOne({ _id: req.params.id, tenantId });
     if (!branch) {
         throw new AppError("Branch not found", 404);
@@ -102,8 +103,8 @@ export const getBranch = asyncHandler(async (req: Request, res: Response) => {
     res.status(200).json(branch);
 });
 
-export const createBranch = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).tenantId;
+export const createBranch = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
 
     // Check if main branch exists if this is trying to be main
     if (req.body.isMain) {
@@ -134,8 +135,8 @@ export const createBranch = asyncHandler(async (req: Request, res: Response) => 
     res.status(201).json(branch);
 });
 
-export const updateBranch = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).tenantId;
+export const updateBranch = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
 
     if (req.body.isMain) {
         await Branch.updateMany({ tenantId, _id: { $ne: req.params.id } }, { isMain: false });
@@ -164,8 +165,8 @@ export const updateBranch = asyncHandler(async (req: Request, res: Response) => 
     res.status(200).json(branch);
 });
 
-export const deleteBranch = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).tenantId;
+export const deleteBranch = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
     const branch = await Branch.findOneAndDelete({ _id: req.params.id, tenantId });
 
     if (!branch) {

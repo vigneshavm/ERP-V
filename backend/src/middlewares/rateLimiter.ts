@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import crypto from 'crypto';
-import { error as logError, warn } from '../config/logger.js';
+import { error as logError, warn, info } from '../config/logger.js';
 import { Request, Response, NextFunction } from 'express';
 
 // Extend Request to include rateLimitContext
@@ -33,7 +33,7 @@ let isRedisAvailable = false;
 let redisErrorLogged = false; // Track if we've already logged the Redis error
 
 redisClient.on('connect', () => {
-    console.log('✅ Redis connected (rate limiting)');
+    info('✅ Redis connected (rate limiting)');
     isRedisAvailable = true;
     redisErrorLogged = false; // Reset error flag on successful connection
 });
@@ -296,7 +296,7 @@ export const loginRateLimiter = async (req: Request, res: Response, next: NextFu
 
         // Fail-safe: Allow request but log error
         if (process.env.NODE_ENV === 'production') {
-            console.error('🚨 RATE LIMITER FAILURE - SECURITY DEGRADED');
+            logError('🚨 RATE LIMITER FAILURE - SECURITY DEGRADED');
         }
 
         next();
@@ -375,7 +375,7 @@ export const handleLoginAttempt = async (req: Request, success: boolean) => {
         if (accountKey) await resetRateLimit(accountKey);
         if (deviceKey) await resetRateLimit(deviceKey);
 
-        console.log('✅ Login successful - rate limit counters reset', {
+        info('✅ Login successful - rate limit counters reset', {
             ip,
             accountHash: accountKey ? accountKey.split(':')[2] : null,
             correlationId,

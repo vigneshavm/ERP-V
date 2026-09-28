@@ -1,6 +1,6 @@
 ﻿
 import React, { useState } from 'react';
-import { X, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { PurchaseOrder } from "../../../types/purchase";
 import { useDispatch } from 'react-redux';
 // We assume we can import these. If not, we might need to verify paths.
@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { createBill } from "../../../redux/slices/billSlice";
 import { AppDispatch } from "../../../redux/store";
 import { toast } from 'react-toastify';
+import { Button, Input, Modal, Textarea } from '../../../components/shared';
 
 interface CreateBillModalProps {
     isOpen: boolean;
@@ -52,85 +53,64 @@ const CreateBillModal: React.FC<CreateBillModalProps> = ({ isOpen, onClose, orde
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-sm w-full max-w-lg shadow-2xl border dark:border-slate-700 flex flex-col">
-                <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                    <div>
-                        <h2 className="text-xl font-bold mb-1">Create Bill</h2>
-                        <p className="text-sm text-slate-500">For PO #{order.po_number}</p>
-                    </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Create Bill"
+            size="md"
+        >
+            <p className="text-sm text-slate-500 -mt-4 mb-4">For PO #{order.po_number}</p>
+            <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Bill Date</label>
-                            <input
-                                type="date"
-                                required
-                                className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
-                                value={formData.date}
-                                onChange={e => setFormData({ ...formData, date: e.target.value })}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Due Date</label>
-                            <input
-                                type="date"
-                                className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
-                                value={formData.dueDate}
-                                onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Amount</label>
-                        <div className="relative">
-                            <span className="absolute left-4 top-2 text-slate-500">₹</span>
-                            <input
-                                type="number"
-                                required
-                                disabled // Usually bill matches PO, but maybe editable? Let's keep editable but prefilled
-                                className="w-full pl-8 pr-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
-                                value={formData.amount}
-                                onChange={e => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
-                        <textarea
-                            className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
-                            rows={3}
-                            value={formData.description}
-                            onChange={e => setFormData({ ...formData, description: e.target.value })}
+                        <Input
+                            type="date"
+                            label="Bill Date"
+                            required
+                            value={formData.date}
+                            onChange={e => setFormData({ ...formData, date: e.target.value })}
+                        />
+                        <Input
+                            type="date"
+                            label="Due Date"
+                            value={formData.dueDate}
+                            onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
                         />
                     </div>
 
+                    <Input
+                        type="number"
+                        label="Amount"
+                        required
+                        disabled
+                        icon={<span className="text-slate-500">₹</span>}
+                        value={formData.amount}
+                        onChange={e => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
+                    />
+
+                    <Textarea
+                        label="Description"
+                        minRows={3}
+                        value={formData.description}
+                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                    />
+
                     <div className="pt-4 flex justify-end gap-3">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-6 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                        >
+                        <Button type="button" variant="secondary" size="md" onClick={onClose}>
                             Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="submit"
+                            variant="primary"
+                            size="md"
+                            icon={<FileText className="w-4 h-4" />}
                             disabled={loading}
-                            className="px-6 py-2.5 bg-purple-600 text-white rounded-xl font-bold shadow-lg shadow-purple-600/25 hover:bg-purple-700 transition-all flex items-center gap-2"
+                            loading={loading}
                         >
-                            {loading ? 'Creating...' : <><FileText className="w-4 h-4" /> Create Bill</>}
-                        </button>
+                            Create Bill
+                        </Button>
                     </div>
-                </form>
-            </div>
-        </div>
+            </form>
+        </Modal>
     );
 };
 

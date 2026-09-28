@@ -9,6 +9,7 @@ import {
 import Layout from '../../../components/shared/Layout/index';
 import { Estimate } from '../../../types/sales';
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button, Card, Input } from '../../../components/shared';
 
 const PAGE_SIZE = 10;
 
@@ -160,85 +161,98 @@ const EstimateList = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto">
-                        <button
+                        <Button
+                            variant="secondary"
+                            size="md"
+                            icon={<RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />}
                             onClick={fetchEstimates}
-                            className={`p-2.5 bg-card border border-default rounded-sm hover:bg-surface transition-all ${isLoading ? 'animate-spin' : ''}`}
-                        >
-                            <RefreshCw className="w-4 h-4 text-warning" />
-                        </button>
-                        <button
+                        />
+                        <Button
+                            variant="warning"
+                            size="md"
+                            icon={<Plus className="w-4 h-4" />}
                             onClick={() => navigate('/sales/estimates/new')}
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-warning text-warning-fg rounded-sm shadow-lg transition-all text-xs font-black uppercase tracking-widest hover:opacity-90"
+                            fullWidth
+                            className="md:flex-none"
                         >
-                            <Plus className="w-4 h-4" /> New Estimate
-                        </button>
+                            New Estimate
+                        </Button>
                     </div>
                 </header>
 
-                {/* KPI Cards — same pattern as Sales Register */}
+                {/* KPI Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {kpiCards.map((card, i) => (
-                        <div key={i} className="card-interactive p-6 relative overflow-hidden group bg-card/60 backdrop-blur-2xl border border-default">
-                            <div className="flex justify-between items-start mb-4">
-                                <div className={`p-3 rounded-sm ${card.bg} ${card.color} border ${card.border}`}>
-                                    <card.icon className="w-5 h-5" />
+                        <Card key={i} variant="default" size="md" className="relative overflow-hidden group">
+                            <Card.Body>
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className={`p-3 rounded-sm ${card.bg} ${card.color} border ${card.border}`}>
+                                        <card.icon className="w-5 h-5" />
+                                    </div>
+                                    <div className="text-[10px] font-black text-success bg-success/10 border border-success/30 px-2 py-1 rounded-sm uppercase tracking-widest">
+                                        +12.4%
+                                    </div>
                                 </div>
-                                <div className="text-[10px] font-black text-success bg-success/10 border border-success/30 px-2 py-1 rounded-sm uppercase tracking-widest">
-                                    +12.4%
+                                <h3 className={`text-2xl font-display font-black tracking-tighter tabular-nums ${card.color}`}>
+                                    {isLoading ? '—' : card.value}
+                                </h3>
+                                <p className="text-[10px] font-black text-secondary uppercase tracking-widest mt-1">{card.label}</p>
+                                <div className="mt-3 h-1 w-full bg-border rounded-full overflow-hidden">
+                                    <div className={`h-full rounded-full w-[65%] ${card.bg.replace('/10', '')}`} />
                                 </div>
-                            </div>
-                            <h3 className={`text-2xl font-display font-black tracking-tighter tabular-nums ${card.color}`}>
-                                {isLoading ? '—' : card.value}
-                            </h3>
-                            <p className="text-[10px] font-black text-secondary uppercase tracking-widest mt-1">{card.label}</p>
-                            <div className="mt-3 h-1 w-full bg-border rounded-full overflow-hidden">
-                                <div className={`h-full rounded-full w-[65%] ${card.bg.replace('/10', '')}`} />
-                            </div>
-                            <p className="text-[9px] font-bold text-secondary mt-2 flex items-center gap-1">
-                                <Zap className="w-3 h-3 text-warning" /> {card.sub}
-                            </p>
-                        </div>
+                                <p className="text-[9px] font-bold text-secondary mt-2 flex items-center gap-1">
+                                    <Zap className="w-3 h-3 text-warning" /> {card.sub}
+                                </p>
+                            </Card.Body>
+                        </Card>
                     ))}
                 </div>
 
-                {/* Toolbar — standalone bordered card, matching Sales Register */}
-                <div className="glass-panel rounded-sm border border-default p-5 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto items-center">
-                        <div className="relative w-full md:w-96">
-                            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-warning" />
-                            <input
-                                type="text"
-                                value={searchTerm}
-                                onChange={e => handleSearch(e.target.value)}
-                                placeholder="Search estimate number or customer..."
-                                className="w-full bg-card border border-default rounded-sm py-3 pl-12 pr-4 text-xs font-bold focus:outline-none focus:border-warning/50 focus:ring-2 focus:ring-warning/10 transition-all text-main placeholder:text-secondary"
-                            />
+                {/* Toolbar */}
+                <Card variant="default" size="md">
+                    <Card.Body>
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto items-center">
+                                <div className="w-full md:w-96">
+                                    <Input
+                                        type="text"
+                                        value={searchTerm}
+                                        onChange={e => handleSearch(e.target.value)}
+                                        placeholder="Search estimate number or customer..."
+                                        icon={<Search className="w-4 h-4 text-warning" />}
+                                    />
+                                </div>
+                                <Button
+                                    variant="secondary"
+                                    size="md"
+                                    icon={<Filter className="w-4 h-4" />}
+                                    fullWidth
+                                    className="md:w-auto"
+                                >
+                                    Filters
+                                </Button>
+                            </div>
+                            <div className="flex bg-surface p-1 rounded-sm border border-default w-full md:w-auto overflow-x-auto gap-1">
+                                {['all', 'draft', 'sent', 'accepted', 'rejected'].map(s => (
+                                    <Button
+                                        key={s}
+                                        variant={statusFilter === s ? 'secondary' : 'tertiary'}
+                                        size="sm"
+                                        onClick={() => handleStatus(s)}
+                                        fullWidth
+                                        className="md:flex-none"
+                                    >
+                                        {s}
+                                    </Button>
+                                ))}
+                            </div>
                         </div>
-                        <button className="h-10 px-5 w-full md:w-auto bg-card hover:bg-surface border border-default rounded-sm text-[10px] font-black uppercase tracking-widest text-secondary flex items-center justify-center gap-2 transition-all">
-                            <Filter className="w-4 h-4" /> Filters
-                        </button>
-                    </div>
-                    <div className="flex bg-surface p-1 rounded-sm border border-default w-full md:w-auto overflow-x-auto gap-1">
-                        {['all', 'draft', 'sent', 'accepted', 'rejected'].map(s => (
-                            <button
-                                key={s}
-                                onClick={() => handleStatus(s)}
-                                className={`px-4 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all flex-1 md:flex-none ${
-                                    statusFilter === s
-                                        ? 'bg-card text-warning shadow-sm border border-default'
-                                        : 'text-secondary hover:text-main'
-                                }`}
-                            >
-                                {s}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                    </Card.Body>
+                </Card>
 
-                {/* Table — standalone bordered card */}
-                <div className="glass-panel flex flex-col overflow-hidden rounded-sm border border-default">
-                    {/* Table */}
-                    <div className="flex-1 overflow-auto min-h-[400px]">
+                {/* Table */}
+                <Card variant="default" size="lg" className="flex flex-col overflow-hidden">
+                    <Card.Body className="flex-1 overflow-auto min-h-[400px] p-0">
                         <table className="w-full text-left border-collapse">
                             <thead className="bg-surface/50 sticky top-0 z-20 border-b border-default">
                                 <tr>
@@ -314,20 +328,20 @@ const EstimateList = () => {
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                                                        <button
+                                                        <Button
+                                                            variant="secondary"
+                                                            size="sm"
+                                                            icon={<Eye className="w-4 h-4" />}
                                                             onClick={() => navigate(`/sales/estimate/${est._id}`)}
-                                                            className="p-2 text-secondary hover:text-warning hover:bg-warning/10 rounded-sm transition-all"
                                                             title="View"
-                                                        >
-                                                            <Eye className="w-4 h-4" />
-                                                        </button>
-                                                        <button
+                                                        />
+                                                        <Button
+                                                            variant="danger"
+                                                            size="sm"
+                                                            icon={<Trash2 className="w-4 h-4" />}
                                                             onClick={() => handleDelete(est._id || '')}
-                                                            className="p-2 text-secondary hover:text-danger hover:bg-danger/10 rounded-sm transition-all"
                                                             title="Delete"
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
+                                                        />
                                                     </div>
                                                 </td>
                                             </tr>
@@ -346,21 +360,23 @@ const EstimateList = () => {
                                                         {estimates.length === 0 ? 'No estimates yet. Create your first estimate.' : 'Refine your search or filter.'}
                                                     </p>
                                                 </div>
-                                                <button
+                                                <Button
+                                                    variant="secondary"
+                                                    size="sm"
                                                     onClick={() => { setSearchTerm(''); setStatusFilter('all'); setCurrentPage(1); }}
-                                                    className="mt-2 px-6 py-2 bg-warning/10 border border-warning/30 text-warning text-xs font-black uppercase tracking-widest rounded-sm hover:bg-warning hover:text-warning-fg transition-all"
+                                                    className="mt-2"
                                                 >
                                                     Clear Filters
-                                                </button>
+                                                </Button>
                                             </div>
                                         </td>
                                     </tr>
                                 )}
                             </tbody>
                         </table>
-                    </div>
+                    </Card.Body>
 
-                    {/* Pagination Footer — identical to Sales Register */}
+                    {/* Pagination Footer */}
                     <div className="p-5 border-t border-default bg-surface/20 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div className="flex items-center gap-4">
                             <p className="text-[10px] font-black uppercase tracking-widest text-secondary">
@@ -378,43 +394,44 @@ const EstimateList = () => {
                             </div>
                         </div>
                         <div className="flex items-center gap-1">
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                icon={<ChevronLeft className="w-3.5 h-3.5" />}
                                 onClick={() => goTo(safePage - 1)}
                                 disabled={safePage === 1}
-                                className="px-3 py-2 bg-card border border-default rounded-sm text-[10px] font-black uppercase tracking-widest text-secondary disabled:opacity-30 hover:border-warning/50 hover:text-warning transition-all flex items-center gap-1 disabled:cursor-not-allowed"
                             >
-                                <ChevronLeft className="w-3.5 h-3.5" /> Prev
-                            </button>
+                                Prev
+                            </Button>
                             {pageButtons.map((p, i) =>
                                 p === '...' ? (
                                     <span key={`e${i}`} className="px-2 text-secondary text-xs">…</span>
                                 ) : (
-                                    <button
+                                    <Button
                                         key={p}
+                                        variant={safePage === p ? 'warning' : 'secondary'}
+                                        size="sm"
                                         onClick={() => goTo(p as number)}
-                                        className={`w-8 h-8 rounded-sm text-[10px] font-black transition-all border ${
-                                            safePage === p
-                                                ? 'bg-warning text-warning-fg border-warning'
-                                                : 'bg-card text-secondary border-default hover:border-warning/50 hover:text-warning'
-                                        }`}
                                     >
                                         {p}
-                                    </button>
+                                    </Button>
                                 )
                             )}
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                icon={<ChevronRight className="w-3.5 h-3.5" />}
                                 onClick={() => goTo(safePage + 1)}
                                 disabled={safePage === totalPages}
-                                className="px-3 py-2 bg-card border border-default rounded-sm text-[10px] font-black uppercase tracking-widest text-secondary disabled:opacity-30 hover:border-warning/50 hover:text-warning transition-all flex items-center gap-1 disabled:cursor-not-allowed"
                             >
-                                Next <ChevronRight className="w-3.5 h-3.5" />
-                            </button>
+                                Next
+                            </Button>
                         </div>
                         <p className="text-[9px] font-black text-muted uppercase tracking-widest hidden sm:block">
                             {PAGE_SIZE} per page
                         </p>
                     </div>
-                </div>
+                </Card>
 
             </div>{/* end relative z-10 */}
             </div>{/* end relative outer */}

@@ -11,6 +11,7 @@
 //  - bull types may not be installed
 import Bull from 'bull';
 import fs from 'fs';
+import { info, error as logError } from './logger.js';
 
 // Type definitions for bull (when @types/bull is not available)
 type Queue<_T = any> = any;
@@ -119,19 +120,19 @@ pdfQueue.process(async (job: Job<PdfJobData>): Promise<PdfJobResult> => {
 
 // Queue event listeners
 emailQueue.on('completed', (job: Job<EmailJobData>, result: EmailJobResult) => {
-    console.log(`✅ Email job ${job.id} completed:`, result);
+    info(`✅ Email job ${job.id} completed:`, result);
 });
 
 emailQueue.on('failed', (job: Job<EmailJobData>, err: Error) => {
-    console.error(`❌ Email job ${job.id} failed:`, err.message);
+    logError(`❌ Email job ${job.id} failed:`, err.message);
 });
 
 pdfQueue.on('completed', (job: Job<PdfJobData>, result: PdfJobResult) => {
-    console.log(`✅ PDF job ${job.id} completed:`, result);
+    info(`✅ PDF job ${job.id} completed:`, result);
 });
 
 pdfQueue.on('failed', (job: Job<PdfJobData>, err: Error) => {
-    console.error(`❌ PDF job ${job.id} failed:`, err.message);
+    logError(`❌ PDF job ${job.id} failed:`, err.message);
 });
 
 // Helper functions to add jobs
@@ -156,10 +157,10 @@ export const queuePDF = async (type: string, data: any): Promise<Job<PdfJobData>
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-    console.log('📦 Closing job queues...');
+    info('📮 Closing job queues...');
     await emailQueue.close();
     await pdfQueue.close();
-    console.log('✅ Job queues closed');
+    info('✅ Job queues closed');
 });
 
 export default { emailQueue, pdfQueue, queueEmail, queuePDF };

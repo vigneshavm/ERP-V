@@ -10,6 +10,7 @@ import { POSHeldBillsModal } from '../POSHeldBillsModal';
 import { POSTerminalInfo } from '../POSTerminalInfo';
 import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { Button } from '@/components/shared/Button';
 
 interface POSTemplateProps {
     logic: POSLogic;
@@ -154,14 +155,9 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         currentBranch={currentBranch || ''}
                     />
                     <div className="flex gap-2 mr-2">
-                        <button
-                            onClick={() => setIsHeldBillsOpen(true)}
-                            className="p-2 bg-primary/10 text-primary rounded-lg flex items-center gap-2"
-                        >
-                            <PauseCircle className="w-5 h-5" />
-                        </button>
+                        <Button onClick={() => setIsHeldBillsOpen(true)} className="p-2 bg-primary/10 text-primary rounded-lg flex items-center gap-2"><PauseCircle className="w-5 h-5" /></Button>
 
-                        <div className="bg-slate-100 p-1 rounded-lg flex gap-1 ml-2">
+                        <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex gap-1 ml-2">
                             {/* Sale / Return Toggle */}
                             <div className="flex bg-slate-200 p-0.5 rounded-lg mr-2">
                                 <button

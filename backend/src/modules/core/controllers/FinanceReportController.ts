@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { error } from "../../../config/logger.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 import {
     buildBillProfit, buildCashFlow, buildDayBook, buildProfitLoss, buildSalesReport, buildTransactions, parseFinanceRange,
 } from "../../finance/services/FinanceReportService.js";
@@ -25,13 +26,13 @@ import { buildBankReconciliation, buildCashBankOverview, buildLoansReport, confi
  *   POST /api/reports/finance/bank-reconciliation/match      { pairs: [{ statementId, entryId }] }
  */
 
-const q = (req: Request, k: string): string | undefined => (typeof req.query[k] === "string" ? (req.query[k] as string) : undefined);
-const tenantOf = (req: Request): string => String((req as unknown as { tenantId?: string }).tenantId ?? "");
+const q = (req: AuthenticatedRequest, k: string): string | undefined => (typeof req.query[k] === "string" ? (req.query[k] as string) : undefined);
+const tenantOf = (req: AuthenticatedRequest): string => String(req.user.tenantId ?? "");
 
 class BadRequest extends Error {}
 
-function handler(label: string, fn: (req: Request, tenantId: string) => Promise<unknown>) {
-    return async (req: Request, res: Response): Promise<void> => {
+function handler(label: string, fn: (req: AuthenticatedRequest, tenantId: string) => Promise<unknown>) {
+    return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             res.status(200).json(await fn(req, tenantOf(req)));
         } catch (err) {
@@ -49,13 +50,13 @@ function handler(label: string, fn: (req: Request, tenantId: string) => Promise<
     };
 }
 
-function rangeOf(req: Request) {
+function rangeOf(req: AuthenticatedRequest) {
     const range = parseFinanceRange(q(req, "from"), q(req, "to"));
     if (!range) throw new BadRequest("Pass from and to as YYYY-MM-DD, with from on or before to.");
     return range;
 }
 
-const table = (req: Request) => ({ search: q(req, "search"), sort: q(req, "sort"), dir: q(req, "dir"), page: q(req, "page"), limit: q(req, "limit") });
+const table = (req: AuthenticatedRequest) => ({ search: q(req, "search"), sort: q(req, "sort"), dir: q(req, "dir"), page: q(req, "page"), limit: q(req, "limit") });
 
 export const getDayBook = handler("Day Book", (req, tenantId) => buildDayBook(tenantId, q(req, "date")));
 
@@ -90,7 +91,7 @@ export const getBankReconciliation = handler("Bank Reconciliation", (req, tenant
 export const postReconcileMatches = handler("Bank Reconciliation", (req, tenantId) => {
     const pairs = (req.body as { pairs?: unknown })?.pairs;
     if (!Array.isArray(pairs) || !pairs.length) throw new BadRequest("Send pairs: [{ statementId, entryId }].");
-    const userId = String((req as unknown as { user?: { _id?: unknown } }).user?._id ?? "");
+    const userId = String(req.user._id ?? "");
     const clean = pairs
         .filter((p): p is { statementId: string; entryId: string } => !!p && typeof p.statementId === "string" && typeof p.entryId === "string")
         .slice(0, 500);

@@ -1,21 +1,12 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 
 import RecurringExpense from '../models/RecurringExpense.js';
 
 import Expense from '../models/Expense.js';
 import { info, error } from '../../../config/logger.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import type { TenantRef } from '../../../interfaces/TenantRef.js';
 
 interface BranchSummary {
     branch_name: string;
@@ -35,7 +26,7 @@ interface UpcomingDue {
 /**
  * Calculate intelligence metrics for recurring expenses
  */
-const calculateIntelligence = async (recurringExpenses: any[], userId: string) => {
+const calculateIntelligence = async (recurringExpenses: any[], tenantId: TenantRef) => {
     const now = new Date();
     const thirtyDaysLater = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
@@ -94,7 +85,7 @@ const calculateIntelligence = async (recurringExpenses: any[], userId: string) =
     await Expense.aggregate([
         {
             $match: {
-                createdBy: new mongoose.Types.ObjectId(userId),
+                createdBy: new mongoose.Types.ObjectId(tenantId),
                 date: { $gte: startOfMonth }
             }
         },
@@ -150,11 +141,11 @@ const calculateIntelligence = async (recurringExpenses: any[], userId: string) =
 export const getAllRecurringExpenses = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const recurringExpenses = await RecurringExpense.find({
-            createdBy: req.user?._id,
+            createdBy: req.tenantId,
             is_active: true
         }).sort({ next_due: 1 });
 
-        const intelligence = await calculateIntelligence(recurringExpenses, req.user?._id as string);
+        const intelligence = await calculateIntelligence(recurringExpenses, req.tenantId);
 
         // Transform for frontend compatibility
         const expenses = recurringExpenses.map((exp: any) => ({

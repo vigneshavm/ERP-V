@@ -1,21 +1,19 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 import Supplier from '../models/Supplier.js';
 import Bill from '../../finance/models/Bill.js';
 import PaymentOut from '../models/PaymentOut.js';
 import DebitNote from '../models/DebitNote.js';
 import PurchaseReturn from '../models/PurchaseReturn.js';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { error } from '../../../config/logger.js';
 
-export const getSupplierLedger = async (req: Request, res: Response) => {
+export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { id } = req.params;
         const { startDate, endDate } = req.query;
         // Authenticated user context
-        const tenantId = (req as any).user?.tenantId?.toString();
-
-        if (!tenantId) {
-            return res.status(401).json({ success: false, message: 'Unauthorized' });
-        }
+        const tenantId = req.tenantId.toString();
 
         const start = startDate ? new Date(startDate as string) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
         const end = endDate ? new Date(endDate as string) : new Date();
@@ -184,8 +182,8 @@ export const getSupplierLedger = async (req: Request, res: Response) => {
             }
         });
 
-    } catch (error: any) {
-        console.error('Ledger Error:', error);
-        res.status(500).json({ success: false, message: error.message });
+    } catch (err: any) {
+        error(`Ledger Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: err.message });
     }
 };

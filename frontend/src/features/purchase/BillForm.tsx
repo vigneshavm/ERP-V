@@ -6,6 +6,7 @@ import api from "../../services/api";
 import { toast } from 'react-toastify';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import { Button, Input } from "../../components/shared";
 import BillBasicInfo from './Components/BillBasicInfo';
 import BillItemsTable from './Components/BillItemsTable';
 import BillFinancialSummary from './Components/BillFinancialSummary';
@@ -140,29 +141,56 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                     ]}
                     actions={
                         <div className="flex items-center gap-3">
-                            <button
+                            <Button
                                 onClick={runOCR}
                                 disabled={isLoading}
-                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95"
+                                variant="secondary"
+                                size="md"
+                                icon={<Zap className={`w-4 h-4 ${isLoading ? 'animate-pulse text-warning' : 'text-primary'}`} />}
+                                loading={isLoading}
                             >
-                                <Zap className={`w-4 h-4 ${isLoading ? 'animate-pulse text-warning' : 'text-primary'}`} /> {isLoading ? 'Extracting...' : 'Auto-Extract (OCR)'}
-                            </button>
+                                {isLoading ? 'Extracting...' : 'Auto-Extract (OCR)'}
+                            </Button>
                             
                             {id && bill.status !== 'Paid' && (
-                                <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-                                    <button onClick={() => handleUpdateStatus('Hold')} className="p-2 text-warning hover:bg-warning-soft rounded-lg transition-colors" title="Hold"><Clock className="w-4 h-4" /></button>
-                                    <button onClick={() => handleUpdateStatus('Disputed')} className="p-2 text-danger hover:bg-danger-soft rounded-lg transition-colors" title="Dispute"><AlertCircle className="w-4 h-4" /></button>
-                                    <button onClick={() => handleUpdateStatus('Rejected')} className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg transition-colors" title="Reject"><Ban className="w-4 h-4" /></button>
+                                <div className="flex items-center gap-1">
+                                    <Button
+                                        type="button"
+                                        variant="tertiary"
+                                        size="sm"
+                                        icon={<Clock className="w-4 h-4" />}
+                                        onClick={() => handleUpdateStatus('Hold')}
+                                        title="Hold"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="tertiary"
+                                        size="sm"
+                                        icon={<AlertCircle className="w-4 h-4" />}
+                                        onClick={() => handleUpdateStatus('Disputed')}
+                                        title="Dispute"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="tertiary"
+                                        size="sm"
+                                        icon={<Ban className="w-4 h-4" />}
+                                        onClick={() => handleUpdateStatus('Rejected')}
+                                        title="Reject"
+                                    />
                                 </div>
                             )}
 
-                            <button
+                            <Button
                                 onClick={handleSave}
                                 disabled={isLoading}
-                                className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95"
+                                variant="primary"
+                                size="md"
+                                icon={<Save className="w-4 h-4" />}
+                                loading={isLoading}
                             >
-                                <Save className="w-4 h-4" /> {id ? 'Update Node' : 'Finalize Bill'}
-                            </button>
+                                {id ? 'Update Node' : 'Finalize Bill'}
+                            </Button>
                         </div>
                     }
                 />
@@ -185,25 +213,19 @@ const BillForm: React.FC<Props> = ({ onBack, onSave = async () => { }, initialDa
                                     <FileSpreadsheet className="w-5 h-5 text-success" /> Vendor Documents
                                 </h3>
                                 <div className="space-y-6">
-                                    <div>
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Vendor Invoice No.</label>
-                                        <input
-                                            type="text"
-                                            value={bill.vendorInvoiceNo || ''}
-                                            onChange={(e) => updateBillField('vendorInvoiceNo', e.target.value)}
-                                            placeholder="INV-X"
-                                            className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-primary/10 transition-all outline-none"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Invoice Date</label>
-                                        <input
-                                            type="date"
-                                            value={bill.bill_date || ''}
-                                            onChange={(e) => updateBillField('bill_date', e.target.value)}
-                                            className="w-full px-5 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
-                                        />
-                                    </div>
+                                    <Input
+                                        label="Vendor Invoice No."
+                                        type="text"
+                                        value={bill.vendorInvoiceNo || ''}
+                                        onChange={(e) => updateBillField('vendorInvoiceNo', e.target.value)}
+                                        placeholder="INV-X"
+                                    />
+                                    <Input
+                                        label="Invoice Date"
+                                        type="date"
+                                        value={bill.bill_date || ''}
+                                        onChange={(e) => updateBillField('bill_date', e.target.value)}
+                                    />
                                 </div>
                             </div>
                         </div>

@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import asyncHandler from "express-async-handler";
 import AuditLog from "../models/AuditLog.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 // @desc    Get audit logs
 // @route   GET /api/audit-logs
 // @access  Private (Admin/Owner)
-export const getAuditLogs = asyncHandler(async (req: Request, res: Response) => {
-    const tenantId = (req as any).tenantId;
+export const getAuditLogs = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const tenantId = req.user.tenantId;
     const { entity, action, user, startDate, endDate, limit = 50, page = 1 } = req.query;
 
     if (!tenantId) {

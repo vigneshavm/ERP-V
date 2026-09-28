@@ -1,5 +1,6 @@
 ﻿import React from 'react';
-import { Search, ImageIcon, Sparkles, SlidersHorizontal } from 'lucide-react';
+import { Search, ImageIcon, Sparkles, SlidersHorizontal } from 'lucide-react';import { Input } from '@/components/shared/Input';
+
 
 interface StorefrontHeaderProps {
     searchTerm: string;
@@ -28,7 +29,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
                     placeholder="Search for products..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-12 py-2.5 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner"
+                    className="w-full pl-10 pr-12 py-2.5 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 shadow-inner"
                 />
                 <Search className="w-5 h-5 text-slate-400 absolute left-3" />
 

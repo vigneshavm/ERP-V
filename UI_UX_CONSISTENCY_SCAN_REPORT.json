@@ -1,0 +1,413 @@
+{
+  "scan_date": "2026-09-28",
+  "scan_scope": "frontend/src/features/**/*.tsx",
+  "feature_domains": 22,
+  "total_files_analyzed": "~200+",
+  "executive_summary": {
+    "critical_findings": 4,
+    "high_priority_findings": 3,
+    "total_ui_consistency_issues": 2408
+  },
+  "issue_breakdown": {
+    "raw_button_elements": {
+      "description": "HTML <button> elements that bypass Button component",
+      "total_matches": 304,
+      "files_affected": 117,
+      "severity": "HIGH",
+      "remediation": "Replace with <Button> component from components/shared",
+      "impact": "Inconsistent styling, missing accessibility features, inconsistent interaction patterns"
+    },
+    "raw_input_elements": {
+      "description": "HTML <input> elements that bypass Input component",
+      "total_matches": 79,
+      "files_affected": 29,
+      "severity": "HIGH",
+      "remediation": "Replace with <Input> component from components/shared",
+      "impact": "Inconsistent form styling, missing validation states, accessibility issues"
+    },
+    "custom_spacing_violations": {
+      "description": "Non-standard Tailwind spacing values (px-5, py-2.5, py-3.5, py-4)",
+      "total_matches": 892,
+      "breakdown": {
+        "px-5": {
+          "matches": 72,
+          "files": 24
+        },
+        "py-2.5": {
+          "matches": 92,
+          "files": 40
+        },
+        "py-3.5_and_py-4": {
+          "matches": 728,
+          "files": 95
+        }
+      },
+      "severity": "HIGH",
+      "remediation": "Use standard Tailwind scale (px-4, py-2, py-3, etc.)",
+      "impact": "Inconsistent spacing rhythm, difficult to maintain uniform design system"
+    },
+    "arbitrary_border_radius": {
+      "description": "Arbitrary border radius values (rounded-[2rem], rounded-[2.5rem], rounded-[3rem], etc.)",
+      "total_matches": 207,
+      "files_affected": 61,
+      "severity": "MEDIUM",
+      "examples": [
+        "rounded-[2rem]",
+        "rounded-[2.5rem]",
+        "rounded-[3rem]",
+        "rounded-[3.5rem]",
+        "rounded-[40px]",
+        "rounded-[32px]",
+        "rounded-[1.5rem]",
+        "rounded-[1.25rem]"
+      ],
+      "remediation": "Use standard rounded scale (rounded-lg, rounded-xl, etc.) or create Tailwind theme extension",
+      "impact": "Inconsistent border radius patterns, difficulty in design system updates"
+    },
+    "missing_dark_variants": {
+      "description": "Background, text, and border classes missing dark: variants",
+      "total_matches": 1001,
+      "files_affected": 75,
+      "severity": "MEDIUM",
+      "examples_found": [
+        "bg-white without dark:bg-slate-800",
+        "bg-slate-50 without dark:bg-slate-900",
+        "text-slate-700 without dark:text-slate-200",
+        "border-slate-200 without dark:border-slate-700",
+        "bg-primary without dark variant"
+      ],
+      "remediation": "Add dark: variants for all color classes",
+      "impact": "Poor dark mode support, inconsistent theme application"
+    }
+  },
+  "top_10_files_by_raw_button_count": [
+    {
+      "rank": 1,
+      "file": "frontend/src/features/system/Sync/DeviceIntelligence.tsx",
+      "raw_buttons": 12,
+      "issues": "Multiple raw button elements, inconsistent styling"
+    },
+    {
+      "rank": 2,
+      "file": "frontend/src/features/purchase/PurchaseEntry.tsx",
+      "raw_buttons": 10,
+      "issues": "Mix of Button component and raw buttons"
+    },
+    {
+      "rank": 3,
+      "file": "frontend/src/features/purchase/PurchaseOrderDetails.tsx",
+      "raw_buttons": 8,
+      "issues": "Inconsistent button patterns in detail view"
+    },
+    {
+      "rank": 4,
+      "file": "frontend/src/features/inventory/InventoryManager.tsx",
+      "raw_buttons": 8,
+      "issues": "Raw buttons in modal and action contexts"
+    },
+    {
+      "rank": 5,
+      "file": "frontend/src/features/purchase/PurchaseExpress.tsx",
+      "raw_buttons": 8,
+      "issues": "Raw buttons mixed with proper components"
+    },
+    {
+      "rank": 6,
+      "file": "frontend/src/features/employees/AttendanceCalendar.tsx",
+      "raw_buttons": 7,
+      "issues": "Multiple raw buttons for bulk actions"
+    },
+    {
+      "rank": 7,
+      "file": "frontend/src/features/expenses/DailyFinance.tsx",
+      "raw_buttons": 7,
+      "issues": "Raw buttons in transaction forms"
+    },
+    {
+      "rank": 8,
+      "file": "frontend/src/features/reports/index.tsx",
+      "raw_buttons": 6,
+      "issues": "Raw button in report entry point"
+    },
+    {
+      "rank": 9,
+      "file": "frontend/src/features/sales/deliveryChallans/DeliveryChallanDetail.tsx",
+      "raw_buttons": 6,
+      "issues": "Raw buttons in delivery challan detail"
+    },
+    {
+      "rank": 10,
+      "file": "frontend/src/features/purchase/Components/BillItemsTable.tsx",
+      "raw_buttons": 5,
+      "issues": "Raw button in table actions"
+    }
+  ],
+  "top_10_files_by_raw_input_count": [
+    {
+      "rank": 1,
+      "file": "frontend/src/features/expenses/DailyFinance.tsx",
+      "raw_inputs": 8,
+      "issues": "Date and amount inputs for financial entry"
+    },
+    {
+      "rank": 2,
+      "file": "frontend/src/features/financial/overview/LoansPage.tsx",
+      "raw_inputs": 10,
+      "issues": "Multiple loan calculation inputs"
+    },
+    {
+      "rank": 3,
+      "file": "frontend/src/features/system/Settings/FinanceTab.tsx",
+      "raw_inputs": 4,
+      "issues": "Bank and finance configuration inputs"
+    },
+    {
+      "rank": 4,
+      "file": "frontend/src/features/purchase/PaymentOut.tsx",
+      "raw_inputs": 6,
+      "issues": "Payment form inputs with dates and amounts"
+    },
+    {
+      "rank": 5,
+      "file": "frontend/src/features/system/Settings/GeneralTab.tsx",
+      "raw_inputs": 7,
+      "issues": "General settings form inputs"
+    },
+    {
+      "rank": 6,
+      "file": "frontend/src/features/purchase/PurchaseExpress.tsx",
+      "raw_inputs": 6,
+      "issues": "Raw inputs in purchase express form"
+    },
+    {
+      "rank": 7,
+      "file": "frontend/src/features/inventory/StockMovement.tsx",
+      "raw_inputs": 3,
+      "issues": "Date and search inputs"
+    },
+    {
+      "rank": 8,
+      "file": "frontend/src/features/reports/components/ReportFilterFields.tsx",
+      "raw_inputs": 4,
+      "issues": "Date range and search inputs for reports"
+    },
+    {
+      "rank": 9,
+      "file": "frontend/src/features/suppliers/Agents.tsx",
+      "raw_inputs": 2,
+      "issues": "Search input in agent list"
+    },
+    {
+      "rank": 10,
+      "file": "frontend/src/features/system/Settings/BranchSettingsTab.tsx",
+      "raw_inputs": 3,
+      "issues": "Branch configuration inputs"
+    }
+  ],
+  "top_5_files_by_custom_spacing_violations": [
+    {
+      "rank": 1,
+      "file": "frontend/src/features/purchase/PurchaseEntry.tsx",
+      "violations": 45,
+      "issue_types": ["py-4", "py-3.5", "px-5", "py-2.5"]
+    },
+    {
+      "rank": 2,
+      "file": "frontend/src/features/employees/AllowanceManager.tsx",
+      "violations": 35,
+      "issue_types": ["py-4", "px-6"]
+    },
+    {
+      "rank": 3,
+      "file": "frontend/src/features/financial/Cashbank/FinanceOverview.tsx",
+      "violations": 28,
+      "issue_types": ["py-4", "px-8"]
+    },
+    {
+      "rank": 4,
+      "file": "frontend/src/features/purchase/Components/PayablesTable.tsx",
+      "violations": 25,
+      "issue_types": ["py-4", "px-6"]
+    },
+    {
+      "rank": 5,
+      "file": "frontend/src/features/sales/MrpPendingInvoices.tsx",
+      "violations": 22,
+      "issue_types": ["py-4", "px-6"]
+    }
+  ],
+  "sample_code_anti_patterns": {
+    "raw_button_pattern": {
+      "anti_pattern": "<button onClick={handleClick} className=\"p-2 text-slate-400 hover:text-primary\">Edit</button>",
+      "correct_pattern": "<Button variant=\"tertiary\" size=\"sm\" icon={<Edit className=\"w-4 h-4\" />} onClick={handleClick} />",
+      "file_examples": [
+        "frontend/src/features/inventory/CategoryManager.tsx:394",
+        "frontend/src/features/expenses/ExpenseCategoriesManager.tsx:226"
+      ]
+    },
+    "raw_input_pattern": {
+      "anti_pattern": "<input type=\"text\" className=\"w-full px-5 py-4 bg-slate-50 border border-slate-100\" />",
+      "correct_pattern": "<Input type=\"text\" value={value} onChange={handleChange} />",
+      "file_examples": [
+        "frontend/src/features/system/Settings/FinanceTab.tsx:106",
+        "frontend/src/features/system/Settings/GeneralTab.tsx:378"
+      ]
+    },
+    "custom_spacing_pattern": {
+      "anti_pattern": "className=\"px-5 py-4 rounded-xl\" or className=\"py-3.5 px-6\"",
+      "correct_pattern": "className=\"px-4 py-3 rounded-lg\" or className=\"px-6 py-2\"",
+      "file_examples": [
+        "frontend/src/features/business/MarketingTools.tsx:291",
+        "frontend/src/features/customers/components/CustomerForm.tsx:107"
+      ]
+    },
+    "arbitrary_border_radius_pattern": {
+      "anti_pattern": "className=\"rounded-[2rem]\" or className=\"rounded-[2.5rem]\"",
+      "correct_pattern": "className=\"rounded-2xl\" or create theme extension for 40px (rounded-[40px])",
+      "file_examples": [
+        "frontend/src/features/business/MarketingTools.tsx:369",
+        "frontend/src/features/combo-offers/ComboOfferManager.tsx:160"
+      ]
+    },
+    "missing_dark_variant_pattern": {
+      "anti_pattern": "className=\"bg-white border-slate-200 text-slate-700\"",
+      "correct_pattern": "className=\"bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200\"",
+      "file_examples": [
+        "frontend/src/features/customers/Customer360Modal.tsx:17",
+        "frontend/src/features/dashboard/Dashboard.tsx:493"
+      ]
+    }
+  },
+  "remediation_roadmap": {
+    "phase_1_high_priority": {
+      "duration": "1-2 weeks",
+      "focus": "Replace raw buttons and inputs with components",
+      "estimated_changes": 383,
+      "files_to_update": 146,
+      "tasks": [
+        "Create migration script to identify all raw buttons/inputs",
+        "Update top 10 files by raw button count",
+        "Update top 10 files by raw input count",
+        "Update form components to use Input component"
+      ]
+    },
+    "phase_2_spacing_consistency": {
+      "duration": "2-3 weeks",
+      "focus": "Standardize spacing to Tailwind scale",
+      "estimated_changes": 892,
+      "files_to_update": 95,
+      "tasks": [
+        "Create spacing standardization guide",
+        "Audit px-5 usage (72 matches) - replace with px-4 or px-6",
+        "Audit py-2.5 usage (92 matches) - replace with py-2 or py-3",
+        "Audit py-3.5/py-4 usage (728 matches) - standardize across codebase"
+      ]
+    },
+    "phase_3_border_radius": {
+      "duration": "1-2 weeks",
+      "focus": "Standardize border radius values",
+      "estimated_changes": 207,
+      "files_to_update": 61,
+      "tasks": [
+        "Create Tailwind theme extension for commonly used arbitrary values",
+        "Replace rounded-[2rem] with standard scale or theme variable",
+        "Replace rounded-[2.5rem] with standard scale or theme variable",
+        "Document approved border radius scale in design system"
+      ]
+    },
+    "phase_4_dark_mode": {
+      "duration": "2-3 weeks",
+      "focus": "Complete dark mode variant coverage",
+      "estimated_changes": 1001,
+      "files_to_update": 75,
+      "tasks": [
+        "Audit all bg- classes for dark: variants",
+        "Audit all text- classes for dark: variants",
+        "Audit all border- classes for dark: variants",
+        "Create linting rules to enforce dark variants on color classes"
+      ]
+    }
+  },
+  "design_system_gaps": [
+    {
+      "gap": "Button component not used consistently",
+      "impact": "Inconsistent button styling and behavior across app",
+      "recommendation": "Enforce Button component usage via ESLint rule"
+    },
+    {
+      "gap": "Input component not adopted across forms",
+      "impact": "Form styling inconsistencies, missing validation state handling",
+      "recommendation": "Create comprehensive Input component with variants and migrate all raw inputs"
+    },
+    {
+      "gap": "Tailwind spacing scale not followed",
+      "impact": "Visual inconsistency, difficult to maintain spacing rhythm",
+      "recommendation": "Document approved spacing values and enforce via ESLint"
+    },
+    {
+      "gap": "Border radius lacks defined system",
+      "impact": "Multiple arbitrary values used inconsistently",
+      "recommendation": "Define 3-5 standard border radius values in Tailwind theme"
+    },
+    {
+      "gap": "Dark mode implementation incomplete",
+      "impact": "Poor dark mode UX, inconsistent theme application",
+      "recommendation": "Enforce dark: variants on all color classes via linting rules"
+    }
+  ],
+  "recommended_eslint_rules": [
+    {
+      "rule": "no-restricted-syntax",
+      "description": "Prevent direct <button> tag usage (enforce Button component)",
+      "pattern": "<button[^>]*className"
+    },
+    {
+      "rule": "no-restricted-syntax",
+      "description": "Prevent direct <input> tag usage (enforce Input component)",
+      "pattern": "<input[^>]*className"
+    },
+    {
+      "rule": "enforce-spacing-scale",
+      "description": "Only allow standard Tailwind spacing values",
+      "allowed": ["px-2", "px-3", "px-4", "px-6", "px-8", "py-2", "py-3", "py-4", "py-6", "py-8"],
+      "forbidden": ["px-5", "py-2.5", "py-3.5"]
+    },
+    {
+      "rule": "enforce-dark-variants",
+      "description": "Require dark: variants for all bg-, text-, border- classes",
+      "pattern": "/(bg-|text-|border-)/.*(?!dark:)"
+    }
+  ],
+  "timeline_and_effort": {
+    "total_estimated_effort": "8-10 weeks",
+    "total_estimated_changes": 2483,
+    "average_changes_per_file": "12-15",
+    "recommended_approach": "Phased rollout with automated tooling where possible",
+    "team_allocation": "2 developers full-time on UI consistency",
+    "dependencies": [
+      "Update shared component library first",
+      "Create ESLint rules before large refactors",
+      "Establish design system documentation",
+      "Set up pre-commit hooks for validation"
+    ]
+  },
+  "notes": {
+    "analysis_methodology": "Regex-based grep search across all .tsx files in features directory",
+    "search_patterns_used": [
+      "<button\\s - finds all raw button elements (304 matches)",
+      "<input\\s - finds all raw input elements (79 matches)",
+      "px-5 - finds custom horizontal padding (72 matches)",
+      "py-2\\.5 - finds custom vertical padding 2.5rem (92 matches)",
+      "py-4|py-3\\.5 - finds custom vertical padding 4/3.5rem (728 matches)",
+      "rounded-\\[ - finds arbitrary border radius values (207 matches)",
+      "bg-\\w+[^\"]*(?!.*dark:) - finds missing dark variants (1001+ matches)"
+    ],
+    "limitations": "This scan identifies patterns but manual review recommended for context-specific decisions",
+    "next_steps": [
+      "Review report findings with design team",
+      "Prioritize issue remediation by business impact",
+      "Create detailed migration plan for each phase",
+      "Set up automated testing for consistency rules"
+    ]
+  }
+}

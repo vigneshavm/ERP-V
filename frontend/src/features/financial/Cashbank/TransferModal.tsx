@@ -2,7 +2,8 @@
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from "../../../redux/store";
 import { createTransfer } from "../../../redux/slices/cashbankSlice";
-import { X, ArrowRightLeft, ShieldCheck } from 'lucide-react';
+import { ArrowRightLeft, ShieldCheck } from 'lucide-react';
+import { Button, Input, Modal, Select } from '@/components/shared';
 
 interface TransferModalProps {
     accounts: any[];
@@ -38,35 +39,24 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-slate-800 w-full max-w-lg rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative">
-                <div className="p-10">
-                    <div className="flex items-center justify-between mb-10">
+        <Modal
+            isOpen
+            onClose={onClose}
+            title="Fund Transfer"
+            size="sm"
+        >
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic -mt-4 mb-4">Internal Liquidity Movement</p>
+            <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
-                            <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Fund Transfer</h3>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Internal Liquidity Movement</p>
-                        </div>
-                        <button onClick={onClose} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-full text-slate-400 hover:text-error transition">
-                            <X size={20} />
-                        </button>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">From account</label>
-                            <select
-                                required
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 block mb-2">From account</label>
+                            <Select
+                                options={[
+                                    { value: '', label: 'Select Source Account...' },
+                                    ...accounts.map(acc => ({ value: acc._id, label: `${acc.bankName} - ${acc.accountNumber} (₹${acc.currentBalance})`, disabled: acc._id === formData.toAccount }))
+                                ]}
                                 value={formData.fromAccount}
-                                onChange={e => setFormData({ ...formData, fromAccount: e.target.value })}
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
-                            >
-                                <option value="">Select Source Account...</option>
-                                {accounts.map(acc => (
-                                    <option key={acc._id} value={acc._id} disabled={acc._id === formData.toAccount}>
-                                        {acc.bankName} - {acc.accountNumber} (₹{acc.currentBalance})
-                                    </option>
-                                ))}
-                            </select>
+                                onChange={(value) => setFormData({ ...formData, fromAccount: typeof value === 'string' ? value : value[0] })}
+                            />
                         </div>
 
                         <div className="flex justify-center -my-2 relative z-10">
@@ -75,59 +65,49 @@ const TransferModal: React.FC<TransferModalProps> = ({ accounts, onClose, onSucc
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">To account</label>
-                            <select
-                                required
+                        <div>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 block mb-2">To account</label>
+                            <Select
+                                options={[
+                                    { value: '', label: 'Select Designation Account...' },
+                                    ...accounts.map(acc => ({ value: acc._id, label: `${acc.bankName} - ${acc.accountNumber}`, disabled: acc._id === formData.fromAccount }))
+                                ]}
                                 value={formData.toAccount}
-                                onChange={e => setFormData({ ...formData, toAccount: e.target.value })}
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
-                            >
-                                <option value="">Select Designation Account...</option>
-                                {accounts.map(acc => (
-                                    <option key={acc._id} value={acc._id} disabled={acc._id === formData.fromAccount}>
-                                        {acc.bankName} - {acc.accountNumber}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Transfer Magnitude (₹)</label>
-                            <input
-                                type="number"
-                                required
-                                min="1"
-                                value={formData.amount}
-                                onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
-                                placeholder="0.00"
+                                onChange={(value) => setFormData({ ...formData, toAccount: typeof value === 'string' ? value : value[0] })}
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Reference / Memo</label>
-                            <input
-                                type="text"
-                                value={formData.description}
-                                onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
-                                placeholder="E.g. Daily Cash Deposit"
-                            />
-                        </div>
+                        <Input
+                            label="Transfer Magnitude (₹)"
+                            type="number"
+                            required
+                            min="1"
+                            value={formData.amount}
+                            onChange={e => setFormData({ ...formData, amount: e.target.value })}
+                            placeholder="0.00"
+                        />
 
-                        <button
+                        <Input
+                            label="Reference / Memo"
+                            type="text"
+                            value={formData.description}
+                            onChange={e => setFormData({ ...formData, description: e.target.value })}
+                            placeholder="E.g. Daily Cash Deposit"
+                        />
+
+                        <Button
                             type="submit"
+                            variant="secondary"
+                            size="lg"
+                            icon={<ShieldCheck className="w-5 h-5 text-primary" />}
                             disabled={loading || !formData.fromAccount || !formData.toAccount || !formData.amount}
-                            className="w-full py-5 mt-6 bg-slate-950 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-slate-900 transition-all flex items-center justify-center gap-4 border border-slate-700 disabled:opacity-50"
+                            loading={loading}
+                            fullWidth
                         >
-                            <ShieldCheck className="w-5 h-5 text-primary" />
-                            {loading ? 'Executing Transfer...' : 'Authorize Transfer'}
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+                            Authorize Transfer
+                        </Button>
+            </form>
+        </Modal>
     );
 };
 

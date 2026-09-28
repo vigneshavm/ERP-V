@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import { loadDbConfig, openPool, queryAll, type ShopDbPool } from "../integrations/textilesoft/shopDbReader.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ async function safe<T>(label: string, fn: () => Promise<T>): Promise<T | { error
     try {
         return await fn();
     } catch (e) {
-        console.log(`  ! ${label}: ${(e as Error).message}`);
+        info(`  ! ${label}: ${(e as Error).message}`);
         return { error: (e as Error).message };
     }
 }
@@ -44,17 +45,17 @@ async function sample(pool: ShopDbPool, table: string) {
 async function main() {
     const pool = await openPool(loadDbConfig());
     try {
-        console.log("1/5 table row counts ...");
+        info("1/5 table row counts ...");
         const counts = (await q(pool, `SELECT t.name AS name, SUM(p.rows) AS n FROM sys.tables t JOIN sys.partitions p ON p.object_id=t.object_id AND p.index_id IN (0,1) GROUP BY t.name HAVING SUM(p.rows)>0 ORDER BY SUM(p.rows) DESC`)) as { name: string; n: number }[];
         out.topTablesByRows = counts.slice(0, 40);
         out.hintedTables = counts.filter((c) => NAME_HINT.test(c.name)).slice(0, 60);
 
-        console.log("2/5 tables that have a barcode column ...");
+        info("2/5 tables that have a barcode column ...");
         out.tablesWithBarcodeColumn = await safe("barcode tables", () =>
             q(pool, `SELECT c.TABLE_NAME AS name, c.COLUMN_NAME AS col FROM INFORMATION_SCHEMA.COLUMNS c WHERE c.TABLE_SCHEMA='dbo' AND c.COLUMN_NAME LIKE '%barcode%' ORDER BY c.TABLE_NAME`),
         );
 
-        console.log("3/5 sampling key tables ...");
+        info("3/5 sampling key tables ...");
         const wanted = new Set(FIXED.filter((t) => counts.some((c) => c.name.toLowerCase() === t.toLowerCase())));
         for (const c of counts.filter((c) => /stock|bal/i.test(c.name)).slice(0, 6)) wanted.add(c.name);
         const samples: Record<string, unknown> = {};
@@ -64,7 +65,7 @@ async function main() {
         }
         out.samples = samples;
 
-        console.log("4/5 stockdetails counters ...");
+        info("4/5 stockdetails counters ...");
         out.stockdetailsCounters = await safe("stockdetails counters", () =>
             q(pool, `SELECT COUNT(*) AS totalRows, COUNT(DISTINCT barcode) AS barcodes, COUNT(DISTINCT pname) AS productNames,
               SUM(CASE WHEN TRY_CAST(tot_qty AS float)<>0 THEN 1 ELSE 0 END) AS totQtyNonZero,

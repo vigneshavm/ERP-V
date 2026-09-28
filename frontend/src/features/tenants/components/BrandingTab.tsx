@@ -1,7 +1,8 @@
 ﻿import React from 'react';
 import { Settings, Globe, ShieldCheck } from 'lucide-react';
 
-import { CURRENCIES, DATE_FORMATS, THEMES, LAYOUT_DENSITIES } from '../../../constants/common';
+import { CURRENCIES, DATE_FORMATS, THEMES, LAYOUT_DENSITIES } from '../../../constants/common';import { Input } from '@/components/shared/Input';
+
 
 export const BrandingTab: React.FC<{
     newTenant: any, setNewTenant: any,

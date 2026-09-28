@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import { loadDbConfig, openPool, queryAll } from "../integrations/textilesoft/shopDbReader.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ interface Col { name: string; type: string }
 
 async function main() {
     const cfg = loadDbConfig();
-    console.log(`Connecting to ${cfg.database} ...`);
+    info(`Connecting to ${cfg.database} ...`);
     const pool = await openPool(cfg);
     let superbill: unknown = null;
     const out: { table: string; rows: number; columns: { name: string; type: string; filled: number; filledPct: number; examples: string[] }[] }[] = [];
@@ -38,7 +39,7 @@ async function main() {
             list.push({ name: String(r.c), type: String(r.d).toLowerCase() });
             byTable.set(String(r.t), list);
         }
-        console.log(`${byTable.size} tables, ${cols.length} columns`);
+        info(`${byTable.size} tables, ${cols.length} columns`);
         let i = 0;
         for (const [table, list] of byTable) {
             i++;
@@ -69,7 +70,7 @@ async function main() {
                 entry.columns = list.map((c) => ({ name: c.name, type: c.type, filled: 0, filledPct: 0, examples: [] }));
             }
             out.push(entry);
-            if (i % 25 === 0) console.log(`  ${i}/${byTable.size} tables ...`);
+            if (i % 25 === 0) info(`  ${i}/${byTable.size} tables ...`);
         }
         // "Super/bulk sale" bills (GstSuperSalesEntry / SuperBill pages) live in superbill1/superbill2, which the ERP
         // does not read. How big are they, do they duplicate sales2, and are their barcodes stock the ERP counts?
@@ -85,9 +86,9 @@ async function main() {
                 "ISNULL(SUM(CASE WHEN l.[barcode] IN (SELECT [barcode] FROM dbo.[stockdetails]) THEN TRY_CAST(l.[qty] AS float) END), 0) AS qtyOnStockBarcodes " +
                 "FROM dbo.[superbill1] AS l WHERE l.[status] <> '1'");
             superbill = { header: hdr, lines: ln };
-            console.log("\nSuper bills (not read by the ERP):", JSON.stringify(superbill));
+            info("Super bills (not read by the ERP):", JSON.stringify(superbill));
         } catch (e) {
-            console.log("Super bill check skipped:", (e as Error).message);
+            info("Super bill check skipped:", (e as Error).message);
         }
     } finally {
         await pool.close();
@@ -104,7 +105,7 @@ async function main() {
     const nonEmpty = out.filter((t) => t.rows > 0);
     const deadCols = nonEmpty.reduce((s, t) => s + t.columns.filter((c) => c.filled === 0).length, 0);
     const allCols = nonEmpty.reduce((s, t) => s + t.columns.length, 0);
-    console.log(`\nTables: ${out.length} (${nonEmpty.length} with data, ${out.length - nonEmpty.length} empty)`);
+    info(`\nTables: ${out.length} (${nonEmpty.length} with data, ${out.length - nonEmpty.length} empty)`);
     console.log(`Columns in tables with data: ${allCols}, never filled: ${deadCols}`);
     console.log(`Written: ${path.join(dir, "field-usage.json")} and field-usage.csv`);
 }

@@ -1,13 +1,16 @@
 import { Response } from 'express';
 import mongoose from 'mongoose';
+import { container } from 'tsyringe';
 import Supplier from '../models/Supplier.js';
-import Purchase from '../models/Purchase.js';
-import PurchaseReturn from '../models/PurchaseReturn.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 import { isSqlItemSource } from '../../../config/itemDataSource.js';
 import { sqlSupplierList } from '../../../integrations/textilesoft/sqlSuppliers.js';
-import { warn } from '../../../config/logger.js';
+import { warn, error } from '../../../config/logger.js';
+import { SupplierService } from '../services/SupplierService.js';
+import { AppError } from '../../../utils/AppError.js';
 // Removed static imports for Bill, PaymentOut, DebitNote to use dynamic imports in getSupplierLedger
+
+const supplierService = container.resolve(SupplierService);
 
 export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -232,70 +235,30 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
         }
         res.status(200).json({ success: true, data: enrichedStats });
 
-    } catch (error: any) {
-        console.error('Get Supplier Analytics Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    } catch (err: any) {
+        error(`Get Supplier Analytics Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Server Error', error: err.message });
     }
 };
 
 export const createSupplier = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const {
-            businessName, contactPersonName, contactNo, email, physicalAddress,
-            gstNo, panNo, supplierType, openingBalance, balanceType, creditPeriod,
-            status, supplierGroup, groupId, defaultPaymentMode, isOneTime, bankAccounts
-        } = req.body;
-
         const tenantId = req.user?.tenantId?.toString();
         if (!tenantId) {
             return res.status(401).json({ success: false, message: 'Unauthorized access' });
         }
 
-        // Check if supplier exists
-        const existingSupplier = await Supplier.findOne({ tenantId, businessName });
-        if (existingSupplier) {
-            return res.status(400).json({ success: false, message: 'Supplier with this name already exists' });
-        }
-
-        // Auto-generate supplierId
-        const lastSupplier = await Supplier.findOne({ tenantId }).sort({ supplierId: -1 });
-        let nextId = 1;
-        if (lastSupplier && lastSupplier.supplierId && lastSupplier.supplierId.includes('-')) {
-            const lastNum = parseInt(lastSupplier.supplierId.split('-')[1]);
-            if (!isNaN(lastNum)) nextId = lastNum + 1;
-        }
-        const supplierId = `SUP-${nextId.toString().padStart(5, '0')}`;
-
-        const supplier = await Supplier.create({
-            tenantId,
-            supplierId,
-            businessName,
-            contactPersonName,
-            contactNo,
-            email,
-            physicalAddress,
-            gstNo,
-            panNo,
-            supplierType,
-            openingBalance: openingBalance || 0,
-            balanceType: balanceType || 'payable',
-            creditPeriod: creditPeriod || 0,
-            status: status || 'active',
-            supplierGroup: supplierGroup || undefined,
-            groupId: groupId || undefined,
-            defaultPaymentMode: defaultPaymentMode || 'NEFT',
-            isOneTime: !!isOneTime,
-            bankAccounts: bankAccounts || [],
-            owner: req.user?._id
-        });
-
+        const supplier = await supplierService.createSupplier(tenantId, req.user._id.toString(), req.body);
         res.status(201).json({ success: true, data: supplier });
-    } catch (error: any) {
-        console.error('Create Supplier Error:', error);
-        if (error.code === 11000) {
+    } catch (err: any) {
+        error(`Create Supplier Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        if (err instanceof AppError) {
+            return res.status(err.statusCode).json({ success: false, message: err.message });
+        }
+        if (err.code === 11000) {
             return res.status(400).json({ success: false, message: 'Supplier with this name already exists' });
         }
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+        res.status(500).json({ success: false, message: 'Server Error', error: err.message });
     }
 };
 
@@ -306,14 +269,11 @@ export const getSuppliers = async (req: AuthenticatedRequest, res: Response) => 
             return res.status(401).json({ success: false, message: 'Unauthorized access' });
         }
 
-        const suppliers = await Supplier.find({ tenantId })
-            .populate('groupId')
-            .sort({ createdAt: -1 });
-
+        const suppliers = await supplierService.getSuppliers(tenantId);
         res.status(200).json({ success: true, data: suppliers });
-    } catch (error: any) {
-        console.error('Get Suppliers Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    } catch (err: any) {
+        error(`Get Suppliers Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Server Error', error: err.message });
     }
 };
 
@@ -321,60 +281,18 @@ export const getSupplierById = async (req: AuthenticatedRequest, res: Response) 
     try {
         const { id } = req.params;
         const tenantId = req.user?.tenantId?.toString();
-
-        // Dynamic Imports to avoid circular dependencies
-        const { default: Bill } = await import('../../finance/models/Bill.js');
-        const { default: PaymentOut } = await import('../models/PaymentOut.js');
-        const { default: DebitNote } = await import('../models/DebitNote.js');
-
-        const supplier = await Supplier.findOne({ _id: id, tenantId }).populate('groupId').lean();
-
-        if (!supplier) {
-            return res.status(404).json({ success: false, message: 'Supplier not found' });
+        if (!tenantId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized access' });
         }
 
-        // Calculate functionality metrics (Live Data)
-        const s = supplier as any;
-        const [billStats, paymentStats, debitNoteStats] = await Promise.all([
-            Bill.aggregate([
-                { $match: { supplier: s._id, tenantId, status: { $nin: ['draft', 'rejected', 'cancelled'] } } },
-                { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
-            ]),
-            PaymentOut.aggregate([
-                { $match: { supplierId: s._id, tenantId, status: { $in: ['cleared', 'pending'] } } },
-                { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
-            ]),
-            DebitNote.aggregate([
-                { $match: { vendorId: s._id, tenantId, status: 'APPROVED' } },
-                { $group: { _id: null, totalAmount: { $sum: '$totalAmount' } } }
-            ])
-        ]);
-
-        const totalInvoiced = (billStats[0]?.totalAmount || 0) + (s.manualTotalInvoiced || 0);
-        const totalPaid = (paymentStats[0]?.totalAmount || 0) + (s.manualTotalPaid || 0);
-        const totalDebitNotes = debitNoteStats[0]?.totalAmount || 0;
-        const openingBalance = s.openingBalance || 0;
-
-        // Net Balance = (Opening + Invoiced) - (Paid + DebitNotes)
-        // Assuming standard payable context
-        const netBalance = (openingBalance + totalInvoiced) - (totalPaid + totalDebitNotes);
-
-        res.status(200).json({
-            success: true,
-            data: {
-                ...supplier,
-                totalAmount: totalInvoiced,
-                totalPaid,
-                netBalance,
-                debitNoteTotal: totalDebitNotes,
-                // Explicitly return manual fields for UI editing
-                manualTotalInvoiced: s.manualTotalInvoiced || 0,
-                manualTotalPaid: s.manualTotalPaid || 0
-            }
-        });
-    } catch (error: any) {
-        console.error('Get Supplier Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+        const data = await supplierService.getSupplierById(String(id), tenantId);
+        res.status(200).json({ success: true, data });
+    } catch (err: any) {
+        if (err instanceof AppError) {
+            return res.status(err.statusCode).json({ success: false, message: err.message });
+        }
+        error(`Get Supplier Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Server Error', error: err.message });
     }
 };
 
@@ -382,26 +300,21 @@ export const updateSupplier = async (req: AuthenticatedRequest, res: Response) =
     try {
         const { id } = req.params;
         const tenantId = req.user?.tenantId?.toString();
-
-        let supplier = await Supplier.findOne({ _id: id, tenantId });
-
-        if (!supplier) {
-            return res.status(404).json({ success: false, message: 'Supplier not found' });
+        if (!tenantId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized access' });
         }
 
-        supplier = await Supplier.findOneAndUpdate(
-            { _id: id, tenantId },
-            req.body,
-            { new: true, runValidators: true }
-        );
-
+        const supplier = await supplierService.updateSupplier(String(id), tenantId, req.body);
         res.status(200).json({ success: true, data: supplier });
-    } catch (error: any) {
-        console.error('Update Supplier Error:', error);
-        if (error.code === 11000) {
+    } catch (err: any) {
+        if (err instanceof AppError) {
+            return res.status(err.statusCode).json({ success: false, message: err.message });
+        }
+        error(`Update Supplier Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        if (err.code === 11000) {
             return res.status(400).json({ success: false, message: 'Supplier with this name already exists' });
         }
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+        res.status(500).json({ success: false, message: 'Server Error', error: err.message });
     }
 };
 
@@ -409,34 +322,17 @@ export const deleteSupplier = async (req: AuthenticatedRequest, res: Response) =
     try {
         const { id } = req.params;
         const tenantId = req.user?.tenantId?.toString();
-
-        // Check if supplier is used in any Purchase Orders
-        const hasPurchases = await Purchase.findOne({ vendorId: id, tenantId });
-        if (hasPurchases) {
-            return res.status(400).json({
-                success: false,
-                message: 'Cannot delete supplier with existing purchase records. Please delete associated purchases first.'
-            });
+        if (!tenantId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized access' });
         }
 
-        // Check if supplier is used in any Purchase Returns
-        const hasReturns = await PurchaseReturn.findOne({ vendorId: id, tenantId });
-        if (hasReturns) {
-            return res.status(400).json({
-                success: false,
-                message: 'Cannot delete supplier with existing purchase return records. Please delete associated returns first.'
-            });
-        }
-
-        const supplier = await Supplier.findOneAndDelete({ _id: id, tenantId });
-
-        if (!supplier) {
-            return res.status(404).json({ success: false, message: 'Supplier not found' });
-        }
-
+        await supplierService.deleteSupplier(String(id), tenantId);
         res.status(200).json({ success: true, message: 'Supplier deleted successfully' });
-    } catch (error: any) {
-        res.status(500).json({ message: error.message });
+    } catch (err: any) {
+        if (err instanceof AppError) {
+            return res.status(err.statusCode).json({ success: false, message: err.message });
+        }
+        res.status(500).json({ message: err.message });
     }
 };
 
@@ -483,7 +379,7 @@ export const getSupplierReports = async (req: AuthenticatedRequest, res: Respons
             }
         });
     } catch (err: any) {
-        console.error('Report Error', err);
+        error(`Report Error: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({ message: err.message });
     }
 };
@@ -502,11 +398,11 @@ export const getAgeingAnalysis = async (req: AuthenticatedRequest, res: Response
             success: true,
             data
         });
-    } catch (error: any) {
-        console.error('Ageing Analysis Error:', error);
+    } catch (err: any) {
+        error(`Ageing Analysis Error: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({
             success: false,
-            message: error.message
+            message: err.message
         });
     }
 };
@@ -762,9 +658,9 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
                 totals
             }
         });
-    } catch (error: any) {
-        console.error('Get Vendor Inflow/Outflow Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    } catch (err: any) {
+        error(`Get Vendor Inflow/Outflow Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Server Error', error: err.message });
     }
 };
 
@@ -953,8 +849,8 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
             }
         });
 
-    } catch (error: any) {
-        console.error('Get Supplier Ledger Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    } catch (err: any) {
+        error(`Get Supplier Ledger Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Server Error', error: err.message });
     }
 };

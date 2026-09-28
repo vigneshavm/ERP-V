@@ -22,6 +22,7 @@ import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import SupplierSubNav from './SupplierSubNav';
 import SupplierGroupModal from "../../components/suppliers/SupplierGroupModal";
+import { Input } from '@/components/shared/Input';
 
 const SupplierGroups: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();

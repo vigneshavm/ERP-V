@@ -1,7 +1,9 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import BankStatementTransaction from '../models/BankStatementTransaction.js';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { error } from '../../../config/logger.js';
 
 dotenv.config();
 
@@ -10,7 +12,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 /**
  * AI-powered extraction of bank statements from PDF using Gemini Vision
  */
-export const uploadStatement = async (req: Request, res: Response) => {
+export const uploadStatement = async (req: AuthenticatedRequest, res: Response) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'No bank statement file uploaded' });
@@ -73,13 +75,13 @@ export const uploadStatement = async (req: Request, res: Response) => {
         try {
             extractedData = JSON.parse(text);
         } catch (parseError) {
-            console.error('JSON Parse Error for Bank Statement. Raw Text:', text);
+            error(`JSON Parse Error for Bank Statement. Raw Text: ${text}`, { stack: (parseError as Error).stack });
             throw new Error('AI returned malformed JSON data for bank statement');
         }
 
         // Save transactions to database
-        const userId = (req as any).user?._id; // Assuming authMiddleware populated req.user
-        if (!userId) {
+        const tenantId = req.user.tenantId;
+        if (!tenantId) {
             return res.status(401).json({ success: false, message: 'User not authenticated properly' });
         }
 
@@ -90,7 +92,7 @@ export const uploadStatement = async (req: Request, res: Response) => {
             type: t.type,
             reference: t.reference || '',
             balance: t.balance || 0,
-            userId: userId,
+            tenantId: tenantId,
             status: 'pending'
         }));
 
@@ -101,24 +103,24 @@ export const uploadStatement = async (req: Request, res: Response) => {
             data: extractedData,
             message: "Bank statement analysis complete and transactions saved."
         });
-    } catch (error: any) {
-        console.error('Bank Statement Extraction Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to analyze bank statement', error: error.message });
+    } catch (err: any) {
+        error(`Bank Statement Extraction Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Failed to analyze bank statement', error: err.message });
     }
 };
 
 /**
  * Fetch all bank statement transactions for the logged-in user
  */
-export const getTransactions = async (req: Request, res: Response) => {
+export const getTransactions = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user?._id;
-        if (!userId) {
+        const tenantId = req.user.tenantId;
+        if (!tenantId) {
             return res.status(401).json({ success: false, message: 'User not authenticated' });
         }
 
         const { status } = req.query;
-        const filter: any = { userId };
+        const filter: any = { tenantId };
         if (status) {
             filter.status = status;
         }
@@ -129,8 +131,8 @@ export const getTransactions = async (req: Request, res: Response) => {
             success: true,
             data: transactions
         });
-    } catch (error: any) {
-        console.error('Fetch Transactions Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch transactions', error: error.message });
+    } catch (err: any) {
+        error(`Fetch Transactions Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Failed to fetch transactions', error: err.message });
     }
 };

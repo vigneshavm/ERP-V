@@ -6,6 +6,7 @@ import { AttendanceStatus } from "../../types/common";
 import { getDaysInMonth, getFirstDayOfMonth, formatDateISO } from "../../utils/helpers";
 
 import { Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/shared/Button';
 
 interface AttendanceCalendarProps {
     currentYear: number;
@@ -81,7 +82,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                         >
                             <span className={`text-[10px] ${textClass}`}>{day}</span>
                             {icon && !isSelected && <div className="mt-0.5">{icon}</div>}
-                            {isSelected && <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-white rounded-full"></div>}
+                            {isSelected && <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-white dark:bg-slate-800 rounded-full"></div>}
                             {log?.advanceTaken ? <div className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 bg-warning rounded-full" title="Advance Taken"></div> : null}
                         </button>
                     );
@@ -112,12 +113,7 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Unable to load attendance</p>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{loadError}</p>
                             {onRetry && (
-                                <button
-                                    onClick={onRetry}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-md text-xs font-bold transition"
-                                >
-                                    <RefreshCw className="w-3.5 h-3.5" /> Retry
-                                </button>
+                                <Button onClick={onRetry} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-md text-xs font-bold transition"><RefreshCw className="w-3.5 h-3.5" /> Retry</Button>
                             )}
                         </div>
                     ) : isLoading ? (
@@ -132,10 +128,10 @@ const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
                 <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
                     {isSelectionMode ? (
                         <div className="flex gap-1 animate-in slide-in-from-bottom-2">
-                            <button onClick={() => onBulkAction('PRESENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-success-soft text-success border border-success-line hover:border-success rounded text-[10px] font-bold disabled:opacity-50 transition">Full</button>
-                            <button onClick={() => onBulkAction('HALF')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-warning-soft text-warning border border-warning-line hover:border-warning rounded text-[10px] font-bold disabled:opacity-50 transition">Half</button>
-                            <button onClick={() => onBulkAction('QUARTER')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-warning-soft text-warning border border-warning-line hover:border-warning rounded text-[10px] font-bold disabled:opacity-50 transition">Qtr</button>
-                            <button onClick={() => onBulkAction('ABSENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-danger-soft text-danger border border-danger-line hover:border-danger rounded text-[10px] font-bold disabled:opacity-50 transition">Abs</button>
+                            <Button onClick={() => onBulkAction('PRESENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-success-soft text-success border border-success-line hover:border-success rounded text-[10px] font-bold disabled:opacity-50 transition">Full</Button>
+                            <Button onClick={() => onBulkAction('HALF')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-warning-soft text-warning border border-warning-line hover:border-warning rounded text-[10px] font-bold disabled:opacity-50 transition">Half</Button>
+                            <Button onClick={() => onBulkAction('QUARTER')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-warning-soft text-warning border border-warning-line hover:border-warning rounded text-[10px] font-bold disabled:opacity-50 transition">Qtr</Button>
+                            <Button onClick={() => onBulkAction('ABSENT')} disabled={selectedDates.size === 0} className="flex-1 py-1.5 bg-danger-soft text-danger border border-danger-line hover:border-danger rounded text-[10px] font-bold disabled:opacity-50 transition">Abs</Button>
                             <button onClick={() => onBulkAction('CLEAR')} disabled={selectedDates.size === 0} className="px-2 py-1.5 bg-input text-secondary border border-default hover:text-main rounded text-[10px] font-bold disabled:opacity-50 transition"><X size={12} /></button>
                         </div>
                     ) : (

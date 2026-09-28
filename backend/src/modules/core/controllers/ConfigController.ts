@@ -1,13 +1,14 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import ConfigService from '../services/ConfigService.js';
 import SystemConfig from '../models/SystemConfig.js';
 import TaxMaster from '../models/TaxMaster.js';
 import LoyaltyRule from '../models/LoyaltyRule.js';
 import SegmentRule from '../models/SegmentRule.js';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
-export const getConfigs = async (req: Request, res: Response) => {
+export const getConfigs = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId || 'default';
+        const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { group } = req.query;
 
         const query: any = { tenantId };
@@ -20,9 +21,9 @@ export const getConfigs = async (req: Request, res: Response) => {
     }
 };
 
-export const updateConfig = async (req: Request, res: Response) => {
+export const updateConfig = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId || 'default';
+        const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { key, value, group } = req.body;
 
         if (!key || value === undefined) {
@@ -38,9 +39,9 @@ export const updateConfig = async (req: Request, res: Response) => {
     }
 };
 
-export const updateTaxMaster = async (req: Request, res: Response) => {
+export const updateTaxMaster = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId || 'default';
+        const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { taxCode, taxName, percentage } = req.body;
 
         const tax = await TaxMaster.findOneAndUpdate(
@@ -56,9 +57,9 @@ export const updateTaxMaster = async (req: Request, res: Response) => {
     }
 };
 
-export const updateLoyaltyRule = async (req: Request, res: Response) => {
+export const updateLoyaltyRule = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId || 'default';
+        const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { ruleId, ruleName, spendPerPoint, rupeesPer100Points } = req.body;
 
         const rule = await LoyaltyRule.findOneAndUpdate(
@@ -74,9 +75,9 @@ export const updateLoyaltyRule = async (req: Request, res: Response) => {
     }
 };
 
-export const updateSegmentRule = async (req: Request, res: Response) => {
+export const updateSegmentRule = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).user.tenantId || 'default';
+        const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { segmentName, minSpend, minOrders, inactiveDaysThreshold } = req.body;
 
         const rule = await SegmentRule.findOneAndUpdate(

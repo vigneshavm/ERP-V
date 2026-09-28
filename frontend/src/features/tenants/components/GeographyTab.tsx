@@ -1,5 +1,6 @@
 import React from 'react';
-import { MapPin, Globe, X, Plus } from 'lucide-react';
+import { MapPin, Globe, X, Plus } from 'lucide-react';import { Button } from '@/components/shared/Button';
+
 
 export const GeographyTab: React.FC<{
     newTenant: any, setNewTenant: any,
@@ -73,13 +74,7 @@ export const GeographyTab: React.FC<{
                             className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCity(); } }}
                         />
-                        <button
-                            type="button"
-                            onClick={addCity}
-                            className="px-3 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-700"
-                        >
-                            Add
-                        </button>
+                        <Button type="button" onClick={addCity} className="px-3 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-700">Add</Button>
                     </div>
 
                     <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
@@ -134,13 +129,7 @@ export const GeographyTab: React.FC<{
                                                 onChange={e => setTempBranch((prev: any) => ({ ...prev, address: e.target.value }))}
                                             />
                                             <div className="flex gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => addBranch(cityIdx)}
-                                                    className="flex-1 bg-primary text-white py-1 rounded text-xs font-medium hover:bg-primary-hover"
-                                                >
-                                                    Save Branch
-                                                </button>
+                                                <Button type="button" onClick={() => addBranch(cityIdx)} className="flex-1 bg-primary text-white py-1 rounded text-xs font-medium hover:bg-primary-hover">Save Branch</Button>
                                                 <button
                                                     type="button"
                                                     onClick={() => setTempBranch({ cityIndex: -1, name: '', address: '' })}

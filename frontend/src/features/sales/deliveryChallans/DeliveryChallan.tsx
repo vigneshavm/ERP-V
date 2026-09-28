@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { Button, Input, Textarea } from '../../../components/shared';
 import {
     Truck,
     Plus,
@@ -212,12 +213,12 @@ const DeliveryChallan = () => {
             {/* Top Command Bar */}
             <header className="relative z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-8 py-4 flex items-center justify-between shadow-sm transition-all">
                 <div className="flex items-center gap-6">
-                    <button 
+                    <Button
+                        variant="secondary"
+                        size="md"
+                        icon={<ArrowLeft className="w-4 h-4" />}
                         onClick={() => navigate('/sales/challans')}
-                        className="p-3 bg-slate-100 dark:bg-slate-800 rounded-sm hover:scale-110 transition-transform text-slate-500 hover:text-warning"
-                    >
-                        <ArrowLeft className="w-5 h-5" />
-                    </button>
+                    />
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="page-title text-slate-900 dark:text-white">
@@ -234,20 +235,23 @@ const DeliveryChallan = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button 
+                    <Button
+                        variant="secondary"
+                        size="md"
                         onClick={() => navigate('/sales/challans')}
-                        className="hidden md:flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"
+                        className="hidden md:flex"
                     >
                         Cancel
-                    </button>
-                    <button 
+                    </Button>
+                    <Button
+                        variant="warning"
+                        size="md"
+                        icon={isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                         onClick={handleSave}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-8 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50"
                     >
-                        {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                         Finalize Protocol
-                    </button>
+                    </Button>
                 </div>
             </header>
 
@@ -275,7 +279,7 @@ const DeliveryChallan = () => {
                         </div>
 
                         {/* Items Data Matrix */}
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[40px] shadow-sm overflow-hidden flex flex-col transition-all">
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full shadow-sm overflow-hidden flex flex-col transition-all">
                             <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/50">
                                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Dispatch Manifest</h3>
                                 <div className="flex items-center gap-3">
@@ -284,12 +288,12 @@ const DeliveryChallan = () => {
                                             <Briefcase className="w-3 h-3" /> Linked to SO
                                         </span>
                                     )}
-                                    <button 
+                                    <Button
+                                        variant="warning"
+                                        size="md"
+                                        icon={<Plus className="w-4 h-4" />}
                                         onClick={() => setShowItemModal(true)}
-                                        className="p-3 bg-warning text-white rounded-sm hover:scale-110 transition-transform shadow-lg shadow-amber-500/20"
-                                    >
-                                        <Plus className="w-5 h-5" />
-                                    </button>
+                                    />
                                 </div>
                             </div>
 
@@ -335,33 +339,33 @@ const DeliveryChallan = () => {
                                                     </td>
                                                     <td className="px-8 py-6 text-right">
                                                         <div className="inline-flex items-center bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-1 shadow-inner">
-                                                            <button 
+                                                            <Button
+                                                                variant="secondary"
+                                                                size="sm"
+                                                                icon={<Minus className="w-3 h-3" />}
                                                                 onClick={() => updateItem(index, 'deliveredQty', Math.max(1, item.deliveredQty - 1))}
-                                                                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 transition-colors"
-                                                            >
-                                                                <Minus className="w-3 h-3" />
-                                                            </button>
+                                                            />
                                                             <input
                                                                 type="number"
                                                                 value={item.deliveredQty}
                                                                 onChange={(e) => updateItem(index, 'deliveredQty', parseFloat(e.target.value) || 0)}
                                                                 className="w-16 text-center bg-transparent text-xs font-black outline-none dark:text-white"
                                                             />
-                                                            <button 
+                                                            <Button
+                                                                variant="secondary"
+                                                                size="sm"
+                                                                icon={<Plus className="w-3 h-3" />}
                                                                 onClick={() => updateItem(index, 'deliveredQty', item.deliveredQty + 1)}
-                                                                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 transition-colors"
-                                                            >
-                                                                <Plus className="w-3 h-3" />
-                                                            </button>
+                                                            />
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-6 text-center">
-                                                        <button 
+                                                        <Button
+                                                            variant="danger"
+                                                            size="md"
+                                                            icon={<Trash2 className="w-4 h-4" />}
                                                             onClick={() => removeItem(index)}
-                                                            className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-danger rounded-xl hover:bg-danger/90 hover:text-white transition-all shadow-sm"
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
+                                                        />
                                                     </td>
                                                 </tr>
                                             ))
@@ -376,11 +380,11 @@ const DeliveryChallan = () => {
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
                                 <Info className="w-4 h-4 text-warning" /> Operational Directives
                             </h3>
-                            <textarea 
+                            <Textarea
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm p-6 text-xs font-bold outline-none focus:border-warning/30 transition-all dark:text-white placeholder:text-slate-500 min-h-[120px] shadow-inner"
                                 placeholder="Enter specific logistical protocols, handling terms, or delivery notes..."
+                                minRows={6}
                             />
                         </div>
                     </div>
@@ -403,12 +407,12 @@ const DeliveryChallan = () => {
                                             <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight truncate">{formData.customer.name}</p>
                                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5 truncate">{formData.customer.address?.line1}, {formData.customer.address?.city}</p>
                                         </div>
-                                        <button 
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            icon={<RefreshCw className="w-4 h-4" />}
                                             onClick={() => setFormData({ ...formData, customer: null, salesOrder: null, items: [] })}
-                                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 hover:text-danger transition-colors"
-                                        >
-                                            <RefreshCw className="w-4 h-4" />
-                                        </button>
+                                        />
                                     </div>
                                     <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
@@ -421,25 +425,31 @@ const DeliveryChallan = () => {
                                 </div>
                             ) : (
                                 <div className="space-y-3">
-                                    <button 
+                                    <Button
+                                        variant="outline"
+                                        size="lg"
+                                        icon={<Search className="w-6 h-6" />}
                                         onClick={() => setShowCustomerModal(true)}
-                                        className="w-full bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-sm p-6 flex flex-col items-center gap-3 hover:border-warning/50 transition-all group shadow-sm"
+                                        fullWidth
+                                        className="dashed-border flex-col gap-3 h-auto p-6"
                                     >
-                                        <Search className="w-6 h-6 text-slate-300 group-hover:text-warning transition-colors" />
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-warning transition-colors">Select customer</p>
-                                    </button>
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">Select customer</span>
+                                    </Button>
                                     <div className="flex items-center gap-2 px-4 py-2 opacity-30">
                                         <div className="h-px flex-1 bg-slate-300 dark:bg-slate-700" />
                                         <span className="text-[9px] font-black uppercase tracking-widest">OR</span>
                                         <div className="h-px flex-1 bg-slate-300 dark:bg-slate-700" />
                                     </div>
-                                    <button 
+                                    <Button
+                                        variant="warning"
+                                        size="lg"
+                                        icon={<Briefcase className="w-6 h-6" />}
                                         onClick={() => setShowSalesOrderModal(true)}
-                                        className="w-full bg-warning/10 border border-warning/20 text-warning rounded-sm p-6 flex flex-col items-center gap-3 hover:bg-warning/20 transition-all group shadow-sm"
+                                        fullWidth
+                                        className="flex-col gap-3 h-auto p-6"
                                     >
-                                        <Briefcase className="w-6 h-6" />
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em]">Select from Sales Order</p>
-                                    </button>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] block">Select from Sales Order</span>
+                                    </Button>
                                 </div>
                             )}
                         </div>
@@ -471,28 +481,22 @@ const DeliveryChallan = () => {
                                 </div>
                                 <div>
                                     <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Vehicle No.</label>
-                                    <div className="relative">
-                                        <Navigation className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warning" />
-                                        <input
-                                            type="text"
-                                            value={formData.vehicleNo}
-                                            onChange={(e) => setFormData({ ...formData, vehicleNo: e.target.value })}
-                                            placeholder="MH-01-AB-1234"
-                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-warning/30 transition-all dark:text-white"
-                                        />
-                                    </div>
+                                    <Input
+                                        type="text"
+                                        value={formData.vehicleNo}
+                                        onChange={(e) => setFormData({ ...formData, vehicleNo: e.target.value })}
+                                        placeholder="MH-01-AB-1234"
+                                        icon={<Navigation className="w-4 h-4 text-warning" />}
+                                    />
                                 </div>
                                 <div>
                                     <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Dispatch Date</label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warning" />
-                                        <input
-                                            type="date"
-                                            value={formData.challanDate}
-                                            onChange={(e) => setFormData({ ...formData, challanDate: e.target.value })}
-                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-3 pl-12 pr-4 text-xs font-bold outline-none focus:border-warning/30 transition-all dark:text-white"
-                                        />
-                                    </div>
+                                    <Input
+                                        type="date"
+                                        value={formData.challanDate}
+                                        onChange={(e) => setFormData({ ...formData, challanDate: e.target.value })}
+                                        icon={<Calendar className="w-4 h-4 text-warning" />}
+                                    />
                                 </div>
                             </div>
                         </div>

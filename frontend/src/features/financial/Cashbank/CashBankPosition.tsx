@@ -20,22 +20,24 @@ import {
     ArrowDownLeft,
     Activity
 } from 'lucide-react';
+import { Button } from '@/components/shared';
 
 // Moved to module scope - was defined inside CashBankPosition's render body (recreated, and lost
 // its DOM state, on every render). Takes everything via props already, so no closure to thread through.
 const QuickAction: React.FC<{ title: string; icon: React.ElementType; onClick: () => void; color: string }> = ({ title, icon: Icon, onClick, color }) => (
-    <button
+    <Button
+        variant="outline"
         onClick={onClick}
-        className="flex items-center justify-between p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[2rem] hover:border-primary group transition-all duration-300 shadow-sm"
+        className="justify-between p-6 rounded-xl group"
     >
-        <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-300 ${color} shadow-sm group-hover:scale-110`}>
+        <span className="flex items-center gap-4">
+            <span className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-300 ${color} shadow-sm group-hover:scale-110`}>
                 <Icon className="w-6 h-6" />
-            </div>
+            </span>
             <span className="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{title}</span>
-        </div>
+        </span>
         <ChevronRight className="w-5 h-5 text-slate-300 group-hover:translate-x-2 transition-all" />
-    </button>
+    </Button>
 );
 
 const CashBankPosition: React.FC = () => {
@@ -76,12 +78,14 @@ const CashBankPosition: React.FC = () => {
                         { label: 'Liquidity Center' }
                     ]}
                     actions={
-                        <button
+                        <Button
+                            variant="primary"
+                            size="md"
+                            icon={<RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />}
                             onClick={fetchPosition}
-                            className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"
                         >
-                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Sync Nodes
-                        </button>
+                            Sync Nodes
+                        </Button>
                     }
                 />
 
@@ -113,12 +117,14 @@ const CashBankPosition: React.FC = () => {
                                         <ArrowDownLeft className="w-4 h-4 text-success" /> Immediate physical liquidity
                                     </p>
                                 </div>
-                                <button 
-                                    onClick={() => navigate('/cashbank/cash-in-hand')} 
-                                    className="relative z-10 bg-white/10 hover:bg-white/20 px-8 py-3.5 rounded-sm backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/20 active:scale-95"
+                                <Button
+                                    variant="tertiary"
+                                    size="md"
+                                    onClick={() => navigate('/cashbank/cash-in-hand')}
+                                    className="relative z-10 bg-white/10 hover:bg-white/20 rounded-sm backdrop-blur-md border border-white/20 text-white"
                                 >
                                     Open cash register
-                                </button>
+                                </Button>
                             </div>
 
                             <div className="bg-slate-900 dark:bg-slate-900 p-10 rounded-xl text-white shadow-2xl space-y-10 relative overflow-hidden group border border-slate-800">
@@ -132,12 +138,14 @@ const CashBankPosition: React.FC = () => {
                                         <ArrowUpRight className="w-4 h-4 text-primary" /> Mapping {position?.breakdown.bank.accounts} active accounts
                                     </p>
                                 </div>
-                                <button 
-                                    onClick={() => navigate('/cashbank/bank-accounts')} 
-                                    className="relative z-10 bg-white/5 hover:bg-white/10 px-8 py-3.5 rounded-sm backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/5 active:scale-95"
+                                <Button
+                                    variant="tertiary"
+                                    size="md"
+                                    onClick={() => navigate('/cashbank/bank-accounts')}
+                                    className="relative z-10 bg-white/5 hover:bg-white/10 rounded-sm backdrop-blur-md border border-white/5 text-white"
                                 >
                                     Monitor Account Nodes
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>

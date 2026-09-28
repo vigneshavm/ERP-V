@@ -3,6 +3,8 @@ import { IndianRupee, Calculator } from 'lucide-react';
 import { Card } from "../../components/core/Display/Card";
 import { formatCurrency } from "../../utils/helpers";
 import { convertMonthlyToDailyWage } from "../../utils/laborUtils";
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface AddLaborerFormProps {
     newEmp: { name: string; role: string; roleId: string; dailyRate: string; mobile: string; branch: string };
@@ -110,8 +112,8 @@ const AddLaborerForm: React.FC<AddLaborerFormProps> = ({
                 )}
 
                 <div className="flex gap-2 mt-1">
-                    <button type="submit" className="flex-1 bg-primary text-white py-1 rounded text-xs font-medium hover:bg-primary-hover">{submitLabel}</button>
-                    <button type="button" onClick={onCancel} className="flex-1 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 py-1 rounded text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-600">Cancel</button>
+                    <Button type="submit" className="flex-1 bg-primary text-white py-1 rounded text-xs font-medium hover:bg-primary-hover">{submitLabel}</Button>
+                    <Button type="button" onClick={onCancel} className="flex-1 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 py-1 rounded text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-600">Cancel</Button>
                 </div>
             </form>
         </Card>

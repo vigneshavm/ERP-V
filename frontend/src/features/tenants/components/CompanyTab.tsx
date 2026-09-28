@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react';import { Input } from '@/components/shared/Input';
+
 
 export const CompanyTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTenant, setNewTenant }) => {
     // Defensive fallback for companyDetails

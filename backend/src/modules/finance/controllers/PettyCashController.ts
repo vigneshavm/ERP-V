@@ -5,6 +5,7 @@ import PettyCashClose, { IDenominationCounts, CASH_DENOMINATIONS } from '../mode
 import Invoice from '../../sales/models/Invoice.js';
 import Expense from '../../expense/models/Expense.js';
 import { info, error as logError } from '../../../config/logger.js';
+import type { TenantRef } from '../../../interfaces/TenantRef.js';
 
 // Sums a denomination-count breakdown into a rupee total. Kept as a small pure function so it can
 // be re-verified in a test without needing a live DB connection (mirrors the pure-logic test
@@ -29,7 +30,7 @@ const dayBounds = (dateStr: string) => {
 // covering both single-method invoices and split-payment line items -- same shape as the cash
 // aggregation DayEndController already uses, extended to card/credit so the close screen can show
 // what the system expects alongside what the cashier physically counts.
-const sumInvoicesByMethod = async (tenantId: string, startDate: Date, endDate: Date, methods: string[]): Promise<number> => {
+const sumInvoicesByMethod = async (tenantId: TenantRef, startDate: Date, endDate: Date, methods: string[]): Promise<number> => {
     const result = await Invoice.aggregate([
         {
             $match: {
@@ -62,7 +63,7 @@ const sumInvoicesByMethod = async (tenantId: string, startDate: Date, endDate: D
 
 export const getPettyCashSummary = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const tenantId = req.user?.tenantId as string;
+        const tenantId = req.tenantId;
         const dateStr = (req.query.date as string) || new Date().toISOString().split('T')[0];
         const counterId = (req.query.counterId as string) || 'MAIN';
         const { startDate, endDate } = dayBounds(dateStr);
@@ -101,7 +102,7 @@ export const getPettyCashSummary = async (req: AuthenticatedRequest, res: Respon
 
 export const createPettyCashClose = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const tenantId = req.user?.tenantId as string;
+        const tenantId = req.tenantId;
         const {
             date, counterId = 'MAIN', denominations,
             expectedCash, cardAmount, creditAmount,
@@ -147,7 +148,7 @@ export const createPettyCashClose = async (req: AuthenticatedRequest, res: Respo
 
 export const getPettyCashHistory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const tenantId = req.user?.tenantId as string;
+        const tenantId = req.tenantId;
         const limit = Math.min(parseInt((req.query.limit as string) || '30', 10), 100);
         const history = await PettyCashClose.find({ tenantId })
             .sort({ date: -1 })

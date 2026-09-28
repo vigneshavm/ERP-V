@@ -13,6 +13,7 @@ import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
 import { POSMobileMenu } from '../POSMobileMenu';
 import { Menu, CreditCard } from 'lucide-react';
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { Button } from '@/components/shared/Button';
 
 interface POSTemplateProps {
     logic: POSLogic;

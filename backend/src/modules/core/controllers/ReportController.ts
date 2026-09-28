@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import Invoice from '../../sales/models/Invoice.js';
 
@@ -18,18 +18,7 @@ import { hasSqlDashboard, sqlDashboardStats, type SqlDashboardStats } from '../.
 import { isSalesReportDim, sqlSalesReport, sqlStatusDebug, sqlSalesIntelligence } from '../../../integrations/textilesoft/sqlSalesReports.js';
 import { sqlInvoiceListByDate } from '../../../integrations/textilesoft/sqlSales.js';
 import { erpDayBills, erpSalesReport } from '../services/ErpSalesReportService.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        tenantId?: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * @swagger
@@ -56,7 +45,7 @@ export const getSalesReport = async (req: AuthenticatedRequest, res: Response): 
         const items = await Item.find({ tenantId });
 
         const report = generateAIReport(invoices, items);
-        const stockAlerts = req.user?._id ? await checkStockAlerts(req.user._id) : [];
+        const stockAlerts = req.user?._id ? await checkStockAlerts(String(req.user._id)) : [];
 
         info(`Sales report generated for ${req.user?.name} with ${report.summary.totalInvoices} invoices`);
 
@@ -355,7 +344,7 @@ export const getShopSalesReport = async (req: AuthenticatedRequest, res: Respons
         return;
     }
     try {
-        res.status(200).json(await sqlSalesReport(q.dim, q.range, q.from, q.to, req.user?.tenantId));
+        res.status(200).json(await sqlSalesReport(q.dim, q.range, q.from, q.to, req.tenantId?.toString()));
     } catch (err) {
         warn(`[sql-reports] shop sales report (${q.dim}) failed - ${(err as Error).message}`);
         res.status(503).json({ message: SHOP_DB_DOWN });

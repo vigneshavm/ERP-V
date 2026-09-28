@@ -31,6 +31,8 @@ import {
 import { getAccounts } from '../../redux/slices/cashbankSlice';
 import api from "../../services/api";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 const AllowanceManager: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -164,13 +166,8 @@ const AllowanceManager: React.FC = () => {
             <PageHeader
                 title="Allowance Management"
                 description="Define earnings and deductions for your staff payroll."
-                actions={<button
-                    onClick={handleOpenAdd}
-                    className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg font-bold shadow-sm transition-all"
-                >
-                    <PlusCircle className="w-5 h-5" />
-                    Add New Component
-                </button>}
+                actions={<Button onClick={handleOpenAdd} className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg font-bold shadow-sm transition-all"><PlusCircle className="w-5 h-5" />
+                    Add New Component</Button>}
             />
 
             {/* Tabs */}
@@ -401,13 +398,8 @@ const AllowanceManager: React.FC = () => {
                                                     )}
                                                     <td className="px-6 py-4 text-center">
                                                         <div className="flex items-center gap-2">
-                                                            <button
-                                                                onClick={() => handlePayment(emp._id, accounts[0]?.bankName || 'Cash', effectiveWorkedDays)}
-                                                                className="flex items-center gap-1.5 bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-blue-500/20"
-                                                            >
-                                                                <Banknote className="w-3.5 h-3.5" />
-                                                                Pay
-                                                            </button>
+                                                            <Button onClick={() => handlePayment(emp._id, accounts[0]?.bankName || 'Cash', effectiveWorkedDays)} className="flex items-center gap-1.5 bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-blue-500/20"><Banknote className="w-3.5 h-3.5" />
+                                                                Pay</Button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -591,9 +583,7 @@ const AllowanceManager: React.FC = () => {
                                 {editingId ? <Pencil className="w-5 h-5 text-primary" /> : <PlusCircle className="w-5 h-5 text-primary" />}
                                 {editingId ? 'Edit Component' : 'New Salary Component'}
                             </h3>
-                            <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                                <XCircle className="w-6 h-6" />
-                            </button>
+                            <Button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><XCircle className="w-6 h-6" /></Button>
                         </div>
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
                             <div>
@@ -665,13 +655,7 @@ const AllowanceManager: React.FC = () => {
                             </div>
 
                             <div className="flex gap-3 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowModal(false)}
-                                    className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                                >
-                                    Cancel
-                                </button>
+                                <Button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Cancel</Button>
                                 <button
                                     type="submit"
                                     className="flex-1 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold shadow-sm transition-all shadow-blue-500/20 flex items-center justify-center gap-2"
@@ -725,18 +709,8 @@ const ComponentCard = ({
                 </div>
             </div>
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                    onClick={onEdit}
-                    className="p-2 text-slate-300 hover:text-primary hover:bg-primary-soft dark:hover:bg-primary-soft rounded-lg transition-all"
-                >
-                    <Pencil className="w-4 h-4" />
-                </button>
-                <button
-                    onClick={onDelete}
-                    className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
+                <Button onClick={onEdit} className="p-2 text-slate-300 hover:text-primary hover:bg-primary-soft dark:hover:bg-primary-soft rounded-lg transition-all"><Pencil className="w-4 h-4" /></Button>
+                <Button onClick={onDelete} className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-lg transition-all"><Trash2 className="w-4 h-4" /></Button>
             </div>
         </div>
     );

@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import asyncHandler from "express-async-handler";
 import Notification from "../models/Notification.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 // @desc    Get all notifications for user
 // @route   GET /api/notifications
 // @access  Private
-export const getNotifications = asyncHandler(async (req: Request, res: Response) => {
-    const userId = (req as any).user._id;
+export const getNotifications = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user._id;
     const { unreadOnly } = req.query;
 
     const query: any = { recipient: userId };
@@ -30,9 +31,9 @@ export const getNotifications = asyncHandler(async (req: Request, res: Response)
 // @desc    Mark notification as read
 // @route   PATCH /api/notifications/:id/read
 // @access  Private
-export const markAsRead = asyncHandler(async (req: Request, res: Response) => {
+export const markAsRead = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const notificationId = req.params.id;
-    const userId = (req as any).user._id;
+    const userId = req.user._id;
 
     const notification = await Notification.findOne({ _id: notificationId, recipient: userId });
 
@@ -50,8 +51,8 @@ export const markAsRead = asyncHandler(async (req: Request, res: Response) => {
 // @desc    Mark all notifications as read
 // @route   PATCH /api/notifications/read-all
 // @access  Private
-export const markAllAsRead = asyncHandler(async (req: Request, res: Response) => {
-    const userId = (req as any).user._id;
+export const markAllAsRead = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user._id;
 
     await Notification.updateMany(
         { recipient: userId, readAt: null },

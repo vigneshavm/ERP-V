@@ -19,7 +19,9 @@ import {
 } from 'lucide-react';
 import Layout from "../../components/shared/Layout/index.js";
 
-import api from "../../services/api.js";
+import api from "../../services/api.js";import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface Template {
     id: number;
@@ -211,7 +213,7 @@ const MarketingTools: React.FC = () => {
                         {/* Editor Section */}
                         <div className="lg:col-span-8 space-y-8">
                             {/* Template Discovery */}
-                            <motion.div variants={itemVariants} className="bg-white rounded-sm shadow-sm border border-slate-200 p-8 overflow-hidden relative">
+                            <motion.div variants={itemVariants} className="bg-white dark:bg-slate-800 rounded-sm shadow-sm border border-slate-200 dark:border-slate-700 p-8 overflow-hidden relative">
                                 <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-primary-soft rounded-full blur-3xl opacity-50" />
                                 <div className="relative z-10">
                                     <div className="flex items-center justify-between mb-8">
@@ -221,7 +223,7 @@ const MarketingTools: React.FC = () => {
                                         </div>
                                         <div className="flex -space-x-2">
                                             {[1, 2, 3].map(i => (
-                                                <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center overflow-hidden">
+                                                <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
                                                     <img src={`https://i.pravatar.cc/100?u=${i}`} alt="user" className="w-full h-full object-cover" />
                                                 </div>
                                             ))}
@@ -489,7 +491,7 @@ const MarketingTools: React.FC = () => {
                                     ) : (
                                         <div className="mb-2 p-3 bg-warning-soft rounded-xl border border-warning-line text-warning text-xs font-medium text-center">
                                             No Instagram accounts connected.
-                                            <button onClick={handleConnect} className="text-primary font-bold underline ml-1 hover:text-primary">Connect Now</button>
+                                            <Button onClick={handleConnect} className="text-primary font-bold underline ml-1 hover:text-primary">Connect Now</Button>
                                         </div>
                                     )}
 

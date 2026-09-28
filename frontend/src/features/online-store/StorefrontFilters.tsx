@@ -1,5 +1,7 @@
 import React from 'react';
-import { Filter, Check } from 'lucide-react';
+import { Filter, Check } from 'lucide-react';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface StorefrontFiltersProps {
     availableCategories: string[];
@@ -33,7 +35,7 @@ export const StorefrontFilters: React.FC<StorefrontFiltersProps> = ({
                     <Filter className="w-5 h-5" /> Filters
                 </div>
                 {isMobile && onClose && (
-                    <button onClick={onClose} className="text-slate-500 font-bold">Close</button>
+                    <Button onClick={onClose} className="text-slate-500 font-bold">Close</Button>
                 )}
             </div>
 
@@ -83,12 +85,7 @@ export const StorefrontFilters: React.FC<StorefrontFiltersProps> = ({
                 </label>
             </div>
 
-            <button
-                onClick={resetFilters}
-                className="w-full py-2 text-sm text-slate-500 hover:text-danger font-medium transition-colors border border-dashed border-slate-300 dark:border-slate-700 rounded-lg hover:border-danger-line hover:bg-danger-soft dark:hover:bg-danger-soft"
-            >
-                Reset Filters
-            </button>
+            <Button onClick={resetFilters} className="w-full py-2 text-sm text-slate-500 hover:text-danger font-medium transition-colors border border-dashed border-slate-300 dark:border-slate-700 rounded-lg hover:border-danger-line hover:bg-danger-soft dark:hover:bg-danger-soft">Reset Filters</Button>
         </aside>
     );
 };

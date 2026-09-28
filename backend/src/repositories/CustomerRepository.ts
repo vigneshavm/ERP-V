@@ -1,6 +1,7 @@
 import { injectable, singleton } from "tsyringe";
 import Customer from "../modules/crm/models/Customer.js";
 import { ICustomer } from "../interfaces/ICustomer.js";
+import type { TenantRef } from '../interfaces/TenantRef.js';
 
 @injectable()
 @singleton()
@@ -9,41 +10,92 @@ export class CustomerRepository {
         return Customer.create(customerData);
     }
 
-    async findById(id: string, userId: string): Promise<ICustomer | null> {
-        return Customer.findOne({ _id: id, owner: userId }).populate("referredBy", "name phone");
+    /**
+     * Find customer by ID for a tenant
+     * @param id Customer ID
+     * @param tenantId Tenant scope (also checks owner for backward compat)
+     */
+    async findById(id: string, tenantId: TenantRef): Promise<ICustomer | null> {
+        return Customer.findOne({ 
+            _id: id, 
+            $or: [{ tenantId }, { owner: tenantId }]  // Support both tenantId and owner fields
+        }).populate("referredBy", "name phone");
     }
 
-    async findByPhone(phone: string, userId: string): Promise<ICustomer | null> {
-        return Customer.findOne({ phone, owner: userId });
+    /**
+     * Find customer by phone for a tenant
+     */
+    async findByPhone(phone: string, tenantId: TenantRef): Promise<ICustomer | null> {
+        return Customer.findOne({ 
+            phone, 
+            $or: [{ tenantId }, { owner: tenantId }]
+        });
     }
 
-    async findByEmail(email: string, userId: string): Promise<ICustomer | null> {
-        return Customer.findOne({ email, owner: userId });
+    /**
+     * Find customer by email for a tenant
+     */
+    async findByEmail(email: string, tenantId: TenantRef): Promise<ICustomer | null> {
+        return Customer.findOne({ 
+            email, 
+            $or: [{ tenantId }, { owner: tenantId }]
+        });
     }
 
-    async findByPhoneExcludingId(phone: string, userId: string, excludeId: string): Promise<ICustomer | null> {
-        return Customer.findOne({ phone, owner: userId, _id: { $ne: excludeId } });
+    /**
+     * Find customer by phone excluding a specific ID for a tenant
+     */
+    async findByPhoneExcludingId(phone: string, tenantId: TenantRef, excludeId: string): Promise<ICustomer | null> {
+        return Customer.findOne({ 
+            phone, 
+            $or: [{ tenantId }, { owner: tenantId }],
+            _id: { $ne: excludeId } 
+        });
     }
 
-    async findByEmailExcludingId(email: string, userId: string, excludeId: string): Promise<ICustomer | null> {
-        return Customer.findOne({ email, owner: userId, _id: { $ne: excludeId } });
+    /**
+     * Find customer by email excluding a specific ID for a tenant
+     */
+    async findByEmailExcludingId(email: string, tenantId: TenantRef, excludeId: string): Promise<ICustomer | null> {
+        return Customer.findOne({ 
+            email, 
+            $or: [{ tenantId }, { owner: tenantId }],
+            _id: { $ne: excludeId } 
+        });
     }
 
-    async findAll(userId: string): Promise<ICustomer[]> {
-        return Customer.find({ owner: userId })
+    /**
+     * Find all customers for a tenant
+     */
+    async findAll(tenantId: TenantRef): Promise<ICustomer[]> {
+        return Customer.find({ 
+            $or: [{ tenantId }, { owner: tenantId }]
+        })
             .populate("referredBy", "name phone")
             .sort({ name: 1 });
     }
 
-    async update(id: string, userId: string, updateData: Partial<ICustomer>): Promise<ICustomer | null> {
+    /**
+     * Update customer for a tenant
+     */
+    async update(id: string, tenantId: TenantRef, updateData: Partial<ICustomer>): Promise<ICustomer | null> {
         return Customer.findOneAndUpdate(
-            { _id: id, owner: userId },
+            { 
+                _id: id, 
+                $or: [{ tenantId }, { owner: tenantId }]
+            },
             updateData,
             { new: true }
         );
     }
 
-    async delete(id: string, userId: string): Promise<ICustomer | null> {
-        return Customer.findOneAndDelete({ _id: id, owner: userId });
+    /**
+     * Delete customer for a tenant
+     */
+    async delete(id: string, tenantId: TenantRef): Promise<ICustomer | null> {
+        return Customer.findOneAndDelete({ 
+            _id: id, 
+            $or: [{ tenantId }, { owner: tenantId }]
+        });
     }
 }

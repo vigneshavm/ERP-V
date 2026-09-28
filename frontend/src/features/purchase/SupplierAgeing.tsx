@@ -17,6 +17,8 @@ import {
     BarChart3
 } from 'lucide-react';
 import api from "../../services/api";
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface AgeingBucket {
     "0-30": number;
@@ -107,12 +109,7 @@ const SupplierAgeing: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex items-center gap-3">
-                            <button
-                                onClick={handleExport}
-                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95"
-                            >
-                                <Download className="w-4 h-4" /> Export
-                            </button>
+                            <Button onClick={handleExport} className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95"><Download className="w-4 h-4" /> Export</Button>
                             <button
                                 onClick={fetchAgeing}
                                 className="p-2.5 bg-primary/10 text-primary rounded-xl hover:bg-primary/20 transition-all active:scale-95"
@@ -267,7 +264,7 @@ const SupplierAgeing: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-8 bg-primary/5 rounded-[2.5rem] border border-primary/10 animate-in zoom-in-95 duration-700">
+                <div className="flex items-center gap-4 p-8 bg-primary/5 rounded-2xl border border-primary/10 animate-in zoom-in-95 duration-700">
                     <div className="p-3 bg-primary/10 rounded-sm">
                         <Zap className="text-primary w-6 h-6" />
                     </div>

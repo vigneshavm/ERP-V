@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,6 +11,7 @@ import Layout from "@/components/shared/Layout/Layout";
 import PageHeader from "@/components/shared/Layout/PageHeader";
 import MetricCard from "@/components/shared/UI/MetricCard";
 import CustomerSelectionModal from "@/components/shared/Modals/CustomerSelectionModal";
+import { Button, Input, Select, Card } from "@/components/shared";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Customer, Invoice } from "@/types/sales";
 import {
@@ -34,6 +35,7 @@ const SalesInvoice = () => {
   const {
     invoices = [],
     summary = null,
+    pagination = null,
     isLoading,
     isError,
     message,
@@ -42,6 +44,7 @@ const SalesInvoice = () => {
 
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -49,61 +52,60 @@ const SalesInvoice = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  // Debounce free-text search so every keystroke doesn't hit the server.
   useEffect(() => {
-    dispatch(getAllSalesInvoices());
+    const t = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 400);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
+
+  // Back to page 1 whenever a filter (not the page itself) changes; adjusted during render
+  // (tracking the previous filters) instead of setState in an effect.
+  const [prevFilters, setPrevFilters] = useState({ debouncedSearch, statusFilter, selectedCustomer });
+  if (prevFilters.debouncedSearch !== debouncedSearch || prevFilters.statusFilter !== statusFilter || prevFilters.selectedCustomer !== selectedCustomer) {
+    setPrevFilters({ debouncedSearch, statusFilter, selectedCustomer });
+    setCurrentPage(1);
+  }
+
+  const fetchInvoices = () => dispatch(getAllSalesInvoices({
+    search: debouncedSearch || undefined,
+    status: statusFilter !== "all" ? statusFilter : undefined,
+    customerId: selectedCustomer?._id,
+    page: currentPage,
+    pageSize: itemsPerPage,
+  }));
+
+  useEffect(() => {
     dispatch(getSalesInvoiceSummary());
     return () => {
       dispatch(reset());
     };
   }, [dispatch]);
 
-  // Back to page 1 whenever the filters change; adjusted during render (tracking the previous
-  // filters) instead of setState in an effect.
-  const [prevFilters, setPrevFilters] = useState({ searchTerm, statusFilter, selectedCustomer });
-  if (prevFilters.searchTerm !== searchTerm || prevFilters.statusFilter !== statusFilter || prevFilters.selectedCustomer !== selectedCustomer) {
-    setPrevFilters({ searchTerm, statusFilter, selectedCustomer });
-    setCurrentPage(1);
-  }
-
-  // Shop (SQL) bills number in the hundreds of thousands, so only the newest are loaded up front;
-  // typing a bill no / customer / phone asks the server for the matching bills instead.
-  const firstSearch = useRef(true);
+  // Server-side search/filter/pagination -- the shop's Textilesoft-backed invoice set can run
+  // into the hundreds of thousands, so only the current page (matching current filters) is loaded.
   useEffect(() => {
-    if (firstSearch.current) { firstSearch.current = false; return; }
-    const t = setTimeout(() => { dispatch(getAllSalesInvoices(searchTerm.trim() || undefined)); }, 400);
-    return () => clearTimeout(t);
-  }, [searchTerm, dispatch]);
+    fetchInvoices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch, statusFilter, selectedCustomer, currentPage, dispatch]);
 
   const handleDelete = async (id: string) => {
     await dispatch(deleteSalesInvoice(id));
     setDeleteConfirm(null);
-    dispatch(getAllSalesInvoices());
+    fetchInvoices();
+    dispatch(getSalesInvoiceSummary());
   };
 
   const isCustomer = (cust: any): cust is Customer => {
     return cust && typeof cust === 'object' && 'name' in cust;
   };
 
-  const filteredInvoices = Array.isArray(invoices)
-    ? (invoices as Invoice[]).filter((invoice) => {
-      const customer = invoice.customer;
-      const customerName = isCustomer(customer) ? customer.name : '';
-      const matchesSearch =
-        invoice.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customerName.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus =
-        statusFilter === "all" || invoice.paymentStatus === statusFilter;
-      const matchesCustomer =
-        !selectedCustomer || (isCustomer(customer) && customer._id === selectedCustomer._id);
-      return matchesSearch && matchesStatus && matchesCustomer;
-    })
-    : [];
-
-  // Pagination calculations
-  const totalPages = Math.ceil(filteredInvoices.length / itemsPerPage);
+  // Filtering/search/status/customer are already applied server-side; this page just renders
+  // whichever page of results came back.
+  const paginatedInvoices = Array.isArray(invoices) ? (invoices as Invoice[]) : [];
+  const totalResults = pagination?.total ?? paginatedInvoices.length;
+  const totalPages = pagination?.totalPages ?? 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedInvoices = filteredInvoices.slice(startIndex, endIndex);
+  const endIndex = startIndex + paginatedInvoices.length;
 
 
   // Get metrics from backend summary (source of truth)
@@ -118,13 +120,14 @@ const SalesInvoice = () => {
           title="Sales Invoices"
           description="Manage and track your customer invoicing"
           actions={
-            <button
+            <Button
+              variant="primary"
+              size="md"
+              icon={<Plus className="w-4 h-4" />}
               onClick={() => navigate('/sales/new')}
-              className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-xl hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all font-black uppercase tracking-widest text-xs btn-interactive"
             >
-              <Plus className="w-4 h-4" />
-              <span>Create Invoice</span>
-            </button>
+              Create Invoice
+            </Button>
           }
         />
 
@@ -165,81 +168,88 @@ const SalesInvoice = () => {
         </div>
 
         {/* Advanced Filters */}
-        <div className="glass-panel p-4 rounded-xl border border-default/30 flex flex-col gap-4 mb-8">
-          <div className="flex flex-wrap gap-4 items-end">
-            {/* Search */}
-            <div className="flex-1 min-w-[200px]">
-              <label className="text-xs font-bold text-muted uppercase mb-1 block">Search</label>
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-2.5 text-secondary opacity-50" />
-                <input
+        <Card variant="default" size="lg">
+          <Card.Body className="flex flex-col gap-4 p-4">
+            <div className="flex flex-wrap gap-4 items-end">
+              {/* Search */}
+              <div className="flex-1 min-w-[200px]">
+                <label className="text-xs font-bold text-muted uppercase mb-1 block">Search</label>
+                <Input
                   type="text"
                   placeholder="Search invoice number, customer..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-input/50 border border-default/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  icon={<Search className="w-4 h-4" />}
                 />
               </div>
-            </div>
 
-            {/* Status Filter */}
-            <div className="w-48">
-              <label className="text-xs font-bold text-muted uppercase mb-1 block">Status</label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 bg-input/50 border border-default/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-              >
-                <option value="all">All Status</option>
-                <option value="paid">Paid</option>
-                <option value="partial">Partial</option>
-                <option value="unpaid">Unpaid</option>
-              </select>
-            </div>
+              {/* Status Filter */}
+              <div className="w-48">
+                <label className="text-xs font-bold text-muted uppercase mb-1 block">Status</label>
+                <Select
+                  value={statusFilter}
+                  onChange={(value) => setStatusFilter(typeof value === 'string' ? value : value[0])}
+                  options={[
+                    { label: 'All Status', value: 'all' },
+                    { label: 'Paid', value: 'paid' },
+                    { label: 'Partial', value: 'partial' },
+                    { label: 'Unpaid', value: 'unpaid' }
+                  ]}
+                  size="md"
+                />
+              </div>
 
-            {/* Customer Filter */}
-            <div className="w-auto">
-              <label className="text-xs font-bold text-muted uppercase mb-1 block">Customer</label>
-              {selectedCustomer ? (
-                <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-2 rounded-lg text-sm font-medium animate-fade-in h-[38px]">
-                  <span className="truncate max-w-[150px]">{selectedCustomer.name}</span>
-                  <button onClick={() => setSelectedCustomer(null)} className="hover:text-primary-hover transition-colors">
-                    <XCircle className="w-4 h-4" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setShowCustomerModal(true)}
-                  className="px-4 py-2 bg-input/50 border border-default/30 text-secondary rounded-lg hover:bg-surface/60 transition-all text-sm font-medium flex items-center gap-2 h-[38px]"
-                >
-                  <Filter className="w-4 h-4" />
-                  Filter Customer
-                </button>
-              )}
+              {/* Customer Filter */}
+              <div className="w-auto">
+                <label className="text-xs font-bold text-muted uppercase mb-1 block">Customer</label>
+                {selectedCustomer ? (
+                  <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-2 rounded-lg text-sm font-medium animate-fade-in h-[42px]">
+                    <span className="truncate max-w-[150px]">{selectedCustomer.name}</span>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      icon={<XCircle className="w-4 h-4" />}
+                      onClick={() => setSelectedCustomer(null)}
+                    />
+                  </div>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    icon={<Filter className="w-4 h-4" />}
+                    onClick={() => setShowCustomerModal(true)}
+                  >
+                    Filter Customer
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
 
         {/* Data Table */}
-        <div className="glass-panel rounded-xl border border-default/30 overflow-hidden flex flex-col shadow-sm">
-          {isLoading ? (
+        <Card variant="default" size="lg" className="overflow-hidden flex flex-col shadow-sm">
+          <Card.Body className="p-0">
+            {isLoading ? (
             <div className="flex flex-col items-center justify-center py-32">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
               <p className="text-muted text-sm font-medium">Loading invoices...</p>
             </div>
-          ) : filteredInvoices.length === 0 ? (
+          ) : paginatedInvoices.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 px-4 text-center">
               <div className="bg-surface/30 p-4 rounded-full mb-4">
                 <Search className="w-8 h-8 text-secondary opacity-50" />
               </div>
               <h3 className="text-lg font-bold text-main">No Invoices Found</h3>
               <p className="text-muted mt-1 max-w-sm text-sm">No sales invoices match your current search or filter criteria.</p>
-              <button
+              <Button
+                variant="secondary"
+                size="md"
                 onClick={() => { setSearchTerm(''); setStatusFilter('all'); setSelectedCustomer(null); }}
-                className="mt-6 px-4 py-2 glass-panel border border-default/30 text-main opacity-90 text-sm font-medium rounded-lg hover:bg-surface/50 transition-all shadow-sm"
+                className="mt-6"
               >
                 Clear Filters
-              </button>
+              </Button>
             </div>
           ) : (
             <>
@@ -286,20 +296,20 @@ const SalesInvoice = () => {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2">
-                            <button
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              icon={<Eye className="w-4 h-4" />}
                               onClick={() => navigate(`/sales/invoice/${invoice._id}`)}
-                              className="p-2 text-muted hover:text-primary hover:bg-surface/60 rounded-lg transition-all"
                               title="View Invoice"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            <button
+                            />
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              icon={<Trash2 className="w-4 h-4" />}
                               onClick={() => setDeleteConfirm(invoice._id || null)}
-                              className="p-2 text-muted hover:text-danger hover:bg-surface/60 rounded-lg transition-all"
                               title="Delete Invoice"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            />
                           </div>
                         </td>
                       </tr>
@@ -335,30 +345,29 @@ const SalesInvoice = () => {
               {totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-default/30 flex items-center justify-between bg-surface/40">
                   <div className="text-xs text-muted ">
-                    Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, filteredInvoices.length)}</span> of <span className="font-medium">{filteredInvoices.length}</span> results
+                    Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, totalResults)}</span> of <span className="font-medium">{totalResults}</span> results
                   </div>
                   <div className="flex items-center gap-2">
-                    <button
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
-                      className="px-3 py-1.5 border border-default/40 rounded-lg text-xs font-medium text-secondary hover:bg-card/50 hover:bg-surface/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                       Previous
-                    </button>
+                    </Button>
                     <div className="flex gap-1">
                       {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
                         if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
                           return (
-                            <button
+                            <Button
                               key={page}
+                              variant={currentPage === page ? "primary" : "secondary"}
+                              size="sm"
                               onClick={() => setCurrentPage(page)}
-                              className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-medium transition-all ${currentPage === page
-                                ? "bg-primary text-white"
-                                : "text-secondary hover:bg-surface/60"
-                                }`}
                             >
                               {page}
-                            </button>
+                            </Button>
                           );
                         } else if (page === currentPage - 2 || page === currentPage + 2) {
                           return <span key={page} className="px-1 text-muted">...</span>;
@@ -366,46 +375,54 @@ const SalesInvoice = () => {
                         return null;
                       })}
                     </div>
-                    <button
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1.5 border border-default/40 rounded-lg text-xs font-medium text-secondary hover:bg-card/50 hover:bg-surface/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                       Next
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
             </>
           )}
-        </div>
+          </Card.Body>
+        </Card>
 
         {/* Delete Modal */}
         {deleteConfirm && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in duration-300">
-            <div className="glass-panel rounded-sm shadow-2xl max-w-sm w-full p-6 border border-default/30 animate-scale-in">
-              <div className="w-12 h-12 bg-danger-soft dark:bg-danger-soft rounded-full flex items-center justify-center mb-4 mx-auto">
-                <AlertTriangle className="w-6 h-6 text-danger" />
-              </div>
-              <h3 className="text-lg font-bold text-main text-center mb-2">Delete Invoice?</h3>
-              <p className="text-sm text-muted text-center mb-6">
-                Are you sure you want to delete this invoice? This action cannot be undone.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setDeleteConfirm(null)}
-                  className="flex-1 px-4 py-2 glass-panel border border-default/30 rounded-lg text-main opacity-90 font-medium hover:bg-surface/50 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleDelete(deleteConfirm)}
-                  className="flex-1 px-4 py-2 bg-danger text-white rounded-lg font-medium hover:bg-danger transition-all shadow-md shadow-danger/20"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
+            <Card variant="default" size="md" className="max-w-sm w-full animate-scale-in">
+              <Card.Body className="text-center space-y-4">
+                <div className="w-12 h-12 bg-danger/10 dark:bg-danger/10 rounded-full flex items-center justify-center mx-auto">
+                  <AlertTriangle className="w-6 h-6 text-danger" />
+                </div>
+                <h3 className="text-lg font-bold text-main">Delete Invoice?</h3>
+                <p className="text-sm text-muted">
+                  Are you sure you want to delete this invoice? This action cannot be undone.
+                </p>
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    onClick={() => setDeleteConfirm(null)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="md"
+                    onClick={() => handleDelete(deleteConfirm)}
+                    className="flex-1"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </Card.Body>
+            </Card>
           </div>
         )}
       </div>

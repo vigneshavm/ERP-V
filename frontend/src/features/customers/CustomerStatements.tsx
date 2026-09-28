@@ -12,6 +12,8 @@ import {
     Phone
 } from 'lucide-react';
 import { formatDate } from '../../utils/helpers';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface StatementData {
     customerId: string;
@@ -147,13 +149,7 @@ const CustomerStatements: React.FC = () => {
                     <div className="md:col-span-2">
                         <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Select Customer</label>
                         <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Search customer..."
-                                className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm mb-2"
-                                value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
-                            />
+                            <Input type="text" placeholder="Search customer..." className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm mb-2" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                             <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                         </div>
                         <select

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createSalesInvoice, reset } from "../../../redux/slices/salesInvoiceSlice";
 import CustomerSelectionModal from "../../../components/shared/Modals/CustomerSelectionModal";
+import { Button, Input, Textarea } from "../../../components/shared";
 import { AppDispatch, RootState } from "../../../redux/store";
 import { 
     Plus, Trash2, Save, User, Calendar, Receipt, Percent, 
@@ -20,6 +21,15 @@ interface InvoiceItem {
     amount: number;
 }
 
+// Loose shape CustomerSelectionModal actually resolves to (it isn't wired to the real
+// Customer type yet -- see its onSelect prop).
+interface InvoiceCustomer {
+    _id: string;
+    name: string;
+    phone?: string;
+    gstin?: string;
+}
+
 const SalesInvoiceForm: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -31,10 +41,12 @@ const SalesInvoiceForm: React.FC = () => {
     // Lazy initializer - the previous object-literal form called Date.now()/new Date() on every
     // render (an impure call in the render body); () => ({...}) only runs once, on mount.
     const [formData, setFormData] = useState(() => ({
+        // Provisional reference shown before save; the backend assigns the authoritative,
+        // collision-safe invoiceNo (see SalesService.createInvoice), so it's not submitted.
         invoiceNo: `INV-${Date.now().toString().slice(-6)}`,
         invoiceDate: new Date().toISOString().split("T")[0],
         dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-        customer: null as any,
+        customer: null as InvoiceCustomer | null,
         // Start with one empty line to fill in.
         items: [{ name: "", quantity: 1, rate: 0, tax: 0, amount: 0 }] as InvoiceItem[],
         discount: 0,
@@ -105,6 +117,7 @@ const SalesInvoiceForm: React.FC = () => {
 
         const payload = {
             ...formData,
+            invoiceNo: undefined,
             customer: formData.customer._id,
             totalAmount: calculateTotal(),
             subtotal: calculateSubtotal(),
@@ -151,9 +164,14 @@ const SalesInvoiceForm: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center gap-3 w-full md:w-auto">
-                        <Link to="/sales/register" className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-card border border-default text-main rounded-sm hover:bg-surface transition-all text-xs font-bold shadow-sm">
-                            <ArrowLeft className="w-4 h-4 text-warning" /> Back to Registry
-                        </Link>
+                        <Button
+                            variant="secondary"
+                            size="md"
+                            icon={<ArrowLeft className="w-4 h-4" />}
+                            onClick={() => navigate('/sales/register')}
+                        >
+                            Back to Registry
+                        </Button>
                     </div>
                 </header>
 
@@ -162,7 +180,7 @@ const SalesInvoiceForm: React.FC = () => {
                     <div className="lg:col-span-8 space-y-8">
                         
                         {/* Section 1: Transaction Context */}
-                        <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 p-8 shadow-sm relative overflow-hidden group">
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm relative overflow-hidden group">
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="w-12 h-12 bg-warning/10 rounded-sm flex items-center justify-center text-warning">
                                     <Receipt className="w-6 h-6" />
@@ -176,45 +194,30 @@ const SalesInvoiceForm: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Reference ID</label>
-                                    <div className="relative group">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-warning">
-                                            <Layers className="w-4 h-4" />
-                                        </div>
-                                        <input 
-                                            type="text" 
-                                            value={formData.invoiceNo}
-                                            disabled
-                                            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-12 pr-4 text-sm font-mono font-bold text-slate-400 cursor-not-allowed"
-                                        />
-                                    </div>
+                                    <Input
+                                        type="text"
+                                        value={formData.invoiceNo}
+                                        disabled
+                                        icon={<Layers className="w-4 h-4" />}
+                                    />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Emission Date</label>
-                                    <div className="relative group">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-warning">
-                                            <Calendar className="w-4 h-4" />
-                                        </div>
-                                        <input 
-                                            type="date" 
-                                            value={formData.invoiceDate}
-                                            onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
-                                            className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-primary/50 outline-none transition-all dark:text-white"
-                                        />
-                                    </div>
+                                    <Input
+                                        type="date"
+                                        value={formData.invoiceDate}
+                                        onChange={(e) => setFormData({ ...formData, invoiceDate: e.target.value })}
+                                        icon={<Calendar className="w-4 h-4" />}
+                                    />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Due Threshold</label>
-                                    <div className="relative group">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-danger">
-                                            <Clock className="w-4 h-4" />
-                                        </div>
-                                        <input 
-                                            type="date" 
-                                            value={formData.dueDate}
-                                            onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                                            className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-12 pr-4 text-sm font-bold focus:border-primary/50 outline-none transition-all dark:text-white"
-                                        />
-                                    </div>
+                                    <Input
+                                        type="date"
+                                        value={formData.dueDate}
+                                        onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                                        icon={<Clock className="w-4 h-4" />}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -231,13 +234,14 @@ const SalesInvoiceForm: React.FC = () => {
                                         <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Process line-item valuations</p>
                                     </div>
                                 </div>
-                                <button
-                                    type="button"
+                                <Button
+                                    variant="warning"
+                                    size="md"
+                                    icon={<Plus className="w-4 h-4" />}
                                     onClick={addItem}
-                                    className="flex items-center gap-2 px-6 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20"
                                 >
-                                    <Plus className="w-4 h-4" /> Add Asset
-                                </button>
+                                    Add Asset
+                                </Button>
                             </div>
 
                             <div className="overflow-x-auto custom-scrollbar">
@@ -270,7 +274,7 @@ const SalesInvoiceForm: React.FC = () => {
                                                         min="1"
                                                         value={item.quantity}
                                                         onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                                        className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-slate-900 dark:text-white outline-none focus:border-primary/50 transition-all"
+                                                        className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-2 text-sm text-center font-mono font-bold text-slate-900 dark:text-white outline-none focus:border-primary/50 dark:focus:border-primary/30 transition-all"
                                                     />
                                                 </td>
                                                 <td className="px-4 py-5 text-right">
@@ -299,13 +303,12 @@ const SalesInvoiceForm: React.FC = () => {
                                                     <span className="text-sm font-black text-slate-900 dark:text-white font-mono tracking-tighter">₹{item.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
                                                 </td>
                                                 <td className="px-4 py-5 text-center">
-                                                    <button
-                                                        type="button"
+                                                    <Button
+                                                        variant="danger"
+                                                        size="sm"
+                                                        icon={<Trash2 className="w-4 h-4" />}
                                                         onClick={() => removeItem(index)}
-                                                        className="p-2.5 text-slate-400 hover:text-danger hover:bg-danger/10 rounded-xl transition-all"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
+                                                    />
                                                 </td>
                                             </tr>
                                         ))}
@@ -330,22 +333,22 @@ const SalesInvoiceForm: React.FC = () => {
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                                         <Info className="w-3.5 h-3.5 text-warning" /> Internal Notes
                                     </label>
-                                    <textarea
+                                    <Textarea
                                         placeholder="Add mission-critical notes for auditing..."
                                         value={formData.notes}
                                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                        className="w-full p-5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[24px] text-xs font-bold min-h-[140px] focus:border-primary/50 outline-none transition-all resize-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-800 shadow-inner"
+                                        minRows={3}
                                     />
                                 </div>
                                 <div className="space-y-4">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                                         <ShieldCheck className="w-3.5 h-3.5 text-danger" /> Terms & Conditions
                                     </label>
-                                    <textarea
+                                    <Textarea
                                         placeholder="Define legal framework for this node..."
                                         value={formData.termsAndConditions}
                                         onChange={(e) => setFormData({ ...formData, termsAndConditions: e.target.value })}
-                                        className="w-full p-5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[24px] text-[11px] font-bold min-h-[140px] focus:border-primary/50 outline-none transition-all resize-none text-slate-500 dark:text-slate-400 shadow-inner"
+                                        minRows={3}
                                     />
                                 </div>
                             </div>
@@ -385,25 +388,29 @@ const SalesInvoiceForm: React.FC = () => {
                                             <span className="text-slate-900 dark:text-white">{formData.customer.gstin || 'EXEMPT'}</span>
                                         </div>
                                     </div>
-                                    <button
-                                        type="button"
+                                    <Button
+                                        variant="secondary"
+                                        size="md"
+                                        fullWidth
                                         onClick={() => setShowCustomerModal(true)}
-                                        className="w-full mt-6 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest hover:border-warning transition-all shadow-sm"
+                                        className="mt-6"
                                     >
                                         Change customer
-                                    </button>
+                                    </Button>
                                 </div>
                             ) : (
-                                <button
-                                    type="button"
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    fullWidth
                                     onClick={() => setShowCustomerModal(true)}
-                                    className="w-full py-16 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[32px] flex flex-col items-center justify-center gap-5 text-slate-400 hover:border-warning/50 hover:text-warning hover:bg-warning/90/[0.02] transition-all group/btn"
+                                    className="h-auto py-16 flex-col gap-5 border-2 border-dashed rounded-[32px]"
                                 >
-                                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-sm flex items-center justify-center group-hover/btn:scale-110 transition-all shadow-inner">
-                                        <Plus className="w-8 h-8 opacity-40 group-hover/btn:opacity-100" />
+                                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-sm flex items-center justify-center">
+                                        <Plus className="w-8 h-8" />
                                     </div>
                                     <span className="font-black text-[10px] uppercase tracking-[0.2em]">Select customer</span>
-                                </button>
+                                </Button>
                             )}
                         </div>
 
@@ -434,30 +441,24 @@ const SalesInvoiceForm: React.FC = () => {
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-between">
                                             Logistics Adjustment <Truck className="w-4 h-4 text-warning" />
                                         </label>
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] text-warning font-bold">₹</span>
-                                            <input
-                                                type="number"
-                                                value={formData.shippingCharges}
-                                                onChange={(e) => setFormData({ ...formData, shippingCharges: Number(e.target.value) })}
-                                                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-slate-900 dark:text-white outline-none focus:border-primary/50 transition-all text-right shadow-inner"
-                                            />
-                                        </div>
+                                        <Input
+                                            type="number"
+                                            value={formData.shippingCharges}
+                                            onChange={(e) => setFormData({ ...formData, shippingCharges: Number(e.target.value) })}
+                                            placeholder="₹ 0.00"
+                                        />
                                     </div>
                                     
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-between">
                                             Yield Discount <Percent className="w-4 h-4 text-danger" />
                                         </label>
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] text-danger font-bold">₹</span>
-                                            <input
-                                                type="number"
-                                                value={formData.discount}
-                                                onChange={(e) => setFormData({ ...formData, discount: Number(e.target.value) })}
-                                                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-sm py-4 pl-8 pr-4 text-sm font-mono font-bold text-danger outline-none focus:border-primary/50 transition-all text-right shadow-inner"
-                                            />
-                                        </div>
+                                        <Input
+                                            type="number"
+                                            value={formData.discount}
+                                            onChange={(e) => setFormData({ ...formData, discount: Number(e.target.value) })}
+                                            placeholder="₹ 0.00"
+                                        />
                                     </div>
                                 </div>
 
@@ -471,26 +472,21 @@ const SalesInvoiceForm: React.FC = () => {
                                 </div>
                             </div>
 
-                            <button
+                            <Button
                                 type="submit"
-                                disabled={isLoading}
-                                className="w-full mt-8 py-5 bg-warning text-white rounded-sm font-black text-xs uppercase tracking-[0.3em] shadow-xl shadow-amber-500/20 hover:bg-warning/90 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group/submit"
+                                variant="warning"
+                                size="lg"
+                                fullWidth
+                                loading={isLoading}
+                                icon={<Save className="w-5 h-5" />}
+                                className="mt-8"
                             >
-                                {isLoading ? (
-                                    <>
-                                        <div className="w-5 h-5 border-[3px] border-white/20 border-t-white rounded-full animate-spin"></div>
-                                        Processing Logic...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Save className="w-5 h-5 group-hover/submit:scale-125 transition-all" />
-                                        Finalize Registry
-                                    </>
-                                )}
-                            </button>
+                                {isLoading ? 'Processing Logic...' : 'Finalize Registry'}
+                            </Button>
                         </div>
 
-                        {/* Security Badge */}
+                        {/* Security Badge */}
+
                     </div>
                 </form>
             </main>

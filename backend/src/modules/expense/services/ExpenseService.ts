@@ -1,4 +1,5 @@
 import { injectable, inject } from "tsyringe";
+import mongoose from "mongoose";
 import { ExpenseRepository } from "../../../repositories/ExpenseRepository.js";
 import { AppError } from "../../../utils/AppError.js";
 import { IExpense } from "../../../interfaces/IExpense.js";
@@ -26,7 +27,7 @@ export class ExpenseService {
 
         // Validate bank payment
         if (paymentMethod === 'bank_transfer' && bankAccount) {
-            const bankAcc = await BankAccount.findOne({ _id: bankAccount, userId });
+            const bankAcc = await BankAccount.findOne({ _id: bankAccount, tenantId: new mongoose.Types.ObjectId(userId) });
             if (!bankAcc) {
                 throw new AppError("Bank account not found", 400);
             }

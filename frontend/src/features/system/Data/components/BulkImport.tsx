@@ -2,6 +2,7 @@
 import api from "@/services/api";
 import { toast } from 'react-toastify';
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button } from '@/components/shared/Button';
 
 interface ProcessedRow {
     row: number;
@@ -376,13 +377,7 @@ const BulkImport = () => {
                     >
                         Reset Engine
                     </button>
-                    <button
-                        onClick={handleImport}
-                        disabled={importableRowsCount === 0 || importing}
-                        className="flex-[2] py-4 bg-primary text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 active:scale-95 transition-all disabled:opacity-50"
-                    >
-                        {importing ? 'Syncing...' : `Commit ${importableRowsCount} Records`}
-                    </button>
+                    <Button onClick={handleImport} disabled={importableRowsCount === 0 || importing} className="flex-[2] py-4 bg-primary text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 active:scale-95 transition-all disabled:opacity-50">{importing ? 'Syncing...' : `Commit ${importableRowsCount} Records`}</Button>
                 </div>
             )}
         </div>

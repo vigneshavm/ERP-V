@@ -5,6 +5,7 @@ import Brand from '../modules/inventory/models/Brand.js';
 import Size from '../modules/inventory/models/Size.js';
 import Color from '../modules/inventory/models/Color.js';
 import Shelf from '../modules/inventory/models/Shelf.js';
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -46,23 +47,23 @@ const SHELVES: { shelfCode: string; shelfType: 'FULL' | 'HALF' }[] = [
 
 const seedInventoryFilters = async () => {
     try {
-        console.log('Connecting to MongoDB...', process.env.MONGO_URI ? 'URI Found' : 'URI Missing');
+        info('Connecting to MongoDB...', process.env.MONGO_URI ? 'URI Found' : 'URI Missing');
         await mongoose.connect(process.env.MONGO_URI as string, { family: 4 });
-        console.log('Connected to MongoDB');
+        info('Connected to MongoDB');
 
         for (const name of BRANDS) {
             await Brand.findOneAndUpdate({ name }, { name, isActive: true }, { upsert: true, new: true });
-            console.log(`Seeded brand: ${name}`);
+            info(`Seeded brand: ${name}`);
         }
 
         for (const size of SIZES) {
             await Size.findOneAndUpdate({ name: size.name }, { ...size, isActive: true }, { upsert: true, new: true });
-            console.log(`Seeded size: ${size.name}`);
+            info(`Seeded size: ${size.name}`);
         }
 
         for (const color of COLORS) {
             await Color.findOneAndUpdate({ name: color.name }, { ...color, isActive: true }, { upsert: true, new: true });
-            console.log(`Seeded color: ${color.name}`);
+            info(`Seeded color: ${color.name}`);
         }
 
         for (const shelf of SHELVES) {
@@ -71,10 +72,10 @@ const seedInventoryFilters = async () => {
                 { ...shelf, warehouseId: 'MAIN_WAREHOUSE', isActive: true },
                 { upsert: true, new: true }
             );
-            console.log(`Seeded shelf: ${shelf.shelfCode} (${shelf.shelfType})`);
+            info(`Seeded shelf: ${shelf.shelfCode} (${shelf.shelfType})`);
         }
 
-        console.log('Inventory filter catalog (Brand/Size/Color/Shelf) seeding completed.');
+        info('Inventory filter catalog (Brand/Size/Color/Shelf) seeding completed.');
         process.exit(0);
     } catch (error) {
         console.error('Error seeding inventory filter catalog:', error);

@@ -27,7 +27,8 @@ import {
     CheckCircle
 } from 'lucide-react';
 import { SalesOrder } from '../../../types/sales';
-import { formatDate } from '../../../utils/helpers';
+import { formatDate } from '../../../utils/helpers';import { Button } from '@/components/shared/Button';
+
 
 interface StatusConfig {
     color: string;
@@ -128,9 +129,7 @@ const SalesOrderDetail = () => {
             <div className="min-h-full bg-app text-main flex flex-col items-center justify-center gap-4">
                 <AlertTriangle className="w-16 h-16 text-danger opacity-20" />
                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest text-center">Order not found</p>
-                <button onClick={() => navigate('/sales/orders')} className="mt-4 px-6 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20">
-                    Return to Registry
-                </button>
+                <Button onClick={() => navigate('/sales/orders')} className="mt-4 px-6 py-3 bg-warning text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-warning/90 transition-all shadow-lg shadow-amber-500/20">Return to Registry</Button>
             </div>
         );
     }
@@ -153,12 +152,7 @@ const SalesOrderDetail = () => {
                 {/* Modern Header */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div className="flex items-center gap-6">
-                        <button 
-                            onClick={() => navigate('/sales/orders')}
-                            className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:scale-110 transition-transform text-slate-500 hover:text-warning shadow-sm"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </button>
+                        <Button onClick={() => navigate('/sales/orders')} className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm hover:scale-110 transition-transform text-slate-500 hover:text-warning shadow-sm"><ArrowLeft className="w-5 h-5" /></Button>
                         <div className="relative">
                             <div className="absolute -left-4 top-0 bottom-0 w-1 bg-warning rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
                             <h1 className="page-title text-slate-900 dark:text-white flex items-center gap-3">
@@ -202,7 +196,7 @@ const SalesOrderDetail = () => {
                 </header>
 
                 {/* Progress Timeline */}
-                <div className="bg-white dark:bg-slate-900 rounded-[40px] border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
+                <div className="bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
                     <div className="flex items-center justify-between gap-4 max-w-4xl mx-auto">
                         {lifecycleStages.map((stage, index) => (
                             <div key={stage.name} className="flex-1 flex items-center gap-4 last:flex-none">

@@ -2,6 +2,8 @@
 import { X, Crown, History, Zap, Phone, Mail, MapPin, Wallet } from 'lucide-react';
 import { formatDate } from '../../utils/helpers';
 import { Customer } from "../../types/sales";
+import { Card } from '../../components/shared';
+import { Button } from '@/components/shared/Button';
 
 interface Customer360ModalProps {
     isOpen: boolean;
@@ -11,7 +13,6 @@ interface Customer360ModalProps {
 
 const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, customer }) => {
     if (!isOpen) return null;
-
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
@@ -33,33 +34,35 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                             </div>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-sm transition-all">
-                        <X className="w-6 h-6 text-slate-400" />
-                    </button>
+                    <Button onClick={onClose} className="p-3 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-sm transition-all"><X className="w-6 h-6 text-slate-400" /></Button>
                 </div>
 
                 <div className="p-8 grid grid-cols-12 gap-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
                     {/* Customer Intelligence Layer */}
                     <div className="col-span-12 lg:col-span-4 space-y-6">
                         {/* Loyalty Card */}
-                        <div className="bg-primary-soft dark:bg-primary-soft p-6 rounded-[2.5rem] border border-primary/30 dark:border-primary/30">
-                            <div className="flex justify-between items-start mb-4">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-primary">Loyalty Status</p>
-                                <Crown className="w-5 h-5 text-warning" />
-                            </div>
-                            <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-1">{customer.tier || 'BRONZE'}</h3>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{customer.points.toLocaleString()} Points Balance</p>
-                        </div>
+                        <Card variant="default" size="md" className="bg-primary/10 dark:bg-primary/10 border-primary/30">
+                            <Card.Body>
+                                <div className="flex justify-between items-start mb-4">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary">Loyalty Status</p>
+                                    <Crown className="w-5 h-5 text-warning" />
+                                </div>
+                                <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-1">{customer.tier || 'BRONZE'}</h3>
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{customer.points.toLocaleString()} Points Balance</p>
+                            </Card.Body>
+                        </Card>
 
                         {/* Revenue Card */}
-                        <div className="bg-slate-900 dark:bg-slate-800 p-6 rounded-[2.5rem] text-white">
-                            <div className="flex justify-between items-start mb-4">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-primary">Lifetime Value</p>
-                                <Zap className="w-5 h-5 text-primary" />
-                            </div>
-                            <h3 className="text-3xl font-black mb-1">₹{(customer.totalPurchases || 0).toLocaleString()}</h3>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Across {customer.purchaseCount || 0} Invoices</p>
-                        </div>
+                        <Card variant="default" size="md" className="bg-slate-900 dark:bg-slate-800">
+                            <Card.Body className="text-white">
+                                <div className="flex justify-between items-start mb-4">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary">Lifetime Value</p>
+                                    <Zap className="w-5 h-5 text-primary" />
+                                </div>
+                                <h3 className="text-3xl font-black mb-1">₹{(customer.totalPurchases || 0).toLocaleString()}</h3>
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Across {customer.purchaseCount || 0} Invoices</p>
+                            </Card.Body>
+                        </Card>
                     </div>
 
                     {/* Account facts from the customer record */}
@@ -68,14 +71,18 @@ const Customer360Modal: React.FC<Customer360ModalProps> = ({ isOpen, onClose, cu
                             <History className="w-4 h-4" /> Account
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-sm border border-slate-100 dark:border-slate-700">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2"><Wallet className="w-3.5 h-3.5" /> Outstanding</p>
-                                <p className="text-2xl font-black text-slate-900 dark:text-white mt-2">₹{(customer.dues || 0).toLocaleString('en-IN')}</p>
-                            </div>
-                            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-sm border border-slate-100 dark:border-slate-700">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Last purchase</p>
-                                <p className="text-2xl font-black text-slate-900 dark:text-white mt-2">{customer.lastPurchase ? formatDate(customer.lastPurchase) : 'None recorded'}</p>
-                            </div>
+                            <Card variant="flat" size="md">
+                                <Card.Body>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2"><Wallet className="w-3.5 h-3.5" /> Outstanding</p>
+                                    <p className="text-2xl font-black text-slate-900 dark:text-white mt-2">₹{(customer.dues || 0).toLocaleString('en-IN')}</p>
+                                </Card.Body>
+                            </Card>
+                            <Card variant="flat" size="md">
+                                <Card.Body>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Last purchase</p>
+                                    <p className="text-2xl font-black text-slate-900 dark:text-white mt-2">{customer.lastPurchase ? formatDate(customer.lastPurchase) : 'None recorded'}</p>
+                                </Card.Body>
+                            </Card>
                         </div>
                         <p className="text-xs text-slate-500">
                             Satisfaction scores and feedback aren't shown because the ERP doesn't record customer feedback yet.

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Store, MapPin, Phone, Layers, Loader2, Plus, Check, CheckCircle2 } from 'lucide-react';
 import { GeneralTabProps } from './types';
 import api from '../../../services/api';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface BusinessSectorData {
     _id: string;
@@ -261,13 +263,7 @@ const GeneralTab: React.FC<GeneralTabProps> = ({
 
                             {selectableCategories.length > 0 && (
                                 <div className="flex items-center gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={toggleSelectAll}
-                                        className="text-[10px] font-extrabold text-primary uppercase tracking-widest hover:underline"
-                                    >
-                                        {allSelected ? 'Clear all' : 'Select all'}
-                                    </button>
+                                    <Button type="button" onClick={toggleSelectAll} className="text-[10px] font-extrabold text-primary uppercase tracking-widest hover:underline">{allSelected ? 'Clear all' : 'Select all'}</Button>
                                     <button
                                         type="button"
                                         onClick={handleAddSelectedCategories}

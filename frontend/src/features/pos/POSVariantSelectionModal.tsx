@@ -1,6 +1,8 @@
 ﻿import React, { useState, useMemo } from 'react';
 import { Product } from "../../types/product";
-import { X, ShoppingCart } from 'lucide-react';
+import { X, ShoppingCart } from 'lucide-react';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface POSVariantSelectionModalProps {
     isOpen: boolean;
@@ -81,9 +83,7 @@ export const POSVariantSelectionModal: React.FC<POSVariantSelectionModalProps> =
                         <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">{baseProduct.name}</h2>
                         <p className="text-sm text-slate-500">Select Variants to Add</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors">
-                        <X className="w-5 h-5 text-slate-500" />
-                    </button>
+                    <Button onClick={onClose} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors"><X className="w-5 h-5 text-slate-500" /></Button>
                 </div>
 
                 {/* Matrix Grid */}
@@ -174,12 +174,7 @@ export const POSVariantSelectionModal: React.FC<POSVariantSelectionModalProps> =
                     </div>
 
                     <div className="flex gap-3">
-                        <button
-                            onClick={onClose}
-                            className="px-4 py-2 text-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg font-medium transition-colors"
-                        >
-                            Cancel (Esc)
-                        </button>
+                        <Button onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg font-medium transition-colors">Cancel (Esc)</Button>
                         <button
                             onClick={handleBatchAdd}
                             disabled={totalQty === 0}

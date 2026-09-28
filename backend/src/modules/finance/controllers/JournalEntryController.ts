@@ -1,46 +1,12 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import JournalEntry from '../models/JournalEntry.js';
 import { error, info } from '../../../config/logger.js';
-
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 export const getJournalEntries = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const { startDate, endDate, accountId } = req.query;
-        // Basic filtering by tenant (assume multi-tenant middleware handles tenantId injection usually, 
-        // but looking at previous controllers, we filter by userId for now or tenantId if available)
-
-        // Check if previous controllers use tenantId or userId. 
-        // CashBankController used userId. JournalEntry model has tenantId required.
-        // We will assume a middleware attaches tenantId to req or we use userId if tenantId logic isn't fully exposed in snippet.
-        // Based on JournalEntry.ts model: tenantId is required.
-        // We'll try to get tenantId from req.user or req.params/query or middleware augmentation.
-        // For consistency with specific user requests seen so far, we might default to userId mapping or req.body.
-
-        // Let's assume standard filtering:
-        const query: any = {};
-
-        // If the request is authenticated, we typically scope to the user's tenant.
-        // Assuming we might have req.user.tenantId or similar. 
-        // For safety, let's look for tenantId in the query or body or assume middleware handles it.
-        // However, CashBankController filtered by `userId: req.user?._id`. 
-        // JournalEntry model has `tenantId` strict requirement.
-
-        // We will construct the query to include tenantId if present in user object, 
-        // otherwise we might need to fallback. 
-        // Let's try to simulate what would be standard.
-        // We will filter by `tenantId` if available on user context.
-        if ((req as any).tenantId) {
-            query.tenantId = (req as any).tenantId;
-        } else if ((req as any).user?.tenantId) {
-            query.tenantId = (req as any).user.tenantId;
-        }
+        const query: any = { tenantId: req.user.tenantId };
 
         if (startDate || endDate) {
             query.date = {};
@@ -83,10 +49,8 @@ export const createJournalEntry = async (req: AuthenticatedRequest, res: Respons
             return;
         }
 
-        // Determine tenantId. Prefer explicit or from user.
-        const tenantId = (req as any).tenantId || (req as any).user?.tenantId || (req as any).user?._id;
-        // Fallback to userId as tenantId for single-user dev environments if strict tenant context missing.
-        // But JournalEntry model expects ObjectId.
+        // Determine tenantId from authenticated request
+        const tenantId = req.user.tenantId;
 
         const newEntry = await JournalEntry.create({
             tenantId,
@@ -96,7 +60,7 @@ export const createJournalEntry = async (req: AuthenticatedRequest, res: Respons
             reference,
             entries,
             status: 'POSTED', // Auto-post for now
-            createdBy: req.user?._id
+            createdBy: req.user.name || req.user._id
         });
 
         info(`Journal Entry created by ${req.user?.name}: ${description}`);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
+import { Button, Input, Select } from '../../../components/shared';
 
 interface PayablesFiltersProps {
     viewMode: 'bill-wise' | 'vendor-wise';
@@ -27,51 +28,52 @@ const PayablesFilters: React.FC<PayablesFiltersProps> = ({
     return (
         <div className="flex flex-wrap gap-3 items-center justify-between">
             <div className="flex gap-2 bg-slate-100 dark:bg-slate-800/50 p-1 rounded-xl">
-                <button
+                <Button
+                    variant={viewMode === 'bill-wise' ? 'success' : 'tertiary'}
+                    size="sm"
                     onClick={() => onViewModeChange('bill-wise')}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'bill-wise' ? 'bg-white dark:bg-slate-900 text-success shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                     Bill-wise
-                </button>
-                <button
+                </Button>
+                <Button
+                    variant={viewMode === 'vendor-wise' ? 'success' : 'tertiary'}
+                    size="sm"
                     onClick={() => onViewModeChange('vendor-wise')}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'vendor-wise' ? 'bg-white dark:bg-slate-900 text-success shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                     Vendor-wise
-                </button>
+                </Button>
             </div>
 
             <div className="flex gap-2 flex-grow max-w-4xl">
-                <div className="relative flex-grow">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input
+                <div className="flex-grow">
+                    <Input
                         type="text"
                         placeholder="Search Vendor / Bill #..."
                         value={searchTerm}
                         onChange={(e) => onSearchTermChange(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                        icon={<Search className="w-4 h-4 text-slate-400" />}
                     />
                 </div>
 
-                <select
+                <Select
+                    options={[
+                        { value: 'All', label: 'All Statuses' },
+                        { value: 'Overdue', label: 'Overdue' },
+                        { value: 'Due Soon', label: 'Due Soon' },
+                        { value: 'Future', label: 'Future Dues' },
+                    ]}
                     value={statusFilter}
-                    onChange={(e) => onStatusFilterChange(e.target.value as any)}
-                    className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500/20 outline-none"
-                >
-                    <option value="All">All Statuses</option>
-                    <option value="Overdue">Overdue</option>
-                    <option value="Due Soon">Due Soon</option>
-                    <option value="Future">Future Dues</option>
-                </select>
+                    onChange={(value) => onStatusFilterChange((typeof value === 'string' ? value : value[0]) as any)}
+                />
 
-                <select
+                <Select
+                    options={[
+                        { value: '', label: 'All Vendors' },
+                        ...suppliers.map(s => ({ value: s._id, label: s.businessName }))
+                    ]}
                     value={vendorFilter}
-                    onChange={(e) => onVendorFilterChange(e.target.value)}
-                    className="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500/20 outline-none max-w-[200px]"
-                >
-                    <option value="">All Vendors</option>
-                    {suppliers.map(s => <option key={s._id} value={s._id}>{s.businessName}</option>)}
-                </select>
+                    onChange={(value) => onVendorFilterChange(typeof value === 'string' ? value : value[0])}
+                />
             </div>
         </div>
     );

@@ -13,6 +13,7 @@ import {
 import { RootState, AppDispatch } from "../../../redux/store";
 import { ArrowLeft, Download, RefreshCw, CheckCircle2, X } from 'lucide-react';
 import { formatDate } from '../../../utils/helpers';
+import { Button, Input, Select } from '@/components/shared';
 
 const AccountLedger: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -104,18 +105,12 @@ const AccountLedger: React.FC = () => {
                     : `Account: ****${ledgerData.account.accountNumber.slice(-4)} | Type: ${ledgerData.account.accountType}`}
                 actions={
                     <div className="flex gap-2">
-                        <button
-                            onClick={() => navigate('/cashbank/summary')}
-                            className="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
-                        >
-                            <ArrowLeft className="w-4 h-4" /> Back
-                        </button>
-                        <button
-                            onClick={exportCSV}
-                            className="px-4 py-2 bg-success text-white rounded-xl hover:bg-success/90 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-100 dark:shadow-none flex items-center gap-2"
-                        >
-                            <Download className="w-4 h-4" /> Export CSV
-                        </button>
+                        <Button variant="secondary" size="md" icon={<ArrowLeft className="w-4 h-4" />} onClick={() => navigate('/cashbank/summary')}>
+                            Back
+                        </Button>
+                        <Button variant="success" size="md" icon={<Download className="w-4 h-4" />} onClick={exportCSV}>
+                            Export CSV
+                        </Button>
                     </div>
                 }
             />
@@ -151,43 +146,39 @@ const AccountLedger: React.FC = () => {
             {/* Filters */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 mb-6 shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Start Date</label>
-                        <input
-                            type="date"
-                            value={filters.startDate}
-                            onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm"
-                        />
-                    </div>
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">End Date</label>
-                        <input
-                            type="date"
-                            value={filters.endDate}
-                            onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm"
-                        />
-                    </div>
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
-                        <select
+                    <Input
+                        label="Start Date"
+                        type="date"
+                        value={filters.startDate}
+                        onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+                    />
+                    <Input
+                        label="End Date"
+                        type="date"
+                        value={filters.endDate}
+                        onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+                    />
+                    <div>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 block mb-2">Status</label>
+                        <Select
+                            options={[
+                                { value: 'all', label: 'All Transactions' },
+                                { value: 'true', label: 'Reconciled Only' },
+                                { value: 'false', label: 'Unreconciled Only' },
+                            ]}
                             value={filters.reconciled}
-                            onChange={(e) => setFilters({ ...filters, reconciled: e.target.value })}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-bold text-sm"
-                        >
-                            <option value="all">All Transactions</option>
-                            <option value="true">Reconciled Only</option>
-                            <option value="false">Unreconciled Only</option>
-                        </select>
+                            onChange={(value) => setFilters({ ...filters, reconciled: typeof value === 'string' ? value : value[0] })}
+                        />
                     </div>
                     <div className="flex items-end">
-                        <button
+                        <Button
+                            variant="secondary"
+                            size="md"
                             onClick={() => setFilters({ startDate: '', endDate: '', reconciled: 'all' })}
-                            className="w-full py-3 border border-slate-200 dark:border-slate-800 text-slate-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                            fullWidth
                         >
                             Clear Parameters
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -197,24 +188,15 @@ const AccountLedger: React.FC = () => {
                 <div className="bg-primary-soft dark:bg-primary-soft border border-primary/30 dark:border-primary/30 rounded-[2rem] p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in">
                     <span className="text-primary dark:text-primary font-black uppercase tracking-tight text-sm">{selectedTxns.length} transaction(s) targeted</span>
                     <div className="flex flex-wrap gap-2">
-                        <button
-                            onClick={() => bulkReconcile(true)}
-                            className="px-6 py-2.5 bg-success text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-100 dark:shadow-none hover:bg-success/90 transition-all"
-                        >
+                        <Button variant="success" size="md" onClick={() => bulkReconcile(true)}>
                             Mark Reconciled
-                        </button>
-                        <button
-                            onClick={() => bulkReconcile(false)}
-                            className="px-6 py-2.5 bg-slate-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:bg-slate-700 transition-all"
-                        >
+                        </Button>
+                        <Button variant="secondary" size="md" onClick={() => bulkReconcile(false)}>
                             Mark Unreconciled
-                        </button>
-                        <button
-                            onClick={() => setSelectedTxns([])}
-                            className="px-6 py-2.5 border border-primary/30 text-primary rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all"
-                        >
+                        </Button>
+                        <Button variant="outline" size="md" onClick={() => setSelectedTxns([])}>
                             Clear Selection
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}
@@ -268,7 +250,7 @@ const AccountLedger: React.FC = () => {
                                         <td className="px-6 py-4 max-w-md">
                                             <p className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight truncate">{txn.description || 'No Narrative Data'}</p>
                                             {txn.reference && (
-                                                <span className="inline-block mt-1 px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md text-[9px] font-black text-slate-400 uppercase tracking-widest">Ref: {txn.reference}</span>
+                                                <span className="inline-block mt-1 px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Ref: {txn.reference}</span>
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-black text-danger">
@@ -292,12 +274,14 @@ const AccountLedger: React.FC = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">
-                                            <button
+                                            <Button
+                                                variant="tertiary"
+                                                size="sm"
+                                                className={txn.reconciled ? 'text-slate-400 hover:text-danger' : 'text-primary'}
                                                 onClick={() => toggleReconcile(txn._id)}
-                                                className={`p-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${txn.reconciled ? 'text-slate-400 hover:text-danger hover:bg-danger-soft' : 'text-primary hover:bg-primary-soft'}`}
                                             >
                                                 {txn.reconciled ? 'Revoke CLEAR' : 'Execute CLEAR'}
-                                            </button>
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))

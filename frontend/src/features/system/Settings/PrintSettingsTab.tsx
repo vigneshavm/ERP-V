@@ -1,6 +1,7 @@
 import React from 'react';
 import { Printer, FileText, Hash } from 'lucide-react';
-import { PrintSettingsTabProps } from './types';
+import { PrintSettingsTabProps } from './types';import { Input } from '@/components/shared/Input';
+
 
 const PrintSettingsTab: React.FC<PrintSettingsTabProps> = ({ printSettings, setPrintSettings }) => {
     return (

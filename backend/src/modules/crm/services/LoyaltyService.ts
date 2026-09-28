@@ -1,6 +1,7 @@
 import Customer from "../models/Customer.js";
 import LoyaltyTransaction from "../models/LoyaltyTransaction.js";
 import ConfigService from "../../core/services/ConfigService.js";
+import type { TenantRef } from '../../../interfaces/TenantRef.js';
 
 export class LoyaltyService {
     /**
@@ -24,7 +25,7 @@ export class LoyaltyService {
      * Award loyalty points to a customer upon successful invoice payment
      */
     static async earnPoints(
-        tenantId: string,
+        tenantId: TenantRef,
         customerId: string,
         invoiceId: string,
         spendAmount: number,
@@ -58,7 +59,7 @@ export class LoyaltyService {
      * Redeem customer loyalty points at checkout
      */
     static async redeemPoints(
-        tenantId: string,
+        tenantId: TenantRef,
         customerId: string,
         invoiceId: string,
         pointsToRedeem: number,

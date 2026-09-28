@@ -7,40 +7,20 @@ import LoanPayment from "../models/LoanPayment.js";
 import Cheque from "../models/Cheque.js";
 import Bill from "../models/Bill.js";
 import BankStatementTransaction from "../models/BankStatementTransaction.js";
-import User from "../../core/models/User.js";
 import { buildCashFlow } from "./FinanceReportService.js";
 import {
-    ALERT_RULES, addDays, buildAlerts, cashPosition, daysBetween, lastCount, loanRow, reconciliationSummary, suggestMatches,
+    ALERT_RULES, buildAlerts, cashPosition, lastCount, loanRow, reconciliationSummary, suggestMatches,
     type LedgerEntry, type LoanRow, type StatementLine,
 } from "./cashBankMath.js";
+import { todayIst, istStart, istEndExclusive, addDays, daysBetween, dateOf } from "../../../utils/dateUtils.js";
+import { toNumber as n, round2 } from "../../../utils/typeConversion.js";
+import { tenantKey, tenantUsers } from "../../../utils/mongooseUtils.js";
 
 /**
  * Cash & bank overview (Finance > Overview) and bank reconciliation, from the ERP's own records plus the shop's
  * cash sales (through the Cash Flow report). Everything is for the whole shop (all users of the tenant): the
  * older cash-bank endpoints only look at the signed-in user's records.
  */
-
-const IST_OFFSET_MS = 5.5 * 3_600_000;
-const istDate = (d: Date): string => new Date(d.getTime() + IST_OFFSET_MS).toISOString().slice(0, 10);
-const todayIst = () => istDate(new Date());
-const istStart = (d: string) => new Date(`${d}T00:00:00+05:30`);
-const istEndExclusive = (d: string) => new Date(istStart(d).getTime() + 86_400_000);
-const tenantKey = (tenantId: string) => (mongoose.Types.ObjectId.isValid(tenantId) ? new mongoose.Types.ObjectId(tenantId) : tenantId);
-const n = (v: unknown): number => {
-    const x = Number(v);
-    return Number.isFinite(x) ? x : 0;
-};
-const round2 = (v: number) => Math.round(v * 100) / 100;
-const dateOf = (v: unknown): string | null => {
-    const d = v instanceof Date ? v : v ? new Date(String(v)) : null;
-    return d && !Number.isNaN(d.getTime()) ? istDate(d) : null;
-};
-
-async function tenantUsers(tenantId: string) {
-    const users = await User.find({ tenantId: tenantKey(tenantId) }, { _id: 1 }).lean();
-    const ids = users.map((u) => u._id as mongoose.Types.ObjectId);
-    return { ids, strings: ids.map(String) };
-}
 
 /* ---------------------------------------------------------------------------------------------------- Overview */
 

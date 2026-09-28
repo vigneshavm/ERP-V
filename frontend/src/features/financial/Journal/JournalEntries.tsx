@@ -7,6 +7,7 @@ import PageHeader from '../../../components/shared/Layout/PageHeader';
 import { Plus, Search, Filter, Calendar as CalendarIcon, FileText, ChevronRight, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button, Input } from '@/components/shared';
 
 const JournalEntries: React.FC = () => {
     const dispatch = useDispatch<any>();
@@ -45,15 +46,17 @@ const JournalEntries: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex gap-3">
-                            <button className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
-                                <Download className="w-4 h-4" /> Export Ledger
-                            </button>
-                            <button
+                            <Button variant="secondary" size="md" icon={<Download className="w-4 h-4" />}>
+                                Export Ledger
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                icon={<Plus className="w-4 h-4" />}
                                 onClick={() => navigate('/finance/journal/new')}
-                                className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"
                             >
-                                <Plus className="w-4 h-4" /> New Entry
-                            </button>
+                                New Entry
+                            </Button>
                         </div>
                     }
                 />
@@ -61,19 +64,15 @@ const JournalEntries: React.FC = () => {
                 {/* Search & Stats Pulse */}
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-white dark:bg-slate-800 p-4 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm">
                     <div className="relative flex-1 w-full">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <input
-                            type="text"
+                        <Input
                             placeholder="Search by description or reference code..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-12 pr-6 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-sm focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                            icon={<Search className="w-4 h-4 text-slate-400" />}
                         />
                     </div>
                     <div className="flex gap-3 shrink-0">
-                        <button className="p-3 bg-slate-50 dark:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 rounded-sm text-slate-500 transition shadow-sm">
-                            <Filter className="w-5 h-5" />
-                        </button>
+                        <Button variant="secondary" size="md" icon={<Filter className="w-5 h-5" />} />
                     </div>
                 </div>
 

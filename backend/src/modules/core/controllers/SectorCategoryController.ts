@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import BusinessSector from '../models/BusinessSector.js';
 import ProductCategoryModel from '../../inventory/models/ProductCategory.js';
 import { SECTOR_CATEGORY_SEED_DATA, SECTOR_SHORT_CODES } from '../data/sectorCategorySeedData.js';
+import { warn } from '../../../config/logger.js';
 
 // Fallback dataset guarantees zero offline failure. Both the sector list and
 // the per-sector category list are derived from the same
@@ -63,7 +64,7 @@ export const getBusinessSectors = async (_req: Request, res: Response): Promise<
             return;
         }
     } catch (error) {
-        console.warn('MongoDB connection unavailable, using seeded fallback Business Sectors');
+        warn('MongoDB connection unavailable, using seeded fallback Business Sectors');
     }
     res.status(200).json({ success: true, data: FALLBACK_SECTORS });
 };
@@ -95,7 +96,7 @@ export const getProductCategories = async (req: Request, res: Response): Promise
             return;
         }
     } catch (error) {
-        console.warn('MongoDB connection unavailable, using seeded fallback Product Categories');
+        warn('MongoDB connection unavailable, using seeded fallback Product Categories');
     }
 
     // Fallback logic by sectorName or sectorId

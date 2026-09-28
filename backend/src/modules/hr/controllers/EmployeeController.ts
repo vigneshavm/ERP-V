@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import Employee from '../models/Employee.js';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * @swagger
@@ -25,10 +26,10 @@ import Employee from '../models/Employee.js';
  *       201:
  *         description: Employee created successfully
  */
-export const addEmployee = async (req: Request, res: Response) => {
+export const addEmployee = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { name, role, roleId, mobile, dailyRate, baseSalary, wageType, joiningDate, branchId, sector } = req.body;
-        const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+        const tenantId = req.user.tenantId;
 
         if (!tenantId) {
             return res.status(401).json({ success: false, message: 'Tenant context missing' });
@@ -78,9 +79,9 @@ export const addEmployee = async (req: Request, res: Response) => {
  *       200:
  *         description: List of employees retrieved
  */
-export const getEmployees = async (req: Request, res: Response) => {
+export const getEmployees = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+        const tenantId = req.user.tenantId;
 
         if (!tenantId) {
             return res.status(401).json({ success: false, message: 'Tenant context missing' });
@@ -100,10 +101,10 @@ export const getEmployees = async (req: Request, res: Response) => {
     }
 };
 
-export const updateEmployee = async (req: Request, res: Response) => {
+export const updateEmployee = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { id } = req.params;
-        const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+        const tenantId = req.user.tenantId;
         const updateData = req.body;
 
         const employee = await Employee.findOneAndUpdate(
@@ -128,10 +129,10 @@ export const updateEmployee = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteEmployee = async (req: Request, res: Response) => {
+export const deleteEmployee = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { id } = req.params;
-        const tenantId = (req as any).tenantId || (req as any).user?.tenantId;
+        const tenantId = req.user.tenantId;
 
         // Perform soft delete
         const employee = await Employee.findOneAndUpdate(

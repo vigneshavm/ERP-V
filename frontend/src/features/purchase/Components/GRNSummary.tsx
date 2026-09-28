@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Info, Camera, Plus, FileText, Trash2 } from 'lucide-react';
-import { GRNItem } from "../../../types/purchase";
+import { GRNItem } from "../../../types/purchase";import { Button } from '@/components/shared/Button';
+
 
 interface GRNSummaryProps {
     items?: GRNItem[];
@@ -66,7 +67,7 @@ const GRNSummary: React.FC<GRNSummaryProps> = ({
                     <FileText className="w-5 h-5 text-primary" /> Discrepancy Notes
                 </h3>
                 <textarea
-                    className="w-full p-4 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-sm text-sm focus:ring-2 focus:ring-primary outline-none min-h-[120px]"
+                    className="w-full p-4 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-sm text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary dark:focus:ring-indigo-400 outline-none min-h-[120px]"
                     placeholder="Any shortages, damages, or notes from the delivery..."
                     value={notes || ''}
                     onChange={e => onNotesChange(e.target.value)}

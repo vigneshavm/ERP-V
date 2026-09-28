@@ -9,6 +9,8 @@ import {
 import api from "../../services/api";
 import { PurchaseReturn, PurchaseReturnStatus } from "../../types/purchase";
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 const PurchaseReturns: React.FC = () => {
     const navigate = useNavigate();
@@ -110,12 +112,7 @@ const PurchaseReturns: React.FC = () => {
                         { label: 'Returns Archive' }
                     ]}
                     actions={
-                        <button
-                            onClick={() => navigate('/purchase/returns/new')}
-                            className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition hover:scale-105 active:scale-95 flex items-center gap-3"
-                        >
-                            <RotateCcw className="w-4 h-4" /> New return
-                        </button>
+                        <Button onClick={() => navigate('/purchase/returns/new')} className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition hover:scale-105 active:scale-95 flex items-center gap-3"><RotateCcw className="w-4 h-4" /> New return</Button>
                     }
                 />
                 {loadError && (
@@ -130,7 +127,7 @@ const PurchaseReturns: React.FC = () => {
                         { label: 'Floating Credits', val: formatCurrency(stats.pendingAmount), icon: Clock, color: 'text-warning', bg: 'bg-warning-soft' },
                         { label: 'Resolved (Credited)', val: stats.total - returns.filter(r => r.status !== 'Credited').length, icon: ShieldCheck, color: 'text-primary', bg: 'bg-primary-soft' }
                     ].map((card, i) => (
-                        <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
+                        <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
                                 <div className={`p-4 ${card.bg} ${card.color} rounded-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
                                     <card.icon className="w-6 h-6" />

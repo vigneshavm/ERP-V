@@ -2,6 +2,17 @@ import { Request, Response, NextFunction } from "express";
 import AuditLog from "../modules/core/models/AuditLog.js";
 import { error as logError } from "../utils/logger.js";
 
+declare global {
+    namespace Express {
+        interface Request {
+            /** Snapshots controllers attach for the audit log (before/after an update, or the deleted record). */
+            originalEntity?: unknown;
+            updatedEntity?: unknown;
+            deletedEntity?: unknown;
+        }
+    }
+}
+
 /**
  * Log audit trail for critical operations
  */

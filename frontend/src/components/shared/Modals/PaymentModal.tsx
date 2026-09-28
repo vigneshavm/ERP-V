@@ -1,5 +1,6 @@
-﻿import React from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { XCircle } from 'lucide-react';
+import api from '../../../services/api';
 
 interface PaymentModalProps {
     isOpen: boolean;
@@ -10,6 +11,13 @@ interface PaymentModalProps {
     paidAmount: number;
 }
 
+interface BankAccountOption {
+    _id: string;
+    bankName?: string;
+    accountNumber?: string;
+    currentBalance?: number;
+}
+
 const PaymentModal: React.FC<PaymentModalProps> = ({
     isOpen,
     onClose,
@@ -18,6 +26,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     totalAmount,
     paidAmount
 }) => {
+    const [paymentMethod, setPaymentMethod] = useState('cash');
+    const [bankAccounts, setBankAccounts] = useState<BankAccountOption[]>([]);
+
+    // Bank accounts are only needed once the user picks Bank Transfer; fetched lazily so this
+    // shared modal doesn't hit the API for every payment regardless of method.
+    useEffect(() => {
+        if (!isOpen || paymentMethod !== 'bank_transfer' || bankAccounts.length) return;
+        api.get('/api/cashbank/accounts')
+            .then(({ data }) => setBankAccounts((Array.isArray(data) ? data : data?.data ?? []).filter((acc: any) => acc.status === 'active')))
+            .catch(() => setBankAccounts([]));
+    }, [isOpen, paymentMethod, bankAccounts.length]);
+
     if (!isOpen) return null;
 
     const remainingAmount = totalAmount - paidAmount;
@@ -25,9 +45,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
+        const amount = parseFloat(formData.get('amount') as string);
         onSubmit({
-            amount: parseFloat(formData.get('amount') as string),
-            paymentMethod: formData.get('paymentMethod'),
+            amount,
+            // Consumers disagree on the field name for the same value (SalesService.markAsPaid
+            // expects `amount`, BillController.updateBillPayment expects `paidAmount`) -- send both.
+            paidAmount: amount,
+            paymentMethod,
+            bankAccount: paymentMethod === 'bank_transfer' ? (formData.get('bankAccount') as string) : undefined,
             paymentDate: formData.get('paymentDate'),
             notes: formData.get('notes')
         });
@@ -87,15 +112,35 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                             <label className="label-sm text-slate-400 mb-1 block">Method</label>
                             <select
                                 name="paymentMethod"
+                                value={paymentMethod}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
                                 className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold"
                                 required
                             >
-                                <option value="Cash">Cash</option>
-                                <option value="Bank Transfer">Bank Transfer</option>
-                                <option value="UPI">UPI</option>
-                                <option value="Cheque">Cheque</option>
+                                <option value="cash">Cash</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="upi">UPI</option>
+                                <option value="cheque">Cheque</option>
                             </select>
                         </div>
+
+                        {paymentMethod === 'bank_transfer' && (
+                            <div>
+                                <label className="label-sm text-slate-400 mb-1 block">Bank Account</label>
+                                <select
+                                    name="bankAccount"
+                                    className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold"
+                                    required
+                                >
+                                    <option value="">Choose Bank Account</option>
+                                    {bankAccounts.map((acc) => (
+                                        <option key={acc._id} value={acc._id}>
+                                            {acc.bankName} - ****{acc.accountNumber?.slice(-4)} (₹{acc.currentBalance?.toLocaleString()})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
 
                         <div>
                             <label className="label-sm text-slate-400 mb-1 block">Notes</label>

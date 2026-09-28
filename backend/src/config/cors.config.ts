@@ -1,4 +1,5 @@
 import { CorsOptions } from "cors";
+import { error as logError, warn } from './logger.js';
 
 /**
  * Enhanced CORS configuration for production
@@ -68,7 +69,7 @@ const isAllowedOrigin = async (origin: string | undefined): Promise<boolean> => 
 
         return !!tenant;
     } catch (error) {
-        console.error('Error checking dynamic CORS origin:', error);
+        logError('Error checking dynamic CORS origin:', error);
         return false;
     }
 };
@@ -83,7 +84,7 @@ export const corsOptions: CorsOptions = {
             if (allowed) {
                 callback(null, true);
             } else {
-                console.warn(`CORS blocked request from origin: ${origin}`);
+                warn(`CORS blocked request from origin: ${origin}`);
                 callback(new Error(`CORS not allowed from origin: ${origin}`));
             }
         } catch (error: any) {

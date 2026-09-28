@@ -15,6 +15,7 @@ import {
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/shared/Button';
 
 interface PurchaseUploadProps {
     handleFileUpload?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -149,7 +150,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
             {mode === 'AI' ? (
                 /* AI UPLOAD VIEW (Original Functionality Enhanced) */
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="bg-success/30 dark:bg-success-soft p-10 rounded-[2.5rem] border-2 border-success-line dark:border-success/30 border-dashed text-center transition-all hover:bg-success-soft dark:hover:bg-success-soft group relative overflow-hidden">
+                    <div className="bg-success/30 dark:bg-success-soft p-10 rounded-2xl border-2 border-success-line dark:border-success/30 border-dashed text-center transition-all hover:bg-success-soft dark:hover:bg-success-soft group relative overflow-hidden">
                         <input
                             type="file"
                             id="invoiceUpload"
@@ -204,13 +205,8 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 font-medium">
                                     Download our official template to ensure your data format matches our system.
                                 </p>
-                                <button
-                                    onClick={downloadPurchaseTemplate}
-                                    className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-slate-900 dark:bg-slate-700 text-white rounded-sm text-xs font-black uppercase tracking-wider hover:bg-slate-800 transition-all shadow-lg active:scale-95"
-                                >
-                                    <FileSpreadsheet className="w-4 h-4" />
-                                    Download Template
-                                </button>
+                                <Button onClick={downloadPurchaseTemplate} className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-slate-900 dark:bg-slate-700 text-white rounded-sm text-xs font-black uppercase tracking-wider hover:bg-slate-800 transition-all shadow-lg active:scale-95"><FileSpreadsheet className="w-4 h-4" />
+                                    Download Template</Button>
                             </div>
 
                             <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm">
@@ -351,12 +347,7 @@ const PurchaseUpload: React.FC<PurchaseUploadProps> = ({
                                                     <span className="text-xs font-black text-success dark:text-success">₹{parseFloat(String(res.row['Rate'] || 0)).toLocaleString()}</span>
                                                 </td>
                                                 <td className="px-6 py-4 text-center">
-                                                    <button
-                                                        onClick={() => removeBulkRow(idx)}
-                                                        className="p-2 text-slate-300 hover:text-danger transition-colors"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
+                                                    <Button onClick={() => removeBulkRow(idx)} className="p-2 text-slate-300 hover:text-danger transition-colors"><Trash2 className="w-4 h-4" /></Button>
                                                 </td>
                                             </tr>
                                         ))}

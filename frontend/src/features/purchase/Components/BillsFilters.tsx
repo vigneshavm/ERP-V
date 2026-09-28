@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import { Search } from 'lucide-react';
+import { Card, Input, Select } from '../../../components/shared';
 
 interface Props {
     searchTerm: string;
@@ -8,35 +9,38 @@ interface Props {
     onStatusFilterChange: (value: string) => void;
 }
 
+const STATUS_OPTIONS = [
+    { value: 'all', label: 'All Status' },
+    { value: 'Received', label: 'Received' },
+    { value: 'Matched', label: 'Matched' },
+    { value: 'Approved', label: 'Approved' },
+    { value: 'Paid', label: 'Paid' },
+    { value: 'Disputed', label: 'Disputed' },
+    { value: 'Hold', label: 'On Hold' },
+];
+
 const BillsFilters: React.FC<Props> = ({ searchTerm, onSearchChange, statusFilter, onStatusFilterChange }) => {
     return (
-        <div className="bg-white dark:bg-[rgb(var(--color-card))] border dark:border-[rgb(var(--color-border))] rounded-sm p-4">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div className="w-full sm:w-96 relative">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input
-                        type="text"
-                        placeholder="Search bill # or supplier..."
-                        value={searchTerm}
-                        onChange={(e) => onSearchChange(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
+        <Card variant="default" size="md">
+            <Card.Body>
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div className="w-full sm:w-96">
+                        <Input
+                            type="text"
+                            placeholder="Search bill # or supplier..."
+                            value={searchTerm}
+                            onChange={(e) => onSearchChange(e.target.value)}
+                            icon={<Search className="w-4 h-4 text-slate-400" />}
+                        />
+                    </div>
+                    <Select
+                        options={STATUS_OPTIONS}
+                        value={statusFilter}
+                        onChange={(value) => onStatusFilterChange(typeof value === 'string' ? value : value[0])}
                     />
                 </div>
-                <select
-                    value={statusFilter}
-                    onChange={(e) => onStatusFilterChange(e.target.value)}
-                    className="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
-                >
-                    <option value="all">All Status</option>
-                    <option value="Received">Received</option>
-                    <option value="Matched">Matched</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Disputed">Disputed</option>
-                    <option value="Hold">On Hold</option>
-                </select>
-            </div>
-        </div>
+            </Card.Body>
+        </Card>
     );
 };
 

@@ -10,6 +10,7 @@ import GRNFilters from './Components/GRNFilters';
 import GRNTable from './Components/GRNTable';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { Button } from '@/components/shared/Button';
 
 const GoodsReceived: React.FC = () => {
     const navigate = useNavigate();
@@ -25,15 +26,10 @@ const GoodsReceived: React.FC = () => {
                     description={`Track incoming shipments and receiving verification • ${getBranchName(currentBranch)}`}
                     actions={
                         <>
-                            <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                            <button className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center gap-2">
                                 <Download className="w-4 h-4" /> Export
                             </button>
-                            <button
-                                onClick={() => navigate('/purchase/grn/new')}
-                                className="px-4 py-2 bg-success text-white rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"
-                            >
-                                <Plus className="w-4 h-4" /> Receive Goods
-                            </button>
+                            <Button onClick={() => navigate('/purchase/grn/new')} className="px-4 py-2 bg-success text-white rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"><Plus className="w-4 h-4" /> Receive Goods</Button>
                         </>
                     }
                 />

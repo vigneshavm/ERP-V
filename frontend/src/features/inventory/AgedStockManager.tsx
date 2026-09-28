@@ -4,6 +4,7 @@ import Layout from "../../components/shared/Layout/index";
 import { SortTh } from "../reports/components/SortTh";
 import { useSort } from "../reports/hooks/useReportData";
 import { AlertCircle, CalendarDays, ChevronLeft, ChevronRight, Clock, Info, Package, RefreshCw, Search, Truck, X } from 'lucide-react';
+import { Input } from '@/components/shared/Input';
 
 /**
  * Aged Stock -- "purchased but not sold", grouped by calendar month of purchase.
@@ -186,7 +187,7 @@ const AgedStockManager: React.FC = () => {
                     <button
                         onClick={() => load(true)}
                         disabled={loading}
-                        className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm font-bold flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm transition disabled:opacity-50"
+                        className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm font-bold flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm transition disabled:opacity-50 dark:text-slate-100"
                     >
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
                     </button>
@@ -290,13 +291,7 @@ const AgedStockManager: React.FC = () => {
                 <div className="flex flex-col lg:flex-row gap-3">
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <input
-                            type="text"
-                            placeholder="Search product, barcode or supplier..."
-                            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium"
-                            value={searchInput}
-                            onChange={(e) => setSearchInput(e.target.value)}
-                        />
+                        <Input type="text" placeholder="Search product, barcode or supplier..." className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-sm outline-none focus:ring-2 focus:ring-primary/20 transition shadow-sm font-medium" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
                     </div>
                     <div className="flex flex-wrap items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm px-3 py-2 shadow-sm">
                         <CalendarDays className="w-4 h-4 text-slate-400" />

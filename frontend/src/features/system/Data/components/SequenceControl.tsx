@@ -1,3 +1,4 @@
+import { Button } from '@/components/shared/Button';
 ﻿import React, { useState } from 'react';
 import {
     Hash,
@@ -122,9 +123,7 @@ const SequenceControl: React.FC = () => {
                             ))}
                         </div>
 
-                        <button className="w-full mt-6 py-3 bg-primary text-white rounded-sm font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all">
-                            Run Full Audit Trace
-                        </button>
+                        <Button className="w-full mt-6 py-3 bg-primary text-white rounded-sm font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all">Run Full Audit Trace</Button>
                     </div>
 
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm border-l-4 border-l-emerald-500">

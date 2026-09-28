@@ -8,6 +8,7 @@ import { validateMapping } from "../integrations/textilesoft/mapping.js";
 import { loadDbConfig, openPool } from "../integrations/textilesoft/shopDbReader.js";
 import { runSync } from "../integrations/textilesoft/syncService.js";
 import type { StockMode } from "../integrations/textilesoft/types.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -63,8 +64,8 @@ async function main() {
         const { errors, ...counts } = report;
         console.table(counts);
         if (errors.length) {
-            console.log(`${errors.length} issue(s); first 20:`);
-            errors.slice(0, 20).forEach((e) => console.log(`  ${e.row ? `row ${e.row}: ` : ""}${e.message}`));
+            info(`${errors.length} issue(s); first 20:`);
+            errors.slice(0, 20).forEach((e) => info(`  ${e.row ? `row ${e.row}: ` : ""}${e.message}`));
         }
         if (dryRun) console.log("\nDry run: nothing was written to the ERP database.");
     } finally {

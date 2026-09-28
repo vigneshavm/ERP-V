@@ -20,6 +20,7 @@ import PageHeader from "../../components/shared/Layout/PageHeader";
 import SupplierSubNav from './SupplierSubNav';
 import AgentModal from "../../components/suppliers/AgentModal";
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Input } from '@/components/shared/Input';
 
 const Agents: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();

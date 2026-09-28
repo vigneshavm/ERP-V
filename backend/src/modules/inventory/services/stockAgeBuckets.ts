@@ -9,6 +9,9 @@
  * Pure functions only -- no DB access -- so the SQL and Mongo paths share the exact same bucketing.
  */
 
+import { round2 } from "../../../utils/typeConversion.js";
+import { resolveTablePagination } from "../../../utils/paginationUtils.js";
+
 export type StockAgeBucketKey = "0" | "1" | "2" | "3" | "4" | "5" | "6-11" | "12+" | "unknown";
 
 export const STOCK_AGE_BUCKETS: { key: StockAgeBucketKey; from: number | null; to: number | null }[] = [
@@ -109,7 +112,6 @@ export interface StockAgeSummaryBucket {
 }
 
 const round3 = (n: number): number => Math.round(n * 1000) / 1000;
-const round2 = (n: number): number => Math.round(n * 100) / 100;
 
 /** Adds age, bucket and value to each lot with stock left; drops lots with nothing remaining. */
 export function classifyLots(lots: StockAgeLot[], asOf: string): StockAgeRow[] {
@@ -306,9 +308,7 @@ export function pageRows(rows: StockAgeRow[], q: StockAgeQuery): { items: StockA
             const c = blank(va) ? 0 : typeof va === "number" && typeof vb === "number" ? va - vb : String(va).localeCompare(String(vb), undefined, { numeric: true, sensitivity: "base" });
             return c * sign || a.barcode.localeCompare(b.barcode);
         });
-    const limit = Math.min(200, Math.max(1, parseInt(String(q.limit)) || 50));
-    const pages = Math.max(1, Math.ceil(filtered.length / limit));
-    const page = Math.min(pages, Math.max(1, parseInt(String(q.page)) || 1));
+    const { page, limit, pages } = resolveTablePagination(filtered.length, q);
     return {
         items: filtered.slice((page - 1) * limit, page * limit),
         pagination: { page, limit, total: filtered.length, pages },

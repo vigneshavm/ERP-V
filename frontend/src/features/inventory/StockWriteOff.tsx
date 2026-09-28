@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Search, Package, Loader2, CheckCircle2 } from 'lucide-react';
 import api from '@/services/api';
-import PageHeader from '@/components/shared/Layout/PageHeader';
+import PageHeader from '@/components/shared/Layout/PageHeader';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface ItemOption {
     _id: string;
@@ -110,7 +112,7 @@ const StockWriteOff: React.FC = () => {
                                     <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedItem.name}</p>
                                     <p className="text-xs text-slate-500">{selectedItem.sku || '—'} · In stock: {selectedItem.stockQty}</p>
                                 </div>
-                                <button type="button" onClick={() => setSelectedItem(null)} className="text-xs font-bold text-primary">Change</button>
+                                <Button type="button" onClick={() => setSelectedItem(null)} className="text-xs font-bold text-primary">Change</Button>
                             </div>
                         ) : (
                             <div className="relative mt-1">

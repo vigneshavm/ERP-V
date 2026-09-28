@@ -3,6 +3,8 @@ import { Shield, Zap, CheckCircle, Smartphone, AlertTriangle, Link as LinkIcon, 
 
 import { WhatsAppService } from "../../../services/whatsappService";
 import { getColorClasses } from "../../../utils/tailwindColorClasses";
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 const IntegrationsTab: React.FC = () => {
     const [isVerifying, setIsVerifying] = useState(false);
@@ -67,7 +69,7 @@ const IntegrationsTab: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-sm">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-sm">
                     <div className="grid lg:grid-cols-3 gap-12">
                         <div className="lg:col-span-1 space-y-8">
                             {/* Configuration Form */}
@@ -116,7 +118,7 @@ const IntegrationsTab: React.FC = () => {
                                 <button
                                     onClick={handleTestConnection}
                                     disabled={isVerifying}
-                                    className="flex items-center justify-center gap-2 w-full py-4 bg-primary hover:bg-primary-hover text-white rounded-[1.25rem] text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-200 dark:shadow-none active:scale-95 disabled:opacity-50"
+                                    className="flex items-center justify-center gap-2 w-full py-4 bg-primary hover:bg-primary-hover text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-200 dark:shadow-none active:scale-95 disabled:opacity-50"
                                 >
                                     {isVerifying ? (
                                         'VERIFYING...'

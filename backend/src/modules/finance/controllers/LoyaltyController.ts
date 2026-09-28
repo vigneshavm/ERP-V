@@ -1,17 +1,10 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 import { singleton } from 'tsyringe';
 import Customer from '../../crm/models/Customer.js';
 import LoyaltyTransaction from '../models/LoyaltyTransaction.js';
 import { error } from '../../../config/logger.js';
-
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 @singleton()
 export class LoyaltyController {
@@ -53,7 +46,7 @@ export class LoyaltyController {
 
             const customer = await Customer.findOne({
                 _id: id as string,
-                owner: req.user?._id
+                $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}]
             }).select('name points tier');
 
             if (!customer) {
@@ -102,7 +95,7 @@ export class LoyaltyController {
 
             const transactions = await LoyaltyTransaction.find({
                 customer: id as string,
-                owner: req.user?._id
+                tenantId: req.user.tenantId
             }).sort({ createdAt: -1 });
 
             res.status(200).json(transactions);
@@ -157,7 +150,7 @@ export class LoyaltyController {
 
             const customer = await Customer.findOne({
                 _id: customerId,
-                owner: req.user?._id
+                $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}]
             });
 
             if (!customer) {
@@ -182,7 +175,7 @@ export class LoyaltyController {
                 type: type || (points >= 0 ? 'BONUS' : 'REDEEMED'),
                 points: Math.abs(points),
                 description: description || 'Manual adjustment',
-                owner: req.user?._id
+                tenantId: req.user.tenantId
             });
 
             res.status(200).json({

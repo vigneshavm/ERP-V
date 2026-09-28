@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { quoteTable } from "../integrations/textilesoft/mapping.js";
 import { discoverSchema, suggestMapping } from "../integrations/textilesoft/schemaDiscovery.js";
 import { loadDbConfig, openPool, queryAll } from "../integrations/textilesoft/shopDbReader.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -34,10 +35,10 @@ async function main() {
 
         const tables = await discoverSchema(pool);
         const top = Number(values.top);
-        console.log(`Found ${tables.length} tables. Most likely product/stock tables:\n`);
+        info(`Found ${tables.length} tables. Most likely product/stock tables:\n`);
         for (const t of tables.slice(0, top)) {
-            console.log(`  [score ${String(t.score).padStart(2)}] ${t.table}  (${t.rows >= 0 ? t.rows : "?"} rows)`);
-            console.log(`             ${t.columns.map((c) => c.name).join(", ")}`);
+            info(`  [score ${String(t.score).padStart(2)}] ${t.table}  (${t.rows >= 0 ? t.rows : "?"} rows)`);
+            info(`             ${t.columns.map((c) => c.name).join(", ")}`);
         }
 
         const outDir = path.resolve(process.cwd(), values.out as string);
@@ -46,7 +47,7 @@ async function main() {
         if (tables[0]) {
             fs.writeFileSync(path.join(outDir, "textilesoft.mapping.suggested.json"), JSON.stringify(suggestMapping(tables[0]), null, 2));
         }
-        console.log(`\nWrote ${outDir}${path.sep}schema-report.json and textilesoft.mapping.suggested.json`);
+        info(`\nWrote ${outDir}${path.sep}schema-report.json and textilesoft.mapping.suggested.json`);
         console.log("Next: verify with  --sample <schema.table>, then copy/edit the suggestion to textilesoft.mapping.json");
     } finally {
         await pool.close();

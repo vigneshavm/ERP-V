@@ -4,7 +4,8 @@ import { Mail, ArrowRight, LifeBuoy } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
 import AuthAlert from '../components/AuthAlert';
 import AuthInput from '../components/AuthInput';
-import { useForgotPasswordForm } from '../hooks/useForgotPasswordForm';
+import { useForgotPasswordForm } from '../hooks/useForgotPasswordForm';import { Button } from '@/components/shared/Button';
+
 
 const ForgotPassword: React.FC = () => {
     const { form, onSubmit, isLoading, isError, isSuccess, message } = useForgotPasswordForm();

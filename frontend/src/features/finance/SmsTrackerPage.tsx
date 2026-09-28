@@ -2,6 +2,7 @@
 import { MessageSquare, RefreshCw, Layers, History, CheckCircle2, AlertCircle, Plus, Zap } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { Button, Card, Input } from '@/components/shared';
 import SmsTransactionCard from '../../components/Finance/SmsTransactionCard';
 import ExpenseForm from '../../components/Finance/ExpenseForm';
 import { useExpenses } from '../../hooks/useExpenses';
@@ -95,25 +96,29 @@ const SmsTrackerPage: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex gap-3">
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                icon={<Plus className="w-4 h-4" />}
                                 onClick={() => setIsExpenseFormOpen(true)}
-                                className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest"
                             >
-                                <Plus className="w-4 h-4" /> Manual Record
-                            </button>
-                            <button
+                                Manual Record
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                icon={<MessageSquare className="w-4 h-4" />}
                                 onClick={() => setShowTestInput(!showTestInput)}
-                                className="px-5 py-2.5 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-xl text-xs font-black shadow-xl flex items-center gap-2 hover:opacity-90 transition active:scale-95 uppercase tracking-widest"
                             >
-                                <MessageSquare className="w-4 h-4" /> Capture SMS
-                            </button>
-                            <button
+                                Capture SMS
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                icon={<RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />}
                                 onClick={fetchTransactions}
                                 disabled={isRefreshing}
-                                className="p-2.5 bg-primary text-white rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 disabled:opacity-50"
-                            >
-                                <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                            </button>
+                            />
                         </div>
                     }
                 />
@@ -136,12 +141,11 @@ const SmsTrackerPage: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 <div className="md:col-span-1">
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Sender</label>
-                                    <input
+                                    <Input
                                         type="text"
                                         value={testSender}
                                         onChange={(e) => setTestSender(e.target.value)}
                                         placeholder="e.g., HDFCBK"
-                                        className="w-full bg-slate-900 border border-slate-800 rounded-sm px-5 py-3 text-sm focus:ring-2 focus:ring-primary/40 transition-all font-mono font-bold tracking-tighter uppercase"
                                     />
                                 </div>
                                 <div className="md:col-span-3">
@@ -155,8 +159,20 @@ const SmsTrackerPage: React.FC = () => {
                                 </div>
                             </div>
                             <div className="flex justify-end gap-4">
-                                <button onClick={() => setShowTestInput(false)} className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Abort Capture</button>
-                                <button onClick={handleTestSubmit} className="px-8 py-2.5 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Save SMS</button>
+                                <Button
+                                    variant="secondary"
+                                    size="md"
+                                    onClick={() => setShowTestInput(false)}
+                                >
+                                    Abort Capture
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    size="md"
+                                    onClick={handleTestSubmit}
+                                >
+                                    Save SMS
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -164,39 +180,45 @@ const SmsTrackerPage: React.FC = () => {
 
                 {/* KPI Pulse Node Row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6 group hover:border-warning/30 transition-all duration-500">
-                        <div className="w-16 h-16 bg-warning/10 text-warning rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                            <Layers className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
-                                {transactions.filter((t: any) => t.status === 'pending').length}
+                    <Card variant="default" size="md" className="flex items-center gap-6 group hover:border-warning/30">
+                        <Card.Body className="flex items-center gap-6 p-8">
+                            <div className="w-16 h-16 bg-warning/10 text-warning rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                                <Layers className="w-8 h-8" />
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Pending</div>
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6 group hover:border-success/30 transition-all duration-500">
-                        <div className="w-16 h-16 bg-success/10 text-success rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                            <CheckCircle2 className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
-                                {transactions.filter((t: any) => t.status === 'converted').length}
+                            <div>
+                                <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
+                                    {transactions.filter((t: any) => t.status === 'pending').length}
+                                </div>
+                                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Pending</div>
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Resolved Nodes</div>
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6 group hover:border-primary/30 transition-all duration-500">
-                        <div className="w-16 h-16 bg-primary/10 text-primary rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                            <History className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
-                                {transactions.length}
+                        </Card.Body>
+                    </Card>
+                    <Card variant="default" size="md" className="flex items-center gap-6 group hover:border-success/30">
+                        <Card.Body className="flex items-center gap-6 p-8">
+                            <div className="w-16 h-16 bg-success/10 text-success rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                                <CheckCircle2 className="w-8 h-8" />
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Total Synchronized</div>
-                        </div>
-                    </div>
+                            <div>
+                                <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
+                                    {transactions.filter((t: any) => t.status === 'converted').length}
+                                </div>
+                                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Resolved Nodes</div>
+                            </div>
+                        </Card.Body>
+                    </Card>
+                    <Card variant="default" size="md" className="flex items-center gap-6 group hover:border-primary/30">
+                        <Card.Body className="flex items-center gap-6 p-8">
+                            <div className="w-16 h-16 bg-primary/10 text-primary rounded-[2rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                                <History className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
+                                    {transactions.length}
+                                </div>
+                                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 italic">Total Synchronized</div>
+                            </div>
+                        </Card.Body>
+                    </Card>
                 </div>
 
                 {/* Resolution Workspace */}

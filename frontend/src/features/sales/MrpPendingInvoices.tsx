@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { AlertTriangle, CheckCircle2, X, Pencil } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import { Button, Input } from "../../components/shared";
 import api from "../../services/api";
 import { formatDate } from '../../utils/helpers';
 
@@ -107,12 +108,14 @@ const MrpPendingInvoices: React.FC = () => {
                                     <td className="text-right tabular-nums px-6 py-4 text-sm font-bold text-slate-900 dark:text-white">₹{inv.totalAmount.toLocaleString()}</td>
                                     <td className="px-6 py-4 text-xs text-slate-500 max-w-xs truncate">{inv.mrpPendingNote || '—'}</td>
                                     <td className="px-6 py-4 text-right">
-                                        <button
+                                        <Button
+                                            variant="primary"
+                                            size="sm"
+                                            icon={<Pencil className="w-3.5 h-3.5" />}
                                             onClick={() => openFinalize(inv)}
-                                            className="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-xs font-bold hover:bg-primary/20 flex items-center gap-1.5 ml-auto"
                                         >
-                                            <Pencil className="w-3.5 h-3.5" /> Finalize MRP
-                                        </button>
+                                            Finalize MRP
+                                        </Button>
                                     </td>
                                 </tr>
                             ))}
@@ -145,36 +148,43 @@ const MrpPendingInvoices: React.FC = () => {
                             {editingInvoice.items.map((it) => (
                                 <div key={it.item} className="flex items-center justify-between gap-3">
                                     <span className="text-sm text-slate-700 dark:text-slate-300 truncate">{it.name || it.item} × {it.quantity}</span>
-                                    <div className="relative shrink-0">
-                                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">₹</span>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step="0.01"
-                                            value={draftPrices[it.item] ?? ''}
-                                            onChange={(e) => setDraftPrices(prev => ({ ...prev, [it.item]: e.target.value }))}
-                                            className="w-28 pl-4 pr-2 py-1.5 text-sm text-right bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none"
-                                        />
-                                    </div>
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        value={draftPrices[it.item] ?? ''}
+                                        onChange={(e) => setDraftPrices(prev => ({ ...prev, [it.item]: e.target.value }))}
+                                        placeholder="₹0"
+                                        className="w-32"
+                                    />
                                 </div>
                             ))}
                         </div>
                         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-700">
-                            <button onClick={() => setEditingInvoice(null)} className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800">Cancel</button>
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                onClick={() => setEditingInvoice(null)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                size="md"
                                 onClick={() => handleFinalize(false)}
                                 disabled={isSaving}
-                                className="px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-60"
                             >
                                 Clear flag only
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                icon={<CheckCircle2 className="w-4 h-4" />}
                                 onClick={() => handleFinalize(true)}
                                 disabled={isSaving}
-                                className="px-5 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 disabled:opacity-60 flex items-center gap-1.5"
                             >
-                                <CheckCircle2 className="w-4 h-4" /> {isSaving ? 'Saving...' : 'Save & Finalize'}
-                            </button>
+                                Finalize MRP
+                            </Button>
                         </div>
                     </div>
                 </div>

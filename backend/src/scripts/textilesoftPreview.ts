@@ -6,6 +6,7 @@ import { buildSelect, validateMapping } from "../integrations/textilesoft/mappin
 import { loadDbConfig, openPool, queryAll, streamRows, type ShopDbPool } from "../integrations/textilesoft/shopDbReader.js";
 import { transformRow } from "../integrations/textilesoft/transform.js";
 import type { ShopItem } from "../integrations/textilesoft/types.js";
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ async function safe<T>(label: string, fn: () => Promise<T>): Promise<T | { error
     try {
         return await fn();
     } catch (e) {
-        console.log(`  ! ${label}: ${(e as Error).message}`);
+        info(`  ! ${label}: ${(e as Error).message}`);
         return { error: (e as Error).message };
     }
 }
@@ -38,7 +39,7 @@ async function main() {
     const pool = await openPool(loadDbConfig());
     try {
         // 1) Real run of the mapping.
-        console.log("1/3 running the mapping ...");
+        info("1/3 running the mapping ...");
         const t0 = Date.now();
         const items: ShopItem[] = [];
         const skipped = new Map<string, number>();
@@ -76,7 +77,7 @@ async function main() {
 
         // 2) Stock sign distribution WITHOUT the in-stock filter (how many lots go negative?).
         if (mapping.stock) {
-            console.log("2/3 stock sign distribution ...");
+            info("2/3 stock sign distribution ...");
             const wide = { ...mapping, stock: { ...mapping.stock, inStockOnly: false } };
             let pos = 0, zero = 0, neg = 0, negQty = 0, posQty = 0;
             for await (const rows of streamRows(pool, buildSelect(wide), 2000)) {
@@ -89,7 +90,7 @@ async function main() {
         }
 
         // 3) Which sales rows count? (status flags, blank barcodes, barcodes with no purchase lot)
-        console.log("3/3 sales diagnostics ...");
+        info("3/3 sales diagnostics ...");
         const flag = (table: string, col: string) => safe(`${table}.${col}`, () => q(pool, `SELECT ${col} AS v, COUNT(*) AS n, SUM(TRY_CAST(qty AS float)) AS qty FROM dbo.${table} GROUP BY ${col} ORDER BY COUNT(*) DESC`));
         report.salesFlags = {
             "salsntry.status": await flag("salsntry", "status"),

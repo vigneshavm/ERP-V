@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import api from '../../services/api';
 import Layout from '../../components/shared/Layout/index';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface InventoryItem {
     _id: string;
@@ -186,13 +188,7 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
                         </label>
                         <div className="relative">
                             <Search className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
-                            <input
-                                type="text"
-                                value={searchProduct}
-                                onChange={e => setSearchProduct(e.target.value)}
-                                placeholder="Search by Product Name (e.g. Shirt, Saree, Classmate)..."
-                                className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm font-bold text-slate-900 dark:text-white transition-all"
-                            />
+                            <Input type="text" value={searchProduct} onChange={e => setSearchProduct(e.target.value)} placeholder="Search by Product Name (e.g. Shirt, Saree, Classmate)..." className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm font-bold text-slate-900 dark:text-white transition-all" />
                         </div>
                     </div>
 
@@ -324,12 +320,7 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
                         <AlertTriangle className="w-12 h-12 text-warning mx-auto mb-3" />
                         <h4 className="text-base font-bold text-slate-800 dark:text-slate-200">Couldn't load inventory</h4>
                         <p className="text-xs text-slate-500 mt-1 mb-4">{loadError}</p>
-                        <button
-                            onClick={() => fetchInventory()}
-                            className="px-4 py-2 text-xs font-bold text-primary border border-primary/30 rounded-xl hover:bg-primary/5 transition-all"
-                        >
-                            Retry
-                        </button>
+                        <Button onClick={() => fetchInventory()} className="px-4 py-2 text-xs font-bold text-primary border border-primary/30 rounded-xl hover:bg-primary/5 transition-all">Retry</Button>
                     </div>
                 ) : !hasSearched || items.length === 0 ? (
                     <div className="p-12 text-center">

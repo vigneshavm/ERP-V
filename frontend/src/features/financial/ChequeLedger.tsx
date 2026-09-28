@@ -2,6 +2,7 @@ import React from 'react';
 import { Clock } from 'lucide-react';
 import { formatCurrency, formatDate} from "@/utils/helpers";
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button } from '@/components/shared';
 
 interface ChequeLedgerProps {
     sectorCheques: any[];
@@ -10,7 +11,7 @@ interface ChequeLedgerProps {
 
 const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStatus }) => {
     return (
-        <div className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
             <div className="overflow-x-auto">
                 <table className="w-full">
                     <thead>
@@ -41,18 +42,12 @@ const ChequeLedger: React.FC<ChequeLedgerProps> = ({ sectorCheques, onUpdateStat
                                 <td className="py-4 pr-4 text-right">
                                     {cheque.status === 'PENDING' && (
                                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button
-                                                onClick={() => onUpdateStatus(cheque.id || cheque._id, 'CLEARED')}
-                                                className="px-3 py-1 bg-success text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:scale-105 transition"
-                                            >
+                                            <Button variant="success" size="sm" onClick={() => onUpdateStatus(cheque.id || cheque._id, 'CLEARED')}>
                                                 Clear
-                                            </button>
-                                            <button
-                                                onClick={() => onUpdateStatus(cheque.id || cheque._id, 'BOUNCED')}
-                                                className="px-3 py-1 bg-error text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:scale-105 transition"
-                                            >
+                                            </Button>
+                                            <Button variant="danger" size="sm" onClick={() => onUpdateStatus(cheque.id || cheque._id, 'BOUNCED')}>
                                                 Bounce
-                                            </button>
+                                            </Button>
                                         </div>
                                     )}
                                 </td>

@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import Invoice from "../../sales/models/Invoice.js";
 import Return from "../../sales/models/Return.js";
 import PaymentIn from "../../sales/models/PaymentIn.js";
@@ -7,7 +6,6 @@ import CashbankTransaction from "../models/CashbankTransaction.js";
 import PaymentOut from "../../purchase/models/PaymentOut.js";
 import PurchasePayment from "../../purchase/models/PurchasePayment.js";
 import Expense from "../../expense/models/Expense.js";
-import User from "../../core/models/User.js";
 import { isSqlItemSource } from "../../../config/itemDataSource.js";
 import {
     shopBarcodeCosts, shopBillCosts, shopCancelledBills, shopFinanceAsOf, shopPurchases, shopSalesBills, shopTopItems, type ShopRange,
@@ -17,6 +15,9 @@ import {
     ENTRY_TYPE_LABEL, all, billProfit, byDay, byType, chronological, erpInvoiceSplit, flowTotals, inflow, modeOf, outflow,
     profitTotals, round2, shopBillSplit, type BillProfit, type EntryType, type FinanceEntry, type Mode,
 } from "./financeMath.js";
+import { istDate, istTime, todayIst, parseISODateRange, dateRangeQuery as dateFilter } from "../../../utils/dateUtils.js";
+import { toNumber as n, toString as s } from "../../../utils/typeConversion.js";
+import { tenantKey, tenantUserIds } from "../../../utils/mongooseUtils.js";
 
 /**
  * Financial reports: Day Book, All Transactions, Cash Flow, P&L and Bill-wise Profit.
@@ -42,36 +43,12 @@ type Source = "sql" | "mongo";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Doc = Record<string, any>;
 
-const IST_OFFSET_MS = 5.5 * 3_600_000;
-const istStart = (d: string) => new Date(`${d}T00:00:00+05:30`);
-const istEndExclusive = (d: string) => new Date(istStart(d).getTime() + 86_400_000);
-const istDate = (d: Date): string => new Date(d.getTime() + IST_OFFSET_MS).toISOString().slice(0, 10);
-const istTime = (d: Date): string => new Date(d.getTime() + IST_OFFSET_MS).toISOString().slice(11, 16);
-const todayIst = (): string => istDate(new Date());
-
-const n = (v: unknown): number => {
-    const x = Number(v);
-    return Number.isFinite(x) ? x : 0;
-};
-const s = (v: unknown): string => String(v ?? "").trim();
 const sourceOf = (): Source => (isSqlItemSource() ? "sql" : "mongo");
 
 export interface FinanceRange { from: string; to: string }
 
-export const parseFinanceRange = (from: unknown, to: unknown): FinanceRange | null => {
-    const ok = (v: unknown): v is string => typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v);
-    if (!ok(from) || !ok(to) || from > to) return null;
-    return { from, to };
-};
+export const parseFinanceRange = (from: unknown, to: unknown): FinanceRange | null => parseISODateRange(from, to);
 
-const tenantKey = (tenantId: string) => (mongoose.Types.ObjectId.isValid(tenantId) ? new mongoose.Types.ObjectId(tenantId) : tenantId);
-
-async function tenantUserIds(tenantId: string): Promise<mongoose.Types.ObjectId[]> {
-    const users = await User.find({ tenantId: tenantKey(tenantId) }, { _id: 1 }).lean();
-    return users.map((u) => u._id as mongoose.Types.ObjectId);
-}
-
-const dateFilter = (r: FinanceRange) => ({ $gte: istStart(r.from), $lt: istEndExclusive(r.to) });
 const whenOf = (d: unknown) => {
     const date = d instanceof Date ? d : new Date(String(d));
     return Number.isNaN(date.getTime()) ? { date: "", time: null } : { date: istDate(date), time: istTime(date) };

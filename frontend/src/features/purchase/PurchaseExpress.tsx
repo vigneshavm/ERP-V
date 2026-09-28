@@ -12,6 +12,7 @@ import { usePurchaseItems } from "../../hooks/usePurchaseItems";
 import api from "../../services/api";
 import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
+import { Button, Input, Modal, Select, Textarea } from "../../components/shared";
 import { toast } from 'react-toastify';
 
 const PurchaseExpress: React.FC = () => {
@@ -137,13 +138,13 @@ const PurchaseExpress: React.FC = () => {
                                     onClick={() => setAutoPrint(!autoPrint)}
                                     className={`w-10 h-5 rounded-full transition-all relative ${autoPrint ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-700'}`}
                                 >
-                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${autoPrint ? 'left-6' : 'left-1'}`} />
+                                    <div className={`absolute top-1 w-3 h-3 bg-white dark:bg-slate-300 rounded-full transition-all ${autoPrint ? 'left-6' : 'left-1'}`} />
                                 </button>
                             </div>
                             <button 
                                 onClick={handleSave}
                                 disabled={isProcessing}
-                                className="px-8 py-3 bg-primary text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
+                                className="px-8 py-3 bg-primary text-white rounded-lg text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
                             >
                                 {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4 fill-white" />}
                                 Commit Node
@@ -225,12 +226,7 @@ const PurchaseExpress: React.FC = () => {
                                                     ) : (
                                                         <div className="px-8 py-10 text-center space-y-3">
                                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">No supplier found</p>
-                                                            <button 
-                                                                onClick={() => window.open('/suppliers', '_blank')}
-                                                                className="text-xs font-black text-primary uppercase tracking-widest hover:underline"
-                                                            >
-                                                                Add supplier
-                                                            </button>
+                                                            <Button onClick={() => window.open('/suppliers', '_blank')} className="text-xs font-black text-primary uppercase tracking-widest hover:underline">Add supplier</Button>
                                                         </div>
                                                     )}
                                                 </div>
@@ -247,7 +243,7 @@ const PurchaseExpress: React.FC = () => {
                                                 placeholder="e.g. INV/2024/001"
                                                 value={invoiceNo}
                                                 onChange={e => setInvoiceNo(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-[1.5rem] text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none uppercase tracking-tighter"
+                                                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-lg text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none uppercase tracking-tighter"
                                             />
                                         </div>
                                     </div>
@@ -256,12 +252,7 @@ const PurchaseExpress: React.FC = () => {
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Fiscal Date</label>
                                         <div className="relative">
                                             <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                            <input 
-                                                type="date"
-                                                value={purchaseDate}
-                                                onChange={e => setPurchaseDate(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-[1.5rem] text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none"
-                                            />
+                                            <Input type="date" value={purchaseDate} onChange={e => setPurchaseDate(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-[1.5rem] text-xs font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none" />
                                         </div>
                                     </div>
                                 </div>
@@ -374,9 +365,7 @@ const PurchaseExpress: React.FC = () => {
                                                 <span className="text-sm font-black text-primary tracking-tighter tabular-nums">₹{item.line_total?.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                             </div>
                                             <div className="col-span-1 flex justify-end">
-                                                <button onClick={() => removeItem(idx)} className="p-3 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-xl transition-all">
-                                                    <Trash2 className="w-5 h-5" />
-                                                </button>
+                                                <Button onClick={() => removeItem(idx)} className="p-3 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-xl transition-all"><Trash2 className="w-5 h-5" /></Button>
                                             </div>
                                         </div>
                                     ))}
@@ -392,7 +381,7 @@ const PurchaseExpress: React.FC = () => {
                                     value={notes}
                                     onChange={e => setNotes(e.target.value)}
                                     placeholder="Enter additional transaction context..."
-                                    className="w-full h-24 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-[2rem] p-6 text-xs font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none"
+                                    className="w-full h-24 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-xl p-6 text-xs font-bold focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none"
                                 />
                             </div>
                             <div className="bg-white dark:bg-slate-800 rounded-xl p-10 border border-slate-200 dark:border-slate-700 shadow-sm space-y-6 flex flex-col justify-center items-center group cursor-pointer hover:border-primary/20 transition-all">

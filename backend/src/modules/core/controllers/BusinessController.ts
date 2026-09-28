@@ -3,6 +3,7 @@ import BusinessProfile from "../models/BusinessProfile.js";
 import Tenant from "../models/Tenant.js";
 import Sector from "../models/Sector.js";
 import BusinessType from "../models/BusinessType.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 
 
@@ -15,17 +16,17 @@ import BusinessType from "../models/BusinessType.js";
  *     security:
  *       - bearerAuth: []
  */
-export const getSetupStatus = async (req: Request, res: Response) => {
+export const getSetupStatus = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = req.user._id;
         let profile = await BusinessProfile.findOne({ userId });
 
         if (!profile) {
             profile = await BusinessProfile.create({
                 userId,
-                businessName: (req as any).user.shopName || "My Business",
-                email: (req as any).user.email,
-                phone: (req as any).user.phone || "",
+                businessName: req.user.shopName || "My Business",
+                email: req.user.email,
+                phone: req.user.phone || "",
             });
         }
 
@@ -58,9 +59,9 @@ export const getSetupStatus = async (req: Request, res: Response) => {
  *     security:
  *       - bearerAuth: []
  */
-export const completeSetup = async (req: Request, res: Response) => {
+export const completeSetup = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = req.user._id;
         const { businessName, category, businessType, phone } = req.body;
 
         const profile = await BusinessProfile.findOneAndUpdate(
@@ -103,29 +104,29 @@ export const completeSetup = async (req: Request, res: Response) => {
  *       404:
  *         description: Profile not found
  */
-export const getProfile = async (req: Request, res: Response) => {
+export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = req.user._id;
         let profile = await BusinessProfile.findOne({ userId });
 
         if (!profile) {
             // Create a default profile if not found
             profile = await BusinessProfile.create({
                 userId,
-                businessName: (req as any).user.shopName || "My Business",
-                email: (req as any).user.email,
-                phone: (req as any).user.phone || "",
-                address: (req as any).user.shopAddress || ""
+                businessName: req.user.shopName || "My Business",
+                email: req.user.email,
+                phone: req.user.phone || "",
+                address: req.user.shopAddress || ""
             });
         }
 
         // Fetch Tenant to get structured address
-        const tenant = await Tenant.findById((req as any).user.tenantId);
+        const tenant = await Tenant.findById(req.user.tenantId);
 
         const responseData = {
             ...profile.toObject(),
             tenantAddress: tenant?.address || null,
-            gstNumber: tenant?.subscriptionPlan ? "" : (req as any).user.gstNumber // Placeholder logic
+            gstNumber: tenant?.subscriptionPlan ? "" : req.user.gstNumber // Placeholder logic
         };
 
         res.status(200).json({
@@ -165,9 +166,9 @@ export const getProfile = async (req: Request, res: Response) => {
  *       200:
  *         description: Profile updated successfully
  */
-export const updateProfile = async (req: Request, res: Response) => {
+export const updateProfile = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = req.user._id;
         const profileData = req.body;
 
         const profile = await BusinessProfile.findOneAndUpdate(
@@ -202,9 +203,9 @@ export const updateProfile = async (req: Request, res: Response) => {
  *       404:
  *         description: Business profile not found
  */
-export const syncGoogle = async (req: Request, res: Response) => {
+export const syncGoogle = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = req.user._id;
 
         // In a real app, this would exchange tokens and fetch from GMB API
         // Removing simulated data for now
@@ -309,9 +310,9 @@ export const getBusinessTypes = async (_req: Request, res: Response) => {
  *             properties:
  *               reply: { type: string }
  */
-export const replyToReview = async (req: Request, res: Response) => {
+export const replyToReview = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = req.user._id;
         const { reviewId } = req.params;
         const { reply } = req.body;
 
@@ -368,9 +369,9 @@ export const replyToReview = async (req: Request, res: Response) => {
  *               type: { type: string, enum: [OFFER, EVENT, UPDATE] }
  *               imageUrl: { type: string }
  */
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = req.user._id;
         const { content, type, imageUrl } = req.body;
 
         const newPost = {

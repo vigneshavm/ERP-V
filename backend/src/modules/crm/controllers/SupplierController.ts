@@ -1,19 +1,9 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 
 import Supplier from '../models/Supplier.js';
 import { info, error } from '../../../config/logger.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * @swagger
@@ -46,7 +36,7 @@ export const addSupplier = async (req: AuthenticatedRequest, res: Response): Pro
         if (contactNo) {
             const existingContact = await Supplier.findOne({
                 contactNo,
-                owner: req.user?._id
+                $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}]
             });
 
             if (existingContact) {
@@ -59,7 +49,7 @@ export const addSupplier = async (req: AuthenticatedRequest, res: Response): Pro
         if (email) {
             const existingEmail = await Supplier.findOne({
                 email,
-                owner: req.user?._id
+                $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}]
             });
 
             if (existingEmail) {
@@ -69,7 +59,7 @@ export const addSupplier = async (req: AuthenticatedRequest, res: Response): Pro
         }
 
         // Auto-generate supplierId
-        const lastSupplier = await Supplier.findOne({ owner: req.user?._id }).sort({ supplierId: -1 });
+        const lastSupplier = await Supplier.findOne({ $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}] }).sort({ supplierId: -1 });
         let nextId = 1;
         if (lastSupplier && lastSupplier.supplierId) {
             const lastNum = parseInt(lastSupplier.supplierId.split('-')[1]);
@@ -77,7 +67,7 @@ export const addSupplier = async (req: AuthenticatedRequest, res: Response): Pro
         }
         const supplierId = `SUP-${nextId.toString().padStart(5, '0')}`;
 
-        // Create supplier with owner reference
+        // Create supplier with tenant reference
         const supplier = await Supplier.create({
             supplierId,
             businessName,
@@ -91,8 +81,7 @@ export const addSupplier = async (req: AuthenticatedRequest, res: Response): Pro
             balanceType: balanceType || 'payable',
             creditPeriod: creditPeriod || 0,
             status: status || 'active',
-            tenantId: req.user?.tenantId,
-            owner: req.user?._id
+            tenantId: req.user.tenantId
         });
 
         info(`New supplier added by ${req.user?.name}: ${businessName} (${supplierId})`);
@@ -116,7 +105,7 @@ export const updateSupplier = async (req: AuthenticatedRequest, res: Response): 
 
         const supplier = await Supplier.findOne({
             _id: req.params.id,
-            owner: req.user?._id
+            $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}]
         });
 
         if (!supplier) {
@@ -128,7 +117,7 @@ export const updateSupplier = async (req: AuthenticatedRequest, res: Response): 
         if (req.body.contactNo && req.body.contactNo !== supplier.contactNo) {
             const existingContact = await Supplier.findOne({
                 contactNo: req.body.contactNo,
-                owner: req.user?._id,
+                $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}],
                 _id: { $ne: req.params.id }
             });
 
@@ -142,7 +131,7 @@ export const updateSupplier = async (req: AuthenticatedRequest, res: Response): 
         if (req.body.email && req.body.email !== supplier.email) {
             const existingEmail = await Supplier.findOne({
                 email: req.body.email,
-                owner: req.user?._id,
+                $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}],
                 _id: { $ne: req.params.id }
             });
 
@@ -185,7 +174,7 @@ export const updateSupplier = async (req: AuthenticatedRequest, res: Response): 
  */
 export const getAllSuppliers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const suppliers = await Supplier.find({ owner: req.user?._id }).sort({ businessName: 1 });
+        const suppliers = await Supplier.find({ $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}] }).sort({ businessName: 1 });
         res.status(200).json(suppliers);
     } catch (err) {
         error(`Get All Suppliers Error: ${(err as Error).message}`);
@@ -206,7 +195,7 @@ export const getSupplierById = async (req: AuthenticatedRequest, res: Response):
 
         const supplier = await Supplier.findOne({
             _id: req.params.id,
-            owner: req.user?._id
+            $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}]
         });
 
         if (!supplier) {
@@ -234,7 +223,7 @@ export const deleteSupplier = async (req: AuthenticatedRequest, res: Response): 
 
         const supplier = await Supplier.findOne({
             _id: req.params.id,
-            owner: req.user?._id
+            $or: [{tenantId: req.user.tenantId}, {owner: req.user.tenantId}]
         });
 
         if (!supplier) {

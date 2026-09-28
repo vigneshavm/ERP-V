@@ -21,9 +21,7 @@ function buildInstallments(totalAmount: number, count: number, startDate: Date, 
 
 export const createEMIPlan = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = req.user?.tenantId;
-        const userId = req.user?._id;
-        if (!tenantId || !userId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+        const tenantId = req.user.tenantId;
 
         const { invoiceId, customerId, totalAmount, numberOfInstallments, startDate, frequency } = req.body;
         if (!invoiceId || !customerId) return res.status(400).json({ success: false, message: 'Invoice and customer are required' });
@@ -45,7 +43,7 @@ export const createEMIPlan = async (req: AuthenticatedRequest, res: Response) =>
             frequency: freq,
             installments,
             status: 'ACTIVE',
-            createdBy: userId
+            createdBy: req.user.name || req.user._id
         });
 
         res.status(201).json({ success: true, data: plan });
@@ -56,7 +54,7 @@ export const createEMIPlan = async (req: AuthenticatedRequest, res: Response) =>
 
 export const getEMIPlans = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = req.user?.tenantId;
+        const tenantId = req.user.tenantId;
         if (!tenantId) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
         const query: Record<string, any> = { tenantId };
@@ -77,7 +75,7 @@ export const getEMIPlans = async (req: AuthenticatedRequest, res: Response) => {
 // installment is paid -- the main business action this registry exists for.
 export const recordInstallmentPayment = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = req.user?.tenantId;
+        const tenantId = req.user.tenantId;
         if (!tenantId) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
         const { id } = req.params;

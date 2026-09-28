@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { RootState, AppDispatch } from "../../redux/store";
 import { DetailCard, DataPoint } from './components/CustomerUI';
+import { Button } from '@/components/shared/Button';
 
 const CustomerDetail = () => {
     const navigate = useNavigate();
@@ -58,7 +59,7 @@ const CustomerDetail = () => {
                     </div>
                     <p className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-widest">Entry Restricted</p>
                     <p className="text-sm text-slate-500 max-w-xs">{message || 'This consumer profile has been archived or does not exist in the current terminal.'}</p>
-                    <button onClick={() => navigate('/customers')} className="mt-4 px-8 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-primary-hover transition-all font-medium">Return to Portfolio</button>
+                    <Button onClick={() => navigate('/customers')} className="mt-4 px-8 py-3 bg-primary text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-primary-hover transition-all font-medium">Return to Portfolio</Button>
                 </div>
             </Layout>
         );
@@ -126,7 +127,7 @@ const CustomerDetail = () => {
                 <div className="col-span-12 lg:col-span-8 space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
                         <DetailCard title="Reachability Node" icon={MapPin}>
-                            <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800/50 group-hover:border-primary/30 transition-all">
+                            <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-100 dark:border-slate-800/50 group-hover:border-primary/30 transition-all">
                                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Facility Address</p>
                                 <p className="text-sm font-bold text-slate-700 dark:text-slate-300 leading-relaxed italic">"{customer.address || 'Operational address not registered in global database.'}"</p>
                             </div>

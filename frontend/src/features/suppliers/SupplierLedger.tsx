@@ -10,6 +10,8 @@ import PageHeader from '../../components/shared/Layout/PageHeader';
 import SupplierSubNav from './SupplierSubNav';
 import SupplierLedgerSummary from './components/SupplierLedgerSummary';
 import SupplierLedgerTable from './components/SupplierLedgerTable';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 // Interfaces for response data
 interface Transaction {

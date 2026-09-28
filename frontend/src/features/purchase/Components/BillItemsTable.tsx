@@ -1,6 +1,8 @@
 ﻿import React from 'react';
 import { Plus, AlertCircle } from 'lucide-react';
-import { PurchaseBillItem } from "../../../types/purchase";
+import { PurchaseBillItem } from "../../../types/purchase";import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface BillItemsTableProps {
     items: PurchaseBillItem[];

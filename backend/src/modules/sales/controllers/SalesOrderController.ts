@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 
 import SalesOrder from '../models/SalesOrder.js';
@@ -15,18 +15,7 @@ import { info, error } from '../../../config/logger.js';
 import { logStockMovement } from '../../../utils/stockMovementLogger.js';
 import { calculatePaymentStatus } from '../../../utils/paymentStatusCalculator.js';
 import { validateStockLevels, validateSalesOrderQuantities } from '../../../utils/inventoryValidator.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-    tenantId?: string; // Injected by Auth Middleware
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 interface SalesOrderItem {
     item: string;
@@ -197,8 +186,7 @@ export const createSalesOrder = async (req: AuthenticatedRequest, res: Response)
             salesOrder: populatedOrder,
         });
     } catch (err) {
-        console.error('Create Sales Order Error:', err);
-        error(`Sales Order creation failed: ${(err as Error).message}`);
+        error(`Sales Order creation failed: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };
@@ -351,8 +339,7 @@ export const updateSalesOrder = async (req: AuthenticatedRequest, res: Response)
             salesOrder: updatedOrder,
         });
     } catch (err) {
-        console.error('Update Sales Order Error:', err);
-        error(`Sales Order update failed: ${(err as Error).message}`);
+        error(`Sales Order update failed: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };
@@ -452,8 +439,7 @@ export const confirmSalesOrder = async (req: AuthenticatedRequest, res: Response
             salesOrder: populatedOrder,
         });
     } catch (err) {
-        console.error('Confirm Sales Order Error:', err);
-        error(`Sales Order confirmation failed: ${(err as Error).message}`);
+        error(`Sales Order confirmation failed: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };
@@ -514,8 +500,7 @@ export const getSalesOrderById = async (req: AuthenticatedRequest, res: Response
 
         res.status(200).json(salesOrder);
     } catch (err) {
-        console.error('Get Sales Order Error:', err);
-        error(`Get Sales Order failed: ${(err as Error).message}`);
+        error(`Get Sales Order failed: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };
@@ -567,8 +552,7 @@ export const listSalesOrders = async (req: AuthenticatedRequest, res: Response):
 
         res.status(200).json(salesOrders);
     } catch (err) {
-        console.error('List Sales Orders Error:', err);
-        error(`List Sales Orders failed: ${(err as Error).message}`);
+        error(`List Sales Orders failed: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };
@@ -628,7 +612,7 @@ export const cancelSalesOrder = async (req: AuthenticatedRequest, res: Response)
             for (const item of salesOrder.items) {
                 const unreservedQty = item.reservedQty - item.deliveredQty;
                 if (unreservedQty > 0) {
-                    await releaseStock(item.item.toString(), unreservedQty, salesOrder._id.toString(), 'SalesOrder', req.user?._id as string);
+                    await releaseStock(item.item.toString(), unreservedQty, salesOrder._id.toString(), 'SalesOrder', req.user?._id);
                 }
             }
         }
@@ -651,8 +635,7 @@ export const cancelSalesOrder = async (req: AuthenticatedRequest, res: Response)
             salesOrder: populatedOrder,
         });
     } catch (err) {
-        console.error('Cancel Sales Order Error:', err);
-        error(`Sales Order cancellation failed: ${(err as Error).message}`);
+        error(`Sales Order cancellation failed: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };
@@ -773,7 +756,7 @@ export const convertToDeliveryChallan = async (req: AuthenticatedRequest, res: R
                 dcItem.quantity,
                 salesOrder._id,
                 'SalesOrder',
-                req.user?._id as string,
+                req.user?._id,
                 previousState,
                 { ...previousState, stockQty: item.stockQty }
             );
@@ -784,7 +767,7 @@ export const convertToDeliveryChallan = async (req: AuthenticatedRequest, res: R
                 dcItem.quantity,
                 salesOrder._id,
                 'SalesOrder',
-                req.user?._id as string,
+                req.user?._id,
                 { ...previousState, stockQty: item.stockQty },
                 newState
             );
@@ -854,8 +837,7 @@ export const convertToDeliveryChallan = async (req: AuthenticatedRequest, res: R
                 .populate('items.item', 'name sku unit'),
         });
     } catch (err) {
-        console.error('Convert to Delivery Challan Error:', err);
-        error(`Conversion to Delivery Challan failed: ${(err as Error).message}`);
+        error(`Conversion to Delivery Challan failed: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };
@@ -981,7 +963,7 @@ export const convertToInvoice = async (req: AuthenticatedRequest, res: Response)
                 invItem.quantity,
                 salesOrder._id,
                 'SalesOrder',
-                req.user?._id as string,
+                req.user?._id,
                 previousState,
                 newState
             );
@@ -1057,8 +1039,7 @@ export const convertToInvoice = async (req: AuthenticatedRequest, res: Response)
                 .populate('items.item', 'name sku unit'),
         });
     } catch (err) {
-        console.error('Convert to Invoice Error:', err);
-        error(`Conversion to Invoice failed: ${(err as Error).message}`);
+        error(`Conversion to Invoice failed: ${(err as Error).message}`, { stack: (err as Error).stack });
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };

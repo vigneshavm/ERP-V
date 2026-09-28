@@ -1,6 +1,7 @@
 import { injectable, singleton } from "tsyringe";
 import Item from "../modules/inventory/models/Item.js";
 import { IItem } from "../interfaces/IItem.js";
+import type { TenantRef } from '../interfaces/TenantRef.js';
 
 @injectable()
 @singleton()
@@ -9,7 +10,7 @@ export class InventoryRepository {
         return Item.create(itemData);
     }
 
-    async findById(id: string, tenantId: string, session?: any): Promise<IItem | null> {
+    async findById(id: string, tenantId: TenantRef, session?: any): Promise<IItem | null> {
         return Item.findOne({ _id: id, tenantId }).session(session || null);
     }
 

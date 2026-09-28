@@ -28,6 +28,8 @@ interface POSCartGridProps {
 }
 
 import { useFuzzySearch } from "../../hooks/useFuzzySearch";
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 // import { POSVariantSelectionModal } from './POSVariantSelectionModal';
 // import { POSVariantSelectionModal } from './POSVariantSelectionModal';
 
@@ -62,7 +64,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                     {item.qty < 0 && <span className="ml-2 text-[10px] uppercase font-black text-white bg-danger px-1 rounded-sm">RETURN</span>}
                 </p>
                 <p className="text-[10px] text-slate-500 font-mono">
-                    {item.sku} {item.unit === 'Meter' && <span className="bg-slate-100 dark:bg-slate-700 px-1 rounded ml-1">Per Meter</span>}
+                    {item.sku} {item.unit === 'Meter' && <span className="bg-slate-100 dark:bg-slate-700 px-1 rounded ml-1 text-slate-900 dark:text-slate-100">Per Meter</span>}
                 </p>
                 {(item.size || item.color) && (
                     <div className="flex gap-2 mt-0.5">
@@ -183,25 +185,14 @@ const CartItemCard = React.memo<CartItemRowProps>(({
             <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 p-2 rounded-lg">
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-0.5 shadow-sm">
-                        <button
-                            onClick={() => onUpdateCartQty(item.id, Math.max(0, item.qty - 1))}
-                            className="w-8 h-8 flex items-center justify-center text-slate-500 active:bg-slate-100 rounded-md"
-                        >-</button>
+                        <Button onClick={() => onUpdateCartQty(item.id, Math.max(0, item.qty - 1))} className="w-8 h-8 flex items-center justify-center text-slate-500 active:bg-slate-100 rounded-md">-</Button>
                         <span className="w-8 text-center font-bold text-sm">{item.qty}</span>
-                        <button
-                            onClick={() => onUpdateCartQty(item.id, item.qty + 1)}
-                            className="w-8 h-8 flex items-center justify-center text-primary active:bg-primary/5 rounded-md"
-                        >+</button>
+                        <Button onClick={() => onUpdateCartQty(item.id, item.qty + 1)} className="w-8 h-8 flex items-center justify-center text-primary active:bg-primary/5 rounded-md">+</Button>
                     </div>
                     <p className="text-xs text-slate-400">@ ₹{item.price}</p>
                 </div>
 
-                <button
-                    onClick={() => onRemoveFromCart(item.id)}
-                    className="p-2 text-error bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
+                <Button onClick={() => onRemoveFromCart(item.id)} className="p-2 text-error bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm"><Trash2 className="w-4 h-4" /></Button>
             </div>
         </div>
     );
@@ -685,13 +676,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                     {/* Add to Cart Button */}
                     <div>
                         <label className="text-[10px] font-bold text-transparent uppercase mb-1 block">Action</label>
-                        <button
-                            onClick={handleQuickEntryAdd}
-                            disabled={!selectedType || !quickEntryPrice || parseFloat(quickEntryPrice) <= 0}
-                            className="px-4 py-2 bg-success hover:bg-success/90 text-white rounded-lg font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap"
-                        >
-                            + Add
-                        </button>
+                        <Button onClick={handleQuickEntryAdd} disabled={!selectedType || !quickEntryPrice || parseFloat(quickEntryPrice) <= 0} className="px-4 py-2 bg-success hover:bg-success/90 text-white rounded-lg font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap">+ Add</Button>
                     </div>
 
                     {/* Clear Button */}
@@ -723,12 +708,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                         <Camera className="w-4 h-4" />
                         Visual Search: Found {visualMatches.length} matches
                     </span>
-                    <button
-                        onClick={() => setVisualMatches(null)}
-                        className="p-1 hover:bg-primary-soft rounded-full text-primary"
-                    >
-                        <X className="w-4 h-4" />
-                    </button>
+                    <Button onClick={() => setVisualMatches(null)} className="p-1 hover:bg-primary-soft rounded-full text-primary"><X className="w-4 h-4" /></Button>
                 </div>
             )}
             */}

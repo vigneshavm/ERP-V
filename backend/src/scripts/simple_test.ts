@@ -3,15 +3,17 @@ import mongoose from 'mongoose';
 
 dotenv.config();
 
-console.log("Simple test starting...");
-console.log("MONGO_URI:", process.env.MONGO_URI ? "Found" : "Missing");
+import { info } from '../config/logger.js';
+
+info("Simple test starting...");
+info("MONGO_URI:", process.env.MONGO_URI ? "Found" : "Missing");
 
 const run = async () => {
     try {
         if (!process.env.MONGO_URI) throw new Error("No Mongo URI");
-        console.log("Connecting...");
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log("Connected!");
+        info("Connecting...");
+        await mongoose.connect(process.env.MONGO_URI!);
+        info("Connected!");
         await mongoose.disconnect();
         console.log("Disconnected.");
     } catch (e) {

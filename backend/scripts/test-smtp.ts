@@ -10,11 +10,11 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 async function testEmail() {
-    console.log('--- SMTP TEST START ---');
-    console.log('Host:', process.env.SMTP_HOST);
-    console.log('Port:', process.env.SMTP_PORT);
-    console.log('User:', process.env.SMTP_USER);
-    console.log('From:', process.env.EMAIL_FROM);
+    info('--- SMTP TEST START ---');
+    info('Host:', process.env.SMTP_HOST);
+    info('Port:', process.env.SMTP_PORT);
+    info('User:', process.env.SMTP_USER);
+    info('From:', process.env.EMAIL_FROM);
 
     if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
         console.error('❌ Error: SMTP credentials missing in .env');
@@ -32,11 +32,11 @@ async function testEmail() {
     });
 
     try {
-        console.log('Verifying transport...');
+        info('Verifying transport...');
         await transporter.verify();
-        console.log('✅ Transport verified!');
+        info('✅ Transport verified!');
 
-        console.log('Sending test email...');
+        info('Sending test email...');
         const mailOptions = {
             from: process.env.EMAIL_FROM || '"BizzAI Test" <noreply@bizzai.com>',
             to: process.env.SMTP_USER, // Send to self (the sandbox login email)
@@ -46,9 +46,9 @@ async function testEmail() {
         };
 
         const info = await transporter.sendMail(mailOptions);
-        console.log('✅ Email sent successfully!');
-        console.log('Message ID:', info.messageId);
-        console.log('Response:', info.response);
+        info('✅ Email sent successfully!');
+        info('Message ID:', info.messageId);
+        info('Response:', info.response);
     } catch (error: any) {
         console.error('❌ SMTP Error:', error.message);
         if (error.response) {

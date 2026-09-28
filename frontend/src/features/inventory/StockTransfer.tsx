@@ -7,7 +7,9 @@ import PageHeader from "../../components/shared/Layout/PageHeader";
 import api from "../../services/api";
 import { AppDispatch, RootState } from "../../redux/store";
 import { fetchMasterEntries } from "../../redux/slices/masterDataSlice";
-import { formatDate } from '../../utils/helpers';
+import { formatDate } from '../../utils/helpers';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface ItemOption {
     _id: string;
@@ -151,12 +153,7 @@ const StockTransfer: React.FC = () => {
                     title="Stock Transfer"
                     description="Move existing stock between warehouses, independent of any specific goods receipt."
                     actions={
-                        <button
-                            onClick={() => setIsModalOpen(true)}
-                            className="px-4 py-2 bg-success text-white rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"
-                        >
-                            <Plus className="w-4 h-4" /> New Transfer
-                        </button>
+                        <Button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-success text-white rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"><Plus className="w-4 h-4" /> New Transfer</Button>
                     }
                 />
 
@@ -314,13 +311,7 @@ const StockTransfer: React.FC = () => {
                             >
                                 Cancel
                             </button>
-                            <button
-                                onClick={handleSubmit}
-                                disabled={isSaving}
-                                className="px-5 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 disabled:opacity-60"
-                            >
-                                {isSaving ? 'Transferring...' : 'Transfer Stock'}
-                            </button>
+                            <Button onClick={handleSubmit} disabled={isSaving} className="px-5 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 disabled:opacity-60">{isSaving ? 'Transferring...' : 'Transfer Stock'}</Button>
                         </div>
                     </div>
                 </div>

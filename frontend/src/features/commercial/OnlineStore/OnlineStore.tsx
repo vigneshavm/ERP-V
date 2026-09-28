@@ -13,6 +13,8 @@ import { Product } from "../../../types/product";
 import { getProductRecommendations, searchProductsByImage } from "../../../services/geminiService";
 import FeatureMatrix from "./components/FeatureMatrix";
 import PricingTiers from "./components/PricingTiers";
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 // --- Hero / Setup Component Inline (Refactor of GrowHero) ---
 const OnlineStoreSetup: React.FC<{
@@ -271,7 +273,7 @@ const OnlineStore: React.FC = () => {
                 <main className="flex-1 overflow-y-auto p-6 md:p-10">
                     {/* ... (AI Feedback Area - same as Storefront.tsx) ... */}
                     {(showAi || aiResult || visualSearchImage) && (
-                        <div className="mb-8 bg-white dark:bg-slate-900 rounded-[2rem] border border-primary/30 dark:border-primary/30 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
+                        <div className="mb-8 bg-white dark:bg-slate-900 rounded-xl border border-primary/30 dark:border-primary/30 shadow-xl overflow-hidden animate-in slide-in-from-top-2">
                             {/* ... Content ... */}
                             <div className="p-6">
                                 {showAi && !visualSearchImage && !aiResult && !aiThinking && (

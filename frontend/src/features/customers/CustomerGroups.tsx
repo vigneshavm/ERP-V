@@ -26,6 +26,7 @@ import {
     Tag,
 } from 'lucide-react';
 import PageHeader from '../../components/shared/Layout/PageHeader';
+import { Button, Input } from '../../components/shared';
 
 interface GroupFormState {
     name: string;
@@ -137,12 +138,14 @@ const CustomerGroups: React.FC = () => {
             <PageHeader
                 title="Customer Groups"
                 description="Organize customers into groups with custom pricing and terms"
-                actions={<button
+                actions={<Button
                     onClick={openCreateModal}
-                    className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 flex items-center gap-2"
+                    variant="primary"
+                    size="md"
+                    icon={<FolderPlus className="w-4 h-4" />}
                 >
-                    <FolderPlus className="w-4 h-4" /> Create Group
-                </button>}
+                    Create Group
+                </Button>}
             />
 
             {/* Summary Cards */}
@@ -167,16 +170,13 @@ const CustomerGroups: React.FC = () => {
 
             {/* Search */}
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="relative max-w-md">
-                    <input
+                    <Input
                         type="text"
                         placeholder="Search groups..."
-                        className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        icon={<Search className="w-4 h-4" />}
                     />
-                    <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
-                </div>
             </div>
 
             {/* Groups List */}
@@ -258,18 +258,25 @@ const CustomerGroups: React.FC = () => {
                                     </div>
 
                                     <div className="flex gap-2">
-                                        <button
+                                        <Button
+                                            type="button"
                                             onClick={(e) => { e.stopPropagation(); openEditModal(group); }}
-                                            className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2"
+                                            variant="secondary"
+                                            size="sm"
+                                            icon={<Edit className="w-4 h-4" />}
                                         >
-                                            <Edit className="w-4 h-4" /> Edit Group
-                                        </button>
-                                        <button
+                                            Edit Group
+                                        </Button>
+                                        <Button
+                                            type="button"
                                             onClick={(e) => { e.stopPropagation(); handleDelete(group); }}
-                                            className="px-4 py-2 bg-error/10 text-error rounded-lg text-sm font-bold hover:bg-error/20 flex items-center gap-2 ml-auto"
+                                            variant="danger"
+                                            size="sm"
+                                            icon={<Trash2 className="w-4 h-4" />}
+                                            className="ml-auto"
                                         >
-                                            <Trash2 className="w-4 h-4" /> Delete
-                                        </button>
+                                            Delete
+                                        </Button>
                                     </div>
                                 </div>
                             )}
@@ -297,58 +304,47 @@ const CustomerGroups: React.FC = () => {
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-800">
                         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                             <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingGroup ? 'Edit Group' : 'Create Group'}</h3>
-                            <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
-                                <X className="w-5 h-5" />
-                            </button>
+                            <Button
+                                type="button"
+                                variant="tertiary"
+                                size="sm"
+                                icon={<X className="w-5 h-5" />}
+                                onClick={() => setShowModal(false)}
+                            />
                         </div>
                         <div className="p-6 space-y-4">
-                            <div>
-                                <label className="text-xs font-bold text-slate-500 uppercase">Name</label>
-                                <input
-                                    type="text"
-                                    value={form.name}
-                                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                    className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
-                                    placeholder="e.g. Wholesale"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
-                                <input
-                                    type="text"
-                                    value={form.description}
-                                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                    className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
-                                />
-                            </div>
+                            <Input
+                                label="Name"
+                                type="text"
+                                value={form.name}
+                                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                placeholder="e.g. Wholesale"
+                            />
+                            <Input
+                                label="Description"
+                                type="text"
+                                value={form.description}
+                                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                            />
                             <div className="grid grid-cols-3 gap-3">
-                                <div>
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Discount %</label>
-                                    <input
-                                        type="number"
-                                        value={form.discountPercent}
-                                        onChange={(e) => setForm({ ...form, discountPercent: e.target.value })}
-                                        className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Credit Limit</label>
-                                    <input
-                                        type="number"
-                                        value={form.creditLimit}
-                                        onChange={(e) => setForm({ ...form, creditLimit: e.target.value })}
-                                        className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Terms (days)</label>
-                                    <input
-                                        type="number"
-                                        value={form.paymentTermsDays}
-                                        onChange={(e) => setForm({ ...form, paymentTermsDays: e.target.value })}
-                                        className="w-full mt-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
-                                    />
-                                </div>
+                                <Input
+                                    label="Discount %"
+                                    type="number"
+                                    value={form.discountPercent}
+                                    onChange={(e) => setForm({ ...form, discountPercent: e.target.value })}
+                                />
+                                <Input
+                                    label="Credit Limit"
+                                    type="number"
+                                    value={form.creditLimit}
+                                    onChange={(e) => setForm({ ...form, creditLimit: e.target.value })}
+                                />
+                                <Input
+                                    label="Terms (days)"
+                                    type="number"
+                                    value={form.paymentTermsDays}
+                                    onChange={(e) => setForm({ ...form, paymentTermsDays: e.target.value })}
+                                />
                             </div>
                             <div>
                                 <label className="text-xs font-bold text-slate-500 uppercase">Color</label>
@@ -361,14 +357,24 @@ const CustomerGroups: React.FC = () => {
                             </div>
                         </div>
                         <div className="p-6 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 text-slate-600 dark:text-slate-400 font-bold text-sm">Cancel</button>
-                            <button
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="md"
+                                onClick={() => setShowModal(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="primary"
+                                size="md"
                                 onClick={handleSave}
                                 disabled={saving || !form.name.trim()}
-                                className="px-6 py-2 bg-primary text-white rounded-lg text-sm font-bold disabled:opacity-50"
+                                loading={saving}
                             >
-                                {saving ? 'Saving…' : editingGroup ? 'Save Changes' : 'Create Group'}
-                            </button>
+                                {editingGroup ? 'Save Changes' : 'Create Group'}
+                            </Button>
                         </div>
                     </div>
                 </div>

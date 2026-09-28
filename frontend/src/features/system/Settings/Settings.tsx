@@ -47,7 +47,8 @@ import SecurityTab from './SecurityTab';
 import SubscriptionTab from './SubscriptionTab';
 import { MISConfig, ModulesConfig, TenantTheme, PrintSettings } from './types';
 import { DEFAULT_MIS_CONFIG } from '../../../types/tenant/mis';
-import { DEFAULT_PRINT_SETTINGS } from '../../../types/tenant/printSettings';
+import { DEFAULT_PRINT_SETTINGS } from '../../../types/tenant/printSettings';import { Button } from '@/components/shared/Button';
+
 
 const Settings: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -440,12 +441,7 @@ const Settings: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
-                            <button
-                                onClick={handleReset}
-                                className="px-4 py-2 text-slate-500 hover:text-error dark:text-slate-400 font-bold flex items-center gap-2 transition-colors"
-                            >
-                                <RotateCcw className="w-4 h-4" /> Reset
-                            </button>
+                            <Button onClick={handleReset} className="px-4 py-2 text-slate-500 hover:text-error dark:text-slate-400 font-bold flex items-center gap-2 transition-colors"><RotateCcw className="w-4 h-4" /> Reset</Button>
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}

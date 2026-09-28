@@ -14,7 +14,7 @@ import { info, error as logError } from '../../../config/logger.js';
 
 export const getDayEndSummary = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const tenantId = req.user?.tenantId;
+        const tenantId = req.tenantId;
         if (!tenantId) {
             res.status(400).json({ message: 'Day end requires a tenant account' });
             return;
@@ -38,7 +38,7 @@ export const getDayEndSummary = async (req: AuthenticatedRequest, res: Response)
         const cashSalesResult = await Invoice.aggregate([
             {
                 $match: {
-                    tenantId: new mongoose.Types.ObjectId(tenantId as string),
+                    tenantId: new mongoose.Types.ObjectId(tenantId),
                     createdAt: { $gte: startDate, $lte: endDate },
                     $or: [{ paymentMethod: 'cash' }, { 'splitPaymentDetails.method': 'cash' }]
                 }
@@ -135,7 +135,7 @@ export const getDayEndSummary = async (req: AuthenticatedRequest, res: Response)
 
 export const saveDayEndReconciliation = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const tenantId = req.user?.tenantId;
+        const tenantId = req.tenantId;
         if (!tenantId) {
             res.status(400).json({ message: 'Day end requires a tenant account' });
             return;
@@ -191,6 +191,7 @@ export const saveDayEndReconciliation = async (req: AuthenticatedRequest, res: R
                             reference: cheque.number,
                             date: new Date(),
                             userId: req.user?._id,
+                            tenantId: req.tenantId,
                         }], { session });
 
                         // Update Bank Account Balance

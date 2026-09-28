@@ -13,11 +13,9 @@ import {
     Plus,
     Search,
     Calendar,
-    X,
     CheckCircle2,
     ArrowDownLeft,
     ArrowUpRight,
-    Activity,
     ShieldCheck,
     Zap,
     Download,
@@ -31,6 +29,7 @@ import TransferModal from './TransferModal';
 import DayEndModal from './DayEndModal';
 import ClearingParameters from './ClearingParameters';
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button, Input, Modal, Select } from '@/components/shared';
 
 const Cheques: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -209,39 +208,24 @@ const Cheques: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex gap-3">
-                        <button
-                            onClick={() => setShowClearingParams(true)}
-                            className="px-5 py-2.5 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-200 transition active:scale-95 uppercase tracking-[0.2em]"
-                        >
-                            <Zap className="w-4 h-4" /> Parameters
-                        </button>
-                        <button
-                            onClick={() => setShowDayEndModal(true)}
-                            className="px-5 py-2.5 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-200 transition active:scale-95 uppercase tracking-[0.2em]"
-                        >
-                            <Calendar className="w-4 h-4" /> Day End
-                        </button>
-                        <button
-                            onClick={() => setShowTransferModal(true)}
-                            className="px-5 py-2.5 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-200 transition active:scale-95 uppercase tracking-[0.2em]"
-                        >
-                            <ArrowRight className="w-4 h-4" /> Fund Transfer
-                        </button>
-                        <button
-                            onClick={handleOpenBulkPay}
-                            className="px-5 py-2.5 bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-brand-200 transition active:scale-95 uppercase tracking-[0.2em]"
-                        >
-                            <Layers className="w-4 h-4" /> Bulk Payment Stream
-                        </button>
-                        <button className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-[0.2em]">
-                            <Download className="w-4 h-4 text-primary" /> Export Ledger
-                        </button>
-                        <button
-                            onClick={() => setShowAddCheque(true)}
-                            className="px-5 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-[0.2em]"
-                        >
-                            <Plus className="w-4 h-4 fill-current" /> Add cheque
-                        </button>
+                        <Button variant="secondary" size="md" icon={<Zap className="w-4 h-4" />} onClick={() => setShowClearingParams(true)}>
+                            Parameters
+                        </Button>
+                        <Button variant="secondary" size="md" icon={<Calendar className="w-4 h-4" />} onClick={() => setShowDayEndModal(true)}>
+                            Day End
+                        </Button>
+                        <Button variant="secondary" size="md" icon={<ArrowRight className="w-4 h-4" />} onClick={() => setShowTransferModal(true)}>
+                            Fund Transfer
+                        </Button>
+                        <Button variant="secondary" size="md" icon={<Layers className="w-4 h-4" />} onClick={handleOpenBulkPay}>
+                            Bulk Payment Stream
+                        </Button>
+                        <Button variant="secondary" size="md" icon={<Download className="w-4 h-4 text-primary" />}>
+                            Export Ledger
+                        </Button>
+                        <Button variant="primary" size="md" icon={<Plus className="w-4 h-4" />} onClick={() => setShowAddCheque(true)}>
+                            Add cheque
+                        </Button>
                     </div>
                 </div>
 
@@ -321,33 +305,30 @@ const Cheques: React.FC = () => {
                             { id: 'CLEARED', label: 'Cleared' },
                             { id: 'BOUNCED', label: 'Bounced' }
                         ].map(f => (
-                            <button
+                            <Button
                                 key={f.id}
+                                variant={statusFilter === f.id ? 'secondary' : 'tertiary'}
+                                size="sm"
                                 onClick={() => setStatusFilter(f.id as any)}
-                                className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === f.id
-                                    ? 'bg-white dark:bg-slate-800 text-primary shadow-sm'
-                                    : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                                    }`}
+                                fullWidth
+                                className="md:flex-none"
                             >
                                 {f.label}
-                            </button>
+                            </Button>
                         ))}
                     </div>
 
                     <div className="flex items-center gap-4 w-full md:w-auto px-2">
-                        <div className="relative flex-1 md:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <input
+                        <div className="flex-1 md:w-64">
+                            <Input
                                 type="text"
                                 placeholder="Search Instruments..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 transition font-black tracking-tight italic"
+                                icon={<Search className="w-4 h-4 text-slate-400" />}
                             />
                         </div>
-                        <button className="p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-primary transition shadow-sm">
-                            <Filter className="w-4 h-4" />
-                        </button>
+                        <Button variant="secondary" size="md" icon={<Filter className="w-4 h-4" />} />
                     </div>
                 </div>
 
@@ -414,126 +395,94 @@ const Cheques: React.FC = () => {
             </div>
 
             {/* --- MODALS --- */}
-            {showAddCheque && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative">
-                        <Activity className="absolute -top-10 -right-10 w-48 h-48 text-primary opacity-5" />
-
-                        <div className="p-10">
-                            <div className="flex items-center justify-between mb-10">
-                                <div>
-                                    <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Add cheque</h3>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Securing asset node in {currentSector} zone</p>
-                                </div>
-                                <button onClick={() => setShowAddCheque(false)} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-full text-slate-400 hover:text-error transition">
-                                    <X size={20} />
-                                </button>
-                            </div>
-
-                            <form onSubmit={handleRegister} className="space-y-6">
+            <Modal
+                isOpen={showAddCheque}
+                onClose={() => setShowAddCheque(false)}
+                title="Add cheque"
+                size="lg"
+            >
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic -mt-4 mb-4">Securing asset node in {currentSector} zone</p>
+                <form onSubmit={handleRegister} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Cheque No.</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={formData.number}
-                                            onChange={e => setFormData({ ...formData, number: e.target.value })}
-                                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
-                                            placeholder="CHQ-XXXXXX"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Entry Date</label>
-                                        <input
-                                            type="date"
-                                            required
-                                            value={formData.date}
-                                            onChange={e => setFormData({ ...formData, date: e.target.value })}
-                                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Counter-Party Label</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={formData.payee}
-                                            onChange={e => setFormData({ ...formData, payee: e.target.value })}
-                                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all"
-                                            placeholder="Entity Name..."
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Magnitude (₹)</label>
-                                        <input
-                                            type="number"
-                                            required
-                                            value={formData.amount}
-                                            onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono"
-                                            placeholder="0.00"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Target Account</label>
-                                        <select
-                                            required
+                                    <Input
+                                        label="Cheque No."
+                                        type="text"
+                                        required
+                                        value={formData.number}
+                                        onChange={e => setFormData({ ...formData, number: e.target.value })}
+                                        placeholder="CHQ-XXXXXX"
+                                    />
+                                    <Input
+                                        label="Entry Date"
+                                        type="date"
+                                        required
+                                        value={formData.date}
+                                        onChange={e => setFormData({ ...formData, date: e.target.value })}
+                                    />
+                                    <Input
+                                        label="Counter-Party Label"
+                                        type="text"
+                                        required
+                                        value={formData.payee}
+                                        onChange={e => setFormData({ ...formData, payee: e.target.value })}
+                                        placeholder="Entity Name..."
+                                    />
+                                    <Input
+                                        label="Magnitude (₹)"
+                                        type="number"
+                                        required
+                                        value={formData.amount}
+                                        onChange={e => setFormData({ ...formData, amount: e.target.value })}
+                                        placeholder="0.00"
+                                    />
+                                    <div>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 block mb-2">Target Account</label>
+                                        <Select
+                                            options={[{ value: '', label: 'Select Account...' }, ...accounts.map(acc => ({ value: acc._id, label: `${acc.bankName} - ${acc.accountNumber}` }))]}
                                             value={formData.accountId}
-                                            onChange={e => setFormData({ ...formData, accountId: e.target.value })}
-                                            className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-sm font-black italic outline-none focus:ring-4 focus:ring-primary/10 transition-all font-mono appearance-none"
-                                        >
-                                            <option value="">Select Account...</option>
-                                            {accounts.map(acc => (
-                                                <option key={acc._id} value={acc._id}>{acc.bankName} - {acc.accountNumber}</option>
-                                            ))}
-                                        </select>
+                                            onChange={(value) => setFormData({ ...formData, accountId: typeof value === 'string' ? value : value[0] })}
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">Direction</label>
                                         <div className="flex bg-slate-50 dark:bg-slate-900 p-1 rounded-sm border border-slate-100 dark:border-slate-700">
-                                            <button
+                                            <Button
                                                 type="button"
+                                                variant={formData.type === 'RECEIVED' ? 'primary' : 'tertiary'}
+                                                size="sm"
                                                 onClick={() => setFormData({ ...formData, type: 'RECEIVED' })}
-                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'RECEIVED' ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' : 'text-slate-400'}`}
+                                                fullWidth
                                             >
                                                 Received
-                                            </button>
-                                            <button
+                                            </Button>
+                                            <Button
                                                 type="button"
+                                                variant={formData.type === 'ISSUED' ? 'primary' : 'tertiary'}
+                                                size="sm"
                                                 onClick={() => setFormData({ ...formData, type: 'ISSUED' })}
-                                                className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${formData.type === 'ISSUED' ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' : 'text-slate-400'}`}
+                                                fullWidth
                                             >
                                                 Issued
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>
 
-                                <button type="submit" className="w-full py-5 mt-6 bg-slate-950 text-white rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-slate-900 transition-all flex items-center justify-center gap-4 border border-slate-700">
-                                    <ShieldCheck className="w-5 h-5 text-primary" />
+                                <Button type="submit" variant="secondary" size="lg" icon={<ShieldCheck className="w-5 h-5 text-primary" />} fullWidth>
                                     Save cheque
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            )}
+                                </Button>
+                </form>
+            </Modal>
 
-            {showDetails && selectedCheque && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-slate-800 w-full max-w-lg rounded-[3.5rem] shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                        <div className="p-10 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/10">
-                            <div>
-                                <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">{selectedCheque.number}</h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">Approval history</p>
-                            </div>
-                            <button onClick={() => setShowDetails(false)} className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-slate-400 hover:text-error transition shadow-sm">
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div className="p-10 text-center">
+            {selectedCheque && (
+            <Modal
+                isOpen={showDetails}
+                onClose={() => setShowDetails(false)}
+                title={selectedCheque.number}
+                size="sm"
+            >
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic -mt-4 mb-6">Approval history</p>
+                        <div className="text-center">
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-primary text-[9px] font-black uppercase tracking-[0.2em] mb-6 italic">
                                 <Zap className="w-3.5 h-3.5 fill-current" /> Cheque amount
                             </div>
@@ -555,52 +504,80 @@ const Cheques: React.FC = () => {
 
                             {selectedCheque.status === 'PENDING' && (
                                 <div className="flex gap-4">
-                                    <button
+                                    <Button
+                                        variant="success"
+                                        size="lg"
+                                        icon={<CheckCircle2 className="w-5 h-5 fill-current" />}
                                         onClick={() => handleUpdateStatus(selectedCheque.id, 'CLEARED')}
-                                        className="flex-1 py-5 bg-success text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-success/20 hover:scale-105 transition-all flex items-center justify-center gap-2"
+                                        fullWidth
                                     >
-                                        <CheckCircle2 className="w-5 h-5 fill-current" /> Mark cleared
-                                    </button>
-                                    <button
+                                        Mark cleared
+                                    </Button>
+                                    <Button
+                                        variant="danger"
+                                        size="lg"
+                                        icon={<XCircle className="w-5 h-5 fill-current" />}
                                         onClick={() => handleUpdateStatus(selectedCheque.id, 'BOUNCED')}
-                                        className="flex-1 py-5 bg-error text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-error/20 hover:scale-105 transition-all flex items-center justify-center gap-2"
+                                        fullWidth
                                     >
-                                        <XCircle className="w-5 h-5 fill-current" /> Log Rejection
-                                    </button>
+                                        Log Rejection
+                                    </Button>
                                 </div>
                             )}
                         </div>
-                    </div>
-                </div>
+            </Modal>
             )}
 
-            {showBulkPaymentModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-slate-800 w-full max-w-4xl rounded-[3.5rem] shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh]">
-                        <div className="p-10 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between">
-                            <div>
-                                <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-1">Bulk Payment Stream</h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">Balance check</p>
+            <Modal
+                isOpen={showBulkPaymentModal}
+                onClose={() => setShowBulkPaymentModal(false)}
+                title="Bulk Payment Stream"
+                size="xl"
+                footer={
+                    <div className="flex items-center justify-between">
+                            <div className="text-left">
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Payload Magnitude</p>
+                                <p className="text-2xl font-black italic text-slate-900 dark:text-white">
+                                    ₹{formatCurrency(selectedInvoices.filter(i => i.selected).reduce((acc, i) => acc + (i.payAmount || 0), 0))}
+                                </p>
                             </div>
-                            <button onClick={() => setShowBulkPaymentModal(false)} className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm text-slate-400 hover:text-error transition">
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div className="p-10 overflow-y-auto flex-1 space-y-8">
+                            <div className="flex gap-4">
+                                <Button
+                                    variant="outline"
+                                    size="md"
+                                    onClick={handleValidateBulk}
+                                    disabled={isValidating || !bulkPayAccountId || selectedInvoices.filter(i => i.selected).length === 0}
+                                    loading={isValidating}
+                                >
+                                    Run Balance Check
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    size="lg"
+                                    disabled={!validationResults || !validationResults.approved}
+                                >
+                                    {validationResults?.approved ? 'Execute Batch Payment' : 'Validation Required'}
+                                </Button>
+                            </div>
+                    </div>
+                }
+            >
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic -mt-4 mb-6">Balance check</p>
+                        <div className="space-y-8">
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 text-center block">Deployment Account</label>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {accounts.map(acc => (
-                                        <button
+                                        <Button
                                             key={acc._id}
+                                            variant="outline"
                                             onClick={() => setBulkPayAccountId(acc._id)}
-                                            className={`p-6 rounded-[2rem] border-2 transition-all text-left ${bulkPayAccountId === acc._id ? 'border-primary bg-primary/5 ring-8 ring-primary/5' : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 hover:border-slate-200'}`}
+                                            className={`h-auto flex-col items-start p-6 rounded-[2rem] border-2 text-left ${bulkPayAccountId === acc._id ? 'border-primary bg-primary/5 ring-8 ring-primary/5' : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900'}`}
                                         >
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{acc.bankName}</p>
                                             <p className="text-sm font-black italic text-slate-900 dark:text-white mb-2">{acc.accountNumber}</p>
                                             <p className="text-xs font-black text-primary italic">₹{formatCurrency(acc.currentBalance)}</p>
-                                        </button>
+                                        </Button>
                                     ))}
                                 </div>
                             </div>
@@ -671,33 +648,7 @@ const Cheques: React.FC = () => {
                                 </table>
                             </div>
                         </div>
-
-                        <div className="p-10 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                            <div className="text-left">
-                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Payload Magnitude</p>
-                                <p className="text-2xl font-black italic text-slate-900 dark:text-white">
-                                    ₹{formatCurrency(selectedInvoices.filter(i => i.selected).reduce((acc, i) => acc + (i.payAmount || 0), 0))}
-                                </p>
-                            </div>
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={handleValidateBulk}
-                                    disabled={isValidating || !bulkPayAccountId || selectedInvoices.filter(i => i.selected).length === 0}
-                                    className="px-8 py-4 bg-white dark:bg-slate-800 border-2 border-primary text-primary rounded-sm text-[9px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all disabled:opacity-50 flex items-center gap-2"
-                                >
-                                    {isValidating ? 'Processing Logic...' : 'Run Balance Check'}
-                                </button>
-                                <button
-                                    disabled={!validationResults || !validationResults.approved}
-                                    className="px-10 py-5 bg-primary text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 transition-all disabled:opacity-30 flex items-center gap-3"
-                                >
-                                    {validationResults?.approved ? 'Execute Batch Payment' : 'Validation Required'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            </Modal>
 
             {showTransferModal && (
                 <TransferModal

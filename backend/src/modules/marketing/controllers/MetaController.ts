@@ -1,13 +1,15 @@
 import { Request, Response } from "express";
 import { MetaService } from "../services/MetaService.js";
 import { MetaIntegration } from "../models/MetaIntegration.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { error, info } from '../../../config/logger.js';
 
 const metaService = new MetaService();
 
 export class MetaController {
 
     // Get the Facebook Login URL
-    getAuthUrl = (_req: Request, res: Response) => {
+    getAuthUrl = (_req: AuthenticatedRequest, res: Response) => {
         try {
             const url = metaService.getLoginUrl();
             res.json({ success: true, url });
@@ -17,14 +19,14 @@ export class MetaController {
     }
 
     // Handle OAuth Callback
-    handleCallback = async (req: Request, res: Response) => {
+    handleCallback = async (req: AuthenticatedRequest, res: Response) => {
         try {
             const { code } = req.body;
             if (!code) {
                 return res.status(400).json({ success: false, message: "Code is required" });
             }
 
-            const userId = (req as any).user._id;
+            const userId = req.user._id;
             const tokenData = await metaService.exchangeCodeForToken(code);
             const accessToken = tokenData.access_token;
 
@@ -43,20 +45,20 @@ export class MetaController {
             );
 
             // Background fetch of pages/accounts
-            this.refreshDataInternal(userId, accessToken);
+            this.refreshDataInternal(String(userId), accessToken);
 
             res.json({ success: true, data: integration });
 
-        } catch (error: any) {
-            console.error("Meta Auth Error:", error);
-            res.status(500).json({ success: false, message: error.message });
+        } catch (err: any) {
+            error('Meta Auth Error:', err);
+            res.status(500).json({ success: false, message: err.message });
         }
     }
 
     // Get Integration Status
-    getStatus = async (req: Request, res: Response) => {
+    getStatus = async (req: AuthenticatedRequest, res: Response) => {
         try {
-            const userId = (req as any).user._id;
+            const userId = req.user._id;
             const integration = await MetaIntegration.findOne({ user: userId });
 
             if (!integration) {
@@ -121,15 +123,15 @@ export class MetaController {
                     whatsappBusinessAccounts: whatsappAccounts
                 }
             );
-        } catch (error) {
-            console.error("Error refreshing Meta data:", error);
+        } catch (err) {
+            error('Error refreshing Meta data:', err);
         }
     }
 
     // Get Connected Pages
-    getPages = async (req: Request, res: Response) => {
+    getPages = async (req: AuthenticatedRequest, res: Response) => {
         try {
-            const userId = (req as any).user._id;
+            const userId = req.user._id;
             const integration = await MetaIntegration.findOne({ user: userId });
             res.json({ success: true, data: integration?.connectedPages || [] });
         } catch (error: any) {
@@ -138,9 +140,9 @@ export class MetaController {
     }
 
     // Get Ad Accounts
-    getAdAccounts = async (req: Request, res: Response) => {
+    getAdAccounts = async (req: AuthenticatedRequest, res: Response) => {
         try {
-            const userId = (req as any).user._id;
+            const userId = req.user._id;
             const integration = await MetaIntegration.findOne({ user: userId });
             res.json({ success: true, data: integration?.adAccounts || [] });
         } catch (error: any) {
@@ -149,9 +151,9 @@ export class MetaController {
     }
 
     // Get WhatsApp Accounts
-    getWhatsAppAccounts = async (req: Request, res: Response) => {
+    getWhatsAppAccounts = async (req: AuthenticatedRequest, res: Response) => {
         try {
-            const userId = (req as any).user._id;
+            const userId = req.user._id;
             const integration = await MetaIntegration.findOne({ user: userId });
             res.json({ success: true, data: integration?.whatsappBusinessAccounts || [] });
         } catch (error: any) {
@@ -160,10 +162,10 @@ export class MetaController {
     }
 
     // Publish Post to Instagram
-    publishPost = async (req: Request, res: Response) => {
+    publishPost = async (req: AuthenticatedRequest, res: Response) => {
         try {
             const { instagramAccountId, imageUrl, caption } = req.body;
-            const userId = (req as any).user._id;
+            const userId = req.user._id;
 
             if (!instagramAccountId || !imageUrl) {
                 return res.status(400).json({ success: false, message: "Instagram Account ID and Image URL are required" });
@@ -191,9 +193,9 @@ export class MetaController {
 
             res.json({ success: true, data: result });
 
-        } catch (error: any) {
-            console.error("Publish Error:", error);
-            res.status(500).json({ success: false, message: error.message });
+        } catch (err: any) {
+            error('Publish Error:', err);
+            res.status(500).json({ success: false, message: err.message });
         }
     }
 
@@ -205,7 +207,7 @@ export class MetaController {
 
         if (mode && token) {
             if (mode === 'subscribe' && token === process.env.META_WEBHOOK_VERIFY_TOKEN) {
-                console.log('WEBHOOK_VERIFIED');
+                info('WEBHOOK_VERIFIED');
                 res.status(200).send(challenge);
             } else {
                 res.sendStatus(403);

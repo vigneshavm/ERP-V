@@ -1,5 +1,6 @@
 import Invoice from '../../sales/models/Invoice.js';
 import { decomposeGST } from '../../../utils/gstUtils.js';
+import type { TenantRef } from '../../../interfaces/TenantRef.js';
 
 export { decomposeGST };
 
@@ -9,7 +10,7 @@ export { decomposeGST };
 export interface GSTR1Report {
     period: string;
     generatedAt: Date;
-    tenantId: string;
+    tenantId: TenantRef;
     summary: {
         totalInvoices: number;
         totalTaxableValue: number;
@@ -46,7 +47,7 @@ export interface GSTR1Report {
 }
 
 export const buildGSTR1Report = async (
-    tenantId: string,
+    tenantId: TenantRef,
     period: string // "YYYY-MM"
 ): Promise<GSTR1Report> => {
     const [year, month] = period.split('-').map(Number);

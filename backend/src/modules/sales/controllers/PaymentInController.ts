@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 import PaymentIn from '../models/PaymentIn.js';
 import Customer from '../../crm/models/Customer.js';
@@ -7,17 +7,7 @@ import Transaction from '../models/Transaction.js';
 import CashbankTransaction from '../../finance/models/CashbankTransaction.js';
 import BankAccount from '../../finance/models/BankAccount.js';
 import { info, error } from '../../../config/logger.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 interface PaymentMethod {
     method: string;
@@ -119,7 +109,7 @@ export const createPaymentIn = async (req: AuthenticatedRequest, res: Response):
                 }
                 const bankAccount = await BankAccount.findOne({
                     _id: pm.bankAccount,
-                    userId: req.user?._id,
+                    userId: req.user.tenantId,
                 });
                 if (!bankAccount) {
                     res.status(400).json({
@@ -150,7 +140,7 @@ export const createPaymentIn = async (req: AuthenticatedRequest, res: Response):
             }
             const depositBankAccount = await BankAccount.findOne({
                 _id: depositAccount,
-                userId: req.user?._id,
+                userId: req.user.tenantId,
             });
             if (!depositBankAccount) {
                 res.status(400).json({
@@ -351,7 +341,7 @@ export const createPaymentIn = async (req: AuthenticatedRequest, res: Response):
             toAccount: depositAccount,
             description: `Payment In - Receipt ${receiptNumber} - Customer: ${customer.name}`,
             reference: receiptNumber,
-            userId: req.user?._id,
+            userId: req.user.tenantId,
         });
 
         if (depositAccount !== 'cash') {
@@ -378,11 +368,10 @@ export const createPaymentIn = async (req: AuthenticatedRequest, res: Response):
             payment: populatedPayment,
         });
     } catch (err) {
-        console.error('=== Payment In Error ===');
-        console.error('Error message:', (err as Error).message);
-        console.error('Error stack:', (err as Error).stack);
-        console.error('Request body:', JSON.stringify(req.body, null, 2));
-        error(`Create Payment In Error: ${(err as Error).message}`);
+        error(`Create Payment In Error: ${(err as Error).message}`, { 
+            stack: (err as Error).stack,
+            requestBody: req.body 
+        });
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };

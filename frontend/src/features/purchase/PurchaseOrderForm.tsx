@@ -1,11 +1,12 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
-import { Save, Trash2, Plus, Search, MapPin, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, ChevronDown, CheckCircle2, Package, Truck, CreditCard, Zap } from 'lucide-react';
+import { Save, Trash2, Plus, Search, FileText, Paperclip, X, History, AlertTriangle, Loader2, Info, CheckCircle2, Package, Truck, CreditCard, Zap } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderItem } from "../../types/purchase";
 import { usePurchaseItems } from "../../hooks/usePurchaseItems";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import api from "../../services/api";
 import { formatDate } from '../../utils/helpers';
+import { Button, Checkbox, Input, Modal, Select, Textarea } from '../../components/shared';
 
 interface Props {
     onBack?: () => void;
@@ -216,62 +217,56 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
     return (
         <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-900">
             {/* History Modal */}
-            {historyModal.show && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700 animate-in zoom-in-95 duration-300">
-                        <div className="p-8 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                            <h3 className="text-sm font-black flex items-center gap-3 uppercase tracking-widest">
-                                <History className="w-5 h-5 text-primary" /> Price History: <span className="text-primary">{historyModal.item}</span>
-                            </h3>
-                            <button onClick={() => setHistoryModal(prev => ({ ...prev, show: false }))} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all">
-                                <X className="w-4 h-4" />
-                            </button>
-                        </div>
-                        <div className="p-8 max-h-96 overflow-y-auto custom-scrollbar">
-                            {historyModal.loading ? (
-                                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
-                            ) : historyModal.data.length === 0 ? (
-                                <div className="text-center py-12 opacity-40">
-                                    <Info className="w-12 h-12 mx-auto mb-4" />
-                                    <p className="text-xs font-black uppercase tracking-widest">No node history found.</p>
-                                </div>
-                            ) : (
-                                <table className="w-full text-left">
-                                    <thead className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                        <tr>
-                                            <th className="pb-4">Fiscal Date</th>
-                                            <th className="pb-4">Vendor</th>
-                                            <th className="pb-4 text-right">Rate</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                                        {historyModal.data.map((h, i) => (
-                                            <tr key={i} className="group">
-                                                <td className="py-4 text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter tabular-nums">{formatDate(h.date)}</td>
-                                                <td className="py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[120px]">{h.vendorName}</td>
-                                                <td className="py-4 text-right text-xs font-black text-primary tabular-nums">₹{h.rate}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )}
-                        </div>
+            <Modal
+                isOpen={historyModal.show}
+                onClose={() => setHistoryModal(prev => ({ ...prev, show: false }))}
+                title={`Price History: ${historyModal.item}`}
+                size="sm"
+            >
+                {historyModal.loading ? (
+                    <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+                ) : historyModal.data.length === 0 ? (
+                    <div className="text-center py-12 opacity-40">
+                        <Info className="w-12 h-12 mx-auto mb-4" />
+                        <p className="text-xs font-black uppercase tracking-widest">No node history found.</p>
                     </div>
-                </div>
-            )}
+                ) : (
+                    <table className="w-full text-left">
+                        <thead className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            <tr>
+                                <th className="pb-4">Fiscal Date</th>
+                                <th className="pb-4">Vendor</th>
+                                <th className="pb-4 text-right">Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                            {historyModal.data.map((h, i) => (
+                                <tr key={i} className="group">
+                                    <td className="py-4 text-xs font-black text-slate-900 dark:text-white uppercase tracking-tighter tabular-nums">{formatDate(h.date)}</td>
+                                    <td className="py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[120px]">{h.vendorName}</td>
+                                    <td className="py-4 text-right text-xs font-black text-primary tabular-nums">₹{h.rate}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </Modal>
 
             <PageHeader
                 title={initialData ? 'Refactor Order' : 'Institutional Order'}
                 description="Initialize procurement nodes with verified supply-chain parameters."
                 actions={
                     <div className="flex items-center gap-3">
-                        <button
+                        <Button
+                            variant="primary"
+                            size="md"
+                            icon={<Save className="w-4 h-4" />}
                             onClick={handleSubmit}
                             disabled={isSaving}
-                            className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 disabled:opacity-50"
+                            loading={isSaving}
                         >
-                            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Node
-                        </button>
+                            Save Node
+                        </Button>
                     </div>
                 }
                 breadcrumbs={[
@@ -304,38 +299,33 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div className="md:col-span-1">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">PO No.</label>
-                            <div className="px-5 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black text-slate-500 font-mono tracking-tighter ">
+                            <div className="px-5 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black text-slate-500 dark:text-slate-400 font-mono tracking-tighter ">
                                 {header.po_number}
                             </div>
                         </div>
                         <div>
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Fiscal Date</label>
-                            <input
+                            <Input
                                 type="date"
                                 value={header.po_date}
                                 onChange={e => setHeader({ ...header, po_date: e.target.value })}
-                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">ETA Constraint</label>
-                            <input
+                            <Input
                                 type="date"
                                 value={header.expected_delivery || ''}
                                 onChange={e => setHeader({ ...header, expected_delivery: e.target.value })}
-                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Supplier</label>
-                            <select
+                            <Select
+                                options={[{ value: '', label: 'Select entity...' }, ...(Array.isArray(vendors) ? vendors.map(v => ({ value: v.id, label: v.name })) : [])]}
                                 value={header.vendor_id || ''}
-                                onChange={e => setHeader({ ...header, vendor_id: e.target.value })}
-                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
-                            >
-                                <option value="">Select entity...</option>
-                                {Array.isArray(vendors) && vendors.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
-                            </select>
+                                onChange={(value) => setHeader({ ...header, vendor_id: typeof value === 'string' ? value : value[0] })}
+                            />
                         </div>
                     </div>
 
@@ -343,39 +333,33 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div>
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Supply Hub</label>
-                            <div className="relative">
-                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <select
-                                    value={header.delivery_location}
-                                    onChange={e => setHeader({ ...header, delivery_location: e.target.value })}
-                                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none"
-                                >
-                                    <option value="Main Warehouse">Main Warehouse</option>
-                                    <option value="Production Unit A">Production Unit A</option>
-                                    <option value="Retail Outlet - Center">Retail Outlet - Center</option>
-                                    <option value="Third-party Logistics (3PL)">Third-party Logistics (3PL)</option>
-                                </select>
-                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                            </div>
+                            <Select
+                                options={[
+                                    { value: 'Main Warehouse', label: 'Main Warehouse' },
+                                    { value: 'Production Unit A', label: 'Production Unit A' },
+                                    { value: 'Retail Outlet - Center', label: 'Retail Outlet - Center' },
+                                    { value: 'Third-party Logistics (3PL)', label: 'Third-party Logistics (3PL)' },
+                                ]}
+                                value={header.delivery_location}
+                                onChange={(value) => setHeader({ ...header, delivery_location: typeof value === 'string' ? value : value[0] })}
+                            />
                         </div>
                         <div className="md:col-span-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Coordinate Precision (Address)</label>
-                            <input
+                            <Input
                                 type="text"
                                 value={header.delivery_address || ''}
                                 onChange={e => setHeader({ ...header, delivery_address: e.target.value })}
                                 placeholder="Plot, Sector, Landmark..."
-                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                         <div>
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Reference No.</label>
-                            <input
+                            <Input
                                 type="text"
                                 value={header.reference_number || ''}
                                 onChange={e => setHeader({ ...header, reference_number: e.target.value })}
                                 placeholder="e.g. QUO-2024-X"
-                                className="w-full px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-black focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                             />
                         </div>
                     </div>
@@ -385,12 +369,14 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                         <div className="p-8 border-b border-slate-100 dark:border-slate-700 flex flex-col md:flex-row items-center justify-between gap-6">
                             <div className="flex items-center gap-4">
                                 <h3 className="text-sm font-black uppercase tracking-widest">Inventory Nodes</h3>
-                                <button
+                                <Button
+                                    variant="tertiary"
+                                    size="sm"
+                                    icon={<Plus className="w-3.5 h-3.5" />}
                                     onClick={handleAddLot}
-                                    className="px-4 py-1.5 bg-primary-soft text-primary dark:bg-primary-soft dark:text-primary text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 hover:bg-primary-soft transition-all"
                                 >
-                                    <Plus className="w-3.5 h-3.5" /> Bulk Lot
-                                </button>
+                                    Bulk Lot
+                                </Button>
                             </div>
                             <div className="relative w-full md:w-80">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -484,14 +470,10 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                                 ₹{item.line_total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                             </td>
                                             <td className="px-8 py-5 text-center">
-                                                <button onClick={() => handleShowHistory(item.product_id || '', item.product_name)} className="p-2 text-slate-300 hover:text-primary hover:bg-primary/5 rounded-xl transition-all">
-                                                    <History className="w-4 h-4" />
-                                                </button>
+                                                <Button variant="tertiary" size="sm" icon={<History className="w-4 h-4" />} onClick={() => handleShowHistory(item.product_id || '', item.product_name)} />
                                             </td>
                                             <td className="px-8 py-5 text-center">
-                                                <button onClick={() => removeItem(idx)} className="p-2 text-slate-300 hover:text-danger hover:bg-danger-soft rounded-xl transition-all">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                <Button variant="tertiary" size="sm" icon={<Trash2 className="w-4 h-4" />} className="text-danger" onClick={() => removeItem(idx)} />
                                             </td>
                                         </tr>
                                     ))}
@@ -515,10 +497,10 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                 <FileText className="w-5 h-5 text-slate-400" />
                                 <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notes</h4>
                             </div>
-                            <textarea
+                            <Textarea
                                 value={header.notes || ''}
                                 onChange={e => setHeader({ ...header, notes: e.target.value })}
-                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                                minRows={7}
                                 placeholder="Internal protocol instructions, quality constraints, audit remarks..."
                             />
                         </div>
@@ -528,18 +510,17 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                     <ShieldCheck className="w-5 h-5 text-success" />
                                     <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Governance Clauses (T&C)</h4>
                                 </div>
-                                <select
-                                    onChange={e => setHeader({ ...header, terms_and_conditions: e.target.value })}
-                                    className="text-[9px] font-black text-primary uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full outline-none cursor-pointer"
-                                >
-                                    <option value="">Apply Clause...</option>
-                                    {termsTemplates.map(t => <option key={t.name} value={t.content}>{t.name}</option>)}
-                                </select>
+                                <Select
+                                    options={[{ value: '', label: 'Apply Clause...' }, ...termsTemplates.map(t => ({ value: t.content, label: t.name }))]}
+                                    value=""
+                                    onChange={(value) => setHeader({ ...header, terms_and_conditions: typeof value === 'string' ? value : value[0] })}
+                                    size="sm"
+                                />
                             </div>
-                            <textarea
+                            <Textarea
                                 value={header.terms_and_conditions || ''}
                                 onChange={e => setHeader({ ...header, terms_and_conditions: e.target.value })}
-                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-sm p-6 text-xs font-bold h-40 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all resize-none"
+                                minRows={7}
                                 placeholder="Mandatory procurement clauses, liability limitations, payment constraints..."
                             />
                         </div>
@@ -555,9 +536,7 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
                                 <div key={i} className="flex items-center gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 rounded-sm text-[10px] font-black uppercase tracking-widest border border-slate-100 dark:border-slate-700 group transition-all hover:border-primary/20">
                                     <FileText className="w-4 h-4 text-slate-400" />
                                     <span className="max-w-[150px] truncate">{file}</span>
-                                    <button onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} className="text-slate-300 hover:text-danger transition-colors">
-                                        <X className="w-4 h-4" />
-                                    </button>
+                                    <Button variant="tertiary" size="sm" icon={<X className="w-4 h-4" />} className="text-slate-300 hover:text-danger" onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))} />
                                 </div>
                             ))}
                             <label className="flex items-center gap-3 px-6 py-2.5 bg-white dark:bg-slate-800 border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-sm text-[10px] font-black uppercase tracking-widest text-slate-400 hover:border-primary/50 hover:text-primary cursor-pointer transition-all shadow-sm">
@@ -625,57 +604,59 @@ const PurchaseOrderForm: React.FC<Props> = ({ onBack: __onBack = () => { }, onSa
 
                         <div className="space-y-4 pt-4">
                             <div className="grid grid-cols-2 gap-4">
-                                <button
+                                <Button
+                                    variant="secondary"
+                                    size="md"
+                                    icon={<FileText className="w-4 h-4" />}
                                     onClick={() => setHeader({ ...header, status: 'DRAFT' })}
-                                    className="py-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2"
                                 >
-                                    <FileText className="w-4 h-4" /> Draft
-                                </button>
-                                <button
-                                    className="py-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    Draft
+                                </Button>
+                                <Button
+                                    variant="secondary"
+                                    size="md"
+                                    icon={<Truck className="w-4 h-4" />}
                                 >
-                                    <Truck className="w-4 h-4" /> Dispatch
-                                </button>
+                                    Dispatch
+                                </Button>
                             </div>
 
                             <div className="p-6 bg-primary/5 rounded-[2.5rem] border border-primary/10 space-y-4">
-                                <div className="flex items-center gap-3">
-                                    <input
-                                        type="checkbox"
-                                        id="billLater"
-                                        checked={header.status === 'RECEIVED'}
-                                        onChange={e => setHeader({ ...header, status: e.target.checked ? 'RECEIVED' : 'COMPLETED' })}
-                                        className="w-5 h-5 rounded-lg border-primary/20 text-primary focus:ring-primary/20 cursor-pointer"
-                                    />
-                                    <label htmlFor="billLater" className="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest cursor-pointer">
-                                        Receive now
-                                    </label>
-                                </div>
+                                <Checkbox
+                                    id="billLater"
+                                    label="Receive now"
+                                    checked={header.status === 'RECEIVED'}
+                                    onChange={e => setHeader({ ...header, status: e.target.checked ? 'RECEIVED' : 'COMPLETED' })}
+                                />
 
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2">
                                         <CreditCard className="w-3 h-3" /> Settlement Mode
                                     </label>
-                                    <select
+                                    <Select
+                                        options={[
+                                            { value: 'Credit', label: 'Credit' },
+                                            { value: 'Cash', label: 'Cash Transaction' },
+                                            { value: 'UPI', label: 'Digital (UPI/Bank)' },
+                                        ]}
                                         value={(header as any).payment_method || 'Credit'}
-                                        onChange={e => setHeader({ ...header, payment_method: e.target.value } as any)}
-                                        className="w-full bg-white dark:bg-slate-800 border border-primary/10 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none"
-                                    >
-                                        <option value="Credit">Credit</option>
-                                        <option value="Cash">Cash Transaction</option>
-                                        <option value="UPI">Digital (UPI/Bank)</option>
-                                    </select>
+                                        onChange={(value) => setHeader({ ...header, payment_method: (typeof value === 'string' ? value : value[0]) } as any)}
+                                        size="sm"
+                                    />
                                 </div>
                             </div>
 
-                            <button
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                icon={<CheckCircle2 className="w-5 h-5" />}
                                 onClick={handleSubmit}
                                 disabled={isSaving}
-                                className="w-full py-5 bg-primary text-white rounded-[2rem] text-xs font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                                loading={isSaving}
+                                fullWidth
                             >
-                                {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />} 
                                 {header.status === 'RECEIVED' ? 'Finalize Receipt' : 'Complete Protocol'}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                     

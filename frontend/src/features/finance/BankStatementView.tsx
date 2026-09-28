@@ -4,6 +4,7 @@ import { bankStatementService, BankStatementTransaction } from '../../services/b
 import { toast } from 'react-toastify';
 import Layout from '../../components/shared/Layout/Layout';
 import PageHeader from '../../components/shared/Layout/PageHeader';
+import { Button } from '@/components/shared/Button';
 
 /* ─── Summary card ─────────────────────────────────────────────────────────── */
 interface SummaryCardProps {
@@ -16,7 +17,7 @@ interface SummaryCardProps {
 }
 
 const SummaryCard: React.FC<SummaryCardProps> = ({ label, value, sub, icon, colorClass, bgClass }) => (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[2rem] p-6 shadow-sm flex items-start gap-4 group hover:border-primary/20 transition-all duration-500">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm flex items-start gap-4 group hover:border-primary/20 transition-all duration-500">
         <div className={`p-3.5 rounded-sm ${bgClass} ${colorClass} shrink-0 shadow-sm group-hover:scale-110 transition-transform`}>
             {icon}
         </div>

@@ -38,7 +38,7 @@ const BusinessSubNav: React.FC = () => {
     ];
 
     return (
-        <div className="bg-white border-b border-slate-200 sticky top-0 z-20 mb-6 -mx-4 px-4 lg:-mx-8 lg:px-8">
+        <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-20 mb-6 -mx-4 px-4 lg:-mx-8 lg:px-8">
             <div className="flex overflow-x-auto no-scrollbar py-1">
                 <div className="flex gap-1">
                     {navItems.map((item) => {

@@ -10,6 +10,7 @@ import {
     LayoutDashboard
 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { Button, Card } from '@/components/shared';
 import Layout from "../../components/shared/Layout/index";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import ExpenseForm from '../../components/Finance/ExpenseForm';
@@ -73,15 +74,21 @@ const BudgetTrackerPage: React.FC = () => {
                     ]}
                     actions={
                         <div className="flex gap-3">
-                            <button className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest">
-                                <Search className="w-4 h-4" /> Deep Search
-                            </button>
-                            <button
-                                onClick={() => setIsFormOpen(true)}
-                                className="px-6 py-2.5 bg-success text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-500/20 flex items-center gap-2 hover:bg-success/90 transition active:scale-95 uppercase tracking-widest"
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                icon={<Search className="w-4 h-4" />}
                             >
-                                <Plus className="w-5 h-5" /> Record Expense
-                            </button>
+                                Deep Search
+                            </Button>
+                            <Button
+                                variant="success"
+                                size="md"
+                                icon={<Plus className="w-5 h-5" />}
+                                onClick={() => setIsFormOpen(true)}
+                            >
+                                Record Expense
+                            </Button>
                         </div>
                     }
                 />
@@ -152,48 +159,50 @@ const BudgetTrackerPage: React.FC = () => {
 
                                 {/* Monthly Trend Card */}
                                 {report?.monthly_trends.slice(0, 1).map((m, idx) => (
-                                    <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-10 shadow-sm">
-                                        <div className="flex items-center justify-between mb-8">
+                                    <Card key={idx} variant="default" size="lg">
+                                        <Card.Header trailing>
                                             <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Consolidated Summary: {m.month}</h3>
                                             <span className="px-4 py-1.5 bg-success/10 text-success dark:text-success rounded-full text-[10px] font-black uppercase tracking-widest">Active Monitoring</span>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                            <div className="space-y-4">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Budget Utilization</p>
-                                                {m.budget_utilization !== null && (
-                                                    <div className="h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                                        <div
-                                                            className={`h-full rounded-full ${m.budget_utilization > 100 ? 'bg-danger' : 'bg-success'}`}
-                                                            style={{ width: `${Math.min(m.budget_utilization, 100)}%` }}
-                                                        />
-                                                    </div>
-                                                )}
-                                                <p className="text-2xl font-black text-slate-900 dark:text-white tabular-nums">
-                                                    {formatCurrency(m.expense, { fractionDigits: 0 })}
-                                                    <span className="text-slate-400 text-sm font-bold ml-2">/ {m.budget === null ? '—' : formatCurrency(m.budget, { fractionDigits: 0 })}</span>
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-col justify-center items-end text-right">
-                                                <div className="flex items-center gap-2 text-success dark:text-success mb-2">
-                                                    <ShieldCheck className="w-5 h-5" />
-                                                    <span className="text-xs font-black uppercase tracking-widest">Budget Status</span>
+                                        </Card.Header>
+                                        <Card.Body>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                                <div className="space-y-4">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Budget Utilization</p>
+                                                    {m.budget_utilization !== null && (
+                                                        <div className="h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                            <div
+                                                                className={`h-full rounded-full ${m.budget_utilization > 100 ? 'bg-danger' : 'bg-success'}`}
+                                                                style={{ width: `${Math.min(m.budget_utilization, 100)}%` }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    <p className="text-2xl font-black text-slate-900 dark:text-white tabular-nums">
+                                                        {formatCurrency(m.expense, { fractionDigits: 0 })}
+                                                        <span className="text-slate-400 text-sm font-bold ml-2">/ {m.budget === null ? '—' : formatCurrency(m.budget, { fractionDigits: 0 })}</span>
+                                                    </p>
                                                 </div>
-                                                <p className="text-[10px] text-slate-500 font-bold uppercase leading-relaxed max-w-[200px]">
-                                                    {m.budget_utilization === null
-                                                        ? 'No category budgets are set, so there is nothing to compare against.'
-                                                        : m.budget_utilization <= 100
-                                                            ? `You have used ${m.budget_utilization}% of this month's budget.`
-                                                            : `You are ${m.budget_utilization - 100}% over this month's budget.`}
-                                                </p>
+                                                <div className="flex flex-col justify-center items-end text-right">
+                                                    <div className="flex items-center gap-2 text-success dark:text-success mb-2">
+                                                        <ShieldCheck className="w-5 h-5" />
+                                                        <span className="text-xs font-black uppercase tracking-widest">Budget Status</span>
+                                                    </div>
+                                                    <p className="text-[10px] text-slate-500 font-bold uppercase leading-relaxed max-w-[200px]">
+                                                        {m.budget_utilization === null
+                                                            ? 'No category budgets are set, so there is nothing to compare against.'
+                                                            : m.budget_utilization <= 100
+                                                                ? `You have used ${m.budget_utilization}% of this month's budget.`
+                                                                : `You are ${m.budget_utilization - 100}% over this month's budget.`}
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </Card.Body>
+                                    </Card>
                                 ))}
                             </div>
 
                             {/* Right Side: Intelligence & Categories */}
                             <div className="lg:col-span-4 space-y-8">
-                                <div className="bg-slate-950 text-white rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden group">
+                                <div className="bg-slate-950 text-white rounded-2xl p-10 shadow-2xl relative overflow-hidden group">
                                     <Zap className="absolute -top-6 -right-6 w-24 h-24 text-success opacity-10 group-hover:scale-125 transition duration-1000" />
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-success mb-6 flex items-center gap-2">
                                         <Zap className="w-4 h-4 fill-emerald-500" /> Insights
@@ -208,25 +217,29 @@ const BudgetTrackerPage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-10 shadow-sm">
-                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-10">By category</h3>
-                                    <div className="space-y-8">
-                                        {report?.by_category.slice(0, 5).map((cat, i) => (
-                                            <div key={i} className="space-y-3 group">
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-[10px] font-black tracking-widest uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{cat.category}</span>
-                                                    <span className="text-xs font-black text-slate-900 dark:text-white tabular-nums">₹{cat.amount.toLocaleString()}</span>
+                                <Card variant="default" size="lg">
+                                    <Card.Header>
+                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">By category</h3>
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <div className="space-y-8">
+                                            {report?.by_category.slice(0, 5).map((cat, i) => (
+                                                <div key={i} className="space-y-3 group">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-[10px] font-black tracking-widest uppercase text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{cat.category}</span>
+                                                        <span className="text-xs font-black text-slate-900 dark:text-white tabular-nums">₹{cat.amount.toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                        <div
+                                                            className={`h-full rounded-full transition-all duration-1000 ${cat.status === 'OVER' ? 'bg-danger' : 'bg-success shadow-lg shadow-emerald-500/20'}`}
+                                                            style={{ width: `${cat.percentage}` }}
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                                    <div
-                                                        className={`h-full rounded-full transition-all duration-1000 ${cat.status === 'OVER' ? 'bg-danger' : 'bg-success shadow-lg shadow-emerald-500/20'}`}
-                                                        style={{ width: `${cat.percentage}` }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                            ))}
+                                        </div>
+                                    </Card.Body>
+                                </Card>
                             </div>
                         </div>
                     )}

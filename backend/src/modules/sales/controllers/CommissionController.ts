@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose from "mongoose";
 import CommissionRule from "../models/CommissionRule.js";
 import Invoice from "../models/Invoice.js";
 import User from "../../core/models/User.js";
 import Item from "../../inventory/models/Item.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 // Roles allowed to create/edit/delete commission rules. Viewing the computed report is open to
 // any logged-in (protect-gated) user, matching the rest of this controller's sibling reports;
@@ -16,9 +17,9 @@ const COMMISSION_ADMIN_ROLES = ['owner', 'co-owner', 'manager'];
  * @route   GET /api/commission-rules
  * @access  Private
  */
-export const getCommissionRules = async (req: Request, res: Response): Promise<void> => {
+export const getCommissionRules = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const rules = await CommissionRule.find({ tenantId: (req as any).tenantId })
+        const rules = await CommissionRule.find({ tenantId: req.user.tenantId })
             .populate('employeeId', 'name role')
             .populate('itemId', 'name sku category')
             .sort({ createdAt: -1 });
@@ -33,9 +34,9 @@ export const getCommissionRules = async (req: Request, res: Response): Promise<v
  * @route   POST /api/commission-rules
  * @access  Private (owner/co-owner/manager)
  */
-export const createCommissionRule = async (req: Request, res: Response): Promise<void> => {
+export const createCommissionRule = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const requesterRole = (req as any).user?.role;
+        const requesterRole = req.user.role;
         if (!requesterRole || !COMMISSION_ADMIN_ROLES.includes(requesterRole)) {
             res.status(403).json({ message: 'Only an owner, co-owner, or manager can manage commission rules.' });
             return;
@@ -70,7 +71,7 @@ export const createCommissionRule = async (req: Request, res: Response): Promise
         }
 
         const rule = await CommissionRule.create({
-            tenantId: (req as any).tenantId,
+            tenantId: req.user.tenantId,
             name,
             employeeId: employeeId || undefined,
             scope,
@@ -91,9 +92,9 @@ export const createCommissionRule = async (req: Request, res: Response): Promise
  * @route   PATCH /api/commission-rules/:id
  * @access  Private (owner/co-owner/manager)
  */
-export const updateCommissionRule = async (req: Request, res: Response): Promise<void> => {
+export const updateCommissionRule = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const requesterRole = (req as any).user?.role;
+        const requesterRole = req.user.role;
         if (!requesterRole || !COMMISSION_ADMIN_ROLES.includes(requesterRole)) {
             res.status(403).json({ message: 'Only an owner, co-owner, or manager can manage commission rules.' });
             return;
@@ -102,7 +103,7 @@ export const updateCommissionRule = async (req: Request, res: Response): Promise
         const { id } = req.params;
         const { name, employeeId, scope, itemId, category, rateType, rateValue, status } = req.body;
 
-        const rule = await CommissionRule.findOne({ _id: id, tenantId: (req as any).tenantId });
+        const rule = await CommissionRule.findOne({ _id: id, tenantId: req.user.tenantId });
         if (!rule) {
             res.status(404).json({ message: 'Commission rule not found.' });
             return;
@@ -157,16 +158,16 @@ export const updateCommissionRule = async (req: Request, res: Response): Promise
  * @route   DELETE /api/commission-rules/:id
  * @access  Private (owner/co-owner/manager)
  */
-export const deleteCommissionRule = async (req: Request, res: Response): Promise<void> => {
+export const deleteCommissionRule = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const requesterRole = (req as any).user?.role;
+        const requesterRole = req.user.role;
         if (!requesterRole || !COMMISSION_ADMIN_ROLES.includes(requesterRole)) {
             res.status(403).json({ message: 'Only an owner, co-owner, or manager can manage commission rules.' });
             return;
         }
 
         const { id } = req.params;
-        const result = await CommissionRule.findOneAndDelete({ _id: id, tenantId: (req as any).tenantId });
+        const result = await CommissionRule.findOneAndDelete({ _id: id, tenantId: req.user.tenantId });
         if (!result) {
             res.status(404).json({ message: 'Commission rule not found.' });
             return;
@@ -206,9 +207,9 @@ function resolveRule(rules: any[], employeeId: string, itemId: string, category:
  * @route   GET /api/commission-rules/report?from=&to=&employeeId=
  * @access  Private
  */
-export const getCommissionReport = async (req: Request, res: Response): Promise<void> => {
+export const getCommissionReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const tenantId = (req as any).tenantId;
+        const tenantId = req.user.tenantId;
         const { from, to, employeeId } = req.query as { from?: string; to?: string; employeeId?: string };
 
         const dateFilter: Record<string, Date> = {};

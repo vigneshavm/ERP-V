@@ -1,10 +1,12 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { X, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../redux/store';
 import { getAllBills } from '../../../redux/slices/billSlice';
 import { Bill } from '../../../redux/slices/billSlice';
 import { formatDate } from '../../../utils/helpers';
+import { Button, Modal } from '../../../components/shared';
+import { Input } from '@/components/shared/Input';
 
 interface BillSelectionModalProps {
     isOpen: boolean;
@@ -110,19 +112,41 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
         .reduce((sum, [___, val]) => sum + val, 0);
 
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-sm w-full max-w-4xl shadow-2xl border dark:border-slate-700 flex flex-col max-h-[90vh]">
-                <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 rounded-t-2xl">
-                    <div>
-                        <h2 className="text-xl font-bold mb-1 text-slate-800 dark:text-white">Select Bills for Settlement</h2>
-                        <p className="text-sm text-slate-500">Select unpaid invoices to settle</p>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Select Bills for Settlement"
+            size="xl"
+            footer={
+                <div className="flex justify-between items-center">
+                    <div className="text-sm">
+                        <span className="text-slate-500">Selected Due: </span>
+                        <strong className="text-slate-800 dark:text-white text-lg ml-1">₹{totalSelectedDue.toLocaleString()}</strong>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors">
-                        <X className="w-5 h-5 text-slate-500" />
-                    </button>
-                </div>
 
-                <div className="flex-1 overflow-y-auto p-6">
+                    <div className="flex items-center gap-4">
+                        <div className="text-right mr-4">
+                            <div className="text-sm text-slate-500">Total To Pay</div>
+                            <div className="text-xl font-bold text-primary dark:text-primary">₹{totalAllocated.toLocaleString()}</div>
+                        </div>
+
+                        <Button variant="secondary" size="md" onClick={onClose}>
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="primary"
+                            size="md"
+                            icon={<CheckCircle size={18} />}
+                            onClick={handleConfirm}
+                            disabled={selectedBillIds.size === 0}
+                        >
+                            Confirm Selection
+                        </Button>
+                    </div>
+                </div>
+            }
+        >
+            <p className="text-sm text-slate-500 -mt-2 mb-4">Select unpaid invoices to settle</p>
                     {loading ? (
                         <div className="flex items-center justify-center h-40">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -213,38 +237,7 @@ const BillSelectionModal: React.FC<BillSelectionModalProps> = ({
                             </tbody>
                         </table>
                     )}
-                </div>
-
-                <div className="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-b-2xl flex justify-between items-center">
-                    <div className="text-sm">
-                        <span className="text-slate-500">Selected Due: </span>
-                        <strong className="text-slate-800 dark:text-white text-lg ml-1">₹{totalSelectedDue.toLocaleString()}</strong>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="text-right mr-4">
-                            <div className="text-sm text-slate-500">Total To Pay</div>
-                            <div className="text-xl font-bold text-primary dark:text-primary">₹{totalAllocated.toLocaleString()}</div>
-                        </div>
-
-                        <button
-                            onClick={onClose}
-                            className="px-5 py-2.5 text-slate-600 font-medium hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-600"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleConfirm}
-                            disabled={selectedBillIds.size === 0}
-                            className="px-8 py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-primary-hover active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                        >
-                            <CheckCircle size={18} />
-                            Confim Selection
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </Modal>
     );
 };
 

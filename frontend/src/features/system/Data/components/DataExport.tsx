@@ -1,7 +1,9 @@
 ﻿import { useState } from 'react';
 import PageHeader from "@/components/shared/Layout/PageHeader";
 import api from "@/services/api";
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 const DataExport = () => {
     const [selectedModule, setSelectedModule] = useState('inventory');
@@ -205,13 +207,7 @@ const DataExport = () => {
                         </div>
 
                         <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
-                            <button
-                                onClick={handleExport}
-                                disabled={exporting}
-                                className="w-full py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-600/20 active:scale-95 transition-all disabled:bg-slate-300"
-                            >
-                                {exporting ? 'Processing Export...' : 'Generate and Download Export'}
-                            </button>
+                            <Button onClick={handleExport} disabled={exporting} className="w-full py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-600/20 active:scale-95 transition-all disabled:bg-slate-300">{exporting ? 'Processing Export...' : 'Generate and Download Export'}</Button>
                         </div>
                     </div>
                 </div>
@@ -232,7 +228,7 @@ const DataExport = () => {
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
                             <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recent Exports</h3>
-                            <button className="text-[10px] font-black text-primary uppercase">View All</button>
+                            <Button className="text-[10px] font-black text-primary uppercase">View All</Button>
                         </div>
                         <div className="divide-y divide-slate-100 dark:divide-slate-800">
                             {recentExports.map((item) => (

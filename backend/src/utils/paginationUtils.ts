@@ -75,3 +75,26 @@ export const buildPaginatedMeta = (
         hasPrevPage: page > 1,
     };
 };
+
+export interface TablePagination {
+    page: number;
+    limit: number;
+    pages: number;
+}
+
+/**
+ * Bounded page/limit for in-memory table pagination (search/sort/paginate over an array already
+ * held in memory), clamping `page` to the last available page once `total` is known.
+ */
+export const resolveTablePagination = (
+    total: number,
+    query: { page?: string | number; limit?: string | number },
+    defaultLimit = 50,
+    maxLimit = 200
+): TablePagination => {
+    const limit = Math.min(maxLimit, Math.max(1, parseInt(String(query.limit)) || defaultLimit));
+    const pages = Math.max(1, Math.ceil(total / limit));
+    const page = Math.min(pages, Math.max(1, parseInt(String(query.page)) || 1));
+    return { page, limit, pages };
+};
+

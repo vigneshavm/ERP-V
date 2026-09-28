@@ -1,7 +1,8 @@
 ﻿import React from 'react';
 import { ShoppingCart, Package, CreditCard, Users, Truck, BarChart3, ChevronRight, CheckCircle2, Zap, LucideIcon, Briefcase, FileText, History, ClipboardList, Store } from 'lucide-react';
 import { ModulesTabProps } from './types';
-import { getColorClasses } from '../../../utils/tailwindColorClasses';
+import { getColorClasses } from '../../../utils/tailwindColorClasses';import { Button } from '@/components/shared/Button';
+
 
 interface ModuleDef {
     id: string;

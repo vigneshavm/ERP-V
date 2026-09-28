@@ -1,5 +1,6 @@
 import React from 'react';
-import { Globe } from 'lucide-react';
+import { Globe } from 'lucide-react';import { Input } from '@/components/shared/Input';
+
 
 export const IntegrationsTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTenant, setNewTenant }) => {
     // Defensive fallback for integrations

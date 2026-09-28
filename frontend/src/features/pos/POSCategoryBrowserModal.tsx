@@ -1,6 +1,8 @@
 ﻿import React, { useState, useMemo } from 'react';
 import { X, ChevronLeft, Search, Package, LayoutGrid, Check } from 'lucide-react';
-import { Product } from "../../types/product";
+import { Product } from "../../types/product";import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface POSCategoryBrowserModalProps {
     isOpen: boolean;
@@ -79,12 +81,7 @@ export const POSCategoryBrowserModal: React.FC<POSCategoryBrowserModalProps> = (
                 <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
                     <div className="flex items-center gap-4">
                         {step !== 'CATEGORIES' && (
-                            <button
-                                onClick={handleBack}
-                                className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-colors text-slate-600 dark:text-slate-400"
-                            >
-                                <ChevronLeft className="w-6 h-6" />
-                            </button>
+                            <Button onClick={handleBack} className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-colors text-slate-600 dark:text-slate-400"><ChevronLeft className="w-6 h-6" /></Button>
                         )}
                         <div>
                             <h2 className="text-xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -100,12 +97,7 @@ export const POSCategoryBrowserModal: React.FC<POSCategoryBrowserModalProps> = (
                             </p>
                         </div>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-colors text-slate-400 hover:text-error"
-                    >
-                        <X className="w-6 h-6" />
-                    </button>
+                    <Button onClick={onClose} className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-colors text-slate-400 hover:text-error"><X className="w-6 h-6" /></Button>
                 </div>
 
                 {/* Search Bar (Only for products view) */}

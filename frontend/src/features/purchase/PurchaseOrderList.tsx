@@ -2,6 +2,7 @@
 import { Search, FileText, CheckCircle, Clock, AlertCircle, Lock, MoreHorizontal, Trash2, Printer, Download, Eye, FileSpreadsheet, Info, ArrowUpDown, Activity } from 'lucide-react';
 import { PurchaseOrder, PurchaseOrderStatus, PurchaseOrderItem } from "../../hooks/usePurchaseOrders";
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button, Input, Select } from '@/components/shared';
 
 interface PurchaseOrderListProps {
     orders?: PurchaseOrder[];
@@ -81,35 +82,28 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                     <div className="flex flex-col md:flex-row gap-6 w-full xl:w-auto">
                         <div className="relative flex-1 md:w-80">
                             <label className="ui-label mb-3 block">Search</label>
-                            <div className="relative">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <input
-                                    type="text"
-                                    placeholder="Search PO # or Supplier..."
-                                    value={searchTerm}
-                                    onChange={e => setSearchTerm(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                                />
-                            </div>
+                            <Input
+                                type="text"
+                                placeholder="Search PO # or Supplier..."
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                icon={<Search className="w-4 h-4 text-slate-400" />}
+                            />
                         </div>
                         {selectedOrders.length > 0 && (
                             <div className="flex items-center gap-4 bg-primary/5 text-primary px-6 py-2.5 rounded-sm border border-primary/10 animate-in zoom-in-95 self-end md:self-auto">
                                 <span className="text-xs font-black uppercase tracking-widest">{selectedOrders.length} Nodes Active</span>
                                 <div className="h-4 w-px bg-primary/20 mx-2" />
-                                <button className="p-1.5 hover:bg-primary/10 rounded-xl transition-all" title="Bulk Approve"><CheckCircle className="w-4 h-4" /></button>
-                                <button className="p-1.5 hover:bg-danger-soft text-danger rounded-xl transition-all" title="Bulk Cancel"><Trash2 className="w-4 h-4" /></button>
-                                <button className="p-1.5 hover:bg-primary/10 rounded-xl transition-all" title="Bulk Print"><Printer className="w-4 h-4" /></button>
+                                <Button variant="tertiary" size="sm" icon={<CheckCircle className="w-4 h-4" />} title="Bulk Approve" />
+                                <Button variant="tertiary" size="sm" icon={<Trash2 className="w-4 h-4" />} className="text-danger" title="Bulk Cancel" />
+                                <Button variant="tertiary" size="sm" icon={<Printer className="w-4 h-4" />} title="Bulk Print" />
                             </div>
                         )}
                     </div>
 
                     <div className="flex items-center gap-3 w-full xl:w-auto justify-end">
-                        <button className="p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl text-slate-400 hover:text-success transition-all">
-                            <FileSpreadsheet className="w-4 h-4" />
-                        </button>
-                        <button className="p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl text-slate-400 hover:text-danger transition-all">
-                            <Download className="w-4 h-4" />
-                        </button>
+                        <Button variant="secondary" size="md" icon={<FileSpreadsheet className="w-4 h-4" />} />
+                        <Button variant="secondary" size="md" icon={<Download className="w-4 h-4" />} />
                     </div>
                 </div>
 
@@ -117,43 +111,33 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-2">
                     <div>
                         <label className="ui-label mb-3 block">Operational Status</label>
-                        <select
+                        <Select
+                            options={['All', 'DRAFT', 'SUBMITTED', 'APPROVED', 'SENT_TO_VENDOR', 'PARTIALLY_RECEIVED', 'COMPLETED', 'Billed', 'Paid', 'CANCELLED'].map(s => ({ value: s, label: s === 'All' ? 'All Statuses' : s }))}
                             value={statusFilter}
-                            onChange={e => setStatusFilter(e.target.value)}
-                            className="w-full px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                        >
-                            <option value="All">All Statuses</option>
-                            {['DRAFT', 'SUBMITTED', 'APPROVED', 'SENT_TO_VENDOR', 'PARTIALLY_RECEIVED', 'COMPLETED', 'Billed', 'Paid', 'CANCELLED'].map(s => (
-                                <option key={s} value={s}>{s}</option>
-                            ))}
-                        </select>
+                            onChange={(value) => setStatusFilter(typeof value === 'string' ? value : value[0])}
+                        />
                     </div>
                     <div>
                         <label className="ui-label mb-3 block">Supplier</label>
-                        <select
+                        <Select
+                            options={[{ value: 'All', label: 'All Entities' }, ...vendors.map(v => ({ value: v, label: v }))]}
                             value={vendorFilter}
-                            onChange={e => setVendorFilter(e.target.value)}
-                            className="w-full px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                        >
-                            <option value="All">All Entities</option>
-                            {vendors.map(v => <option key={v} value={v}>{v}</option>)}
-                        </select>
+                            onChange={(value) => setVendorFilter(typeof value === 'string' ? value : value[0])}
+                        />
                     </div>
                     <div className="md:col-span-2">
                         <label className="ui-label mb-3 block">Fiscal Range</label>
                         <div className="flex items-center gap-3">
-                            <input
+                            <Input
                                 type="date"
                                 value={dateRange.from}
                                 onChange={e => setDateRange({ ...dateRange, from: e.target.value })}
-                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                             />
                             <span className="text-slate-300 font-bold">→</span>
-                            <input
+                            <Input
                                 type="date"
                                 value={dateRange.to}
                                 onChange={e => setDateRange({ ...dateRange, to: e.target.value })}
-                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                             />
                         </div>
                     </div>
@@ -264,12 +248,8 @@ const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({ orders = [], onCr
                                     </td>
                                     <td className="px-8 py-6">
                                         <div className="flex items-center justify-center gap-2">
-                                            <button onClick={() => onView(order.id)} className="p-2.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all active:scale-95">
-                                                <Eye className="w-4 h-4" />
-                                            </button>
-                                            <button className="p-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-xl transition-all">
-                                                <MoreHorizontal className="w-4 h-4" />
-                                            </button>
+                                            <Button variant="secondary" size="sm" icon={<Eye className="w-4 h-4" />} onClick={() => onView(order.id)} />
+                                            <Button variant="secondary" size="sm" icon={<MoreHorizontal className="w-4 h-4" />} />
                                         </div>
                                     </td>
                                 </tr>

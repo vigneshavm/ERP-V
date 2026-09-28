@@ -1,5 +1,6 @@
 import React from 'react';
-import { UserCog } from 'lucide-react';
+import { UserCog } from 'lucide-react';import { Input } from '@/components/shared/Input';
+
 
 export const UserTab: React.FC<{ newTenant: any, setNewTenant: any }> = ({ newTenant, setNewTenant }) => {
     // Defensive fallback for adminUser

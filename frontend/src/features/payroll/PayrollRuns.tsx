@@ -7,8 +7,11 @@ import { RootState, AppDispatch } from '../../redux/store';
 import { fetchPayrollRuns, generatePayrollRun } from '../../redux/slices/payrollSlice';
 import { PlayCircle, Eye, Printer } from 'lucide-react';
 import { formatDateISO } from '../../utils/helpers';
-import api from '../../services/api';
-import StatusBadge from '@/components/shared/UI/StatusBadge';
+import api from '../../services/api';
+
+import StatusBadge from '@/components/shared/UI/StatusBadge';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 const PayrollRuns = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -71,7 +74,7 @@ const PayrollRuns = () => {
                             { label: 'Details' }
                         ]}
                     />
-                    <div className="mt-6 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div className="mt-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
                         <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                             <h3 className="font-bold text-slate-700">Employee Payslips ({payslips.length})</h3>
                             <div className="flex gap-2">
@@ -200,19 +203,8 @@ const PayrollRuns = () => {
                             </div>
 
                             <div className="flex justify-end gap-3">
-                                <button
-                                    onClick={() => setIsGenerateOpen(false)}
-                                    className="px-4 py-2 text-slate-600 hover:text-slate-900"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleGenerate}
-                                    disabled={loading}
-                                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50"
-                                >
-                                    {loading ? 'Processing...' : 'Run Payroll'}
-                                </button>
+                                <Button onClick={() => setIsGenerateOpen(false)} className="px-4 py-2 text-slate-600 hover:text-slate-900">Cancel</Button>
+                                <Button onClick={handleGenerate} disabled={loading} className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50">{loading ? 'Processing...' : 'Run Payroll'}</Button>
                             </div>
                         </div>
                     </div>

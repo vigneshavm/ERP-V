@@ -216,6 +216,11 @@ const invoiceSchema = new Schema<IInvoice>(
 );
 
 invoiceSchema.index({ invoiceNo: 1, tenantId: 1 }, { unique: true });
+// Performance optimization: Compound indexes for common filter patterns
+invoiceSchema.index({ tenantId: 1, paymentStatus: 1, createdAt: -1 });
+invoiceSchema.index({ tenantId: 1, fulfillmentStatus: 1, createdAt: -1 });
+invoiceSchema.index({ tenantId: 1, isDeleted: 1, createdAt: -1 });
+invoiceSchema.index({ tenantId: 1, customer: 1, createdAt: -1 });
 
 const Invoice = mongoose.model<IInvoice>("Invoice", invoiceSchema);
 export default Invoice;

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
+import { error } from '../../../config/logger.js';
 
 dotenv.config();
 
@@ -65,7 +66,7 @@ export const extractSupplierFromInvoice = async (req: Request, res: Response) =>
         try {
             extractedData = JSON.parse(text);
         } catch (parseError) {
-            console.error('JSON Parse Error. Raw Text:', text);
+            error(`JSON Parse Error. Raw Text: ${text}`, { stack: (parseError as Error).stack });
             throw new Error('AI returned malformed JSON data');
         }
 
@@ -74,9 +75,9 @@ export const extractSupplierFromInvoice = async (req: Request, res: Response) =>
             data: extractedData,
             message: "Invoice analysis complete. Field mapping successful."
         });
-    } catch (error: any) {
-        console.error('Invoice Extraction Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to analyze invoice', error: error.message });
+    } catch (err: any) {
+        error(`Invoice Extraction Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Failed to analyze invoice', error: err.message });
     }
 };
 
@@ -136,7 +137,7 @@ export const extractSupplierFromText = async (req: Request, res: Response) => {
         try {
             extractedData = JSON.parse(text);
         } catch (parseError) {
-            console.error('JSON Parse Error. Raw Text:', text);
+            error(`JSON Parse Error. Raw Text: ${text}`, { stack: (parseError as Error).stack });
             throw new Error('AI returned malformed JSON data');
         }
 
@@ -145,9 +146,9 @@ export const extractSupplierFromText = async (req: Request, res: Response) => {
             data: extractedData,
             message: "Text analysis complete. Field mapping successful."
         });
-    } catch (error: any) {
-        console.error('Text Extraction Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to analyze text', error: error.message });
+    } catch (err: any) {
+        error(`Text Extraction Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Failed to analyze text', error: err.message });
     }
 };
 
@@ -214,7 +215,7 @@ export const extractPurchaseInvoice = async (req: Request, res: Response) => {
         try {
             extractedData = JSON.parse(text);
         } catch (parseError) {
-            console.error('JSON Parse Error for Purchase Invoice. Raw Text:', text);
+            error(`JSON Parse Error for Purchase Invoice. Raw Text: ${text}`, { stack: (parseError as Error).stack });
             throw new Error('AI returned malformed JSON data for purchase invoice');
         }
 
@@ -223,9 +224,9 @@ export const extractPurchaseInvoice = async (req: Request, res: Response) => {
             data: extractedData,
             message: "Purchase invoice analysis complete."
         });
-    } catch (error: any) {
-        console.error('Purchase Invoice Extraction Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to analyze purchase invoice', error: error.message });
+    } catch (err: any) {
+        error(`Purchase Invoice Extraction Error: ${(err as Error).message}`, { stack: (err as Error).stack });
+        res.status(500).json({ success: false, message: 'Failed to analyze purchase invoice', error: err.message });
     }
 };
 

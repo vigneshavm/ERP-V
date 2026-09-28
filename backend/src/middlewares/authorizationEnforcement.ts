@@ -8,7 +8,7 @@
  */
 
 import { Request, Response, NextFunction } from "express";
-import { warn, error as logError } from '../utils/logger.js';
+import { warn, error as logError, info } from '../utils/logger.js';
 
 /**
  * HTTP methods that mutate state (require authorization)
@@ -171,20 +171,20 @@ export const enforceAuthorization = (req: Request, res: Response, next: NextFunc
  * @param {Object} app - Express app instance
  */
 export const printAuthorizationReport = (app: any) => {
-    console.log('\n🔒 Authorization Coverage Report\n');
+    info('\n🔒 Authorization Coverage Report\n');
 
     const results = validateAuthorizationCoverage(app);
 
-    console.log(`Total mutating routes: ${results.total}`);
-    console.log(`Protected routes: ${results.protected}`);
-    console.log(`Public routes: ${results.public.length}`);
-    console.log(`Unprotected routes: ${results.unprotected.length}\n`);
+    info(`Total mutating routes: ${results.total}`);
+    info(`Protected routes: ${results.protected}`);
+    info(`Public routes: ${results.public.length}`);
+    info(`Unprotected routes: ${results.unprotected.length}\n`);
 
     if (results.unprotected.length > 0) {
-        console.error('❌ UNPROTECTED ROUTES DETECTED:\n');
+        logError('❌ UNPROTECTED ROUTES DETECTED:\n');
         results.unprotected.forEach(({ route, middlewares }) => {
-            console.error(`  - ${route}`);
-            console.error(`    Middlewares: ${middlewares.join(', ')}\n`);
+            logError(`  - ${route}`);
+            logError(`    Middlewares: ${middlewares.join(', ')}\n`);
         });
 
         if (process.env.NODE_ENV === 'production') {
@@ -196,7 +196,7 @@ export const printAuthorizationReport = (app: any) => {
             warn('⚠️  Unprotected routes detected (development mode)');
         }
     } else {
-        console.log('✅ All mutating routes are protected\n');
+        info('✅ All mutating routes are protected\n');
     }
 
     return results;

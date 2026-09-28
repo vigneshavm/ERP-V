@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 
 import Invoice from '../models/Invoice.js';
@@ -11,19 +11,7 @@ import BankAccount from '../../finance/models/BankAccount.js';
 import { info, error, warn } from '../../../config/logger.js';
 import { isSqlItemSource } from '../../../config/itemDataSource.js';
 import { isSqlId, sqlInvoiceById, sqlInvoiceList, sqlInvoiceTotals } from '../../../integrations/textilesoft/sqlSales.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-    tenantId?: string; // Injected by Auth Middleware
-    deletedEntity?: any;
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
  * @swagger
@@ -378,8 +366,8 @@ export const markSalesInvoiceAsPaid = async (req: AuthenticatedRequest, res: Res
                 toAccount: bankAccount,
                 description: `Payment for invoice ${invoice.invoiceNo}`,
                 date: new Date(),
-                userId: req.user?._id,
-                tenantId: req.tenantId // Enable strict accounting isolation
+                userId: req.user.tenantId,
+                tenantId: req.user.tenantId // Enable strict accounting isolation
             });
 
             // Update bank balance (add)

@@ -2,6 +2,7 @@ import React from 'react';
 import { RefreshCw } from 'lucide-react';
 import Layout from '../../../components/shared/Layout';
 import PageHeader from '../../../components/shared/Layout/PageHeader';
+import { Button } from '@/components/shared';
 import { ReportError, ReportLoading } from '../../reports/components';
 
 /**
@@ -30,14 +31,16 @@ export const FinancePage: React.FC<{
                 actions={
                     <>
                         {actions}
-                        <button
+                        <Button
                             type="button"
+                            variant="secondary"
+                            size="md"
+                            icon={<RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />}
                             onClick={onRefresh}
                             disabled={loading}
-                            className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                         >
-                            <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} /> Refresh
-                        </button>
+                            Refresh
+                        </Button>
                     </>
                 }
             />

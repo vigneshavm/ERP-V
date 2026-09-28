@@ -8,7 +8,6 @@ import PageHeader from "../../components/shared/Layout/PageHeader";
 import {
     Users,
     UserPlus,
-    Search,
     MoreVertical,
     Eye,
     Trash2,
@@ -21,6 +20,7 @@ import {
     Mail,
     ArrowUpRight
 } from 'lucide-react';
+import { Button, Card, Input } from '@/components/shared';
 import { RootState, AppDispatch } from "../../redux/store";
 import { Customer } from './types';
 import { getColorClasses } from '../../utils/tailwindColorClasses';
@@ -73,18 +73,22 @@ const Customers = () => {
                 breadcrumbs={[{ label: 'Dashboard', link: '/' }, { label: 'Customers' }]}
                 actions={
                     <>
-                        <button
+                        <Button
+                            variant="warning"
+                            size="md"
+                            icon={<CreditCard className="w-4 h-4" />}
                             onClick={() => navigate('/customers/with-dues')}
-                            className="flex items-center gap-2 px-4 py-2 bg-warning-soft dark:bg-warning-soft border border-warning-line dark:border-warning-line text-warning dark:text-warning rounded-xl text-sm font-bold shadow-sm hover:bg-warning-soft transition-all font-medium"
                         >
-                            <CreditCard className="w-4 h-4" /> Collection Report
-                        </button>
-                        <button
+                            Collection Report
+                        </Button>
+                        <Button
+                            variant="primary"
+                            size="md"
+                            icon={<UserPlus className="w-4 h-4" />}
                             onClick={() => navigate('/customers/add')}
-                            className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-primary-hover active:scale-95 transition-all font-medium"
                         >
-                            <UserPlus className="w-4 h-4" /> Add High-Value Customer
-                        </button>
+                            Add High-Value Customer
+                        </Button>
                     </>
                 }
             />
@@ -95,56 +99,55 @@ const Customers = () => {
                     {stats.map((stat, i) => {
                         const colorClasses = getColorClasses(stat.color);
                         return (
-                        <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform">
-                                <stat.icon className={`w-24 h-24 ${colorClasses.text}`} />
-                            </div>
-                            <div className="relative z-10">
-                                <div className={`w-12 h-12 rounded-sm ${colorClasses.surface} flex items-center justify-center mb-4`}>
-                                    <stat.icon className={`w-6 h-6 ${colorClasses.icon}`} />
+                        <Card key={i} variant="default" size="md" className="relative overflow-hidden group hover:shadow-md">
+                            <Card.Body>
+                                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform">
+                                    <stat.icon className={`w-24 h-24 ${colorClasses.text}`} />
                                 </div>
-                                <div className="flex items-end justify-between">
-                                    <div>
-                                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
-                                        <p className="text-3xl font-black text-slate-800 dark:text-white mt-1">{stat.value}</p>
+                                <div className="relative z-10">
+                                    <div className={`w-12 h-12 rounded-sm ${colorClasses.surface} flex items-center justify-center mb-4`}>
+                                        <stat.icon className={`w-6 h-6 ${colorClasses.icon}`} />
                                     </div>
-                                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${colorClasses.surface} ${colorClasses.text} uppercase tracking-tighter`}>
-                                        {stat.trend}
-                                    </span>
+                                    <div className="flex items-end justify-between">
+                                        <div>
+                                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                                            <p className="text-3xl font-black text-slate-800 dark:text-white mt-1">{stat.value}</p>
+                                        </div>
+                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${colorClasses.surface} ${colorClasses.text} uppercase tracking-tighter`}>
+                                            {stat.trend}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            </Card.Body>
+                        </Card>
                         );
                     })}
                 </div>
 
                 {/* Main Content Card */}
-                <div className="bg-white dark:bg-slate-900 rounded-sm border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden">
-                    <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50 dark:bg-slate-800/10">
-                        <div className="relative w-full sm:w-96 group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                            <input
-                                type="text"
-                                placeholder="Filter records by name, ID or terminal..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-sm outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-primary transition-all font-medium text-sm text-[rgb(var(--color-text))]"
-                            />
+                <Card variant="default" size="lg">
+                    <Card.Body>
+                        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 pb-6 border-b border-slate-100 dark:border-slate-700">
+                            <div className="w-full sm:w-96">
+                                <Input
+                                    type="text"
+                                    placeholder="Filter records by name, ID or terminal..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button variant="secondary" size="sm">
+                                    <RefreshCcw className="w-4 h-4" />
+                                </Button>
+                                <Button variant="secondary" size="sm">
+                                    <Download className="w-4 h-4" />
+                                </Button>
+                                <Button variant="secondary" size="sm">
+                                    <MoreVertical className="w-4 h-4" />
+                                </Button>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <button className="p-3 text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
-                                <RefreshCcw className="w-4 h-4" />
-                            </button>
-                            <button className="p-3 text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
-                                <Download className="w-4 h-4" />
-                            </button>
-                            <button className="p-3 text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
-                                <MoreVertical className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="bg-slate-50/80 dark:bg-slate-800/50 text-[10px] uppercase tracking-[0.15em] font-black text-slate-400">
@@ -250,8 +253,8 @@ const Customers = () => {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
-                </div>
+                    </Card.Body>
+                </Card>
             </div>
 
             {/* Decommission Confirmation */}
@@ -274,18 +277,22 @@ const Customers = () => {
                         </div>
                     </div>
                     <div className="flex gap-3 pt-2">
-                        <button
+                        <Button
+                            variant="secondary"
+                            size="md"
+                            fullWidth
                             onClick={() => setDeleteConfirm(null)}
-                            className="flex-1 px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-200 transition-all font-medium"
                         >
                             Abort
-                        </button>
-                        <button
-                            onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
-                            className="flex-1 px-6 py-3 bg-danger text-white rounded-sm text-[10px] font-black uppercase tracking-[0.2em] hover:bg-danger/90 shadow-lg shadow-red-200 dark:shadow-none transition-all font-medium"
+                        </Button>
+                        <Button
+                            variant="danger"
+                            size="md"
+                            fullWidth
+                            onClick={() => handleDelete(deleteConfirm!)}
                         >
-                            Confirm
-                        </button>
+                            Confirm Termination
+                        </Button>
                     </div>
                 </div>
             </Modal>

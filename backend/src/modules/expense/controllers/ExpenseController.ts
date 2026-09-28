@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 
 import Expense from '../models/Expense.js';
@@ -6,24 +6,15 @@ import Expense from '../models/Expense.js';
 import CashbankTransaction from '../../finance/models/CashbankTransaction.js';
 import BankAccount from '../../finance/models/BankAccount.js';
 import { info, error } from '../../../config/logger.js';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 /**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        [key: string]: any;
-    };
-}
-
-/**
- * @desc Get all expenses (only for current owner)
+ * @desc Get all expenses (only for current tenant)
  * @route GET /api/expenses
  */
 export const getAllExpenses = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const expenses = await Expense.find({ createdBy: req.user?._id })
+        const expenses = await Expense.find({ tenantId: req.user.tenantId })
             .sort({ createdAt: -1 });
         res.status(200).json(expenses);
     } catch (err) {
@@ -45,10 +36,10 @@ export const createExpense = async (req: AuthenticatedRequest, res: Response): P
             return;
         }
 
-        // Check for duplicate expenseNo within this owner's expenses
+        // Check for duplicate expenseNo within this tenant's expenses
         const existingExpense = await Expense.findOne({
             expenseNo,
-            createdBy: req.user?._id
+            tenantId: req.user.tenantId
         });
 
         if (existingExpense) {
@@ -58,7 +49,7 @@ export const createExpense = async (req: AuthenticatedRequest, res: Response): P
 
         // Validate bank payment
         if (paymentMethod === 'bank_transfer' && bankAccount) {
-            const bankAcc = await BankAccount.findOne({ _id: bankAccount, userId: req.user?._id });
+            const bankAcc = await BankAccount.findOne({ _id: bankAccount, tenantId: req.user.tenantId });
             if (!bankAcc) {
                 res.status(400).json({ message: 'Bank account not found' });
                 return;
@@ -81,7 +72,7 @@ export const createExpense = async (req: AuthenticatedRequest, res: Response): P
             description,
             receipt,
             bankAccount: bankAccount || null,
-            createdBy: req.user?._id
+            tenantId: req.user.tenantId
         });
 
         // Handle bank payment
@@ -94,12 +85,12 @@ export const createExpense = async (req: AuthenticatedRequest, res: Response): P
                 toAccount: 'expense',
                 description: `Expense: ${category} - ${description || expenseNo}`,
                 date: new Date(),
-                userId: req.user?._id,
+                tenantId: req.user.tenantId,
             });
 
             // Update bank balance (deduct)
             await BankAccount.updateOne(
-                { _id: bankAccount, userId: req.user?._id },
+                { _id: bankAccount, tenantId: req.user.tenantId },
                 {
                     $inc: { currentBalance: -amount },
                     $push: { transactions: cashbankTxn._id }
@@ -116,7 +107,7 @@ export const createExpense = async (req: AuthenticatedRequest, res: Response): P
                 toAccount: 'expense',
                 description: `Cash expense: ${category} - ${description || expenseNo}`,
                 date: new Date(),
-                userId: req.user?._id,
+                tenantId: req.user.tenantId,
             });
 
             info(`Cash payment for expense ${expenseNo}: -₹${amount}`);

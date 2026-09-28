@@ -25,6 +25,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import api from '../../services/api';
 import Layout from '../../components/shared/Layout/index';
+import { Button } from '../../components/shared/Button';
+import { Input } from '../../components/shared/Input';
 
 interface Category {
     id: string;
@@ -310,12 +312,12 @@ const CategoryManager: React.FC = () => {
                         Unable to retrieve category data. Please ensure the backend server is running and accessible.
                     </p>
                     <div className="flex gap-3">
-                        <button
+                        <Button
                             onClick={fetchData}
                             className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold text-sm flex items-center gap-2 transition-colors"
                         >
                             <RefreshCw className="w-4 h-4" /> Retry Connection
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </Layout>
@@ -337,19 +339,19 @@ const CategoryManager: React.FC = () => {
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <button
+                    <Button
                         onClick={handleExport}
                         disabled={isExporting}
                         className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />} Export
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={openNewCategoryModal}
                         className="px-4 py-2 bg-primary text-white hover:bg-primary/90 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md shadow-primary/20 transition-all active:scale-95"
                     >
                         <FolderPlus className="w-4 h-4" /> New Category
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -378,7 +380,7 @@ const CategoryManager: React.FC = () => {
                 {/* Controls Toolbar */}
                 <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50/50 dark:bg-slate-700/50">
                     <div className="relative w-full md:w-80">
-                        <input
+                        <Input
                             type="text"
                             placeholder="Search categories..."
                             className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-main focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none shadow-sm transition-all"
@@ -391,13 +393,13 @@ const CategoryManager: React.FC = () => {
                         )}
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" onClick={refreshData} title="Refresh Data">
+                        <Button className="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" onClick={refreshData} title="Refresh Data">
                             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                        </button>
+                        </Button>
                         <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
-                        <button className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm">
+                        <Button className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm">
                             <Filter className="w-3.5 h-3.5" /> Filters
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
@@ -522,12 +524,12 @@ const CategoryManager: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2 text-slate-400">
-                                                <button className="p-2 hover:bg-white dark:hover:bg-slate-700 hover:text-primary rounded-lg hover:shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-600 transition-all">
+                                                <Button className="p-2 hover:bg-white dark:hover:bg-slate-700 hover:text-primary rounded-lg hover:shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-600 transition-all">
                                                     <Edit className="w-4 h-4" />
-                                                </button>
-                                                <button className="p-2 hover:bg-danger-soft dark:hover:bg-danger-soft hover:text-danger rounded-lg border border-transparent hover:border-danger-line dark:hover:border-danger/30 transition-all">
+                                                </Button>
+                                                <Button className="p-2 hover:bg-danger-soft dark:hover:bg-danger-soft hover:text-danger rounded-lg border border-transparent hover:border-danger-line dark:hover:border-danger/30 transition-all">
                                                     <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                </Button>
                                             </div>
                                         </td>
                                     </tr>
@@ -543,20 +545,20 @@ const CategoryManager: React.FC = () => {
                         Page <span className="font-bold text-slate-900 dark:text-slate-100">{page}</span> of <span className="font-bold text-slate-900 dark:text-slate-100">{totalPages}</span>
                     </p>
                     <div className="flex items-center gap-2">
-                        <button
+                        <Button
                             onClick={() => setPage(p => Math.max(1, p - 1))}
                             disabled={page === 1 || isLoading}
                             className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors flex items-center gap-1"
                         >
                             <ChevronLeft className="w-4 h-4" /> Previous
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages || isLoading}
                             className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors flex items-center gap-1"
                         >
                             Next <ChevronRight className="w-4 h-4" />
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -575,12 +577,12 @@ const CategoryManager: React.FC = () => {
                         <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                             <FolderPlus className="w-5 h-5 text-primary" /> New Category
                         </h3>
-                        <button
+                        <Button
                             onClick={closeNewCategoryModal}
                             className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                         >
                             <X className="w-4 h-4" />
-                        </button>
+                        </Button>
                     </div>
                     <form onSubmit={handleCreateCategory}>
                         <div className="px-6 py-5 space-y-4">
@@ -593,7 +595,7 @@ const CategoryManager: React.FC = () => {
                                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                                     Category Name <span className="text-danger">*</span>
                                 </label>
-                                <input
+                                <Input
                                     type="text"
                                     autoFocus
                                     value={newCategoryForm.name}
@@ -633,7 +635,7 @@ const CategoryManager: React.FC = () => {
                                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                                         Default Unit
                                     </label>
-                                    <input
+                                    <Input
                                         type="text"
                                         value={newCategoryForm.defaultUnit}
                                         onChange={(e) => setNewCategoryForm(prev => ({ ...prev, defaultUnit: e.target.value }))}
@@ -661,22 +663,22 @@ const CategoryManager: React.FC = () => {
                             </div>
                         </div>
                         <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
-                            <button
+                            <Button
                                 type="button"
                                 onClick={closeNewCategoryModal}
                                 disabled={isCreatingCategory}
                                 className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold transition-colors disabled:opacity-50"
                             >
                                 Cancel
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 type="submit"
                                 disabled={isCreatingCategory}
                                 className="px-4 py-2 bg-primary text-white hover:bg-primary/90 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md shadow-primary/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isCreatingCategory ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                                 Create Category
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>

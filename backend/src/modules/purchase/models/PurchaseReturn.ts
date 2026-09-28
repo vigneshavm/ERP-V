@@ -18,6 +18,9 @@ export interface IPurchaseReturnItem {
 
 export interface IPurchaseReturn extends Document {
     returnId: string;
+    /** Owning tenant. Optional only because returns created before multi-tenant scoping lack it
+     *  (scripts/migrations/004-backfill-purchase-return-tenant.js fills it from createdBy). */
+    tenantId?: mongoose.Types.ObjectId;
     bill?: mongoose.Types.ObjectId;
     debitNoteId?: mongoose.Types.ObjectId; // Link to Debit Note
     // Which goods receipt this return is against -- optional so a supplier-level return with
@@ -141,12 +144,18 @@ const purchaseReturnSchema = new Schema<IPurchaseReturn>(
             ref: "User",
             required: true,
         },
+        tenantId: {
+            type: Schema.Types.ObjectId,
+            ref: "Tenant",
+            index: true,
+        },
     },
     { timestamps: true }
 );
 
 purchaseReturnSchema.index({ returnId: 1, createdBy: 1 }, { unique: true });
 purchaseReturnSchema.index({ grnId: 1 });
+purchaseReturnSchema.index({ tenantId: 1, createdAt: -1 });
 
 const PurchaseReturn = mongoose.model<IPurchaseReturn>("PurchaseReturn", purchaseReturnSchema);
 export default PurchaseReturn;

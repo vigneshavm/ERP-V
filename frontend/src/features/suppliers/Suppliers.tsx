@@ -25,6 +25,7 @@ import SupplierStatsCards from './components/SupplierStatsCards';
 import SupplierFilterBar from './components/SupplierFilterBar';
 import { toast } from 'react-toastify';
 import { formatDate } from '../../utils/helpers';
+import { Button } from '@/components/shared/Button';
 
 // Moved to module scope - was defined inside Suppliers' render body (recreated on every render).
 // sortConfig is now passed in as a prop instead of being read from an outer closure.
@@ -142,18 +143,8 @@ const Suppliers: React.FC = () => {
           title="Suppliers"
           actions={
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleExportCSV}
-                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"
-              >
-                <Download className="w-3.5 h-3.5" /> Export
-              </button>
-              <button
-                onClick={() => navigate('/suppliers/add')}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary transition-all shadow-sm"
-              >
-                <UserPlus className="w-3.5 h-3.5" /> Add Supplier
-              </button>
+              <Button onClick={handleExportCSV} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"><Download className="w-3.5 h-3.5" /> Export</Button>
+              <Button onClick={() => navigate('/suppliers/add')} className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary transition-all shadow-sm"><UserPlus className="w-3.5 h-3.5" /> Add Supplier</Button>
             </div>
           }
         />
@@ -312,12 +303,7 @@ const Suppliers: React.FC = () => {
                       {/* Actions — Kebab menu */}
                       <td className="px-6 py-4 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                         <div className="relative">
-                          <button
-                            onClick={() => setOpenMenuId(openMenuId === supplier._id ? null : supplier._id)}
-                            className="p-1.5 text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all"
-                          >
-                            <MoreVertical className="w-4 h-4" />
-                          </button>
+                          <Button onClick={() => setOpenMenuId(openMenuId === supplier._id ? null : supplier._id)} className="p-1.5 text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all"><MoreVertical className="w-4 h-4" /></Button>
                           {openMenuId === supplier._id && (
                             <div className="absolute right-0 top-8 w-40 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-20 py-1 animate-in fade-in zoom-in-95 duration-150">
                               <button
@@ -365,18 +351,8 @@ const Suppliers: React.FC = () => {
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button
-              onClick={() => setDeleteConfirm(null)}
-              className="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => handleDelete(deleteConfirm)}
-              className="flex-1 px-4 py-2.5 bg-danger text-white rounded-lg text-sm font-medium hover:bg-danger/90 transition-all"
-            >
-              Delete
-            </button>
+            <Button onClick={() => setDeleteConfirm(null)} className="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">Cancel</Button>
+            <Button onClick={() => handleDelete(deleteConfirm)} className="flex-1 px-4 py-2.5 bg-danger text-white rounded-lg text-sm font-medium hover:bg-danger/90 transition-all">Delete</Button>
           </div>
         </div>
       </Modal>

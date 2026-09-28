@@ -1,5 +1,6 @@
 ﻿import React from 'react';
-import { X, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
+import { Button, Input, Modal, Select, Textarea } from '@/components/shared';
 
 interface FinanceModalsProps {
     showExpenseModal: boolean;
@@ -18,145 +19,113 @@ const FinanceModals: React.FC<FinanceModalsProps> = ({
     showExpenseModal, setShowExpenseModal, handleAddExpense, newExpense, setNewExpense,
     showChequeModal, setShowChequeModal, handleAddCheque, newCheque, setNewCheque
 }) => {
-    if (!showExpenseModal && !showChequeModal) return null;
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            {showExpenseModal && (
-                <div className="bg-white dark:bg-slate-800 rounded-sm shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 animate-in zoom-in-95 duration-200">
-                    <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-700">
-                        <h3 className="text-xl font-bold">Log New Expense</h3>
-                        <button onClick={() => setShowExpenseModal(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition"><X className="w-5 h-5" /></button>
-                    </div>
-                    <form onSubmit={handleAddExpense} className="p-6 space-y-4">
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Category</label>
-                            <input
-                                type="text"
-                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
-                                placeholder="e.g. Marketing, Utilities"
-                                value={newExpense.category}
-                                onChange={e => setNewExpense({ ...newExpense, category: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Amount</label>
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">₹</span>
-                                <input
-                                    type="number"
-                                    className="w-full pl-8 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-bold"
-                                    placeholder="0.00"
-                                    value={newExpense.amount}
-                                    onChange={e => setNewExpense({ ...newExpense, amount: e.target.value })}
-                                    required
-                                />
-                            </div>
-                        </div>
+        <>
+            <Modal
+                isOpen={showExpenseModal}
+                onClose={() => setShowExpenseModal(false)}
+                title="Log New Expense"
+                size="sm"
+            >
+                    <form onSubmit={handleAddExpense} className="space-y-4">
+                        <Input
+                            label="Category"
+                            type="text"
+                            placeholder="e.g. Marketing, Utilities"
+                            value={newExpense.category}
+                            onChange={e => setNewExpense({ ...newExpense, category: e.target.value })}
+                            required
+                        />
+                        <Input
+                            label="Amount"
+                            type="number"
+                            placeholder="0.00"
+                            value={newExpense.amount}
+                            onChange={e => setNewExpense({ ...newExpense, amount: e.target.value })}
+                            icon={<span className="font-bold text-slate-400">₹</span>}
+                            required
+                        />
                         <div>
                             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Payment Method</label>
-                            <select
-                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
+                            <Select
+                                options={[
+                                    { value: 'Cash', label: 'Cash' },
+                                    { value: 'Bank Transfer', label: 'Bank Transfer' },
+                                    { value: 'Card', label: 'Card' },
+                                    { value: 'UPI', label: 'UPI' },
+                                ]}
                                 value={newExpense.paymentMethod || 'Cash'}
-                                onChange={e => setNewExpense({ ...newExpense, paymentMethod: e.target.value })}
-                            >
-                                <option value="Cash">Cash</option>
-                                <option value="Bank Transfer">Bank Transfer</option>
-                                <option value="Card">Card</option>
-                                <option value="UPI">UPI</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Description</label>
-                            <textarea
-                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
-                                placeholder="Details..."
-                                rows={3}
-                                value={newExpense.description}
-                                onChange={e => setNewExpense({ ...newExpense, description: e.target.value })}
+                                onChange={(value) => setNewExpense({ ...newExpense, paymentMethod: typeof value === 'string' ? value : value[0] })}
                             />
                         </div>
-                        <button type="submit" className="w-full py-4 bg-primary text-white rounded-xl font-bold uppercase tracking-widest hover:bg-primary/90 transition shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
-                            <Save className="w-4 h-4" /> Save Record
-                        </button>
+                        <Textarea
+                            label="Description"
+                            placeholder="Details..."
+                            minRows={3}
+                            value={newExpense.description}
+                            onChange={e => setNewExpense({ ...newExpense, description: e.target.value })}
+                        />
+                        <Button type="submit" variant="primary" size="lg" icon={<Save className="w-4 h-4" />} fullWidth>
+                            Save Record
+                        </Button>
                     </form>
-                </div>
-            )}
+            </Modal>
 
-            {showChequeModal && (
-                <div className="bg-white dark:bg-slate-800 rounded-sm shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 animate-in zoom-in-95 duration-200">
-                    <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-700">
-                        <h3 className="text-xl font-bold">Register Cheque</h3>
-                        <button onClick={() => setShowChequeModal(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition"><X className="w-5 h-5" /></button>
-                    </div>
-                    <form onSubmit={handleAddCheque} className="p-6 space-y-4">
+            <Modal
+                isOpen={showChequeModal}
+                onClose={() => setShowChequeModal(false)}
+                title="Register Cheque"
+                size="sm"
+            >
+                    <form onSubmit={handleAddCheque} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Cheque No</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-mono font-medium"
-                                    placeholder="XXXXXX"
-                                    value={newCheque.number}
-                                    onChange={e => setNewCheque({ ...newCheque, number: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Date</label>
-                                <input
-                                    type="date"
-                                    className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
-                                    value={newCheque.date}
-                                    onChange={e => setNewCheque({ ...newCheque, date: e.target.value })}
-                                    required
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Bank Name</label>
-                            <input
+                            <Input
+                                label="Cheque No"
                                 type="text"
-                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
-                                placeholder="Bank Name"
-                                value={newCheque.bankName}
-                                onChange={e => setNewCheque({ ...newCheque, bankName: e.target.value })}
+                                placeholder="XXXXXX"
+                                value={newCheque.number}
+                                onChange={e => setNewCheque({ ...newCheque, number: e.target.value })}
+                                required
+                            />
+                            <Input
+                                label="Date"
+                                type="date"
+                                value={newCheque.date}
+                                onChange={e => setNewCheque({ ...newCheque, date: e.target.value })}
                                 required
                             />
                         </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Amount</label>
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">₹</span>
-                                <input
-                                    type="number"
-                                    className="w-full pl-8 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-bold"
-                                    placeholder="0.00"
-                                    value={newCheque.amount}
-                                    onChange={e => setNewCheque({ ...newCheque, amount: e.target.value })}
-                                    required
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Payee</label>
-                            <input
-                                type="text"
-                                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary/50 transition font-medium"
-                                placeholder="Payee Name"
-                                value={newCheque.payee}
-                                onChange={e => setNewCheque({ ...newCheque, payee: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <button type="submit" className="w-full py-4 bg-primary text-white rounded-xl font-bold uppercase tracking-widest hover:bg-primary/90 transition shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
-                            <Save className="w-4 h-4" /> Issue Cheque
-                        </button>
+                        <Input
+                            label="Bank Name"
+                            type="text"
+                            placeholder="Bank Name"
+                            value={newCheque.bankName}
+                            onChange={e => setNewCheque({ ...newCheque, bankName: e.target.value })}
+                            required
+                        />
+                        <Input
+                            label="Amount"
+                            type="number"
+                            placeholder="0.00"
+                            value={newCheque.amount}
+                            onChange={e => setNewCheque({ ...newCheque, amount: e.target.value })}
+                            icon={<span className="font-bold text-slate-400">₹</span>}
+                            required
+                        />
+                        <Input
+                            label="Payee"
+                            type="text"
+                            placeholder="Payee Name"
+                            value={newCheque.payee}
+                            onChange={e => setNewCheque({ ...newCheque, payee: e.target.value })}
+                            required
+                        />
+                        <Button type="submit" variant="primary" size="lg" icon={<Save className="w-4 h-4" />} fullWidth>
+                            Issue Cheque
+                        </Button>
                     </form>
-                </div>
-            )}
-        </div>
+            </Modal>
+        </>
     );
 };
 

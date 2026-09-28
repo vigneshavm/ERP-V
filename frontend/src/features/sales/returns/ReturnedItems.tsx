@@ -2,8 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from "../../../services/api";
 import Layout from "../../../components/shared/Layout/Layout";
-import { getColorClasses } from "../../../utils/tailwindColorClasses";
+import { getColorClasses } from "../../../utils/tailwindColorClasses";
+
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import { Button, Card, Input } from '../../../components/shared';
 import {
     RotateCcw,
     Plus,
@@ -140,15 +142,21 @@ const ReturnedItems = () => {
                             </div>
                         </div>
                         <div className="flex gap-3">
-                            <button className="flex items-center gap-2 px-5 py-2.5 rounded-sm bg-card border border-default text-xs font-black uppercase tracking-widest text-muted hover:text-main hover:border-danger/30 transition-all">
-                                <Download className="w-4 h-4" /> Export Report
-                            </button>
-                            <button 
-                                onClick={() => navigate('/sales/return')}
-                                className="flex items-center gap-2 px-6 py-2.5 bg-danger text-white rounded-sm hover:bg-danger/90 shadow-lg shadow-danger/20 transition-all text-xs font-black uppercase tracking-widest"
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                icon={<Download className="w-4 h-4" />}
                             >
-                                <Plus className="w-4 h-4" /> New Return
-                            </button>
+                                Export Report
+                            </Button>
+                            <Button
+                                variant="danger"
+                                size="md"
+                                icon={<Plus className="w-4 h-4" />}
+                                onClick={() => navigate('/sales/return')}
+                            >
+                                New Return
+                            </Button>
                         </div>
                     </header>
 
@@ -176,46 +184,47 @@ const ReturnedItems = () => {
                     </div>
 
                     {/* Filters & Search */}
-                    <div className="glass-panel p-5 rounded-sm border border-default flex flex-wrap gap-5 items-center">
-                        <div className="relative flex-1 min-w-[300px]">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-                            <input 
-                                type="text" 
-                                placeholder="Search return ID, invoice, or customer..." 
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full bg-card border border-default rounded-sm py-3 pl-12 pr-4 text-xs font-bold focus:outline-none focus:border-danger/50 focus:ring-2 focus:ring-danger/10 transition-all text-main placeholder:text-secondary"
-                            />
-                        </div>
-                        <div className="flex flex-wrap items-center gap-6">
-                            <div className="flex items-center gap-3">
-                                <span className="text-[10px] font-black text-secondary uppercase tracking-widest shrink-0">Status</span>
-                                <select 
-                                    value={statusFilter}
-                                    onChange={(e) => setStatusFilter(e.target.value)}
-                                    className="bg-app border border-default rounded-sm px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-main focus:outline-none focus:border-danger/50 transition-all cursor-pointer"
-                                >
-                                    <option value="all">All Status</option>
-                                    <option value="processed">Processed</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="refunded">Refunded</option>
-                                </select>
+                    <Card variant="default" size="md">
+                        <Card.Body className="flex flex-wrap gap-5 items-center">
+                            <div className="flex-1 min-w-[300px]">
+                                <Input
+                                    type="text"
+                                    placeholder="Search return ID, invoice, or customer..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    icon={<Search className="w-4 h-4 text-muted" />}
+                                />
                             </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-[10px] font-black text-secondary uppercase tracking-widest shrink-0">Method</span>
-                                <select 
-                                    value={refundMethodFilter}
-                                    onChange={(e) => setRefundMethodFilter(e.target.value)}
-                                    className="bg-app border border-default rounded-sm px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-main focus:outline-none focus:border-danger/50 transition-all cursor-pointer"
-                                >
-                                    <option value="all">All Methods</option>
-                                    <option value="credit">Credit</option>
-                                    <option value="cash">Cash</option>
-                                    <option value="bank">Bank</option>
-                                </select>
+                            <div className="flex flex-wrap items-center gap-6">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-[10px] font-black text-secondary uppercase tracking-widest shrink-0">Status</span>
+                                    <select 
+                                        value={statusFilter}
+                                        onChange={(e) => setStatusFilter(e.target.value)}
+                                        className="bg-app border border-default rounded-sm px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-main focus:outline-none focus:border-danger/50 transition-all cursor-pointer"
+                                    >
+                                        <option value="all">All Status</option>
+                                        <option value="processed">Processed</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="refunded">Refunded</option>
+                                    </select>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-[10px] font-black text-secondary uppercase tracking-widest shrink-0">Method</span>
+                                    <select 
+                                        value={refundMethodFilter}
+                                        onChange={(e) => setRefundMethodFilter(e.target.value)}
+                                        className="bg-app border border-default rounded-sm px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-main focus:outline-none focus:border-danger/50 transition-all cursor-pointer"
+                                    >
+                                        <option value="all">All Methods</option>
+                                        <option value="credit">Credit</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="bank">Bank</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </Card.Body>
+                    </Card>
 
                     {/* Data Table */}
                     <div className="glass-panel rounded-sm border border-default overflow-hidden">
@@ -253,12 +262,13 @@ const ReturnedItems = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-5">
-                                                    <button 
+                                                    <Button
+                                                        variant="tertiary"
+                                                        size="sm"
                                                         onClick={() => navigate(`/pos/invoice/${rec.invoice?._id}`)}
-                                                        className="text-xs font-bold text-primary hover:underline"
                                                     >
                                                         {rec.invoice?.invoiceNo || 'N/A'}
-                                                    </button>
+                                                    </Button>
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <span className={`px-2 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-widest ${
@@ -278,18 +288,19 @@ const ReturnedItems = () => {
                                                 </td>
                                                 <td className="px-6 py-5 text-right">
                                                     <div className="flex justify-end gap-2">
-                                                        <button 
+                                                        <Button
+                                                            variant="secondary"
+                                                            size="sm"
+                                                            icon={<ChevronRight className={`w-4 h-4 transition-transform ${expandedRows.has(rec._id) ? 'rotate-90' : ''}`} />}
                                                             onClick={() => toggleRowExpansion(rec._id)}
-                                                            className="p-2 rounded-sm bg-card border border-default text-muted hover:text-main transition-all"
-                                                        >
-                                                            <ChevronRight className={`w-4 h-4 transition-transform ${expandedRows.has(rec._id) ? 'rotate-90' : ''}`} />
-                                                        </button>
-                                                        <button 
+                                                        />
+                                                        <Button
+                                                            variant="danger"
+                                                            size="sm"
+                                                            icon={<Trash2 className="w-4 h-4" />}
                                                             onClick={() => setDeleteConfirm(rec._id)}
-                                                            className="p-2 rounded-sm bg-card border border-default text-danger/50 hover:text-danger transition-all opacity-0 group-hover:opacity-100"
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
+                                                            className="opacity-0 group-hover:opacity-100"
+                                                        />
                                                     </div>
                                                 </td>
                                             </tr>
@@ -318,33 +329,30 @@ const ReturnedItems = () => {
                                 Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredReturns.length)} of {filteredReturns.length} entries
                             </div>
                             <div className="flex gap-1">
-                                <button 
+                                <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    icon={<ChevronLeft className="w-4 h-4" />}
                                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                                     disabled={safePage === 1}
-                                    className="p-2 rounded-sm bg-card border border-default text-main hover:bg-surface disabled:opacity-50 transition-all"
-                                >
-                                    <ChevronLeft className="w-4 h-4" />
-                                </button>
+                                />
                                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                                    <button
+                                    <Button
                                         key={p}
+                                        variant={safePage === p ? 'danger' : 'secondary'}
+                                        size="sm"
                                         onClick={() => setCurrentPage(p)}
-                                        className={`w-8 h-8 rounded-sm text-xs font-bold transition-all ${
-                                            safePage === p 
-                                            ? 'bg-danger text-white shadow-sm border border-danger' 
-                                            : 'bg-card border border-default text-main hover:bg-surface'
-                                        }`}
                                     >
                                         {p}
-                                    </button>
+                                    </Button>
                                 ))}
-                                <button 
+                                <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    icon={<ChevronRight className="w-4 h-4" />}
                                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                                     disabled={safePage === totalPages}
-                                    className="p-2 rounded-sm bg-card border border-default text-main hover:bg-surface disabled:opacity-50 transition-all"
-                                >
-                                    <ChevronRight className="w-4 h-4" />
-                                </button>
+                                />
                             </div>
                         </div>
                     )}
@@ -363,18 +371,22 @@ const ReturnedItems = () => {
                             This will reverse all inventory and ledger allocations. This action cannot be undone.
                         </p>
                         <div className="flex gap-4">
-                            <button
+                            <Button
+                                variant="secondary"
+                                size="md"
                                 onClick={() => setDeleteConfirm(null)}
-                                className="flex-1 px-6 py-3 border border-default rounded-sm text-xs font-black uppercase tracking-widest text-main hover:bg-card transition-all"
+                                fullWidth
                             >
                                 Cancel
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="danger"
+                                size="md"
                                 onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
-                                className="flex-1 px-6 py-3 bg-danger text-white rounded-sm text-xs font-black uppercase tracking-widest hover:bg-danger/90 shadow-lg shadow-danger/20 transition-all"
+                                fullWidth
                             >
                                 Delete
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Layout from "../../../components/shared/Layout/index";
 import PageHeader from "../../../components/shared/Layout/PageHeader";
-import CashBankModal from './components/CashBankModal';
 import CashBankInput from './components/CashBankInput';
 import CashBankFormSection from './components/CashBankFormSection';
 import { getAccounts, createAccount, deleteAccount, reset } from "../../../redux/slices/cashbankSlice";
@@ -24,6 +23,7 @@ import {
     UtensilsCrossed,
     Wallet
 } from 'lucide-react';
+import { Button, Modal, Select } from '@/components/shared';
 
 const EMPTY_ACCOUNT: Partial<Account> = {
     bankName: '',
@@ -98,12 +98,9 @@ const BankAccounts: React.FC = () => {
                         { label: 'Accounts' }
                     ]}
                     actions={
-                        <button
-                            onClick={() => setShowAddAccount(true)}
-                            className="px-6 py-3 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/25 flex items-center gap-2 hover:bg-primary/90 transition-all uppercase tracking-widest"
-                        >
-                            <Plus className="w-5 h-5" /> Add bank account
-                        </button>
+                        <Button variant="primary" size="md" icon={<Plus className="w-5 h-5" />} onClick={() => setShowAddAccount(true)}>
+                            Add bank account
+                        </Button>
                     }
                 />
 
@@ -192,56 +189,61 @@ const BankAccounts: React.FC = () => {
 
                                 {/* Masked Account Number on Hover or revealed */}
                                 <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button
+                                    <Button
+                                        variant="tertiary"
+                                        size="sm"
+                                        icon={revealedAccounts[acc._id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                         onClick={(e) => { e.stopPropagation(); toggleReveal(acc._id); }}
-                                        className="p-1.5 hover:bg-white/10 rounded-lg text-slate-500"
-                                    >
-                                        {revealedAccounts[acc._id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                    </button>
-                                    <button
+                                    />
+                                    <Button
+                                        variant="tertiary"
+                                        size="sm"
+                                        icon={<Trash2 className="w-4 h-4" />}
+                                        className="hover:text-danger"
                                         onClick={(e) => { e.stopPropagation(); if (window.confirm('Wipe unit from registry?')) dispatch(deleteAccount(acc._id)); }}
-                                        className="p-1.5 hover:bg-danger/10 rounded-lg text-slate-500 hover:text-danger"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
+                                    />
                                 </div>
                             </div>
                         ))}
 
                         {/* Add Account Trigger */}
-                        <div
+                        <Button
+                            variant="outline"
                             onClick={() => setShowAddAccount(true)}
-                            className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-white/5 rounded-[2.5rem] hover:border-success/30 hover:bg-success/5 transition-all cursor-pointer group"
+                            className="h-auto flex-col p-8 border-2 border-dashed border-white/5 rounded-2xl hover:border-success/30 hover:bg-success/5"
+                            fullWidth
                         >
-                            <div className="w-12 h-12 bg-white/5 rounded-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <div className="w-12 h-12 bg-white/5 rounded-sm flex items-center justify-center mb-4">
                                 <Plus className="w-6 h-6 text-success" />
                             </div>
-                            <h4 className="text-sm font-black uppercase tracking-widest text-slate-500">Add bank account</h4>
-                        </div>
+                            <span className="text-sm font-black uppercase tracking-widest text-slate-500">Add bank account</span>
+                        </Button>
                     </div>
                 {/* Floating Action Button (Alternative Add Account) */}
-                <button
+                <Button
+                    variant="success"
+                    icon={<Plus className="w-8 h-8 stroke-[4]" />}
                     onClick={() => setShowAddAccount(true)}
-                    className="fixed bottom-10 right-10 w-16 h-16 bg-success hover:bg-success/90 text-slate-950 rounded-full flex items-center justify-center shadow-[0_10px_40px_-5px_rgb(var(--color-success)/0.5)] active:scale-95 transition-all border-[6px] border-bg z-50"
-                >
-                    <Plus className="w-8 h-8 stroke-[4]" />
-                </button>
+                    className="fixed bottom-10 right-10 w-16 h-16 rounded-full shadow-[0_10px_40px_-5px_rgb(var(--color-success)/0.5)] border-[6px] border-bg z-50 p-0"
+                />
 
-                <CashBankModal
+                <Modal
                     isOpen={showAddAccount}
                     onClose={() => setShowAddAccount(false)}
                     title="New Banking Relationship"
-                    subtitle="Configure institutional liquidity nodes"
-                    icon={Building2}
+                    size="md"
                     footer={
-                        <>
-                            <button type="button" onClick={() => setShowAddAccount(false)} className="px-8 py-3.5 border border-white/5 text-slate-500 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">Abort</button>
-                            <button type="submit" form="add-account-form" disabled={isLoading} className="px-10 py-3.5 bg-success text-slate-950 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-success/90 disabled:opacity-50 transition-all">
-                                {isLoading ? 'Synchronizing...' : 'Commit Initialization'}
-                            </button>
-                        </>
+                        <div className="flex justify-end gap-3">
+                            <Button type="button" variant="secondary" size="md" onClick={() => setShowAddAccount(false)}>
+                                Abort
+                            </Button>
+                            <Button type="submit" variant="success" size="md" form="add-account-form" disabled={isLoading} loading={isLoading}>
+                                Commit Initialization
+                            </Button>
+                        </div>
                     }
                 >
+                    <p className="text-xs font-medium text-slate-400 -mt-4 mb-6">Configure institutional liquidity nodes</p>
                     <form id="add-account-form" onSubmit={handleSubmit} className="space-y-8">
                         <CashBankFormSection title="Institution Details">
                             <CashBankInput label="Financial Institution" icon={Building2}>
@@ -290,15 +292,15 @@ const BankAccounts: React.FC = () => {
 
                         <CashBankFormSection title="Liquidity Configuration">
                             <CashBankInput label="Account Classification" icon={Activity}>
-                                <select
+                                <Select
+                                    options={[
+                                        { value: 'Savings', label: 'Savings' },
+                                        { value: 'Current', label: 'Current' },
+                                        { value: 'Overdraft', label: 'Overdraft' },
+                                    ]}
                                     value={formData.accountType}
-                                    onChange={(e) => setFormData({ ...formData, accountType: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-white/5 rounded-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-primary transition-all font-bold text-sm text-white appearance-none"
-                                >
-                                    <option>Savings</option>
-                                    <option>Current</option>
-                                    <option>Overdraft</option>
-                                </select>
+                                    onChange={(value) => setFormData({ ...formData, accountType: typeof value === 'string' ? value : value[0] })}
+                                />
                             </CashBankInput>
                             <CashBankInput label="Opening Position" icon={Activity}>
                                 <input
@@ -311,7 +313,7 @@ const BankAccounts: React.FC = () => {
                             </CashBankInput>
                         </CashBankFormSection>
                     </form>
-                </CashBankModal>
+                </Modal>
             </div>
         </Layout>
     );

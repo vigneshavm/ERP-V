@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import BusinessSector from '../modules/core/models/BusinessSector.js';
 import ProductCategoryModel from '../modules/inventory/models/ProductCategory.js';
 import { SECTOR_CATEGORY_SEED_DATA, SECTOR_SHORT_CODES } from '../modules/core/data/sectorCategorySeedData.js';
+import { info } from '../config/logger.js';
 
 dotenv.config();
 
@@ -17,9 +18,9 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const seedSectorCategories = async () => {
     try {
-        console.log('Connecting to MongoDB...', process.env.MONGO_URI ? 'URI Found' : 'URI Missing');
+        info('Connecting to MongoDB...', process.env.MONGO_URI ? 'URI Found' : 'URI Missing');
         await mongoose.connect(process.env.MONGO_URI as string, { family: 4 });
-        console.log('Connected to MongoDB');
+        info('Connected to MongoDB');
 
         for (const [sectorName, categories] of Object.entries(SECTOR_CATEGORY_SEED_DATA)) {
             const sector = await BusinessSector.findOneAndUpdate(
@@ -27,7 +28,7 @@ const seedSectorCategories = async () => {
                 { name: sectorName, status: 'ACTIVE', shortCode: SECTOR_SHORT_CODES[sectorName] },
                 { upsert: true, new: true }
             );
-            console.log(`Seeded business sector: ${sector.name} (shortCode: ${sector.shortCode})`);
+            info(`Seeded business sector: ${sector.name} (shortCode: ${sector.shortCode})`);
 
             for (const category of categories) {
                 await ProductCategoryModel.findOneAndUpdate(
@@ -42,11 +43,11 @@ const seedSectorCategories = async () => {
                     },
                     { upsert: true, new: true }
                 );
-                console.log(`  -> Seeded product category: ${category.name}`);
+                info(`  -> Seeded product category: ${category.name}`);
             }
         }
 
-        console.log('Business Sector / Product Category seeding completed.');
+        info('Business Sector / Product Category seeding completed.');
         process.exit(0);
     } catch (error) {
         console.error('Error seeding business sectors / product categories:', error);

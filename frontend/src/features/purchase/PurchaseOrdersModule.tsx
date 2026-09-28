@@ -10,7 +10,8 @@ import { RootState } from "../../redux/store";
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import { ClipboardList, Clock, CheckCircle, Lock, Plus } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';import { Button } from '@/components/shared/Button';
+
 
 const PurchaseOrdersModule: React.FC = () => {
     const { id } = useParams<{ id?: string }>();
@@ -146,12 +147,7 @@ const PurchaseOrdersModule: React.FC = () => {
                                 { label: 'Orders' }
                             ]}
                             actions={
-                                <button
-                                    onClick={handleCreate}
-                                    className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"
-                                >
-                                    <Plus className="w-4 h-4" /> New Order
-                                </button>
+                                <Button onClick={handleCreate} className="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition hover:scale-105 active:scale-95 uppercase tracking-widest"><Plus className="w-4 h-4" /> New Order</Button>
                             }
                         />
 

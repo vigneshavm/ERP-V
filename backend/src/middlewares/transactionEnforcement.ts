@@ -10,7 +10,7 @@
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import { withTransaction } from '../utils/transaction.js';
-import { error as logError } from '../utils/logger.js';
+import { error as logError, info, warn } from '../utils/logger.js';
 
 /**
  * List of critical multi-write operations that MUST use transactions
@@ -151,11 +151,11 @@ export const validateTransactionEnforcement = (app: any) => {
  */
 export const enableTransactionGuard = () => {
     if (process.env.NODE_ENV === 'production') {
-        console.warn('⚠️  Transaction guard disabled in production');
+        warn('⚠️  Transaction guard disabled in production');
         return;
     }
 
-    console.log('🔒 Transaction guard enabled (development mode)');
+    info('🔐 Transaction guard enabled (development mode)');
 
     // This would require monkey-patching Mongoose Model.prototype.save, etc.
     // Simplified implementation - just log warning

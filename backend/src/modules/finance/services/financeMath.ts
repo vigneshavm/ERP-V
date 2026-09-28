@@ -10,6 +10,10 @@
  * as inflow or outflow.
  */
 
+import { toNumber as n, round2 } from "../../../utils/typeConversion.js";
+
+export { round2 };
+
 export type EntrySource = "shop" | "erp";
 
 export type EntryType =
@@ -48,13 +52,6 @@ export interface FinanceEntry {
     credit: number;
     note: string;
 }
-
-export const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
-
-const n = (v: unknown): number => {
-    const x = typeof v === "number" ? v : Number(String(v ?? "").trim());
-    return Number.isFinite(x) ? x : 0;
-};
 
 export type Mode = "cash" | "bank" | "credit";
 

@@ -6,6 +6,7 @@ import { info, error } from '../../../config/logger.js';
 import Item from '../models/Item.js';
 import ReprintQueue from '../models/ReprintQueue.js';
 import mongoose from 'mongoose';
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 import { isSqlItemSource } from '../../../config/itemDataSource.js';
 import { withMongoFallback } from '../../../integrations/textilesoft/sqlItemSource.js';
 import { sqlAgingReport, sqlCityWiseStock, sqlDeadStockReport, sqlItemHistory, sqlLowStockReport, sqlRackWiseStock, sqlStockAgeBuckets, sqlStockFilterOptions, sqlStockMovements, sqlStockStatusReport, type StockReportQuery } from '../../../integrations/textilesoft/sqlStockReports.js';
@@ -17,10 +18,9 @@ export class InventoryController {
         @inject(StockAgingService) private stockAgingService: StockAgingService
     ) { }
 
-    public addItem = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public addItem = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const result = await this.inventoryService.addItem(authReq.body, authReq.tenantId as string, authReq.user);
+            const result = await this.inventoryService.addItem(req.body, req.tenantId.toString(), req.user);
             res.status(201).json(result);
         } catch (err: any) {
             error(`Add Item Error: ${err.message}`);
@@ -28,10 +28,9 @@ export class InventoryController {
         }
     };
 
-    public getAllItems = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getAllItems = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const result = await this.inventoryService.getAllItemsWithPagination(authReq.tenantId as string, req.query);
+            const result = await this.inventoryService.getAllItemsWithPagination(req.tenantId.toString(), req.query);
             res.status(200).json(result);
         } catch (err: any) {
             error(`Get All Items Error: ${err.message}`);
@@ -39,10 +38,9 @@ export class InventoryController {
         }
     };
 
-    public getSingleItem = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getSingleItem = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const item = await this.inventoryService.getSingleItem(authReq.params.id, authReq.tenantId as string);
+            const item = await this.inventoryService.getSingleItem(String(req.params.id), req.tenantId.toString());
             res.status(200).json(item);
         } catch (err: any) {
             error(`Get Single Item Error: ${err.message}`);
@@ -50,10 +48,9 @@ export class InventoryController {
         }
     };
 
-    public getItemByBarcode = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getItemByBarcode = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const item = await this.inventoryService.getItemByBarcode(authReq.params.barcode, authReq.tenantId as string);
+            const item = await this.inventoryService.getItemByBarcode(String(req.params.barcode), req.tenantId.toString());
             res.status(200).json(item);
         } catch (err: any) {
             error(`Get Item by Barcode Error: ${err.message}`);
@@ -61,19 +58,18 @@ export class InventoryController {
         }
     };
 
-    public updateItem = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public updateItem = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             // Fetch current state for audit
-            const originalItem = await Item.findOne({ _id: authReq.params.id, tenantId: authReq.tenantId });
+            const originalItem = await Item.findOne({ _id: req.params.id, tenantId: req.tenantId });
             if (originalItem) {
-                authReq.originalEntity = originalItem.toObject();
+                req.originalEntity = originalItem.toObject();
             }
 
-            const result = await this.inventoryService.updateItem(authReq.params.id, authReq.tenantId as string, authReq.body, authReq.user);
-            
+            const result = await this.inventoryService.updateItem(String(req.params.id), req.tenantId.toString(), req.body, req.user);
+
             // Attach result for audit
-            authReq.updatedEntity = result;
+            req.updatedEntity = result;
 
             res.status(200).json(result);
         } catch (err: any) {
@@ -82,16 +78,15 @@ export class InventoryController {
         }
     };
 
-    public deleteItem = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public deleteItem = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             // Fetch current state for audit
-            const originalItem = await Item.findOne({ _id: authReq.params.id, tenantId: authReq.tenantId });
+            const originalItem = await Item.findOne({ _id: req.params.id, tenantId: req.tenantId });
             if (originalItem) {
-                authReq.deletedEntity = originalItem.toObject();
+                req.deletedEntity = originalItem.toObject();
             }
 
-            await this.inventoryService.deleteItem(authReq.params.id, authReq.tenantId as string, authReq.user?.name as string);
+            await this.inventoryService.deleteItem(String(req.params.id), req.tenantId.toString(), req.user.name);
             res.status(200).json({ message: 'Item deleted' });
         } catch (err: any) {
             error(`Delete Item Error: ${err.message}`);
@@ -99,10 +94,9 @@ export class InventoryController {
         }
     };
 
-    public getLowStockItems = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getLowStockItems = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const lowStockItems = await this.inventoryService.getLowStockItems(authReq.tenantId as string);
+            const lowStockItems = await this.inventoryService.getLowStockItems(req.tenantId.toString());
             res.status(200).json(lowStockItems);
         } catch (err: any) {
             error(`Low Stock Item Error: ${err.message}`);
@@ -110,10 +104,9 @@ export class InventoryController {
         }
     };
 
-    public importItems = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public importItems = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const result = await this.inventoryService.importItems(authReq.body.items, authReq.tenantId as string, authReq.user);
+            const result = await this.inventoryService.importItems(req.body.items, req.tenantId.toString(), req.user);
             res.status(200).json(result);
         } catch (err: any) {
             error(`Bulk Import Error: ${err.message}`);
@@ -121,11 +114,10 @@ export class InventoryController {
         }
     };
 
-    public bulkAdjustStock = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public bulkAdjustStock = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const { ids, adjustment, type } = authReq.body;
-            const modifiedCount = await this.inventoryService.bulkAdjustStock(ids, adjustment, type, authReq.tenantId as string, authReq.user);
+            const { ids, adjustment, type } = req.body;
+            const modifiedCount = await this.inventoryService.bulkAdjustStock(ids, adjustment, type, req.tenantId.toString(), req.user);
             res.status(200).json({ message: `${modifiedCount} items adjusted successfully`, modifiedCount });
         } catch (err: any) {
             error(`Bulk Stock Adjustment Error: ${err.message}`);
@@ -133,15 +125,14 @@ export class InventoryController {
         }
     };
 
-    public bulkUpdateCategory = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public bulkUpdateCategory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const { ids, category } = authReq.body;
+            const { ids, category } = req.body;
             const result = await Item.updateMany(
-                { _id: { $in: ids }, tenantId: authReq.tenantId as string },
+                { _id: { $in: ids }, tenantId: req.tenantId.toString() },
                 { $set: { category } }
             );
-            info(`Bulk category update by ${authReq.user?.name}: ${result.modifiedCount} items migrated to ${category}`);
+            info(`Bulk category update by ${req.user.name}: ${result.modifiedCount} items migrated to ${category}`);
             res.status(200).json({ message: `${result.modifiedCount} items updated successfully`, modifiedCount: result.modifiedCount });
         } catch (err: any) {
             error(`Bulk Category Update Error: ${err.message}`);
@@ -149,10 +140,9 @@ export class InventoryController {
         }
     };
 
-    public duplicateItem = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public duplicateItem = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const item = await this.inventoryService.getSingleItem(authReq.params.id, authReq.tenantId as string);
+            const item = await this.inventoryService.getSingleItem(String(req.params.id), req.tenantId.toString());
             const { _id, createdAt, updatedAt, ...itemData } = (item as any).toObject();
 
             itemData.name = `${itemData.name} (Copy)`;
@@ -162,9 +152,9 @@ export class InventoryController {
             // over would let a POS scan resolve to the wrong SKU. Clear it so the
             // duplicate needs its own barcode assigned/printed.
             delete itemData.barcode;
-            itemData.addedBy = authReq.user?._id as string;
+            itemData.addedBy = req.user._id;
 
-            const result = await this.inventoryService.addItem(itemData, authReq.tenantId as string, authReq.user);
+            const result = await this.inventoryService.addItem(itemData, req.tenantId.toString(), req.user);
             res.status(201).json(result.item);
         } catch (err: any) {
             error(`Duplicate Item Error: ${err.message}`);
@@ -172,13 +162,12 @@ export class InventoryController {
         }
     };
 
-    public toggleItemStatus = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public toggleItemStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const item = await this.inventoryService.getSingleItem(authReq.params.id, authReq.tenantId as string);
+            const item = await this.inventoryService.getSingleItem(String(req.params.id), req.tenantId.toString());
             item.isActive = !item.isActive;
             await item.save();
-            info(`Item status toggled by ${authReq.user?.name}: ${item.name} is now ${item.isActive ? 'Active' : 'Inactive'}`);
+            info(`Item status toggled by ${req.user.name}: ${item.name} is now ${item.isActive ? 'Active' : 'Inactive'}`);
             res.status(200).json(item);
         } catch (err: any) {
             error(`Toggle Status Error: ${err.message}`);
@@ -186,15 +175,15 @@ export class InventoryController {
         }
     };
 
-    public getItemStockHistory = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getItemStockHistory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            const tenantId = req.tenantId.toString();
             const mongoHistory = () => mongoose.model('StockLog').find({
-                itemId: authReq.params.id,
-                tenantId: authReq.tenantId as string
+                itemId: req.params.id,
+                tenantId
             }).sort({ createdAt: -1 });
             const history = isSqlItemSource()
-                ? await withMongoFallback('item history', () => sqlItemHistory(authReq.params.id, authReq.tenantId as string), async () => mongoHistory() as any)
+                ? await withMongoFallback('item history', () => sqlItemHistory(String(req.params.id), tenantId), async () => mongoHistory() as any)
                 : await mongoHistory();
             res.status(200).json(history);
         } catch (err: any) {
@@ -204,41 +193,10 @@ export class InventoryController {
     };
 
     /** Stock in/out log: Textilesoft purchases/sales/returns in SQL mode, ERP StockLog otherwise. */
-    public getStockMovements = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getStockMovements = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const q = req.query as Record<string, string | undefined>;
-            const mongoMovements = async () => {
-                const page = Math.max(1, parseInt(q.page || '1') || 1);
-                const limit = Math.min(200, Math.max(1, parseInt(q.limit || '50') || 50));
-                const StockLog = mongoose.model('StockLog');
-                const filter: Record<string, unknown> = { tenantId: authReq.tenantId };
-                if (q.type === 'IN') filter.delta = { $gt: 0 };
-                if (q.type === 'OUT') filter.delta = { $lt: 0 };
-                if (q.from || q.to) filter.createdAt = { ...(q.from ? { $gte: new Date(q.from) } : {}), ...(q.to ? { $lte: new Date(`${q.to}T23:59:59Z`) } : {}) };
-                const [logs, total, agg] = await Promise.all([
-                    StockLog.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).populate('itemId', 'name sku').lean(),
-                    StockLog.countDocuments(filter),
-                    StockLog.aggregate([{ $match: filter }, { $group: { _id: null, inQty: { $sum: { $cond: [{ $gt: ['$delta', 0] }, '$delta', 0] } }, outQty: { $sum: { $cond: [{ $lt: ['$delta', 0] }, { $abs: '$delta' }, 0] } } } }]),
-                ]);
-                return {
-                    items: (logs as any[]).map((l) => ({
-                        id: String(l._id),
-                        date: new Date(l.createdAt).toISOString().slice(0, 10),
-                        item: l.itemId?.name || 'Unknown item',
-                        sku: l.itemId?.sku || '',
-                        type: l.delta >= 0 ? 'IN' : 'OUT',
-                        qty: Math.abs(l.delta),
-                        ref: l.type,
-                        party: '',
-                        reason: l.reason || '',
-                    })),
-                    pagination: { page, limit, total, pages: Math.ceil(total / limit) },
-                    totals: { transactions: total, inQty: agg[0]?.inQty ?? 0, outQty: agg[0]?.outQty ?? 0 },
-                    range: null,
-                    source: 'mongo',
-                };
-            };
+            const mongoMovements = () => this.inventoryService.getStockMovements(req.tenantId.toString(), q);
             const result = isSqlItemSource() ? await withMongoFallback('stock movements', () => sqlStockMovements(q), mongoMovements) : await mongoMovements();
             res.status(200).json(result);
         } catch (err: any) {
@@ -247,10 +205,9 @@ export class InventoryController {
         }
     };
 
-    public getStockAgingReport = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getStockAgingReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const tenantId = authReq.tenantId as string;
+            const tenantId = req.tenantId.toString();
             const report = isSqlItemSource()
                 ? await withMongoFallback('aging report', () => sqlAgingReport(tenantId), () => this.stockAgingService.getAgingAnalysis(tenantId))
                 : await this.stockAgingService.getAgingAnalysis(tenantId);
@@ -262,10 +219,9 @@ export class InventoryController {
     };
 
     /** Purchased-but-not-sold stock by calendar-month bucket (summary over all lots + one page of a bucket). */
-    public getStockAgeBuckets = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getStockAgeBuckets = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const tenantId = authReq.tenantId as string;
+            const tenantId = req.tenantId.toString();
             const q = {
                 bucket: typeof req.query.bucket === 'string' ? req.query.bucket : undefined,
                 month: typeof req.query.month === 'string' ? req.query.month : undefined,
@@ -298,8 +254,8 @@ export class InventoryController {
     }
 
     private runStockReport(label: string, sql: (tenantId: string, q: StockReportQuery) => Promise<any>, mongo: (tenantId: string, q: StockReportQuery) => Promise<any>) {
-        return async (req: Request, res: Response): Promise<void> => {
-            const tenantId = (req as any).tenantId as string;
+        return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+            const tenantId = req.tenantId.toString();
             try {
                 const q = this.stockReportQuery(req);
                 const report = isSqlItemSource() ? await withMongoFallback(label, () => sql(tenantId, q), () => mongo(tenantId, q)) : await mongo(tenantId, q);
@@ -316,11 +272,10 @@ export class InventoryController {
     public getLowStockReport = this.runStockReport('low stock report', sqlLowStockReport, (t, q) => this.stockAgingService.getLowStockReport(t, q));
     public getDeadStockReport = this.runStockReport('dead stock report', sqlDeadStockReport, (t, q) => this.stockAgingService.getDeadStockReport(t, q));
 
-    public performAgingAction = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public performAgingAction = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const { itemId, action, value } = req.body;
-            const result = await this.stockAgingService.applyAction(itemId, authReq.tenantId as string, action, value);
+            const result = await this.stockAgingService.applyAction(itemId, req.tenantId.toString(), action, value);
             res.status(200).json({ message: "Action applied successfully", result });
         } catch (err: any) {
             error(`Aging Action Error: ${err.message}`);
@@ -328,11 +283,11 @@ export class InventoryController {
         }
     };
 
-    public batchPriceUpdate = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public batchPriceUpdate = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const { sku, newPrice } = req.body;
-            const item = await Item.findOne({ sku, tenantId: authReq.tenantId as string });
+            const tenantId = req.tenantId.toString();
+            const item = await Item.findOne({ sku, tenantId });
             if (!item) {
                 res.status(404).json({ message: 'Item not found' });
                 return;
@@ -342,8 +297,8 @@ export class InventoryController {
             item.sellingPrice = newPrice;
             await item.save();
 
-            let queue = await ReprintQueue.findOne({ tenantId: authReq.tenantId as string });
-            if (!queue) queue = new ReprintQueue({ tenantId: authReq.tenantId as string, items: [] });
+            let queue = await ReprintQueue.findOne({ tenantId });
+            if (!queue) queue = new ReprintQueue({ tenantId, items: [] });
 
             const existingIndex = queue.items.findIndex(i => i.itemId.toString() === item._id.toString());
             if (existingIndex > -1) {
@@ -361,7 +316,7 @@ export class InventoryController {
                 });
             }
             await queue.save();
-            info(`Batch Price Update by ${authReq.user?.name}: ${item.sku} to ${newPrice}`);
+            info(`Batch Price Update by ${req.user.name}: ${item.sku} to ${newPrice}`);
             res.status(200).json({ message: 'Price updated and queued for reprint', item, queue });
         } catch (err: any) {
             error(`Batch Price Update Error: ${err.message}`);
@@ -369,10 +324,9 @@ export class InventoryController {
         }
     };
 
-    public getReprintQueue = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getReprintQueue = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const queue = await ReprintQueue.findOne({ tenantId: authReq.tenantId as string });
+            const queue = await ReprintQueue.findOne({ tenantId: req.tenantId.toString() });
             res.status(200).json(queue ? queue.items : []);
         } catch (err: any) {
             error(`Get Reprint Queue Error: ${err.message}`);
@@ -380,10 +334,9 @@ export class InventoryController {
         }
     };
 
-    public clearReprintQueue = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public clearReprintQueue = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            await ReprintQueue.findOneAndUpdate({ tenantId: authReq.tenantId as string }, { $set: { items: [] } });
+            await ReprintQueue.findOneAndUpdate({ tenantId: req.tenantId.toString() }, { $set: { items: [] } });
             res.status(200).json({ message: 'Reprint queue cleared' });
         } catch (err: any) {
             error(`Clear Reprint Queue Error: ${err.message}`);
@@ -391,16 +344,15 @@ export class InventoryController {
         }
     };
 
-    public deleteItemsBatch = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public deleteItemsBatch = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const { ids } = authReq.body;
+            const { ids } = req.body;
             if (!ids || !Array.isArray(ids) || ids.length === 0) {
                 res.status(400).json({ message: 'No IDs provided for deletion' });
                 return;
             }
-            const items = await Item.deleteMany({ _id: { $in: ids }, tenantId: authReq.tenantId as string });
-            info(`Batch delete by ${authReq.user?.name}: ${items.deletedCount} items removed`);
+            const items = await Item.deleteMany({ _id: { $in: ids }, tenantId: req.tenantId.toString() });
+            info(`Batch delete by ${req.user.name}: ${items.deletedCount} items removed`);
             res.status(200).json({ message: `${items.deletedCount} items deleted successfully`, deletedCount: items.deletedCount });
         } catch (err: any) {
             error(`Batch Delete Error: ${err.message}`);
@@ -408,10 +360,9 @@ export class InventoryController {
         }
     };
 
-    public getInventoryStats = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getInventoryStats = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const stats = await this.inventoryService.getInventoryStats(authReq.tenantId as string);
+            const stats = await this.inventoryService.getInventoryStats(req.tenantId.toString());
             res.status(200).json(stats);
         } catch (err: any) {
             error(`Get Inventory Stats Error: ${err.message}`);
@@ -419,10 +370,9 @@ export class InventoryController {
         }
     };
 
-    public getStockByCity = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getStockByCity = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const tenantId = authReq.tenantId as string;
+            const tenantId = req.tenantId.toString();
             const mongo = () => this.inventoryService.getStockByCity(tenantId);
             // SQL mode: single-store shops get the shared stock snapshot; multi-store tenants keep per-store levels.
             const report = isSqlItemSource()
@@ -435,10 +385,9 @@ export class InventoryController {
         }
     };
 
-    public getStockByRack = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getStockByRack = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const tenantId = authReq.tenantId as string;
+            const tenantId = req.tenantId.toString();
             const mongo = () => this.inventoryService.getStockByRack(tenantId);
             const report = isSqlItemSource()
                 ? await withMongoFallback<any>('rack-wise stock', () => sqlRackWiseStock(tenantId, this.stockReportQuery(req)), mongo)
@@ -453,10 +402,9 @@ export class InventoryController {
     // Distinct list of category values actually used across this tenant's items.
     // Used to populate the Items page category filter, which previously only
     // showed categories present on the currently loaded page of results.
-    public getDistinctCategories = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getDistinctCategories = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const categories = await this.inventoryService.getDistinctCategories(authReq.tenantId as string);
+            const categories = await this.inventoryService.getDistinctCategories(req.tenantId.toString());
             res.status(200).json(categories);
         } catch (err: any) {
             // The service itself already catches its own DB errors and resolves to [],
@@ -469,11 +417,10 @@ export class InventoryController {
 
     // Records stock lost to damage or unexplained shrinkage -- distinct from a normal
     // ADJUST/SALES stock movement so it shows up separately in stock history/reporting.
-    public writeOffStock = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public writeOffStock = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const { itemId, quantity, cause, reason } = authReq.body;
-            await this.inventoryService.writeOffStock(itemId, Number(quantity), cause, reason, authReq.tenantId as string, authReq.user);
+            const { itemId, quantity, cause, reason } = req.body;
+            await this.inventoryService.writeOffStock(itemId, Number(quantity), cause, reason, req.tenantId.toString(), req.user);
             res.status(200).json({ message: 'Stock write-off recorded' });
         } catch (err: any) {
             error(`Stock Write-Off Error: ${err.message}`);
@@ -484,10 +431,9 @@ export class InventoryController {
     // Backs the Inventory Variant Search page's Brand/Size/Color/Shelf filter dropdowns.
     // Always DB-driven (global Brand/Size/Color/Shelf catalog collections unioned with
     // whatever values this tenant's own Items already use) -- see InventoryService.getFilterOptions.
-    public getFilterOptions = async (req: Request, res: Response): Promise<void> => {
-        const authReq = req as any;
+    public getFilterOptions = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const options = await this.inventoryService.getFilterOptions(authReq.tenantId as string);
+            const options = await this.inventoryService.getFilterOptions(req.tenantId.toString());
             res.status(200).json({ success: true, data: options });
         } catch (err: any) {
             error(`Get Filter Options Error: ${err.message}`);

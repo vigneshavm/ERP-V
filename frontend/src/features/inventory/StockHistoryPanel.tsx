@@ -1,5 +1,6 @@
 ﻿import React from 'react';
-import { X, History, TrendingUp, TrendingDown, RefreshCcw, ShoppingCart, Truck, Database } from 'lucide-react';
+import { X, History, TrendingUp, TrendingDown, RefreshCcw, ShoppingCart, Truck, Database } from 'lucide-react';import { Button } from '@/components/shared/Button';
+
 
 interface StockLog {
     _id: string;
@@ -59,9 +60,7 @@ export const StockHistoryDrawer: React.FC<StockHistoryDrawerProps> = ({ isOpen, 
                         </h3>
                         <p className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest truncate max-w-[300px]">{itemName}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 rounded-full transition-all">
-                        <X className="w-6 h-6" />
-                    </button>
+                    <Button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 rounded-full transition-all"><X className="w-6 h-6" /></Button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-8 space-y-6">
@@ -120,9 +119,7 @@ export const StockHistoryDrawer: React.FC<StockHistoryDrawerProps> = ({ isOpen, 
                 </div>
 
                 <div className="p-8 border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-700/50">
-                    <button onClick={onClose} className="w-full py-4 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-xl font-black uppercase tracking-widest text-[10px] hover:scale-[1.02] active:scale-95 transition-all shadow-xl">
-                        Dismiss Audit Panel
-                    </button>
+                    <Button onClick={onClose} className="w-full py-4 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-xl font-black uppercase tracking-widest text-[10px] hover:scale-[1.02] active:scale-95 transition-all shadow-xl">Dismiss Audit Panel</Button>
                 </div>
             </div>
         </div>

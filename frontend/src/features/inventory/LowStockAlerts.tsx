@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { AlertTriangle, ShoppingCart, Bell, Download } from 'lucide-react';
 import api from '@/services/api';
-import PageHeader from '@/components/shared/Layout/PageHeader';
+import PageHeader from '@/components/shared/Layout/PageHeader';import { Button } from '@/components/shared/Button';
+
 
 interface LowStockItem {
     _id: string;
@@ -67,7 +68,7 @@ const LowStockAlerts: React.FC = () => {
             <PageHeader
                 title="Low Stock Alerts"
                 description="Items below reorder level, requiring action."
-                actions={<button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+                actions={<button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all dark:text-slate-100">
                     <Download className="w-4 h-4" /> Export
                 </button>}
             />

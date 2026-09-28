@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose from "mongoose";
+import { container } from "tsyringe";
 import { AppError } from "../../../utils/AppError.js";
 import { error } from "../../../config/logger.js";
 import Item from "../../inventory/models/Item.js";
@@ -11,6 +12,8 @@ import Tenant from "../../core/models/Tenant.js";
 import User from "../../core/models/User.js";
 import StockLog from "../../inventory/models/StockLog.js";
 import { stockReservationManager } from "../../inventory/services/StockReservationService.js";
+import { SalesService } from "../services/SalesService.js";
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 // Mirrors frontend/src/types/tenant/mis.ts's DEFAULT_MIS_CONFIG for the three fields this
 // enforcement check needs -- kept as the fallback so a tenant that has never opened
@@ -36,7 +39,7 @@ const INVOICE_EDIT_ROLES = ['owner', 'co-owner', 'manager'];
  * @route   GET /api/pos/products
  * @access  Private
  */
-export const getPosProducts = async (_req: Request, res: Response): Promise<void> => {
+export const getPosProducts = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
     // TODO: Implement POS product fetching logic
     res.status(200).json({
         success: true,
@@ -56,7 +59,7 @@ export const getPosProducts = async (_req: Request, res: Response): Promise<void
  *       200:
  *         description: POS summary retrieved
  */
-export const getPosSummary = async (_req: Request, res: Response): Promise<void> => {
+export const getPosSummary = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
     res.status(200).json({ message: 'POS summary endpoint' });
 };
 
@@ -72,7 +75,7 @@ export const getPosSummary = async (_req: Request, res: Response): Promise<void>
  *       201:
  *         description: POS sale processed
  */
-export const processPosSale = async (_req: Request, res: Response): Promise<void> => {
+export const processPosSale = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
     res.status(201).json({ message: 'POS sale processed' });
 };
 
@@ -81,7 +84,7 @@ export const processPosSale = async (_req: Request, res: Response): Promise<void
  * @route   POST /api/pos/invoice
  * @access  Private
  */
-export const createInvoice = async (req: Request, res: Response): Promise<void> => {
+export const createInvoice = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -139,13 +142,13 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
 
         for (const item of items) {
             // Use findById directly for better error handling if needed, but findOne with tenantId is safer
-            const product = await Item.findOne({ _id: item.item || item._id, tenantId: (req as any).tenantId }).session(session);
+            const product = await Item.findOne({ _id: item.item || item._id, tenantId: req.tenantId }).session(session);
 
             if (!product) {
                 throw new AppError(`Item not found: ${item.name}`, 404);
             }
 
-            const reservedQty = stockReservationManager.getReservedQuantity((req as any).tenantId, product._id.toString());
+            const reservedQty = stockReservationManager.getReservedQuantity(req.tenantId.toString(), product._id.toString());
             const availableNetStock = product.stockQty - reservedQty;
 
             if (availableNetStock < item.quantity) {
@@ -177,8 +180,8 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
             await inventoryService.reduceStock(
                 product._id.toString(),
                 item.quantity,
-                (req as any).tenantId,
-                (req as any).user,
+                req.tenantId,
+                req.user,
                 'SALES',
                 session
             );
@@ -191,14 +194,14 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
         // bill-level `discount` and the sum of per-item discounts count toward the cap,
         // since a cashier could otherwise bypass the bill-level check by discounting
         // each line instead.
-        const tenantForPolicy = await Tenant.findById((req as any).tenantId).session(session);
+        const tenantForPolicy = await Tenant.findById(req.tenantId).session(session);
         const misConfig = { ...DEFAULT_DISCOUNT_POLICY, ...(tenantForPolicy?.misConfig || {}) };
 
         // Per-user discount permission: a cashier with an explicit User.maxDiscountPercent
         // gets that ceiling instead of the tenant-wide default, letting an owner grant (or
         // restrict) individual staff without touching the shop-wide MIS Controls setting.
         // Undefined/null on the user means "inherit the tenant cap".
-        const requestingUserMaxDiscount = (req as any).user?.maxDiscountPercent;
+        const requestingUserMaxDiscount = req.user?.maxDiscountPercent;
         const effectiveMaxDiscountPercent = typeof requestingUserMaxDiscount === 'number'
             ? requestingUserMaxDiscount
             : misConfig.maxDiscountPercent;
@@ -221,7 +224,7 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
                         400
                     );
                 }
-                const approver = await User.findOne({ _id: discountApprovedBy, tenantId: (req as any).tenantId }).session(session);
+                const approver = await User.findOne({ _id: discountApprovedBy, tenantId: req.tenantId }).session(session);
                 if (!approver || !DISCOUNT_APPROVER_ROLES.includes(approver.role)) {
                     throw new AppError("Discount approval must come from a manager, co-owner, or owner.", 400);
                 }
@@ -243,7 +246,7 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
         const isWholesale = saleChannel === 'WHOLESALE';
         const invoicePrefix = isWholesale ? 'WR' : 'INV';
         const lastInvoice = await Invoice.findOne({
-            tenantId: (req as any).tenantId,
+            tenantId: req.tenantId,
             invoiceNo: new RegExp(`^${invoicePrefix}-`)
         }).sort({ createdAt: -1 }).session(session);
         let nextInvoiceNum = 1;
@@ -262,7 +265,7 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
         if (!resolvedCustomerId && (customerPhone || customerName)) {
             let existingCust = null;
             if (customerPhone) {
-                existingCust = await Customer.findOne({ phone: customerPhone, tenantId: (req as any).tenantId }).session(session);
+                existingCust = await Customer.findOne({ phone: customerPhone, tenantId: req.tenantId }).session(session);
             }
 
             if (existingCust) {
@@ -272,8 +275,8 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
                 const newCust = new Customer({
                     name: customerName || 'Walk-in Customer',
                     phone: customerPhone || '',
-                    owner: (req as any).user._id,
-                    tenantId: (req as any).tenantId,
+                    owner: req.user._id,
+                    tenantId: req.tenantId,
                     marketingConsent: {
                         optIn: Boolean(marketingConsentOptIn),
                         consentDate: new Date(),
@@ -287,7 +290,7 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
                 resolvedCustomerId = newCust._id;
             }
         } else if (customerId) {
-            customer = await Customer.findOne({ _id: customerId, tenantId: (req as any).tenantId }).session(session);
+            customer = await Customer.findOne({ _id: customerId, tenantId: req.tenantId }).session(session);
         }
 
         // Update Customer Marketing Opt-in if explicitly passed
@@ -311,7 +314,7 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
         if (customer && pointsToRedeem > 0) {
             const { LoyaltyService } = await import("../../crm/services/LoyaltyService.js");
             pointsDiscount = await LoyaltyService.redeemPoints(
-                (req as any).tenantId,
+                req.tenantId,
                 customer._id.toString(),
                 invoiceNo,
                 pointsToRedeem,
@@ -339,7 +342,7 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
             if (paymentStatus === 'paid' || actualReceived > 0) {
                 const { LoyaltyService } = await import("../../crm/services/LoyaltyService.js");
                 await LoyaltyService.earnPoints(
-                    (req as any).tenantId,
+                    req.tenantId,
                     customer._id.toString(),
                     invoiceNo,
                     actualReceived,
@@ -365,8 +368,8 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
             paymentMethod,
             splitPaymentDetails,
             bankAccount: bankAccount || null,
-            tenantId: (req as any).tenantId,
-            createdBy: (req as any).user._id,
+            tenantId: req.tenantId,
+            createdBy: req.user._id,
             isMrpPending: Boolean(isMrpPending),
             mrpPendingNote: isMrpPending ? (mrpPendingNote || undefined) : undefined,
             saleChannel: isWholesale ? 'WHOLESALE' : 'RETAIL',
@@ -387,8 +390,8 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
                             toAccount: split.method === 'cash' ? 'cash_in_hand' : (bankAccount || 'bank_account'),
                             description: `Split Sale: ${invoiceNo} (${split.method})`,
                             date: new Date(),
-                            userId: (req as any).user._id,
-                            tenantId: (req as any).tenantId,
+                            userId: req.user._id,
+                            tenantId: req.tenantId,
                             referenceId: newInvoice[0]._id,
                             referenceModel: 'Invoice'
                         }], { session });
@@ -399,7 +402,7 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
                 if (paymentMethod === 'bank_transfer' && bankAccount) {
                     toAccount = bankAccount;
                     await BankAccount.findOneAndUpdate(
-                        { _id: bankAccount, tenantId: (req as any).tenantId },
+                        { _id: bankAccount, tenantId: req.tenantId },
                         { $inc: { currentBalance: actualReceived } },
                         { session }
                     );
@@ -412,8 +415,8 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
                     toAccount: paymentMethod === 'cash' ? 'cash' : toAccount,
                     description: `POS Sale: ${invoiceNo}`,
                     date: new Date(),
-                    userId: (req as any).user._id,
-                    tenantId: (req as any).tenantId,
+                    userId: req.user._id,
+                    tenantId: req.tenantId,
                     referenceId: newInvoice[0]._id,
                     referenceModel: 'Invoice'
                 }], { session });
@@ -441,10 +444,11 @@ export const createInvoice = async (req: Request, res: Response): Promise<void> 
  * @route   GET /api/pos/invoice/mrp-pending
  * @access  Private
  */
-export const getMrpPendingInvoices = async (req: Request, res: Response): Promise<void> => {
+export const getMrpPendingInvoices = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        const tenantId = req.tenantId;
         const invoices = await Invoice.find({
-            tenantId: (req as any).tenantId,
+            tenantId,
             isMrpPending: true,
             isDeleted: { $ne: true }
         })
@@ -467,9 +471,9 @@ export const getMrpPendingInvoices = async (req: Request, res: Response): Promis
  * @route   PATCH /api/pos/invoice/:id/finalize-mrp
  * @access  Private
  */
-export const finalizeMrpPricing = async (req: Request, res: Response): Promise<void> => {
+export const finalizeMrpPricing = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const tenantId = (req as any).tenantId;
+        const tenantId = req.tenantId;
         const invoice = await Invoice.findOne({ _id: req.params.id, tenantId });
         if (!invoice) {
             res.status(404).json({ success: false, message: "Invoice not found" });
@@ -511,7 +515,7 @@ export const finalizeMrpPricing = async (req: Request, res: Response): Promise<v
 
         invoice.isMrpPending = false;
         invoice.mrpFinalizedAt = new Date();
-        invoice.mrpFinalizedBy = (req as any).user._id;
+        invoice.mrpFinalizedBy = req.user._id;
 
         await invoice.save();
         res.status(200).json({ success: true, message: "MRP finalized", invoice });
@@ -531,13 +535,13 @@ export const finalizeMrpPricing = async (req: Request, res: Response): Promise<v
  * @route   PATCH /api/pos/invoice/:id/edit
  * @access  Private (owner/co-owner/manager)
  */
-export const editInvoice = async (req: Request, res: Response): Promise<void> => {
+export const editInvoice = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-        const tenantId = (req as any).tenantId;
-        const requestingUser = (req as any).user;
+        const tenantId = req.tenantId;
+        const requestingUser = req.user;
         if (!requestingUser?.role || !INVOICE_EDIT_ROLES.includes(requestingUser.role)) {
             throw new AppError("Only an owner, co-owner, or manager can edit a completed invoice.", 403);
         }
@@ -647,6 +651,33 @@ export const editInvoice = async (req: Request, res: Response): Promise<void> =>
     }
 };
 
+/**
+ * @desc    Record a payment against a POS invoice. Same Invoice collection/paid-status logic
+ *          as the Sales Invoices module -- delegates to SalesService.markAsPaid rather than
+ *          duplicating it.
+ * @route   PUT /api/pos/invoice/:id/payment
+ * @access  Private
+ */
+export const payInvoice = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const salesService = container.resolve(SalesService);
+        // PaymentModal sends both `amount` and `paidAmount` (its two consumers disagree on the
+        // field name for the same value) -- accept either.
+        const amount = Number(req.body.amount ?? req.body.paidAmount);
+        const result = await salesService.markAsPaid(
+            req.params.id as string,
+            req.tenantId,
+            req.user.name,
+            { amount, bankAccount: req.body.bankAccount, paymentMethod: req.body.paymentMethod }
+        );
+        res.status(200).json({ success: true, data: result });
+    } catch (err) {
+        const appErr = err as AppError;
+        error(`Record POS invoice payment failed: ${appErr.message}`);
+        res.status(appErr.statusCode || 500).json({ success: false, message: appErr.message });
+    }
+};
+
 export default {
     getPosProducts,
     getPosSummary,
@@ -654,5 +685,6 @@ export default {
     createInvoice,
     getMrpPendingInvoices,
     finalizeMrpPricing,
-    editInvoice
+    editInvoice,
+    payInvoice
 };

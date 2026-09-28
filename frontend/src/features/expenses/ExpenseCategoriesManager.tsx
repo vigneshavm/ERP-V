@@ -4,6 +4,7 @@ import { RootState, AppDispatch } from "../../redux/store";
 import { useExpenseCategories, ExpenseCategory } from "../../hooks/useExpenseCategories";
 import { fetchMasterEntries } from "../../redux/slices/masterDataSlice";
 import Layout from "../../components/shared/Layout/index";
+import { Button, Input } from "../../components/shared";
 import {
     Settings,
     Plus,
@@ -84,13 +85,14 @@ const ExpenseCategoriesManager: React.FC = () => {
                             Define spending policies & budgets for <span className="font-bold text-primary">{user?.tenantId || 'Organization'}</span>
                         </p>
                     </div>
-                    <button
+                    <Button
                         onClick={startNew}
-                        className="px-6 py-3 bg-primary text-white rounded-sm font-black text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"
+                        variant="primary"
+                        size="md"
+                        icon={<Plus className="w-5 h-5" />}
                     >
-                        <Plus className="w-5 h-5" />
-                        <span>Create Category Policy</span>
-                    </button>
+                        Create Category Policy
+                    </Button>
                 </div>
 
                 {/* Strategic Overview */}
@@ -125,21 +127,19 @@ const ExpenseCategoriesManager: React.FC = () => {
                 {/* Main Table Layer */}
                 <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between">
-                        <div className="relative w-full md:w-96">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Search category policy..."
-                                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border-none rounded-sm text-sm focus:ring-2 focus:ring-primary/20"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex gap-2">
-                            <button className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl text-slate-400 hover:text-primary transition-colors">
-                                <Filter className="w-5 h-5" />
-                            </button>
-                        </div>
+                        <Input
+                            type="text"
+                            placeholder="Search category policy..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            icon={<Search className="w-4 h-4" />}
+                        />
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            size="md"
+                            icon={<Filter className="w-5 h-5" />}
+                        />
                     </div>
 
                     <div className="overflow-x-auto">
@@ -188,7 +188,7 @@ const ExpenseCategoriesManager: React.FC = () => {
                                             {cat.approval_required ? (
                                                 <span className="px-2.5 py-1 bg-warning-soft text-warning text-[9px] font-black rounded-lg uppercase tracking-widest">Requires Manager Sig</span>
                                             ) : (
-                                                <span className="px-2.5 py-1 bg-slate-100 text-slate-500 text-[9px] font-black rounded-lg uppercase tracking-widest">Auto-Approve</span>
+                                                <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[9px] font-black rounded-lg uppercase tracking-widest">Auto-Approve</span>
                                             )}
                                         </td>
                                         <td className="p-6 text-right">

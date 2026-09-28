@@ -37,7 +37,7 @@ export const POSCustomerDisplay: React.FC = () => {
             {/* Header */}
             <div className="bg-primary text-white p-6 shadow-lg">
                 <h1 className="text-3xl font-bold flex items-center gap-3">
-                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-white/20 dark:bg-slate-700/30 rounded-xl flex items-center justify-center">
                         <ShoppingCart className="w-8 h-8" />
                     </div>
                     <span>My Store Name</span>
@@ -62,7 +62,7 @@ export const POSCustomerDisplay: React.FC = () => {
                                     <div className="flex-1">
                                         <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">{item.name}</h3>
                                         <div className="flex gap-2 text-sm text-slate-500 mt-1">
-                                            {item.size && <span className="bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded">Sz: {item.size}</span>}
+                                            {item.size && <span className="bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-slate-900 dark:text-slate-100">Sz: {item.size}</span>}
                                             {item.color && <span className="bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded">Col: {item.color}</span>}
                                             <span className="font-mono">{item.qty} {item.unit} x ₹{item.price}</span>
                                         </div>

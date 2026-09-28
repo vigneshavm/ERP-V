@@ -17,9 +17,9 @@ async function check() {
     try {
         await mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 5000 });
         const count = await Bill.countDocuments({});
-        console.log(`Total Bills: ${count}`);
+        info(`Total Bills: ${count}`);
         const latest = await Bill.find({}).sort({ createdAt: -1 }).limit(5);
-        console.log("Latest 5 bills:");
+        info("Latest 5 bills:");
         latest.forEach(b => console.log(`- ${b.billNo} (${b.amount})`));
         process.exit(0);
     } catch (err) {

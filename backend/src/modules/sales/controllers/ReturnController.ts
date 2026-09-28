@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 
 import Return from '../models/Return.js';
@@ -13,18 +13,7 @@ import Transaction from '../models/Transaction.js';
 
 import CashbankTransaction from '../../finance/models/CashbankTransaction.js';
 import { info, error } from '../../../config/logger.js';
-
-/**
- * Request interface with authenticated user
- */
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-    deletedEntity?: any;
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 interface ReturnItem {
     productId: string;
@@ -382,7 +371,7 @@ export const createReturn = async (req: AuthenticatedRequest, res: Response): Pr
 
                 const bankAcc = await BankAccount.findOne({
                     _id: refundBankAccount,
-                    userId: req.user?._id
+                    userId: req.user.tenantId
                 });
 
                 info('Bank account found:', { bankName: bankAcc ? bankAcc.bankName : 'NOT FOUND' });
@@ -396,14 +385,14 @@ export const createReturn = async (req: AuthenticatedRequest, res: Response): Pr
                         toAccount: 'sale_return',
                         description: `Refund for sales return ${returnId}`,
                         date: new Date(),
-                        userId: req.user?._id,
+                        userId: req.user.tenantId,
                     });
 
                     info('Cashbank transaction created:', { transactionId: cashbankTxn._id });
 
                     // Update bank balance (deduct)
                     const updateResult = await BankAccount.updateOne(
-                        { _id: refundBankAccount, userId: req.user?._id },
+                        { _id: refundBankAccount, userId: req.user.tenantId },
                         {
                             $inc: { currentBalance: -totalReturnAmount },
                             $push: { transactions: cashbankTxn._id }
@@ -430,7 +419,8 @@ export const createReturn = async (req: AuthenticatedRequest, res: Response): Pr
                     fromAccount: 'cash',
                     toAccount: 'sale_return',
                     description: `Cash refund for sales return ${returnId}`,
-                    userId: req.user?._id,
+                    userId: req.user.tenantId,
+                    tenantId: req.user.tenantId,
                     date: new Date(),
                 });
 
@@ -632,7 +622,7 @@ export const deleteReturn = async (req: AuthenticatedRequest, res: Response): Pr
 
             const bankAcc = await BankAccount.findOne({
                 _id: returnRecord.bankAccount,
-                userId: req.user?._id
+                userId: req.user.tenantId
             });
 
             if (bankAcc) {
@@ -642,13 +632,13 @@ export const deleteReturn = async (req: AuthenticatedRequest, res: Response): Pr
                     fromAccount: returnRecord.bankAccount,
                     type: 'out',
                     description: new RegExp(`sales return ${returnRecord.returnId}`),
-                    userId: req.user?._id
+                    userId: req.user.tenantId
                 });
 
                 if (cashbankTxn) {
                     // Update bank balance (add back the money because 'out' is being reversed)
                     await BankAccount.updateOne(
-                        { _id: returnRecord.bankAccount, userId: req.user?._id },
+                        { _id: returnRecord.bankAccount, userId: req.user.tenantId },
                         {
                             $inc: { currentBalance: returnRecord.totalReturnAmount },
                             $pull: { transactions: cashbankTxn._id }

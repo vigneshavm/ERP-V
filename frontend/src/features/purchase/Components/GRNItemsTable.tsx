@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Package, Search, CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
-import { GRNItem, InspectionStatus } from "../../../types/purchase";
+import { GRNItem, InspectionStatus } from "../../../types/purchase";import { Input } from '@/components/shared/Input';
+
 
 interface GRNItemsTableProps {
     items?: GRNItem[];
@@ -68,7 +69,7 @@ const GRNItemsTable: React.FC<GRNItemsTableProps> = ({
                                     <td className="px-4 py-4">
                                         <input
                                             type="number"
-                                            className="w-20 mx-auto px-2 py-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-center font-bold focus:ring-1 focus:ring-primary outline-none"
+                                            className="w-20 mx-auto px-2 py-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-center font-bold focus:ring-1 focus:ring-primary dark:focus:ring-indigo-400 outline-none"
                                             value={item.receivedQty}
                                             onChange={e => onItemChange(idx, 'receivedQty', parseInt(e.target.value) || 0)}
                                         />
@@ -89,13 +90,7 @@ const GRNItemsTable: React.FC<GRNItemsTableProps> = ({
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="space-y-2">
-                                            <input
-                                                type="text"
-                                                placeholder="Batch #"
-                                                className="w-full px-3 py-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none"
-                                                value={item.batchNumber || ''}
-                                                onChange={e => onItemChange(idx, 'batchNumber', e.target.value)}
-                                            />
+                                            <Input type="text" placeholder="Batch #" className="w-full px-3 py-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none" value={item.batchNumber || ''} onChange={e => onItemChange(idx, 'batchNumber', e.target.value)} />
                                             <input
                                                 type="text"
                                                 placeholder="Expiry Date"

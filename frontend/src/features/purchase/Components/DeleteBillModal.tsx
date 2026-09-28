@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import { Trash2 } from 'lucide-react';
+import { Button, Modal } from '../../../components/shared';
 
 interface Props {
     isOpen: boolean;
@@ -11,29 +12,27 @@ const DeleteBillModal: React.FC<Props> = ({ isOpen, onClose, onConfirm }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-sm w-full max-w-sm p-6 shadow-2xl border dark:border-slate-700">
-                <div className="w-12 h-12 bg-danger-soft rounded-full flex items-center justify-center mb-4">
-                    <Trash2 className="w-6 h-6 text-danger" />
-                </div>
-                <h3 className="text-lg font-bold mb-2">Delete Bill?</h3>
-                <p className="text-slate-500 text-sm mb-6">Are you sure you want to delete this bill? This action cannot be undone.</p>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Delete Bill?"
+            size="sm"
+            footer={
                 <div className="flex gap-3">
-                    <button
-                        onClick={onConfirm}
-                        className="flex-1 py-2.5 bg-danger text-white rounded-xl text-sm font-bold shadow-lg shadow-red-500/20"
-                    >
+                    <Button variant="danger" size="md" onClick={onConfirm} fullWidth>
                         Confirm Delete
-                    </button>
-                    <button
-                        onClick={onClose}
-                        className="flex-1 py-1 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 rounded-lg text-sm font-medium transition-colors"
-                    >
+                    </Button>
+                    <Button variant="secondary" size="md" onClick={onClose} fullWidth>
                         Cancel
-                    </button>
+                    </Button>
                 </div>
+            }
+        >
+            <div className="w-12 h-12 bg-danger-soft rounded-full flex items-center justify-center mb-4">
+                <Trash2 className="w-6 h-6 text-danger" />
             </div>
-        </div>
+            <p className="text-slate-500 text-sm">Are you sure you want to delete this bill? This action cannot be undone.</p>
+        </Modal>
     );
 };
 

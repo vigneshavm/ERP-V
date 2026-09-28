@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Palette, Sun, Moon, Shield, Upload, Info, Image as ImageIcon } from 'lucide-react';
-import { BrandingTabProps } from './types';
+import { BrandingTabProps } from './types';import { Button } from '@/components/shared/Button';
+
 
 const COLORS = [
     { name: 'Indigo Corporate', hex: '#4f46e5' },
@@ -99,7 +100,7 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] p-10 flex flex-col md:flex-row items-center gap-12">
+                <div className="bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 rounded-2xl p-10 flex flex-col md:flex-row items-center gap-12">
                     <div className="relative group">
                         <div className="w-48 h-48 bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden transition-transform duration-500 group-hover:scale-105">
                             {logoUrl ? (
@@ -127,9 +128,7 @@ const BrandingTab: React.FC<BrandingTabProps> = ({
                             <label htmlFor="logo-upload" className="cursor-pointer inline-flex items-center gap-3 px-8 py-3.5 bg-primary hover:bg-primary-hover text-white rounded-sm text-sm font-black transition-all shadow-lg hover:shadow-indigo-500/20 active:scale-95">
                                 <Upload className="w-4 h-4" /> UPLOAD NEW ASSET
                             </label>
-                            <button className="px-8 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm text-sm font-black hover:bg-slate-50 transition-all">
-                                REMOVE
-                            </button>
+                            <Button className="px-8 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-sm text-sm font-black hover:bg-slate-50 transition-all">REMOVE</Button>
                         </div>
 
                         <div className="flex items-center justify-center md:justify-start gap-4">

@@ -12,6 +12,8 @@ import {
 import { Plus, Edit, Trash2, X, Loader2, Search, ChevronDown, Check } from 'lucide-react';
 import api from '../../services/api';
 import PageHeader from '../../components/shared/Layout/PageHeader';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
 
 interface MetaFieldConfig {
     key: string;
@@ -166,8 +168,8 @@ const MultiSelectField: React.FC<MultiSelectFieldProps> = ({ options, value, onC
                     <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400">
                         <span>{selected.length} selected</span>
                         <div className="flex items-center gap-3">
-                            <button type="button" onClick={() => onChange(visible.join(', '))} className="text-primary hover:underline">Select All</button>
-                            <button type="button" onClick={() => onChange('')} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:underline">Clear</button>
+                            <Button type="button" onClick={() => onChange(visible.join(', '))} className="text-primary hover:underline">Select All</Button>
+                            <Button type="button" onClick={() => onChange('')} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:underline">Clear</Button>
                         </div>
                     </div>
 
@@ -196,13 +198,7 @@ const MultiSelectField: React.FC<MultiSelectFieldProps> = ({ options, value, onC
                     </div>
 
                     <div className="flex justify-end pt-1 border-t border-slate-100 dark:border-slate-700">
-                        <button
-                            type="button"
-                            onClick={() => setOpen(false)}
-                            className="px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest bg-primary text-white hover:bg-primary/90 transition-all"
-                        >
-                            Done
-                        </button>
+                        <Button type="button" onClick={() => setOpen(false)} className="px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest bg-primary text-white hover:bg-primary/90 transition-all">Done</Button>
                     </div>
                 </div>
             )}
@@ -371,12 +367,7 @@ const MasterDataManager: React.FC = () => {
                                 className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm"
                             />
                         </div>
-                        <button
-                            onClick={openCreateModal}
-                            className="px-4 py-2 bg-primary text-white rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 shrink-0"
-                        >
-                            <Plus className="w-4 h-4" /> Add {activeType.label}
-                        </button>
+                        <Button onClick={openCreateModal} className="px-4 py-2 bg-primary text-white rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 shrink-0"><Plus className="w-4 h-4" /> Add {activeType.label}</Button>
                     </div>
 
                     {isLoading && entries.length === 0 ? (
@@ -409,8 +400,8 @@ const MasterDataManager: React.FC = () => {
                                         ))}
                                         <td className="px-6 py-3 text-right">
                                             <div className="flex justify-end gap-2">
-                                                <button onClick={() => openEditModal(entry)} className="p-1.5 text-slate-400 hover:text-primary"><Edit className="w-4 h-4" /></button>
-                                                <button onClick={() => handleDelete(entry)} className="p-1.5 text-slate-400 hover:text-error"><Trash2 className="w-4 h-4" /></button>
+                                                <Button onClick={() => openEditModal(entry)} className="p-1.5 text-slate-400 hover:text-primary"><Edit className="w-4 h-4" /></Button>
+                                                <Button onClick={() => handleDelete(entry)} className="p-1.5 text-slate-400 hover:text-error"><Trash2 className="w-4 h-4" /></Button>
                                             </div>
                                         </td>
                                     </tr>
@@ -426,7 +417,7 @@ const MasterDataManager: React.FC = () => {
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-800">
                         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                             <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingEntry ? 'Edit' : 'Add'} {activeType.label}</h3>
-                            <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"><X className="w-5 h-5" /></button>
+                            <Button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"><X className="w-5 h-5" /></Button>
                         </div>
                         <div className="p-6 space-y-4">
                             <div>
@@ -486,14 +477,8 @@ const MasterDataManager: React.FC = () => {
                             ))}
                         </div>
                         <div className="p-6 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 text-slate-600 dark:text-slate-400 font-bold text-sm">Cancel</button>
-                            <button
-                                onClick={handleSave}
-                                disabled={saving || !form.name.trim() || (!!activeType.parentType && !editingEntry && !form.parentId)}
-                                className="px-6 py-2 bg-primary text-white rounded-lg text-sm font-bold disabled:opacity-50"
-                            >
-                                {saving ? 'Saving…' : 'Save'}
-                            </button>
+                            <Button onClick={() => setShowModal(false)} className="px-4 py-2 text-slate-600 dark:text-slate-400 font-bold text-sm">Cancel</Button>
+                            <Button onClick={handleSave} disabled={saving || !form.name.trim() || (!!activeType.parentType && !editingEntry && !form.parentId)} className="px-6 py-2 bg-primary text-white rounded-lg text-sm font-bold disabled:opacity-50">{saving ? 'Saving…' : 'Save'}</Button>
                         </div>
                     </div>
                 </div>

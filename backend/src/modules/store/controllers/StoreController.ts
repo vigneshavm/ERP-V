@@ -1,18 +1,10 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import mongoose from 'mongoose';
 import Store from '../models/Store.js';
 import Branch from '../../core/models/Branch.js';
 import Item from '../../inventory/models/Item.js';
 import { error } from '../../../config/logger.js';
-
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        name?: string;
-        [key: string]: any;
-    };
-    tenantId?: string;
-}
+import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 export const createStore = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {

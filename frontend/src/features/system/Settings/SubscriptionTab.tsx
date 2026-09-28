@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Check, Zap, Shield, Crown, Building, CreditCard, ChevronRight, Activity, LucideIcon } from 'lucide-react';
 import api from "../../../services/api";
 import { toast } from 'react-toastify';
-import { RootState } from "../../../redux/store";
+import { RootState } from "../../../redux/store";import { Button } from '@/components/shared/Button';
+
 
 interface Plan {
     code: string;
@@ -87,7 +88,7 @@ const SubscriptionTab: React.FC = () => {
     return (
         <div className="p-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Active Subscription Summary */}
-            <section className="bg-slate-900 rounded-[2.5rem] p-10 flex flex-col md:flex-row items-center gap-10 border border-slate-800 shadow-2xl relative overflow-hidden">
+            <section className="bg-slate-900 rounded-2xl p-10 flex flex-col md:flex-row items-center gap-10 border border-slate-800 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
                     <Shield className="w-64 h-64 text-success" />
                 </div>
@@ -115,12 +116,8 @@ const SubscriptionTab: React.FC = () => {
                 </div>
 
                 <div className="relative z-10 space-y-3 shrink-0">
-                    <button className="w-full px-8 py-3.5 bg-white text-slate-900 rounded-sm text-[11px] font-black tracking-widest shadow-lg active:scale-95 transition-all">
-                        VIEW BILLING HISTORY
-                    </button>
-                    <button className="w-full px-8 py-3.5 bg-slate-800 text-slate-300 rounded-sm text-[11px] font-black tracking-widest border border-slate-700 hover:bg-slate-700 transition-all">
-                        CANCEL PLAN
-                    </button>
+                    <Button className="w-full px-8 py-3.5 bg-white text-slate-900 rounded-sm text-[11px] font-black tracking-widest shadow-lg active:scale-95 transition-all">VIEW BILLING HISTORY</Button>
+                    <Button className="w-full px-8 py-3.5 bg-slate-800 text-slate-300 rounded-sm text-[11px] font-black tracking-widest border border-slate-700 hover:bg-slate-700 transition-all">CANCEL PLAN</Button>
                 </div>
             </section>
 

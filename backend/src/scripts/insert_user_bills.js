@@ -59,12 +59,12 @@ const Item = mongoose.model('Item', itemSchema);
 
 async function run() {
     try {
-        console.log("Connecting to MongoDB...");
+        info("Connecting to MongoDB...");
         await mongoose.connect(MONGO_URI, {
             serverSelectionTimeoutMS: 30000,
             connectTimeoutMS: 30000
         });
-        console.log("✅ Connected to MongoDB");
+        info("✅ Connected to MongoDB");
 
         const templateSupplier = await Supplier.findOne({ businessName: "Zara" }) || await Supplier.findOne({});
         if (!templateSupplier) throw new Error("No suppliers found to use as template");
@@ -73,7 +73,7 @@ async function run() {
         const ownerId = templateSupplier.owner;
         const createdById = templateSupplier.createdBy || ownerId;
 
-        console.log(`Using Tenant: ${tenantId}, Owner: ${ownerId}`);
+        info(`Using Tenant: ${tenantId}, Owner: ${ownerId}`);
 
         // Ensure dummy item exists
         let dummyItem = await Item.findOne({ name: "General Fabric", tenantId });
@@ -86,7 +86,7 @@ async function run() {
                 addedBy: createdById.toString(),
                 tenantId: tenantId
             });
-            console.log("✅ Created dummy item: General Fabric");
+            info("✅ Created dummy item: General Fabric");
         }
 
         const data = [
@@ -123,7 +123,7 @@ async function run() {
             let supplier = await Supplier.findOne({ businessName: new RegExp(`^${bizName}$`, 'i') });
 
             if (!supplier) {
-                console.log(`Creating missing supplier: ${bizName}`);
+                info(`Creating missing supplier: ${bizName}`);
                 const dummyPhone = `82222222${i.toString().padStart(2, '0')}`;
                 const dummyEmail = `supplier_${i}_${Date.now()}@test.com`;
                 supplier = await Supplier.create({
@@ -162,10 +162,10 @@ async function run() {
                     total: entry.amount
                 }]
             });
-            console.log(`✅ [${i + 1}/17] Bill for ${bizName}: ${entry.billNo} (${entry.amount})`);
+            info(`✅ [${i + 1}/17] Bill for ${bizName}: ${entry.billNo} (${entry.amount})`);
         }
 
-        console.log("✅ All bills inserted successfully.");
+        info("✅ All bills inserted successfully.");
         await mongoose.disconnect();
         process.exit(0);
     } catch (err) {

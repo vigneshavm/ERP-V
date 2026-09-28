@@ -7,7 +7,10 @@ import PageHeader from "../../components/shared/Layout/PageHeader";
 import api from "../../services/api";
 import { AppDispatch, RootState } from "../../redux/store";
 import { fetchMasterEntries } from "../../redux/slices/masterDataSlice";
-import { formatDate } from '../../utils/helpers';
+import { formatDate } from '../../utils/helpers';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+import { getApiErrorMessage } from '../../utils/apiError';
+
 
 interface GRNOption {
     id: string;
@@ -149,7 +152,7 @@ const GRNTransfer: React.FC = () => {
             resetForm();
             fetchTransfers();
         } catch (err: any) {
-            toast.error(err?.response?.data?.message || 'Failed to transfer material');
+            toast.error(getApiErrorMessage(err, 'Failed to transfer material'));
         } finally {
             setIsSaving(false);
         }
@@ -164,12 +167,7 @@ const GRNTransfer: React.FC = () => {
                     title="GRN Material Transfer"
                     description="Move stock received under a specific GRN between warehouses, with a traceable audit trail."
                     actions={
-                        <button
-                            onClick={() => setIsModalOpen(true)}
-                            className="px-4 py-2 bg-success text-white rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"
-                        >
-                            <Plus className="w-4 h-4" /> New Transfer
-                        </button>
+                        <Button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-success text-white rounded-lg text-sm font-bold hover:bg-success/90 flex items-center gap-2"><Plus className="w-4 h-4" /> New Transfer</Button>
                     }
                 />
 
@@ -313,13 +311,7 @@ const GRNTransfer: React.FC = () => {
                             >
                                 Cancel
                             </button>
-                            <button
-                                onClick={handleSubmit}
-                                disabled={isSaving}
-                                className="px-5 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 disabled:opacity-60"
-                            >
-                                {isSaving ? 'Transferring...' : 'Transfer Material'}
-                            </button>
+                            <Button onClick={handleSubmit} disabled={isSaving} className="px-5 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 disabled:opacity-60">{isSaving ? 'Transferring...' : 'Transfer Material'}</Button>
                         </div>
                     </div>
                 </div>

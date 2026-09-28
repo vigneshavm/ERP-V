@@ -6,7 +6,8 @@ import PageHeader from '../../components/shared/Layout/PageHeader';
 import { RootState, AppDispatch } from '../../redux/store';
 import { fetchAttendanceSummary, saveAttendanceSummary } from '../../redux/slices/payrollSlice';
 import { Save, Calendar } from 'lucide-react';
-import api from '../../services/api';
+import api from '../../services/api';import { Input } from '@/components/shared/Input';
+
 
 // One editable row per employee: the saved attendance summary for the month if there is one,
 // otherwise a full-month default.
@@ -108,7 +109,7 @@ const AttendanceSummaryManager = () => {
                     ]}
                 />
 
-                <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <Calendar size={18} className="text-slate-400" />

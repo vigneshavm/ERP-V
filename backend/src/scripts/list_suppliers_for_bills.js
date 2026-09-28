@@ -22,12 +22,12 @@ const Supplier = mongoose.model('Supplier', supplierSchema);
 
 async function run() {
     try {
-        console.log("Connecting to MongoDB...");
+        info("Connecting to MongoDB...");
         await mongoose.connect(MONGO_URI, {
             serverSelectionTimeoutMS: 10000,
             connectTimeoutMS: 10000,
         });
-        console.log("✅ Connected to MongoDB");
+        info("✅ Connected to MongoDB");
         const suppliers = await Supplier.find({});
         console.log(JSON.stringify(suppliers, null, 2));
         process.exit(0);

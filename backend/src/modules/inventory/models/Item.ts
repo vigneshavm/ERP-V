@@ -193,6 +193,11 @@ itemSchema.set("toObject", { virtuals: true });
 // Compound index to ensure item name is unique PER TENANT
 itemSchema.index({ name: 1, tenantId: 1 }, { unique: true });
 // We can keep addedBy index if needed for user-specific queries, but tenantId is primary scope.
+// Performance optimization: Compound indexes for common filter patterns
+itemSchema.index({ tenantId: 1, stockQty: 1 }); // For in-stock items queries
+itemSchema.index({ tenantId: 1, category: 1, stockQty: 1 }); // Category + stock filters
+itemSchema.index({ tenantId: 1, isActive: 1, stockQty: 1 }); // Active items queries
+itemSchema.index({ tenantId: 1, createdAt: -1 }); // For aging analysis
 
 const Item = mongoose.model<IItem>("Item", itemSchema);
 export default Item;

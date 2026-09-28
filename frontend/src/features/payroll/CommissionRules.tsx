@@ -5,8 +5,11 @@ import { Percent, Plus, Trash2, Search, X } from 'lucide-react';
 import Layout from "../../components/shared/Layout/Layout";
 import PageHeader from "../../components/shared/Layout/PageHeader";
 import api from "../../services/api";
-import { RootState } from "../../redux/store";
-import { TONE_CLASSES } from '@/utils/statusTone';
+import { RootState } from "../../redux/store";
+
+import { TONE_CLASSES } from '@/utils/statusTone';import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 // Textilesoft's commission subsystem (salesman commission, product/PCS/range-wise commission,
 // floor/section commission reporting) had no counterpart anywhere in this codebase before this
@@ -243,20 +246,9 @@ const CommissionRules: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <div className="relative">
                                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input
-                                    type="text"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    placeholder="Search rules..."
-                                    className="pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm outline-none"
-                                />
+                                <Input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search rules..." className="pl-9 pr-4 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-primary dark:focus:ring-indigo-400" />
                             </div>
-                            <button
-                                onClick={openCreateModal}
-                                className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:opacity-90"
-                            >
-                                <Plus className="w-4 h-4" /> New Rule
-                            </button>
+                            <Button onClick={openCreateModal} className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:opacity-90"><Plus className="w-4 h-4" /> New Rule</Button>
                         </div>
                     </div>
                     <div className="overflow-x-auto">
@@ -291,12 +283,7 @@ const CommissionRules: React.FC = () => {
                                             </button>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button
-                                                onClick={() => handleDelete(rule)}
-                                                className="p-1.5 text-danger hover:bg-danger-soft rounded-lg"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
+                                            <Button onClick={() => handleDelete(rule)} className="p-1.5 text-danger hover:bg-danger-soft rounded-lg"><Trash2 className="w-4 h-4" /></Button>
                                         </td>
                                     </tr>
                                 ))}
@@ -322,11 +309,11 @@ const CommissionRules: React.FC = () => {
                 <div className="p-6 flex flex-wrap items-end gap-4">
                     <div>
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">From</label>
-                        <input type="date" value={reportFrom} onChange={(e) => setReportFrom(e.target.value)} className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent" />
+                        <Input type="date" value={reportFrom} onChange={(e) => setReportFrom(e.target.value)} className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent" />
                     </div>
                     <div>
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">To</label>
-                        <input type="date" value={reportTo} onChange={(e) => setReportTo(e.target.value)} className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent" />
+                        <Input type="date" value={reportTo} onChange={(e) => setReportTo(e.target.value)} className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm bg-transparent" />
                     </div>
                     <div>
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Employee</label>
@@ -335,13 +322,7 @@ const CommissionRules: React.FC = () => {
                             {users.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
                         </select>
                     </div>
-                    <button
-                        onClick={fetchReport}
-                        disabled={reportLoading}
-                        className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:opacity-90 disabled:opacity-60"
-                    >
-                        {reportLoading ? 'Loading...' : 'Run Report'}
-                    </button>
+                    <Button onClick={fetchReport} disabled={reportLoading} className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:opacity-90 disabled:opacity-60">{reportLoading ? 'Loading...' : 'Run Report'}</Button>
                 </div>
                 {reportNote && (
                     <div className="mx-6 mb-4 px-4 py-2 bg-warning-soft border border-warning-line text-warning text-xs rounded-lg">{reportNote}</div>
@@ -383,9 +364,7 @@ const CommissionRules: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                         <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center sticky top-0 bg-white dark:bg-slate-800">
                             <h2 className="text-lg font-bold">New Commission Rule</h2>
-                            <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-700">
-                                <X className="w-5 h-5" />
-                            </button>
+                            <Button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></Button>
                         </div>
                         <div className="p-6 space-y-4">
                             <div>
@@ -476,16 +455,8 @@ const CommissionRules: React.FC = () => {
                             </div>
                         </div>
                         <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 sticky bottom-0 bg-white dark:bg-slate-800">
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSubmit}
-                                disabled={submitting}
-                                className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:opacity-90 disabled:opacity-60"
-                            >
-                                {submitting ? 'Saving...' : 'Create Rule'}
-                            </button>
+                            <Button onClick={() => setShowModal(false)} className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">Cancel</Button>
+                            <Button onClick={handleSubmit} disabled={submitting} className="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:opacity-90 disabled:opacity-60">{submitting ? 'Saving...' : 'Create Rule'}</Button>
                         </div>
                     </div>
                 </div>

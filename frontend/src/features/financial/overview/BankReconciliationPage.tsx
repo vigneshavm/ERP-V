@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeftRight, CheckCircle2, FileSpreadsheet, Landmark } from 'lucide-react';
+import { Button } from '@/components/shared';
 import api from '@/services/api';
 import { formatNumber } from '@/utils/formatters';
 import { ReportKpiGrid, ReportPeriodPicker, ReportTable, useReportData, useReportPeriod } from '../../reports/components';
@@ -98,7 +99,7 @@ const BankReconciliationPage: React.FC = () => {
             actions={(
                 <>
                     <select aria-label="Bank account" value={accountId} onChange={e => setAccountId(e.target.value)}
-                        className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                        className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200">
                         {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                     </select>
                     <ReportPeriodPicker value={period} />
@@ -136,12 +137,18 @@ const BankReconciliationPage: React.FC = () => {
                             columns={MATCH_COLUMNS}
                             rows={matchRows}
                             rowKey={r => r.statementId}
-                            actions={(
-                                <button type="button" onClick={confirm} disabled={saving || selected.size === 0}
-                                    className="rounded-md bg-primary px-3 py-2 text-xs font-bold text-white disabled:opacity-50">
-                                    {saving ? 'Saving…' : `Confirm ${formatNumber(selected.size)} match${selected.size === 1 ? '' : 'es'}`}
-                                </button>
-                            )}
+                            actions={
+                                <Button
+                                    type="button"
+                                    variant="primary"
+                                    size="md"
+                                    onClick={confirm}
+                                    disabled={saving || selected.size === 0}
+                                    loading={saving}
+                                >
+                                    Confirm {formatNumber(selected.size)} match{selected.size === 1 ? '' : 'es'}
+                                </Button>
+                            }
                         />
                     )}
                     <ReportTable title="Only in the bank statement" subtitle={`Net ${rupees0(s.onlyInStatement.net)}: bank charges, interest, or entries not yet made in the ERP`} columns={LINE_COLUMNS} rows={onlyStatement} rowKey={r => r.id} emptyMessage="Every statement line is matched." />

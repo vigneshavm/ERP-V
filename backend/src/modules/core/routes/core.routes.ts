@@ -1,31 +1,31 @@
 import express from 'express';
-import authRoutes from './authRoutes.js';
-import userRoutes from './userRoutes.js';
-import businessRoutes from './businessRoutes.js';
-import healthRoutes from './healthRoutes.js';
-import refreshTokenRoutes from './refreshTokenRoutes.js';
-import reportRoutes from './reportRoutes.js';
-import settingsRoutes from './settingsRoutes.js';
-import shopRoutes from './shopRoutes.js';
-import branchRoutes from './branchRoutes.js';
-import subscriptionPlanRoutes from './subscriptionPlanRoutes.js';
-import auditLogRoutes from './auditLogRoutes.js';
-import adminRoutes from './adminRoutes.js';
+import auth from './auth.routes.js';
+import user from './user.routes.js';
+import business from './business.routes.js';
+import health from './health.routes.js';
+import refreshToken from './refreshToken.routes.js';
+import report from './report.routes.js';
+import settings from './settings.routes.js';
+import shop from './shop.routes.js';
+import branch from './branch.routes.js';
+import subscriptionPlan from './subscriptionPlan.routes.js';
+import auditLog from './auditLog.routes.js';
+import admin from './admin.routes.js';
 
 const router = express.Router();
 
-router.use('/auth', authRoutes);
-router.use('/users', userRoutes);
-router.use('/business', businessRoutes);
-router.use('/health', healthRoutes);
-router.use('/refresh-token', refreshTokenRoutes);
-router.use('/reports', reportRoutes);
-router.use('/settings', settingsRoutes);
-router.use('/shop', shopRoutes);
-router.use('/branches', branchRoutes);
-router.use('/subscription-plans', subscriptionPlanRoutes);
-router.use('/audit-logs', auditLogRoutes);
-router.use('/admin', adminRoutes);
+router.use('/auth', auth);
+router.use('/users', user);
+router.use('/business', business);
+router.use('/health', health);
+router.use('/refresh-token', refreshToken);
+router.use('/reports', report);
+router.use('/settings', settings);
+router.use('/shop', shop);
+router.use('/branches', branch);
+router.use('/subscription-plans', subscriptionPlan);
+router.use('/audit-logs', auditLog);
+router.use('/admin', admin);
 
 
 export default router;

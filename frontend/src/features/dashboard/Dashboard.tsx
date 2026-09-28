@@ -13,8 +13,10 @@ import { getSupplierAnalytics } from "../../redux/slices/supplierSlice";
 import { fetchPurchaseOrders } from "../../redux/slices/purchaseSlice";
 import { getAllCustomers } from "../../redux/slices/customerSlice";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
-import Layout from "../../components/shared/Layout/index";
+import Layout from "../../components/shared/Layout/index";
+
 import StatusBadge from '@/components/shared/UI/StatusBadge';
+import Button from '@/components/shared/UI/Button';
 import {
   User,
   RotateCcw,
@@ -863,9 +865,7 @@ const Dashboard: React.FC = () => {
                   </div>
                   <p className="text-2xl font-display font-black text-main tracking-tighter">{alert.metric}</p>
                 </div>
-                <button className="w-full py-3 bg-danger/10 border border-danger/30 text-[10px] font-black text-danger uppercase tracking-[0.3em] hover:bg-danger hover:text-white transition-all relative z-10 rounded-sm">
-                  {alert.action}
-                </button>
+                <Button className="w-full py-3 bg-danger/10 border border-danger/30 text-[10px] font-black text-danger uppercase tracking-[0.3em] hover:bg-danger hover:text-white transition-all relative z-10 rounded-sm">{alert.action}</Button>
               </div>
             ))}
           </div>

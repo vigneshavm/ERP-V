@@ -12,7 +12,7 @@
 
 import { Redis } from 'ioredis';
 import { Request, Response, NextFunction } from 'express';
-import { error as logError, warn } from './logger.js';
+import { error as logError, warn, info } from './logger.js';
 
 // Redis client type (using any for ioredis compatibility with NodeNext)
 type RedisClient = any;
@@ -28,12 +28,8 @@ interface CircuitBreakerConfig {
     timeout: number;
 }
 
-interface AuthenticatedRequest extends Request {
-    user?: {
-        _id: string;
-        [key: string]: any;
-    };
-}
+// `user` comes from the global Express.Request declaration (middlewares/authMiddleware.ts).
+type AuthenticatedRequest = Request;
 
 // Circuit breaker state
 const circuitBreaker: CircuitBreakerConfig = {
@@ -71,7 +67,7 @@ const withCircuitBreaker = async <T>(operation: () => Promise<T>): Promise<T | n
         if (circuitBreaker.state === 'HALF_OPEN') {
             circuitBreaker.state = 'CLOSED';
             circuitBreaker.failures = 0;
-            console.log('✅ Circuit breaker: Recovered (CLOSED)');
+            info('✅ Circuit breaker: Recovered (CLOSED)');
         }
 
         return result;
@@ -112,7 +108,7 @@ const redisClient: RedisClient = new Redis(redisOptions);
 let isConnected = false;
 
 redisClient.on('connect', () => {
-    console.log('✅ Redis connected');
+    info('✅ Redis connected');
     isConnected = true;
     circuitBreaker.state = 'CLOSED';
     circuitBreaker.failures = 0;
@@ -124,7 +120,7 @@ redisClient.on('error', (err: Error) => {
 });
 
 redisClient.on('close', () => {
-    console.log('📦 Redis connection closed');
+    info('📮 Redis connection closed');
     isConnected = false;
 });
 
@@ -289,9 +285,9 @@ export const invalidateUserCache = async (userId: string, pattern: string = '*')
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-    console.log('📦 Closing Redis connection...');
+    info('📦 Closing Redis connection...');
     await redisClient.quit();
-    console.log('✅ Redis connection closed');
+    info('✅ Redis connection closed');
 });
 
 // Named exports

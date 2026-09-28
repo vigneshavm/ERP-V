@@ -11,14 +11,16 @@ import BankAccount from "../../finance/models/BankAccount.js";
 import JournalEntry from "../../finance/models/JournalEntry.js";
 import SalaryComponent from "../models/SalaryComponent.js";
 import { AppError } from "../../../utils/AppError.js";
+import { error } from "../../../config/logger.js";
 import { sendEmail } from "../../../utils/emailService.js";
 import { getMonthDateRange } from "../../../utils/dateUtils.js";
+import type { TenantRef, IdRef } from '../../../interfaces/TenantRef.js';
 
 @injectable()
 export class PayrollService {
 
     // 1. Generate Payroll (Draft)
-    async generatePayroll(tenantId: string, month: number, year: number, _userId: string, branchId?: string) {
+    async generatePayroll(tenantId: TenantRef, month: number, year: number, _userId: IdRef, branchId?: string) {
         const session = await mongoose.startSession();
         session.startTransaction();
 
@@ -203,7 +205,7 @@ export class PayrollService {
     }
 
     // 2. Approve Payroll
-    async approvePayroll(runId: string, tenantId: string, userId: string) {
+    async approvePayroll(runId: string, tenantId: TenantRef, userId: IdRef) {
         const session = await mongoose.startSession();
         session.startTransaction();
 
@@ -268,7 +270,7 @@ export class PayrollService {
     }
 
     // 3. Pay Payroll (Finance Integration)
-    async payPayroll(runId: string, accountId: string, paymentMode: 'BANK_TRANSFER' | 'CASH' | 'UPI' | 'CHEQUE', tenantId: string, userId: string) {
+    async payPayroll(runId: string, accountId: string, paymentMode: 'BANK_TRANSFER' | 'CASH' | 'UPI' | 'CHEQUE', tenantId: TenantRef, userId: IdRef) {
         const session = await mongoose.startSession();
         session.startTransaction();
 
@@ -311,6 +313,7 @@ export class PayrollService {
                 reference: `PAYROLL-${run._id}`,
                 reconciled: true,
                 userId: userId,
+                tenantId: new mongoose.Types.ObjectId(tenantId),
             }], { session });
 
             // Post Payment Journal Entry (Clearing Liability)
@@ -374,7 +377,7 @@ export class PayrollService {
     }
 
     // 4. Update Payslip (Correction/Review)
-    async updatePayslip(payslipId: string, tenantId: string, updates: {
+    async updatePayslip(payslipId: string, tenantId: TenantRef, updates: {
         earnings?: any[], deductions?: any[], basicSalary?: number
     }) {
         const session = await mongoose.startSession();
@@ -419,7 +422,7 @@ export class PayrollService {
     }
 
     // 5. Delete Run (Rollback)
-    async deleteRun(runId: string, tenantId: string) {
+    async deleteRun(runId: string, tenantId: TenantRef) {
         const session = await mongoose.startSession();
         session.startTransaction();
         try {
@@ -441,7 +444,7 @@ export class PayrollService {
     }
 
     // 6. Send Payslip (Delivery)
-    async sendPayslip(payslipId: string, tenantId: string, channels: ('EMAIL' | 'WHATSAPP')[]) {
+    async sendPayslip(payslipId: string, tenantId: TenantRef, channels: ('EMAIL' | 'WHATSAPP')[]) {
         const payslip = await Payslip.findOne({ _id: payslipId, tenantId }).populate('employeeId');
         if (!payslip) throw new AppError("Payslip not found", 404);
 
@@ -470,7 +473,7 @@ export class PayrollService {
         return results;
     }
     // 7. Bulk Update Structure (e.g. Tea Allowance for All)
-    async bulkUpdateStructure(tenantId: string, componentId: string, amount: number) {
+    async bulkUpdateStructure(tenantId: TenantRef, componentId: string, amount: number) {
         const session = await mongoose.startSession();
         session.startTransaction();
 
@@ -478,8 +481,8 @@ export class PayrollService {
             // Validate Component
             const component = await SalaryComponent.findOne({ _id: componentId, tenantId }).session(session);
             if (!component) {
-                console.error(`[PayrollService] Component not found!`);
-                throw new AppError("Component not found", 404);
+                error(`[PayrollService] Component not found!`);
+                throw new AppError('Component not found', 404);
             }
 
             // Find All Active Employees
@@ -537,7 +540,7 @@ export class PayrollService {
     }
 
     // 8. Process Individual Payout (Immediate)
-    async processIndividualPayout(tenantId: string, employeeId: string, month: number, year: number, userId: string, paymentMode: 'BANK_TRANSFER' | 'CASH' | 'UPI' | 'CHEQUE', accountId: string, overrideWorkedDays?: number, force: boolean = false) {
+    async processIndividualPayout(tenantId: TenantRef, employeeId: string, month: number, year: number, userId: IdRef, paymentMode: 'BANK_TRANSFER' | 'CASH' | 'UPI' | 'CHEQUE', accountId: string, overrideWorkedDays?: number, force: boolean = false) {
         const session = await mongoose.startSession();
         session.startTransaction();
 
@@ -679,7 +682,8 @@ export class PayrollService {
                 date: new Date(),
                 reference: `PAY-IND-${payslip[0]._id}`,
                 reconciled: true,
-                userId
+                userId,
+                tenantId: new mongoose.Types.ObjectId(tenantId),
             }], { session });
 
             // Journal

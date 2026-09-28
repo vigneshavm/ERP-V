@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import { Calculator, Landmark, FileText, CheckCircle2, CreditCard } from 'lucide-react';
-import { FinanceTabProps } from './types';
+import { FinanceTabProps } from './types';import { Input } from '@/components/shared/Input';
+
 
 const FinanceTab: React.FC<FinanceTabProps> = ({
     taxMode, setTaxMode, gstin, setGstin, pan, setPan,
@@ -122,7 +123,7 @@ const FinanceTab: React.FC<FinanceTabProps> = ({
                     </div>
                 </div>
 
-                <div className="mt-8 p-6 bg-warning/30 dark:bg-warning-soft border border-warning-line dark:border-warning-line rounded-[2rem] flex flex-col md:flex-row items-center gap-6">
+                <div className="mt-8 p-6 bg-warning/30 dark:bg-warning-soft border border-warning-line dark:border-warning-line rounded-xl flex flex-col md:flex-row items-center gap-6">
                     <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-sm shadow-sm flex items-center justify-center shrink-0">
                         <Landmark className="w-8 h-8 text-warning" />
                     </div>

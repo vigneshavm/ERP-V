@@ -5,6 +5,8 @@
  * stored `tier` is only refreshed on a manual adjustment, not when points are earned at billing.
  */
 
+import { round2 } from "../../../utils/typeConversion.js";
+
 export const TIERS = [
     { tier: "Platinum", minPoints: 5000 },
     { tier: "Gold", minPoints: 2000 },
@@ -32,7 +34,6 @@ export interface MemberInput {
 
 export interface LedgerInput { customerId: string; type: string; points: number; date: string }
 
-const round2 = (v: number) => Math.round(v * 100) / 100;
 const dayNum = (iso: string) => Math.round(new Date(`${iso}T00:00:00Z`).getTime() / 86_400_000);
 
 /** A loyalty member: holds points, or has ever earned or redeemed. Customers who never touched the scheme aren't members. */

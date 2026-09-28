@@ -7,6 +7,7 @@ import { ArrowLeft, Save, Plus, Trash2, AlertCircle, Info } from 'lucide-react';
 import { RootState } from '../../../redux/store';
 import { createJournalEntry } from '../../../redux/slices/journalEntrySlice';
 import { toast } from 'react-toastify';
+import { Button, Input } from '@/components/shared';
 
 interface JELineItem {
     id: number;
@@ -108,48 +109,42 @@ const JournalEntryForm: React.FC = () => {
                         { label: 'New Transaction' }
                     ]}
                     actions={
-                        <button
-                            onClick={() => navigate('/finance/journal')}
-                            className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 shadow-sm transition active:scale-95 uppercase tracking-widest"
-                        >
-                            <ArrowLeft className="w-4 h-4" /> Discard
-                        </button>
+                        <Button variant="secondary" size="md" icon={<ArrowLeft className="w-4 h-4" />} onClick={() => navigate('/finance/journal')}>
+                            Discard
+                        </Button>
                     }
                 />
 
                 <form onSubmit={handleSubmit} className="max-w-6xl mx-auto space-y-8">
                     {/* Primary Meta Data */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                         <div className="md:col-span-1">
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Fiscal Date</label>
-                            <input
+                            <Input
+                                label="Fiscal Date"
                                 type="date"
                                 required
                                 value={date}
                                 onChange={e => setDate(e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-sm focus:ring-2 focus:ring-primary/20 font-bold transition-all"
                             />
                         </div>
                         <div className="md:col-span-1">
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Reference ID</label>
-                            <input
+                            <Input
+                                label="Reference ID"
                                 type="text"
                                 required
                                 placeholder="e.g., ADJ-0224-01"
                                 value={reference}
                                 onChange={e => setReference(e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-sm focus:ring-2 focus:ring-primary/20 font-mono font-bold tracking-tighter uppercase transition-all"
                             />
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Transaction Narration</label>
-                            <input
+                            <Input
+                                label="Transaction Narration"
                                 type="text"
                                 required
                                 placeholder="Describe the adjustment or entry..."
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-sm focus:ring-2 focus:ring-primary/20 font-bold italic transition-all"
                             />
                         </div>
                     </div>
@@ -213,28 +208,29 @@ const JournalEntryForm: React.FC = () => {
                                             />
                                         </div>
                                         <div className="col-span-12 md:col-span-2 flex justify-end">
-                                            <button
+                                            <Button
                                                 type="button"
+                                                variant="tertiary"
+                                                size="sm"
+                                                icon={<Trash2 className="w-4 h-4" />}
                                                 onClick={() => handleRemoveLine(item.id)}
-                                                className="p-2.5 text-slate-300 hover:text-danger hover:bg-danger-soft dark:hover:bg-danger-soft rounded-xl transition-all"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
+                                                className="hover:text-danger hover:bg-danger-soft"
+                                            />
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <button
+                            <Button
                                 type="button"
+                                variant="tertiary"
+                                size="md"
+                                icon={<Plus className="w-3.5 h-3.5" />}
                                 onClick={handleAddLine}
-                                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary-dark p-4 group transition-all"
+                                className="px-4 py-4"
                             >
-                                <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20">
-                                    <Plus className="w-3.5 h-3.5" />
-                                </div>
                                 Add line
-                            </button>
+                            </Button>
                         </div>
                     </div>
 
@@ -272,14 +268,16 @@ const JournalEntryForm: React.FC = () => {
                         </div>
 
                         <div className="shrink-0">
-                            <button
-                                onClick={handleSubmit}
+                            <Button
+                                type="submit"
+                                variant={isBalanced ? 'primary' : 'secondary'}
+                                size="lg"
                                 disabled={loading || !isBalanced}
-                                className={`flex items-center gap-3 px-10 py-4 rounded-sm font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 ${isBalanced ? 'bg-primary text-white hover:bg-primary/90 shadow-primary/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+                                loading={loading}
+                                icon={<Save className="w-4 h-4" />}
                             >
-                                {loading ? 'Committing...' : 'Commit Transaction'}
-                                <Save className="w-4 h-4" />
-                            </button>
+                                Commit Transaction
+                            </Button>
                         </div>
                     </div>
                 </form>

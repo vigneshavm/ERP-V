@@ -45,7 +45,9 @@ import { SystemTab } from "./components/SystemTab";
 import { GeographyTab } from "./components/GeographyTab";
 import { UserTab } from "./components/UserTab";
 import { BrandingTab } from "./components/BrandingTab";
-import { IntegrationsTab } from "./components/IntegrationsTab";
+import { IntegrationsTab } from "./components/IntegrationsTab";import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/Input';
+
 
 interface TenantManagementProps {
     onLoginAs?: (tenant: Tenant) => void;
@@ -273,13 +275,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     </div>
 
                     <div className="flex gap-3">
-                        <button
-                            type="button"
-                            onClick={() => setIsDeployView(false)}
-                            className="px-6 py-2.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                        >
-                            Cancel
-                        </button>
+                        <Button type="button" onClick={() => setIsDeployView(false)} className="px-6 py-2.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Cancel</Button>
                         <button
                             form="tenant-full-form"
                             type="submit"
@@ -403,12 +399,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                         <LayoutDashboard className="w-5 h-5" />
                     </button>
                     <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1 hidden lg:block"></div>
-                    <button
-                        onClick={handleOpenProvisionPanel}
-                        className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition-all active:scale-95"
-                    >
-                        <Plus className="w-4 h-4" /> Provision Tenant
-                    </button>
+                    <Button onClick={handleOpenProvisionPanel} className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition-all active:scale-95"><Plus className="w-4 h-4" /> Provision Tenant</Button>
                 </div>
             </div>
 
@@ -470,13 +461,7 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                     <div className="bg-white dark:bg-slate-900 p-4 rounded-sm border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
                         <div className="relative flex-1 w-full md:w-auto">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Search tenants..."
-                                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                            <Input type="text" placeholder="Search tenants..." className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                         </div>
 
                         <div className="flex overflow-x-auto gap-3 w-full md:w-auto pb-2 md:pb-0">
@@ -811,15 +796,8 @@ const TenantManager: React.FC<TenantManagementProps> = ({ onLoginAs }) => {
                                 className="flex-1 p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500 min-h-[100px] resize-none"
                             />
                             <div className="flex flex-col gap-2">
-                                <button className="px-6 py-3 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/20 hover:bg-primary-hover transition-all">
-                                    Send Broadcast
-                                </button>
-                                <button
-                                    onClick={() => setAnnouncement('')}
-                                    className="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
-                                >
-                                    Clear
-                                </button>
+                                <Button className="px-6 py-3 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/20 hover:bg-primary-hover transition-all">Send Broadcast</Button>
+                                <Button onClick={() => setAnnouncement('')} className="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700">Clear</Button>
                             </div>
                         </div>
                     </div>
