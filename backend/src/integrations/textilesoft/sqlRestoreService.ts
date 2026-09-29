@@ -5,6 +5,7 @@ import { loadDbConfig, openPool, type ShopDbConfig } from "./shopDbReader.js";
 import { validateMapping } from "./mapping.js";
 import { runSync } from "./syncService.js";
 import { ensureErpDbAccess, adminConfigured, type DbAccessResult } from "./sqlDbAccess.js";
+import { restoreWithCarryover, type CarryoverReport } from "./sqlRestoreCarryover.js";
 import type { SyncReport } from "./types.js";
 
 export interface BackupFileInfo {
@@ -34,6 +35,8 @@ export interface RestoreResult {
     durationMs: number;
     headerDetails?: BackupHeaderDetails;
     syncReport?: SyncReport;
+    /** Local bills kept across the restore, with the before/after last-bill times and the check result. */
+    carryover?: CarryoverReport;
     /** ERP logins whose database access was re-created after the restore. */
     access?: DbAccessResult;
     accessError?: string;
@@ -203,79 +206,12 @@ export async function restoreDatabaseFromFile(
     const headerDetails = await verifyBackupHeader(normalizedPath);
     info(`[sql-restore] Verified backup header: Database='${headerDetails.databaseName}', Size=${headerDetails.backupSizeMB}MB`);
 
-    // 2. Connect to master to execute RESTORE
+    // 2. Restore without losing local bills: backup -> side copy, carry over local bills that are newer
+    //    than the backup or were written by the ERP (matched by bill key), verify, then swap it in.
+    //    The target is only replaced once the check passes (see sqlRestoreCarryover.ts).
     const adminConfig = getAdminDbConfig();
-    const mssql = (await import("mssql")).default;
-
-    const masterPool = new mssql.ConnectionPool({
-        server: adminConfig.server,
-        port: adminConfig.instanceName ? undefined : adminConfig.port,
-        database: "master",
-        user: adminConfig.user,
-        password: adminConfig.password,
-        connectionTimeout: adminConfig.connectionTimeoutMs,
-        requestTimeout: 600000, // 10 minutes timeout for large database restores
-        options: {
-            instanceName: adminConfig.instanceName,
-            encrypt: adminConfig.encrypt,
-            trustServerCertificate: adminConfig.trustServerCertificate,
-        },
-    });
-
-    await masterPool.connect();
-
-    try {
-        const req = masterPool.request();
-        req.input("backupPath", mssql.NVarChar, normalizedPath);
-
-        // Terminate existing connections to allow replace
-        const singleUserSql = `
-            IF DB_ID('${targetDb}') IS NOT NULL
-            BEGIN
-                ALTER DATABASE [${targetDb}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-            END;
-        `;
-        info(`[sql-restore] Setting database [${targetDb}] to SINGLE_USER...`);
-        await req.batch(singleUserSql);
-
-        // Execute restore with REPLACE
-        const restoreSql = `
-            RESTORE DATABASE [${targetDb}]
-            FROM DISK = @backupPath
-            WITH REPLACE, RECOVERY;
-        `;
-        info(`[sql-restore] Executing RESTORE DATABASE [${targetDb}] FROM DISK = '${normalizedPath}' WITH REPLACE...`);
-        await req.query(restoreSql);
-
-        // Reset to MULTI_USER
-        const multiUserSql = `
-            IF DB_ID('${targetDb}') IS NOT NULL
-            BEGIN
-                ALTER DATABASE [${targetDb}] SET MULTI_USER;
-            END;
-        `;
-        info(`[sql-restore] Setting database [${targetDb}] back to MULTI_USER...`);
-        await req.batch(multiUserSql);
-
-        info(`[sql-restore] SQL Server restore completed successfully in ${Date.now() - startTime}ms.`);
-    } catch (err) {
-        error(`[sql-restore] Error during database restore: ${(err as Error).message}`);
-        // Ensure database is reset to MULTI_USER even if restore failed
-        try {
-            const recoveryReq = masterPool.request();
-            await recoveryReq.batch(`
-                IF DB_ID('${targetDb}') IS NOT NULL
-                BEGIN
-                    ALTER DATABASE [${targetDb}] SET MULTI_USER;
-                END;
-            `);
-        } catch {
-            // Ignore secondary cleanup error
-        }
-        throw err;
-    } finally {
-        await masterPool.close();
-    }
+    const carryover = await restoreWithCarryover(normalizedPath, targetDb, adminConfig);
+    info(`[sql-restore] SQL Server restore completed in ${Date.now() - startTime}ms (${carryover.carried.length} local bill(s) kept).`);
 
     // 2b. The restore replaced the database's user list: give the ERP's read (and POS write) logins
     // their access back straight away, so reading and POS billing keep working without SSMS.
@@ -339,9 +275,14 @@ export async function restoreDatabaseFromFile(
         durationMs,
         headerDetails,
         syncReport,
+        carryover,
         access,
         accessError,
         message: `Database '${targetDb}' successfully restored from '${path.basename(normalizedPath)}' in ${(durationMs / 1000).toFixed(1)}s.${syncReport ? ` Synced ${syncReport.read} items (${syncReport.updated} updated, ${syncReport.inserted} inserted).` : ""}` +
+            ` Last bill: backup ${carryover.backupLastBillAt ?? "none"}, local ${carryover.localLastBillAt ?? "none"}, now ${carryover.finalLastBillAt ?? "none"}.` +
+            (carryover.carried.length ? ` Kept ${carryover.carried.length} local bill(s) not in the backup (verified, each once).` : " No local bills needed keeping.") +
+            (carryover.conflicts.length ? ` ${carryover.conflicts.length} local bill(s) share a bill key with a different backup bill and were NOT copied; see carryover.conflicts.` : "") +
+            (carryover.previousDatabase ? ` Previous database kept as [${carryover.previousDatabase}].` : "") +
             (access ? ` ERP access re-applied for: ${access.applied.join(", ") || "none"}.` : "") +
             (accessError ? ` Warning: ${accessError}` : ""),
     };

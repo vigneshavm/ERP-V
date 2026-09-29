@@ -63,8 +63,22 @@ interface RestoreResponse {
     durationMs: number;
     headerDetails?: BackupHeader;
     syncReport?: SyncReport;
+    /** Local bills kept across the restore (see backend sqlRestoreCarryover.ts). */
+    carryover?: {
+        backupLastBillAt: string | null;
+        localLastBillAt: string | null;
+        finalLastBillAt: string | null;
+        localWasNewer: boolean;
+        carried: { key: string; billNo: string; at: string | null; lines: number; userId: string }[];
+        conflicts: { key: string; localAt: string | null; backupAt: string | null }[];
+        verified: boolean;
+        savedTo?: string;
+        previousDatabase?: string;
+    };
     message: string;
 }
+
+const billTime = (v: string | null | undefined) => (v ? new Date(v).toLocaleString() : '—');
 
 export const SqlRestoreManager: React.FC = () => {
     const [config, setConfig] = useState<SqlConfig | null>(null);
@@ -597,6 +611,41 @@ export const SqlRestoreManager: React.FC = () => {
                     </div>
 
                     {/* Sync Statistics if available */}
+                    {restoreResult.carryover && (
+                        <div className="mt-4 rounded-lg border border-default p-4 text-sm space-y-2">
+                            <p className="font-bold text-main">Local bills kept across the restore</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                                <div><span className="text-muted">Backup last bill</span><br />{billTime(restoreResult.carryover.backupLastBillAt)}</div>
+                                <div><span className="text-muted">Local last bill (before)</span><br />{billTime(restoreResult.carryover.localLastBillAt)}</div>
+                                <div><span className="text-muted">Last bill now</span><br /><b>{billTime(restoreResult.carryover.finalLastBillAt)}</b></div>
+                            </div>
+                            <p className="text-xs">
+                                {restoreResult.carryover.carried.length
+                                    ? `${restoreResult.carryover.carried.length} bill(s) were not in the backup and were re-applied — each verified present exactly once with all lines.`
+                                    : 'No local bills needed keeping.'}
+                                {restoreResult.carryover.savedTo ? ` Copy saved at ${restoreResult.carryover.savedTo}.` : ''}
+                                {restoreResult.carryover.previousDatabase ? ` The old database is kept as ${restoreResult.carryover.previousDatabase}.` : ''}
+                            </p>
+                            {restoreResult.carryover.carried.length > 0 && (
+                                <div className="max-h-40 overflow-y-auto text-xs border-t border-default pt-2">
+                                    {restoreResult.carryover.carried.map(b => (
+                                        <div key={b.key} className="flex justify-between gap-2">
+                                            <span>{b.billNo || b.key}{b.userId ? ` · ${b.userId}` : ''}</span>
+                                            <span className="text-muted">{billTime(b.at)} · {b.lines} line(s)</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            {restoreResult.carryover.conflicts.length > 0 && (
+                                <p className="text-xs text-danger">
+                                    {restoreResult.carryover.conflicts.length} local bill(s) share a bill key with a different bill in the backup and were not copied
+                                    (they are in the saved copy): {restoreResult.carryover.conflicts.slice(0, 5).map(c => c.key).join(', ')}
+                                    {restoreResult.carryover.conflicts.length > 5 ? '…' : ''}
+                                </p>
+                            )}
+                        </div>
+                    )}
+
                     {restoreResult.syncReport && (
                         <div className="pt-3 border-t border-emerald-200 dark:border-emerald-800">
                             <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 mb-2">

@@ -76,3 +76,22 @@ Remove test bills (copy only): `DELETE FROM dbo.salsntry WHERE UserID='ERP'; DEL
   receipt and gets its real SQL number when it syncs.
 - Running line counters `count_IDBillno`, `comp_continu_billno`, `cmy_wo_continu_billno` continue from the
   latest line (their exact Textilesoft meaning is unknown) — check them in step 2.
+
+## Restoring SSS_copy without losing local bills
+Settings → Restore (`sqlRestoreCarryover.ts`) no longer overwrites `SSS_copy` in place:
+1. The backup is restored into a side copy `SSS_copy__incoming` (the live `SSS_copy` is untouched).
+2. Last bill time (`sales2.[datetime]`) is compared: backup vs local.
+3. `SSS_copy` is frozen (ERP logins can't write; a POS bill made now is queued and retried).
+4. Local bills to keep = newer than the backup's last bill **or** written by the ERP (`UserID` =
+   `TEXTILESOFT_POS_USERID`) — and **not already in the backup**, matched on `sysidandbill`.
+   (ERP bills are never in the shop backup, even older ones, so time alone would lose them.)
+5. They are saved to `backend/backups/restore-carryover/*.json` first, then inserted (header + lines) into the
+   side copy in one transaction; `[No]` is renumbered after the backup's rows.
+6. Check: every kept bill present exactly once with all its lines; latest bill ≥ local latest before.
+7. Only then: `SSS_copy` → `SSS_copy__previous` (rollback copy), side copy → `SSS_copy`, ERP access re-applied.
+If any step fails, the side copy is dropped and `SSS_copy` stays as it was.
+
+A local bill whose `sysidandbill` exists in the backup with a different time is **not** copied (it's a
+numbering clash); it is listed in the result and kept in the saved JSON. Using an ERP-only counter avoids this.
+Restores done directly in SSMS bypass all of this — use the ERP's Restore screen.
+Disk space: the side copy and `__previous` each need about the size of the database.
