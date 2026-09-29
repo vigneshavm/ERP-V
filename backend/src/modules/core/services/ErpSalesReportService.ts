@@ -1,5 +1,5 @@
 import Invoice from "../../sales/models/Invoice.js";
-import { ERP_BASIS, addDays, aggregateErpSales, istDate, type ErpInvoice, type SalesDim } from "./erpSalesMath.js";
+import { ERP_BASIS, addDays, aggregateErpSales, counterOf, istDate, type ErpInvoice, type SalesDim } from "./erpSalesMath.js";
 import { dateRangeQuery as between } from "../../../utils/dateUtils.js";
 import { tenantKey } from "../../../utils/mongooseUtils.js";
 
@@ -34,7 +34,14 @@ export function resolveRange(range: string | undefined, fromQ?: string, toQ?: st
     return { from: validDate(fromQ) ?? addDays(to, span), to };
 }
 
-export async function erpSalesReport(dim: SalesDim, tenantId: string, range: string | undefined, fromQ?: string, toQ?: string): Promise<ErpSalesReportResult> {
+export async function erpSalesReport(
+    dim: SalesDim,
+    tenantId: string,
+    range: string | undefined,
+    fromQ?: string,
+    toQ?: string,
+    counter?: string,
+): Promise<ErpSalesReportResult> {
     const { from, to } = resolveRange(range, fromQ, toQ);
     const tid = tenantKey(tenantId);
     const createdAt = between({ from, to });
@@ -44,7 +51,11 @@ export async function erpSalesReport(dim: SalesDim, tenantId: string, range: str
         liveQuery.lean(),
         dim === "day" ? Invoice.find({ tenantId: tid, ...CANCELLED, createdAt }, INVOICE_FIELDS).lean() : Promise.resolve([]),
     ]);
-    const rows = aggregateErpSales(dim, live as unknown as ErpInvoice[], cancelled as unknown as ErpInvoice[], from, to);
+    // Optional billing-counter filter, matched the same way the "counter" breakdown names counters.
+    const counterName = counter?.trim();
+    const atCounter = (list: unknown[]): ErpInvoice[] =>
+        counterName ? (list as ErpInvoice[]).filter((inv) => counterOf(inv) === counterName) : (list as ErpInvoice[]);
+    const rows = aggregateErpSales(dim, atCounter(live), atCounter(cancelled), from, to);
     return { rows, range: { from, to }, asOf: istDate(new Date()), source: "mongo", ...(ERP_BASIS[dim] ? { basis: ERP_BASIS[dim] } : {}) };
 }
 
@@ -56,13 +67,14 @@ export interface DayBill {
     paymentMethod: string;
     totalAmount: number;
     cancelled: boolean;
+    counterName: string;
 }
 
 /** Every ERP bill on one India-time day (cancelled ones flagged), in the shape the SQL day-bills list uses. */
 export async function erpDayBills(tenantId: string, date: string): Promise<DayBill[]> {
     const docs = await Invoice.find(
         { tenantId: tenantKey(tenantId), isDeleted: { $ne: true }, fulfillmentStatus: { $ne: "REFUNDED" }, createdAt: between({ from: date, to: date }) },
-        { invoiceNo: 1, createdAt: 1, customer: 1, paymentMethod: 1, totalAmount: 1, fulfillmentStatus: 1 },
+        { invoiceNo: 1, createdAt: 1, customer: 1, paymentMethod: 1, totalAmount: 1, fulfillmentStatus: 1, counterName: 1 },
     ).populate("customer", "name phone").sort({ createdAt: 1 }).lean();
     return docs.map((d) => {
         const c = d.customer as unknown as { name?: string; phone?: string } | null | undefined;
@@ -74,6 +86,7 @@ export async function erpDayBills(tenantId: string, date: string): Promise<DayBi
             paymentMethod: String(d.paymentMethod ?? "cash"),
             totalAmount: Number(d.totalAmount) || 0,
             cancelled: d.fulfillmentStatus === "CANCELLED",
+            counterName: counterOf(d as unknown as ErpInvoice),
         };
     });
 }

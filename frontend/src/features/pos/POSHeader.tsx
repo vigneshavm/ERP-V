@@ -1,9 +1,13 @@
 
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../services/api';
 import { Maximize2, Minimize2, Wifi, WifiOff, Plus, X, Languages } from 'lucide-react';
 import { Session } from "../../types/sales";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import { useLanguage } from "../../contexts/LanguageContext";import { Button } from '@/components/shared/Button';
+import { useLanguage } from "../../contexts/LanguageContext";
+import { Button } from '@/components/shared/Button';
 
 
 interface POSHeaderProps {
@@ -36,8 +40,35 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
     const isOnline = useNetworkStatus();
     const { language, setLanguage, t } = useLanguage();
 
+    const navigate = useNavigate();
     const currentBranchData = branches?.find(b => b.id === currentBranch);
-    const availableCounters = currentBranchData?.counters || [];
+    // With a store picked, its counters; with "All Stores", every store's counters (labelled with the
+    // store), so a till can always pick its counter -- checkout is blocked until one is selected.
+    // The 'All' entry is a placeholder branch from the initial state, not a real store.
+    // In SQL mode the counters are Textilesoft's own (dbo.countername via /api/pos/counters), so ERP
+    // bills use the same counter names as the shop database; otherwise the ERP store counters.
+    const { data: counterSource } = useQuery({
+        queryKey: ['pos-counters'],
+        queryFn: async () => (await api.get('/api/pos/counters')).data as { source: 'sql' | 'erp'; counters: { id: string; name: string }[] },
+        staleTime: 5 * 60 * 1000,
+    });
+    const isSqlCounters = counterSource?.source === 'sql';
+    const availableCounters: { id: string; name: string; branchName?: string }[] = useMemo(() => {
+        if (isSqlCounters) return counterSource?.counters ?? [];
+        return currentBranchData && currentBranchData.id !== 'All'
+            ? (currentBranchData.counters || [])
+            : (branches || []).filter((b: any) => b.id !== 'All')
+                .flatMap((b: any) => (b.counters || []).map((c: any) => ({ ...c, branchName: b.name })));
+    }, [isSqlCounters, counterSource, currentBranchData, branches]);
+    const counterKnown = !!activeCounterId && availableCounters.some(c => c.id === activeCounterId);
+
+    // One counter only: select it automatically. A remembered counter that no longer exists is cleared,
+    // so checkout asks for a real one instead of numbering bills with a deleted counter.
+    useEffect(() => {
+        if (availableCounters.length === 0) return;
+        if (!activeCounterId && availableCounters.length === 1) onSwitchCounter(availableCounters[0].id);
+        else if (activeCounterId && !counterKnown) onSwitchCounter('');
+    }, [availableCounters, activeCounterId, counterKnown, onSwitchCounter]);
 
     return (
         <div className="flex gap-4 mb-2 shrink-0 items-end">
@@ -114,18 +145,40 @@ export const POSHeader: React.FC<POSHeaderProps> = ({
                 </select>
             </div>
 
-            {/* Counter Selector */}
-            {availableCounters.length > 0 && (
-                <div className="hidden lg:flex flex-col gap-1">
+            {/* Counter Selector -- always shown (also on small screens): checkout needs a counter. */}
+            {availableCounters.length === 0 ? (
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">{t('terminal')}</label>
+                    {isSqlCounters ? (
+                        <span
+                            title="dbo.countername in the shop database has no counters"
+                            className="border-b-2 border-danger px-3 py-2 rounded-t-lg text-sm font-bold text-danger bg-white dark:bg-slate-800"
+                        >
+                            No counters in shop DB
+                        </span>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={() => navigate('/settings/branches')}
+                            title="No billing counters are set up for this shop yet"
+                            className="border-b-2 border-danger px-3 py-2 rounded-t-lg text-sm font-bold text-danger bg-white dark:bg-slate-800 hover:bg-danger/5"
+                        >
+                            No counters — set up
+                        </button>
+                    )}
+                </div>
+            ) : (
+                <div className="flex flex-col gap-1">
                     <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">{t('terminal')}</label>
                     <select
-                        value={activeCounterId}
+                        value={counterKnown ? activeCounterId : ''}
                         onChange={(e) => onSwitchCounter(e.target.value)}
-                        className="bg-white dark:bg-slate-800 border-b-2 border-primary px-3 py-2 rounded-t-lg text-sm font-bold text-slate-700 dark:text-white outline-none focus:ring-2 ring-primary/20"
+                        className={`bg-white dark:bg-slate-800 border-b-2 px-3 py-2 rounded-t-lg text-sm font-bold outline-none focus:ring-2 ring-primary/20 ${counterKnown ? 'border-primary text-slate-700 dark:text-white' : 'border-danger text-danger'}`}
                     >
-                        {availableCounters.map((c: any) => (
-                            <option key={c.id} value={c.id}>
-                                {c.id} - {c.name}
+                        {!counterKnown && <option value="" disabled>Select counter</option>}
+                        {availableCounters.map((c) => (
+                            <option key={`${c.branchName ?? ''}-${c.id}`} value={c.id}>
+                                {c.name === c.id ? c.id : `${c.id} - ${c.name}`}{c.branchName ? ` (${c.branchName})` : ''}
                             </option>
                         ))}
                     </select>

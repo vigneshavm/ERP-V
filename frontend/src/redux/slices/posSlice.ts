@@ -45,7 +45,14 @@ const defaultSession: Session = {
     discountAmount: 0
 };
 
+// The billing counter this device bills from, remembered across reloads (one till = one counter).
+const ACTIVE_COUNTER_KEY = 'POS_ACTIVE_COUNTER';
+const readActiveCounter = (): string | undefined => {
+    try { return localStorage.getItem(ACTIVE_COUNTER_KEY) || undefined; } catch { return undefined; }
+};
+
 const initialState: POSState = {
+    activeCounterId: readActiveCounter(),
     invoices: [],
     salesHistory: [],
     customers: [],
@@ -190,7 +197,11 @@ export const posSlice = createSlice({
             state.activeSessionIndex = action.payload;
         },
         setActiveCounter: (state, action: PayloadAction<string>) => {
-            state.activeCounterId = action.payload;
+            state.activeCounterId = action.payload || undefined;
+            try {
+                if (action.payload) localStorage.setItem(ACTIVE_COUNTER_KEY, action.payload);
+                else localStorage.removeItem(ACTIVE_COUNTER_KEY);
+            } catch { /* storage unavailable: the choice just isn't remembered */ }
         },
         setCustomersList: (state, action: PayloadAction<Customer[]>) => {
             state.customers = action.payload;

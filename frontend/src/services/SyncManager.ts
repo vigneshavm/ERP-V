@@ -5,6 +5,7 @@ import { setDailyRecordSynced } from "../redux/slices/financeSlice";
 import { SyncIntelligenceService } from './SyncIntelligenceService';
 import { sendDailyFinanceChange } from './dailyFinanceApi';
 import { buildPosInvoicePayload } from './posInvoiceMapper';
+import { isPermanentRejection, notifyFailedSalesChanged, rejectionMessage, serverRefusedError } from './failedSales';
 
 export class SyncManager {
     private static isSyncingSelection = false;
@@ -18,8 +19,10 @@ export class SyncManager {
         try {
             // Filter, not where('synced'): `synced` is stored as a boolean, and IndexedDB can't
             // index booleans, so an index lookup never matched and queued sales were never sent.
+            // Bills the server already rejected (`failed`) are skipped: they wait in the POS
+            // "Failed bills" list for a person to retry or dismiss them.
             const pendingSales = await db.offlineSales
-                .filter(sale => !sale.synced)
+                .filter(sale => !sale.synced && !sale.failed)
                 .toArray();
 
             for (const sale of pendingSales) {
@@ -32,7 +35,7 @@ export class SyncManager {
                     const { data } = await api.post('/api/pos/invoice', buildPosInvoicePayload(sale));
 
                     if (!data?.success) {
-                        throw new Error(data?.message || 'Server did not confirm the sale was saved');
+                        throw serverRefusedError(data?.message);
                     }
 
                     await db.offlineSales.update(sale.localId!, { synced: true });
@@ -51,10 +54,14 @@ export class SyncManager {
 
                 } catch (err: any) {
                     console.error(`Failed to sync sale ${sale.id}:`, err);
-                    // Track retry attempts (OfflineSale has no `error` field, unlike DailyFinanceQueueItem)
+                    // A bill the server refused (bad data) will be refused again, so stop retrying it
+                    // and move it to the "Failed bills" list; network/server outages keep retrying.
+                    const rejected = isPermanentRejection(err);
                     await db.offlineSales.update(sale.localId!, {
-                        retryCount: (sale.retryCount || 0) + 1
+                        retryCount: (sale.retryCount || 0) + 1,
+                        ...(rejected ? { failed: true, error: rejectionMessage(err), failedAt: new Date().toISOString() } : {})
                     });
+                    if (rejected) notifyFailedSalesChanged();
                     // Failures are logged too, so a sale that keeps failing is visible in the ledger.
                     await SyncIntelligenceService.logEvent({
                         deviceId: SyncIntelligenceService.getDeviceId(),

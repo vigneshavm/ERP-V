@@ -7,6 +7,7 @@ import {
     ReportTable, axisProps, compactNumber, compactRupees, cursorFill, gridProps, useClientReportTable, useReportPeriod,
 } from './components';
 import { useShopSales, withBasis } from './analytics/shopSales';
+import { useCounterFilter, withCounter } from './analytics/CounterFilter';
 
 interface HourRow {
     hour: number;
@@ -38,7 +39,8 @@ const EXPORT_COLUMNS: ReportColumn<TableRow>[] = [
 const HourlyBillingReport: React.FC = () => {
     const period = useReportPeriod('this-month');
     const { from, to } = period.period;
-    const shop = useShopSales<HourRow>('hour', from, to);
+    const counterFilter = useCounterFilter(from, to);
+    const shop = useShopSales<HourRow>('hour', from, to, counterFilter.counter);
     const hours = shop.rows;
 
     const rows: TableRow[] = useMemo(() => hours.map(h => ({ ...h, avgBill: h.transactions ? h.revenue / h.transactions : null })), [hours]);
@@ -57,13 +59,14 @@ const HourlyBillingReport: React.FC = () => {
         <ReportPageShell<TableRow>
             reportId="hourly-billing"
             period={period}
-            note={shop.loaded ? withBasis('Bills and sales by the hour the bill was made, added up over every day in the period. Cancelled bills excluded.', shop.basis) : undefined}
+            filters={counterFilter.filters}
+            note={shop.loaded ? withBasis(withCounter('Bills and sales by the hour the bill was made, added up over every day in the period. Cancelled bills excluded.', counterFilter.counter), shop.basis) : undefined}
             onRefresh={() => shop.reload(true)}
             loading={shop.loading}
             error={shop.error}
             isEmpty={shop.loaded && totalBills === 0}
             meta={{ resolvedSource: shop.source, asOf: shop.asOf, recordCount: open.length }}
-            export={{ columns: EXPORT_COLUMNS, fetchRows: () => filteredRows }}
+            export={{ columns: EXPORT_COLUMNS, fetchRows: () => filteredRows, filterSummary: counterFilter.summary }}
         >
             {shop.loaded && peakBills && peakSales && (
                 <>

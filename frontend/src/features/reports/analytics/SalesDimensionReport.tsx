@@ -7,6 +7,7 @@ import {
 } from '../components';
 import type { ReportId } from '../config/reportRegistry';
 import { DimensionRow, ShopSalesDim, useShopSales, withBasis } from './shopSales';
+import { useCounterFilter, withCounter } from './CounterFilter';
 
 interface Row extends DimensionRow { sharePct: number }
 
@@ -35,7 +36,10 @@ export const SalesDimensionReport: React.FC<{ config: SalesDimensionConfig }> = 
     const { reportId, dim, label, countLabel, hasItems, note, multiSelect } = config;
     const period = useReportPeriod('this-month');
     const { from, to } = period.period;
-    const shop = useShopSales<DimensionRow>(dim, from, to);
+    // Every breakdown except the counter one itself can be narrowed to one billing counter.
+    const canFilterCounter = dim !== 'counter';
+    const counterFilter = useCounterFilter(from, to, canFilterCounter);
+    const shop = useShopSales<DimensionRow>(dim, from, to, canFilterCounter ? counterFilter.counter : '');
     const [selected, setSelected] = useState<string[]>([]);
 
     const allRows = shop.rows;
@@ -67,12 +71,17 @@ export const SalesDimensionReport: React.FC<{ config: SalesDimensionConfig }> = 
         <ReportPageShell<Row>
             reportId={reportId}
             period={period}
-            filters={multiSelect ? {
-                activeCount: selected.length ? 1 : 0,
-                onClear: () => setSelected([]),
-                content: <FilterMultiSelect label={label} values={selected} onChange={setSelected} options={allRows.map(r => r.name)} />,
+            filters={multiSelect || canFilterCounter ? {
+                activeCount: (selected.length ? 1 : 0) + (canFilterCounter ? counterFilter.activeCount : 0),
+                onClear: () => { setSelected([]); counterFilter.setCounter(''); },
+                content: (
+                    <>
+                        {canFilterCounter && counterFilter.field}
+                        {multiSelect && <FilterMultiSelect label={label} values={selected} onChange={setSelected} options={allRows.map(r => r.name)} />}
+                    </>
+                ),
             } : undefined}
-            note={shop.loaded ? withBasis(`${note} Cancelled bills excluded.`, shop.basis) : undefined}
+            note={shop.loaded ? withBasis(withCounter(`${note} Cancelled bills excluded.`, counterFilter.counter), shop.basis) : undefined}
             onRefresh={() => shop.reload(true)}
             loading={shop.loading}
             error={shop.error}
@@ -84,7 +93,11 @@ export const SalesDimensionReport: React.FC<{ config: SalesDimensionConfig }> = 
                     { key: 'avg', header: 'Sales per piece', value: r => (hasItems && r.items ? Math.round((r.revenue / r.items) * 100) / 100 : null), exportable: hasItems },
                 ],
                 fetchRows: () => filteredRows,
-                filterSummary: [...(selected.length ? [`${label}: ${selected.join(', ')}`] : []), ...(tableProps.search?.value ? [`Search: ${tableProps.search.value}`] : [])],
+                filterSummary: [
+                    ...counterFilter.summary,
+                    ...(selected.length ? [`${label}: ${selected.join(', ')}`] : []),
+                    ...(tableProps.search?.value ? [`Search: ${tableProps.search.value}`] : []),
+                ],
             }}
         >
             {shop.loaded && (

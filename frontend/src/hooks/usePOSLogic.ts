@@ -136,19 +136,24 @@ export const usePOSLogic = () => {
         }
     }, [activeCounterId]);
 
-    const reprintLastBill = useCallback(() => {
-        if (!lastBill) return;
+    // Prints any sale on this counter's receipt layout (same tenant/branch header as checkout).
+    // Returns false when the shop/branch details aren't loaded, so callers can say so.
+    const printSale = useCallback((sale: Sale): boolean => {
         const effectiveTenant = tenants.find(t => t.id === user?.tenantId) || tenants[0];
         const effectiveBranch = branches.find(b => b.id === currentBranch) || branches[0];
-        if (effectiveTenant && effectiveBranch) {
-            const wasFullScreen = !!document.fullscreenElement;
-            printSaleReceipt(lastBill, effectiveTenant, effectiveBranch, () => {
-                if (wasFullScreen && !document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => console.log("Auto-restore fullscreen blocked:", err));
-                }
-            });
-        }
-    }, [lastBill, tenants, branches, user, currentBranch]);
+        if (!effectiveTenant || !effectiveBranch) return false;
+        const wasFullScreen = !!document.fullscreenElement;
+        printSaleReceipt(sale, effectiveTenant, effectiveBranch, () => {
+            if (wasFullScreen && !document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log("Auto-restore fullscreen blocked:", err));
+            }
+        });
+        return true;
+    }, [tenants, branches, user, currentBranch]);
+
+    const reprintLastBill = useCallback(() => {
+        if (lastBill) printSale(lastBill);
+    }, [lastBill, printSale]);
 
     const downloadLastBill = useCallback(() => {
         if (!lastBill) return;
@@ -524,6 +529,7 @@ export const usePOSLogic = () => {
         lastBill,
         reprintLastBill,
         downloadLastBill,
+        printSale,
 
         // Refs
         posContainerRef

@@ -1,6 +1,7 @@
 import express from "express";
 import {
     getPosProducts,
+    getPosCounters,
     createInvoice,
     getMrpPendingInvoices,
     finalizeMrpPricing,
@@ -12,6 +13,7 @@ import { protect } from "../../../middlewares/authMiddleware.js";
 const router = express.Router();
 
 router.get("/products", protect, getPosProducts);
+router.get("/counters", protect, getPosCounters);
 router.post("/invoice", protect, createInvoice);
 router.get("/invoice/mrp-pending", protect, getMrpPendingInvoices);
 router.patch("/invoice/:id/finalize-mrp", protect, finalizeMrpPricing);

@@ -78,9 +78,39 @@ export const updateStore = async (req: AuthenticatedRequest, res: Response): Pro
             return;
         }
 
+        // Only the store's own editable fields -- `$set: req.body` also let a request overwrite
+        // tenantId, isActive, managerUserId or anything else on the document.
+        const update: Record<string, unknown> = {};
+        for (const key of ['name', 'address', 'city', 'gstin'] as const) {
+            if (typeof req.body?.[key] === 'string') update[key] = req.body[key];
+        }
+        if (req.body?.counters !== undefined) {
+            if (!Array.isArray(req.body.counters)) {
+                res.status(400).json({ message: 'counters must be a list' });
+                return;
+            }
+            const seen = new Set<string>();
+            const counters = [];
+            for (const c of req.body.counters) {
+                const cid = String(c?.id ?? '').trim().toUpperCase();
+                const cname = String(c?.name ?? '').trim();
+                if (!cid || !cname) {
+                    res.status(400).json({ message: 'Every counter needs a code and a name' });
+                    return;
+                }
+                if (seen.has(cid)) {
+                    res.status(400).json({ message: `Counter code ${cid} is used twice` });
+                    return;
+                }
+                seen.add(cid);
+                counters.push({ id: cid.slice(0, 20), name: cname.slice(0, 60), lastBillNumber: String(c?.lastBillNumber ?? '0') });
+            }
+            update.counters = counters;
+        }
+
         const updatedStore = await Store.findOneAndUpdate(
             { _id: id, tenantId },
-            { $set: req.body },
+            { $set: update },
             { new: true }
         );
 

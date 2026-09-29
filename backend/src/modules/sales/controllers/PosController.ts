@@ -14,6 +14,8 @@ import StockLog from "../../inventory/models/StockLog.js";
 import { stockReservationManager } from "../../inventory/services/StockReservationService.js";
 import { SalesService } from "../services/SalesService.js";
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { isSqlItemSource } from "../../../config/itemDataSource.js";
+import { isSqlPosWriteEnabled, sqlCounters, writePosBillToSql, SqlPosError, type SqlPosLine } from "../../../integrations/textilesoft/sqlPosWriter.js";
 
 // Mirrors frontend/src/types/tenant/mis.ts's DEFAULT_MIS_CONFIG for the three fields this
 // enforcement check needs -- kept as the fallback so a tenant that has never opened
@@ -84,7 +86,131 @@ export const processPosSale = async (_req: AuthenticatedRequest, res: Response):
  * @route   POST /api/pos/invoice
  * @access  Private
  */
+/**
+ * @desc    Billing counters for the POS picker. SQL mode: Textilesoft's counters (dbo.countername);
+ *          otherwise the ERP's own store counters are used by the client, so this returns source 'erp'.
+ * @route   GET /api/pos/counters
+ */
+export const getPosCounters = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
+    if (!isSqlItemSource()) {
+        res.status(200).json({ success: true, source: 'erp', counters: [] });
+        return;
+    }
+    try {
+        res.status(200).json({ success: true, source: 'sql', writes: isSqlPosWriteEnabled(), counters: await sqlCounters() });
+    } catch (err) {
+        error(`[sql-pos] counters failed - ${(err as Error).message}`);
+        res.status(503).json({ success: false, message: 'The shop database could not be reached to load the billing counters.' });
+    }
+};
+
+/**
+ * POS bill -> Textilesoft (dbo.sales2 + dbo.salsntry) instead of MongoDB, when ITEM_DATA_SOURCE=sql and
+ * TEXTILESOFT_POS_WRITE=on. Stock is not moved separately: Textilesoft (and the ERP's SQL stock read)
+ * works stock out from the sale lines themselves. Customers stay in MongoDB (read here for the name/phone
+ * printed on the bill); no Invoice, StockLog or cash-book entry is written to MongoDB for these bills.
+ */
+async function createInvoiceInSql(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+        const { items, discount = 0, paymentMethod, paidAmount = 0, counterName, customerId, customerName, customerPhone, discountApprovedBy, taxMode } = req.body;
+        if (!Array.isArray(items) || items.length === 0) throw new AppError('Cart is empty', 400);
+        const inclusive = String(taxMode || 'INCLUSIVE').toUpperCase() !== 'EXCLUSIVE';
+
+        const lines: SqlPosLine[] = [];
+        for (const it of items) {
+            const qty = Number(it.quantity);
+            const price = Number(it.price);
+            const gst = Number(it.tax) || 0;
+            if (!(qty > 0)) throw new AppError(`Quantity for ${it.name || 'an item'} must be greater than zero`, 400);
+            if (!(price >= 0)) throw new AppError(`Price for ${it.name || 'an item'} is not valid`, 400);
+            const unitPriceIncl = inclusive ? price : price * (1 + gst / 100);
+            const isQuickEntry = it.isQuickEntry === true || String(it.item ?? it._id ?? '').startsWith('QE-');
+            if (isQuickEntry) {
+                const name = String(it.name ?? '').trim();
+                if (!name) throw new AppError('Quick Entry line needs a product type', 400);
+                lines.push({ barcode: '', name, gstRate: gst, qty, unitPriceIncl, group: name });
+                continue;
+            }
+            // Items are mirrored from the shop DB into MongoDB; the barcode ties the line to its purchase lot.
+            const product = await Item.findOne({ _id: it.item || it._id, tenantId: req.tenantId }).lean();
+            if (!product) throw new AppError(`Item not found: ${it.name}`, 404);
+            const p = product as unknown as { name?: string; barcode?: string; hsnCode?: string; category?: string; unit?: string };
+            if (!p.barcode) throw new AppError(`${p.name || it.name} has no barcode, so it can't be billed into the shop database`, 400);
+            lines.push({ barcode: String(p.barcode), name: String(p.name || it.name), hsn: p.hsnCode, group: p.category, unit: p.unit, gstRate: gst, qty, unitPriceIncl });
+        }
+
+        // Same discount cap as the MongoDB path (MIS Controls).
+        const gross = lines.reduce((s, l) => s + l.qty * l.unitPriceIncl, 0);
+        const billDiscount = Number(discount) || 0;
+        if (billDiscount > 0) {
+            const tenant = await Tenant.findById(req.tenantId);
+            const mis = { ...DEFAULT_DISCOUNT_POLICY, ...(tenant?.misConfig || {}) };
+            const cap = typeof req.user?.maxDiscountPercent === 'number' ? req.user.maxDiscountPercent : mis.maxDiscountPercent;
+            const pct = gross > 0 ? (billDiscount / gross) * 100 : 0;
+            if (pct > cap) {
+                if (!mis.allowDiscountOverride) throw new AppError(`Discount of ${pct.toFixed(1)}% exceeds the allowed maximum of ${cap}%. Discount override is disabled for this store.`, 400);
+                if (mis.requireApprovalForHighDiscount) {
+                    const approver = discountApprovedBy ? await User.findOne({ _id: discountApprovedBy, tenantId: req.tenantId }) : null;
+                    if (!approver || !DISCOUNT_APPROVER_ROLES.includes(approver.role)) {
+                        throw new AppError(`Discount of ${pct.toFixed(1)}% exceeds the allowed maximum of ${cap}% and requires manager approval.`, 400);
+                    }
+                }
+            }
+        }
+
+        let name = customerName as string | undefined;
+        let phone = customerPhone as string | undefined;
+        if (customerId && (!name || !phone)) {
+            const cust = await Customer.findOne({ _id: customerId, tenantId: req.tenantId }).lean() as { name?: string; phone?: string } | null;
+            name = name || cust?.name;
+            phone = phone || cust?.phone;
+        }
+
+        const total = Math.max(0, gross - billDiscount);
+        const method = String(paymentMethod || 'cash').toLowerCase();
+        const paid = Math.min(Number(paidAmount) || 0, total);
+        const payment = { cash: 0, card: 0, upi: 0, credit: Math.max(0, total - paid) };
+        if (method === 'card') payment.card = paid;
+        else if (method === 'upi') payment.upi = paid;
+        else payment.cash = paid;
+
+        const result = await writePosBillToSql({
+            counter: String(counterName || ''),
+            userId: (process.env.TEXTILESOFT_POS_USERID || 'ERP').slice(0, 20),
+            customerName: name && name !== 'Walk-in Customer' ? name : undefined,
+            phone: phone || undefined,
+            lines,
+            billDiscount,
+            payment,
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Bill saved to the shop database',
+            invoice: {
+                _id: `sql:${result.sysidandbill}`,
+                invoiceNo: result.billNo,
+                billNo: result.billNo,
+                counterName: result.counter,
+                totalAmount: result.total,
+                createdAt: result.datetime,
+                source: 'sql',
+            },
+        });
+    } catch (err) {
+        const status = err instanceof SqlPosError ? err.statusCode : (err as { statusCode?: number }).statusCode || 500;
+        error(`Create Invoice (SQL) Failed: ${(err as Error).message}`);
+        res.status(status).json({ success: false, message: (err as Error).message });
+    }
+}
+
 export const createInvoice = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    // SQL mode with POS writes switched on: the bill goes to the shop database only (see createInvoiceInSql).
+    if (isSqlItemSource() && isSqlPosWriteEnabled()) {
+        await createInvoiceInSql(req, res);
+        return;
+    }
+
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -141,6 +267,36 @@ export const createInvoice = async (req: AuthenticatedRequest, res: Response): P
         const processedItems = [];
 
         for (const item of items) {
+            // POS Quick Entry line (product type + typed price, cart id "QE-..."): there is no stock
+            // item or lot behind it, so it is saved as a plain line (name, qty, price, GST) and moves
+            // no stock. It used to go through the Item lookup below and fail the whole bill.
+            const isQuickEntry = item.isQuickEntry === true || String(item.item ?? item._id ?? '').startsWith('QE-');
+            if (isQuickEntry) {
+                const qeName = String(item.name ?? '').trim();
+                const qeQty = Number(item.quantity);
+                const qePrice = Number(item.price);
+                if (!qeName) throw new AppError('Quick Entry line needs a product type', 400);
+                if (!(qeQty > 0)) throw new AppError(`Quantity for ${qeName} must be greater than zero`, 400);
+                if (!(qePrice >= 0)) throw new AppError(`Price for ${qeName} is not valid`, 400);
+
+                const qeTotal = qeQty * qePrice;
+                const qeTax = Number(item.tax) || 0;
+                subtotal += qeTotal;
+                taxTotal += (qeTotal * qeTax) / 100;
+                totalItemDiscount += Number(item.discount) || 0;
+                processedItems.push({
+                    isQuickEntry: true,
+                    name: qeName,
+                    quantity: qeQty,
+                    price: qePrice,
+                    total: qeTotal,
+                    tax: qeTax,
+                    gstRate: qeTax,
+                    discount: Number(item.discount) || 0
+                });
+                continue;
+            }
+
             // Use findById directly for better error handling if needed, but findOne with tenantId is safer
             const product = await Item.findOne({ _id: item.item || item._id, tenantId: req.tenantId }).session(session);
 
@@ -586,7 +742,8 @@ export const editInvoice = async (req: AuthenticatedRequest, res: Response): Pro
             // unlike InventoryService.addStock) mirroring how ReturnController already restocks
             // a sales return: Item.stockQty +/- delta, plus an ADJUST StockLog entry for audit.
             const qtyDelta = newQty - oldQty;
-            if (qtyDelta !== 0) {
+            // Quick Entry lines have no stock item, so an edit changes only the line itself.
+            if (qtyDelta !== 0 && !line.isQuickEntry) {
                 const product = await Item.findOne({ _id: line.item, tenantId }).session(session);
                 if (!product) throw new AppError(`Item not found: ${line.name || line.item}`, 404);
                 if (qtyDelta > 0 && product.stockQty < qtyDelta) {

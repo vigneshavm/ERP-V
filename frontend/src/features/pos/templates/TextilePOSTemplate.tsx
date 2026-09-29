@@ -7,6 +7,8 @@ import { POSCartGrid } from '../POSCartGrid';
 import { POSCustomerPanel } from '../POSCustomerPanel';
 import { POSFooter } from '../POSFooter';
 import { POSHeldBillsModal } from '../POSHeldBillsModal';
+import { POSBillReprint } from '../POSBillReprint';
+import { POSFailedBills } from '../POSFailedBills';
 import { POSTerminalInfo } from '../POSTerminalInfo';
 import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
 import { useLanguage } from "../../../contexts/LanguageContext";
@@ -274,6 +276,11 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                 </div>
                             </div>
                         )}
+
+                        <div className="px-2 pb-1">
+                            <POSBillReprint printSale={logic.printSale} />
+                            <POSFailedBills />
+                        </div>
 
                         <div className="p-2 bg-surface/50 border-t border-default">
                             <POSFooter

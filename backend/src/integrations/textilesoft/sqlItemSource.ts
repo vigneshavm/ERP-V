@@ -6,6 +6,7 @@ import { AppError } from "../../utils/AppError.js";
 import { info, warn } from "../../config/logger.js";
 import { buildItemPageQueries, buildSelect, buildStatsQuery, validateMapping, type BuiltQuery, type ItemQueryOptions } from "./mapping.js";
 import { loadDbConfig, openPool, streamRows, type ShopDbPool } from "./shopDbReader.js";
+import { healDbAccess } from "./sqlDbAccess.js";
 import { materializeShopItems } from "./sqlItemOverlay.js";
 import { transformRow } from "./transform.js";
 import type { ShopDbMapping, ShopItem } from "./types.js";
@@ -28,10 +29,14 @@ let mappingCache: { file: string; mtimeMs: number; mapping: ShopDbMapping } | un
 
 export async function getPool(): Promise<ShopDbPool> {
     if (!poolPromise) {
-        poolPromise = openPool(loadDbConfig()).catch((err) => {
-            poolPromise = undefined; // retry on the next request instead of caching the failure
-            throw err;
-        });
+        poolPromise = openPool(loadDbConfig())
+            // Right after a restore (e.g. one done in SSMS) the ERP login has lost its database access:
+            // re-apply it with the admin login and try once more.
+            .catch(async (err) => ((await healDbAccess(err)) ? openPool(loadDbConfig()) : Promise.reject(err)))
+            .catch((err) => {
+                poolPromise = undefined; // retry on the next request instead of caching the failure
+                throw err;
+            });
     }
     return poolPromise;
 }

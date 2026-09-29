@@ -8,6 +8,8 @@ import { POSCartGrid } from '../POSCartGrid';
 import { POSCustomerPanel } from '../POSCustomerPanel';
 import { POSFooter } from '../POSFooter';
 import { POSHeldBillsModal } from '../POSHeldBillsModal';
+import { POSBillReprint } from '../POSBillReprint';
+import { POSFailedBills } from '../POSFailedBills';
 import { POSTerminalInfo } from '../POSTerminalInfo';
 import { POSCategoryBrowserModal } from '../POSCategoryBrowserModal';
 import { POSMobileMenu } from '../POSMobileMenu';
@@ -341,6 +343,11 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                     </div>
                                 </div>
                             )}
+
+                            <div className="shrink-0 px-2 pb-1 bg-surface/50">
+                                <POSBillReprint printSale={logic.printSale} />
+                                <POSFailedBills />
+                            </div>
 
                             <div className="shrink-0">
                                 <POSFooter

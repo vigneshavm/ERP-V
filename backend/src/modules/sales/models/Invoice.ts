@@ -2,11 +2,14 @@ import mongoose, { Schema } from "mongoose";
 import { IInvoice } from "../../../interfaces/IInvoice.js";
 
 const invoiceItemSchema = new Schema({
+    // Required for stock items. A POS Quick Entry line (product type + typed price, no barcode/lot)
+    // has no Item: it keeps only name/price/qty/GST below and never moves stock.
     item: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Item",
-        required: true,
+        required: function (this: { isQuickEntry?: boolean }) { return !this.isQuickEntry; },
     },
+    isQuickEntry: { type: Boolean, default: false },
     name: { type: String },        // Denormalized for fast reads/receipts
     hsnCode: { type: String },     // HSN/SAC code at time of sale
     gstRate: { type: Number, default: 0 },  // GST % at time of sale

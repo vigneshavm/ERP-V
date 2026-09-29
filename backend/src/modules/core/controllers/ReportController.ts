@@ -318,7 +318,8 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
 const SHOP_DB_DOWN = 'The shop database could not be reached, so this report cannot be shown right now. Try again in a moment.';
 
 /**
- * GET /api/reports/shop-sales?dim=brand|category|counter|salesCounter|hour|day|product&range=TODAY|WEEK|MONTH|CUSTOM&from=&to=
+ * GET /api/reports/shop-sales?dim=brand|category|counter|salesCounter|hour|day|product&range=TODAY|WEEK|MONTH|CUSTOM&from=&to=&counter=
+ * `counter` (optional) limits any breakdown to one billing counter, named as in the dim=counter rows.
  * Sales breakdown for the Detailed Analytics reports: from the shop database in SQL mode, else from the ERP's POS
  * invoices (all of them for the period, computed here; the pages no longer aggregate whatever sales the browser
  * happens to hold). In SQL mode a shop-database failure is a 503: ERP-only figures would silently undercount.
@@ -329,6 +330,7 @@ export const getShopSalesReport = async (req: AuthenticatedRequest, res: Respons
         res.status(400).json({ message: 'dim must be brand, category, counter, salesCounter, hour, day or product' });
         return;
     }
+    const counter = typeof q.counter === 'string' && q.counter.trim() ? q.counter.trim().slice(0, 100) : undefined;
     if (!isSqlItemSource()) {
         const tenantId = req.user?.tenantId;
         if (!tenantId) {
@@ -336,7 +338,7 @@ export const getShopSalesReport = async (req: AuthenticatedRequest, res: Respons
             return;
         }
         try {
-            res.status(200).json(await erpSalesReport(q.dim, String(tenantId), q.range, q.from, q.to));
+            res.status(200).json(await erpSalesReport(q.dim, String(tenantId), q.range, q.from, q.to, counter));
         } catch (err) {
             error(`[reports] ERP sales breakdown (${q.dim}) failed - ${(err as Error).message}`);
             res.status(500).json({ message: 'Server Error', error: (err as Error).message });
@@ -344,7 +346,7 @@ export const getShopSalesReport = async (req: AuthenticatedRequest, res: Respons
         return;
     }
     try {
-        res.status(200).json(await sqlSalesReport(q.dim, q.range, q.from, q.to, req.tenantId?.toString()));
+        res.status(200).json(await sqlSalesReport(q.dim, q.range, q.from, q.to, req.tenantId?.toString(), counter));
     } catch (err) {
         warn(`[sql-reports] shop sales report (${q.dim}) failed - ${(err as Error).message}`);
         res.status(503).json({ message: SHOP_DB_DOWN });
@@ -353,7 +355,7 @@ export const getShopSalesReport = async (req: AuthenticatedRequest, res: Respons
 
 /**
  * Bills for one calendar day, for the Daily Sales Report's drill-down (click a ledger row -> see every bill).
- * GET /api/reports/shop-sales/day-bills?date=YYYY-MM-DD
+ * GET /api/reports/shop-sales/day-bills?date=YYYY-MM-DD&counter= (counter optional, as in the counter breakdown)
  */
 export const getShopSalesDayBills = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const date = req.query.date;
@@ -361,6 +363,9 @@ export const getShopSalesDayBills = async (req: AuthenticatedRequest, res: Respo
         res.status(400).json({ message: 'date must be YYYY-MM-DD' });
         return;
     }
+    const dayCounter = typeof req.query.counter === 'string' && req.query.counter.trim() ? req.query.counter.trim() : undefined;
+    const atCounter = <T extends { counterName?: unknown }>(rows: T[]): T[] =>
+        dayCounter ? rows.filter((r) => (String(r.counterName ?? '').trim() || 'Main Counter') === dayCounter) : rows;
     if (!isSqlItemSource()) {
         const tenantId = req.user?.tenantId;
         if (!tenantId) {
@@ -368,7 +373,7 @@ export const getShopSalesDayBills = async (req: AuthenticatedRequest, res: Respo
             return;
         }
         try {
-            res.status(200).json({ source: 'mongo', date, rows: await erpDayBills(String(tenantId), date) });
+            res.status(200).json({ source: 'mongo', date, rows: atCounter(await erpDayBills(String(tenantId), date)) });
         } catch (err) {
             error(`[reports] ERP day bills failed for ${date} - ${(err as Error).message}`);
             res.status(500).json({ message: 'Server Error', error: (err as Error).message });
@@ -376,7 +381,7 @@ export const getShopSalesDayBills = async (req: AuthenticatedRequest, res: Respo
         return;
     }
     try {
-        const rows = await sqlInvoiceListByDate(date);
+        const rows = atCounter(await sqlInvoiceListByDate(date));
         res.status(200).json({ source: 'sql', date, rows });
     } catch (err) {
         warn(`[sql-reports] day bills failed for ${date} - ${(err as Error).message}`);

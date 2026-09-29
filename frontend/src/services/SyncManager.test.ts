@@ -88,16 +88,33 @@ describe('SyncManager.syncOfflineSales', () => {
         expect(mockOfflineSalesUpdate).toHaveBeenCalledWith(1, { synced: true });
     });
 
-    test('a server rejection (success: false) is treated as a failure, not marked synced', async () => {
+    test('a server rejection (success: false) is not marked synced; it moves to Failed bills and stops retrying', async () => {
         mockPendingQueue([pendingSale()]);
         mockApiPost.mockResolvedValue({ data: { success: false, message: 'Duplicate invoice' } });
 
         await SyncManager.syncOfflineSales();
 
-        expect(mockOfflineSalesUpdate).toHaveBeenCalledWith(1, { retryCount: 1 });
+        expect(mockOfflineSalesUpdate).toHaveBeenCalledWith(1, expect.objectContaining({ retryCount: 1, failed: true, error: 'Duplicate invoice' }));
         expect(mockOfflineSalesUpdate).not.toHaveBeenCalledWith(1, { synced: true });
         expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ entityId: 'A01-000123', status: 'FAILED' }));
         expect(mockLogEvent).not.toHaveBeenCalledWith(expect.objectContaining({ status: 'SYNCED' }));
+    });
+
+    test('a 400 from the server moves the bill to Failed bills with the server reason', async () => {
+        mockPendingQueue([pendingSale()]);
+        mockApiPost.mockRejectedValue({ response: { status: 400, data: { message: 'Item not found: SHIRT' } }, message: 'Request failed with status code 400' });
+
+        await SyncManager.syncOfflineSales();
+
+        expect(mockOfflineSalesUpdate).toHaveBeenCalledWith(1, expect.objectContaining({ failed: true, error: 'Item not found: SHIRT' }));
+    });
+
+    test('bills already marked failed are not sent again', async () => {
+        mockPendingQueue([pendingSale({ failed: true, error: 'Item not found: SHIRT' })]);
+
+        await SyncManager.syncOfflineSales();
+
+        expect(mockApiPost).not.toHaveBeenCalled();
     });
 
     test('a network/throw error increments retryCount instead of marking synced', async () => {

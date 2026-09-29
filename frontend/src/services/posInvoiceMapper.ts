@@ -21,8 +21,13 @@ export const buildPosInvoicePayload = (sale: Sale) => {
         // Meter-based lines are billed by cut length, same convention as usePOSTotals.ts
         const quantity = item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty;
 
+        // Quick Entry lines (product type + typed price) have no stock item; the server saves them
+        // as plain lines without touching stock.
+        const isQuickEntry = (item as any).isQuickEntry === true || String(item.id ?? '').startsWith('QE-');
+
         return {
-            item: item.id || (item as any)._id,
+            item: isQuickEntry ? undefined : item.id || (item as any)._id,
+            isQuickEntry: isQuickEntry || undefined,
             name: (item as any).name,
             quantity,
             price: item.price,
@@ -57,6 +62,8 @@ export const buildPosInvoicePayload = (sale: Sale) => {
         // Wholesale/Retail (WR) Billing -- see backend's IInvoice.ts for the full rationale.
         // Omitted (undefined) for every existing caller, which createInvoice defaults to RETAIL.
         saleChannel: sale.saleChannel || undefined,
-        counterName: sale.counterName || undefined
+        counterName: sale.counterName || undefined,
+        // Whether line prices include GST (the shop-database writer needs it to split tax out correctly).
+        taxMode: sale.taxMode || undefined
     };
 };

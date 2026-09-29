@@ -11,6 +11,13 @@ import {
     uploadLedgerEvents,
     getLedgerEvents
 } from "../controllers/SyncController.js";
+import {
+    getSqlRestoreConfig,
+    getDiscoveredBackupFiles,
+    verifyBackupFile,
+    restoreSqlDatabase,
+    triggerTextileSync,
+} from "../controllers/SqlRestoreController.js";
 import { protect } from "../../../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -29,5 +36,13 @@ router.get("/conflicts", protect, getConflicts);
 
 router.get("/ledger", protect, getLedgerEvents);
 router.post("/ledger", protect, uploadLedgerEvents);
+
+// SQL Server Database Restore & Sync routes
+router.get("/sql/config", protect, getSqlRestoreConfig);
+router.get("/sql/backup-files", protect, getDiscoveredBackupFiles);
+router.post("/sql/backup-files", protect, getDiscoveredBackupFiles);
+router.post("/sql/verify", protect, verifyBackupFile);
+router.post("/sql/restore", protect, restoreSqlDatabase);
+router.post("/sql/sync", protect, triggerTextileSync);
 
 export default router;

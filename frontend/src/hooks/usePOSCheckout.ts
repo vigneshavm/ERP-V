@@ -10,7 +10,6 @@ import { Branch, Tenant } from "../types/tenant";
 import { DEFAULT_MIS_CONFIG } from "../types/tenant/mis";
 import { calculateLoyaltyPoints } from "../utils/loyalty";
 import { printSaleReceipt } from "../utils/printService";
-import { db } from "../services/db";
 import { TaxMode } from "../types/common";
 
 // Roles allowed to approve a discount above the tenant's MIS Controls cap. Mirrors
@@ -62,6 +61,13 @@ export const usePOSCheckout = ({
 
     const handleCheckout = useCallback(async () => {
         if (cart.length === 0 || isProcessing) return;
+
+        // A bill needs a billing counter: its number is "<counter>-<seq>" and reports group by it.
+        // Without one the bill used to be numbered "null-0001" and saved with no counter.
+        if (!activeCounterId) {
+            toast.error('Select a counter first — pick this till in the "Terminal" box at the top of the POS screen. (No counters listed? Add them in Settings → Branches.)', { position: 'top-center' });
+            return;
+        }
 
         // --- Discount Policy Enforcement (MIS Controls) ---
         // Blocks checkout client-side, before the receipt prints, rather than only
@@ -175,17 +181,16 @@ export const usePOSCheckout = ({
         }
 
         if (isOnline) {
-            dispatch(processSale(sale));
+            // Wait for the server so the receipt carries its bill number (processSale swaps sale.id
+            // for it); if the server can't be reached the provisional number stays and it's queued.
+            await dispatch(processSale(sale));
             // Increment the counter on the RESOLVED branch
             dispatch(incrementCounterBillNumber({ branchId: effectiveBranch.id, counterId: activeCounterId! }));
         } else {
             try {
-                await db.offlineSales.add({
-                    ...sale,
-                    synced: false,
-                    retryCount: 0
-                });
-                dispatch(processSale(sale));
+                // processSale queues the sale itself when offline; adding it here as well queued every
+                // offline bill twice, so it was sent to the server twice once back online.
+                await dispatch(processSale(sale));
                 dispatch(incrementCounterBillNumber({ branchId: effectiveBranch.id, counterId: activeCounterId! }));
             } catch (err) {
                 console.error('Failed to save offline sale:', err);

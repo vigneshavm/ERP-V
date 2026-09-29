@@ -293,13 +293,17 @@ export const MENU_ITEMS: MenuItem[] = [
         icon: Rocket,
         module: 'GROW',
         isGrow: true,
+        // Growth pages have no routes of their own: they render through ModuleRenderer on "/" and are
+        // selected with ?tab=<id> (same as the /grow, /marketing, /engagement redirects). Without a
+        // path, clicking one from any other route (e.g. /sales/invoices) only set activeTab, the URL
+        // stayed put, and useTabSync immediately switched the tab back -- so nothing navigated.
         children: [
-            { id: 'GROW', label: 'Dashboard', icon: Rocket, module: 'GROW', isGrow: true },
-            { id: 'GROW_GOOGLE', label: 'Google', icon: Globe, module: 'GROW', isGrow: true },
-            { id: 'GROW_MARKETING', label: 'Marketing', icon: Megaphone, module: 'GROW', isGrow: true },
-            { id: 'GROW_ENGAGEMENT', label: 'Engagement', icon: MessageCircle, module: 'GROW', isGrow: true },
-            { id: 'GROW_SYNC', label: 'Sync', icon: RefreshCw, module: 'GROW', isGrow: true },
-            { id: 'GROW_DATA', label: 'Data', icon: Database, module: 'GROW', isGrow: true },
+            { id: 'GROW_DASHBOARD', label: 'Dashboard', icon: Rocket, module: 'GROW', isGrow: true, path: '/?tab=GROW_DASHBOARD' },
+            { id: 'GROW_GOOGLE', label: 'Google', icon: Globe, module: 'GROW', isGrow: true, path: '/?tab=GROW_GOOGLE' },
+            { id: 'GROW_MARKETING', label: 'Marketing', icon: Megaphone, module: 'GROW', isGrow: true, path: '/?tab=GROW_MARKETING' },
+            { id: 'GROW_ENGAGEMENT', label: 'Engagement', icon: MessageCircle, module: 'GROW', isGrow: true, path: '/?tab=GROW_ENGAGEMENT' },
+            { id: 'GROW_SYNC', label: 'Sync', icon: RefreshCw, module: 'GROW', isGrow: true, path: '/?tab=GROW_SYNC' },
+            { id: 'GROW_DATA', label: 'Data', icon: Database, module: 'GROW', isGrow: true, path: '/?tab=GROW_DATA' },
         ]
     }
 ];

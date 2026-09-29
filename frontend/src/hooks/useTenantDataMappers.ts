@@ -98,14 +98,20 @@ export const useTenantDataMappers = () => {
     });
 
     const mapBranch = (b: any, tenants: Tenant[]) => {
-        const t = tenants.find(ten => ten.id === b.tenant_id);
+        const tenantId = b.tenant_id ?? b.tenantId;
+        const t = tenants.find(ten => ten.id === tenantId);
         return {
-            id: b.id,
-            tenantId: b.tenant_id,
+            id: b.id ?? b._id,
+            tenantId,
             name: b.name,
             city: b.city,
             address: b.address,
             sector: t?.sector || 'General',
+            // Billing counters (Settings -> Branches). The POS counter picker and bill numbering read
+            // these; they used to be dropped here, so the POS never had any counter to select.
+            counters: Array.isArray(b.counters)
+                ? b.counters.map((c: any) => ({ id: String(c.id), name: String(c.name ?? c.id), lastBillNumber: Number(c.lastBillNumber) || 0 }))
+                : [],
             updatedAt: b.updated_at || b.updatedAt
         };
     };

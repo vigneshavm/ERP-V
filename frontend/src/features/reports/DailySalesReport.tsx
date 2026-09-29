@@ -8,6 +8,7 @@ import {
 } from './components';
 import { DayBillsDialog } from './analytics/DayBillsDialog';
 import { useShopSales, withBasis } from './analytics/shopSales';
+import { useCounterFilter, withCounter } from './analytics/CounterFilter';
 
 interface DayRow {
     date: string;
@@ -122,7 +123,8 @@ const DailySalesReport: React.FC = () => {
     // "All time" has no dates; the API treats a missing range as the last 30 days, so send an explicit open-ended range.
     const from = period.period.from || ALL_TIME_FROM;
     const to = period.period.to || toIso(new Date());
-    const shop = useShopSales<DayRow>('day', from, to);
+    const counterFilter = useCounterFilter(from, to);
+    const shop = useShopSales<DayRow>('day', from, to, counterFilter.counter);
     const [metric, setMetric] = useState<Metric>('revenue');
     const [grain, setGrain] = useState<Grain>('day');
     const [openDay, setOpenDay] = useState<string | null>(null);
@@ -156,13 +158,14 @@ const DailySalesReport: React.FC = () => {
         <ReportPageShell<TableRow>
             reportId="daily-sales"
             period={period}
-            note={shop.loaded ? withBasis('One row per calendar day. Cancelled bills are excluded from sales and payment split, and counted separately. Click a day to see its bills.', shop.basis) : undefined}
+            filters={counterFilter.filters}
+            note={shop.loaded ? withBasis(withCounter('One row per calendar day. Cancelled bills are excluded from sales and payment split, and counted separately. Click a day to see its bills.', counterFilter.counter), shop.basis) : undefined}
             onRefresh={() => shop.reload(true)}
             loading={shop.loading}
             error={shop.error}
             isEmpty={shop.loaded && totals.transactions === 0 && totals.cancelledCount === 0}
             meta={{ resolvedSource: shop.source, asOf: shop.asOf, recordCount: rows.length }}
-            export={{ columns: EXPORT_COLUMNS, fetchRows: () => filteredRows }}
+            export={{ columns: EXPORT_COLUMNS, fetchRows: () => filteredRows, filterSummary: counterFilter.summary }}
         >
             {shop.loaded && (
                 <>
@@ -231,7 +234,7 @@ const DailySalesReport: React.FC = () => {
                         }] : undefined}
                         emptyMessage="No sales in this period."
                     />
-                    {openDay && <DayBillsDialog date={openDay} onClose={() => setOpenDay(null)} />}
+                    {openDay && <DayBillsDialog date={openDay} counter={counterFilter.counter} onClose={() => setOpenDay(null)} />}
                 </>
             )}
         </ReportPageShell>

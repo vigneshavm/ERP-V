@@ -34,6 +34,10 @@ export const fetchBranchesRaw = async (__tenantId: string | null) => {
     try {
         // Assuming backend has /api/branches endpoint
         const { data } = await api.get('/api/branches');
+        // BranchController answers with a plain array; older code expected { success, data }. Accept
+        // both -- expecting only the envelope made this return [] always, so the POS had no branches
+        // (and no billing counters) at all.
+        if (Array.isArray(data)) return data;
         if (data && data.success && Array.isArray(data.data)) {
             return data.data;
         }

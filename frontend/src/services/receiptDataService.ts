@@ -17,6 +17,9 @@ export interface ReceiptContext {
 // unchanged.
 const normalizeSaleResponse = (raw: any): Sale => {
     if (!raw.invoiceNo) return raw as Sale;
+    // Shop-database bills (source 'sql') are GST-inclusive and their line `price` is the ex-GST rate;
+    // the receipt needs the price as charged, i.e. line total / quantity.
+    const fromSql = raw.source === 'sql';
 
     return {
         id: raw.invoiceNo,
@@ -24,7 +27,7 @@ const normalizeSaleResponse = (raw: any): Sale => {
         items: (raw.items || []).map((item: any) => ({
             id: item.item?._id || item.item,
             name: item.name || item.item?.name || 'Item',
-            price: item.price,
+            price: fromSql && item.quantity ? item.total / item.quantity : item.price,
             qty: item.quantity,
             gstRate: item.gstRate ?? item.tax,
             discount: item.discount ?? 0
@@ -35,7 +38,7 @@ const normalizeSaleResponse = (raw: any): Sale => {
         customerName: raw.customer?.name,
         customerId: raw.customer?._id || raw.customer,
         sector: Sector.GENERAL,
-        taxMode: raw.taxMode,
+        taxMode: raw.taxMode ?? (fromSql ? 'INCLUSIVE' : undefined),
         status: 'COMPLETED',
         paymentStatus: raw.paymentStatus
     };
@@ -69,7 +72,70 @@ const normalizeTenantResponse = (raw: any): Tenant => {
 // back to the business profile's details (see generateReceiptJSON) instead of invented ones.
 const EMPTY_BRANCH: Branch = { id: '', name: '', city: '', address: '' };
 
+// A bill found by the POS "today's bill no." lookup (summary from the invoice list).
+export interface TodaysBillMatch {
+    _id: string;
+    invoiceNo: string;
+    createdAt: string;
+    totalAmount: number;
+    customerName?: string;
+    counterName?: string;
+}
+
+const isToday = (value: string | Date | undefined): boolean => {
+    if (!value) return false;
+    const d = new Date(value);
+    const now = new Date();
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+};
+
 export const receiptDataService = {
+    /**
+     * Finds TODAY's bills matching a bill number, from the same list the Daily Sales drill-down uses
+     * (GET /api/reports/shop-sales/day-bills): the shop database's bills (dbo.sales2) in SQL mode, else the
+     * ERP's own invoices. A plain number ("96" / "0096") matches the number at the end of the bill number
+     * (A96, INV-2026-00096); anything else (e.g. "A96") must match the whole bill number. Only bills the
+     * server has are found (a bill still in the offline queue isn't there yet).
+     */
+    findTodaysBills: async (query: string): Promise<TodaysBillMatch[]> => {
+        const q = query.trim().replace(/^#/, '');
+        if (!q) return [];
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+        const res = await api.get('/api/reports/shop-sales/day-bills', { params: { date: today } });
+        const rows: any[] = Array.isArray(res?.data?.rows) ? res.data.rows : [];
+        const isNumber = /^\d+$/.test(q);
+        const tailNumber = (no: string): number | null => {
+            const m = no.match(/(\d+)$/);
+            return m ? Number(m[1]) : null;
+        };
+
+        return rows
+            .filter(inv => !inv.cancelled && isToday(inv.createdAt))
+            .filter(inv => {
+                const no = String(inv.invoiceNo || '');
+                if (no.toLowerCase() === q.toLowerCase()) return true;
+                return isNumber && tailNumber(no) === Number(q);
+            })
+            .map(inv => ({
+                _id: String(inv._id),
+                invoiceNo: String(inv.invoiceNo),
+                createdAt: inv.createdAt,
+                totalAmount: Number(inv.totalAmount) || 0,
+                customerName: inv.customer?.name,
+                counterName: inv.counterName
+            }));
+    },
+
+    /** Loads one saved invoice by its database id, in the Sale shape the receipt printer uses. */
+    fetchSale: async (invoiceId: string): Promise<Sale> => {
+        const res = await api.get(`/api/sales-invoice/invoice/${invoiceId}`);
+        const raw = res?.data?.data || res?.data;
+        if (!raw) throw new Error(`Could not load invoice ${invoiceId}.`);
+        return normalizeSaleResponse(raw);
+    },
+
     /**
      * Fetches the live receipt context (Sale, Tenant, Branch) for an invoice --
      * GET /api/sales-invoice/invoice/:id, /api/business/profile, /api/branches (see those

@@ -1,8 +1,9 @@
 import { Document, Types } from "mongoose";
 
 export interface IInvoiceItem {
-    item: string | Types.ObjectId; // SKU or Name? Schema says ObjectId ref to Item
+    item: string | Types.ObjectId; // ObjectId ref to Item; absent on Quick Entry lines (see isQuickEntry)
     name?: string;       // Denormalized for display
+    isQuickEntry?: boolean; // POS Quick Entry line: no stock item, no stock movement
     hsnCode?: string;    // HSN/SAC code
     gstRate?: number;    // e.g. 5, 12, 18, 28
     quantity: number;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Building, MapPin, Plus, Settings2, Trash2, CheckCircle2, ChevronRight, Save } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Building, MapPin, Plus, Settings2, Trash2, CheckCircle2, Save, Check, X } from 'lucide-react';
 import api from '../../../services/api';
 import { Counter } from '../../../types/tenant/core';
 import { Button } from '@/components/shared/Button';
@@ -12,6 +13,16 @@ const BranchSettingsTab: React.FC = () => {
     const [newBranchName, setNewBranchName] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
+    const queryClient = useQueryClient();
+
+    // Billing counters: added / renamed / deleted here and saved straight away (not via Save Changes).
+    const [newCounterId, setNewCounterId] = useState('');
+    const [newCounterName, setNewCounterName] = useState('');
+    const [counterError, setCounterError] = useState('');
+    const [counterSaving, setCounterSaving] = useState(false);
+    const [editingCounterId, setEditingCounterId] = useState<string | null>(null);
+    const [editCounterName, setEditCounterName] = useState('');
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
     useEffect(() => {
         api.get('/api/stores').then(res => {
@@ -39,6 +50,48 @@ const BranchSettingsTab: React.FC = () => {
         } catch (err) {
             console.error(err);
         }
+    };
+
+    const saveCounters = async (counters: Counter[]): Promise<boolean> => {
+        if (!selectedBranch?._id) return false;
+        setCounterSaving(true);
+        setCounterError('');
+        try {
+            const res = await api.put(`/api/stores/${selectedBranch._id}`, { counters });
+            const saved = res.data?.counters ?? counters;
+            setBranches(prev => prev.map(b => b._id === selectedBranch._id ? { ...b, counters: saved } : b));
+            // The POS reads counters from the shared branch list; refresh it so the new counter shows there.
+            queryClient.invalidateQueries({ queryKey: ['branches'] });
+            return true;
+        } catch (err: any) {
+            setCounterError(err?.response?.data?.message || 'Could not save the counters. Please try again.');
+            return false;
+        } finally {
+            setCounterSaving(false);
+        }
+    };
+
+    const currentCounters: Counter[] = selectedBranch?.counters || [];
+
+    const handleAddCounter = async () => {
+        const id = newCounterId.trim().toUpperCase();
+        const name = newCounterName.trim() || id;
+        if (!id) { setCounterError('Enter a counter code, e.g. SERVER or C1.'); return; }
+        if (currentCounters.some(c => c.id.toUpperCase() === id)) { setCounterError(`Counter ${id} already exists in this branch.`); return; }
+        if (await saveCounters([...currentCounters, { id, name, lastBillNumber: 0 }])) {
+            setNewCounterId('');
+            setNewCounterName('');
+        }
+    };
+
+    const handleRenameCounter = async (id: string) => {
+        const name = editCounterName.trim();
+        if (!name) { setCounterError('A counter needs a name.'); return; }
+        if (await saveCounters(currentCounters.map(c => c.id === id ? { ...c, name } : c))) setEditingCounterId(null);
+    };
+
+    const handleDeleteCounter = async (id: string) => {
+        if (await saveCounters(currentCounters.filter(c => c.id !== id))) setConfirmDeleteId(null);
     };
 
     const handleLocalChange = (id: string, field: string, value: string) => {
@@ -189,37 +242,107 @@ const BranchSettingsTab: React.FC = () => {
                         </div>
 
                         {/* Billing Counters Section */}
-                        <div className="space-y-6 pb-8">
-                            <div className="flex items-center justify-between">
+                        <div className="space-y-4 pb-8">
+                            <div>
                                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Billing Counters Management</h4>
-                                <button className="text-[11px] font-black text-primary dark:text-primary flex items-center gap-1 hover:gap-2 transition-all">
-                                    MANAGE ALL <ChevronRight className="w-3 h-3" />
-                                </button>
+                                <p className="text-[11px] text-slate-500 mt-1">One counter per billing till. The POS asks each till to pick its counter; bills and the Billing counter reports use it. Changes here are saved immediately.</p>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {(selectedBranch?.counters || []).map((c: Counter) => (
-                                    <div key={c.id} className="group flex items-center justify-between p-5 bg-white dark:bg-slate-800/50 rounded-sm border border-slate-100 dark:border-slate-800 hover:border-primary/30 transition-all shadow-sm">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-400 group-hover:bg-primary-soft group-hover:text-primary transition-colors">
-                                                <Settings2 className="w-5 h-5" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-extrabold text-slate-800 dark:text-white">{c.name}</p>
-                                                <p className="text-[10px] text-slate-500 font-medium">Last: #{c.lastBillNumber}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 transition-colors">
-                                                <Settings2 className="w-4 h-4" />
-                                            </button>
-                                            <button className="p-2 hover:bg-danger-soft dark:hover:bg-danger-soft rounded-xl text-danger transition-colors">
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
+                            {/* Add counter */}
+                            <div className="flex flex-wrap items-end gap-2">
+                                <label className="flex flex-col gap-1">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Code</span>
+                                    <Input
+                                        value={newCounterId}
+                                        onChange={(e) => { setNewCounterId(e.target.value.toUpperCase()); setCounterError(''); }}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') handleAddCounter(); }}
+                                        placeholder="e.g. SERVER"
+                                        maxLength={20}
+                                        className="w-36"
+                                    />
+                                </label>
+                                <label className="flex flex-col gap-1 flex-1 min-w-[12rem]">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Name</span>
+                                    <Input
+                                        value={newCounterName}
+                                        onChange={(e) => { setNewCounterName(e.target.value); setCounterError(''); }}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') handleAddCounter(); }}
+                                        placeholder="e.g. Main counter (optional)"
+                                        maxLength={60}
+                                    />
+                                </label>
+                                <Button
+                                    onClick={handleAddCounter}
+                                    disabled={counterSaving || !newCounterId.trim()}
+                                    className="px-4 py-2.5 bg-primary text-white rounded-lg text-xs font-bold uppercase tracking-widest flex items-center gap-2 disabled:opacity-50"
+                                >
+                                    <Plus className="w-4 h-4" /> Add counter
+                                </Button>
                             </div>
+                            {counterError && <p className="text-xs text-danger">{counterError}</p>}
+
+                            {currentCounters.length === 0 ? (
+                                <p className="text-sm text-slate-500 py-6 text-center border border-dashed border-slate-200 dark:border-slate-700 rounded-sm">
+                                    No counters yet. Add one for each billing till — e.g. SERVER, USER1, USER2 (the same names Textilesoft uses keeps reports aligned).
+                                </p>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {currentCounters.map((c: Counter) => (
+                                        <div key={c.id} className="group flex items-center justify-between gap-2 p-4 bg-white dark:bg-slate-800/50 rounded-sm border border-slate-100 dark:border-slate-800 hover:border-primary/30 transition-all shadow-sm">
+                                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                <div className="w-10 h-10 shrink-0 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-xs font-black text-slate-500">
+                                                    {c.id.slice(0, 4)}
+                                                </div>
+                                                {editingCounterId === c.id ? (
+                                                    <Input
+                                                        autoFocus
+                                                        value={editCounterName}
+                                                        onChange={(e) => setEditCounterName(e.target.value)}
+                                                        onKeyDown={(e) => { if (e.key === 'Enter') handleRenameCounter(c.id); if (e.key === 'Escape') setEditingCounterId(null); }}
+                                                        maxLength={60}
+                                                        className="flex-1"
+                                                    />
+                                                ) : (
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-extrabold text-slate-800 dark:text-white truncate">{c.name}</p>
+                                                        <p className="text-[10px] text-slate-500 font-medium">Code {c.id}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-1 shrink-0">
+                                                {editingCounterId === c.id ? (
+                                                    <>
+                                                        <button type="button" title="Save name" disabled={counterSaving} onClick={() => handleRenameCounter(c.id)} className="p-2 rounded-xl text-success hover:bg-success/10 disabled:opacity-50">
+                                                            <Check className="w-4 h-4" />
+                                                        </button>
+                                                        <button type="button" title="Cancel" onClick={() => setEditingCounterId(null)} className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    </>
+                                                ) : confirmDeleteId === c.id ? (
+                                                    <>
+                                                        <button type="button" disabled={counterSaving} onClick={() => handleDeleteCounter(c.id)} className="px-2 py-1 rounded-lg text-[11px] font-bold bg-danger text-white disabled:opacity-50">
+                                                            Delete
+                                                        </button>
+                                                        <button type="button" onClick={() => setConfirmDeleteId(null)} className="px-2 py-1 rounded-lg text-[11px] font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                            Keep
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button type="button" title="Rename" onClick={() => { setEditingCounterId(c.id); setEditCounterName(c.name); setConfirmDeleteId(null); setCounterError(''); }} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 transition-colors">
+                                                            <Settings2 className="w-4 h-4" />
+                                                        </button>
+                                                        <button type="button" title="Delete counter" onClick={() => { setConfirmDeleteId(c.id); setEditingCounterId(null); }} className="p-2 hover:bg-danger-soft rounded-xl text-danger transition-colors">
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 ) : (

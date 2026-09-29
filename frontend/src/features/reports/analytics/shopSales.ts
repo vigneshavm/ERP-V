@@ -21,8 +21,11 @@ interface ShopSalesResponse<T> {
 /** Stable empty rows while loading, so table and chart memos don't see a new array on every render. */
 const NO_ROWS: never[] = [];
 
-export function useShopSales<T>(dim: ShopSalesDim, from: string, to: string) {
-    const { data, loading, error, reload } = useReportData<ShopSalesResponse<T>>('/api/reports/shop-sales', { dim, range: 'CUSTOM', from, to });
+/** `counter` (optional) limits the breakdown to one billing counter, as named by dim 'counter'. */
+export function useShopSales<T>(dim: ShopSalesDim, from: string, to: string, counter = '', enabled = true) {
+    const { data, loading, error, reload } = useReportData<ShopSalesResponse<T>>(
+        '/api/reports/shop-sales', { dim, range: 'CUSTOM', from, to, counter }, { enabled },
+    );
     return {
         rows: (data?.rows ?? NO_ROWS) as T[],
         asOf: data?.asOf ?? null,

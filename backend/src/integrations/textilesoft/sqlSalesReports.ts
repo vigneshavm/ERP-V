@@ -155,6 +155,12 @@ const daySpan = (fromIso: string, toIso: string): number =>
 
 const hourLabel = (h: number): string => (h === 0 ? "12 AM" : h < 12 ? `${h} AM` : h === 12 ? "12 PM" : `${h - 12} PM`);
 
+/**
+ * A bill's billing counter, as named in the "counter" breakdown: the counter name, else the machine name,
+ * else "Main Counter". The counter filter on every other breakdown matches this same expression.
+ */
+export const COUNTER_LABEL = "COALESCE(NULLIF(LTRIM(RTRIM(s.[countername])), ''), NULLIF(LTRIM(RTRIM(s.[systemname])), ''), 'Main Counter')";
+
 export interface SalesReportResult {
     rows: Record<string, unknown>[];
     range: { from: string; to: string };
@@ -316,7 +322,14 @@ export async function sqlSalesIntelligence(fromQ?: string, toQ?: string): Promis
     };
 }
 
-export async function sqlSalesReport(dim: SalesReportDim, range: string | undefined, fromQ?: string, toQ?: string, tenantId?: string): Promise<SalesReportResult> {
+export async function sqlSalesReport(
+    dim: SalesReportDim,
+    range: string | undefined,
+    fromQ?: string,
+    toQ?: string,
+    tenantId?: string,
+    counter?: string,
+): Promise<SalesReportResult> {
     const asOf = await shopAsOf();
     const end = validDate(toQ) ?? asOf ?? new Date().toISOString().slice(0, 10);
     const span = range === "TODAY" ? 0 : range === "WEEK" ? -6 : -29;
@@ -326,6 +339,15 @@ export async function sqlSalesReport(dim: SalesReportDim, range: string | undefi
         { name: "to", value: end },
     ];
     const period = "CAST(@from AS date) AND CAST(@to AS date)";
+
+    // Optional billing-counter filter (a name from the "counter" breakdown). Bill-level queries match the
+    // header's counter directly; line-level ones keep only lines of that counter's bills in the period.
+    const counterName = counter?.trim();
+    if (counterName) p.push({ name: "counter", value: counterName });
+    const headerCut = counterName ? ` AND ${COUNTER_LABEL} = @counter` : "";
+    const lineCut = counterName
+        ? ` AND l.[systemidbill] IN (SELECT s.[sysidandbill] FROM dbo.[sales2] AS s WHERE s.[date] BETWEEN ${period} AND ${COUNTER_LABEL} = @counter)`
+        : "";
 
     let rows: Record<string, unknown>[] = [];
     if (dim === "brand") {
@@ -338,7 +360,7 @@ export async function sqlSalesReport(dim: SalesReportDim, range: string | undefi
                     `ISNULL(SUM(CASE WHEN l.[status] <> '1' THEN TRY_CAST(l.[net_amount] AS float) ELSE 0 END), 0) AS revenue, ` +
                     `SUM(CASE WHEN l.[status] <> '1' THEN 1 ELSE 0 END) AS cnt, ` +
                     `ISNULL(SUM(CASE WHEN l.[status] <> '1' THEN TRY_CAST(l.[qty] AS float) ELSE 0 END), 0) AS items ` +
-                    `FROM dbo.[salsntry] AS l WHERE l.[date] BETWEEN ${period} GROUP BY l.[barcode]`,
+                    `FROM dbo.[salsntry] AS l WHERE l.[date] BETWEEN ${period}${lineCut} GROUP BY l.[barcode]`,
                 p,
             ),
             barcodeCatalog(),
@@ -348,15 +370,15 @@ export async function sqlSalesReport(dim: SalesReportDim, range: string | undefi
         const label = "COALESCE(NULLIF(LTRIM(RTRIM(l.[ProGroupName])), ''), 'Uncategorized')";
         const data = await run(
             `SELECT TOP 50 ${label} AS name, ISNULL(SUM(TRY_CAST(l.[net_amount] AS float)), 0) AS revenue, COUNT(*) AS cnt, ISNULL(SUM(TRY_CAST(l.[qty] AS float)), 0) AS items ` +
-                `FROM dbo.[salsntry] AS l WHERE l.[status] <> '1' AND l.[date] BETWEEN ${period} GROUP BY ${label} ORDER BY revenue DESC`,
+                `FROM dbo.[salsntry] AS l WHERE l.[status] <> '1' AND l.[date] BETWEEN ${period}${lineCut} GROUP BY ${label} ORDER BY revenue DESC`,
             p,
         );
         rows = data.map((r) => ({ name: String(r.name), revenue: round2(num(r.revenue)), count: num(r.cnt), items: num(r.items) }));
     } else if (dim === "counter") {
-        const label = "COALESCE(NULLIF(LTRIM(RTRIM(s.[countername])), ''), NULLIF(LTRIM(RTRIM(s.[systemname])), ''), 'Main Counter')";
+        const label = COUNTER_LABEL;
         const data = await run(
             `SELECT ${label} AS name, ISNULL(SUM(TRY_CAST(s.[tot_netamnt] AS float)), 0) AS revenue, COUNT(*) AS cnt ` +
-                `FROM dbo.[sales2] AS s WHERE s.[status] <> '1' AND s.[date] BETWEEN ${period} GROUP BY ${label} ORDER BY revenue DESC`,
+                `FROM dbo.[sales2] AS s WHERE s.[status] <> '1' AND s.[date] BETWEEN ${period}${headerCut} GROUP BY ${label} ORDER BY revenue DESC`,
             p,
         );
         rows = data.map((r) => ({ name: String(r.name), revenue: round2(num(r.revenue)), count: num(r.cnt) }));
@@ -374,7 +396,7 @@ export async function sqlSalesReport(dim: SalesReportDim, range: string | undefi
                         `ISNULL(SUM(CASE WHEN l.[status] <> '1' THEN TRY_CAST(l.[net_amount] AS float) ELSE 0 END), 0) AS revenue, ` +
                         `SUM(CASE WHEN l.[status] <> '1' THEN 1 ELSE 0 END) AS cnt, ` +
                         `ISNULL(SUM(CASE WHEN l.[status] <> '1' THEN TRY_CAST(l.[qty] AS float) ELSE 0 END), 0) AS items ` +
-                        `FROM dbo.[salsntry] AS l WHERE l.[date] BETWEEN ${period} GROUP BY l.[barcode]`,
+                        `FROM dbo.[salsntry] AS l WHERE l.[date] BETWEEN ${period}${lineCut} GROUP BY l.[barcode]`,
                     p,
                 ),
                 barcodeCatalog(),
@@ -387,7 +409,7 @@ export async function sqlSalesReport(dim: SalesReportDim, range: string | undefi
                     `ISNULL(SUM(CASE WHEN l.[status] <> '1' THEN TRY_CAST(l.[net_amount] AS float) ELSE 0 END), 0) AS revenue, ` +
                     `SUM(CASE WHEN l.[status] <> '1' THEN 1 ELSE 0 END) AS cnt, ` +
                     `ISNULL(SUM(CASE WHEN l.[status] <> '1' THEN TRY_CAST(l.[qty] AS float) ELSE 0 END), 0) AS items ` +
-                    `FROM dbo.[salsntry] AS l WHERE l.[date] BETWEEN ${period} GROUP BY ${label} ORDER BY revenue DESC`,
+                    `FROM dbo.[salsntry] AS l WHERE l.[date] BETWEEN ${period}${lineCut} GROUP BY ${label} ORDER BY revenue DESC`,
                 p,
             );
             rows = data.map((r) => ({
@@ -409,7 +431,7 @@ export async function sqlSalesReport(dim: SalesReportDim, range: string | undefi
                     `ISNULL(SUM(CASE WHEN l.[status] <> '1' THEN TRY_CAST(l.[net_amount] AS float) ELSE 0 END), 0) AS revenue, ` +
                     `SUM(CASE WHEN l.[status] <> '1' THEN 1 ELSE 0 END) AS cnt, ` +
                     `ISNULL(SUM(CASE WHEN l.[status] <> '1' THEN TRY_CAST(l.[qty] AS float) ELSE 0 END), 0) AS items ` +
-                    `FROM dbo.[salsntry] AS l WHERE l.[date] BETWEEN ${period} GROUP BY l.[barcode]`,
+                    `FROM dbo.[salsntry] AS l WHERE l.[date] BETWEEN ${period}${lineCut} GROUP BY l.[barcode]`,
                 p,
             ),
             barcodeCatalog(),
@@ -418,7 +440,7 @@ export async function sqlSalesReport(dim: SalesReportDim, range: string | undefi
     } else if (dim === "hour") {
         const data = await run(
             `SELECT DATEPART(hour, s.[datetime]) AS h, ISNULL(SUM(TRY_CAST(s.[tot_netamnt] AS float)), 0) AS revenue, COUNT(*) AS cnt ` +
-                `FROM dbo.[sales2] AS s WHERE s.[status] <> '1' AND s.[datetime] IS NOT NULL AND s.[date] BETWEEN ${period} GROUP BY DATEPART(hour, s.[datetime])`,
+                `FROM dbo.[sales2] AS s WHERE s.[status] <> '1' AND s.[datetime] IS NOT NULL AND s.[date] BETWEEN ${period}${headerCut} GROUP BY DATEPART(hour, s.[datetime])`,
             p,
         );
         const byHour = new Map(data.map((r) => [num(r.h), r]));
@@ -442,7 +464,7 @@ export async function sqlSalesReport(dim: SalesReportDim, range: string | undefi
                 `ISNULL(SUM(CASE WHEN s.[status] <> '1' THEN TRY_CAST(s.[s_card_amt] AS float) ELSE 0 END), 0) AS card, ` +
                 `ISNULL(SUM(CASE WHEN s.[status] <> '1' THEN TRY_CAST(s.[s_credit_amt] AS float) ELSE 0 END), 0) AS credit, ` +
                 `ISNULL(SUM(CASE WHEN s.[status] <> '1' THEN TRY_CAST(s.[s_googlepay] AS float) ELSE 0 END), 0) AS upi ` +
-                `FROM dbo.[sales2] AS s WHERE s.[date] BETWEEN ${period} GROUP BY CONVERT(varchar(10), s.[date], 23)`,
+                `FROM dbo.[sales2] AS s WHERE s.[date] BETWEEN ${period}${headerCut} GROUP BY CONVERT(varchar(10), s.[date], 23)`,
             p,
         );
         const byDay = new Map(data.map((r) => [String(r.d), r]));

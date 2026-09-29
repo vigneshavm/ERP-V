@@ -43,7 +43,7 @@ const keyOf = (id: string): string | undefined => {
 const NUM = (col: string): string => `ISNULL(TRY_CAST(s.[${col}] AS float), 0)`;
 const HEADER_COLS =
     `s.[No] AS no, s.[billno] AS billno, s.[mode] AS mode, CONVERT(varchar(10), s.[date], 23) AS d, CONVERT(varchar(19), s.[datetime], 126) AS dt, ` +
-    `s.[cus_name] AS cusName, s.[mbl_no] AS phone, s.[city] AS city, s.[countername] AS counter, s.[UserID] AS userId, s.[sysidandbill] AS sysid, ` +
+    `s.[cus_name] AS cusName, s.[mbl_no] AS phone, s.[city] AS city, s.[countername] AS counter, s.[systemname] AS sysname, s.[UserID] AS userId, s.[sysidandbill] AS sysid, ` +
     `${NUM("tot_qty")} AS qty, ${NUM("tot_netamnt")} AS total, ${NUM("s_credit_amt")} AS credit, ${NUM("s_recevied_cashamt")} AS cash, ` +
     `${NUM("s_card_amt")} AS card, ${NUM("s_googlepay")} AS gpay, ${NUM("bill_less")} AS billLess, ${NUM("roundoff")} AS roundOff`;
 
@@ -65,7 +65,8 @@ function invoiceHeader(r: Row): Doc {
         _id: `${SQL_ID_PREFIX}${str(r.sysid)}`,
         invoiceNo: str(r.mode) || String(r.billno ?? ""),
         saleChannel: "RETAIL",
-        counterName: str(r.counter) || undefined,
+        // Same fallback as the reports' counter breakdown (COUNTER_LABEL): counter name, else machine name.
+        counterName: str(r.counter) || str(r.sysname) || undefined,
         customer: { _id: "sql-customer", name: str(r.cusName) || "Walk-in Customer", phone: str(r.phone) },
         createdBy: { name: str(r.userId) || "Textilesoft" },
         items: [],

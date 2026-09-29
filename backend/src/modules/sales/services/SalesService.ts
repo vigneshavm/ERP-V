@@ -148,7 +148,7 @@ export class SalesService {
         const transformedInvoice = invoice.toObject();
         transformedInvoice.items = transformedInvoice.items.map((item: any) => ({
             ...item,
-            name: item.item?.name || 'Item',
+            name: item.item?.name || item.name || 'Item', // Quick Entry lines have no item, only their own name
             sku: item.item?.sku || ''
         }));
 

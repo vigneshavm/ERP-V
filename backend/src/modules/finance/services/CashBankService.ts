@@ -254,7 +254,7 @@ export class CashBankService {
         const updated = await this.cashBankRepository.updateTransaction(id, tenantId, {
             reconciled: newState,
             reconciledDate: newState ? new Date() : undefined,
-            reconciledBy: newState ? new mongoose.Types.ObjectId(userId) : undefined
+            reconciledBy: newState ? userId : undefined
         });
 
         return updated;
@@ -264,7 +264,7 @@ export class CashBankService {
         const result = await this.cashBankRepository.updateManyTransactions(ids, tenantId, {
             reconciled,
             reconciledDate: reconciled ? new Date() : undefined,
-            reconciledBy: reconciled ? new mongoose.Types.ObjectId(userId) : undefined
+            reconciledBy: reconciled ? userId : undefined
         });
         return result;
     }
@@ -322,16 +322,18 @@ export class CashBankService {
         amount: number;
         returnId: string;
         userId: IdRef;
-        tenantId: string;
+        tenantId?: string | IdRef;
     }): Promise<void> {
-        const { refundMethod, bankAccountId, amount, returnId, userId, tenantId } = input;
+        const { refundMethod, bankAccountId, amount, returnId, userId } = input;
+        const tenantId = (input.tenantId || userId).toString();
+
         if (refundMethod === "bank_transfer" && bankAccountId) {
             const bankAcc = await this.cashBankRepository.findAccountById(bankAccountId.toString(), tenantId);
             if (!bankAcc) return;
             await this.cashBankRepository.createTransaction({
                 type: "in",
                 amount,
-                toAccount: bankAccountId,
+                toAccount: bankAccountId.toString(),
                 fromAccount: "purchase_return",
                 description: `Refund for purchase return ${returnId}`,
                 date: new Date(),
@@ -351,11 +353,27 @@ export class CashBankService {
         }
     }
 
-    async reversePurchaseReturnBankRefund(input: { bankAccountId: IdRef; amount: number; returnId: string; userId: IdRef; tenantId: string }): Promise<void> {
-        const { bankAccountId, amount, tenantId } = input;
+    async reversePurchaseReturnBankRefund(input: {
+        bankAccountId: IdRef;
+        amount: number;
+        returnId: string;
+        userId: IdRef;
+        tenantId?: string | IdRef;
+    }): Promise<void> {
+        const { bankAccountId, amount } = input;
+        const tenantId = (input.tenantId || input.userId).toString();
         const bankAcc = await this.cashBankRepository.findAccountById(bankAccountId.toString(), tenantId);
         if (!bankAcc) return;
 
         await this.cashBankRepository.updateBalance(bankAccountId.toString(), tenantId, -amount);
+    }
+
+    async reversePurchaseReturnCashRefund(input: {
+        amount: number;
+        returnId: string;
+        userId: IdRef;
+        tenantId?: string | IdRef;
+    }): Promise<void> {
+        info(`Reversed cash purchase return refund of ${input.amount} for return ${input.returnId}`);
     }
 }

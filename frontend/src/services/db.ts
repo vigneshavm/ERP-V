@@ -7,6 +7,11 @@ export interface OfflineSale extends Sale {
     localId?: number;
     synced: boolean;
     retryCount: number;
+    /** The server rejected this bill: it is no longer retried and shows in the POS "Failed bills" list. */
+    failed?: boolean;
+    /** The server's reason for rejecting it. */
+    error?: string;
+    failedAt?: string;
 }
 
 export interface SyncMetadata {

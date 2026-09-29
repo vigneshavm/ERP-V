@@ -31,7 +31,8 @@ import {
   Banknote,
   Clock,
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  Loader2
 } from 'lucide-react';
 import {
   BarChart,
@@ -64,6 +65,30 @@ const TrendBadge: React.FC<{ pct: number | null; increaseIsBad?: boolean }> = ({
   );
 };
 
+// Load state for a KPI card: spinner until its own API call answers, never a fallback number.
+type LoadStatus = 'loading' | 'ready' | 'error';
+
+const KpiValue: React.FC<{ status: LoadStatus; onRetry: () => void; children: React.ReactNode }> = ({ status, onRetry, children }) => {
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center h-10" role="status" aria-label="Loading">
+        <Loader2 className="w-7 h-7 text-muted animate-spin" />
+      </div>
+    );
+  }
+  if (status === 'error') {
+    return (
+      <div className="flex items-baseline gap-3 h-10">
+        <span className="text-4xl font-display font-black text-muted tracking-tighter">—</span>
+        <button type="button" onClick={onRetry} className="text-[10px] font-black uppercase tracking-widest text-danger hover:underline">
+          Retry
+        </button>
+      </div>
+    );
+  }
+  return <>{children}</>;
+};
+
 const pctChange = (current: number, previous: number): number | null =>
   previous > 0 ? ((current - previous) / previous) * 100 : null;
 
@@ -90,14 +115,35 @@ const Dashboard: React.FC = () => {
   const branchName = useMemo(() => getBranchName(currentBranchId), [getBranchName, currentBranchId]);
   const sectorName = currentSector || 'General';
 
+  // Per-card load status for THIS visit. Redux may still hold data from an earlier page, and the
+  // slices share one isLoading flag across thunks, so neither tells us whether our call answered.
+  const [statsStatus, setStatsStatus] = useState<LoadStatus>('loading');
+  const [stockStatus, setStockStatus] = useState<LoadStatus>('loading');
+  const [customersStatus, setCustomersStatus] = useState<LoadStatus>('loading');
+
+  // Track a thunk; `showSpinner` is false for background polls so values don't flicker.
+  const track = (promise: Promise<any>, setStatus: (s: LoadStatus) => void, showSpinner = true) => {
+    if (showSpinner) setStatus('loading');
+    promise
+      .then((action: any) => {
+        if (action?.meta?.requestStatus === 'fulfilled') setStatus('ready');
+        else if (showSpinner) setStatus('error');
+      })
+      .catch(() => { if (showSpinner) setStatus('error'); });
+  };
+
+  const loadStats = (showSpinner = true) => track(dispatch(getDashboardStats()), setStatsStatus, showSpinner);
+  const loadStock = () => track(dispatch(getStockReport()), setStockStatus);
+  const loadCustomers = () => track(dispatch(getAllCustomers()), setCustomersStatus);
+
   const fetchAllData = () => {
-    dispatch(getDashboardStats());
-    dispatch(getStockReport());
+    loadStats();
+    loadStock();
     dispatch(getCustomerReport());
     dispatch(getAllExpenses());
     dispatch(getSupplierAnalytics());
     dispatch(fetchPurchaseOrders());
-    dispatch(getAllCustomers());
+    loadCustomers();
   };
 
   useEffect(() => {
@@ -105,7 +151,7 @@ const Dashboard: React.FC = () => {
 
     // Real-Time Pulse: Poll for high-priority updates every 30 seconds
     const interval = setInterval(() => {
-      dispatch(getDashboardStats());
+      loadStats(false);
       dispatch(fetchPurchaseOrders());
     }, 30000);
 
@@ -140,15 +186,11 @@ const Dashboard: React.FC = () => {
     [products]
   );
 
-  const totalStockQuantity = useMemo(() => {
-    if (stockReport && stockReport.totalStockQuantity !== undefined) return stockReport.totalStockQuantity;
-    return products.reduce((acc: number, curr: any) => acc + (curr.stockQty ?? curr.stock ?? 0), 0);
-  }, [stockReport, products]);
+  // Only the API's own figures — no client-side fallback from the product/expense lists, which
+  // can be stale or partial and would show a misleading number.
+  const totalStockQuantity: number = stockReport?.totalStockQuantity ?? 0;
 
-  const totalExpensesLive = useMemo(() => {
-    if (dashboardStats && dashboardStats.totalExpenses !== undefined) return dashboardStats.totalExpenses;
-    return (activeExpensesList as any[]).reduce((sum, exp) => sum + exp.amount, 0);
-  }, [dashboardStats, activeExpensesList]);
+  const totalExpensesLive: number = dashboardStats?.totalExpenses ?? 0;
 
   const totalCustomersCount = useMemo(() => activeCustomersList.length, [activeCustomersList]);
 
@@ -480,7 +522,7 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold text-muted uppercase tracking-[0.2em] ">Business Overview</h2>
             <div className="flex items-center gap-3 glass-panel px-4 py-2 hover:border-primary/40 transition-all">
-              <span className="text-[9px] font-black text-muted uppercase tracking-widest ">Sync: {lastUpdate}{dashboardStats?.asOf ? ` · Shop data to ${dashboardStats.asOf}` : ''}</span>
+              <span className="text-[9px] font-black text-muted uppercase tracking-widest ">Sync: {lastUpdate}{statsStatus === 'ready' && dashboardStats?.asOf ? ` · Shop data to ${dashboardStats.asOf}` : ''}</span>
               <div className="w-px h-3 bg-default opacity-50" />
               <RotateCcw
                 onClick={handleRefresh}
@@ -502,12 +544,14 @@ const Dashboard: React.FC = () => {
                     </div>
                     <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Revenue</span>
                   </div>
-                  <TrendBadge pct={revenueTrend} />
+                  {statsStatus === 'ready' && <TrendBadge pct={revenueTrend} />}
                 </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-sm font-black text-primary ">₹</span>
-                  <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-primary transition-colors">{(totalRevenueLive / 100000).toFixed(2)}L</span>
-                </div>
+                <KpiValue status={statsStatus} onRetry={() => loadStats()}>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-sm font-black text-primary ">₹</span>
+                    <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-primary transition-colors">{(totalRevenueLive / 100000).toFixed(2)}L</span>
+                  </div>
+                </KpiValue>
               </div>
               <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
                 <ResponsiveContainer width="100%" height="100%">
@@ -529,12 +573,14 @@ const Dashboard: React.FC = () => {
                     </div>
                     <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Expenses</span>
                   </div>
-                  <TrendBadge pct={expenseTrend} increaseIsBad />
+                  {statsStatus === 'ready' && <TrendBadge pct={expenseTrend} increaseIsBad />}
                 </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-sm font-black text-danger ">₹</span>
-                  <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-danger transition-colors">{(totalExpensesLive / 100000).toFixed(2)}L</span>
-                </div>
+                <KpiValue status={statsStatus} onRetry={() => loadStats()}>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-sm font-black text-danger ">₹</span>
+                    <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-danger transition-colors">{(totalExpensesLive / 100000).toFixed(2)}L</span>
+                  </div>
+                </KpiValue>
               </div>
               <div className="absolute bottom-0 left-0 right-0 h-14 opacity-30 group-hover:opacity-60 transition-all duration-700">
                 <ResponsiveContainer width="100%" height="100%">
@@ -556,16 +602,18 @@ const Dashboard: React.FC = () => {
                     </div>
                     <span className="text-[11px] font-black text-secondary uppercase tracking-[0.2em]">Customer Base</span>
                   </div>
-                  {newCustomers30d > 0 && (
+                  {customersStatus === 'ready' && newCustomers30d > 0 && (
                     <div className="flex items-center gap-1 text-[10px] font-black text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-sm">
                       <TrendingUp className="w-3 h-3" />
                       +{newCustomers30d} new (30d)
                     </div>
                   )}
                 </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-info transition-colors">{totalCustomersCount}</span>
-                </div>
+                <KpiValue status={customersStatus} onRetry={loadCustomers}>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-info transition-colors">{totalCustomersCount}</span>
+                  </div>
+                </KpiValue>
               </div>
             </div>
 
@@ -582,9 +630,11 @@ const Dashboard: React.FC = () => {
                   </div>
                   
                 </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-warning transition-colors">{totalStockQuantity.toLocaleString()}</span>
-                </div>
+                <KpiValue status={stockStatus} onRetry={loadStock}>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-display font-black text-main tracking-tighter group-hover:text-warning transition-colors">{totalStockQuantity.toLocaleString()}</span>
+                  </div>
+                </KpiValue>
               </div>
             </div>
           </div>

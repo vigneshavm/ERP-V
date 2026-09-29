@@ -53,7 +53,7 @@ export const useTenantData = (user: any) => {
         const mappedBranches = rawBranches ? rawBranches.map((b: any) => mapBranch(b, allTenants)) : [];
 
         const reconciledTenants = allTenants.map(t => {
-            const tenantBranches = rawBranches?.filter((b: any) => b.tenant_id === t.id) || [];
+            const tenantBranches = rawBranches?.filter((b: any) => (b.tenant_id ?? b.tenantId) === t.id) || [];
             const updatedLocations = (t.locations || []).map((loc: any) => ({
                 ...loc,
                 branches: (loc.branches || []).map((b: any) => {

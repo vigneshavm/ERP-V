@@ -49,7 +49,7 @@ export const Modules = {
     Marketing: notConnected('Marketing campaigns', CAMPAIGNS_DETAIL),
     MarketingTools: () => import("../features/business/MarketingTools"),
     GoogleBusiness: notConnected('Google Business Profile', 'Reviews, posts and insights need the Google Business Profile API, which isn\'t connected; the ERP\'s Google sync is not implemented yet.'),
-    Sync: notConnected('Sync & backup'),
+    Sync: () => import("../features/system/Sync/SqlRestoreManager"),
     DeviceIntelligence: () => import("../features/system/Sync/DeviceIntelligence"),
     Data: () => import("../features/system/Data/index"),
     GrowReports: notConnected('Growth reports'),

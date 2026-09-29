@@ -166,11 +166,12 @@ const BillDetailDialog: React.FC<{ billId: string; onClose: () => void }> = ({ b
  * Every bill on one day (shop database in SQL mode, else the ERP POS invoices; both from the server), with a
  * "Cancelled" quick filter and totals. Clicking a bill opens its line items.
  */
-export const DayBillsDialog: React.FC<{ date: string; onClose: () => void }> = ({ date, onClose }) => {
+export const DayBillsDialog: React.FC<{ date: string; counter?: string; onClose: () => void }> = ({ date, counter = '', onClose }) => {
     const [remote, setRemote] = useState<{ bills: BillRow[] | null; error: string; done: boolean }>({ bills: null, error: '', done: false });
     useEffect(() => {
         let cancelled = false;
-        api.get('/api/reports/shop-sales/day-bills', { params: { date } })
+        // Same billing-counter filter as the report the dialog was opened from.
+        api.get('/api/reports/shop-sales/day-bills', { params: counter ? { date, counter } : { date } })
             .then(res => {
                 if (cancelled) return;
                 const rows: Record<string, any>[] = Array.isArray(res.data?.rows) ? res.data.rows : [];
@@ -192,7 +193,7 @@ export const DayBillsDialog: React.FC<{ date: string; onClose: () => void }> = (
                 if (!cancelled) setRemote({ bills: null, error: err?.response?.data?.message || 'Failed to load bills for this day', done: true });
             });
         return () => { cancelled = true; };
-    }, [date]);
+    }, [date, counter]);
 
     const bills = remote.bills;
     const loading = !remote.done;

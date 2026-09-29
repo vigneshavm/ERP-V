@@ -73,7 +73,19 @@ describe('processSale (saleThunks)', () => {
         expect(mockToastError).not.toHaveBeenCalled();
     });
 
-    test('online but the server rejects the sale: queues it offline and warns the cashier', async () => {
+    test('online + server returns its bill number: the sale takes that number (receipt, Last Bill, lookup)', async () => {
+        setOnline(true);
+        mockApiPost.mockResolvedValue({ data: { success: true, invoice: { billNo: 'A96', invoiceNo: 'A96' } } });
+        const sale = makeSale();
+
+        const billNo = await processSale(sale)(dispatch as any, makeGetState() as any);
+
+        expect(billNo).toBe('A96');
+        expect(sale.id).toBe('A96');
+        expect(mockOfflineSalesAdd).not.toHaveBeenCalled();
+    });
+
+    test('online but the server refuses the sale (success=false): keeps it as a failed bill, not retried', async () => {
         setOnline(true);
         mockApiPost.mockResolvedValue({ data: { success: false, message: 'Insufficient stock for Rice' } });
 
@@ -82,9 +94,34 @@ describe('processSale (saleThunks)', () => {
         expect(mockOfflineSalesAdd).toHaveBeenCalledTimes(1);
         const queued = mockOfflineSalesAdd.mock.calls[0][0];
         expect(queued.synced).toBe(false);
-        expect(queued.retryCount).toBe(0);
+        expect(queued.failed).toBe(true);
+        expect(queued.error).toBe('Insufficient stock for Rice');
         expect(queued.id).toBe('A01-000123');
         expect(mockToastError).toHaveBeenCalledTimes(1);
+        expect(mockToastError.mock.calls[0][0]).toMatch(/REJECTED it: Insufficient stock for Rice/);
+    });
+
+    test('online but the server answers 400: keeps it as a failed bill with the server reason', async () => {
+        setOnline(true);
+        mockApiPost.mockRejectedValue({ response: { status: 400, data: { message: 'Item not found: SHIRT' } }, message: 'Request failed with status code 400' });
+
+        await processSale(makeSale())(dispatch as any, makeGetState() as any);
+
+        const queued = mockOfflineSalesAdd.mock.calls[0][0];
+        expect(queued.failed).toBe(true);
+        expect(queued.error).toBe('Item not found: SHIRT');
+        expect(mockToastError.mock.calls[0][0]).toMatch(/Failed bills/);
+    });
+
+    test('online but the server answers 500: queued for automatic retry, not marked failed', async () => {
+        setOnline(true);
+        mockApiPost.mockRejectedValue({ response: { status: 500, data: { message: 'Server Error' } }, message: 'Request failed with status code 500' });
+
+        await processSale(makeSale())(dispatch as any, makeGetState() as any);
+
+        const queued = mockOfflineSalesAdd.mock.calls[0][0];
+        expect(queued.failed).toBeUndefined();
+        expect(queued.retryCount).toBe(0);
         expect(mockToastError.mock.calls[0][0]).toMatch(/did NOT save to the server/);
     });
 
