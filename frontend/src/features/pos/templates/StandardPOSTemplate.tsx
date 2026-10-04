@@ -66,12 +66,15 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         handleCheckout,
         activeCounterId,
         activeCounterName,
+        posBillingLimits,
+        isSqlBilling,
         // branches, // Removed as it's not in logic
         onAddToCart,
         onBarcodeLookup,
         onRemoveFromCart,
         onUpdateCartQty,
         onUpdateCartLength,
+        onSetCartLineDiscount,
         onSetCustomer,
         onLookupOrCreateCustomer,
         onSetTaxMode,
@@ -91,6 +94,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
         getSubcategories,
         allProductTypes,
         productTypeDetails,
+        quickProducts,
         posContainerRef,
         onClearCart: _onClearCart,
         lastBill,
@@ -238,9 +242,12 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             onRemoveFromCart={onRemoveFromCart}
                             onUpdateCartQty={onUpdateCartQty}
                             onUpdateCartLength={onUpdateCartLength}
+                            onSetCartLineDiscount={onSetCartLineDiscount}
+                            maxProductDiscountPercent={posBillingLimits?.maxProdDisPct}
                             onOpenCategoryBrowser={() => setIsCategoryBrowserOpen(true)}
                             allProductTypes={allProductTypes}
                             productTypeDetails={productTypeDetails}
+                            quickProducts={quickProducts}
                         />
                     )}
                 </div>
@@ -367,8 +374,9 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                                     activeCustomer={activeCustomer}
                                     loyaltyConfig={loyaltyConfig}
                                     discountAmount={discountAmount}
+                                    discountBase={isSqlBilling ? cartTotal : cartSubtotal}
                                     onSetDiscountAmount={onSetDiscountAmount}
-                                    maxDiscountPercent={misConfig.maxDiscountPercent}
+                                    maxDiscountPercent={posBillingLimits?.maxBillDisPct ?? misConfig.maxDiscountPercent}
                                     allowDiscountOverride={misConfig.allowDiscountOverride}
                                     isWholesaleCustomer={isWholesaleCustomer}
                                     wholesaleDiscountPercent={wholesaleDiscountPercent}

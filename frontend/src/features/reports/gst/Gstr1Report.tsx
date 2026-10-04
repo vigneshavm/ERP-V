@@ -12,8 +12,8 @@ type DocRow = Gstr1Data['documents'][number];
 
 const DOC_COLUMNS: ReportColumn<DocRow>[] = [
     { key: 'series', header: 'Series', value: r => r.series, subtext: r => (r.source === 'erp' ? 'ERP' : 'Shop'), sortable: false },
-    { key: 'from', header: 'From no.', type: 'number', value: r => (r.from || null), sortable: false },
-    { key: 'to', header: 'To no.', type: 'number', value: r => (r.to || null), sortable: false },
+    { key: 'from', header: 'From no.', value: r => (r.from || null), sortable: false },
+    { key: 'to', header: 'To no.', value: r => (r.to || null), sortable: false },
     { key: 'total', header: 'Total', type: 'number', value: r => r.total, sortable: false },
     { key: 'cancelled', header: 'Cancelled', type: 'number', value: r => r.cancelled, sortable: false },
     { key: 'net', header: 'Net issued', type: 'number', value: r => r.total - r.cancelled, sortable: false },

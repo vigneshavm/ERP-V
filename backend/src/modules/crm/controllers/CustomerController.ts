@@ -4,7 +4,7 @@ import { singleton } from 'tsyringe';
 
 import Customer from '../models/Customer.js';
 
-import Transaction from '../../sales/models/Transaction.js';
+import { listTransactionsByCustomer, listTransactionsByCustomers } from '../../../integrations/textilesoft/erpTransaction.js';
 import { info, error } from '../../../config/logger.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
@@ -261,64 +261,35 @@ export class CustomerController {
      */
     public getAllCustomers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const customers = await Customer.aggregate([
-                { $match: { $or: [{tenantId: new mongoose.Types.ObjectId(req.tenantId)}, {owner: new mongoose.Types.ObjectId(req.tenantId)}] } },
-                {
-                    $lookup: {
-                        from: 'transactions',
-                        localField: '_id',
-                        foreignField: 'customer',
-                        as: 'transactions'
-                    }
-                },
-                {
-                    $addFields: {
-                        purchaseCount: {
-                            $size: {
-                                $filter: {
-                                    input: '$transactions',
-                                    as: 'tx',
-                                    cond: { $eq: ['$$tx.type', 'sale'] }
-                                }
-                            }
-                        },
-                        totalPurchases: {
-                            $sum: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: '$transactions',
-                                            as: 'tx',
-                                            cond: { $eq: ['$$tx.type', 'sale'] }
-                                        }
-                                    },
-                                    as: 'tx',
-                                    in: '$$tx.amount'
-                                }
-                            }
-                        },
-                        lastPurchase: {
-                            $max: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: '$transactions',
-                                            as: 'tx',
-                                            cond: { $eq: ['$$tx.type', 'sale'] }
-                                        }
-                                    },
-                                    as: 'tx',
-                                    in: '$$tx.createdAt'
-                                }
-                            }
-                        }
-                    }
-                },
-                { $project: { transactions: 0 } },
-                { $sort: { name: 1 } }
-            ]);
+            const customers = await Customer.find({
+                $or: [{ tenantId: new mongoose.Types.ObjectId(req.tenantId) }, { owner: new mongoose.Types.ObjectId(req.tenantId) }],
+            }).sort({ name: 1 }).lean();
 
-            res.status(200).json(customers);
+            // Transactions live in erp.transaction now (not a Mongo collection a $lookup can join
+            // against) -- batch-fetch and merge purchase metrics in application code instead.
+            const customerIds = customers.map((c) => String(c._id));
+            const transactions = await listTransactionsByCustomers(customerIds);
+            const salesByCustomer = new Map<string, { count: number; total: number; lastPurchase: Date | null }>();
+            for (const tx of transactions) {
+                if (tx.type !== 'sale' || !tx.customer) continue;
+                const cur = salesByCustomer.get(tx.customer) ?? { count: 0, total: 0, lastPurchase: null };
+                cur.count += 1;
+                cur.total += tx.amount;
+                if (!cur.lastPurchase || tx.createdAt > cur.lastPurchase) cur.lastPurchase = tx.createdAt;
+                salesByCustomer.set(tx.customer, cur);
+            }
+
+            const enriched = customers.map((c) => {
+                const sales = salesByCustomer.get(String(c._id)) ?? { count: 0, total: 0, lastPurchase: null };
+                return {
+                    ...c,
+                    purchaseCount: sales.count,
+                    totalPurchases: sales.total,
+                    lastPurchase: sales.lastPurchase,
+                };
+            });
+
+            res.status(200).json(enriched);
         } catch (err) {
             error(`Get All Customers Error: ${(err as Error).message}`);
             res.status(500).json({ message: 'Server Error', error: (err as Error).message });
@@ -362,14 +333,6 @@ export class CustomerController {
                 { $match: { _id: customerId, $or: [{tenantId: new mongoose.Types.ObjectId(req.tenantId)}, {owner: new mongoose.Types.ObjectId(req.tenantId)}] } },
                 {
                     $lookup: {
-                        from: 'transactions',
-                        localField: '_id',
-                        foreignField: 'customer',
-                        as: 'transactions'
-                    }
-                },
-                {
-                    $lookup: {
                         from: 'customers',
                         localField: 'referredBy',
                         foreignField: '_id',
@@ -378,49 +341,9 @@ export class CustomerController {
                 },
                 {
                     $addFields: {
-                        referredBy: { $arrayElemAt: ['$referredBy', 0] },
-                        purchaseCount: {
-                            $size: {
-                                $filter: {
-                                    input: '$transactions',
-                                    as: 'tx',
-                                    cond: { $eq: ['$$tx.type', 'sale'] }
-                                }
-                            }
-                        },
-                        totalPurchases: {
-                            $sum: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: '$transactions',
-                                            as: 'tx',
-                                            cond: { $eq: ['$$tx.type', 'sale'] }
-                                        }
-                                    },
-                                    as: 'tx',
-                                    in: '$$tx.amount'
-                                }
-                            }
-                        },
-                        lastPurchase: {
-                            $max: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: '$transactions',
-                                            as: 'tx',
-                                            cond: { $eq: ['$$tx.type', 'sale'] }
-                                        }
-                                    },
-                                    as: 'tx',
-                                    in: '$$tx.createdAt'
-                                }
-                            }
-                        }
+                        referredBy: { $arrayElemAt: ['$referredBy', 0] }
                     }
-                },
-                { $project: { transactions: 0 } }
+                }
             ]);
 
             if (!results || results.length === 0) {
@@ -428,7 +351,15 @@ export class CustomerController {
                 return;
             }
 
-            res.status(200).json(results[0]);
+            // Transactions live in erp.transaction now (not a Mongo collection a $lookup can join
+            // against) -- fetch separately and merge purchase metrics in application code instead.
+            const transactions = await listTransactionsByCustomer(String(customerId));
+            const sales = transactions.filter((tx) => tx.type === 'sale');
+            const purchaseCount = sales.length;
+            const totalPurchases = sales.reduce((sum, tx) => sum + tx.amount, 0);
+            const lastPurchase = sales.reduce<Date | null>((latest, tx) => (!latest || tx.createdAt > latest ? tx.createdAt : latest), null);
+
+            res.status(200).json({ ...results[0], purchaseCount, totalPurchases, lastPurchase });
         } catch (err) {
             error(`Get Customer By Id Error: ${(err as Error).message}`);
             res.status(500).json({ message: 'Server Error', error: (err as Error).message });
@@ -526,11 +457,7 @@ export class CustomerController {
                 return;
             }
 
-            const transactions = await Transaction.find({
-                customer: req.params.id,
-            })
-                .sort({ createdAt: -1 })
-                .populate('invoice', 'invoiceNo totalAmount paymentStatus');
+            const transactions = await listTransactionsByCustomer(String(req.params.id));
 
             res.status(200).json({
                 customer: { name: customer.name, phone: customer.phone },

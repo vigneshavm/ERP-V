@@ -1,8 +1,38 @@
-import SystemConfig from "../models/SystemConfig.js";
-import TaxMaster from "../models/TaxMaster.js";
-import LoyaltyRule from "../models/LoyaltyRule.js";
-import SegmentRule from "../models/SegmentRule.js";
+import { getConfig, setConfig } from "../../../integrations/textilesoft/erpSystemConfig.js";
+import { getTaxPercentage } from "../../../integrations/textilesoft/erpTaxMaster.js";
 import type { TenantRef } from '../../../interfaces/TenantRef.js';
+
+type LoyaltyRuleConfig = {
+    ruleId: string;
+    ruleName: string;
+    spendPerPoint: number;
+    rupeesPer100Points: number;
+    bonusMultiplier: number;
+    minSpendRequired: number;
+    startDate?: string;
+    endDate?: string;
+    isActive: boolean;
+};
+
+type SegmentRuleConfig = {
+    segmentName: 'NEW' | 'OCCASIONAL' | 'REGULAR' | 'LOYAL' | 'HIGH_VALUE' | 'INACTIVE';
+    minSpend: number;
+    minOrders: number;
+    inactiveDaysThreshold: number;
+    isActive: boolean;
+};
+
+const loyaltyKey = (tenantId: TenantRef) => `LOYALTY_RULE_${String(tenantId)}`;
+const segmentKey = (tenantId: TenantRef) => `SEGMENT_RULES_${String(tenantId)}`;
+const defaultLoyaltyRule = (): LoyaltyRuleConfig => ({ ruleId: 'DEFAULT_LOYALTY', ruleName: 'Default Loyalty Rule', spendPerPoint: 100, rupeesPer100Points: 10, bonusMultiplier: 1, minSpendRequired: 0, isActive: true });
+const defaultSegmentRules = (): SegmentRuleConfig[] => [
+    { segmentName: 'INACTIVE', minOrders: 1, minSpend: 0, inactiveDaysThreshold: 90, isActive: true },
+    { segmentName: 'HIGH_VALUE', minOrders: 15, minSpend: 25000, inactiveDaysThreshold: 90, isActive: true },
+    { segmentName: 'LOYAL', minOrders: 8, minSpend: 0, inactiveDaysThreshold: 90, isActive: true },
+    { segmentName: 'REGULAR', minOrders: 3, minSpend: 0, inactiveDaysThreshold: 90, isActive: true },
+    { segmentName: 'OCCASIONAL', minOrders: 1, minSpend: 0, inactiveDaysThreshold: 90, isActive: true },
+    { segmentName: 'NEW', minOrders: 0, minSpend: 0, inactiveDaysThreshold: 90, isActive: true },
+];
 
 export class ConfigService {
     private static cache = new Map<string, { value: any; timestamp: number }>();
@@ -16,103 +46,89 @@ export class ConfigService {
     }
 
     /**
-     * Get a dynamic system configuration value by key from DB
+     * Get a dynamic configuration value by key from the existing erp.system_config table.
      */
-    static async get<T = any>(tenantId: TenantRef, key: string, fallbackValue: T): Promise<T> {
-        const cacheKey = `${tenantId}:${key}`;
-        const cached = this.cache.get(cacheKey);
+    static async get<T = any>(key: string, fallbackValue: T): Promise<T> {
+        const cached = this.cache.get(key);
 
         if (cached && (Date.now() - cached.timestamp < this.CACHE_TTL_MS)) {
             return cached.value as T;
         }
 
-        try {
-            const config = (await SystemConfig.findOne({ tenantId, key }).lean()) as any;
-            if (config && config.value !== undefined && config.value !== null) {
-                this.cache.set(cacheKey, { value: config.value, timestamp: Date.now() });
-                return config.value as T;
-            }
-        } catch (err) {
-            // Log & fallback to default if DB lookup fails
-        }
-
-        return fallbackValue;
+        const value = await getConfig<T>(key, fallbackValue);
+        this.cache.set(key, { value, timestamp: Date.now() });
+        return value;
     }
 
     /**
-     * Update or create a dynamic configuration key in DB
+     * Update or create a dynamic configuration key (erp.system_config)
      */
-    static async set(tenantId: string, key: string, value: any, group: 'TAX' | 'LOYALTY' | 'CREDIT' | 'INVENTORY' | 'MARKETING' | 'PAYMENT' | 'GENERAL' = 'GENERAL'): Promise<any> {
-        const config = await SystemConfig.findOneAndUpdate(
-            { tenantId, key },
-            { $set: { value, group } },
-            { upsert: true, new: true }
-        );
-
-        const cacheKey = `${tenantId}:${key}`;
-        this.cache.set(cacheKey, { value, timestamp: Date.now() });
+    static async set(key: string, value: any, group: 'TAX' | 'LOYALTY' | 'CREDIT' | 'INVENTORY' | 'MARKETING' | 'PAYMENT' | 'GENERAL' = 'GENERAL'): Promise<any> {
+        const config = await setConfig(key, value, group);
+        this.cache.set(key, { value, timestamp: Date.now() });
         return config;
     }
 
     /**
-     * Get dynamic Loyalty Rule configuration from DB (LoyaltyRule table or SystemConfig fallback)
+     * Read tenant-scoped loyalty settings from the existing SQL key/value configuration table.
      */
     static async getLoyaltyRuleConfig(tenantId: TenantRef): Promise<{ spendPerPoint: number; rupeesPer100Points: number }> {
-        try {
-            const activeRule = (await LoyaltyRule.findOne({ tenantId, isActive: true }).sort({ createdAt: -1 }).lean()) as any;
-            if (activeRule) {
-                return {
-                    spendPerPoint: activeRule.spendPerPoint,
-                    rupeesPer100Points: activeRule.rupeesPer100Points
-                };
-            }
-        } catch (err) {
-            // Fallback to SystemConfig or default
-        }
+        const saved = await this.get<LoyaltyRuleConfig | null>(loyaltyKey(tenantId), null);
+        const rule = saved?.isActive ? saved : {
+            ...defaultLoyaltyRule(),
+            spendPerPoint: await this.get<number>('LOYALTY_SPEND_PER_POINT', 100),
+            rupeesPer100Points: await this.get<number>('LOYALTY_RUPEES_PER_100_POINTS', 10),
+        };
+        return { spendPerPoint: rule.spendPerPoint, rupeesPer100Points: rule.rupeesPer100Points };
+    }
 
-        const spendPerPoint = await this.get<number>(tenantId, 'LOYALTY_SPEND_PER_POINT', 100);
-        const rupeesPer100Points = await this.get<number>(tenantId, 'LOYALTY_RUPEES_PER_100_POINTS', 10);
-        return { spendPerPoint, rupeesPer100Points };
+    static async saveLoyaltyRule(tenantId: TenantRef, input: Partial<LoyaltyRuleConfig>): Promise<LoyaltyRuleConfig> {
+        const saved = await this.get<LoyaltyRuleConfig | null>(loyaltyKey(tenantId), null);
+        const current = saved ?? {
+            ...defaultLoyaltyRule(),
+            spendPerPoint: await this.get<number>('LOYALTY_SPEND_PER_POINT', 100),
+            rupeesPer100Points: await this.get<number>('LOYALTY_RUPEES_PER_100_POINTS', 10),
+        };
+        const rule = { ...current, ...input, ruleId: input.ruleId || current.ruleId, isActive: input.isActive ?? true };
+        await this.set(loyaltyKey(tenantId), rule, 'LOYALTY');
+        return rule;
     }
 
     /**
-     * Get dynamic Tax percentage from DB TaxMaster by tax code (e.g. 'GST_18')
+     * Get dynamic Tax percentage by tax code (e.g. 'GST_18') from erp.tax_master
      */
-    static async getTaxPercentage(tenantId: string, taxCode: string, fallbackRate: number = 18): Promise<number> {
-        try {
-            const taxRecord = (await TaxMaster.findOne({ tenantId, taxCode, isActive: true }).lean()) as any;
-            if (taxRecord && taxRecord.percentage !== undefined) {
-                return taxRecord.percentage;
-            }
-        } catch (err) {
-            // Fallback
-        }
-
-        return await this.get<number>(tenantId, `TAX_${taxCode.toUpperCase()}`, fallbackRate);
+    static async getTaxPercentage(_tenantId: string, taxCode: string, fallbackRate: number = 18): Promise<number> {
+        return getTaxPercentage(taxCode, fallbackRate);
     }
 
     /**
-     * Get dynamic Customer Segmentation Thresholds from DB SegmentRule
+     * Read segment thresholds from the existing SQL key/value configuration table.
      */
     static async getSegmentRules(tenantId: string) {
-        try {
-            const rules = (await SegmentRule.find({ tenantId, isActive: true }).lean()) as any[];
-            if (rules && rules.length > 0) {
-                return rules;
-            }
-        } catch (err) {
-            // Fallback to default thresholds
-        }
-
-        // Return default configuration rules
+        const saved = await this.get<SegmentRuleConfig[] | null>(segmentKey(tenantId), null);
+        if (saved?.some((rule) => rule.isActive)) return saved.filter((rule) => rule.isActive);
         return [
-            { segmentName: 'INACTIVE', minOrders: 1, minSpend: 0, inactiveDaysThreshold: await this.get(tenantId, 'SEGMENT_INACTIVE_DAYS', 90) },
-            { segmentName: 'HIGH_VALUE', minOrders: await this.get(tenantId, 'SEGMENT_HIGH_VALUE_ORDERS', 15), minSpend: await this.get(tenantId, 'SEGMENT_HIGH_VALUE_SPEND', 25000) },
-            { segmentName: 'LOYAL', minOrders: await this.get(tenantId, 'SEGMENT_LOYAL_ORDERS', 8), minSpend: 0 },
-            { segmentName: 'REGULAR', minOrders: await this.get(tenantId, 'SEGMENT_REGULAR_ORDERS', 3), minSpend: 0 },
-            { segmentName: 'OCCASIONAL', minOrders: await this.get(tenantId, 'SEGMENT_OCCASIONAL_ORDERS', 1), minSpend: 0 },
-            { segmentName: 'NEW', minOrders: 0, minSpend: 0 }
+            { ...defaultSegmentRules()[0], inactiveDaysThreshold: await this.get('SEGMENT_INACTIVE_DAYS', 90) },
+            { ...defaultSegmentRules()[1], minOrders: await this.get('SEGMENT_HIGH_VALUE_ORDERS', 15), minSpend: await this.get('SEGMENT_HIGH_VALUE_SPEND', 25000) },
+            defaultSegmentRules()[2],
+            { ...defaultSegmentRules()[3], minOrders: await this.get('SEGMENT_REGULAR_ORDERS', 3) },
+            { ...defaultSegmentRules()[4], minOrders: await this.get('SEGMENT_OCCASIONAL_ORDERS', 1) },
+            defaultSegmentRules()[5],
         ];
+    }
+
+    static async saveSegmentRule(tenantId: string, input: Partial<SegmentRuleConfig> & Pick<SegmentRuleConfig, 'segmentName'>): Promise<SegmentRuleConfig> {
+        const rules = await this.getSegmentRules(tenantId);
+        const previous = rules.find((rule) => rule.segmentName === input.segmentName);
+        const rule: SegmentRuleConfig = {
+            segmentName: input.segmentName,
+            minSpend: input.minSpend ?? previous?.minSpend ?? 0,
+            minOrders: input.minOrders ?? previous?.minOrders ?? 0,
+            inactiveDaysThreshold: input.inactiveDaysThreshold ?? previous?.inactiveDaysThreshold ?? 90,
+            isActive: input.isActive ?? previous?.isActive ?? true,
+        };
+        await this.set(segmentKey(tenantId), [...rules.filter((entry) => entry.segmentName !== input.segmentName), rule], 'LOYALTY');
+        return rule;
     }
 }
 

@@ -1,169 +1,352 @@
+import type { TextilesoftView } from "../config/textilesoftMenu";
 export const Sector = {
-    GENERAL: 'General',
-    PHARMACY: 'Pharmacy',
-    ELECTRONICS: 'Electronics',
-    GROCERY: 'Grocery',
-    SUPERMARKET: 'Supermarket',
-    TEXTILE: 'Textile',
-    MOBILE_SHOP: 'Mobile Shop',
-    SERVICES: 'Services',
-    RETAIL: 'Retail',
-    RESTAURANT: 'Restaurant',
-    FMCG: 'FMCG'
+  GENERAL: "General",
+  PHARMACY: "Pharmacy",
+  ELECTRONICS: "Electronics",
+  GROCERY: "Grocery",
+  SUPERMARKET: "Supermarket",
+  TEXTILE: "Textile",
+  MOBILE_SHOP: "Mobile Shop",
+  SERVICES: "Services",
+  RETAIL: "Retail",
+  RESTAURANT: "Restaurant",
+  FMCG: "FMCG",
 } as const;
 
-export type Sector = typeof Sector[keyof typeof Sector];
+export type Sector = (typeof Sector)[keyof typeof Sector];
 
-export type AttendanceStatus = 'PRESENT' | 'HALF' | 'QUARTER' | 'ABSENT';
+export type AttendanceStatus = "PRESENT" | "HALF" | "QUARTER" | "ABSENT";
 
 export enum TransactionType {
-    SALE = 'Sale',
-    EXPENSE = 'EXPENSE',
-    PURCHASE = 'Purchase',
-    SALARY = 'Salary',
-    INCOME = 'INCOME'
+  SALE = "Sale",
+  EXPENSE = "EXPENSE",
+  PURCHASE = "Purchase",
+  SALARY = "Salary",
+  INCOME = "INCOME",
 }
 
 export type ModuleType =
-    | 'DASHBOARD'
-    | 'POS'
-    | 'INVENTORY'
-    | 'CUSTOMERS'
-    | 'PURCHASE'
-    | 'SUPPLIERS'
-    | 'FINANCE'
-    | 'EXPENSES'
-    | 'REPORTS'
-    | 'HR'
-    | 'ECOMMERCE'
-    | 'MULTI_BRANCH'
-    | 'GROW';
+  | "DASHBOARD"
+  | "POS"
+  | "INVENTORY"
+  | "CUSTOMERS"
+  | "PURCHASE"
+  | "SUPPLIERS"
+  | "FINANCE"
+  | "EXPENSES"
+  | "REPORTS"
+  | "HR"
+  | "ECOMMERCE"
+  | "MULTI_BRANCH"
+  | "GROW";
 export type BranchId = string;
-export { TaxMode } from './product/enums';
-export type PaymentMethod = 'CASH' | 'CARD' | 'UPI';
+export { TaxMode } from "./product/enums";
+export type PaymentMethod = "CASH" | "CARD" | "UPI";
 export type AppView =
-    // --- MAIN ERP ---
-    // Dashboard
-    | 'DASHBOARD' | 'DASHBOARD_OVERVIEW' | 'DASHBOARD_SNAPSHOT' | 'DASHBOARD_SUMMARY' | 'PROFIT_PULSE'
-    | 'CUSTOMERS' | 'SUPPLIERS' | 'UTILITIES'
+  | TextilesoftView
+  // --- MAIN ERP ---
+  // Dashboard
+  | "DASHBOARD"
+  | "DASHBOARD_OVERVIEW"
+  | "DASHBOARD_SNAPSHOT"
+  | "DASHBOARD_SUMMARY"
+  | "PROFIT_PULSE"
+  | "CUSTOMERS"
+  | "SUPPLIERS"
+  | "UTILITIES"
 
-    // Sales
-    | 'SALES_REGISTER' | 'SALES_INVOICE' | 'ESTIMATE' | 'SALES_ORDER' | 'DELIVERY_CHALLAN'
-    | 'SALES_RETURN' | 'PAYMENT_IN' | 'CUSTOMER_CREDITS' | 'OUTSTANDING_DUES' | 'MRP_PENDING_INVOICES'
-    | 'CHALLAN_LIST' | 'PAYMENT_IN_LIST' | 'INVOICE_REGISTER' | 'ORDER_REGISTER' | 'RETURNED_ITEMS' | 'SALES' // Legacy
+  // Sales
+  | "SALES_REGISTER"
+  | "SALES_INVOICE"
+  | "ESTIMATE"
+  | "SALES_ORDER"
+  | "DELIVERY_CHALLAN"
+  | "SALES_RETURN"
+  | "PAYMENT_IN"
+  | "CUSTOMER_CREDITS"
+  | "OUTSTANDING_DUES"
+  | "MRP_PENDING_INVOICES"
+  | "CHALLAN_LIST"
+  | "PAYMENT_IN_LIST"
+  | "INVOICE_REGISTER"
+  | "ORDER_REGISTER"
+  | "RETURNED_ITEMS"
+  | "SALES" // Legacy
 
-    // Purchases
-    | 'PURCHASE_REGISTER' | 'PURCHASE_ENTRY' | 'PURCHASE_EXPRESS' | 'PURCHASE_ORDER' | 'GOODS_RECEIVED' | 'GRN_FORM' | 'GRN_TRANSFER'
-    | 'DEBIT_NOTES' | 'SUPPLIER_PAYMENTS' | 'OUTSTANDING_PAYABLES' | 'PURCHASE' // Legacy
-    | 'PURCHASE_BILLS' | 'BILL_FORM' | 'PURCHASE_PAYMENT_OUT' | 'PURCHASE_HISTORY' | 'PURCHASE_ORDER_DETAILS'
-    | 'PURCHASE_ORDER_FORM' | 'PURCHASE_ORDER_LIST' | 'PURCHASE_RETURN' | 'PURCHASE_RETURNS' | 'PURCHASE_RETURN_FORM' | 'PURCHASE_UPLOAD'
-    | 'SUPPLIER_PAYMENTS' | 'PAYMENT_OUT' | 'RATE_REVISIONS' | 'CHEQUES_VAULT' | 'SUPPLIER_AGEING'
-    | 'VENDOR_INFLOW_OUTFLOW'
+  // Purchases
+  | "PURCHASE_REGISTER"
+  | "PURCHASE_ENTRY"
+  | "PURCHASE_EXPRESS"
+  | "PURCHASE_ORDER"
+  | "GOODS_RECEIVED"
+  | "GRN_FORM"
+  | "GRN_TRANSFER"
+  | "DEBIT_NOTES"
+  | "SUPPLIER_PAYMENTS"
+  | "OUTSTANDING_PAYABLES"
+  | "PURCHASE" // Legacy
+  | "PURCHASE_BILLS"
+  | "BILL_FORM"
+  | "PURCHASE_PAYMENT_OUT"
+  | "PURCHASE_HISTORY"
+  | "PURCHASE_ORDER_DETAILS"
+  | "PURCHASE_ORDER_FORM"
+  | "PURCHASE_ORDER_LIST"
+  | "PURCHASE_RETURN"
+  | "PURCHASE_RETURNS"
+  | "PURCHASE_RETURN_FORM"
+  | "PURCHASE_UPLOAD"
+  | "SUPPLIER_PAYMENTS"
+  | "PAYMENT_OUT"
+  | "RATE_REVISIONS"
+  | "CHEQUES_VAULT"
+  | "SUPPLIER_AGEING"
+  | "VENDOR_INFLOW_OUTFLOW"
 
-    // Customers
-    | 'CUSTOMER_LIST' | 'CUSTOMER_LEDGER' | 'CUSTOMER_STATEMENTS' | 'CUSTOMER_GROUPS' | 'LOYALTY_POINTS'
-    | 'ADD_CUSTOMER' | 'CUSTOMER_DETAIL' | 'CUSTOMERS_PORTFOLIO' | 'CUSTOMERS_WITH_DUES' | 'EDIT_CUSTOMER'
+  // Customers
+  | "CUSTOMER_LIST"
+  | "CUSTOMER_LEDGER"
+  | "CUSTOMER_STATEMENTS"
+  | "CUSTOMER_GROUPS"
+  | "LOYALTY_POINTS"
+  | "ADD_CUSTOMER"
+  | "CUSTOMER_DETAIL"
+  | "CUSTOMERS_PORTFOLIO"
+  | "CUSTOMERS_WITH_DUES"
+  | "EDIT_CUSTOMER"
 
-    // Suppliers
-    | 'SUPPLIER_LIST' | 'SUPPLIER_LEDGER' | 'SUPPLIER_STATEMENTS' | 'SUPPLIER_GROUPS' | 'AGENTS' | 'VENDORS' | 'VENDOR_DETAILS' | 'VENDOR_FORM' // Legacy
+  // Suppliers
+  | "SUPPLIER_LIST"
+  | "SUPPLIER_LEDGER"
+  | "SUPPLIER_STATEMENTS"
+  | "SUPPLIER_GROUPS"
+  | "AGENTS"
+  | "VENDORS"
+  | "VENDOR_DETAILS"
+  | "VENDOR_FORM" // Legacy
 
-    // Inventory
-    | 'INVENTORY_ITEMS' | 'ITEM_CATEGORIES' | 'STOCK_SUMMARY' | 'STOCK_MOVEMENT'
-    | 'LOW_STOCK_ALERTS' | 'UNITS_HSN' | 'WAREHOUSES' | 'BATCH_EXPIRY' | 'INVENTORY_SEARCH'
-    | 'COMBO_OFFERS' | 'SERIALIZED_UNITS' | 'MASTER_DATA' | 'STOCK_WRITEOFF' | 'STOCK_TRANSFER' | 'DISCOUNT_PERMISSIONS'
-    | 'INVENTORY' | 'AGED_STOCK' // Legacy
+  // Inventory
+  | "INVENTORY_ITEMS"
+  | "ITEM_CATEGORIES"
+  | "PRODUCT_MASTER"
+  | "STOCK_SUMMARY"
+  | "STOCK_MOVEMENT"
+  | "LOW_STOCK_ALERTS"
+  | "UNITS_HSN"
+  | "WAREHOUSES"
+  | "BATCH_EXPIRY"
+  | "INVENTORY_SEARCH"
+  | "COMBO_OFFERS"
+  | "SERIALIZED_UNITS"
+  | "MASTER_DATA"
+  | "STOCK_WRITEOFF"
+  | "STOCK_TRANSFER"
+  | "DISCOUNT_PERMISSIONS"
+  | "INVENTORY"
+  | "AGED_STOCK" // Legacy
 
-    // Cash & Bank
-    | 'CASH_ACCOUNTS' | 'BANK_ACCOUNTS' | 'PETTY_CASH' | 'FUND_TRANSFERS' | 'BANK_RECONCILIATION' | 'BANK_SUMMARY' | 'BANK_STATEMENT' | 'LOAN_ACCOUNTS' | 'TRANSACTIONS' | 'FINANCE' | 'JOURNAL_ENTRIES' | 'JOURNAL_ENTRY_FORM' | 'ACCOUNT_LEDGER' // Legacy
-    | 'EMI_PLANS' | 'CARD_TERMINALS'
+  // Cash & Bank
+  | "CASH_ACCOUNTS"
+  | "BANK_ACCOUNTS"
+  | "PETTY_CASH"
+  | "FUND_TRANSFERS"
+  | "BANK_RECONCILIATION"
+  | "BANK_SUMMARY"
+  | "BANK_STATEMENT"
+  | "LOAN_ACCOUNTS"
+  | "TRANSACTIONS"
+  | "FINANCE"
+  | "JOURNAL_ENTRIES"
+  | "JOURNAL_ENTRY_FORM"
+  | "ACCOUNT_LEDGER" // Legacy
+  | "EMI_PLANS"
+  | "CARD_TERMINALS"
 
-    // POS
-    | 'POS' | 'POS_ORDERS' | 'POS_RETURNS' | 'SHIFT_MANAGEMENT' | 'CASH_DRAWER'
+  // POS
+  | "POS"
+  | "POS_ORDERS"
+  | "POS_RETURNS"
+  | "SHIFT_MANAGEMENT"
+  | "CASH_DRAWER"
 
-    // Expenses
-    | 'EXPENSES' | 'EXPENSE_CATEGORIES' | 'RECURRING_EXPENSES' | 'EXPENSE_REPORTS' | 'EXPENSE_ANALYTICS'
+  // Expenses
+  | "EXPENSES"
+  | "EXPENSE_CATEGORIES"
+  | "RECURRING_EXPENSES"
+  | "EXPENSE_REPORTS"
+  | "EXPENSE_ANALYTICS"
 
-    // Reports
-    | 'REPORTS' | 'REPORT_SALES' | 'REPORT_PURCHASE' | 'REPORT_INVENTORY'
-    | 'REPORT_CUSTOMER' | 'REPORT_SUPPLIER' | 'REPORT_TAX' | 'REPORT_FINANCIAL'
-    | 'REPORT_BRAND_WISE' | 'REPORT_CATEGORY_WISE' | 'REPORT_COUNTER_WISE' | 'REPORT_SALES_COUNTER_WISE' | 'REPORT_HOURLY_BILLING' | 'REPORT_DAILY_SALES' | 'REPORT_PRODUCT_WISE'
+  // Reports
+  | "REPORTS"
+  | "REPORT_SALES"
+  | "REPORT_SALES_INVENTORY_ANALYSIS"
+  | "REPORT_PURCHASE"
+  | "REPORT_INVENTORY"
+  | "REPORT_CUSTOMER"
+  | "REPORT_SUPPLIER"
+  | "REPORT_TAX"
+  | "REPORT_FINANCIAL"
+  | "REPORT_BRAND_WISE"
+  | "REPORT_CATEGORY_WISE"
+  | "REPORT_COUNTER_WISE"
+  | "REPORT_SALES_COUNTER_WISE"
+  | "REPORT_HOURLY_BILLING"
+  | "REPORT_DAILY_SALES"
+  | "REPORT_PRODUCT_WISE"
+  | "DAY_BOOK"
+  | "TRIAL_BALANCE"
+  | "PROFIT_LOSS"
+  | "BALANCE_SHEET"
+  | "CASH_FLOW"
+  | "DAILY" // Legacy
 
-    | 'DAY_BOOK' | 'TRIAL_BALANCE' | 'PROFIT_LOSS' | 'BALANCE_SHEET' | 'CASH_FLOW'
-    | 'DAILY' // Legacy
+  // Utilities
+  | "BARCODE_GENERATOR"
+  | "LABEL_PRINTING"
+  | "BULK_IMPORT"
+  | "DATA_EXPORT"
+  | "NUMBER_SERIES"
+  | "AUDIT_LOGS"
+  | "BARCODE" // Legacy
 
-    // Utilities
-    | 'BARCODE_GENERATOR' | 'LABEL_PRINTING' | 'BULK_IMPORT' | 'DATA_EXPORT' | 'NUMBER_SERIES' | 'AUDIT_LOGS'
-    | 'BARCODE' // Legacy
+  // Settings
+  | "SETTINGS"
+  | "BUSINESS_PROFILE"
+  | "TAX_CONFIGURATION"
+  | "INVOICE_SETTINGS"
+  | "USERS_ROLES"
+  | "BRANCH_SETTINGS"
+  | "FINANCIAL_YEAR"
+  | "INTEGRATIONS"
+  | "BACKUP_RESTORE"
+  | "THEMES_BRANDING"
+  | "STOREFRONT" // Legacy
 
-    // Settings
-    | 'SETTINGS' | 'BUSINESS_PROFILE' | 'TAX_CONFIGURATION' | 'INVOICE_SETTINGS'
-    | 'USERS_ROLES' | 'BRANCH_SETTINGS' | 'FINANCIAL_YEAR' | 'INTEGRATIONS'
-    | 'BACKUP_RESTORE' | 'THEMES_BRANDING' | 'STOREFRONT' // Legacy
+  // HR (Legacy/Additional)
+  | "HR"
+  | "LABOR"
+  | "STAFF_MANAGER"
+  | "DUE_ADJUSTMENT"
+  | "PAYROLL"
+  | "ATTENDANCE"
 
-    // HR (Legacy/Additional)
-    | 'HR' | 'LABOR' | 'STAFF_MANAGER' | 'DUE_ADJUSTMENT' | 'PAYROLL' | 'ATTENDANCE'
+  // --- GROW PLATFORM ---
+  // Dashboard
+  | "GROW_DASHBOARD"
+  | "GROW_OVERVIEW"
+  | "GROW_PERFORMANCE"
+  | "GROW_MARKETING_METRICS"
+  | "GROW_HUB"
+  | "GROW_REVENUE"
+  | "GROW" // Legacy
 
-    // --- GROW PLATFORM ---
-    // Dashboard
-    | 'GROW_DASHBOARD' | 'GROW_OVERVIEW' | 'GROW_PERFORMANCE' | 'GROW_MARKETING_METRICS' | 'GROW_HUB' | 'GROW_REVENUE' | 'GROW' // Legacy
+  // Online Store
+  | "GROW_STORE"
+  | "GROW_STORE_SETUP"
+  | "GROW_PRODUCT_SYNC"
+  | "GROW_STORE_ORDERS"
+  | "GROW_STORE_CUSTOMERS"
+  | "GROW_STORE_PAYMENTS"
+  | "GROW_STORE_THEMES"
+  | "GROW_STORE_DOMAIN"
+  | "GROW_STORE_SHIPPING"
 
-    // Online Store
-    | 'GROW_STORE' | 'GROW_STORE_SETUP' | 'GROW_PRODUCT_SYNC' | 'GROW_STORE_ORDERS'
-    | 'GROW_STORE_CUSTOMERS' | 'GROW_STORE_PAYMENTS' | 'GROW_STORE_THEMES'
-    | 'GROW_STORE_DOMAIN' | 'GROW_STORE_SHIPPING'
+  // Marketing
+  | "GROW_MARKETING"
+  | "GROW_MARKETING_TOOLS"
+  | "GROW_MARKETING_CAMPAIGNS"
+  | "GROW_MARKETING_TEMPLATES"
+  | "GROW_MARKETING_EMAIL"
+  | "GROW_MARKETING_WHATSAPP"
+  | "GROW_MARKETING_SOCIAL"
+  | "GROW_MARKETING_COUPONS"
+  | "GROW_MARKETING_OFFERS"
 
-    // Marketing
-    | 'GROW_MARKETING' | 'GROW_MARKETING_TOOLS' | 'GROW_MARKETING_CAMPAIGNS' | 'GROW_MARKETING_TEMPLATES'
-    | 'GROW_MARKETING_EMAIL' | 'GROW_MARKETING_WHATSAPP' | 'GROW_MARKETING_SOCIAL'
-    | 'GROW_MARKETING_COUPONS' | 'GROW_MARKETING_OFFERS'
+  // Google Business
+  | "GROW_GOOGLE"
+  | "GROW_GOOGLE_PROFILE"
+  | "GROW_GOOGLE_REVIEWS"
+  | "GROW_GOOGLE_POSTS"
+  | "GROW_GOOGLE_INSIGHTS"
+  | "GROW_GOOGLE_PHOTOS"
 
-    // Google Business
-    | 'GROW_GOOGLE' | 'GROW_GOOGLE_PROFILE' | 'GROW_GOOGLE_REVIEWS'
-    | 'GROW_GOOGLE_POSTS' | 'GROW_GOOGLE_INSIGHTS' | 'GROW_GOOGLE_PHOTOS'
+  // Customer Engagement
+  | "GROW_ENGAGEMENT"
+  | "GROW_ENGAGEMENT_SMS"
+  | "GROW_ENGAGEMENT_WHATSAPP"
+  | "GROW_ENGAGEMENT_EMAIL"
+  | "GROW_ENGAGEMENT_LOYALTY"
+  | "GROW_ENGAGEMENT_FEEDBACK"
 
-    // Customer Engagement
-    | 'GROW_ENGAGEMENT' | 'GROW_ENGAGEMENT_SMS' | 'GROW_ENGAGEMENT_WHATSAPP'
-    | 'GROW_ENGAGEMENT_EMAIL' | 'GROW_ENGAGEMENT_LOYALTY' | 'GROW_ENGAGEMENT_FEEDBACK'
+  // Sync & Backup
+  | "GROW_SYNC"
+  | "GROW_SYNC_DEVICE"
+  | "GROW_SYNC_CLOUD"
+  | "GROW_BACKUP"
+  | "GROW_RESTORE_DATA"
+  | "GROW_SYNC_LOGS"
+  | "SYNC_SHARE"
+  | "RESTORE" // Legacy
 
-    // Sync & Backup
-    | 'GROW_SYNC' | 'GROW_SYNC_DEVICE' | 'GROW_SYNC_CLOUD' | 'GROW_BACKUP'
-    | 'GROW_RESTORE_DATA' | 'GROW_SYNC_LOGS' | 'SYNC_SHARE' | 'RESTORE' // Legacy
+  // Data Tools
+  | "GROW_DATA"
+  | "GROW_DATA_IMPORT"
+  | "GROW_DATA_EXPORT"
+  | "GROW_DATA_CLEANUP"
+  | "GROW_DATA_DUPLICATES"
+  | "GROW_DATA_HEALTH"
 
-    // Data Tools
-    | 'GROW_DATA' | 'GROW_DATA_IMPORT' | 'GROW_DATA_EXPORT' | 'GROW_DATA_CLEANUP'
-    | 'GROW_DATA_DUPLICATES' | 'GROW_DATA_HEALTH'
+  // Growth Reports
+  | "GROW_REPORTS"
+  | "GROW_REPORT_SALES"
+  | "GROW_REPORT_ROI"
+  | "GROW_REPORT_CUSTOMER"
+  | "GROW_REPORT_TRAFFIC"
+  | "GROW_REPORT_CONVERSION"
+  | "GROW_SUPER_ADMIN_CONSOLE"
+  | "GROW_TENANT_CONFIG"
+  | "TENANT_MANAGEMENT"
 
-    // Growth Reports
-    | 'GROW_REPORTS' | 'GROW_REPORT_SALES' | 'GROW_REPORT_ROI'
-    | 'GROW_REPORT_CUSTOMER' | 'GROW_REPORT_TRAFFIC' | 'GROW_REPORT_CONVERSION'
-    | 'GROW_SUPER_ADMIN_CONSOLE' | 'GROW_TENANT_CONFIG' | 'TENANT_MANAGEMENT'
+  // Platform Admins
+  | "PLATFORM_ADMIN"
+  | "SUPER_ADMIN_CONSOLE"
+  | "TENANT_ARCHITECT"
+  | "ARCHITECTURE"
+  | "SUPER_ADMIN"
 
-    // Platform Admins
-    | 'PLATFORM_ADMIN' | 'SUPER_ADMIN_CONSOLE' | 'TENANT_ARCHITECT' | 'ARCHITECTURE' | 'SUPER_ADMIN'
+  // Missing Types
+  | "GST_RECONCILIATION"
+  | "REPRINT_QUEUE"
+  | "ATTENDANCE_SUMMARY"
+  | "ATTENDANCE_BOARD"
+  | "ALLOWANCE_MANAGER"
+  | "COMMISSION_MANAGEMENT"
+  // Finance Agents
+  | "FINANCE_AGENTS"
+  // SMS Tracker
+  | "SMS_TRACKER"
+  // Budget Tracker
+  | "BUDGET_TRACKER"
+  // Financial Goals
+  | "FINANCIAL_GOALS"
 
-    // Missing Types
-    | 'GST_RECONCILIATION' | 'REPRINT_QUEUE' | 'ATTENDANCE_SUMMARY' | 'ATTENDANCE_BOARD' | 'ALLOWANCE_MANAGER' | 'COMMISSION_MANAGEMENT'
-    // Finance Agents
-    | 'FINANCE_AGENTS'
-    // SMS Tracker
-    | 'SMS_TRACKER'
-    // Budget Tracker
-    | 'BUDGET_TRACKER'
-    // Financial Goals
-    | 'FINANCIAL_GOALS'
-
-    // Wholesale/Retail (WR) Billing -- a separate billing track for bulk/wholesale
-    // transactions, parallel to standard Sales/Billing and Purchasing/GRN rather than a mode
-    // within them. See frontend/src/features/wholesale/*.
-    | 'WR_COUNTER' | 'WR_SALES_ENTRY' | 'WR_PURCHASE_ENTRY' | 'WR_SALES_BILL_VIEW'
-    | 'WR_PURCHASE_BILL_VIEW' | 'WR_SALES_REPORT' | 'WR_STOCK_REPORT';
+  // Wholesale/Retail (WR) Billing -- a separate billing track for bulk/wholesale
+  // transactions, parallel to standard Sales/Billing and Purchasing/GRN rather than a mode
+  // within them. See frontend/src/features/wholesale/*.
+  | "WR_COUNTER"
+  | "WR_SALES_ENTRY"
+  | "WR_PURCHASE_ENTRY"
+  | "WR_SALES_BILL_VIEW"
+  | "WR_PURCHASE_BILL_VIEW"
+  | "WR_SALES_REPORT"
+  | "WR_STOCK_REPORT";
 
 export enum SystemRole {
-    SUPER_ADMIN = 'superadmin',
-    OWNER = 'owner',
-    CO_OWNER = 'co-owner',
-    ADMIN = 'admin',
-    MANAGER = 'manager',
-    STAFF = 'staff',
-    CUSTOMER = 'customer'
+  SUPER_ADMIN = "superadmin",
+  OWNER = "owner",
+  CO_OWNER = "co-owner",
+  ADMIN = "admin",
+  MANAGER = "manager",
+  STAFF = "staff",
+  CUSTOMER = "customer",
 }

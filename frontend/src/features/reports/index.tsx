@@ -1,4 +1,5 @@
-﻿import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
 import type { AppView } from '@/types/common';
@@ -42,12 +43,22 @@ const resolveGlobalView = (view: AppView): { tab?: string; slug?: string | null 
 };
 
 const ReportsModule: React.FC = () => {
+    const location = useLocation();
     const _dispatch = useDispatch<AppDispatch>();
     const { user, role } = useSelector((state: RootState) => state.auth);
     const { activeTab: globalActiveTab } = useSelector((state: RootState) => state.ui);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTabLocal] = useState<string>(() => resolveGlobalView(globalActiveTab).tab ?? 'transactions');
     const [selectedReportSlug, setSelectedReportSlug] = useState<string | null>(() => resolveGlobalView(globalActiveTab).slug ?? null);
+
+    useEffect(() => {
+        const reportId = new URLSearchParams(location.search).get("report");
+        const report = reportId ? getReport(reportId) : null;
+        if (report) {
+            setActiveTabLocal(report.category);
+            setSelectedReportSlug(report.id);
+        }
+    }, [location.search]);
 
     // Follow global navigation: adjust local state during render when the global view changes
     // (https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).

@@ -11,6 +11,8 @@ const authController = container.resolve(AuthController);
 // Public routes with rate limiting
 router.post("/register", authLimiter, authController.register);
 router.post("/login", authLimiter, authController.login);
+router.post("/refresh", authLimiter, authController.refresh);
+router.post("/logout", authController.logout);
 router.post("/force-logout", forceLogoutLimiter, authController.forceLogout);
 router.post("/forgot-password", passwordResetLimiter, authController.forgotPassword);
 router.post("/reset-password", passwordResetLimiter, authController.resetPassword);

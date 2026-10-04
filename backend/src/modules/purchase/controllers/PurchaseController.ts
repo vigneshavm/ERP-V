@@ -1,9 +1,9 @@
 import { Response } from 'express';
 import { singleton, inject } from 'tsyringe';
 import { PurchaseService } from '../services/PurchaseService.js';
-import { error } from '../../../config/logger.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 import { AppError } from '../../../utils/AppError.js';
+import { error } from '../../../config/logger.js';
 
 /**
  * HTTP translation only -- all purchase business logic (supplier credit checks, inventory
@@ -47,27 +47,15 @@ export class PurchaseController {
                 message: "Purchase created successfully",
             });
         } catch (err: any) {
-            error("Create Purchase Error: " + err.message);
+            error(`Create Purchase Error: ${err.message}`);
             const status = err.statusCode || 500;
             res.status(status).json({ message: err.message, code: err.code, data: err.data });
         }
     };
 
-    /**
-     * @swagger
-     * /api/purchase:
-     *   get:
-     *     summary: Get all purchases
-     *     tags: [Purchase]
-     *     security:
-     *       - bearerAuth: []
-     *     responses:
-     *       200:
-     *         description: List of purchases retrieved
-     */
     public getAllPurchases = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const purchases = await this.purchaseService.getAllPurchases(req.user, req.query as Record<string, unknown>);
+            const purchases = await this.purchaseService.getAllPurchases(req.user, req.query);
             res.json(purchases);
         } catch (err: any) {
             res.status(500).json({ message: err.message });
@@ -111,19 +99,19 @@ export class PurchaseController {
         }
     };
 
-    public getSupplierTotals = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    public deletePurchase = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            const totals = await this.purchaseService.getSupplierTotals(req.tenantId.toString());
-            res.json(totals);
+            await this.purchaseService.deletePurchase(String(req.params.id), req.tenantId.toString());
+            res.json({ message: "Purchase deleted successfully" });
         } catch (err: any) {
             res.status(500).json({ message: err.message });
         }
     };
 
-    public deletePurchase = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    public getSupplierTotals = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
-            await this.purchaseService.deletePurchase(String(req.params.id), req.tenantId.toString());
-            res.json({ message: "Purchase deleted successfully" });
+            const totals = await this.purchaseService.getSupplierTotals(req.tenantId.toString());
+            res.json(totals);
         } catch (err: any) {
             res.status(500).json({ message: err.message });
         }
@@ -158,17 +146,12 @@ export class PurchaseController {
     public updatePOStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const { status, expectedDeliveryDate } = req.body;
-            const purchase = await this.purchaseService.updatePOStatus(
-                String(req.params.id),
-                req.tenantId.toString(),
-                req.user,
-                status,
-                expectedDeliveryDate,
-            );
+            const purchase = await this.purchaseService.updatePOStatus(String(req.params.id), req.tenantId.toString(), req.user, status, expectedDeliveryDate);
             res.json({ success: true, message: `PO status updated to ${status}`, purchase });
         } catch (err: any) {
             res.status(err instanceof AppError ? err.statusCode : 500).json({ message: err.message });
         }
     };
+
 }
 

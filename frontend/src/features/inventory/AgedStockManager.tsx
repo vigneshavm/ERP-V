@@ -76,7 +76,6 @@ interface StockAgeResponse {
     range?: { from: string | null; to: string | null };
     checks?: { multiPurchaseBarcodes: number };
     source: 'sql' | 'mongo';
-    approximate?: boolean;
 }
 
 const OLD_BUCKETS: BucketKey[] = ['6-11', '12+'];
@@ -128,6 +127,10 @@ const AgedStockManager: React.FC = () => {
             if (toDate) params.to = toDate;
             if (refresh) params.refresh = '1';
             const res = await api.get<StockAgeResponse>('/api/inventory/stock-age', { params });
+            if (res.data.source !== 'sql') {
+                setData(null);
+                throw new Error('Stock aging is unavailable because the API did not return SQL Server data.');
+            }
             setData(res.data);
         } catch (err: any) {
             setError(err?.response?.data?.message || err?.message || 'Could not load aged stock');
@@ -194,12 +197,6 @@ const AgedStockManager: React.FC = () => {
                 </div>
 
                 {/* Data-quality notes */}
-                {data?.approximate && (
-                    <div className="flex items-start gap-2 p-3 rounded-sm border border-warning/30 bg-warning/5 text-xs font-medium text-slate-700 dark:text-slate-300">
-                        <Info className="w-4 h-4 text-warning shrink-0 mt-0.5" />
-                        MongoDB mode: each item's whole stock uses the date of its oldest purchase still in stock, so ages are approximate.
-                    </div>
-                )}
                 {multi > 0 && (
                     <div className="flex items-start gap-2 p-3 rounded-sm border border-warning/30 bg-warning/5 text-xs font-medium text-slate-700 dark:text-slate-300">
                         <Info className="w-4 h-4 text-warning shrink-0 mt-0.5" />
@@ -212,6 +209,8 @@ const AgedStockManager: React.FC = () => {
                     </div>
                 )}
 
+                {data ? (
+                    <>
                 {/* Totals */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <Kpi label="Unsold value (cost)" value={rupees(totals.value)} />
@@ -411,6 +410,10 @@ const AgedStockManager: React.FC = () => {
                         </div>
                     )}
                 </div>
+                    </>
+                ) : loading ? (
+                    <div className="p-10 text-center text-sm text-slate-400 font-medium">Loading aged stock…</div>
+                ) : null}
             </div>
         </Layout>
     );

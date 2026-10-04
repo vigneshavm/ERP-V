@@ -218,3 +218,26 @@ describe('receiptGenerator (Dynamic DB/API Data Context)', () => {
         vi.restoreAllMocks();
     });
 });
+
+describe('measured receipt base quantity', () => {
+    it.each([2, -2])('uses cut length for signed count %s in amount and inclusive GST', qty => {
+        const sale = buildDynamicSale({ taxMode: TaxMode.INCLUSIVE, total: qty * 131.25 }, [{ id: 'fabric', name: 'Fabric', unit: 'Meter', qty, cutLength: 1.25, price: 105, gstRate: 5 }]);
+        const receipt = generateReceiptJSON(sale, buildDynamicTenant(), buildDynamicBranch()).receipt_data;
+        expect(receipt.items[0].amount).toBe(qty * 131.25);
+        expect(receipt.items[0].quantity).toBe(qty);
+        expect(receipt.items[0].mtr).toBe(1.25);
+        expect(receipt.tax_details.taxable_value).toBe(qty * 125);
+        expect(receipt.tax_details.cgst_amount).toBeCloseTo(qty * 3.125, 1);
+    });
+    it('uses measured base quantity for exclusive GST too', () => {
+        const sale = buildDynamicSale({ taxMode: TaxMode.EXCLUSIVE, total: 262.5 }, [{ id: 'fabric', unit: 'Meter', qty: 2, cutLength: 1.25, price: 100, gstRate: 5 }]);
+        const receipt = generateReceiptJSON(sale, buildDynamicTenant(), buildDynamicBranch()).receipt_data;
+        expect(receipt.items[0].amount).toBe(250);
+        expect(receipt.tax_details.taxable_value).toBe(250);
+        expect(receipt.tax_details.cgst_amount).toBe(6.25);
+    });
+    it('refuses a historical measured receipt with no cut length instead of inventing one', () => {
+        const sale = buildDynamicSale({}, [{ id: 'fabric', unit: 'Meter', qty: 2, price: 100 }]);
+        expect(() => generateReceiptJSON(sale, buildDynamicTenant(), buildDynamicBranch())).toThrow('positive cut length');
+    });
+});

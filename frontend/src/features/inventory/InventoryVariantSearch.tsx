@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
     Search,
     RotateCcw,
@@ -44,6 +44,16 @@ interface InventoryVariantSearchProps {
 }
 
 export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ embedded = false }) => {
+    const clearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (clearTimerRef.current) {
+                clearTimeout(clearTimerRef.current);
+            }
+        };
+    }, []);
+
     // Filter State
     const [searchProduct, setSearchProduct] = useState('');
     const [selectedBrand, setSelectedBrand] = useState('ALL');
@@ -56,6 +66,8 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
     const [items, setItems] = useState<InventoryItem[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
+    const [page, setPage] = useState(1);
+    const PAGE_SIZE = 100;
     const [loadError, setLoadError] = useState<string | null>(null);
     const [hasSearched, setHasSearched] = useState(false);
 
@@ -90,13 +102,13 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
     // shows a genuine error state -- it never falls back to fabricated demo rows,
     // since an Inventory Manager relying on this page to know real stock levels
     // must never be shown numbers that aren't actually in MongoDB.
-    const fetchInventory = useCallback(async () => {
+    const fetchInventory = useCallback(async (pageNo: number = 1) => {
         setIsLoading(true);
         setLoadError(null);
         try {
             const params: any = {
-                page: 1,
-                limit: 100,
+                page: pageNo,
+                limit: PAGE_SIZE,
             };
             if (searchProduct.trim()) params.search = searchProduct.trim();
             if (selectedBrand !== 'ALL') params.brand = selectedBrand;
@@ -117,7 +129,9 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
             } else if (data && Array.isArray(data.data)) {
                 fetchedItems = data.data;
             }
+            if (!(data && Array.isArray(data.items))) setTotalCount(fetchedItems.length);
 
+            setPage(pageNo);
             setItems(fetchedItems);
         } catch (err: any) {
             console.error('Inventory Search Error:', err);
@@ -139,7 +153,7 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        fetchInventory();
+        fetchInventory(1);
     };
 
     const handleClearFilters = () => {
@@ -149,7 +163,10 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
         setSelectedColor('ALL');
         setSelectedShelf('ALL');
         setSelectedShelfType('ALL');
-        setTimeout(() => {
+        if (clearTimerRef.current) {
+            clearTimeout(clearTimerRef.current);
+        }
+        clearTimerRef.current = setTimeout(() => {
             fetchInventory();
         }, 50);
     };
@@ -320,7 +337,7 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
                         <AlertTriangle className="w-12 h-12 text-warning mx-auto mb-3" />
                         <h4 className="text-base font-bold text-slate-800 dark:text-slate-200">Couldn't load inventory</h4>
                         <p className="text-xs text-slate-500 mt-1 mb-4">{loadError}</p>
-                        <Button onClick={() => fetchInventory()} className="px-4 py-2 text-xs font-bold text-primary border border-primary/30 rounded-xl hover:bg-primary/5 transition-all">Retry</Button>
+                        <Button onClick={() => fetchInventory(page)} className="px-4 py-2 text-xs font-bold text-primary border border-primary/30 rounded-xl hover:bg-primary/5 transition-all">Retry</Button>
                     </div>
                 ) : !hasSearched || items.length === 0 ? (
                     <div className="p-12 text-center">
@@ -420,6 +437,18 @@ export const InventoryVariantSearch: React.FC<InventoryVariantSearchProps> = ({ 
                                 })}
                             </tbody>
                         </table>
+                    </div>
+                )}
+                {!isLoading && !loadError && totalCount > PAGE_SIZE && (
+                    <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-700 px-6 py-4">
+                        <span className="text-xs font-medium text-slate-400">
+                            {(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, totalCount)} of {totalCount}
+                        </span>
+                        <div className="flex items-center gap-2">
+                            <button type="button" disabled={page <= 1} onClick={() => fetchInventory(page - 1)} className="h-9 rounded-lg border border-slate-200 dark:border-slate-700 px-3 text-xs font-bold text-slate-600 dark:text-slate-300 disabled:opacity-40">Previous</button>
+                            <span className="text-xs font-bold text-slate-500">Page {page} of {Math.max(1, Math.ceil(totalCount / PAGE_SIZE))}</span>
+                            <button type="button" disabled={page >= Math.ceil(totalCount / PAGE_SIZE)} onClick={() => fetchInventory(page + 1)} className="h-9 rounded-lg border border-slate-200 dark:border-slate-700 px-3 text-xs font-bold text-slate-600 dark:text-slate-300 disabled:opacity-40">Next</button>
+                        </div>
                     </div>
                 )}
             </div>

@@ -179,10 +179,17 @@ export const customerSlice = createSlice({
       .addCase(getAllCustomers.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getAllCustomers.fulfilled, (state, action: PayloadAction<Customer[]>) => {
+      .addCase(getAllCustomers.fulfilled, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.customers = action.payload;
+        // The list may arrive bare or wrapped ({ data: [...] } / { customers: [...] } / { items: [...] }).
+        const body = action.payload;
+        state.customers = Array.isArray(body)
+          ? body
+          : Array.isArray(body?.data) ? body.data
+          : Array.isArray(body?.customers) ? body.customers
+          : Array.isArray(body?.items) ? body.items
+          : [];
       })
       .addCase(getAllCustomers.rejected, (state, action) => {
         state.isLoading = false;

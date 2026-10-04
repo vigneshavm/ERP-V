@@ -240,6 +240,24 @@ export const posSlice = createSlice({
                 item.qty = action.payload.qty;
             }
         },
+        setReturnFromBill: (state, action: PayloadAction<{ id: string; bill: string }>) => {
+            const session = state.sessions[state.activeSessionIndex];
+            if (!session) return;
+            const item = session.cart.find(i => i.id === action.payload.id);
+            if (item) {
+                item.returnFromBill = action.payload.bill || undefined;
+                item.returnFromLine = undefined;
+            }
+        },
+        setReturnFromLine: (state, action: PayloadAction<{ id: string; bill: string; lineNo: number }>) => {
+            const session = state.sessions[state.activeSessionIndex];
+            if (!session) return;
+            const item = session.cart.find(i => i.id === action.payload.id);
+            if (item) {
+                item.returnFromBill = action.payload.bill || undefined;
+                item.returnFromLine = action.payload.lineNo || undefined;
+            }
+        },
         updateCartLength: (state, action: PayloadAction<{ id: string; length: number }>) => {
             const session = state.sessions[state.activeSessionIndex];
             if (!session) return;
@@ -247,6 +265,11 @@ export const posSlice = createSlice({
             if (item) {
                 item.cutLength = action.payload.length;
             }
+        },
+        setCartLineDiscount: (state, action: PayloadAction<{ id: string; discountPercent: number }>) => {
+            const session = state.sessions[state.activeSessionIndex];
+            const item = session?.cart.find(i => i.id === action.payload.id);
+            if (item && item.qty >= 0) item.discountPercent = Math.max(0, Math.min(99.99, action.payload.discountPercent));
         },
         clearCart: (state) => {
             const session = state.sessions[state.activeSessionIndex];
@@ -443,7 +466,7 @@ export const posSlice = createSlice({
 
 export const {
     resetPosState, clearInvoice, setSessions, setActiveSessionIndex, setActiveCounter,
-    addToCart, removeFromCart, updateCartQty, updateCartLength, clearCart,
+    addToCart, removeFromCart, updateCartQty, updateCartLength, setCartLineDiscount, setReturnFromBill, setReturnFromLine, clearCart,
     addSession, removeSession, setActiveSession,
     setCustomer, addCustomer, updateCustomerPoints, recordSale, setTaxMode, setPaymentMethod, setRedeemedPoints,
     setDiscountAmount, setMrpPending,

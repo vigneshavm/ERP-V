@@ -34,7 +34,7 @@ describe('buildPosInvoicePayload', () => {
         expect(payload.paymentMethod).toBe('cash');
         expect(payload.paidAmount).toBe(630); // recognized payment method -> full total marked paid
         expect(payload.items).toEqual([
-            { item: 'ITEM_1', name: 'Basmati Rice 5kg', quantity: 3, price: 200, tax: 5 },
+            { item: 'ITEM_1', name: 'Basmati Rice 5kg', quantity: 3, price: 200, tax: 5, barcode: undefined, isQuickEntry: undefined, discountPercent: 0, salesmanCode: undefined, returnFromBill: undefined, returnFromLine: undefined },
         ]);
     });
 
@@ -112,5 +112,49 @@ describe('buildPosInvoicePayload', () => {
         const payload = buildPosInvoicePayload(sale);
 
         expect(payload.customerId).toBeUndefined();
+    });
+});
+
+describe('SQL quantity safety', () => {
+    const cloth = (overrides: Record<string, unknown> = {}) => makeSale({ items: [{ id: 'CLOTH', name: 'Fabric', price: 50, qty: 2, unit: 'Meter', cutLength: 1.25, ...overrides } as Sale['items'][number]] });
+    test.each([undefined, 0, -1, NaN, Infinity])('rejects invalid cut length %s instead of billing one metre', cutLength => {
+        expect(() => buildPosInvoicePayload(cloth({ cutLength }))).toThrow('positive cut length');
+    });
+    test.each([0, NaN, Infinity, -Infinity])('rejects invalid count %s', qty => {
+        expect(() => buildPosInvoicePayload(cloth({ qty }))).toThrow('finite, non-zero');
+    });
+    test.each(['MTR', 'metre', 'METER', ' Meter '])('makes unsupported measured alias %s explicit', unit => {
+        expect(() => buildPosInvoicePayload(cloth({ unit }))).toThrow('unavailable in this checkout');
+    });
+    test('preserves signed measured base quantity and exact return source', () => {
+        const line = buildPosInvoicePayload(cloth({ qty: -2, returnFromBill: 'A1', returnFromLine: 9 })).items[0];
+        expect(line.quantity).toBe(-2.5);
+        expect(line.returnFromBill).toBe('A1');
+        expect(line.returnFromLine).toBe(9);
+    });
+    test('rejects a final quantity that SQL would silently round', () => {
+        expect(() => buildPosInvoicePayload(cloth({ qty: 1, cutLength: 1.234 }))).toThrow('two decimal places');
+    });
+    test('accepts binary floating point noise without changing quantity', () => {
+        expect(buildPosInvoicePayload(cloth({ qty: 3, cutLength: 0.1 })).items[0].quantity).toBeCloseTo(0.3, 12);
+    });
+    test('rejects overflow instead of serializing invalid quantity', () => {
+        expect(() => buildPosInvoicePayload(cloth({ qty: 2, cutLength: Number.MAX_VALUE }))).toThrow('precision');
+    });
+    test('rejects a tiny quantity that SQL would store as zero', () => {
+        expect(() => buildPosInvoicePayload(cloth({ qty: 1, cutLength: 1e-12 }))).toThrow('precision');
+    });
+    test('retains existing piece quantity without applying a cut length', () => {
+        expect(buildPosInvoicePayload(cloth({ unit: 'Piece', qty: 3, cutLength: 1.25 })).items[0].quantity).toBe(3);
+    });
+});
+
+describe('explicit payment allocation payload', () => {
+    test('preserves supplied split tenders instead of discarding them', () => {
+        const splitPaymentDetails = [{ method: 'cash', amount: 100.25 }, { method: 'upi', amount: 529.75 }];
+        expect(buildPosInvoicePayload(makeSale({ splitPaymentDetails })).splitPaymentDetails).toEqual(splitPaymentDetails);
+    });
+    test('retains the single-payment payload when no split is supplied', () => {
+        expect(buildPosInvoicePayload(makeSale()).splitPaymentDetails).toEqual([]);
     });
 });

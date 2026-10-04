@@ -146,12 +146,11 @@ describe("PurchaseReturnService.createPurchaseReturn", () => {
         const debitNote: any = debitNoteRepository.create.mock.calls[0][0];
         expect(debitNote).toMatchObject({
             noteId: "DN-000003",
-            tenantId,
             vendorName: "Acme Textiles",
             reason: "RETURN",
             status: "APPROVED",
             totalAmount: 200,
-            createdBy: userId,
+            createdBy: String(userId),
         });
         expect(debitNote.items[0]).toMatchObject({ name: "Shirt", qty: 2, amount: 210 });
 

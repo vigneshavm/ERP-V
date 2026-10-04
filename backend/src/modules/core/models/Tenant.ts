@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { ISubscriptionPlan } from "./SubscriptionPlan.js";
 
 export interface ITenant extends Document {
     name: string;
@@ -107,9 +106,6 @@ export interface ITenant extends Document {
     defaultTaxMode?: string;
     loyaltyPointLabel?: string; // per-tenant naming for the loyalty currency, e.g. "Points" / "Stars" / "Coins"
     enabledModules?: Record<string, boolean>;
-    subscriptionPlan: mongoose.Types.ObjectId | ISubscriptionPlan;
-    subscriptionStartDate?: Date;
-    subscriptionEndDate?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -245,18 +241,7 @@ const tenantSchema = new Schema<ITenant>({
     },
     defaultTaxMode: { type: String },
     loyaltyPointLabel: { type: String, default: 'Points' },
-    enabledModules: { type: Map, of: Boolean },
-    subscriptionPlan: {
-        type: Schema.Types.ObjectId,
-        ref: 'SubscriptionPlan',
-        required: true
-    },
-    subscriptionStartDate: {
-        type: Date
-    },
-    subscriptionEndDate: {
-        type: Date
-    }
+    enabledModules: { type: Map, of: Boolean }
 }, { timestamps: true });
 
 const Tenant = mongoose.model<ITenant>('Tenant', tenantSchema);

@@ -2,10 +2,12 @@ import { Response } from 'express';
 import mongoose from 'mongoose';
 
 import Expense from '../models/Expense.js';
-import ExpenseCategory from '../models/ExpenseCategory.js';
+import { listExpenseCategories } from '../../../integrations/textilesoft/erpExpenseCategory.js';
 import Invoice from '../../sales/models/Invoice.js';
 import { error } from '../../../config/logger.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import { isSqlItemSource } from '../../../config/itemDataSource.js';
+import { listSqlExpenses } from '../../../integrations/textilesoft/sqlExpenses.js';
 
 /**
  * Category data interface
@@ -50,6 +52,51 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
         const tenantId = req.user.tenantId;
         const now = new Date();
 
+        if (isSqlItemSource()) {
+            const startDate = req.query.startDate ? new Date(String(req.query.startDate)) : new Date(now.getFullYear(), now.getMonth(), 1);
+            const endDate = req.query.endDate ? new Date(String(req.query.endDate)) : new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+            if (req.query.endDate) endDate.setHours(23, 59, 59, 999);
+            const [allExpenses, categoryRows] = await Promise.all([listSqlExpenses(), listExpenseCategories()]);
+            const expenses = allExpenses.filter((expense) => expense.date >= startDate && expense.date <= endDate);
+            const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            const byName = new Map<string, { amount: number; count: number }>();
+            for (const expense of expenses) {
+                const row = byName.get(expense.category) ?? { amount: 0, count: 0 };
+                row.amount += expense.amount;
+                row.count++;
+                byName.set(expense.category, row);
+            }
+            const budgets = new Map(categoryRows.map((category) => [category.name, category.monthly_budget]));
+            const by_category = [...byName].map(([category, values]) => ({
+                category,
+                amount: values.amount,
+                budget: budgets.get(category) ?? 0,
+                variance: values.amount - (budgets.get(category) ?? 0),
+                variancePercentage: (budgets.get(category) ?? 0) > 0 ? Math.round((values.amount / (budgets.get(category) ?? 1) - 1) * 100) : 0,
+                percentage: total > 0 ? `${Math.round(values.amount / total * 100)}%` : '0%',
+                type: 'VARIABLE',
+                status: (budgets.get(category) ?? 0) > 0 ? (values.amount > (budgets.get(category) ?? 0) ? 'OVER' : 'UNDER') : 'NONE',
+            })).sort((a, b) => b.amount - a.amount);
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const monthly_trends = Array.from({ length: 6 }, (_, index) => {
+                const date = new Date(now.getFullYear(), now.getMonth() - index, 1);
+                const monthTotal = allExpenses.filter((expense) => expense.date.getFullYear() === date.getFullYear() && expense.date.getMonth() === date.getMonth()).reduce((sum, expense) => sum + expense.amount, 0);
+                const budget = categoryRows.reduce((sum, category) => sum + category.monthly_budget, 0);
+                return { month: monthNames[date.getMonth()], year: date.getFullYear(), expense: monthTotal, income: null, budget_utilization: budget ? Math.round(monthTotal / budget * 100) : null, budget: budget || null, label: `${monthNames[date.getMonth()]} ${date.getFullYear()}` };
+            });
+            res.status(200).json({
+                report_period: `${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`,
+                total_expense: total,
+                by_category,
+                by_branch: [],
+                by_payment_mode: total ? [{ mode: 'CASH', amount: total }] : [],
+                audit_flags: [],
+                recommendations: ['SQL expense entries do not retain payment, branch, receipt, or income details.'],
+                monthly_trends,
+            });
+            return;
+        }
+
         // Default to current month if no date range provided
         const startDate = req.query.startDate
             ? new Date(req.query.startDate as string)
@@ -85,7 +132,7 @@ export const getExpenseReport = async (req: AuthenticatedRequest, res: Response)
         }
 
         // Fetch categories with budgets
-        const categoriesWithBudgets = await ExpenseCategory.find({ createdBy: tenantId });
+        const categoriesWithBudgets = await listExpenseCategories();
         const budgetMap = new Map<string, number>();
         categoriesWithBudgets.forEach(cb => budgetMap.set(cb.name, cb.monthly_budget));
 

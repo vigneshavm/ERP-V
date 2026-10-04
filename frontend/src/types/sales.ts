@@ -43,6 +43,15 @@ export interface CartItem extends Product {
     // gstPercentage (which this normally mirrors, but a line can override it, e.g. an exempted
     // item). receiptGenerator.ts falls back to gstPercentage when this is unset.
     gstRate?: number;
+    /** Textilesoft product discount percentage saved with the sale line. */
+    discountPercent?: number;
+    /** Optional source billing salesperson code. */
+    salesmanCode?: string;
+    /** Returned items (qty < 0), shop-database mode: the bill the item was bought on, e.g. "A96". Needed when the
+     *  barcode was sold at different prices; the server refuses the bill otherwise. */
+    returnFromBill?: string;
+    /** Exact source sale line selected in the shop-database return picker. */
+    returnFromLine?: number;
 }
 
 export interface Customer {
@@ -147,6 +156,10 @@ export interface PopulatedInvoice extends Omit<Invoice, 'customer'> {
 
 export interface Sale {
     id: string;
+    /** Stable client-generated key retained through offline retry; distinct from the printed bill number. */
+    idempotencyKey?: string;
+    /** Server amount accepted during SQL checkout preview; cleared with the Sale object lifecycle. */
+    expectedTotal?: number;
     _id?: string; // Compatibility with Invoice
     date: string;
     createdAt?: string; // Compatibility with Invoice
@@ -161,11 +174,15 @@ export interface Sale {
     branchId?: string;
     taxMode?: TaxMode;
     paymentMethod?: PaymentMethod | string;
+    /** Supplied by a reviewed split-payment caller; the POS checkout has no split editor. */
+    splitPaymentDetails?: Array<{ method: string; amount: number }>;
     status: SaleStatus | string;
     paymentStatus: PaymentStatus | string;
     userId?: string;
     counterId?: string;
     counterName?: string;
+    /** Salesperson for the bill: the employee code (Textilesoft dbo.newemployee.code), stored as sls_man. */
+    salesmanCode?: string;
     loyaltyPointsEarned?: number;
     redeemedPoints?: number;
     redemptionAmount?: number;

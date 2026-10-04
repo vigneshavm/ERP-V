@@ -1,5 +1,5 @@
 import { CorsOptions } from "cors";
-import { error as logError, warn } from './logger.js';
+import { warn } from './logger.js';
 
 /**
  * Enhanced CORS configuration for production
@@ -52,26 +52,8 @@ const isAllowedOrigin = async (origin: string | undefined): Promise<boolean> => 
         return true;
     }
 
-    // NEW: Check dynamic tenant domains
-    try {
-        const domain = origin.replace(/^https?:\/\//, "").split(":")[0];
-
-        // Use the Tenant model directly for lookups
-        // Note: In high traffic, consider adding a cache layer here
-        const { default: Tenant } = await import("../modules/core/models/Tenant.js");
-        const tenant = await Tenant.findOne({
-            $or: [
-                { 'ecommerce.domain': domain },
-                { slug: domain.split('.')[0] } // Support slugs
-            ],
-            status: 'ACTIVE'
-        }).lean();
-
-        return !!tenant;
-    } catch (error) {
-        logError('Error checking dynamic CORS origin:', error);
-        return false;
-    }
+    // Tenant-specific origins must be explicitly configured; origin checks do not query a database.
+    return false;
 };
 
 /**

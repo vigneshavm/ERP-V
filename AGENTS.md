@@ -9,6 +9,17 @@ These are repository-wide rules for AI coding agents.
 
 Follow the existing codebase conventions first. Do not replace working project architecture with generic patterns without a requirement.
 
+## Rules for every task (SQL data work)
+
+These apply to every task that touches ERP data, pages or APIs, in addition to the rules below.
+
+- [ ] Use only tables and columns that already exist in the configured SQL databases and have been verified by read-only metadata inspection.
+- [ ] Do not create, alter, migrate, seed, repair, or add indexes/constraints/triggers to any SQL database. Do not run `backend/sql/erp/*.sql`.
+- [ ] Do not store missing data in unrelated tables, JSON/config blobs, notes, or free-text fields. Do not create a hidden ID crosswalk.
+- [ ] Do not drop a UI page before its page/API/database behavior has been reviewed. A screen with no compatible existing SQL storage must clearly show a reduced scope or an unavailable operation.
+- [ ] No Mongo fallback, mirror, shadow write, or false-success response in a SQL path.
+- [ ] Record the affected UI route, API method/path, backend handler, SQL tables/columns, business behavior lost or retained, and verification evidence for each completed task.
+
 ## Core Principles
 
 **Understand → Search → Reuse → Implement → Clean → Test → Validate**

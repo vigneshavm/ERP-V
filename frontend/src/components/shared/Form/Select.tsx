@@ -326,17 +326,25 @@ const Select = forwardRef<HTMLDivElement, SelectProps>(
 
             <div className="flex items-center gap-1 flex-shrink-0 ml-2">
               {selectedValues.length > 0 && !disabled && (
-                <button
-                  type="button"
+                <span
+                  role="button"
+                  tabIndex={0}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleClear();
                   }}
-                  className="p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleClear();
+                    }
+                  }}
+                  className="p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded cursor-pointer"
                   title={clearText}
                 >
                   <X size={14} />
-                </button>
+                </span>
               )}
 
               {statusIcon && !selectedValues.length && (

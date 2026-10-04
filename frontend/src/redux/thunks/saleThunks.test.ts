@@ -1,163 +1,98 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, afterEach, describe, expect, test, vi } from "vitest";
+import type { Sale } from "../../types/sales";
 
-// Mocks must be declared before importing the module under test (Vitest hoists vi.mock calls).
-const mockApiPost = vi.fn();
-vi.mock('../../services/api', () => ({
-    default: { post: (...args: any[]) => mockApiPost(...args) },
+const mocks = vi.hoisted(() => ({ post: vi.fn(), queue: vi.fn(), finance: vi.fn(), points: vi.fn() }));
+vi.mock("../../services/api", () => ({ default: { post: mocks.post } }));
+vi.mock("../../services/db", () => ({ db: { offlineSales: { add: mocks.queue } } }));
+vi.mock("../slices/financeSlice", () => ({ addTransaction: mocks.finance }));
+vi.mock("../slices/posSlice", () => ({
+    recordSale: (sale: Sale) => ({ type: "pos/recordSale", payload: sale }),
+    updateCustomerPoints: mocks.points,
 }));
+vi.mock("../slices/inventorySlice", () => ({ deductStock: (payload: unknown) => ({ type: "inventory/deductStock", payload }) }));
+const { processSale } = await import("./saleThunks");
 
-const mockOfflineSalesAdd = vi.fn();
-vi.mock('../../services/db', () => ({
-    db: { offlineSales: { add: (...args: any[]) => mockOfflineSalesAdd(...args) } },
-}));
-
-const mockToastError = vi.fn();
-vi.mock('react-toastify', () => ({
-    toast: { error: (...args: any[]) => mockToastError(...args) },
-}));
-
-const { processSale } = await import('./saleThunks');
-
-// This is the fix for the sale that "prints but never reaches the DB": processSale used to
-// fire-and-forget a POST to '/sales-invoice/sync', a route that never existed. It now awaits the
-// real endpoint and, on any failure (network, validation, offline), queues the sale for retry
-// instead of silently dropping it.
-
-function makeSale(overrides: any = {}) {
-    return {
-        id: 'A01-000123',
-        date: '2026-08-26T10:00:00',
-        items: [{ id: 'ITEM_1', name: 'Rice', price: 200, qty: 3, gstPercentage: 5, unit: 'Pcs' }],
-        total: 630,
-        paymentMethod: 'CASH',
-        sector: 'RETAIL',
-        branchId: 'BRANCH_1',
-        ...overrides,
-    };
-}
-
-function makeGetState() {
-    return () => ({
-        auth: { user: { tenantId: 'TENANT_1' } },
-        tenant: { tenants: [{ id: 'TENANT_1', locations: [] }], branches: [] },
-    });
-}
-
-describe('processSale (saleThunks)', () => {
-    let dispatch: ReturnType<typeof vi.fn>;
-    let _originalOnLine: PropertyDescriptor | undefined;
-
-    beforeEach(() => {
-        dispatch = vi.fn();
-        mockApiPost.mockReset();
-        mockOfflineSalesAdd.mockReset();
-        mockToastError.mockReset();
-        _originalOnLine = Object.getOwnPropertyDescriptor(navigator, 'onLine');
-    });
-
-    function setOnline(value: boolean) {
-        Object.defineProperty(navigator, 'onLine', { value, configurable: true });
-    }
-
-    test('online + server accepts the sale: posts to /api/pos/invoice and does not queue offline', async () => {
-        setOnline(true);
-        mockApiPost.mockResolvedValue({ data: { success: true, invoice: { invoiceNo: 'INV-1' } } });
-
-        await processSale(makeSale())(dispatch as any, makeGetState() as any);
-
-        expect(mockApiPost).toHaveBeenCalledWith('/api/pos/invoice', expect.objectContaining({
-            paymentMethod: 'cash',
-            items: [expect.objectContaining({ item: 'ITEM_1', quantity: 3, tax: 5 })],
-        }));
-        expect(mockOfflineSalesAdd).not.toHaveBeenCalled();
-        expect(mockToastError).not.toHaveBeenCalled();
-    });
-
-    test('online + server returns its bill number: the sale takes that number (receipt, Last Bill, lookup)', async () => {
-        setOnline(true);
-        mockApiPost.mockResolvedValue({ data: { success: true, invoice: { billNo: 'A96', invoiceNo: 'A96' } } });
+const makeSale = () => ({ id: "pending-1", total: 200, items: [{ id: "barcode-1", barcode: "barcode-1", name: "Shirt", price: 200, qty: 1, unit: "Piece" }], date: "2026-10-02", paymentMethod: "CASH" } as unknown as Sale);
+let onlineDescriptor: PropertyDescriptor | undefined;
+beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.post.mockReset();
+    onlineDescriptor = Object.getOwnPropertyDescriptor(navigator, "onLine");
+    Object.defineProperty(navigator, "onLine", { value: true, configurable: true });
+});
+afterEach(() => {
+    if (onlineDescriptor) Object.defineProperty(navigator, "onLine", onlineDescriptor);
+    else Reflect.deleteProperty(navigator, "onLine");
+});
+describe("SQL sale persistence confirmation", () => {
+    test.each(["network", "permission", "server rejection"])("%s failure rejects without queue, local posting or receipt continuation", async reason => {
+        mocks.post.mockRejectedValue(new Error(reason));
         const sale = makeSale();
-
-        const billNo = await processSale(sale)(dispatch as any, makeGetState() as any);
-
-        expect(billNo).toBe('A96');
-        expect(sale.id).toBe('A96');
-        expect(mockOfflineSalesAdd).not.toHaveBeenCalled();
+        const dispatch = vi.fn();
+        const receipt = vi.fn();
+        await expect(processSale(sale)(dispatch as never, (() => ({})) as never).then(receipt)).rejects.toThrow(reason);
+        expect(dispatch).not.toHaveBeenCalled();
+        expect(receipt).not.toHaveBeenCalled();
+        expect(mocks.queue).not.toHaveBeenCalled();
+        expect(mocks.finance).not.toHaveBeenCalled();
+        expect(mocks.points).not.toHaveBeenCalled();
+        expect(sale.id).toBe("pending-1");
     });
-
-    test('online but the server refuses the sale (success=false): keeps it as a failed bill, not retried', async () => {
-        setOnline(true);
-        mockApiPost.mockResolvedValue({ data: { success: false, message: 'Insufficient stock for Rice' } });
-
-        await processSale(makeSale())(dispatch as any, makeGetState() as any);
-
-        expect(mockOfflineSalesAdd).toHaveBeenCalledTimes(1);
-        const queued = mockOfflineSalesAdd.mock.calls[0][0];
-        expect(queued.synced).toBe(false);
-        expect(queued.failed).toBe(true);
-        expect(queued.error).toBe('Insufficient stock for Rice');
-        expect(queued.id).toBe('A01-000123');
-        expect(mockToastError).toHaveBeenCalledTimes(1);
-        expect(mockToastError.mock.calls[0][0]).toMatch(/REJECTED it: Insufficient stock for Rice/);
+    test("success=false rejects without local success", async () => {
+        mocks.post.mockResolvedValue({ data: { success: false, message: "Insufficient stock" } });
+        const dispatch = vi.fn();
+        await expect(processSale(makeSale())(dispatch as never, (() => ({})) as never)).rejects.toThrow("Insufficient stock");
+        expect(dispatch).not.toHaveBeenCalled();
+        expect(mocks.queue).not.toHaveBeenCalled();
     });
-
-    test('online but the server answers 400: keeps it as a failed bill with the server reason', async () => {
-        setOnline(true);
-        mockApiPost.mockRejectedValue({ response: { status: 400, data: { message: 'Item not found: SHIRT' } }, message: 'Request failed with status code 400' });
-
-        await processSale(makeSale())(dispatch as any, makeGetState() as any);
-
-        const queued = mockOfflineSalesAdd.mock.calls[0][0];
-        expect(queued.failed).toBe(true);
-        expect(queued.error).toBe('Item not found: SHIRT');
-        expect(mockToastError.mock.calls[0][0]).toMatch(/Failed bills/);
+    test.each([{ success: true }, { success: true, invoice: { billNo: "A1" } }, { success: true, invoice: { billNo: "A1", totalAmount: "" } }])("incomplete confirmation is not local success: %j", async data => {
+        mocks.post.mockResolvedValue({ data });
+        const dispatch = vi.fn();
+        await expect(processSale(makeSale())(dispatch as never, (() => ({})) as never)).rejects.toThrow("confirmation is incomplete");
+        expect(dispatch).not.toHaveBeenCalled();
     });
-
-    test('online but the server answers 500: queued for automatic retry, not marked failed', async () => {
-        setOnline(true);
-        mockApiPost.mockRejectedValue({ response: { status: 500, data: { message: 'Server Error' } }, message: 'Request failed with status code 500' });
-
-        await processSale(makeSale())(dispatch as any, makeGetState() as any);
-
-        const queued = mockOfflineSalesAdd.mock.calls[0][0];
-        expect(queued.failed).toBeUndefined();
-        expect(queued.retryCount).toBe(0);
-        expect(mockToastError.mock.calls[0][0]).toMatch(/did NOT save to the server/);
+    test("offline refuses without API call or queue", async () => {
+        Object.defineProperty(navigator, "onLine", { value: false, configurable: true });
+        const dispatch = vi.fn();
+        await expect(processSale(makeSale())(dispatch as never, (() => ({})) as never)).rejects.toThrow("offline");
+        expect(mocks.post).not.toHaveBeenCalled();
+        expect(mocks.queue).not.toHaveBeenCalled();
+        expect(dispatch).not.toHaveBeenCalled();
     });
-
-    test('online but the request throws (network error): queues it offline and warns the cashier', async () => {
-        setOnline(true);
-        mockApiPost.mockRejectedValue(new Error('Network Error'));
-
-        await processSale(makeSale())(dispatch as any, makeGetState() as any);
-
-        expect(mockOfflineSalesAdd).toHaveBeenCalledTimes(1);
-        expect(mockToastError).toHaveBeenCalledTimes(1);
+    test("confirmed SQL bill updates display state after response, without financial/reward shadow writes", async () => {
+        mocks.post.mockResolvedValue({ data: { success: true, invoice: { billNo: "A1", totalAmount: 199 } } });
+        const sale = makeSale();
+        const dispatch = vi.fn();
+        await expect(processSale(sale)(dispatch as never, (() => ({})) as never)).resolves.toBe("A1");
+        expect(sale.total).toBe(199);
+        expect(dispatch.mock.calls.map(([action]) => action.type)).toEqual(["pos/recordSale", "inventory/deductStock"]);
+        expect(mocks.post).toHaveBeenCalledWith("/api/pos/invoice", expect.any(Object), expect.objectContaining({ headers: { "Idempotency-Key": "pending-1" } }));
+        expect(mocks.finance).not.toHaveBeenCalled();
+        expect(mocks.points).not.toHaveBeenCalled();
+        expect(mocks.queue).not.toHaveBeenCalled();
     });
+});
 
-    test('fully offline: queues immediately without ever calling the API', async () => {
-        setOnline(false);
-
-        await processSale(makeSale())(dispatch as any, makeGetState() as any);
-
-        expect(mockApiPost).not.toHaveBeenCalled();
-        expect(mockOfflineSalesAdd).toHaveBeenCalledTimes(1);
-        // No server round-trip happened, so there's nothing to warn the cashier about yet -
-        // SyncManager reports failures once it actually tries to replay the queue.
-        expect(mockToastError).not.toHaveBeenCalled();
+describe('validated measured quantity at submission', () => {
+    test('invalid measured quantity stops before API or local state', async () => {
+        const sale = makeSale();
+        sale.items[0].unit = 'Meter';
+        sale.items[0].cutLength = 0;
+        const dispatch = vi.fn();
+        await expect(processSale(sale)(dispatch as never, (() => ({})) as never)).rejects.toThrow('positive cut length');
+        expect(mocks.post).not.toHaveBeenCalled();
+        expect(dispatch).not.toHaveBeenCalled();
     });
-
-    test('still records the optimistic local Redux state (recordSale + deductStock) regardless of sync outcome', async () => {
-        setOnline(true);
-        mockApiPost.mockResolvedValue({ data: { success: true } });
-
-        await processSale(makeSale())(dispatch as any, makeGetState() as any);
-
-        const dispatchedTypes = dispatch.mock.calls.map(call => call[0]?.type);
-        expect(dispatchedTypes).toEqual(expect.arrayContaining([
-            expect.stringContaining('recordSale'),
-            expect.stringContaining('deductStock'),
-            expect.stringContaining('addTransaction'),
-        ]));
+    test('confirmed stock display uses the same measured quantity submitted to SQL', async () => {
+        const sale = makeSale();
+        sale.items[0].unit = 'Meter';
+        sale.items[0].cutLength = 1.25;
+        sale.items[0].qty = 2;
+        mocks.post.mockResolvedValue({ data: { success: true, invoice: { billNo: 'A2', totalAmount: 500 } } });
+        const dispatch = vi.fn();
+        await processSale(sale)(dispatch as never, (() => ({})) as never);
+        const payload = mocks.post.mock.calls[0][1];
+        expect(payload.items[0].quantity).toBe(2.5);
+        expect(dispatch).toHaveBeenCalledWith({ type: 'inventory/deductStock', payload: { id: sale.items[0].id, qty: 2.5 } });
     });
 });

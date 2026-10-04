@@ -1,9 +1,9 @@
 import { injectable, inject } from "tsyringe";
+import { Types } from "mongoose";
 import { SupplierReconciliationRepository } from "../repositories/SupplierReconciliationRepository.js";
 import { AppError } from "../../../utils/AppError.js";
-import { ISupplierReconciliation } from "../models/SupplierReconciliation.js";
+import type { SupplierReconciliationEntry } from "../../../integrations/textilesoft/erpSupplierReconciliation.js";
 import { info } from "../../../config/logger.js";
-import { Types } from "mongoose";
 
 @injectable()
 export class SupplierReconciliationService {
@@ -12,10 +12,10 @@ export class SupplierReconciliationService {
     ) { }
 
     async markReconciled(
-        tenantId: Types.ObjectId,
+        _tenantId: Types.ObjectId,
         userId: Types.ObjectId,
         body: any
-    ): Promise<ISupplierReconciliation> {
+    ): Promise<SupplierReconciliationEntry> {
         const { supplierId, transactionType, transactionId, status = 'RECONCILED', notes } = body;
 
         if (!supplierId || !transactionType || !transactionId) {
@@ -24,15 +24,12 @@ export class SupplierReconciliationService {
 
         const reconciliation = await this.reconciliationRepository.findUpsert(
             transactionId,
-            tenantId,
             {
-                supplierId: supplierId as any,
+                supplierId: String(supplierId),
                 transactionType,
-                transactionId,
                 status,
                 notes,
-                reconciledAt: new Date(),
-                createdBy: userId
+                createdBy: String(userId),
             }
         );
 
@@ -40,21 +37,21 @@ export class SupplierReconciliationService {
         return reconciliation;
     }
 
-    async getReconciliationStatus(supplierId: string, tenantId: Types.ObjectId): Promise<ISupplierReconciliation[]> {
+    async getReconciliationStatus(supplierId: string, _tenantId: Types.ObjectId): Promise<SupplierReconciliationEntry[]> {
         if (!supplierId) {
             throw new AppError("Supplier ID is required", 400);
         }
 
-        return this.reconciliationRepository.findBySupplier(new Types.ObjectId(supplierId), tenantId);
+        return this.reconciliationRepository.findBySupplier(supplierId);
     }
 
-    async unreconcile(id: string, tenantId: Types.ObjectId, _userId: Types.ObjectId): Promise<void> {
-        const reconciliation = await this.reconciliationRepository.findById(id, tenantId);
+    async unreconcile(id: string, _tenantId: Types.ObjectId, _userId: Types.ObjectId): Promise<void> {
+        const reconciliation = await this.reconciliationRepository.findById(id);
         if (!reconciliation) {
             throw new AppError("Reconciliation record not found", 404);
         }
 
-        await this.reconciliationRepository.delete(id, tenantId);
+        await this.reconciliationRepository.delete(id);
         info(`Reconciliation removed: ${reconciliation.transactionId}`);
     }
 }

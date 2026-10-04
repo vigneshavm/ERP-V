@@ -27,6 +27,7 @@ interface POSFooterProps {
     // Manual bill-level discount (currency amount). Optional -- callers that don't pass
     // these simply don't render the Discount row, so this can be adopted incrementally.
     discountAmount?: number;
+    discountBase?: number;
     onSetDiscountAmount?: (amount: number) => void;
     maxDiscountPercent?: number;
     allowDiscountOverride?: boolean;
@@ -66,6 +67,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     activeCustomer,
     loyaltyConfig,
     discountAmount = 0,
+    discountBase,
     onSetDiscountAmount,
     maxDiscountPercent,
     allowDiscountOverride = true,
@@ -82,7 +84,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     onCheckout
 }) => {
     const { t } = useLanguage();
-    const discountPercent = cartSubtotal > 0 ? (discountAmount / cartSubtotal) * 100 : 0;
+    const discountPercent = (discountBase ?? cartSubtotal) > 0 ? (discountAmount / (discountBase ?? cartSubtotal)) * 100 : 0;
     const exceedsCap = typeof maxDiscountPercent === 'number' && discountAmount > 0 && discountPercent > maxDiscountPercent;
     return (
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 sm:p-4 shadow-lg flex-1 flex flex-col min-h-0 transition-colors">
@@ -162,6 +164,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                     </div>
                     <div>
                         <span className="text-[9px] font-bold text-slate-400 mb-1 block uppercase">{t('payment')}</span>
+                        <p className="text-[10px] text-slate-500 mb-1" role="note">One cash, card or UPI payment per bill. Split payment entry and customer credit are unavailable in this checkout.</p>
                         <div className="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
                             {(['CASH', 'CARD', 'UPI'] as PaymentMethod[]).map(method => (
                                 <button

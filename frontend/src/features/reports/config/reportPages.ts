@@ -1,6 +1,7 @@
 import type React from 'react';
 import type { ComingSoonReportType, ReportType } from './reportViews';
 import SalesReport from '../sales/SalesReport';
+import MissingSalesReport from '../sales/MissingSalesReport';
 import ReturnsAuditReport from '../returns/ReturnsAuditReport';
 import ExpenseAnalysisReport from '../expenses/ExpenseAnalysisReport';
 import DayBookReport from '../finance/DayBookReport';
@@ -32,13 +33,16 @@ import SalesCounterWiseSalesReport from '../SalesCounterWiseSalesReport';
 import HourlyBillingReport from '../HourlyBillingReport';
 import DailySalesReport from '../DailySalesReport';
 import ProductWiseSalesReport from '../ProductWiseSalesReport';
+import SalesInventoryAnalysis from '../SalesInventoryAnalysis';
 
 /**
  * Report type → page. Every page is a ReportPageShell reading a report API; none has a sample-data fallback.
  * `satisfies` makes a missing page for any non-coming-soon type a compile error.
  */
 export const REPORT_PAGES = {
+    REPORT_MISSING_SALES: MissingSalesReport,
     REPORT_SALES: SalesReport,
+    REPORT_SALES_INVENTORY_ANALYSIS: SalesInventoryAnalysis,
     REPORT_RETURNS_AUDIT: ReturnsAuditReport,
     REPORT_EXPENSE_ANALYSIS: ExpenseAnalysisReport,
     DAY_BOOK: DayBookReport,

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from "../../services/api.js";
 import { RootState } from '../store';
 
-const API_URL = "/api/purchases/agents";
+const API_URL = "/api/agents";
 
 export interface Agent {
     _id: string;
@@ -10,6 +10,8 @@ export interface Agent {
     phone?: string;
     email?: string;
     address?: string;
+    cardNumber?: string;
+    discountPercent?: number;
     commissionPercent: number;
     linkedSupplierId?: string;
     bankAccountNumber?: string;
@@ -48,7 +50,7 @@ export const getAgents = createAsyncThunk<Agent[], void, { state: RootState, rej
             const state = thunkAPI.getState();
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue('Token not found');
-            const response = await api.get(API_URL, getConfig(token));
+            const response = await api.get("/api/agents", getConfig(token));
             return response.data.data || response.data;
         } catch (error: any) {
             const message =

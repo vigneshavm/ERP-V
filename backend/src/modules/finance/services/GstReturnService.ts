@@ -1,16 +1,11 @@
-import Invoice from "../../sales/models/Invoice.js";
-import Bill from "../models/Bill.js";
-import { decomposeGST } from "../../../utils/gstUtils.js";
-import { isSqlItemSource } from "../../../config/itemDataSource.js";
 import { shopHsnMaster, shopInward, shopOutward, type GstRange, type ShopOutward } from "../../../integrations/textilesoft/sqlGstReports.js";
 import { tableQuery, type TableQuery } from "../../core/services/tableQuery.js";
 import {
-    byHsn, byMonth, byRate, financialYear, monthsBetween, resolveRate, setOff, totals,
+    byHsn, byMonth, byRate, financialYear, monthsBetween, setOff, totals,
     type GstSource, type TaxBucket, type TaxTotals,
 } from "./gstMath.js";
-import { istStart, istEndExclusive, istDate, parseISODateRange } from "../../../utils/dateUtils.js";
-import { toNumber as n, round2 } from "../../../utils/typeConversion.js";
-import { tenantKey as tenantMatch } from "../../../utils/mongooseUtils.js";
+import { parseISODateRange } from "../../../utils/dateUtils.js";
+import { round2 } from "../../../utils/typeConversion.js";
 
 /**
  * GST return reports: GSTR-1 (outward), GSTR-3B (monthly summary + ITC set-off), GSTR-9 (annual) and the
@@ -26,7 +21,6 @@ import { tenantKey as tenantMatch } from "../../../utils/mongooseUtils.js";
  * is visible next to the numbers.
  */
 
-type Source = "sql" | "mongo";
 
 /* ------------------------------------------------------------------------------------------------ ERP outward */
 
@@ -41,63 +35,10 @@ export interface ErpOutward {
     returns: { invoices: number; value: number };
 }
 
-export async function erpOutward(tenantId: string, range: GstRange): Promise<ErpOutward> {
-    const docs = await Invoice.find(
-        {
-            tenantId: tenantMatch(tenantId),
-            isDeleted: { $ne: true },
-            // Cancelled and refunded sales are reversed, so they are not outward supplies.
-            fulfillmentStatus: { $nin: ["CANCELLED", "REFUNDED"] },
-            createdAt: { $gte: istStart(range.from), $lt: istEndExclusive(range.to) },
-        },
-        { createdAt: 1, isInterState: 1, taxMode: 1, totalAmount: 1, returnedAmount: 1, hasReturns: 1, items: 1 },
-    ).lean();
-
-    const cells = new Map<string, TaxBucket>();
-    let zeroLines = 0, zeroValue = 0, derived = 0, invoiceValue = 0, retInv = 0, retValue = 0;
-
-    for (const inv of docs as unknown as Record<string, any>[]) {
-        const month = istDate(new Date(inv.createdAt)).slice(0, 7);
-        const inter = Boolean(inv.isInterState);
-        const inclusive = (inv.taxMode ?? "INCLUSIVE") === "INCLUSIVE";
-        invoiceValue += n(inv.totalAmount);
-        if (inv.hasReturns || n(inv.returnedAmount) > 0) { retInv += 1; retValue += n(inv.returnedAmount); }
-
-        for (const it of (inv.items ?? []) as Record<string, any>[]) {
-            const value = n(it.total ?? n(it.price) * n(it.quantity));
-            let taxable = n(it.taxableAmount);
-            let cgst = n(it.cgst), sgst = n(it.sgst), igst = n(it.igst);
-            let tax = cgst + sgst + igst || n(it.tax);
-            const storedRate = it.gstRate;
-
-            if (taxable === 0 && value !== 0) {
-                // No stored breakdown: derive from the recorded rate, the way the invoice was priced.
-                const g = decomposeGST(value, n(storedRate), inter, inclusive);
-                taxable = g.taxableAmount; cgst = g.cgst; sgst = g.sgst; igst = g.igst; tax = g.tax;
-                derived += 1;
-            } else if (cgst + sgst + igst === 0 && tax > 0) {
-                ({ cgst, sgst, igst } = inter ? { cgst: 0, sgst: 0, igst: tax } : { cgst: tax / 2, sgst: tax / 2, igst: 0 });
-            }
-            if (!n(storedRate) || tax === 0) { zeroLines += 1; zeroValue += value; }
-
-            const rate = resolveRate(storedRate, taxable, tax);
-            const hsn = /^\d{4,8}$/.test(String(it.hsnCode ?? "").trim()) ? String(it.hsnCode).trim() : "";
-            const key = `${month}|${rate}|${hsn}|${inter ? 1 : 0}`;
-            const b = cells.get(key) ?? { source: "erp" as GstSource, month, rate, hsn, interState: inter, lines: 0, qty: 0, value: 0, taxable: 0, cgst: 0, sgst: 0, igst: 0 };
-            b.lines += 1; b.qty += n(it.quantity); b.value += value; b.taxable += taxable; b.cgst += cgst; b.sgst += sgst; b.igst += igst;
-            cells.set(key, b);
-        }
-    }
-
-    return {
-        buckets: [...cells.values()],
-        invoices: docs.length,
-        invoiceValue: round2(invoiceValue),
-        zeroRateLines: { lines: zeroLines, value: round2(zeroValue) },
-        derivedLines: derived,
-        returns: { invoices: retInv, value: round2(retValue) },
-    };
-}
+/** Sales now live only in the shop database (counter bills are written to Textilesoft's tables), so there are no ERP-side invoices. */
+export const NO_ERP_OUTWARD: ErpOutward = {
+    buckets: [], invoices: 0, invoiceValue: 0, zeroRateLines: { lines: 0, value: 0 }, derivedLines: 0, returns: { invoices: 0, value: 0 },
+};
 
 /* ------------------------------------------------------------------------------------------------ ERP inward */
 
@@ -124,76 +65,23 @@ export interface InwardRow {
     itcEligible: boolean;
 }
 
-// Bills that are accepted tax invoices. Drafts, rejected, disputed and pending-approval bills are not claimed.
-const BILL_LIVE_STATUSES = ["approved", "paid", "unpaid", "overdue"];
+/** Supplier tax invoices live in the shop database (GRNs), so there are no ERP-side supplier bills. */
+export const NO_ERP_INWARD: { row: InwardRow; cells: TaxBucket[] }[] = [];
 
-export async function erpInward(tenantId: string, range: GstRange): Promise<{ row: InwardRow; cells: TaxBucket[] }[]> {
-    const bills = await Bill.find(
-        { tenantId: String(tenantId), status: { $in: BILL_LIVE_STATUSES }, date: { $gte: istStart(range.from), $lt: istEndExclusive(range.to) } },
-        { billNo: 1, vendorInvoiceNo: 1, date: 1, supplier: 1, items: 1, taxBreakdown: 1, itcStatus: 1 },
-    )
-        .populate("supplier", "name gstNo")
-        .lean();
-
-    const out: { row: InwardRow; cells: TaxBucket[] }[] = [];
-    for (const b of bills as unknown as Record<string, any>[]) {
-        const date = istDate(new Date(b.date));
-        const tb = b.taxBreakdown ?? {};
-        const totalTax = n(tb.cgst) + n(tb.sgst) + n(tb.igst);
-        const inter = n(tb.igst) > 0 && n(tb.cgst) + n(tb.sgst) === 0;
-        const byRateCell = new Map<number, TaxBucket>();
-        for (const it of (b.items ?? []) as Record<string, any>[]) {
-            const value = n(it.total);
-            const tax = n(it.taxAmount);
-            const taxable = value - tax;
-            const rate = resolveRate(it.taxRate, taxable, tax);
-            const cell = byRateCell.get(rate) ?? { source: "erp" as GstSource, month: date.slice(0, 7), rate, hsn: "", interState: inter, lines: 0, qty: 0, value: 0, taxable: 0, cgst: 0, sgst: 0, igst: 0 };
-            cell.lines += 1; cell.qty += n(it.quantity); cell.value += value; cell.taxable += taxable;
-            if (inter) cell.igst += tax; else { cell.cgst += tax / 2; cell.sgst += tax / 2; }
-            byRateCell.set(rate, cell);
-        }
-        // Prefer the bill's own tax split when it disagrees with the line sum (e.g. freight GST).
-        const cells = [...byRateCell.values()];
-        const t = totals(cells);
-        if (totalTax > 0 && Math.abs(totalTax - t.tax) > 0.5 && cells.length === 1) {
-            cells[0].cgst = n(tb.cgst); cells[0].sgst = n(tb.sgst); cells[0].igst = n(tb.igst);
-        }
-        const tt = totals(cells);
-        const supplier = b.supplier ?? {};
-        const gstin = String(supplier.gstNo ?? "").trim().toUpperCase();
-        out.push({ cells, row: {
-            source: "erp", kind: "purchase", doc: String(b.billNo ?? ""), supplierInvoiceNo: b.vendorInvoiceNo ? String(b.vendorInvoiceNo) : null,
-            date, invoiceDate: date, supplier: String(supplier.name ?? "Unknown supplier"), gstin,
-            rates: rateList(cells), lines: tt.lines, qty: tt.qty, value: tt.value, taxable: tt.taxable,
-            cgst: tt.cgst, sgst: tt.sgst, igst: tt.igst, tax: tt.tax,
-            itcEligible: isGstin(gstin) && b.itcStatus !== "INELIGIBLE",
-        } });
-    }
-    return out;
-}
-
-/* ------------------------------------------------------------------------------------------------ Helpers */
-
-/** A 15-character GSTIN: 2-digit state code, PAN, entity, 'Z', check character. */
 export const isGstin = (v: string): boolean => /^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(v);
 
 const rateList = (cells: TaxBucket[]): string =>
     [...new Set(cells.map((c) => c.rate))].sort((a, b) => a - b).map((r) => (r < 0 ? "Unknown" : `${r}%`)).join(", ");
 
-const sourceOf = (): Source => (isSqlItemSource() ? "sql" : "mongo");
+const sourceOf = (): "sql" => "sql";
 
 export const parseRange = (from: unknown, to: unknown): GstRange | null => parseISODateRange(from, to);
 
-const EMPTY_SHOP: ShopOutward = {
-    buckets: [], bills: 0, billValue: 0, headerTax: 0, cancelled: { bills: 0, value: 0 }, interStateBills: 0, documents: [], hsnViaGroupLines: 0, asOf: null,
-};
-
-async function outwardAll(tenantId: string, range: GstRange) {
-    const sql = isSqlItemSource();
-    const [shop, erp, hsn] = await Promise.all([
-        sql ? shopOutward(range) : Promise.resolve(EMPTY_SHOP),
-        erpOutward(tenantId, range),
-        sql ? shopHsnMaster().catch(() => null) : Promise.resolve(null),
+async function outwardAll(_tenantId: string, range: GstRange) {
+    const erp = NO_ERP_OUTWARD;
+    const [shop, hsn] = await Promise.all([
+        shopOutward(range),
+        shopHsnMaster().catch(() => null),
     ]);
     return { shop, erp, buckets: [...shop.buckets, ...erp.buckets], describe: (h: string) => hsn?.describe(h) ?? "" };
 }
@@ -236,7 +124,7 @@ export async function buildGstr1(tenantId: string, range: GstRange) {
         byHsn: byHsn(buckets, describe),
         documents: [
             ...shop.documents.map((d) => ({ source: "shop" as const, ...d })),
-            ...(erp.invoices ? [{ source: "erp" as const, series: "ERP invoices", from: 0, to: 0, total: erp.invoices, cancelled: 0 }] : []),
+            ...(erp.invoices ? [{ source: "erp" as const, series: "ERP invoices", from: "", to: "", total: erp.invoices, cancelled: 0 }] : []),
         ],
         checks: outwardChecks(shop, erp, buckets),
         asOf: shop.asOf,
@@ -246,12 +134,9 @@ export async function buildGstr1(tenantId: string, range: GstRange) {
 
 /* ------------------------------------------------------------------------------------------------ Inward register */
 
-async function inwardAll(tenantId: string, range: GstRange) {
-    const sql = isSqlItemSource();
-    const [shop, erp] = await Promise.all([
-        sql ? shopInward(range) : Promise.resolve({ rows: [], returnsAvailable: true, asOf: null }),
-        erpInward(tenantId, range),
-    ]);
+async function inwardAll(_tenantId: string, range: GstRange) {
+    const shop = await shopInward(range);
+    const erp = NO_ERP_INWARD;
 
     // Shop rows come per document × rate: fold them into one register row per document.
     const docs = new Map<string, { kind: "purchase" | "return"; doc: string; date: string; invoiceDate: string | null; supplier: string; gstin: string; cells: TaxBucket[] }>();

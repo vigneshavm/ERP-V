@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
+import { getShopPool } from '../../../integrations/textilesoft/shopDbPool.js';
+import { query as queryErpSql } from '../../../integrations/textilesoft/erpDb.js';
 
 
 
@@ -60,26 +61,15 @@ export const healthCheck = async (_req: Request, res: Response): Promise<void> =
  */
 export const readinessCheck = async (_req: Request, res: Response): Promise<void> => {
     try {
-        // Check database connection
-        const dbState = mongoose.connection.readyState;
-        const dbReady = dbState === 1; // 1 = connected
-
-        if (!dbReady) {
-            res.status(503).json({
-                status: 'not_ready',
-                timestamp: new Date().toISOString(),
-                checks: {
-                    database: 'disconnected',
-                },
-            });
-            return;
-        }
+        const [shopPool] = await Promise.all([getShopPool(), queryErpSql('SELECT 1 AS ready')]);
+        const shopResult = await shopPool.request().query('SELECT 1 AS ready');
+        if (!shopResult?.recordset?.length) throw new Error('Shop SQL readiness query returned no rows');
 
         res.status(200).json({
             status: 'ready',
             timestamp: new Date().toISOString(),
             checks: {
-                database: 'connected',
+                database: 'sql-connected',
             },
         });
     } catch (error) {

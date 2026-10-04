@@ -194,7 +194,7 @@ className="rounded-full"  // 50%
 **Project Documentation:**
 - [UI/UX Remediation Strategy](UI_UX_REMEDIATION_STRATEGY.md) - 4-phase plan
 - [UI/UX Consistency Analysis](UI_UX_CONSISTENCY_ANALYSIS_DETAILED.md) - Detailed findings
-- [UI/UX Scan Report](UI_UX_CONSISTENCY_SCAN_REPORT.json) - Technical analysis
+- [UI/UX Scan Report](audits/UI_UX_CONSISTENCY_SCAN_REPORT.json) - Technical analysis
 
 ---
 

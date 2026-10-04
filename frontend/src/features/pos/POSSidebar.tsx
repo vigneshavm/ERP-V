@@ -114,7 +114,7 @@ export const POSSidebar: React.FC<POSSidebarProps> = ({
                                     )}
                                 </div>
                                 <p className="font-bold text-sm text-slate-900 dark:text-white">
-                                    ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)).toFixed(2)}
+                                    ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength ?? 0) * item.qty : item.qty)).toFixed(2)}
                                 </p>
                             </div>
 

@@ -149,7 +149,7 @@ describe('PurchaseOrderDetails + ReceiveGoodsModal - real receive-goods integrat
         render(<PurchaseOrderDetails order={order} onAfterReceive={onAfterReceive} />);
 
         fireEvent.click(screen.getByText(/^Receive goods$/i));
-        expect(screen.getByText(/Receive Goods/i)).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Receive Goods' })).toBeInTheDocument();
         expect(screen.getByText(/PO #PUR-20260820-001/i)).toBeInTheDocument();
 
         // Real ReceiveGoodsModal renders one <input type="number"> pair (received, rejected)
@@ -179,7 +179,7 @@ describe('PurchaseOrderDetails + ReceiveGoodsModal - real receive-goods integrat
         expect(onAfterReceive).toHaveBeenCalledWith('PO_1');
 
         // Modal closes on success.
-        await waitFor(() => expect(screen.queryByText(/Receive Goods/i)).not.toBeInTheDocument());
+        await waitFor(() => expect(screen.queryByRole('heading', { name: 'Receive Goods' })).not.toBeInTheDocument());
     });
 
     test('only sends line items with a non-zero received quantity to createGRN', async () => {
@@ -212,7 +212,7 @@ describe('PurchaseOrderDetails + ReceiveGoodsModal - real receive-goods integrat
         fireEvent.click(screen.getByText(/^Receive goods$/i));
         fireEvent.click(screen.getByText(/Confirm Receipt/i));
 
-        await waitFor(() => expect(screen.queryByText(/Receive Goods/i)).not.toBeInTheDocument());
+        await waitFor(() => expect(screen.queryByRole('heading', { name: 'Receive Goods' })).not.toBeInTheDocument());
         expect(mockCreateGRN).not.toHaveBeenCalled();
     });
 
@@ -229,7 +229,7 @@ describe('PurchaseOrderDetails + ReceiveGoodsModal - real receive-goods integrat
         fireEvent.click(screen.getByText(/Confirm Receipt/i));
 
         await waitFor(() => expect(screen.getByText('Insufficient stock ledger')).toBeInTheDocument());
-        expect(screen.getByText(/Receive Goods/i)).toBeInTheDocument(); // still open
+        expect(screen.getByRole('heading', { name: 'Receive Goods' })).toBeInTheDocument(); // still open
         expect(onAfterReceive).not.toHaveBeenCalled();
         expect(mockDispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'purchase/addGRN' }));
     });

@@ -94,7 +94,7 @@ export const SqlRestoreManager: React.FC = () => {
     const [verifying, setVerifying] = useState(false);
     const [headerDetails, setHeaderDetails] = useState<BackupHeader | null>(null);
 
-    const [autoSync, setAutoSync] = useState(true);
+    const [autoSync, setAutoSync] = useState(false); // the old catalog sync targeted MongoDB; SQL-only mode has none
     const [stockMode, setStockMode] = useState<'overwrite' | 'initial-only'>('overwrite');
 
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -222,12 +222,12 @@ export const SqlRestoreManager: React.FC = () => {
 
     // Manual sync only
     const handleManualSync = async () => {
-        const toastId = toast.loading('Synchronizing items & stock from SQL Server...');
+        const toastId = toast.loading('Applying ERP database access...');
         try {
-            const res = await api.post('/api/sync/sql/sync', { stockMode });
+            const res = await api.post('/api/sync/sql/access');
             if (res.data?.success) {
                 toast.update(toastId, {
-                    render: res.data.message || 'Catalog synchronization completed!',
+                    render: res.data.message || 'ERP database access applied.',
                     type: 'success',
                     isLoading: false,
                     autoClose: 5000
@@ -235,7 +235,7 @@ export const SqlRestoreManager: React.FC = () => {
             }
         } catch (err: any) {
             toast.update(toastId, {
-                render: err.response?.data?.message || 'Sync failed',
+                render: err.response?.data?.message || 'Could not apply ERP database access',
                 type: 'error',
                 isLoading: false,
                 autoClose: 5000
@@ -269,7 +269,7 @@ export const SqlRestoreManager: React.FC = () => {
                         className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition"
                     >
                         <RefreshCw className="w-4 h-4" />
-                        Sync Catalog Now
+                        Apply ERP Database Access
                     </button>
                     <button
                         onClick={loadConfig}

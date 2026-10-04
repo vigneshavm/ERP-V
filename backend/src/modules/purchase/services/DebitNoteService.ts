@@ -1,15 +1,14 @@
 import { injectable, inject } from "tsyringe";
-import { Types } from "mongoose";
 import { DebitNoteRepository } from "../repositories/DebitNoteRepository.js";
 import { PurchaseSupplierRepository } from "../../../repositories/PurchaseSupplierRepository.js";
 import { InventoryService } from "../../inventory/services/InventoryService.js";
-import { IDebitNote } from "../models/DebitNote.js";
+import type { DebitNoteEntry, DebitNoteReason as SqlDebitNoteReason } from "../../../integrations/textilesoft/erpDebitNote.js";
 import { AppError } from "../../../utils/AppError.js";
 import { RequestContext } from "../../../utils/requestContext.js";
 import { info, error as logError } from "../../../config/logger.js";
 
-export type DebitNoteReason = IDebitNote["reason"];
-export type DebitNoteStatus = IDebitNote["status"];
+export type DebitNoteReason = SqlDebitNoteReason;
+export type DebitNoteStatus = DebitNoteEntry["status"];
 
 export interface DebitNoteItemInput {
     itemId?: string;
@@ -54,7 +53,7 @@ export class DebitNoteService {
         @inject(InventoryService) private inventoryService: InventoryService,
     ) { }
 
-    async createDebitNote(ctx: RequestContext, input: CreateDebitNoteInput): Promise<IDebitNote> {
+    async createDebitNote(ctx: RequestContext, input: CreateDebitNoteInput): Promise<DebitNoteEntry> {
         const tenantKey = ctx.tenantId.toString();
         const supplier: any = await this.supplierRepository.findRawByIdForTenant(input.vendorId, tenantKey);
         if (!supplier) throw new AppError("Supplier not found", 404, "SUPPLIER_NOT_FOUND");
@@ -65,13 +64,12 @@ export class DebitNoteService {
 
         const note = await this.debitNoteRepository.create({
             noteId: await this.debitNoteRepository.nextNoteId(ctx.tenantId),
-            tenantId: ctx.tenantId,
             date: input.date ? new Date(input.date) : new Date(),
-            vendorId: new Types.ObjectId(input.vendorId),
+            vendorId: input.vendorId,
             vendorName: supplier.businessName || "Unknown",
             reason: input.reason,
             items: input.items.map((i) => ({
-                ...(i.itemId ? { itemId: new Types.ObjectId(i.itemId) } : {}),
+                ...(i.itemId ? { itemId: i.itemId } : {}),
                 name: i.name,
                 qty: i.qty,
                 amount: i.amount,
@@ -81,7 +79,7 @@ export class DebitNoteService {
             poReference: input.poReference,
             branchId: input.branchId || "Main",
             notes: input.notes,
-            createdBy: ctx.userId,
+            createdBy: String(ctx.userId),
         });
 
         if (takesStock) {
@@ -98,17 +96,17 @@ export class DebitNoteService {
         return note;
     }
 
-    async listDebitNotes(ctx: RequestContext): Promise<IDebitNote[]> {
+    async listDebitNotes(ctx: RequestContext): Promise<DebitNoteEntry[]> {
         return this.debitNoteRepository.findAll(ctx.tenantId);
     }
 
-    async getDebitNote(ctx: RequestContext, id: string): Promise<IDebitNote> {
+    async getDebitNote(ctx: RequestContext, id: string): Promise<DebitNoteEntry> {
         const note = await this.debitNoteRepository.findById(id, ctx.tenantId);
         if (!note) throw new AppError("Debit note not found", 404, "DEBIT_NOTE_NOT_FOUND");
         return note;
     }
 
-    async changeStatus(ctx: RequestContext, id: string, to: DebitNoteStatus): Promise<IDebitNote> {
+    async changeStatus(ctx: RequestContext, id: string, to: DebitNoteStatus): Promise<DebitNoteEntry> {
         const note = await this.getDebitNote(ctx, id);
         if (note.status === to) return note;
         if (!TRANSITIONS[note.status].includes(to)) {
@@ -147,7 +145,7 @@ export class DebitNoteService {
         if (lines.length) await this.inventoryService.assertStockAvailable(lines, ctx.tenantId);
     }
 
-    private async takeStockOut(ctx: RequestContext, note: IDebitNote): Promise<void> {
+    private async takeStockOut(ctx: RequestContext, note: DebitNoteEntry): Promise<void> {
         for (const item of note.items) {
             if (!item.itemId) continue;
             try {

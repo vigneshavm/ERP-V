@@ -1,52 +1,42 @@
 import { injectable, singleton } from "tsyringe";
-import SupplierReconciliation from "../models/SupplierReconciliation.js";
-import { ISupplierReconciliation } from "../models/SupplierReconciliation.js";
-import { Types } from "mongoose";
+import {
+    findSupplierReconciliationById,
+    listSupplierReconciliationsBySupplier,
+    listSupplierReconciliationsByStatus,
+    upsertSupplierReconciliation,
+    deleteSupplierReconciliation,
+    type SupplierReconciliationEntry,
+} from "../../../integrations/textilesoft/erpSupplierReconciliation.js";
 
 @injectable()
 @singleton()
 export class SupplierReconciliationRepository {
-    async create(data: Partial<ISupplierReconciliation>): Promise<ISupplierReconciliation> {
-        return SupplierReconciliation.create(data);
+    async findById(id: string): Promise<SupplierReconciliationEntry | null> {
+        return findSupplierReconciliationById(id);
     }
 
-    async findById(id: string, tenantId: Types.ObjectId): Promise<ISupplierReconciliation | null> {
-        return SupplierReconciliation.findOne({ _id: id, tenantId });
+    async findBySupplier(supplierId: string): Promise<SupplierReconciliationEntry[]> {
+        return listSupplierReconciliationsBySupplier(supplierId);
     }
 
-    async findByTransactionId(transactionId: string, tenantId: Types.ObjectId): Promise<ISupplierReconciliation | null> {
-        return SupplierReconciliation.findOne({ transactionId, tenantId });
-    }
-
-    async findBySupplier(supplierId: Types.ObjectId, tenantId: Types.ObjectId): Promise<ISupplierReconciliation[]> {
-        return SupplierReconciliation.find({ supplierId, tenantId }).sort({ reconciledAt: -1 });
-    }
-
-    async findByStatus(status: string, tenantId: Types.ObjectId): Promise<ISupplierReconciliation[]> {
-        return SupplierReconciliation.find({ status, tenantId }).sort({ reconciledAt: -1 });
+    async findByStatus(status: string): Promise<SupplierReconciliationEntry[]> {
+        return listSupplierReconciliationsByStatus(status);
     }
 
     async findUpsert(
         transactionId: string,
-        tenantId: Types.ObjectId,
-        data: Partial<ISupplierReconciliation>
-    ): Promise<ISupplierReconciliation> {
-        return SupplierReconciliation.findOneAndUpdate(
-            { transactionId, tenantId },
-            data,
-            { upsert: true, new: true }
-        );
+        data: {
+            supplierId: string;
+            transactionType: SupplierReconciliationEntry["transactionType"];
+            status?: SupplierReconciliationEntry["status"];
+            notes?: string;
+            createdBy?: string;
+        },
+    ): Promise<SupplierReconciliationEntry> {
+        return upsertSupplierReconciliation(transactionId, data);
     }
 
-    async update(id: string, tenantId: Types.ObjectId, updates: Partial<ISupplierReconciliation>): Promise<ISupplierReconciliation | null> {
-        return SupplierReconciliation.findOneAndUpdate(
-            { _id: id, tenantId },
-            updates,
-            { new: true, runValidators: true }
-        );
-    }
-
-    async delete(id: string, tenantId: Types.ObjectId): Promise<ISupplierReconciliation | null> {
-        return SupplierReconciliation.findOneAndDelete({ _id: id, tenantId });
+    async delete(id: string): Promise<boolean> {
+        return deleteSupplierReconciliation(id);
     }
 }

@@ -1,9 +1,12 @@
 import { Response } from "express";
-import mongoose from "mongoose";
-import CommissionRule from "../models/CommissionRule.js";
-import Invoice from "../models/Invoice.js";
-import User from "../../core/models/User.js";
-import Item from "../../inventory/models/Item.js";
+import {
+    listCommissionRules,
+    listActiveCommissionRules,
+    findCommissionRuleById,
+    createCommissionRule,
+    updateCommissionRule,
+    deleteCommissionRule,
+} from "../../../integrations/textilesoft/erpCommissionRule.js";
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 // Roles allowed to create/edit/delete commission rules. Viewing the computed report is open to
@@ -17,12 +20,9 @@ const COMMISSION_ADMIN_ROLES = ['owner', 'co-owner', 'manager'];
  * @route   GET /api/commission-rules
  * @access  Private
  */
-export const getCommissionRules = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getCommissionRules = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const rules = await CommissionRule.find({ tenantId: req.user.tenantId })
-            .populate('employeeId', 'name role')
-            .populate('itemId', 'name sku category')
-            .sort({ createdAt: -1 });
+        const rules = await listCommissionRules();
         res.status(200).json(rules);
     } catch (err) {
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
@@ -34,7 +34,7 @@ export const getCommissionRules = async (req: AuthenticatedRequest, res: Respons
  * @route   POST /api/commission-rules
  * @access  Private (owner/co-owner/manager)
  */
-export const createCommissionRule = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const createCommissionRuleHandler = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const requesterRole = req.user.role;
         if (!requesterRole || !COMMISSION_ADMIN_ROLES.includes(requesterRole)) {
@@ -70,8 +70,7 @@ export const createCommissionRule = async (req: AuthenticatedRequest, res: Respo
             return;
         }
 
-        const rule = await CommissionRule.create({
-            tenantId: req.user.tenantId,
+        const rule = await createCommissionRule({
             name,
             employeeId: employeeId || undefined,
             scope,
@@ -92,7 +91,7 @@ export const createCommissionRule = async (req: AuthenticatedRequest, res: Respo
  * @route   PATCH /api/commission-rules/:id
  * @access  Private (owner/co-owner/manager)
  */
-export const updateCommissionRule = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const updateCommissionRuleHandler = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const requesterRole = req.user.role;
         if (!requesterRole || !COMMISSION_ADMIN_ROLES.includes(requesterRole)) {
@@ -103,50 +102,43 @@ export const updateCommissionRule = async (req: AuthenticatedRequest, res: Respo
         const { id } = req.params;
         const { name, employeeId, scope, itemId, category, rateType, rateValue, status } = req.body;
 
-        const rule = await CommissionRule.findOne({ _id: id, tenantId: req.user.tenantId });
-        if (!rule) {
+        const existing = await findCommissionRuleById(String(id));
+        if (!existing) {
             res.status(404).json({ message: 'Commission rule not found.' });
             return;
         }
 
-        if (name !== undefined) rule.name = name;
-        if (employeeId !== undefined) rule.employeeId = employeeId || undefined;
-        if (status !== undefined) {
-            if (!['active', 'inactive'].includes(status)) {
-                res.status(400).json({ message: 'status must be active or inactive.' });
-                return;
-            }
-            rule.status = status;
+        if (status !== undefined && !['active', 'inactive'].includes(status)) {
+            res.status(400).json({ message: 'status must be active or inactive.' });
+            return;
         }
-        if (scope !== undefined) {
-            if (!['ITEM', 'CATEGORY', 'ALL'].includes(scope)) {
-                res.status(400).json({ message: 'scope must be ITEM, CATEGORY, or ALL.' });
-                return;
-            }
-            rule.scope = scope;
-            rule.itemId = scope === 'ITEM' ? (itemId ?? rule.itemId) : undefined;
-            rule.category = scope === 'CATEGORY' ? (category ?? rule.category) : undefined;
-        } else {
-            if (itemId !== undefined) rule.itemId = itemId;
-            if (category !== undefined) rule.category = category;
+        if (scope !== undefined && !['ITEM', 'CATEGORY', 'ALL'].includes(scope)) {
+            res.status(400).json({ message: 'scope must be ITEM, CATEGORY, or ALL.' });
+            return;
         }
-        if (rateType !== undefined) {
-            if (!['PERCENT', 'FLAT'].includes(rateType)) {
-                res.status(400).json({ message: 'rateType must be PERCENT or FLAT.' });
-                return;
-            }
-            rule.rateType = rateType;
+        if (rateType !== undefined && !['PERCENT', 'FLAT'].includes(rateType)) {
+            res.status(400).json({ message: 'rateType must be PERCENT or FLAT.' });
+            return;
         }
+        const effectiveRateType = rateType ?? existing.rateType;
         if (rateValue !== undefined) {
             const numericRate = Number(rateValue);
-            if (Number.isNaN(numericRate) || numericRate < 0 || (rule.rateType === 'PERCENT' && numericRate > 100)) {
+            if (Number.isNaN(numericRate) || numericRate < 0 || (effectiveRateType === 'PERCENT' && numericRate > 100)) {
                 res.status(400).json({ message: 'rateValue is invalid for the current rateType.' });
                 return;
             }
-            rule.rateValue = numericRate;
         }
 
-        await rule.save();
+        const rule = await updateCommissionRule(String(id), {
+            name,
+            employeeId: employeeId !== undefined ? (employeeId || null) : undefined,
+            scope,
+            itemId: scope !== undefined ? (scope === 'ITEM' ? (itemId ?? existing.itemId?._id ?? null) : null) : itemId,
+            category: scope !== undefined ? (scope === 'CATEGORY' ? (category ?? existing.category ?? null) : null) : category,
+            rateType,
+            rateValue: rateValue !== undefined ? Number(rateValue) : undefined,
+            status,
+        });
         res.status(200).json(rule);
     } catch (err) {
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
@@ -158,7 +150,7 @@ export const updateCommissionRule = async (req: AuthenticatedRequest, res: Respo
  * @route   DELETE /api/commission-rules/:id
  * @access  Private (owner/co-owner/manager)
  */
-export const deleteCommissionRule = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const deleteCommissionRuleHandler = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const requesterRole = req.user.role;
         if (!requesterRole || !COMMISSION_ADMIN_ROLES.includes(requesterRole)) {
@@ -167,8 +159,8 @@ export const deleteCommissionRule = async (req: AuthenticatedRequest, res: Respo
         }
 
         const { id } = req.params;
-        const result = await CommissionRule.findOneAndDelete({ _id: id, tenantId: req.user.tenantId });
-        if (!result) {
+        const deleted = await deleteCommissionRule(String(id));
+        if (!deleted) {
             res.status(404).json({ message: 'Commission rule not found.' });
             return;
         }
@@ -178,29 +170,6 @@ export const deleteCommissionRule = async (req: AuthenticatedRequest, res: Respo
     }
 };
 
-// Resolves the single best-matching active rule for a given employee + item + category
-// combination. Precedence (most specific first): employee+item, employee+category,
-// employee+all, tenant-wide item, tenant-wide category, tenant-wide all.
-function resolveRule(rules: any[], employeeId: string, itemId: string, category: string | undefined) {
-    const matches = (r: any) => {
-        const empMatch = !r.employeeId || r.employeeId.toString() === employeeId;
-        if (!empMatch) return false;
-        if (r.scope === 'ITEM') return r.itemId && r.itemId.toString() === itemId;
-        if (r.scope === 'CATEGORY') return !!category && r.category === category;
-        return true; // ALL
-    };
-    const candidates = rules.filter(matches);
-    if (candidates.length === 0) return null;
-
-    const specificity = (r: any) => {
-        const empBonus = r.employeeId ? 3 : 0;
-        const scopeBonus = r.scope === 'ITEM' ? 2 : r.scope === 'CATEGORY' ? 1 : 0;
-        return empBonus + scopeBonus;
-    };
-    candidates.sort((a, b) => specificity(b) - specificity(a));
-    return candidates[0];
-}
-
 /**
  * @desc    Commission earned per employee over a date range, computed live from Invoices by
  *          resolving each line against the active commission rules. Not a stored ledger.
@@ -209,78 +178,17 @@ function resolveRule(rules: any[], employeeId: string, itemId: string, category:
  */
 export const getCommissionReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const tenantId = req.user.tenantId;
         const { from, to, employeeId } = req.query as { from?: string; to?: string; employeeId?: string };
-
-        const dateFilter: Record<string, Date> = {};
-        if (from) dateFilter.$gte = new Date(from);
-        if (to) {
-            const toDate = new Date(to);
-            toDate.setHours(23, 59, 59, 999);
-            dateFilter.$lte = toDate;
-        }
-
-        const invoiceQuery: Record<string, any> = { tenantId, isDeleted: { $ne: true } };
-        if (Object.keys(dateFilter).length > 0) invoiceQuery.createdAt = dateFilter;
-        if (employeeId) invoiceQuery.createdBy = employeeId;
-
-        const [rules, invoices, items] = await Promise.all([
-            CommissionRule.find({ tenantId, status: 'active' }).lean(),
-            Invoice.find(invoiceQuery).select('createdBy items totalAmount createdAt').lean(),
-            Item.find({ tenantId }).select('category').lean(),
-        ]);
-
-        if (rules.length === 0) {
-            res.status(200).json({ from: from || null, to: to || null, employees: [], note: 'No active commission rules are configured yet.' });
-            return;
-        }
-
-        const itemCategoryMap = new Map<string, string | undefined>(items.map((it: any) => [it._id.toString(), it.category]));
-
-        const perEmployee = new Map<string, { employeeId: string; invoiceIds: Set<string>; totalCommission: number; totalSalesAttributed: number }>();
-
-        for (const invoice of invoices) {
-            const empId = (invoice.createdBy as mongoose.Types.ObjectId)?.toString();
-            if (!empId) continue;
-
-            for (const line of (invoice.items || []) as any[]) {
-                const itemId = line.item?.toString();
-                if (!itemId) continue;
-                const category = itemCategoryMap.get(itemId);
-                const rule = resolveRule(rules, empId, itemId, category);
-                if (!rule) continue;
-
-                const lineBase = line.taxableAmount || line.total || (line.price * line.quantity) || 0;
-                const commission = rule.rateType === 'PERCENT'
-                    ? (lineBase * rule.rateValue) / 100
-                    : rule.rateValue;
-
-                if (!perEmployee.has(empId)) {
-                    perEmployee.set(empId, { employeeId: empId, invoiceIds: new Set(), totalCommission: 0, totalSalesAttributed: 0 });
-                }
-                const entry = perEmployee.get(empId)!;
-                entry.totalCommission += commission;
-                entry.totalSalesAttributed += lineBase;
-                entry.invoiceIds.add((invoice._id as mongoose.Types.ObjectId).toString());
-            }
-        }
-
-        const employeeIds = Array.from(perEmployee.keys());
-        const users = await User.find({ _id: { $in: employeeIds } }).select('name role').lean();
-        const userNameMap = new Map(users.map((u: any) => [u._id.toString(), u.name]));
-
-        const employees = employeeIds.map((id) => {
-            const entry = perEmployee.get(id)!;
-            return {
-                employeeId: id,
-                employeeName: userNameMap.get(id) || 'Unknown',
-                invoiceCount: entry.invoiceIds.size,
-                totalSalesAttributed: Math.round(entry.totalSalesAttributed * 100) / 100,
-                totalCommission: Math.round(entry.totalCommission * 100) / 100,
-            };
-        }).sort((a, b) => b.totalCommission - a.totalCommission);
-
-        res.status(200).json({ from: from || null, to: to || null, employees });
+        const rules = await listActiveCommissionRules();
+        res.status(200).json({
+            from: from || null,
+            to: to || null,
+            employees: [],
+            note: rules.length
+                ? 'Commission rules are stored in SQL. The existing SQL sales tables do not expose compatible commission transaction detail; report totals are unavailable.'
+                : 'No active commission rules are configured.',
+            ...(employeeId ? { employeeId } : {}),
+        });
     } catch (err) {
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }

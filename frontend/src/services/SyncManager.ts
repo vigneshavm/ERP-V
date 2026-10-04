@@ -32,7 +32,10 @@ export class SyncManager {
                     // this validates stock, persists the invoice, and reduces stock in one
                     // Mongo transaction. The old `/sales-invoice/sync` target had no matching
                     // route, so offline sales replayed here never actually reached the DB.
-                    const { data } = await api.post('/api/pos/invoice', buildPosInvoicePayload(sale));
+                    const payload = buildPosInvoicePayload(sale);
+                    const { data } = await api.post('/api/pos/invoice', payload, {
+                        headers: { 'Idempotency-Key': payload.idempotencyKey },
+                    });
 
                     if (!data?.success) {
                         throw serverRefusedError(data?.message);

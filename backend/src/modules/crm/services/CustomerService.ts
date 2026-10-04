@@ -3,7 +3,7 @@ import { CustomerRepository } from "../../../repositories/CustomerRepository.js"
 import { AppError } from "../../../utils/AppError.js";
 import { ICustomer } from "../../../interfaces/ICustomer.js";
 import { info } from "../../../config/logger.js";
-import Transaction from "../../sales/models/Transaction.js"; // Using Mongoose model directly for mock/simple access
+import { listTransactionsByCustomer } from "../../../integrations/textilesoft/erpTransaction.js";
 
 @injectable()
 export class CustomerService {
@@ -96,9 +96,7 @@ export class CustomerService {
             throw new AppError("Customer not found or unauthorized", 404);
         }
 
-        const transactions = await Transaction.find({ customer: customerId })
-            .sort({ createdAt: -1 })
-            .populate("invoice", "invoiceNo totalAmount paymentStatus");
+        const transactions = await listTransactionsByCustomer(customerId);
 
         return {
             customer: { name: customer.name, phone: customer.phone || '' },

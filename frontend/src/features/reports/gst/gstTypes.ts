@@ -40,7 +40,7 @@ export interface Gstr1Data extends Base {
     counts: { shopBills: number; erpInvoices: number; cancelledShopBills: { bills: number; value: number } };
     byRate: RateRow[];
     byHsn: HsnRow[];
-    documents: { source: 'shop' | 'erp'; series: string; from: number; to: number; total: number; cancelled: number }[];
+    documents: { source: 'shop' | 'erp'; series: string; from: string; to: string; total: number; cancelled: number }[];
     checks: OutwardChecks;
 }
 

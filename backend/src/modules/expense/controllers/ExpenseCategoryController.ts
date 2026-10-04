@@ -1,203 +1,25 @@
 import { Response } from 'express';
-import mongoose from 'mongoose';
-
-import ExpenseCategory from '../models/ExpenseCategory.js';
-import { info, error } from '../../../config/logger.js';
+import { error } from '../../../config/logger.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
+import {
+    listExpenseCategories,
+} from '../../../integrations/textilesoft/erpExpenseCategory.js';
 
-/**
- * Expense category response interface
- */
-interface CategoryResponse {
-    id: string;
-    name: string;
-    monthly_budget: number;
-    approval_required: boolean;
-    is_cash_allowed: boolean;
-    is_active: boolean;
-    gst_eligible: boolean;
-    groupId?: string;
-}
-
-/**
- * @desc Get all expense categories
- * @route GET /api/expense-categories
- */
-export const getAllCategories = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getAllCategories = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const categories = await ExpenseCategory.find({ createdBy: req.user.tenantId })
-            .sort({ name: 1 });
-
-        // Transform for frontend compatibility
-        const transformed: CategoryResponse[] = categories.map((cat: any) => ({
-            id: cat._id,
-            name: cat.name,
-            monthly_budget: cat.monthly_budget,
-            approval_required: cat.approval_required,
-            is_cash_allowed: cat.is_cash_allowed,
-            is_active: cat.is_active,
-            gst_eligible: cat.gst_eligible,
-            groupId: cat.groupId ? String(cat.groupId) : undefined,
-        }));
-
-        res.status(200).json({ categories: transformed });
+        res.status(200).json({ categories: await listExpenseCategories() });
     } catch (err) {
-        error(`Get all expense categories failed: ${(err as Error).message}`);
+        error(`Get SQL expense categories failed: ${(err as Error).message}`);
         res.status(500).json({ message: 'Server Error', error: (err as Error).message });
     }
 };
 
-/**
- * @desc Create new expense category
- * @route POST /api/expense-categories
- */
-export const createCategory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { name, monthly_budget, approval_required, is_cash_allowed, is_active, gst_eligible, groupId } = req.body;
-
-        if (!name) {
-            res.status(400).json({ message: 'Category name is required' });
-            return;
-        }
-
-        // Check for duplicate name within this owner's categories
-        const existingCategory = await ExpenseCategory.findOne({
-            name: { $regex: new RegExp(`^${name}$`, 'i') },
-            createdBy: req.user?._id
-        });
-
-        if (existingCategory) {
-            res.status(400).json({ message: 'Category name already exists' });
-            return;
-        }
-
-        const category = await ExpenseCategory.create({
-            name,
-            monthly_budget: monthly_budget || 0,
-            approval_required: approval_required || false,
-            is_cash_allowed: is_cash_allowed !== false,
-            is_active: is_active !== false,
-            gst_eligible: gst_eligible || false,
-            groupId: groupId || undefined,
-            createdBy: req.user?._id
-        });
-
-        info(`Created expense category: ${name}`);
-
-        res.status(201).json({
-            id: category._id,
-            name: category.name,
-            monthly_budget: category.monthly_budget,
-            approval_required: category.approval_required,
-            is_cash_allowed: category.is_cash_allowed,
-            is_active: category.is_active,
-            gst_eligible: category.gst_eligible,
-            groupId: category.groupId ? String(category.groupId) : undefined,
-        });
-    } catch (err) {
-        error(`Create expense category failed: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
+const unavailable = async (_req: AuthenticatedRequest, res: Response): Promise<void> => {
+    res.status(503).json({ success: false, code: 'SQL_EXPENSE_CATEGORY_WRITE_UNAVAILABLE', message: 'Maintain expense names and groups through the existing Textilesoft masters; budgets and approval rules are not stored there.' });
 };
 
-/**
- * @desc Update expense category
- * @route PUT /api/expense-categories/:id
- */
-export const updateCategory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id as string)) {
-            res.status(400).json({ message: 'Invalid category ID format' });
-            return;
-        }
+export const createCategory = unavailable;
+export const updateCategory = unavailable;
+export const deleteCategory = unavailable;
 
-        const category = await ExpenseCategory.findOne({
-            _id: req.params.id,
-            createdBy: req.user?._id
-        });
-
-        if (!category) {
-            res.status(404).json({ message: 'Category not found or unauthorized' });
-            return;
-        }
-
-        // Check for duplicate name if being updated
-        if (req.body.name && req.body.name !== category.name) {
-            const existingCategory = await ExpenseCategory.findOne({
-                name: { $regex: new RegExp(`^${req.body.name}$`, 'i') },
-                createdBy: req.user?._id,
-                _id: { $ne: req.params.id }
-            });
-
-            if (existingCategory) {
-                res.status(400).json({ message: 'Category name already exists' });
-                return;
-            }
-        }
-
-        const updatedCategory = await ExpenseCategory.findByIdAndUpdate(
-            req.params.id,
-            { $set: req.body },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedCategory) {
-            res.status(404).json({ message: 'Category not found' });
-            return;
-        }
-
-        info(`Updated expense category: ${updatedCategory.name}`);
-
-        res.status(200).json({
-            id: updatedCategory._id,
-            name: updatedCategory.name,
-            monthly_budget: updatedCategory.monthly_budget,
-            approval_required: updatedCategory.approval_required,
-            is_cash_allowed: updatedCategory.is_cash_allowed,
-            is_active: updatedCategory.is_active,
-            gst_eligible: updatedCategory.gst_eligible,
-            groupId: updatedCategory.groupId ? String(updatedCategory.groupId) : undefined,
-        });
-    } catch (err) {
-        error(`Update expense category failed: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
-/**
- * @desc Delete expense category
- * @route DELETE /api/expense-categories/:id
- */
-export const deleteCategory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id as string)) {
-            res.status(400).json({ message: 'Invalid category ID format' });
-            return;
-        }
-
-        const category = await ExpenseCategory.findOne({
-            _id: req.params.id,
-            createdBy: req.user?._id
-        });
-
-        if (!category) {
-            res.status(404).json({ message: 'Category not found or unauthorized' });
-            return;
-        }
-
-        await category.deleteOne();
-        info(`Deleted expense category: ${category.name}`);
-
-        res.status(200).json({ message: 'Category deleted' });
-    } catch (err) {
-        error(`Delete expense category failed: ${(err as Error).message}`);
-        res.status(500).json({ message: 'Server Error', error: (err as Error).message });
-    }
-};
-
-export default {
-    getAllCategories,
-    createCategory,
-    updateCategory,
-    deleteCategory,
-};
+export default { getAllCategories, createCategory, updateCategory, deleteCategory };

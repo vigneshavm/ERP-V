@@ -48,13 +48,15 @@ export interface TaxTotals {
 /**
  * The line's GST rate. Prefers the stored rate when it is a real slab; otherwise infers it from the
  * tax actually charged (tax / taxable), snapped to the nearest slab if within 0.5 percentage points.
- * Returns -1 when neither works, so the report can show the line as "rate unknown" instead of guessing.
+ * Works for returned (negative) lines too. Returns -1 when neither works, so the report can show the
+ * line as "rate unknown" instead of guessing.
  */
 export function resolveRate(stored: unknown, taxable: number, tax: number): number {
     const s = typeof stored === "number" ? stored : Number(String(stored ?? "").trim().replace(/%$/, ""));
     const text = String(stored ?? "").trim();
     if (text !== "" && Number.isFinite(s) && (GST_SLABS as readonly number[]).includes(s)) return s;
-    if (taxable > 0 && tax >= 0) {
+    // Returned lines carry negative value and tax; the ratio is the same, so infer from it too.
+    if (taxable !== 0 && Math.sign(tax) !== -Math.sign(taxable)) {
         const implied = (tax / taxable) * 100;
         let best = -1;
         let gap = Infinity;

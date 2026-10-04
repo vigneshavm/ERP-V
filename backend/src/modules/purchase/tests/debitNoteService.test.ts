@@ -39,7 +39,7 @@ describe("DebitNoteService.createDebitNote", () => {
             vendorId, reason: "PRICE_DIFF",
             items: [{ name: "Rate diff", qty: 2, amount: 150 }, { name: "Freight", qty: 1, amount: 50 }],
         });
-        expect(created).toMatchObject({ noteId: "DN-000009", tenantId, vendorName: "Acme Textiles", totalAmount: 200, status: "DRAFT", createdBy: userId });
+        expect(created).toMatchObject({ noteId: "DN-000009", vendorName: "Acme Textiles", totalAmount: 200, status: "DRAFT", createdBy: String(userId) });
         expect(inventory.reduceStock).not.toHaveBeenCalled();
     });
 

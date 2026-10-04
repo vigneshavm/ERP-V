@@ -16,10 +16,30 @@ declare global {
  */
 export const validateEnv = (): void => {
     const required: string[] = [
-        'MONGO_URI',
         'JWT_SECRET',
         'COOKIE_SECRET'
     ];
+
+    required.push(
+        'TEXTILESOFT_DB_HOST',
+        'TEXTILESOFT_DB_USER',
+        'TEXTILESOFT_DB_PASSWORD',
+        'TEXTILESOFT_DB_WRITE_USER',
+        'TEXTILESOFT_DB_WRITE_PASSWORD',
+        'SHOP_TENANT_ID',
+    );
+    if ((process.env.AUTH_SOURCE || 'sql').trim().toLowerCase() === 'mongo') {
+        error('❌ This build requires AUTH_SOURCE=sql');
+        process.exit(1);
+    }
+    if ((process.env.ITEM_DATA_SOURCE || '').trim().toLowerCase() !== 'sql') {
+        error('❌ This build requires ITEM_DATA_SOURCE=sql');
+        process.exit(1);
+    }
+    if (!/^[a-f\d]{24}$/i.test(process.env.SHOP_TENANT_ID || '')) {
+        error('❌ SHOP_TENANT_ID must be a 24-character tenant key');
+        process.exit(1);
+    }
 
     const missing = required.filter(key => !process.env[key]);
 

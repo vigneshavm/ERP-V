@@ -1,23 +1,30 @@
+import dataBackupRoutes from "./modules/core/routes/dataBackup.routes.js";
 import "reflect-metadata"; // Required for tsyringe
+import sqlRestoreRoutes from "./modules/core/routes/sqlRestore.routes.js";
 import express, { Express } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import helmet from "helmet";
-import mongoSanitize from "express-mongo-sanitize";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 
 // Configs & Utils
-import { initSentry, sentryRequestHandler, sentryTracingHandler, sentryErrorHandler } from "./config/sentry.js";
+import {
+  initSentry,
+  sentryRequestHandler,
+  sentryTracingHandler,
+  sentryErrorHandler,
+} from "./config/sentry.js";
 import { corsOptions } from "./config/cors.config.js";
 import { stream } from "./config/logger.js";
 import requestId from "./middlewares/requestId.js";
 import requestTimeout from "./middlewares/timeout.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import tenantResolver from "./middlewares/tenantResolver.js";
-import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './config/swagger.js';
+import { isSqlOnlyMode } from "./config/appDataMode.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
 
 dotenv.config();
 
@@ -27,7 +34,7 @@ const app: Express = express();
 // Trust Proxy
 // =======================
 if (process.env.NODE_ENV === "production") {
-    app.set("trust proxy", 1);
+  app.set("trust proxy", 1);
 }
 
 // =======================
@@ -35,37 +42,30 @@ if (process.env.NODE_ENV === "production") {
 // =======================
 initSentry(app);
 if (process.env.SENTRY_DSN) {
-    app.use(sentryRequestHandler());
-    app.use(sentryTracingHandler());
+  app.use(sentryRequestHandler());
+  app.use(sentryTracingHandler());
 }
 
 // =======================
 // Security Middleware
 // =======================
 app.use(
-    helmet({
-        contentSecurityPolicy: {
-            directives: {
-                defaultSrc: ["'self'"],
-                styleSrc: ["'self'", "'unsafe-inline'"],
-                scriptSrc: ["'self'"],
-                imgSrc: ["'self'", "data:", "https:"],
-            },
-        },
-        hsts: {
-            maxAge: 31536000, // 1 year
-            includeSubDomains: true,
-            preload: true,
-        },
-    })
-);
-
-app.use(mongoSanitize({
-    replaceWith: '_',
-    onSanitize: ({ req: _req, key }) => {
-        console.warn(`Sanitized key: ${key} in request`);
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "https:"],
+      },
     },
-}));
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+      preload: true,
+    },
+  }),
+);
 
 app.use(compression());
 
@@ -86,9 +86,9 @@ app.use(cors(corsOptions));
 
 // Logging
 if (process.env.NODE_ENV === "development") {
-    app.use(morgan("dev", { stream }));
+  app.use(morgan("dev", { stream }));
 } else {
-    app.use(morgan("combined", { stream }));
+  app.use(morgan("combined", { stream }));
 }
 
 // =======================
@@ -96,146 +96,149 @@ if (process.env.NODE_ENV === "development") {
 // =======================
 app.use(tenantResolver);
 
+// SQL-only mode deliberately exposes only route groups reviewed as SQL-backed. All other mounted
+// legacy routers are denied before they can reach a Mongoose model.
+if (isSqlOnlyMode()) {
+  app.use("/api", (req, res, next) => {
+    const method = req.method.toUpperCase();
+    const route = req.path.replace(/\/+$/, "") || "/";
+    const allowed =
+      route === "/system/data-backup" ||
+      (method === "POST" && /^\/auth\/(login|refresh|logout|force-logout|register|forgot-password|reset-password)$/.test(route)) ||
+      (method === "GET" && /^\/auth\/(profile|csrf-token)$/.test(route)) ||
+      (method === "GET" && /^\/health(\/live|\/ready)?$/.test(route)) ||
+      (method === "GET" && route === "/users") ||
+      (method === "PUT" && /^\/users\/[^/]+$/.test(route)) ||
+      (method === "PATCH" && /^\/users\/[^/]+\/discount-limit$/.test(route)) ||
+      (method === "GET" && /^\/business\/(profile|setup)$/.test(route)) ||
+      (method === "PUT" && route === "/business/profile") ||
+      /^\/(branches|stores|companies|warehouses|counters)(\/|$)/.test(route) ||
+      (method === "GET" && /^\/(customers|agents|cashiers|customer-groups)(\/[^/]+)?$/.test(route)) ||
+      (method === "PUT" && /^\/customers\/[^/]+\/(mobile|card|name)$/.test(route)) ||
+      (method === "POST" && /^\/(customers|agents)$/.test(route)) ||
+      (["GET", "POST", "PUT"].includes(method) && /^\/suppliers(\/[^/]+)?$/.test(route)) ||
+      (method === "GET" && /^\/sales-invoice\/(invoices|summary|invoice\/[^/]+)$/.test(route)) ||
+      (method === "GET" && /^\/purchases(\/[^/]+|\/suppliers\/analytics)?$/.test(route)) ||
+      (method === "GET" && /^\/expenses(\/[^/]+)?$/.test(route)) ||
+      (method === "GET" && /^\/(cashbank(\/cheques)?|daily-finance)$/.test(route)) ||
+      /^\/sync\/sql\/(config|backup-files|verify|restore|access)$/.test(route) ||
+      /^\/hr\/employees(\/|$)/.test(route) ||
+      /^\/masters(\/|$)/.test(route) ||
+      /^\/product-master(\/|$)/.test(route) ||
+      /^\/product-attributes(\/|$)/.test(route) ||
+      /^\/purchase-entry(\/|$)/.test(route) ||
+      /^\/pos(\/|$)/.test(route) ||
+      /^\/purchase-returns(\/|$)/.test(route) ||
+      /^\/reports(\/|$)/.test(route) ||
+      /^\/inventory(\/|$)/.test(route);
+
+    if (allowed) return next();
+    return res.status(503).json({
+      success: false,
+      error: {
+        code: "SQL_ONLY_ROUTE_UNAVAILABLE",
+        message: "This route is not enabled in SQL-only mode.",
+      },
+    });
+  });
+}
+
 // =======================
 // Swagger Documentation
 // =======================
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Root Route
 app.get("/", (_req, res) => {
-    res.send("🚀 SmartERPAI Backend is running (TypeScript)");
+  res.send("🚀 SmartERPAI Backend is running (TypeScript)");
 });
 
 // =======================
 // Routes Integration
 // =======================
 
-// STORE Module
-import storeRoutes from "./modules/store/routes/store.routes.js";
-app.use("/api/stores", storeRoutes);
-
-// CORE Module (Auth, User, Business, Health, etc.)
-import coreRoutes from "./modules/core/routes/core.routes.js";
-app.use("/api", coreRoutes);
-
-import roleRoutes from "./modules/core/routes/./role.routes.js";
-app.use("/api/roles", roleRoutes);
-
-import syncRoutes from "./modules/core/routes/./sync.routes.js";
-app.use("/api/sync", syncRoutes);
-
-import sectorCategoryRoutes from "./modules/core/routes/./sectorCategory.routes.js";
-app.use("/api", sectorCategoryRoutes);
-
-import feedbackRoutes from "./modules/core/routes/./feedback.routes.js";
-app.use("/api/feedback", feedbackRoutes);
-
-import notificationRoutes from "./modules/core/routes/./notification.routes.js";
-app.use("/api/notifications", notificationRoutes);
-
-import auditLogRoutes from "./modules/core/routes/./auditLog.routes.js";
-app.use("/api/audit-logs", auditLogRoutes);
-
-// Reports (dashboard-stats/stock/customers/sales) - was fully implemented but never mounted,
-// so every Shop Owner Dashboard report call was silently 404ing.
-import reportRoutes from "./modules/core/routes/./report.routes.js";
-app.use("/api/reports", reportRoutes);
-
-// INVENTORY Module
-import inventoryRoutes from "./modules/inventory/routes/inventory.routes.js";
-app.use("/api/inventory", inventoryRoutes);
-import stockTransferRoutes from "./modules/inventory/routes/./stockTransfer.routes.js";
-app.use("/api/stock-transfers", stockTransferRoutes);
-
-
-
-// SALES Module
-import salesRoutes from "./modules/sales/routes/sales.routes.js";
-app.use("/api/sales-invoice", salesRoutes);
-import paymentInRoutes from "./modules/sales/routes/paymentIn.routes.js";
-app.use("/api/payment-in", paymentInRoutes);
-import salesOrderRoutes from "./modules/sales/routes/salesOrder.routes.js";
-app.use("/api/sales-orders", salesOrderRoutes);
-import deliveryChallanRoutes from "./modules/sales/routes/deliveryChallan.routes.js";
-app.use("/api/delivery-challan", deliveryChallanRoutes);
-import posRoutes from "./modules/sales/routes/pos.routes.js";
-app.use("/api/pos", posRoutes);
-import commissionRoutes from "./modules/sales/routes/./commission.routes.js";
-app.use("/api/commission-rules", commissionRoutes);
-
-// CRM & Analytics Module
-import crmAnalyticsRoutes from "./modules/crm/routes/./crmAnalytics.routes.js";
-app.use("/api/crm", crmAnalyticsRoutes);
-
-// PURCHASE Module
-import purchaseModuleRoutes from "./modules/purchase/routes/purchase.routes.js";
-import purchasePaymentRoutes from "./modules/purchase/routes/./purchasePayment.routes.js";
-import purchaseReturnRoutes from "./modules/purchase/routes/./purchaseReturn.routes.js";
-import grnRoutes from "./modules/purchase/routes/./grn.routes.js";
-import grnTransferRoutes from "./modules/purchase/routes/./grnTransfer.routes.js";
-app.use("/api/purchases", purchaseModuleRoutes);
-app.use("/api/purchase-payments", purchasePaymentRoutes);
-// Was previously mounting the WHOLE purchase.routes.ts aggregator here too, which put
-// purchase.routes.ts's own `router.use('/', purchaseRoutes)` fallback in front of anything
-// return-specific: GET /api/purchase-returns and GET /api/purchase-returns/:id were silently
-// being served by PurchaseController's getAllPurchases/getPurchaseById (Purchase ORDERS, not
-// returns) instead of PurchaseReturnController. Mount the actual return router directly.
-app.use("/api/purchase-returns", purchaseReturnRoutes);
-app.use("/api/grn", grnRoutes);
-app.use("/api/grn-transfers", grnTransferRoutes);
-
-// FINANCE Module
-import financeRoutes from "./modules/finance/routes/finance.routes.js";
-app.use("/api", financeRoutes); // Bills, Cashbank, Due, Loyalty
-import emiPlanRoutes from "./modules/finance/routes/./emiPlan.routes.js";
-app.use("/api/emi-plans", emiPlanRoutes);
-import cardTerminalRoutes from "./modules/finance/routes/./cardTerminal.routes.js";
-app.use("/api/card-terminals", cardTerminalRoutes);
-
-// EXPENSE Module
-import expenseModuleRoutes from "./modules/expense/routes/expense.routes.js";
-app.use("/api", expenseModuleRoutes);
-
-// SMS Tracker Module
-import smsTrackerRoutes from "./modules/sms-tracker/routes/sms-tracker.routes.js";
-app.use("/api/sms-tracker", smsTrackerRoutes);
-
-// CRM Module
-import crmRoutes from "./modules/crm/routes/crm.routes.js";
-app.use("/api", crmRoutes); // Customers, Suppliers, WhatsApp
-
-// HR Module
-import hrRoutes from "./modules/hr/routes/hr.routes.js";
-app.use("/api/hr", hrRoutes); // Employees
-
-// MARKETING Module
-import metaRoutes from "./modules/marketing/routes/meta.routes.js";
-app.use("/api/marketing/meta", metaRoutes);
-
-// COMBO OFFERS Module
-import comboRoutes from "./modules/combo/routes/combo.routes.js";
-app.use("/api/combo-offers", comboRoutes);
-
-// MASTER DATA Module (generic simple-master lists: customer groups, employee structure,
-// transaction/cash/payment/booking groups, GST type/group, textile product descriptors)
+// SQL-only route set. Mongo-backed routers are intentionally not imported or mounted.
+import {
+  branchRouter,
+  companyRouter,
+  warehouseRouter,
+  counterRouter,
+} from "./modules/core/routes/org.routes.js";
+import productMasterRoutes, {
+  attributeRouter,
+} from "./modules/inventory/routes/productMaster.routes.js";
+import purchaseEntryRoutes from "./modules/purchase/routes/purchaseEntry.routes.js";
+import authRoutes from "./modules/core/routes/auth.routes.js";
+import healthRoutes from "./modules/core/routes/health.routes.js";
+import { SQL_MASTER_TYPES } from "./integrations/textilesoft/sqlMasters.js";
+import { protect } from "./middlewares/authMiddleware.js";
+import { listCustomerGroups } from "./integrations/textilesoft/sqlParties.js";
+import expenseSqlRoutes from "./modules/expense/routes/expenseSql.routes.js";
+import employeeSqlRoutes from "./modules/hr/routes/employeeSql.routes.js";
 import masterDataRoutes from "./modules/masters/routes/masterData.routes.js";
-app.use("/api/masters", masterDataRoutes);
+import { customerRouter, agentRouter, cashierRouter, customerGroupRouter, supplierRouter } from "./modules/crm/routes/partiesSql.routes.js";
+import salesSqlRoutes from "./modules/sales/routes/salesSql.routes.js";
+import purchaseSqlRoutes from "./modules/purchase/routes/purchaseSql.routes.js";
+import { cashBankRouter, dailyFinanceRouter } from "./modules/finance/routes/financeSql.routes.js";
+import userSqlRoutes from "./modules/core/routes/userSql.routes.js";
+import businessSqlRoutes from "./modules/core/routes/businessSql.routes.js";
+import posSqlRoutes from "./modules/sales/routes/posSql.routes.js";
+import purchaseReturnSqlRoutes from "./modules/purchase/routes/purchaseReturnSql.routes.js";
+import reportSqlRoutes from "./modules/core/routes/reportSql.routes.js";
+import inventorySqlRoutes from "./modules/inventory/routes/inventorySql.routes.js";
 
-
-// MISC / LEGACY (To be modularized)
-import returnRoutes from "./modules/sales/routes/return.routes.js";
-app.use("/api/returns", returnRoutes);
-import estimateRoutes from "./modules/sales/routes/estimate.routes.js";
-app.use("/api/estimates", estimateRoutes);
-
-
-// ...
+app.use("/api/auth", authRoutes);
+app.use("/api/health", healthRoutes);
+app.use("/api/system/data-backup", dataBackupRoutes);
+app.use("/api/users", userSqlRoutes);
+app.use("/api/cashbank", cashBankRouter);
+app.use("/api/daily-finance", dailyFinanceRouter);
+app.use("/api/sales-invoice", salesSqlRoutes);
+app.use("/api/purchases", purchaseSqlRoutes);
+// Only the master types Textilesoft keeps in its own tables. The others would fall back to erp.master_entry
+// (and seed default rows on first read), which is not allowed in SQL-only mode.
+// Customer groups live in dbo.CustomerGroup: read-only here (the generic master path would use erp.master_entry).
+app.get("/api/masters/CUSTOMER_GROUP", protect, async (_req, res, next) => {
+  try {
+    res.json(await listCustomerGroups());
+  } catch (err) {
+    next(err);
+  }
+});
+app.use("/api/masters", (req, res, next) => {
+  const seg = req.path.split("/").filter(Boolean);
+  const isEntry = seg[0] === "entry";
+  const ok = seg[0] === "types" || (isEntry ? String(seg[1] ?? "").startsWith("sql.") : SQL_MASTER_TYPES.has(seg[0] ?? ""));
+  if (ok) return next();
+  return res.status(503).json({ success: false, error: { code: "SQL_ONLY_ROUTE_UNAVAILABLE", message: "This master type is not stored in Textilesoft's database." } });
+}, masterDataRoutes);
+app.use("/api/hr/employees", employeeSqlRoutes);
+app.use("/api/expenses", expenseSqlRoutes);
+app.use("/api/customers", customerRouter);
+app.use("/api/sync", sqlRestoreRoutes);
+app.use("/api/agents", agentRouter);
+app.use("/api/cashiers", cashierRouter);
+app.use("/api/customer-groups", customerGroupRouter);
+app.use("/api/suppliers", supplierRouter);
+app.use("/api/business", businessSqlRoutes);
+app.use("/api/branches", branchRouter);
+app.use("/api/stores", branchRouter);
+app.use("/api/companies", companyRouter);
+app.use("/api/warehouses", warehouseRouter);
+app.use("/api/counters", counterRouter);
+app.use("/api/product-master", productMasterRoutes);
+app.use("/api/product-attributes", attributeRouter);
+app.use("/api/purchase-entry", purchaseEntryRoutes);
+app.use("/api/pos", posSqlRoutes);
+app.use("/api/purchase-returns", purchaseReturnSqlRoutes);
+app.use("/api/reports", reportSqlRoutes);
+app.use("/api/inventory", inventorySqlRoutes);
 
 // =======================
 // Error Handler (must be last)
 // =======================
 if (process.env.SENTRY_DSN) {
-    app.use(sentryErrorHandler());
+  app.use(sentryErrorHandler());
 }
 app.use(errorHandler);
 

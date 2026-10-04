@@ -1,0 +1,20 @@
+{
+  "_comment": "AUTO-GENERATED GUESS from table dbo.purentrydetails (81023 rows). Verify every column with --sample, add a \"stock\" block if quantities live in another table, then save as textilesoft.mapping.json.",
+  "source": {
+    "table": "dbo.purentrydetails"
+  },
+  "columns": {
+    "sku": "code",
+    "barcode": "barcode",
+    "brand": "brand",
+    "hsnCode": "hsncode",
+    "gstRate": "gst_per",
+    "color": "color",
+    "size": "size",
+    "design": "design",
+    "shelfCode": "rackno",
+    "sellingPrice": "mrp",
+    "stockQty": "qty",
+    "isActive": "STATUS"
+  }
+}

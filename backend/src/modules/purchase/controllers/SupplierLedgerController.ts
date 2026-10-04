@@ -2,8 +2,8 @@ import { Response } from 'express';
 import mongoose from 'mongoose';
 import Supplier from '../models/Supplier.js';
 import Bill from '../../finance/models/Bill.js';
-import PaymentOut from '../models/PaymentOut.js';
-import DebitNote from '../models/DebitNote.js';
+import { sumPaymentOuts, listPaymentOutsInRange } from '../../../integrations/textilesoft/erpPaymentOut.js';
+import { sumApprovedDebitNotes, listApprovedDebitNotesInRange } from '../../../integrations/textilesoft/erpDebitNote.js';
 import PurchaseReturn from '../models/PurchaseReturn.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 import { error } from '../../../config/logger.js';
@@ -29,7 +29,7 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
         // 2. Calculate "Effective Opening Balance" as of 'start' date
         // Formula: SupplierInitialOpening + (Bills < start) - (Payments < start) - (DebitNotes < start)
 
-        const [preBills, prePayments, preDebitNotes] = await Promise.all([
+        const [preBills, prePaymentsTotal, preDebitNotesTotal] = await Promise.all([
             Bill.aggregate([
                 {
                     $match: {
@@ -41,43 +41,13 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
                 },
                 { $group: { _id: null, total: { $sum: "$amount" } } } // Using amount (Total Bill Value)
             ]),
-            PaymentOut.aggregate([
-                {
-                    $match: {
-                        supplierId: new mongoose.Types.ObjectId(id as string),
-                        tenantId: tenantId,
-                        paymentDate: { $lt: start },
-                        // Only cleared payments count? Or all? Usually cleared/issued. 
-                        // Ledger usually strictly financial, so cleared.
-                        // However, issued cheques block funds. Let's stick to 'cleared' for true ledger,
-                        // or maybe 'cleared' + 'pending' if we want to show committed.
-                        // Standard accounting: Checks issued are credits.
-                        // Let's include 'cleared' and 'pending' (issued but not cleared) as credits to bank / debits to supplier?
-                        // Actually PaymentOut status: 'pending' (Cheque issued).
-                        // Ideally, when cheque is issued, we debit Supplier. So 'cleared' and 'pending'.
-                        status: { $in: ['cleared', 'pending'] }
-                    }
-                },
-                { $group: { _id: null, total: { $sum: "$amount" } } }
-            ]),
-            DebitNote.aggregate([
-                {
-                    $match: {
-                        vendorId: new mongoose.Types.ObjectId(id as string),
-                        // tenantId? DebitNote has vendorId. CreatedBy has tenant context. 
-                        // For safety, we can filter by vendorId which is unique to tenant+supplier usually, 
-                        // but safer to filter by date only if we trust ID.
-                        date: { $lt: start },
-                        status: 'APPROVED'
-                    }
-                },
-                { $group: { _id: null, total: { $sum: "$totalAmount" } } }
-            ]),
+            sumPaymentOuts(String(id), ['cleared', 'pending'], { before: start }),
+            sumApprovedDebitNotes(String(id), { before: start }),
         ]);
 
         const totalPreBills = preBills[0]?.total || 0;
-        const totalPrePayments = prePayments[0]?.total || 0;
-        const totalPreDebitNotes = preDebitNotes[0]?.total || 0;
+        const totalPrePayments = prePaymentsTotal;
+        const totalPreDebitNotes = preDebitNotesTotal;
 
         const effectiveOpeningBalance = (supplier.openingBalance || 0) + totalPreBills - totalPrePayments - totalPreDebitNotes;
 
@@ -89,17 +59,8 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
                 date: { $gte: start, $lte: end },
                 status: { $nin: ['draft', 'rejected', 'cancelled'] }
             }).lean(),
-            PaymentOut.find({
-                supplierId: id,
-                tenantId,
-                paymentDate: { $gte: start, $lte: end },
-                status: { $in: ['cleared', 'pending'] }
-            }).lean(),
-            DebitNote.find({
-                vendorId: id,
-                date: { $gte: start, $lte: end },
-                status: 'APPROVED'
-            }).lean()
+            listPaymentOutsInRange(String(id), ['cleared', 'pending'], start, end),
+            listApprovedDebitNotesInRange(String(id), start, end)
         ]);
 
         // FETCH LINKED PURCHASE RETURNS
@@ -111,7 +72,7 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
 
         const dnToPrMap: Record<string, string> = {};
         purchaseReturns.forEach(pr => {
-            if (pr.debitNoteId) dnToPrMap[pr.debitNoteId.toString()] = pr._id.toString();
+            if (pr.debitNoteId) dnToPrMap[String(pr.debitNoteId)] = pr._id.toString();
         });
 
         // 4. Transform and Merge
@@ -145,7 +106,7 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
             credit: 0,
             debit: d.totalAmount, // Reduces liability
             originalRef: d,
-            purchaseReturnId: dnToPrMap[d._id.toString()] // Link to PR if exists
+            purchaseReturnId: dnToPrMap[String(d._id)] // Link to PR if exists
         }));
 
         // Sort Chronologically

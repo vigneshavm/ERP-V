@@ -9,7 +9,6 @@ import {
 import api from "../../services/api";
 import { PurchaseReturn, PurchaseReturnStatus } from "../../types/purchase";
 import StatusBadge from '@/components/shared/UI/StatusBadge';
-import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
 
 const PurchaseReturns: React.FC = () => {
@@ -49,11 +48,8 @@ const PurchaseReturns: React.FC = () => {
                     grn_number: r.grnId?.grnNumber || (r.grnId ? '' : 'Not GRN-linked'),
                     po_number: undefined,
                     reason: r.items?.[0]?.reason || 'Others',
-                    // The backend model has no status/workflow field yet (a return is a single
-                    // atomic action today, not a multi-step lifecycle) -- refundMethod is the
-                    // closest available signal: cash/bank settle immediately, credit/adjust
-                    // leaves a standing debit note against the supplier.
-                    status: (r.refundMethod === 'cash' || r.refundMethod === 'bank_transfer') ? 'Credited' : 'Initiated',
+                    // pay_type is a stored label; it does not prove a cash/bank settlement.
+                    status: 'Processed',
                     items: r.items || [],
                     total_amount: r.totalAmount,
                     tax_amount: r.taxAmount,
@@ -87,14 +83,9 @@ const PurchaseReturns: React.FC = () => {
 
     const stats = useMemo(() => {
         const totalAmount = returns.reduce((sum, r) => sum + (Number(r.total_amount) || Number((r as any).totalAmount) || 0), 0);
-        const pendingAmount = returns.filter(r => r.status !== 'Credited').reduce((sum, r) => sum + (Number(r.total_amount) || Number((r as any).totalAmount) || 0), 0);
-        const creditedAmount = returns.filter(r => r.status === 'Credited').reduce((sum, r) => sum + (Number(r.total_amount) || Number((r as any).totalAmount) || 0), 0);
-
         return {
             total: returns.length,
             totalAmount,
-            pendingAmount,
-            creditedAmount
         };
     }, [returns]);
 
@@ -105,15 +96,13 @@ const PurchaseReturns: React.FC = () => {
         <Layout>
             <div className="pt-8 space-y-10 pb-20">
                 <PageHeader
-                    title="Procurement Reversal Ledger"
-                    description="Execute reverse logistics nodes and track institutional debit-note credits."
+                    title="Purchase Returns"
+                    description="Existing SQL return records. Payment and supplier-balance settlement are not verified by this report."
                     breadcrumbs={[
                         { label: 'Procurement', link: '/purchase' },
                         { label: 'Returns Archive' }
                     ]}
-                    actions={
-                        <Button onClick={() => navigate('/purchase/returns/new')} className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition hover:scale-105 active:scale-95 flex items-center gap-3"><RotateCcw className="w-4 h-4" /> New return</Button>
-                    }
+                    actions={<span className="rounded-md border border-warning/30 bg-warning-soft px-4 py-2 text-xs font-semibold text-warning" role="status">New return unavailable</span>}
                 />
                 {loadError && (
                     <div role="alert" className="rounded-md border border-danger-line bg-danger-soft px-4 py-3 text-sm font-medium text-danger dark:border-danger/50 dark:bg-danger-soft dark:text-danger">{loadError}</div>
@@ -122,10 +111,10 @@ const PurchaseReturns: React.FC = () => {
                 {/* KPI Pulse Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {[
-                        { label: 'Total Nodes', val: stats.total, icon: RotateCcw, color: 'text-primary', bg: 'bg-primary/10' },
-                        { label: 'Quantum Reversal', val: formatCurrency(stats.totalAmount), icon: Zap, color: 'text-success', bg: 'bg-success-soft' },
-                        { label: 'Floating Credits', val: formatCurrency(stats.pendingAmount), icon: Clock, color: 'text-warning', bg: 'bg-warning-soft' },
-                        { label: 'Resolved (Credited)', val: stats.total - returns.filter(r => r.status !== 'Credited').length, icon: ShieldCheck, color: 'text-primary', bg: 'bg-primary-soft' }
+                        { label: 'SQL Return Records', val: stats.total, icon: RotateCcw, color: 'text-primary', bg: 'bg-primary/10' },
+                        { label: 'Recorded Return Value', val: formatCurrency(stats.totalAmount), icon: Zap, color: 'text-success', bg: 'bg-success-soft' },
+                        { label: 'Payment State', val: 'Not tracked', icon: Clock, color: 'text-warning', bg: 'bg-warning-soft' },
+                        { label: 'Supplier Balance', val: 'Not reconciled', icon: ShieldCheck, color: 'text-primary', bg: 'bg-primary-soft' }
                     ].map((card, i) => (
                         <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm group hover:border-primary/20 transition-all duration-500 overflow-hidden relative">
                             <div className="flex items-center justify-between mb-4 relative z-10">
@@ -167,11 +156,7 @@ const PurchaseReturns: React.FC = () => {
                                 className="w-full px-6 py-3 bg-slate-50 dark:bg-slate-900 border border-transparent rounded-sm text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-primary/10 transition-all outline-none cursor-pointer"
                             >
                                 <option value="all">All States</option>
-                                <option value="Initiated">Initiated</option>
-                                <option value="In-Transit">In-Transit</option>
-                                <option value="Received by Vendor">At Vendor</option>
-                                <option value="Credited">Credited</option>
-                                <option value="Cancelled">Cancelled</option>
+                                <option value="Processed">Recorded</option>
                             </select>
                         </div>
                         <button className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-sm text-slate-400 hover:text-primary transition-all active:scale-95">
@@ -190,7 +175,7 @@ const PurchaseReturns: React.FC = () => {
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Supplier</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">References</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Reason</th>
-                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Refund (INR)</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Return Value (INR)</th>
                                     <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                                     <th className="px-8 py-5"></th>
                                 </tr>

@@ -7,9 +7,10 @@ interface UsePOSTotalsProps {
     activeSession: Session;
     tenants: Tenant[];
     userId?: string;
+    isSqlBilling?: boolean;
 }
 
-export const usePOSTotals = ({ cart, activeSession, tenants, userId }: UsePOSTotalsProps) => {
+export const usePOSTotals = ({ cart, activeSession, tenants, userId, isSqlBilling = false }: UsePOSTotalsProps) => {
     const totals = useMemo(() => {
         let subtotal = 0;
         let tax = 0;
@@ -23,8 +24,9 @@ export const usePOSTotals = ({ cart, activeSession, tenants, userId }: UsePOSTot
             // and posInvoiceMapper.ts so an unconfigured line is charged, printed, and recorded
             // at the same rate.
             const gstRate = (item.gstRate ?? item.gstPercentage ?? 5) / 100;
-            const computedQty = item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty;
-            const lineTotal = item.price * computedQty;
+            const computedQty = item.unit === 'Meter' ? (item.cutLength ?? 0) * item.qty : item.qty;
+            const lineGross = item.price * computedQty;
+            const lineTotal = item.qty < 0 ? lineGross : lineGross * (1 - Math.max(0, Number(item.discountPercent) || 0) / 100);
 
             if (activeSession.taxMode === 'EXCLUSIVE') {
                 subtotal += lineTotal;
@@ -42,7 +44,7 @@ export const usePOSTotals = ({ cart, activeSession, tenants, userId }: UsePOSTot
         const currentTenant = tenants.find(t => t.id === userId);
 
         const redValue = currentTenant?.loyaltyConfig?.redemptionValue || 1;
-        const redAmt = (activeSession.redeemedPoints || 0) * redValue;
+        const redAmt = isSqlBilling ? 0 : (activeSession.redeemedPoints || 0) * redValue;
         const discountAmt = activeSession.discountAmount || 0;
 
         return {
@@ -51,9 +53,11 @@ export const usePOSTotals = ({ cart, activeSession, tenants, userId }: UsePOSTot
             cartTotal: rawTotal,
             redemptionAmount: redAmt,
             discountAmount: discountAmt,
-            finalTotal: Math.max(0, rawTotal - redAmt - discountAmt)
+            finalTotal: isSqlBilling
+                ? (rawTotal - discountAmt < 0 ? -Math.round(-(rawTotal - discountAmt)) : Math.round(rawTotal - discountAmt))
+                : Math.max(0, rawTotal - redAmt - discountAmt)
         };
-    }, [cart, activeSession.taxMode, activeSession.redeemedPoints, activeSession.discountAmount, tenants, userId]);
+    }, [cart, activeSession.taxMode, activeSession.redeemedPoints, activeSession.discountAmount, tenants, userId, isSqlBilling]);
 
     return totals;
 };

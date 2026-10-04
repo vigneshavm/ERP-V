@@ -6,31 +6,35 @@
  *    repository tests for migrated modules live here and import from src/ directly.
  */
 const common = {
-    testEnvironment: "node",
+  testEnvironment: "node",
 };
 
 export default {
-    verbose: true,
-    collectCoverage: false,
-    collectCoverageFrom: ["src/**/*.ts", "!src/scripts/**", "!src/**/tests/**"],
-    projects: [
-        {
-            ...common,
-            displayName: "api (dist)",
-            transform: {},
-            testMatch: ["<rootDir>/tests/**/*.test.js"],
-        },
-        {
-            ...common,
-            displayName: "unit (ts)",
-            testMatch: ["<rootDir>/tests/**/*.test.ts", "<rootDir>/src/**/*.test.ts"],
-            extensionsToTreatAsEsm: [".ts"],
-            // Source imports use the ".js" suffix NodeNext requires; point them at the .ts files.
-            moduleNameMapper: { "^(\\.{1,2}/.*)\\.js$": "$1" },
-            transform: {
-                "^.+\\.ts$": ["ts-jest", { useESM: true, tsconfig: "<rootDir>/tsconfig.jest.json" }],
-            },
-            setupFiles: ["reflect-metadata"],
-        },
-    ],
+  verbose: true,
+  collectCoverage: false,
+  collectCoverageFrom: ["src/**/*.ts", "!src/scripts/**", "!src/**/tests/**"],
+  projects: [
+    {
+      ...common,
+      displayName: "api (dist)",
+      transform: {},
+      testMatch: ["<rootDir>/tests/**/*.test.js"],
+      setupFiles: ["<rootDir>/tests/jestAuthEnv.js"],
+    },
+    {
+      ...common,
+      displayName: "unit (ts)",
+      testMatch: ["<rootDir>/tests/**/*.test.ts", "<rootDir>/src/**/*.test.ts"],
+      extensionsToTreatAsEsm: [".ts"],
+      // Source imports use the ".js" suffix NodeNext requires; point them at the .ts files.
+      moduleNameMapper: { "^(\\.{1,2}/.*)\\.js$": "$1" },
+      transform: {
+        "^.+\\.ts$": [
+          "ts-jest",
+          { useESM: true, tsconfig: "<rootDir>/tsconfig.jest.json" },
+        ],
+      },
+      setupFiles: ["reflect-metadata"],
+    },
+  ],
 };

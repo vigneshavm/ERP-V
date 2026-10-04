@@ -1,35 +1,38 @@
 import { injectable, singleton } from "tsyringe";
-import SupplierGroup from "../models/SupplierGroup.js";
-import { ISupplierGroup } from "../models/SupplierGroup.js";
+import {
+    createSupplierGroup,
+    findSupplierGroupById,
+    findSupplierGroupByName,
+    listSupplierGroups,
+    updateSupplierGroup,
+    deleteSupplierGroup,
+    type SupplierGroupEntry,
+} from "../../../integrations/textilesoft/erpSupplierGroup.js";
 
 @injectable()
 @singleton()
 export class SupplierGroupRepository {
-    async create(data: Partial<ISupplierGroup>): Promise<ISupplierGroup> {
-        return SupplierGroup.create(data);
+    async create(data: Partial<SupplierGroupEntry>): Promise<SupplierGroupEntry> {
+        return createSupplierGroup(data);
     }
 
-    async findById(id: string, tenantId: string): Promise<ISupplierGroup | null> {
-        return SupplierGroup.findOne({ _id: id, tenantId });
+    async findById(id: string): Promise<SupplierGroupEntry | null> {
+        return findSupplierGroupById(id);
     }
 
-    async findByName(name: string, tenantId: string): Promise<ISupplierGroup | null> {
-        return SupplierGroup.findOne({ name, tenantId });
+    async findByName(name: string): Promise<SupplierGroupEntry | null> {
+        return findSupplierGroupByName(name);
     }
 
-    async findAll(tenantId: string): Promise<ISupplierGroup[]> {
-        return SupplierGroup.find({ tenantId }).sort({ name: 1 });
+    async findAll(): Promise<SupplierGroupEntry[]> {
+        return listSupplierGroups();
     }
 
-    async update(id: string, tenantId: string, updates: Partial<ISupplierGroup>): Promise<ISupplierGroup | null> {
-        return SupplierGroup.findOneAndUpdate(
-            { _id: id, tenantId },
-            updates,
-            { new: true, runValidators: true }
-        );
+    async update(id: string, updates: Partial<SupplierGroupEntry>): Promise<SupplierGroupEntry | null> {
+        return updateSupplierGroup(id, updates);
     }
 
-    async delete(id: string, tenantId: string): Promise<ISupplierGroup | null> {
-        return SupplierGroup.findOneAndDelete({ _id: id, tenantId });
+    async delete(id: string): Promise<boolean> {
+        return deleteSupplierGroup(id);
     }
 }

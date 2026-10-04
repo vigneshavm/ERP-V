@@ -2,6 +2,8 @@ import { createHash } from "crypto";
 import { SESSION_PREFIX } from "./mapping.js";
 import { getPool } from "./sqlItemSource.js";
 import { SQL_ID_PREFIX } from "./sqlSales.js";
+import { randomUUID } from "crypto";
+import { withSqlTransaction } from "./sqlWrite.js";
 
 /**
  * ITEM_DATA_SOURCE=sql: the shop's suppliers, read-only.
@@ -18,70 +20,126 @@ type Row = Record<string, unknown>;
 type Doc = Record<string, any>;
 
 const num = (v: unknown): number => {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : 0;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
 };
 const round2 = (n: number): number => Math.round(n * 100) / 100;
 
 let cache: { at: number; value: Doc[] } | undefined;
 
 export async function sqlSupplierList(): Promise<Doc[]> {
-    if (cache && Date.now() - cache.at < 60_000) return cache.value;
-    const req = (await getPool()).request();
-    const res = await req.query(
-        SESSION_PREFIX +
-            `SELECT COALESCE(m.[nm], g.[nm]) AS name, m.[phone] AS phone, m.[email] AS email, m.[city] AS mcity, g.[city] AS gcity, m.[address] AS address, m.[gst] AS gst, m.[days] AS days, m.[opening] AS opening, ` +
-            `ISNULL(g.[grns], 0) AS grns, ISNULL(g.[total], 0) AS total, ISNULL(g.[cash], 0) AS cash, g.[lastDate] AS lastDate ` +
-            `FROM (SELECT LTRIM(RTRIM([sup_name])) AS nm, MAX(NULLIF(LTRIM(RTRIM(ISNULL(NULLIF([mb_nu], ''), [phone_nu]))), '')) AS phone, MAX(NULLIF(LTRIM(RTRIM([e_id])), '')) AS email, ` +
-            `MAX(NULLIF(LTRIM(RTRIM([city])), '')) AS city, MAX(NULLIF(LTRIM(RTRIM([address])), '')) AS address, MAX(NULLIF(LTRIM(RTRIM([gst_number])), '')) AS gst, ` +
-            `MAX(NULLIF(LTRIM(RTRIM([credit_days])), '')) AS days, MAX(TRY_CAST([opening_amount] AS float)) AS opening ` +
-            `FROM dbo.[supplierdetail] WHERE NULLIF(LTRIM(RTRIM([sup_name])), '') IS NOT NULL GROUP BY LTRIM(RTRIM([sup_name]))) AS m ` +
-            `FULL OUTER JOIN (SELECT LTRIM(RTRIM([suplier_name])) AS nm, MAX([Supplier_City]) AS city, COUNT(*) AS grns, ISNULL(SUM(TRY_CAST([totnetamot] AS float)), 0) AS total, ` +
-            `ISNULL(SUM(CASE WHEN UPPER(LTRIM(RTRIM([pay_type]))) = 'CASH' THEN TRY_CAST([totnetamot] AS float) ELSE 0 END), 0) AS cash, CONVERT(varchar(10), MAX([entry_date]), 23) AS lastDate ` +
-            `FROM dbo.[purgrnentry] WHERE NULLIF(LTRIM(RTRIM([suplier_name])), '') IS NOT NULL GROUP BY LTRIM(RTRIM([suplier_name]))) AS g ON UPPER(g.[nm]) = UPPER(m.[nm]) ` +
-            `ORDER BY ISNULL(g.[total], 0) DESC, COALESCE(m.[nm], g.[nm])`,
-    );
-    const rows: Row[] = res ? res.recordset : [];
-    const value = rows.map((r) => {
-        const name = String(r.name).trim();
-        const total = round2(num(r.total));
-        const paid = round2(Math.min(num(r.cash), total));
-        const opening = round2(num(r.opening));
-        const balance = round2(total - paid + opening);
-        return {
-            _id: `${SQL_ID_PREFIX}${createHash("sha1").update(name.toLowerCase()).digest("hex").slice(0, 16)}`,
-            businessName: name,
-            contactPersonName: "",
-            contactNo: String(r.phone ?? "").trim(),
-            email: String(r.email ?? "").trim(),
-            gstNumber: String(r.gst ?? "").trim(),
-            address: String(r.address ?? "").trim(),
-            city: String(r.mcity ?? r.gcity ?? "").trim(),
-            supplierId: "",
-            supplierType: "Textilesoft",
-            status: "active",
-            supplierGroup: "",
-            creditDays: num(r.days),
-            openingBalance: opening,
-            creditLimit: 0,
-            billCount: num(r.grns),
-            totalAmount: total,
-            totalPaid: paid,
-            lastPaymentDate: null,
-            lastPurchaseDate: String(r.lastDate ?? ""),
-            netBalance: balance,
-            currentBillOutstanding: 0,
-            totalOutstanding: balance,
-            overdueCount: 0,
-            overdueAmount: 0,
-            dueSoonCount: 0,
-            dueNext7DaysAmount: 0,
-            creditUtilization: 0,
-            paymentStatus: "Good",
-            isCreditRisk: false,
-            source: "sql",
-        };
-    });
-    cache = { at: Date.now(), value };
-    return value;
+  if (cache && Date.now() - cache.at < 60_000) return cache.value;
+  const req = (await getPool()).request();
+  const res = await req.query(
+    SESSION_PREFIX +
+      `SELECT COALESCE(m.[nm], g.[nm]) AS name, m.[code] AS code, m.[phone] AS phone, m.[email] AS email, m.[city] AS mcity, g.[city] AS gcity, m.[address] AS address, m.[gst] AS gst, m.[days] AS days, m.[opening] AS opening, ` +
+      `ISNULL(g.[grns], 0) AS grns, ISNULL(g.[total], 0) AS total, ISNULL(g.[cash], 0) AS cash, g.[lastDate] AS lastDate ` +
+      `FROM (SELECT LTRIM(RTRIM([sup_name])) AS nm, MAX(NULLIF(LTRIM(RTRIM(ISNULL(NULLIF([mb_nu], ''), [phone_nu]))), '')) AS phone, MAX(NULLIF(LTRIM(RTRIM([e_id])), '')) AS email, ` +
+      `MAX(NULLIF(LTRIM(RTRIM([code])), '')) AS code, MAX(NULLIF(LTRIM(RTRIM([city])), '')) AS city, MAX(NULLIF(LTRIM(RTRIM([address])), '')) AS address, MAX(NULLIF(LTRIM(RTRIM([gst_number])), '')) AS gst, ` +
+      `MAX(NULLIF(LTRIM(RTRIM([credit_days])), '')) AS days, MAX(TRY_CAST([opening_amount] AS float)) AS opening ` +
+      `FROM dbo.[supplierdetail] WHERE NULLIF(LTRIM(RTRIM([sup_name])), '') IS NOT NULL GROUP BY LTRIM(RTRIM([sup_name]))) AS m ` +
+      `FULL OUTER JOIN (SELECT LTRIM(RTRIM([suplier_name])) AS nm, MAX([Supplier_City]) AS city, COUNT(*) AS grns, ISNULL(SUM(TRY_CAST([totnetamot] AS float)), 0) AS total, ` +
+      `ISNULL(SUM(CASE WHEN UPPER(LTRIM(RTRIM([pay_type]))) = 'CASH' THEN TRY_CAST([totnetamot] AS float) ELSE 0 END), 0) AS cash, CONVERT(varchar(10), MAX([entry_date]), 23) AS lastDate ` +
+      `FROM dbo.[purgrnentry] WHERE NULLIF(LTRIM(RTRIM([suplier_name])), '') IS NOT NULL GROUP BY LTRIM(RTRIM([suplier_name]))) AS g ON UPPER(g.[nm]) = UPPER(m.[nm]) ` +
+      `ORDER BY ISNULL(g.[total], 0) DESC, COALESCE(m.[nm], g.[nm])`,
+  );
+  const rows: Row[] = res ? res.recordset : [];
+  const value = rows.map((r) => {
+    const name = String(r.name).trim();
+    const total = round2(num(r.total));
+    const paid = round2(Math.min(num(r.cash), total));
+    const opening = round2(num(r.opening));
+    const balance = round2(total - paid + opening);
+    return {
+      _id: String(r.code ?? "").trim() || `${SQL_ID_PREFIX}${createHash("sha1").update(name.toLowerCase()).digest("hex").slice(0, 16)}`,
+      businessName: name,
+      contactPersonName: "",
+      contactNo: String(r.phone ?? "").trim(),
+      email: String(r.email ?? "").trim(),
+      gstNumber: String(r.gst ?? "").trim(),
+      address: String(r.address ?? "").trim(),
+      city: String(r.mcity ?? r.gcity ?? "").trim(),
+      supplierId: "",
+      supplierType: "Textilesoft",
+      status: "active",
+      supplierGroup: "",
+      creditDays: num(r.days),
+      openingBalance: opening,
+      creditLimit: 0,
+      billCount: num(r.grns),
+      totalAmount: total,
+      totalPaid: paid,
+      lastPaymentDate: null,
+      lastPurchaseDate: String(r.lastDate ?? ""),
+      netBalance: balance,
+      currentBillOutstanding: 0,
+      totalOutstanding: balance,
+      overdueCount: 0,
+      overdueAmount: 0,
+      dueSoonCount: 0,
+      dueNext7DaysAmount: 0,
+      creditUtilization: 0,
+      paymentStatus: "Good",
+      isCreditRisk: false,
+      source: "sql",
+    };
+  });
+  cache = { at: Date.now(), value };
+  return value;
+}
+
+export async function createSqlSupplier(data: Record<string, unknown>): Promise<Doc> {
+  const id = `ERP-${randomUUID().replace(/-/g, "").slice(0, 20)}`;
+  await withSqlTransaction("supplier save", (tx) => tx.insert("supplierdetail", {
+    code: id,
+    ledger: String(data.businessName ?? ""),
+    opening_amount: String(Number(data.openingBalance ?? 0)),
+    sup_name: String(data.businessName ?? ""),
+    nike_name: String(data.contactPersonName ?? ""),
+    address: String(data.physicalAddress ?? ""),
+    city: String(data.city ?? ""),
+    pincode: String(data.pincode ?? ""),
+    phone_nu: String(data.contactNo ?? ""),
+    mb_nu: String(data.contactNo ?? ""),
+    e_id: String(data.email ?? ""),
+    gst_number: String(data.gstNo ?? ""),
+    credit_days: String(data.creditPeriod ?? 0),
+    bank_name: String(data.bankName ?? ""),
+    acc_number: String(data.accountNumber ?? ""),
+    branch_name: String(data.bankBranch ?? ""),
+    ifsc_code: String(data.ifscCode ?? ""),
+    pan_card_number: String(data.panNo ?? ""),
+    agent_name: String(data.agentName ?? ""),
+    agent_number: String(data.agentNumber ?? ""),
+  }));
+  cache = undefined;
+  const supplier = (await sqlSupplierList()).find((row) => row._id === id);
+  if (!supplier) throw new Error("Supplier save succeeded but the row could not be read back");
+  return supplier;
+}
+
+export async function updateSqlSupplier(id: string, data: Record<string, unknown>): Promise<Doc | null> {
+  const set: Record<string, unknown> = {};
+  const assign = (field: string, column: string, transform: (value: unknown) => unknown = String) => {
+    if (field in data) set[column] = transform(data[field]);
+  };
+  assign("businessName", "sup_name"); assign("businessName", "ledger");
+  assign("contactPersonName", "nike_name"); assign("physicalAddress", "address");
+  assign("city", "city"); assign("pincode", "pincode"); assign("contactNo", "phone_nu"); assign("contactNo", "mb_nu");
+  assign("email", "e_id"); assign("gstNo", "gst_number"); assign("panNo", "pan_card_number");
+  assign("openingBalance", "opening_amount"); assign("creditPeriod", "credit_days");
+  const affected = await withSqlTransaction("supplier update", (tx) => tx.update("supplierdetail", set, { code: id }));
+  if (!affected) return null;
+  cache = undefined;
+  return (await sqlSupplierList()).find((row) => row._id === id) ?? null;
+}
+
+export async function deleteSqlSupplier(id: string): Promise<boolean> {
+  const affected = await withSqlTransaction("supplier delete", (tx) => tx.remove("supplierdetail", { code: id }));
+  cache = undefined;
+  return affected > 0;
+}
+
+export async function findSqlSupplier(id: string): Promise<Doc | null> {
+  return (await sqlSupplierList()).find((row) => row._id === id) ?? null;
 }

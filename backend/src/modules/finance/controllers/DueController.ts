@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import DueAdjustment from '../models/DueAdjustment.js';
 
 import Customer from '../../crm/models/Customer.js';
-import Transaction from '../../sales/models/Transaction.js';
+import { createTransaction } from '../../../integrations/textilesoft/erpTransaction.js';
 import { info, error } from '../../../config/logger.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
@@ -118,10 +118,10 @@ export const createDueAdjustment = async (req: AuthenticatedRequest, res: Respon
         });
 
         // Create transaction record
-        await Transaction.create({
+        await createTransaction({
             type: 'due_adjustment',
             customer: customerId,
-            dueAdjustment: dueAdjustment._id,
+            dueAdjustment: dueAdjustment._id.toString(),
             amount: adjustmentAmount,
             paymentMethod: adjustmentMethod,
             description: `Due adjustment of ₹${adjustmentAmount} via ${adjustmentMethod}${notes ? ` - ${notes}` : ''}`,

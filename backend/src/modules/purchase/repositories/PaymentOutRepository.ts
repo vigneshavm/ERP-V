@@ -1,63 +1,56 @@
 import { injectable, singleton } from "tsyringe";
-import PaymentOut from "../models/PaymentOut.js";
-import { IPaymentOut } from "../models/PaymentOut.js";
-import { Types, ClientSession } from "mongoose";
+import {
+    createPaymentOut,
+    findPaymentOutById,
+    findPaymentOutByPaymentNo,
+    listPaymentOuts,
+    listPaymentOutsBySupplier,
+    listPaymentOutsByStatus,
+    findLatestPaymentOut,
+    updatePaymentOut,
+    deletePaymentOut,
+    type PaymentOutEntry,
+} from "../../../integrations/textilesoft/erpPaymentOut.js";
 
 @injectable()
 @singleton()
 export class PaymentOutRepository {
-    async create(data: Partial<IPaymentOut>, session?: ClientSession): Promise<IPaymentOut> {
-        if (session) {
-            return (await PaymentOut.create([data], { session }))[0];
-        }
-        return PaymentOut.create(data);
+    async create(data: Parameters<typeof createPaymentOut>[0]): Promise<PaymentOutEntry> {
+        return createPaymentOut(data);
     }
 
-    async findById(id: string, tenantId: string, session?: ClientSession): Promise<IPaymentOut | null> {
-        const query = PaymentOut.findOne({ _id: id, tenantId });
-        if (session) {
-            return query.session(session);
-        }
-        return query;
+    async findById(id: string, _tenantId?: unknown): Promise<PaymentOutEntry | null> {
+        return findPaymentOutById(id);
     }
 
-    async findByPaymentNo(paymentNo: string, tenantId: string): Promise<IPaymentOut | null> {
-        return PaymentOut.findOne({ paymentNo, tenantId });
+    async findByPaymentNo(paymentNo: string, _tenantId?: unknown): Promise<PaymentOutEntry | null> {
+        return findPaymentOutByPaymentNo(paymentNo);
     }
 
-    async findAll(tenantId: string): Promise<IPaymentOut[]> {
-        return PaymentOut.find({ tenantId })
-            .populate('supplierId', 'businessName')
-            .populate('bankAccountId', 'bankName accountNumber')
-            .populate('createdBy', 'name')
-            .sort({ createdAt: -1 });
+    async findAll(_tenantId?: unknown): Promise<PaymentOutEntry[]> {
+        return listPaymentOuts();
     }
 
-    async findBySupplier(supplierId: Types.ObjectId, tenantId: string): Promise<IPaymentOut[]> {
-        return PaymentOut.find({ supplierId, tenantId }).sort({ createdAt: -1 });
+    async findBySupplier(supplierId: string, _tenantId?: unknown): Promise<PaymentOutEntry[]> {
+        return listPaymentOutsBySupplier(supplierId);
     }
 
-    async findByStatus(status: string, tenantId: string): Promise<IPaymentOut[]> {
-        return PaymentOut.find({ status, tenantId }).sort({ createdAt: -1 });
+    async findByStatus(status: string, _tenantId?: unknown): Promise<PaymentOutEntry[]> {
+        return listPaymentOutsByStatus(status);
     }
 
-    async findLatestByTenant(tenantId: string): Promise<IPaymentOut | null> {
-        return PaymentOut.findOne({ tenantId }).sort({ createdAt: -1 });
+    async findLatestByTenant(_tenantId?: unknown): Promise<PaymentOutEntry | null> {
+        return findLatestPaymentOut();
     }
 
-    async update(id: string, tenantId: string, updates: Partial<IPaymentOut>, session?: ClientSession): Promise<IPaymentOut | null> {
-        const query = PaymentOut.findOneAndUpdate(
-            { _id: id, tenantId },
-            updates,
-            { new: true, runValidators: true }
-        );
-        if (session) {
-            return query.session(session);
-        }
-        return query;
+    async update(id: string, _tenantId: unknown, updates: Partial<{ status: PaymentOutEntry["status"] }>): Promise<PaymentOutEntry | null> {
+        return updatePaymentOut(id, updates);
     }
 
-    async delete(id: string, tenantId: string): Promise<IPaymentOut | null> {
-        return PaymentOut.findOneAndDelete({ _id: id, tenantId });
+    async delete(id: string, _tenantId?: unknown): Promise<PaymentOutEntry | null> {
+        const payment = await findPaymentOutById(id);
+        if (!payment) return null;
+        await deletePaymentOut(id);
+        return payment;
     }
 }

@@ -1,5 +1,5 @@
 import Item from '../models/Item.js';
-import Category from '../models/Category.js';
+import { listCategories, listCategoryNames, findCategoryByName, createCategory as createErpCategory } from '../../../integrations/textilesoft/erpCategory.js';
 import ProductCategoryModel from '../models/ProductCategory.js';
 import BusinessSector from '../../core/models/BusinessSector.js';
 import { SHORT_CODE_TO_FULL_NAME } from '../../core/data/sectorCategorySeedData.js';
@@ -39,15 +39,11 @@ export class CategoryService {
         // 2. Categories registered via "New Category" that may not have any
         // items yet (or ever) — these don't show up in the aggregation above
         // at all, since it only groups over existing Item documents.
-        const registryQuery: any = { tenantId };
-        if (search) {
-            registryQuery.name = { $regex: escapeRegex(search), $options: 'i' };
-        }
-        const registered = await Category.find(registryQuery).lean();
-        // Every name backed by an actual Category document for this tenant --
-        // used below so the merged response can tell a caller (e.g. Settings'
-        // "already added" check) apart from a name that only shows up because
-        // an Item uses it or because it's sector master data.
+        const registered = await listCategories(search || undefined);
+        // Every name backed by an actual Category row -- used below so the
+        // merged response can tell a caller (e.g. Settings' "already added"
+        // check) apart from a name that only shows up because an Item uses it
+        // or because it's sector master data.
         const registeredNames = new Set(registered.map(doc => doc.name.toLowerCase()));
 
         // 2b. Categories mapped to the tenant's business sector via the
@@ -116,7 +112,7 @@ export class CategoryService {
                     gstRate: doc.gstRate ?? 5,
                     status: doc.isActive ? 'ACTIVE' : 'ARCHIVED',
                     health: 'HEALTHY',
-                    created_at: (doc as any).createdAt || new Date(),
+                    created_at: doc.createdAt || new Date(),
                     description: doc.description,
                     color: doc.color,
                     defaultUnit: doc.defaultUnit,
@@ -190,10 +186,7 @@ export class CategoryService {
             throw new AppError('Category name is required', 400);
         }
 
-        const existing = await Category.findOne({
-            tenantId,
-            name: { $regex: `^${escapeRegex(name)}$`, $options: 'i' }
-        });
+        const existing = await findCategoryByName(name);
         if (existing) {
             throw new AppError('A category with this name already exists', 400);
         }
@@ -209,14 +202,12 @@ export class CategoryService {
             throw new AppError('A category with this name already exists on your items', 400);
         }
 
-        const doc = await Category.create({
+        const doc = await createErpCategory({
             name,
             description: payload.description?.trim() || undefined,
             color: payload.color || '#6366f1',
             gstRate: payload.gstRate ?? 5,
             defaultUnit: payload.defaultUnit?.trim() || 'pcs',
-            isActive: true,
-            tenantId,
         });
 
         return {
@@ -227,7 +218,7 @@ export class CategoryService {
             gstRate: doc.gstRate,
             status: 'ACTIVE',
             health: 'HEALTHY',
-            created_at: (doc as any).createdAt || new Date(),
+            created_at: doc.createdAt,
             description: doc.description,
             color: doc.color,
             defaultUnit: doc.defaultUnit,
@@ -248,7 +239,7 @@ export class CategoryService {
             }
         ]);
 
-        const registeredNames = await Category.distinct('name', { tenantId });
+        const registeredNames = await listCategoryNames();
 
         let sectorMappedNames: string[] = [];
         if (sector && sector !== 'General') {

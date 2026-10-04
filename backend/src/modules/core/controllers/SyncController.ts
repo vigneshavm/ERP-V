@@ -2,7 +2,6 @@ import { Response } from "express";
 import asyncHandler from "express-async-handler";
 import mongoose from "mongoose";
 import SyncSettings from "../models/SyncSettings.js";
-import Device from "../models/Device.js";
 import Backup from "../models/Backup.js";
 import Conflict from "../models/Conflict.js";
 import SyncLedgerEvent from "../models/SyncLedgerEvent.js";
@@ -13,7 +12,6 @@ export const getSyncConfig = asyncHandler(async (req: AuthenticatedRequest, res:
 
     // Fetch real data
     const settings = await SyncSettings.findOne({ tenantId });
-    const devices = await Device.find({ tenantId });
     const conflicts = await Conflict.find({ tenantId, status: 'OPEN' });
 
     // Default settings if not found
@@ -29,7 +27,7 @@ export const getSyncConfig = asyncHandler(async (req: AuthenticatedRequest, res:
         success: true,
         data: {
             tenantId,
-            devices: devices,
+            devices: [],
             settings: finalSettings,
             lastSyncAt: new Date().toISOString(), // This would typically come from a sync log
             syncStatus: 'UP_TO_DATE',
@@ -55,10 +53,9 @@ export const updateSettings = asyncHandler(async (req: AuthenticatedRequest, res
     });
 });
 
-export const getDevices = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const tenantId = req.user.tenantId;
-    const devices = await Device.find({ tenantId });
-    res.json({ success: true, data: devices });
+// Device session tracking was Mongo-only (no Textilesoft table); stateless SQL auth has no device lock.
+export const getDevices = asyncHandler(async (_req: AuthenticatedRequest, res: Response) => {
+    res.json({ success: true, data: [] });
 });
 
 export const addDevice = asyncHandler(async (_req: AuthenticatedRequest, res: Response) => {

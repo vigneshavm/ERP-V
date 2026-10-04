@@ -111,7 +111,7 @@ const SalesInvoice = () => {
   // Get metrics from backend summary (source of truth)
   const totalInvoices = summary?.totalInvoices || 0;
   const totalPaid = summary?.totalPaid || 0;
-  const totalDue = summary?.outstandingDues || 0;
+  const totalDue = Number.isFinite(summary?.outstandingDues) ? Number(summary.outstandingDues) : undefined;
 
   return (
     <Layout>
@@ -154,16 +154,16 @@ const SalesInvoice = () => {
             icon={CheckCircle}
             color="emerald"
             variant="default"
-            progress={totalInvoices > 0 ? (totalPaid / (totalPaid + totalDue)) * 100 : 0}
+            progress={totalDue !== undefined && totalInvoices > 0 ? (totalPaid / (totalPaid + totalDue)) * 100 : undefined}
           />
           <MetricCard
             title="Outstanding Dues"
-            value={`₹${totalDue.toLocaleString()}`}
+            value={totalDue === undefined ? "Not available" : `₹${totalDue.toLocaleString()}`}
             icon={AlertCircle}
             color="rose"
             variant="default"
-            subtext="Action Required"
-            trend="down"
+            subtext={totalDue === undefined ? "Customer dues are not included in SQL bill summary" : "Action Required"}
+            trend={totalDue === undefined ? undefined : "down"}
           />
         </div>
 
@@ -308,7 +308,8 @@ const SalesInvoice = () => {
                               size="sm"
                               icon={<Trash2 className="w-4 h-4" />}
                               onClick={() => setDeleteConfirm(invoice._id || null)}
-                              title="Delete Invoice"
+                              title={String(invoice._id || '').startsWith('sql:') ? 'Deletion unavailable for SQL bills' : 'Delete Invoice'}
+                              disabled={String(invoice._id || '').startsWith('sql:')}
                             />
                           </div>
                         </td>

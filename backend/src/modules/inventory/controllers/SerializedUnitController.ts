@@ -3,6 +3,7 @@ import { singleton, inject } from "tsyringe";
 import { SerializedUnitService } from "../services/SerializedUnitService.js";
 import { error } from "../../../config/logger.js";
 import { AuthenticatedRequest } from "../../../middlewares/authMiddleware.js";
+import { isSqlItemSource } from "../../../config/itemDataSource.js";
 
 @singleton()
 export class SerializedUnitController {
@@ -12,6 +13,7 @@ export class SerializedUnitController {
 
     public addUnits = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: "Serialized units are not supported by the existing SQL tables" }); return; }
             const { itemId, units } = req.body;
             const result = await this.serializedUnitService.addUnits(itemId, req.tenantId.toString(), units, req.user._id.toString());
             res.status(201).json(result);
@@ -23,6 +25,7 @@ export class SerializedUnitController {
 
     public getUnitsByItem = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(200).json([]); return; }
             const result = await this.serializedUnitService.getUnitsByItem(req.params.itemId as string, req.tenantId.toString(), req.query.status as string);
             res.status(200).json(result);
         } catch (err: any) {
@@ -33,6 +36,7 @@ export class SerializedUnitController {
 
     public lookup = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(404).json({ message: "Serialized unit tracking is not supported by the existing SQL tables" }); return; }
             const result = await this.serializedUnitService.lookup(req.params.value as string, req.tenantId.toString());
             res.status(200).json(result);
         } catch (err: any) {
@@ -43,6 +47,7 @@ export class SerializedUnitController {
 
     public updateStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: "Serialized units are not supported by the existing SQL tables" }); return; }
             const { status, soldInvoiceId } = req.body;
             const result = await this.serializedUnitService.updateStatus(req.params.id as string, req.tenantId.toString(), status, soldInvoiceId);
             res.status(200).json(result);
@@ -54,6 +59,7 @@ export class SerializedUnitController {
 
     public deleteUnit = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: "Serialized units are not supported by the existing SQL tables" }); return; }
             await this.serializedUnitService.deleteUnit(req.params.id as string, req.tenantId.toString());
             res.status(200).json({ message: "Unit deleted" });
         } catch (err: any) {

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
     setActiveCounter,
     setCustomer,
+    setCartLineDiscount,
     setTaxMode, setPaymentMethod, setRedeemedPoints, setDiscountAmount, setMrpPending
 } from "../redux/slices/posSlice";
 import { DEFAULT_MIS_CONFIG } from "../types/tenant/mis";
@@ -86,7 +87,19 @@ export const usePOSLogic = () => {
     const { defaultTaxMode } = settings;
 
     const activeCustomerId = activeSession.customerId;
-    const activeCustomer = customers.find(c => c.id === activeCustomerId) || customers[0] || DEFAULT_CUSTOMER;
+    const { data: posCounterSource } = useQuery({
+        queryKey: ['pos-counters'],
+        queryFn: async () => (await api.get('/api/pos/counters')).data as { source: 'sql' | 'erp'; counters: { id: string; name: string }[] },
+        staleTime: 5 * 60 * 1000,
+    });
+    const isSqlBilling = posCounterSource?.source === 'sql';
+    const { data: posBillingLimits } = useQuery({
+        queryKey: ['pos-billing-limits', activeCounterId],
+        queryFn: () => api.get('/api/pos/billing-limits', { params: { counter: activeCounterId } }).then(res => res.data?.data || null),
+        enabled: !!activeCounterId,
+        staleTime: 60_000,
+    });
+    const activeCustomer = customers.find(c => c.id === activeCustomerId) || DEFAULT_CUSTOMER; // never pre-select the first customer in the list
     const _isBranchAll = currentBranch === 'All';
 
     // Minimal wholesale/retail billing path: a customer is "wholesale" when their assigned
@@ -170,7 +183,8 @@ export const usePOSLogic = () => {
         cart,
         activeSession,
         tenants,
-        userId: user?.tenantId
+        userId: user?.tenantId,
+        isSqlBilling
     });
 
     // MIS Controls (Settings -> MIS Controls) discount policy, resolved from the tenant
@@ -184,7 +198,7 @@ export const usePOSLogic = () => {
     const { handleCheckout } = usePOSCheckout({
         cart, isProcessing, setIsProcessing, activeSession, activeCounterId: activeCounterId || null,
         currentBranch: currentBranch || '', currentSector: currentSector || '', user: user as any, branches, tenants, getBranchName,
-        isPreOrder, setIsPreOrder, finalTotal, redemptionAmount, cartSubtotal, defaultTaxMode,
+        isPreOrder, setIsPreOrder, finalTotal, redemptionAmount, cartSubtotal, defaultTaxMode, isSqlBilling,
         onCheckoutSuccess: (sale) => {
             handleCheckoutSuccess(sale);
         }
@@ -247,8 +261,12 @@ export const usePOSLogic = () => {
     // reliable regardless of navigation order.
     const { data: tenantSettings } = useQuery({
         queryKey: ['pos-tenant-settings', user?.tenantId],
-        queryFn: () => api.get('/api/settings').then(res => res.data?.data || {}),
-        enabled: !!user?.tenantId,
+        // The shop is SQL-only: tenant settings (sector / business type) are not served, so /api/settings answers 503.
+        // That is expected - POS falls back to its defaults - so do not retry or surface it.
+        queryFn: () => api.get('/api/settings').then(res => res.data?.data || {}).catch(() => ({})),
+        enabled: false, // never request it: the browser logs every 503 even when the error is caught
+        retry: false,
+        staleTime: Infinity,
     });
     const settingsSector: string | undefined = tenantSettings?.sector || undefined;
     const settingsBusinessType: string | undefined = tenantSettings?.businessType || undefined;
@@ -262,7 +280,8 @@ export const usePOSLogic = () => {
     // only when GET /api/settings didn't already give us a sector.
     const { data: businessSectors } = useQuery({
         queryKey: ['business-sectors'],
-        queryFn: () => api.get('/api/business-sectors').then(res => res.data?.data || []),
+        queryFn: () => api.get('/api/business-sectors').then(res => res.data?.data || []).catch(() => []),
+        retry: false,
         enabled: !settingsSector && !!settingsBusinessType,
     });
     const resolvedSector: string | undefined = settingsSector
@@ -276,9 +295,32 @@ export const usePOSLogic = () => {
         enabled: !!resolvedSector,
     });
 
+    // SQL-only mode: Product Types come straight from Textilesoft's product groups / sub groups
+    // (GET /api/pos/product-types); the sector/settings route above is not available there.
+    const { data: sqlProductTypes } = useQuery({
+        queryKey: ['pos-sql-product-types'],
+        queryFn: () => api.get('/api/pos/product-types').then(res => (res.data?.data || []) as { name: string; defaultUnit?: string }[]),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    // All Textilesoft products (newproduct) for Quick Entry: searchable by name, and by product code.
+    const { data: quickProducts = [] } = useQuery({
+        queryKey: ['pos-sql-quick-products'],
+        queryFn: () => api.get('/api/pos/quick-products').then(res => (res.data?.data || []) as { code?: string; name: string; group?: string; unit?: string; price?: number; gstRate?: number }[]),
+        staleTime: 5 * 60 * 1000,
+    });
+
     const dynamicProductTypes = useMemo<
         { name: string; gstRate?: number; defaultUnit?: string }[]
     >(() => {
+        if ((sqlProductTypes && sqlProductTypes.length) || quickProducts.length) {
+            const out = new Map<string, { name: string; gstRate?: number; defaultUnit?: string }>();
+            for (const pt of sqlProductTypes || []) out.set(pt.name.toUpperCase(), { name: pt.name, defaultUnit: toUnitLabel(pt.defaultUnit) });
+            for (const p of quickProducts) {
+                out.set(p.name.toUpperCase(), { name: p.name, gstRate: p.gstRate, defaultUnit: toUnitLabel(p.unit) });
+            }
+            return Array.from(out.values());
+        }
         if (!resolvedSector || !registeredCategoryRows) {
             // No configured Business Sector at all, or the categories query
             // hasn't resolved yet -- leaving the list empty (not fabricating
@@ -299,7 +341,7 @@ export const usePOSLogic = () => {
                     defaultUnit: toUnitLabel(c.defaultUnit)
                 }))
         );
-    }, [resolvedSector, registeredCategoryRows]);
+    }, [resolvedSector, registeredCategoryRows, sqlProductTypes, quickProducts]);
 
     // Name -> {gstRate, defaultUnit} lookup for Quick Entry's GST/unit
     // auto-fill, replacing POSCartGrid's own direct import of the old static
@@ -469,6 +511,8 @@ export const usePOSLogic = () => {
         isHeldBillsOpen,
         activeCounterName: branches.find(b => b.id === currentBranch)?.counters?.find(c => c.id === activeCounterId)?.name,
         activeCounterId,
+        posBillingLimits,
+        isSqlBilling,
 
         // Computed
         cartSubtotal,
@@ -509,6 +553,7 @@ export const usePOSLogic = () => {
         onRemoveFromCart: removeItem,
         onUpdateCartQty: updateQty,
         onUpdateCartLength: updateLength,
+        onSetCartLineDiscount: (id: string, discountPercent: number) => dispatch(setCartLineDiscount({ id, discountPercent })),
         onClearCart: clearCartAction,
         onSetCustomer: (id: string) => dispatch(setCustomer(id)),
         onLookupOrCreateCustomer: (phone: string, name?: string) => (dispatch as any)(lookupOrCreateCustomer(phone, name)),
@@ -525,6 +570,7 @@ export const usePOSLogic = () => {
         getSubcategories,
         allProductTypes,
         productTypeDetails,
+        quickProducts,
         dispatch,
         lastBill,
         reprintLastBill,

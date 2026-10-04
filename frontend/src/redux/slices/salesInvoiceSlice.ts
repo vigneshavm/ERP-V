@@ -57,7 +57,7 @@ export const getSalesInvoiceSummary = createAsyncThunk(
             const token = state.auth.user?.token;
             if (!token) return thunkAPI.rejectWithValue("Not authenticated");
             const response = await api.get(`${API_URL}/summary`, getConfig(token));
-            return response.data;
+            return response.data?.data ?? response.data;
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||

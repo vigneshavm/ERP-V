@@ -163,9 +163,10 @@ const Dashboard: React.FC = () => {
   };
 
   // --- 1. PRODUCTION & BACKEND DATA MAPPING ---
-  const activeCustomersList = reduxCustomers;
-  const activeSuppliersList = reduxSuppliers;
-  const activeExpensesList = reduxExpenses;
+  // Never trust the store to hold a list: a non-array here crashed the whole dashboard.
+  const activeCustomersList: any[] = Array.isArray(reduxCustomers) ? reduxCustomers : EMPTY_LIST;
+  const activeSuppliersList: any[] = Array.isArray(reduxSuppliers) ? reduxSuppliers : EMPTY_LIST;
+  const activeExpensesList: any[] = Array.isArray(reduxExpenses) ? reduxExpenses : EMPTY_LIST;
 
   const _totalOutstandingLive = useMemo(() => 
     activeCustomersList.reduce((sum: number, c: any) => sum + (c.dues || c.outstanding_balance || 0), 0),

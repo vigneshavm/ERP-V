@@ -68,7 +68,7 @@ export const POSCustomerDisplay: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="text-xl font-bold text-slate-700 dark:text-slate-200 font-mono">
-                                        ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)).toFixed(2)}
+                                        ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength ?? 0) * item.qty : item.qty)).toFixed(2)}
                                     </div>
                                 </div>
                             ))}

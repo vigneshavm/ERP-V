@@ -3,14 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch } from "../../redux/store";
 import { getAllPurchases } from "../../redux/slices/purchaseSlice";
-import { setActiveTab } from "../../redux/slices/uiSlice";
 import { PurchaseOrder } from "../../types/purchase";
 import { useBranchResolver } from "../../hooks/useBranchResolver";
 import {
     Search,
     TrendingUp,
     FileText,
-    Plus,
     Eye,
     CheckCircle,
     Clock,
@@ -199,7 +197,8 @@ const PurchaseRegister: React.FC = () => {
     const getStatusBadge = (status: string) => <StatusBadge status={status} />;
 
     const handleView = (order: PurchaseOrder) => {
-        navigate(`/purchase/orders/${order._id || (order as any).id}`);
+        const grnNo = (order as any).purchaseNumber || (order as any).po_number || String(order._id || (order as any).id || "").replace(/^sql:/, "");
+        navigate(`/purchase/grn/view/${encodeURIComponent(grnNo)}`);
     };
 
     const handleExportPDF = async () => {
@@ -272,14 +271,9 @@ const PurchaseRegister: React.FC = () => {
                             >
                                 PDF
                             </Button>
-                            <Button
-                                variant="primary"
-                                size="md"
-                                icon={<Plus className="w-4 h-4" />}
-                                onClick={() => dispatch(setActiveTab('PURCHASE_ENTRY'))}
-                            >
-                                New Entry
-                            </Button>
+                            <span className="rounded-md border border-warning/30 bg-warning-soft px-4 py-2 text-xs font-semibold text-warning" role="status">
+                                New entry unavailable
+                            </span>
                         </div>
                     }
                 />
@@ -524,3 +518,4 @@ const PurchaseRegister: React.FC = () => {
 };
 
 export default PurchaseRegister;
+

@@ -4,7 +4,7 @@ import { container } from 'tsyringe';
 import Supplier from '../models/Supplier.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 import { isSqlItemSource } from '../../../config/itemDataSource.js';
-import { sqlSupplierList } from '../../../integrations/textilesoft/sqlSuppliers.js';
+import { sqlSupplierList, updateSqlSupplier } from '../../../integrations/textilesoft/sqlSuppliers.js';
 import { warn, error } from '../../../config/logger.js';
 import { SupplierService } from '../services/SupplierService.js';
 import { AppError } from '../../../utils/AppError.js';
@@ -20,6 +20,12 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
 
         if (!tenantId) {
             return res.status(401).json({ success: false, message: 'Unauthorized access' });
+        }
+
+        if (isSqlItemSource()) {
+            const rows = await sqlSupplierList();
+            const data = rows.filter((row) => !supplierId || String(row._id) === supplierId);
+            return void res.status(200).json({ success: true, data });
         }
 
         const matchStage: any = { tenantId };
@@ -49,36 +55,6 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                 }
             },
             {
-                $lookup: {
-                    from: "paymentouts",
-                    let: { supplierId: "$_id" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ["$supplierId", "$$supplierId"] },
-                                status: { $in: ["cleared", "pending"] }
-                            }
-                        }
-                    ],
-                    as: "payments"
-                }
-            },
-            {
-                $lookup: {
-                    from: "debitnotes",
-                    let: { supplierId: "$_id" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ["$vendorId", "$$supplierId"] },
-                                status: "APPROVED"
-                            }
-                        }
-                    ],
-                    as: "debitNotes"
-                }
-            },
-            {
                 $project: {
                     businessName: 1,
                     contactPersonName: 1,
@@ -95,14 +71,6 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                     // Metrics (Based on Bills)
                     billCount: { $size: "$bills" },
                     totalAmount: { $sum: "$bills.amount" },
-                    totalPaid: { $sum: "$payments.amount" },
-                    lastPaymentDate: { $max: "$payments.paymentDate" },
-                    netBalance: {
-                        $subtract: [
-                            { $add: [{ $ifNull: ["$openingBalance", 0] }, { $sum: "$bills.amount" }] },
-                            { $add: [{ $sum: "$payments.amount" }, { $sum: "$debitNotes.totalAmount" }] }
-                        ]
-                    },
                     currentBillOutstanding: {
                         $sum: {
                             $map: {
@@ -190,24 +158,49 @@ export const getSupplierAnalytics = async (req: AuthenticatedRequest, res: Respo
                         }
                     }
                 }
-            },
-            {
-                $addFields: {
-                    totalOutstanding: { $add: ["$openingBalance", "$currentBillOutstanding"] },
-                    creditUtilization: {
-                        $cond: {
-                            if: { $gt: ["$creditLimit", 0] },
-                            then: { $multiply: [{ $divide: [{ $add: ["$openingBalance", "$currentBillOutstanding"] }, "$creditLimit"] }, 100] },
-                            else: 0
-                        }
-                    }
-                }
-            },
-            { $sort: { totalOutstanding: -1 } } // Sort by who we owe the most
+            }
         ]);
 
+        // Payments/debit-notes live in erp.* now (not Mongo collections a $lookup can join against) --
+        // batch-fetch per supplier and merge in application code instead.
+        const { listPaymentOutsBySuppliers } = await import('../../../integrations/textilesoft/erpPaymentOut.js');
+        const { listApprovedDebitNotesByVendors } = await import('../../../integrations/textilesoft/erpDebitNote.js');
+        const supplierIds = stats.map((s: any) => String(s._id));
+        const [payments, debitNotes] = await Promise.all([
+            listPaymentOutsBySuppliers(supplierIds, ['cleared', 'pending']),
+            listApprovedDebitNotesByVendors(supplierIds),
+        ]);
+        const paymentsBySupplier = new Map<string, { total: number; lastDate: Date | null }>();
+        for (const p of payments) {
+            const key = p.supplierId._id;
+            const cur = paymentsBySupplier.get(key) ?? { total: 0, lastDate: null };
+            cur.total += p.amount;
+            if (!cur.lastDate || p.paymentDate > cur.lastDate) cur.lastDate = p.paymentDate;
+            paymentsBySupplier.set(key, cur);
+        }
+        const debitNoteTotalBySupplier = new Map<string, number>();
+        for (const d of debitNotes) {
+            debitNoteTotalBySupplier.set(d.vendorId, (debitNoteTotalBySupplier.get(d.vendorId) ?? 0) + d.totalAmount);
+        }
+        const statsWithPayments = stats.map((s: any) => {
+            const id = String(s._id);
+            const pay = paymentsBySupplier.get(id) ?? { total: 0, lastDate: null };
+            const debitNoteTotal = debitNoteTotalBySupplier.get(id) ?? 0;
+            const netBalance = (s.openingBalance + s.totalAmount) - (pay.total + debitNoteTotal);
+            const totalOutstanding = s.openingBalance + s.currentBillOutstanding;
+            return {
+                ...s,
+                totalPaid: pay.total,
+                lastPaymentDate: pay.lastDate,
+                netBalance,
+                totalOutstanding,
+                creditUtilization: s.creditLimit > 0 ? (totalOutstanding / s.creditLimit) * 100 : 0,
+            };
+        });
+        statsWithPayments.sort((a, b) => b.totalOutstanding - a.totalOutstanding);
+
         // Enrich with simplified status string
-        const enrichedStats = stats.map(s => {
+        const enrichedStats = statsWithPayments.map(s => {
             let paymentStatus = 'Good';
             if (s.overdueCount > 0) paymentStatus = 'Overdue';
             else if (s.dueSoonCount > 0) paymentStatus = 'Due Soon';
@@ -338,6 +331,11 @@ export const deleteSupplier = async (req: AuthenticatedRequest, res: Response) =
 
 export const evaluateSupplierPerformance = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        if (isSqlItemSource()) {
+            const supplier = (await sqlSupplierList()).find((row) => String(row._id) === String(req.params.id));
+            res.json({ success: true, data: supplier ? { supplierId: supplier._id, supplierName: supplier.businessName, score: 0, rating: 'unrated', note: 'Performance history is not represented by the existing SQL supplier table.' } : null });
+            return;
+        }
         const { evaluateSupplier } = await import('../services/SupplierPerformanceService.js');
         const id = req.params.id as string;
         const metrics = await evaluateSupplier(id);
@@ -351,6 +349,10 @@ export const getSupplierReports = async (req: AuthenticatedRequest, res: Respons
     try {
         const tenantId = req.user?.tenantId?.toString();
         if (!tenantId) return res.status(401).json({ message: 'Unauthorized' });
+        if (isSqlItemSource()) {
+            const suppliers = await sqlSupplierList();
+            return void res.json({ success: true, data: { payables: suppliers, trends: [], cashFlow: [], profitability: [], overdue: [] } });
+        }
 
         const {
             getPayablesOverview,
@@ -411,10 +413,24 @@ export const bulkUpdateOpeningBalance = async (req: AuthenticatedRequest, res: R
     try {
         const tenantId = req.user?.tenantId?.toString();
         if (!tenantId) return res.status(401).json({ message: 'Unauthorized' });
-
-        const { updates } = req.body; // Array of { supplierName, openingBalance }
+        const { updates } = req.body;
         if (!updates || !Array.isArray(updates)) {
             return res.status(400).json({ message: 'Invalid updates format' });
+        }
+
+        if (isSqlItemSource()) {
+            const results = { updated: 0, failed: 0, errors: [] as string[] };
+            for (const update of updates as Array<{ businessName: string; openingBalance: number }>) {
+                const supplier = (await sqlSupplierList()).find((row) => String(row.businessName).toLowerCase() === String(update.businessName).toLowerCase());
+                if (!supplier) {
+                    results.failed++;
+                    results.errors.push(`Supplier not found: ${update.businessName}`);
+                    continue;
+                }
+                if (await updateSqlSupplier(String(supplier._id), { openingBalance: Number(update.openingBalance) })) results.updated++;
+                else results.failed++;
+            }
+            return void res.status(200).json({ success: true, data: results, message: `Bulk update completed. Updated: ${results.updated}, Failed: ${results.failed}` });
         }
 
         const results = { updated: 0, failed: 0, errors: [] as any[] };
@@ -468,6 +484,31 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
             supplierId?: string;
         };
 
+        if (isSqlItemSource()) {
+            const vendors = (await sqlSupplierList())
+                .filter((supplier) => !supplierId || String(supplier._id) === supplierId)
+                .map((supplier) => ({
+                    businessName: supplier.businessName,
+                    supplierId: supplier._id,
+                    totalInflow: Number(supplier.totalAmount ?? 0),
+                    totalOutflow: Number(supplier.totalPaid ?? 0),
+                    debitNoteTotal: 0,
+                    billCount: Number(supplier.billCount ?? 0),
+                    paymentCount: 0,
+                    openingBalance: Number(supplier.openingBalance ?? 0),
+                    closingBalance: Number(supplier.netBalance ?? 0),
+                }));
+            const totals = vendors.reduce((sum, vendor) => ({
+                totalInflow: sum.totalInflow + vendor.totalInflow,
+                totalOutflow: sum.totalOutflow + vendor.totalOutflow,
+                debitNoteTotal: 0,
+                totalOpeningBalance: sum.totalOpeningBalance + vendor.openingBalance,
+                totalClosingBalance: sum.totalClosingBalance + vendor.closingBalance,
+                vendorCount: sum.vendorCount + 1,
+            }), { totalInflow: 0, totalOutflow: 0, debitNoteTotal: 0, totalOpeningBalance: 0, totalClosingBalance: 0, vendorCount: 0 });
+            return void res.status(200).json({ success: true, data: { vendors, totals, range: { startDate: startDate ?? null, endDate: endDate ?? null } } });
+        }
+
         // Build supplier match stage
         const supplierMatch: any = { tenantId };
         if (supplierId) {
@@ -511,40 +552,6 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
                     as: 'preBills'
                 }
             },
-            {
-                $lookup: {
-                    from: 'paymentouts',
-                    let: { supplierId: '$_id' },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ['$supplierId', '$$supplierId'] },
-                                tenantId,
-                                status: { $in: ['cleared', 'pending'] },
-                                ...(startDate ? { paymentDate: { $lt: new Date(startDate) } } : { _id: null })
-                            }
-                        }
-                    ],
-                    as: 'prePayments'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'debitnotes',
-                    let: { supplierId: '$_id' },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ['$vendorId', '$$supplierId'] },
-                                tenantId,
-                                status: 'APPROVED',
-                                ...(startDate ? { date: { $lt: new Date(startDate) } } : { _id: null })
-                            }
-                        }
-                    ],
-                    as: 'preDebitNotes'
-                }
-            },
             // Lookup bills (inflow) in period
             {
                 $lookup: {
@@ -563,83 +570,76 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
                     as: 'bills'
                 }
             },
-            // Lookup payments (outflow) in period
-            {
-                $lookup: {
-                    from: 'paymentouts',
-                    let: { supplierId: '$_id' },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ['$supplierId', '$$supplierId'] },
-                                tenantId,
-                                status: { $in: ['cleared', 'pending'] },
-                                ...(hasPaymentDateFilter ? { paymentDate: paymentDateFilter } : {})
-                            }
-                        }
-                    ],
-                    as: 'payments'
-                }
-            },
-            // Lookup debit notes (adjustments) in period
-            {
-                $lookup: {
-                    from: 'debitnotes',
-                    let: { supplierId: '$_id' },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ['$vendorId', '$$supplierId'] },
-                                tenantId,
-                                status: 'APPROVED',
-                                ...(hasBillDateFilter ? { date: billDateFilter } : {})
-                            }
-                        }
-                    ],
-                    as: 'debitNotes'
-                }
-            },
             {
                 $project: {
                     businessName: 1,
                     contactPersonName: 1,
                     supplierId: 1,
+                    openingBalanceRaw: { $ifNull: ['$openingBalance', 0] },
                     totalInflow: { $sum: '$bills.amount' },
-                    totalOutflow: { $sum: '$payments.amount' },
-                    debitNoteTotal: { $sum: '$debitNotes.totalAmount' },
                     billCount: { $size: '$bills' },
-                    paymentCount: { $size: '$payments' },
-                    openingBalance: {
-                        $subtract: [
-                            { $add: [{ $ifNull: ['$openingBalance', 0] }, { $sum: '$preBills.amount' }] },
-                            { $add: [{ $sum: '$prePayments.amount' }, { $sum: '$preDebitNotes.totalAmount' }] }
-                        ]
-                    },
-                    closingBalance: {
-                        $subtract: [
-                            { $add: [{ $ifNull: ['$openingBalance', 0] }, { $sum: '$preBills.amount' }, { $sum: '$bills.amount' }] },
-                            { $add: [{ $sum: '$prePayments.amount' }, { $sum: '$payments.amount' }, { $sum: '$preDebitNotes.totalAmount' }, { $sum: '$debitNotes.totalAmount' }] }
-                        ]
-                    }
+                    preBillsAmount: { $sum: '$preBills.amount' },
                 }
             },
-            // Only include suppliers that have activity or a non-zero balance
-            {
-                $match: {
-                    $or: [
-                        { totalInflow: { $gt: 0 } },
-                        { totalOutflow: { $gt: 0 } },
-                        { debitNoteTotal: { $gt: 0 } },
-                        { openingBalance: { $ne: 0 } },
-                        { closingBalance: { $ne: 0 } }
-                    ]
-                }
-            },
-            { $sort: { totalInflow: -1 } }
         ]);
 
+        // Payments/debit-notes live in erp.* now (not Mongo collections a $lookup can join against) --
+        // batch-fetch per supplier and merge in application code instead.
+        const { listPaymentOutsBySuppliers } = await import('../../../integrations/textilesoft/erpPaymentOut.js');
+        const { listApprovedDebitNotesByVendorsInRange } = await import('../../../integrations/textilesoft/erpDebitNote.js');
+        const supplierIds = stats.map((s: any) => String(s._id));
+        const [prePayments, payments, preDebitNotes, debitNotes] = await Promise.all([
+            startDate ? listPaymentOutsBySuppliers(supplierIds, ['cleared', 'pending'], { before: new Date(startDate) }) : Promise.resolve([]),
+            listPaymentOutsBySuppliers(supplierIds, ['cleared', 'pending'], hasPaymentDateFilter ? { from: paymentDateFilter.$gte, to: paymentDateFilter.$lte } : undefined),
+            startDate ? listApprovedDebitNotesByVendorsInRange(supplierIds, { before: new Date(startDate) }) : Promise.resolve([]),
+            listApprovedDebitNotesByVendorsInRange(supplierIds, hasBillDateFilter ? { from: billDateFilter.$gte, to: billDateFilter.$lte } : undefined),
+        ]);
+        const sumBySupplier = <T extends { amount: number }>(entries: T[], keyOf: (e: T) => string) => {
+            const map = new Map<string, number>();
+            for (const e of entries) map.set(keyOf(e), (map.get(keyOf(e)) ?? 0) + e.amount);
+            return map;
+        };
+        const prePaymentsBySupplier = sumBySupplier(prePayments, (p) => p.supplierId._id);
+        const paymentsBySupplier = new Map<string, { total: number; count: number }>();
+        for (const p of payments) {
+            const key = p.supplierId._id;
+            const cur = paymentsBySupplier.get(key) ?? { total: 0, count: 0 };
+            cur.total += p.amount;
+            cur.count += 1;
+            paymentsBySupplier.set(key, cur);
+        }
+        const preDebitNotesBySupplier = new Map<string, number>();
+        for (const d of preDebitNotes) preDebitNotesBySupplier.set(d.vendorId, (preDebitNotesBySupplier.get(d.vendorId) ?? 0) + d.totalAmount);
+        const debitNotesBySupplier = new Map<string, number>();
+        for (const d of debitNotes) debitNotesBySupplier.set(d.vendorId, (debitNotesBySupplier.get(d.vendorId) ?? 0) + d.totalAmount);
+
+        const merged = stats.map((s: any) => {
+            const id = String(s._id);
+            const totalOutflow = paymentsBySupplier.get(id)?.total ?? 0;
+            const paymentCount = paymentsBySupplier.get(id)?.count ?? 0;
+            const debitNoteTotal = debitNotesBySupplier.get(id) ?? 0;
+            const prePaymentsTotal = prePaymentsBySupplier.get(id) ?? 0;
+            const preDebitNotesTotal = preDebitNotesBySupplier.get(id) ?? 0;
+            const openingBalance = (s.openingBalanceRaw + s.preBillsAmount) - (prePaymentsTotal + preDebitNotesTotal);
+            const closingBalance = (s.openingBalanceRaw + s.preBillsAmount + s.totalInflow) - (prePaymentsTotal + totalOutflow + preDebitNotesTotal + debitNoteTotal);
+            return {
+                businessName: s.businessName,
+                contactPersonName: s.contactPersonName,
+                supplierId: s.supplierId,
+                totalInflow: s.totalInflow,
+                totalOutflow,
+                debitNoteTotal,
+                billCount: s.billCount,
+                paymentCount,
+                openingBalance,
+                closingBalance,
+            };
+        }).filter((s) =>
+            s.totalInflow > 0 || s.totalOutflow > 0 || s.debitNoteTotal > 0 || s.openingBalance !== 0 || s.closingBalance !== 0
+        ).sort((a, b) => b.totalInflow - a.totalInflow);
+
         // Calculate overall totals
-        const totals = stats.reduce(
+        const totals = merged.reduce(
             (acc, s) => ({
                 totalInflow: acc.totalInflow + (s.totalInflow || 0),
                 totalOutflow: acc.totalOutflow + (s.totalOutflow || 0),
@@ -654,7 +654,7 @@ export const getVendorInflowOutflow = async (req: AuthenticatedRequest, res: Res
         res.status(200).json({
             success: true,
             data: {
-                vendors: stats,
+                vendors: merged,
                 totals
             }
         });
@@ -674,10 +674,24 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
             return res.status(401).json({ success: false, message: 'Unauthorized access' });
         }
 
+        if (isSqlItemSource()) {
+            const supplier = (await sqlSupplierList()).find((row) => String(row._id) === String(id));
+            if (!supplier) return void res.status(404).json({ success: false, message: 'Supplier not found' });
+            const opening = Number(supplier.openingBalance ?? 0);
+            return void res.status(200).json({ success: true, data: {
+                supplier: { _id: supplier._id, businessName: supplier.businessName, openingBalance: opening },
+                period: { start: startDate ?? null, end: endDate ?? null },
+                openingBalance: opening,
+                closingBalance: Number(supplier.netBalance ?? opening),
+                totals: { credit: 0, debit: 0 },
+                transactions: [],
+            } });
+        }
+
         // Dynamic Imports
         const { default: Bill } = await import('../../finance/models/Bill.js');
-        const { default: PaymentOut } = await import('../models/PaymentOut.js');
-        const { default: DebitNote } = await import('../models/DebitNote.js');
+        const { sumPaymentOuts, listPaymentOutsInRange } = await import('../../../integrations/textilesoft/erpPaymentOut.js');
+        const { sumApprovedDebitNotes, listApprovedDebitNotesInRange } = await import('../../../integrations/textilesoft/erpDebitNote.js');
 
 
         const supplier = await Supplier.findOne({ _id: id, tenantId });
@@ -704,34 +718,14 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
             { $group: { _id: null, total: { $sum: '$amount' } } }
         ]);
 
-        const prePayments = await PaymentOut.aggregate([
-            {
-                $match: {
-                    supplierId: new mongoose.Types.ObjectId(id as string),
-                    tenantId,
-                    status: { $in: ['cleared', 'pending'] },
-                    paymentDate: { $lt: start }
-                }
-            },
-            { $group: { _id: null, total: { $sum: '$amount' } } }
-        ]);
+        const prePayments = await sumPaymentOuts(String(id), ['cleared', 'pending'], { before: start });
 
-        const preDebitNotes = await DebitNote.aggregate([
-            {
-                $match: {
-                    vendorId: new mongoose.Types.ObjectId(id as string),
-                    tenantId,
-                    status: 'APPROVED',
-                    date: { $lt: start }
-                }
-            },
-            { $group: { _id: null, total: { $sum: '$totalAmount' } } }
-        ]);
+        const preDebitNotes = await sumApprovedDebitNotes(String(id), { before: start });
 
         const initialOpening = supplier.openingBalance || 0;
         const billsBefore = preBills[0]?.total || 0;
-        const paymentsBefore = prePayments[0]?.total || 0;
-        const debitNotesBefore = preDebitNotes[0]?.total || 0;
+        const paymentsBefore = prePayments;
+        const debitNotesBefore = preDebitNotes;
 
         // For a supplier (Credit):
         // Balance = (Opening + Bills) - (Payments + DebitNotes)
@@ -755,19 +749,9 @@ export const getSupplierLedger = async (req: AuthenticatedRequest, res: Response
             date: { $gte: start, $lte: end }
         }).lean();
 
-        const payments = await PaymentOut.find({
-            supplierId: id,
-            tenantId,
-            status: { $in: ['cleared', 'pending'] },
-            paymentDate: { $gte: start, $lte: end }
-        }).lean();
+        const payments = await listPaymentOutsInRange(String(id), ['cleared', 'pending'], start, end);
 
-        const debitNotes = await DebitNote.find({
-            vendorId: id,
-            tenantId,
-            status: 'APPROVED',
-            date: { $gte: start, $lte: end }
-        }).lean();
+        const debitNotes = await listApprovedDebitNotesInRange(String(id), start, end);
 
         // 3. Merge and Sort
         const transactions: any[] = [];

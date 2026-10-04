@@ -1,7 +1,9 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IPurchaseReturnItem {
-    itemId: mongoose.Types.ObjectId; // Link to Inventory Item
+    // Legacy records may exist without a single item pointer, especially during the SQL migration.
+    // Keep it optional so older data can still be read and audited without forcing a rewrite.
+    itemId?: mongoose.Types.ObjectId;
     productName: string;
     quantity: number;
     rate: number;
@@ -22,7 +24,7 @@ export interface IPurchaseReturn extends Document {
      *  (scripts/migrations/004-backfill-purchase-return-tenant.js fills it from createdBy). */
     tenantId?: mongoose.Types.ObjectId;
     bill?: mongoose.Types.ObjectId;
-    debitNoteId?: mongoose.Types.ObjectId; // Link to Debit Note
+    debitNoteId?: string; // Link to Debit Note (erp.debit_note id, SQL - not a Mongo ref any more)
     // Which goods receipt this return is against -- optional so a supplier-level return with
     // no specific GRN (e.g. a very old purchase, or a non-stock adjustment) still works, but
     // when set, item quantities are validated against that GRN's acceptedQty and the actual
@@ -47,7 +49,7 @@ const purchaseReturnItemSchema = new Schema<IPurchaseReturnItem>({
     itemId: {
         type: Schema.Types.ObjectId,
         ref: "Item",
-        required: true
+        required: false,
     },
     productName: {
         type: String,
@@ -93,8 +95,7 @@ const purchaseReturnSchema = new Schema<IPurchaseReturn>(
             ref: "Bill",
         },
         debitNoteId: {
-            type: Schema.Types.ObjectId,
-            ref: "DebitNote",
+            type: String,
         },
         grnId: {
             type: Schema.Types.ObjectId,

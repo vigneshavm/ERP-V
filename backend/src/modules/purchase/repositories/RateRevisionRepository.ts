@@ -1,25 +1,25 @@
 import { injectable } from "tsyringe";
-import { ClientSession } from "mongoose";
-import RateRevision, { IRateRevision } from "../models/RateRevision.js";
-import type { IdRef } from "../../../interfaces/TenantRef.js";
+import {
+    createRateRevision,
+    findRateRevisionById,
+    listRateRevisions,
+    decideRateRevision,
+    type RateRevisionEntry,
+} from "../../../integrations/textilesoft/erpRateRevision.js";
 
-/** Rate revisions are tenant-owned; every method takes tenantId (RateRevision.tenantId is a string). */
+/** Rate revisions are single-shop (no tenantId); params kept for minimal call-site changes. */
 @injectable()
 export class RateRevisionRepository {
-    async create(data: Partial<IRateRevision>): Promise<IRateRevision> {
-        return RateRevision.create(data);
+    async create(data: Parameters<typeof createRateRevision>[0]): Promise<RateRevisionEntry> {
+        return createRateRevision(data);
     }
 
-    async findById(tenantId: string, id: string): Promise<IRateRevision | null> {
-        return RateRevision.findOne({ _id: id, tenantId });
+    async findById(_tenantId: string, id: string): Promise<RateRevisionEntry | null> {
+        return findRateRevisionById(id);
     }
 
-    async list(tenantId: string): Promise<IRateRevision[]> {
-        return RateRevision.find({ tenantId })
-            .populate("itemId", "name sku")
-            .populate("supplierId", "businessName")
-            .populate("createdBy", "name")
-            .sort({ createdAt: -1 });
+    async list(_tenantId: string): Promise<RateRevisionEntry[]> {
+        return listRateRevisions();
     }
 
     /**
@@ -27,16 +27,11 @@ export class RateRevisionRepository {
      * not PENDING any more (already decided, e.g. a double click), so it can never be decided twice.
      */
     async decide(
-        tenantId: string,
+        _tenantId: string,
         id: string,
         status: "APPROVED" | "REJECTED",
-        decidedBy: IdRef,
-        session?: ClientSession,
-    ): Promise<IRateRevision | null> {
-        return RateRevision.findOneAndUpdate(
-            { _id: id, tenantId, status: "PENDING" },
-            { $set: { status, approvedBy: decidedBy } },
-            { new: true, session },
-        );
+        decidedBy: string,
+    ): Promise<RateRevisionEntry | null> {
+        return decideRateRevision(id, status, decidedBy);
     }
 }

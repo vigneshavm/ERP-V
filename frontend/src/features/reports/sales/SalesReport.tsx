@@ -10,7 +10,7 @@ import type { PageInfo, ReportColumn, ResolvedSource } from '../components';
 import { filterSummary } from '../utils/reportExport';
 
 interface SalesBillRow {
-    source: 'shop' | 'erp';
+    source: 'shop';
     id: string;
     ref: string;
     date: string;
@@ -46,12 +46,12 @@ interface SalesReportData {
 const rupees0 = (v: number) => formatCurrency(v, { fractionDigits: 0 });
 const nz = (v: number): number | null => (Math.abs(v) < 0.005 ? null : v);
 
-const SOURCES = [{ value: 'shop', label: 'Textilesoft (shop)' }, { value: 'erp', label: 'ERP POS' }];
+const SOURCES = [{ value: 'shop', label: 'Textilesoft SQL' }];
 const MODES = [{ value: 'cash', label: 'Cash' }, { value: 'bank', label: 'Bank / UPI / card' }, { value: 'credit', label: 'On credit' }];
 
 const COLUMNS: ReportColumn<SalesBillRow>[] = [
     { key: 'date', header: 'Date', type: 'date', value: r => r.date, subtext: r => r.time, sortable: true },
-    { key: 'ref', header: 'Bill No', value: r => r.ref, subtext: r => (r.source === 'shop' ? 'Shop' : 'ERP'), sortable: true },
+    { key: 'ref', header: 'Bill No', value: r => r.ref, subtext: () => 'Textilesoft SQL', sortable: true },
     { key: 'customer', header: 'Customer', value: r => r.customer, sortable: true },
     { key: 'value', header: 'Amount', type: 'currency', value: r => r.value, sortable: true },
     { key: 'gst', header: 'GST', type: 'currency', value: r => r.gst, sortable: true, defaultHidden: true },
@@ -64,7 +64,7 @@ const COLUMNS: ReportColumn<SalesBillRow>[] = [
 const EXPORT_COLUMNS: ReportColumn<SalesBillRow>[] = [
     { key: 'date', header: 'Date', value: r => r.date },
     { key: 'time', header: 'Time', value: r => r.time },
-    { key: 'source', header: 'Source', value: r => (r.source === 'shop' ? 'Textilesoft' : 'ERP') },
+    { key: 'source', header: 'Source', value: () => 'Textilesoft SQL' },
     { key: 'ref', header: 'Bill No', value: r => r.ref },
     { key: 'customer', header: 'Customer', value: r => r.customer },
     { key: 'value', header: 'Amount (incl. GST)', value: r => r.value },
@@ -92,8 +92,7 @@ function chartRows(days: SalesReportData['byDay']) {
 }
 
 /**
- * Sales Report (the golden reference layout): every live sale in the period, Textilesoft bills plus ERP POS
- * invoices. Cancelled bills are excluded from every figure and shown on their own.
+ * Sales Report: live bills from Textilesoft SQL. Cancelled bills are excluded from every figure and shown on their own.
  */
 const SalesReport: React.FC = () => {
     const period = useReportPeriod('this-month');
@@ -127,7 +126,7 @@ const SalesReport: React.FC = () => {
                 onClear: () => { setSource(''); setMode(''); },
                 content: (
                     <>
-                        <FilterSelect label="Source" value={source} onChange={setSource} options={SOURCES} allLabel="Shop and ERP" />
+                        <FilterSelect label="Source" value={source} onChange={setSource} options={SOURCES} allLabel="Textilesoft SQL" />
                         <FilterSelect label="Paid by" value={mode} onChange={setMode} options={MODES} allLabel="Any" />
                     </>
                 ),
@@ -158,7 +157,7 @@ const SalesReport: React.FC = () => {
                     ]} />
                     <ReportAnalysisCard
                         title={chart.monthly ? 'Sales by month' : 'Daily sales'}
-                        subtitle={`Sales value per ${chart.monthly ? 'month' : 'day'} · Shop ${rupees0(data.bySource.shop.value)} · ERP ${rupees0(data.bySource.erp.value)}`}
+                        subtitle={`Textilesoft SQL · sales value per ${chart.monthly ? 'month' : 'day'}`}
                         empty={chart.rows.length === 0}
                     >
                         <ResponsiveContainer width="100%" height="100%">
@@ -186,7 +185,7 @@ const SalesReport: React.FC = () => {
                     </ReportAnalysisGrid>
                     <ReportTable
                         title="Sales transactions"
-                        subtitle="One row per bill or invoice; newest first"
+                        subtitle="One row per bill; newest first"
                         columns={COLUMNS}
                         rowKey={r => `${r.source}:${r.id}`}
                         {...report.tableProps}

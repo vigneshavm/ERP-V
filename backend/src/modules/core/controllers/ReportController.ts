@@ -14,7 +14,7 @@ import { checkStockAlerts } from '../../../utils/stockAlert.js';
 import { info, error, warn } from '../../../config/logger.js';
 import { isSqlItemSource } from '../../../config/itemDataSource.js';
 import * as sqlItems from '../../../integrations/textilesoft/sqlItemSource.js';
-import { hasSqlDashboard, sqlDashboardStats, type SqlDashboardStats } from '../../../integrations/textilesoft/sqlDashboard.js';
+import { hasSqlDashboard, sqlDashboardStats } from '../../../integrations/textilesoft/sqlDashboard.js';
 import { isSalesReportDim, sqlSalesReport, sqlStatusDebug, sqlSalesIntelligence } from '../../../integrations/textilesoft/sqlSalesReports.js';
 import { sqlInvoiceListByDate } from '../../../integrations/textilesoft/sqlSales.js';
 import { erpDayBills, erpSalesReport } from '../services/ErpSalesReportService.js';
@@ -80,7 +80,6 @@ export const getStockReport = async (req: AuthenticatedRequest, res: Response): 
         // ITEM_DATA_SOURCE=sql: totals and the low-stock list come from the shop DB.
         if (isSqlItemSource() && req.user?.tenantId) {
             const tenantId = String(req.user.tenantId);
-            sqlItems.ensureMirror(tenantId);
             try {
                 const [stats, lowStock] = await Promise.all([sqlItems.inventoryStats(), sqlItems.lowStockItems(tenantId, 50)]);
                 res.status(200).json({
@@ -93,7 +92,9 @@ export const getStockReport = async (req: AuthenticatedRequest, res: Response): 
                 });
                 return;
             } catch (sqlErr) {
-                warn(`Stock report: shop DB read failed, using MongoDB - ${(sqlErr as Error).message}`);
+                error(`SQL stock report failed: ${(sqlErr as Error).message}`);
+                res.status(500).json({ message: 'SQL stock report unavailable', error: (sqlErr as Error).message });
+                return;
             }
         }
         const items = await Item.find({ tenantId: req.user?.tenantId }).sort({ stockQty: 1 });
@@ -150,6 +151,36 @@ export const getCustomerReport = async (req: AuthenticatedRequest, res: Response
  */
 export const getDashboardStats = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        if (isSqlItemSource()) {
+            try {
+                if (!hasSqlDashboard()) throw new Error('SQL dashboard mappings are not configured');
+                const sql = await sqlDashboardStats();
+                const months = Array.from(new Set([...sql.monthlyRevenue.map((row) => row.month), ...(sql.monthlyExpenses ?? []).map((row) => row.month)])).sort();
+                res.status(200).json({
+                    totalInvoices: sql.totalInvoices,
+                    totalRevenue: sql.totalRevenue,
+                    totalCollected: 0,
+                    totalOutstanding: 0,
+                    dailySales: sql.dailySales,
+                    revenueVsExpenses: months.map((month) => ({
+                        month,
+                        revenue: sql.monthlyRevenue.find((row) => row.month === month)?.revenue ?? 0,
+                        expenses: sql.monthlyExpenses?.find((row) => row.month === month)?.expenses ?? 0,
+                    })),
+                    paymentMethods: sql.paymentMethods,
+                    topCustomersWithDues: [],
+                    recentPurchases: sql.recentPurchases,
+                    expenseByCategory: sql.expenseByCategory,
+                    ...(sql.totalExpenses !== undefined ? { totalExpenses: sql.totalExpenses } : {}),
+                    asOf: sql.asOf,
+                    source: 'sql',
+                });
+            } catch (sqlErr) {
+                error(`SQL dashboard unavailable: ${(sqlErr as Error).message}`);
+                res.status(503).json({ message: SHOP_DB_DOWN });
+            }
+            return;
+        }
         const userId = req.user?._id;
         // Shop-wide scope for everything that has a tenantId field (Invoice, Customer). Expense
         // has no tenantId on its schema (only createdBy) - see the monthlyExpenses aggregate
@@ -158,15 +189,6 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
 
         // ITEM_DATA_SOURCE=sql (with a `dashboard` section in the mapping): revenue, sales trend, payment
         // mix, purchases (and expenses when mapped) come from the shop DB. Customers and dues stay on MongoDB.
-        let sql: SqlDashboardStats | undefined;
-        if (isSqlItemSource()) {
-            try {
-                if (hasSqlDashboard()) sql = await sqlDashboardStats();
-            } catch (sqlErr) {
-                warn(`Dashboard: shop DB read failed, using MongoDB - ${(sqlErr as Error).message}`);
-            }
-        }
-
         // 0. Summary metrics
         const allInvoices = await Invoice.find({ tenantId, isDeleted: { $ne: true } });
         const totalInvoices = allInvoices.length;
@@ -269,35 +291,6 @@ export const getDashboardStats = async (req: AuthenticatedRequest, res: Response
             .sort({ dues: -1 })
             .limit(5)
             .select('name dues');
-
-        if (sql) {
-            // Revenue side from SQL; expenses from SQL when mapped, otherwise the MongoDB expenses above.
-            const sqlMonths = Array.from(new Set([...sql.monthlyRevenue.map((r) => r.month), ...(sql.monthlyExpenses ?? monthlyExpenses.map((e: any) => ({ month: e._id }))).map((e: any) => e.month)])).sort();
-            const expenseFor = (month: string): number =>
-                sql!.monthlyExpenses
-                    ? sql!.monthlyExpenses.find((e) => e.month === month)?.expenses || 0
-                    : monthlyExpenses.find((e: any) => e._id === month)?.expenses || 0;
-            res.status(200).json({
-                totalInvoices: sql.totalInvoices,
-                totalRevenue: sql.totalRevenue,
-                totalCollected,
-                totalOutstanding,
-                dailySales: sql.dailySales,
-                revenueVsExpenses: sqlMonths.map((month) => ({
-                    month,
-                    revenue: sql!.monthlyRevenue.find((r) => r.month === month)?.revenue || 0,
-                    expenses: expenseFor(month)
-                })),
-                paymentMethods: sql.paymentMethods,
-                topCustomersWithDues,
-                recentPurchases: sql.recentPurchases,
-                expenseByCategory: sql.expenseByCategory,
-                ...(sql.totalExpenses !== undefined ? { totalExpenses: sql.totalExpenses } : {}),
-                asOf: sql.asOf,
-                source: 'sql'
-            });
-            return;
-        }
 
         res.status(200).json({
             totalInvoices,
@@ -423,7 +416,7 @@ export const getShopSalesIntelligence = async (req: AuthenticatedRequest, res: R
         res.status(200).json(result);
     } catch (err) {
         warn(`[sql-reports] sales intelligence failed, no SQL figures returned - ${(err as Error).message}`);
-        res.status(200).json({ source: 'mongo' });
+        res.status(503).json({ message: SHOP_DB_DOWN });
     }
 };
 

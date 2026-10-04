@@ -1,20 +1,13 @@
 import { Response } from 'express';
 import ConfigService from '../services/ConfigService.js';
-import SystemConfig from '../models/SystemConfig.js';
-import TaxMaster from '../models/TaxMaster.js';
-import LoyaltyRule from '../models/LoyaltyRule.js';
-import SegmentRule from '../models/SegmentRule.js';
+import { listConfigs } from '../../../integrations/textilesoft/erpSystemConfig.js';
+import { setTaxMaster } from '../../../integrations/textilesoft/erpTaxMaster.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 
 export const getConfigs = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { group } = req.query;
-
-        const query: any = { tenantId };
-        if (group) query.group = group;
-
-        const configs = await SystemConfig.find(query).lean();
+        const configs = await listConfigs(typeof group === 'string' ? group : undefined);
         res.status(200).json({ success: true, data: configs });
     } catch (error: any) {
         res.status(500).json({ success: false, message: error.message });
@@ -23,14 +16,13 @@ export const getConfigs = async (req: AuthenticatedRequest, res: Response) => {
 
 export const updateConfig = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { key, value, group } = req.body;
 
         if (!key || value === undefined) {
             return res.status(400).json({ success: false, message: "key and value are required" });
         }
 
-        const config = await ConfigService.set(tenantId, key, value, group);
+        const config = await ConfigService.set(key, value, group);
         ConfigService.clearCache();
 
         res.status(200).json({ success: true, data: config });
@@ -41,14 +33,9 @@ export const updateConfig = async (req: AuthenticatedRequest, res: Response) => 
 
 export const updateTaxMaster = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { taxCode, taxName, percentage } = req.body;
 
-        const tax = await TaxMaster.findOneAndUpdate(
-            { tenantId, taxCode },
-            { $set: { taxName, percentage, isActive: true } },
-            { upsert: true, new: true }
-        );
+        const tax = await setTaxMaster(taxCode, taxName, percentage);
 
         ConfigService.clearCache();
         res.status(200).json({ success: true, data: tax });
@@ -62,11 +49,12 @@ export const updateLoyaltyRule = async (req: AuthenticatedRequest, res: Response
         const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { ruleId, ruleName, spendPerPoint, rupeesPer100Points } = req.body;
 
-        const rule = await LoyaltyRule.findOneAndUpdate(
-            { tenantId, ruleId: ruleId || 'DEFAULT_LOYALTY' },
-            { $set: { ruleName: ruleName || 'Default Loyalty Rule', spendPerPoint, rupeesPer100Points, isActive: true } },
-            { upsert: true, new: true }
-        );
+        const rule = await ConfigService.saveLoyaltyRule(tenantId, {
+            ruleId: ruleId || 'DEFAULT_LOYALTY',
+            ruleName: ruleName || 'Default Loyalty Rule',
+            spendPerPoint,
+            rupeesPer100Points,
+        });
 
         ConfigService.clearCache();
         res.status(200).json({ success: true, data: rule });
@@ -80,11 +68,12 @@ export const updateSegmentRule = async (req: AuthenticatedRequest, res: Response
         const tenantId = req.user.tenantId ? req.user.tenantId.toString() : 'default';
         const { segmentName, minSpend, minOrders, inactiveDaysThreshold } = req.body;
 
-        const rule = await SegmentRule.findOneAndUpdate(
-            { tenantId, segmentName },
-            { $set: { minSpend, minOrders, inactiveDaysThreshold, isActive: true } },
-            { upsert: true, new: true }
-        );
+        const rule = await ConfigService.saveSegmentRule(tenantId, {
+            segmentName,
+            minSpend,
+            minOrders,
+            inactiveDaysThreshold,
+        });
 
         ConfigService.clearCache();
         res.status(200).json({ success: true, data: rule });

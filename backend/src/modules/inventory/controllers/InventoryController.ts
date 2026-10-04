@@ -8,7 +8,6 @@ import ReprintQueue from '../models/ReprintQueue.js';
 import mongoose from 'mongoose';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 import { isSqlItemSource } from '../../../config/itemDataSource.js';
-import { withMongoFallback } from '../../../integrations/textilesoft/sqlItemSource.js';
 import { sqlAgingReport, sqlCityWiseStock, sqlDeadStockReport, sqlItemHistory, sqlLowStockReport, sqlRackWiseStock, sqlStockAgeBuckets, sqlStockFilterOptions, sqlStockMovements, sqlStockStatusReport, type StockReportQuery } from '../../../integrations/textilesoft/sqlStockReports.js';
 
 @singleton()
@@ -60,6 +59,7 @@ export class InventoryController {
 
     public updateItem = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: 'SQL item updates are unavailable in the existing Textilesoft schema' }); return; }
             // Fetch current state for audit
             const originalItem = await Item.findOne({ _id: req.params.id, tenantId: req.tenantId });
             if (originalItem) {
@@ -80,6 +80,7 @@ export class InventoryController {
 
     public deleteItem = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: 'SQL item deletion is unavailable in the existing Textilesoft schema' }); return; }
             // Fetch current state for audit
             const originalItem = await Item.findOne({ _id: req.params.id, tenantId: req.tenantId });
             if (originalItem) {
@@ -127,6 +128,7 @@ export class InventoryController {
 
     public bulkUpdateCategory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: 'SQL category updates are unavailable in the existing Textilesoft schema' }); return; }
             const { ids, category } = req.body;
             const result = await Item.updateMany(
                 { _id: { $in: ids }, tenantId: req.tenantId.toString() },
@@ -164,6 +166,7 @@ export class InventoryController {
 
     public toggleItemStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: 'SQL item status updates are unavailable in the existing Textilesoft schema' }); return; }
             const item = await this.inventoryService.getSingleItem(String(req.params.id), req.tenantId.toString());
             item.isActive = !item.isActive;
             await item.save();
@@ -178,13 +181,15 @@ export class InventoryController {
     public getItemStockHistory = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
             const tenantId = req.tenantId.toString();
+            if (isSqlItemSource()) {
+                res.status(200).json(await sqlItemHistory(String(req.params.id), tenantId));
+                return;
+            }
             const mongoHistory = () => mongoose.model('StockLog').find({
                 itemId: req.params.id,
                 tenantId
             }).sort({ createdAt: -1 });
-            const history = isSqlItemSource()
-                ? await withMongoFallback('item history', () => sqlItemHistory(String(req.params.id), tenantId), async () => mongoHistory() as any)
-                : await mongoHistory();
+            const history = await mongoHistory();
             res.status(200).json(history);
         } catch (err: any) {
             error(`Get History Error: ${err.message}`);
@@ -197,7 +202,7 @@ export class InventoryController {
         try {
             const q = req.query as Record<string, string | undefined>;
             const mongoMovements = () => this.inventoryService.getStockMovements(req.tenantId.toString(), q);
-            const result = isSqlItemSource() ? await withMongoFallback('stock movements', () => sqlStockMovements(q), mongoMovements) : await mongoMovements();
+            const result = isSqlItemSource() ? await sqlStockMovements(q) : await mongoMovements();
             res.status(200).json(result);
         } catch (err: any) {
             error(`Stock Movements Error: ${err.message}`);
@@ -209,7 +214,7 @@ export class InventoryController {
         try {
             const tenantId = req.tenantId.toString();
             const report = isSqlItemSource()
-                ? await withMongoFallback('aging report', () => sqlAgingReport(tenantId), () => this.stockAgingService.getAgingAnalysis(tenantId))
+                ? await sqlAgingReport(tenantId)
                 : await this.stockAgingService.getAgingAnalysis(tenantId);
             res.status(200).json(report);
         } catch (err: any) {
@@ -235,7 +240,7 @@ export class InventoryController {
                 to: typeof req.query.to === 'string' ? req.query.to : undefined,
             };
             const mongo = () => this.stockAgingService.getStockAgeBuckets(tenantId, q);
-            const report = isSqlItemSource() ? await withMongoFallback('stock age buckets', () => sqlStockAgeBuckets(tenantId, q), mongo) : await mongo();
+            const report = isSqlItemSource() ? await sqlStockAgeBuckets(tenantId, q) : await mongo();
             res.status(200).json(report);
         } catch (err: any) {
             error(`Stock Age Buckets Error: ${err.message}`);
@@ -258,7 +263,7 @@ export class InventoryController {
             const tenantId = req.tenantId.toString();
             try {
                 const q = this.stockReportQuery(req);
-                const report = isSqlItemSource() ? await withMongoFallback(label, () => sql(tenantId, q), () => mongo(tenantId, q)) : await mongo(tenantId, q);
+                const report = isSqlItemSource() ? await sql(tenantId, q) : await mongo(tenantId, q);
                 res.status(200).json(report);
             } catch (err: any) {
                 error(`${label} Error: ${err.message}`);
@@ -274,6 +279,7 @@ export class InventoryController {
 
     public performAgingAction = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: 'SQL stock aging actions are unavailable in the existing Textilesoft schema' }); return; }
             const { itemId, action, value } = req.body;
             const result = await this.stockAgingService.applyAction(itemId, req.tenantId.toString(), action, value);
             res.status(200).json({ message: "Action applied successfully", result });
@@ -285,6 +291,7 @@ export class InventoryController {
 
     public batchPriceUpdate = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: 'SQL batch price updates are unavailable in the existing Textilesoft schema' }); return; }
             const { sku, newPrice } = req.body;
             const tenantId = req.tenantId.toString();
             const item = await Item.findOne({ sku, tenantId });
@@ -326,6 +333,7 @@ export class InventoryController {
 
     public getReprintQueue = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(200).json([]); return; }
             const queue = await ReprintQueue.findOne({ tenantId: req.tenantId.toString() });
             res.status(200).json(queue ? queue.items : []);
         } catch (err: any) {
@@ -336,6 +344,7 @@ export class InventoryController {
 
     public clearReprintQueue = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(200).json({ message: 'No SQL reprint queue is available' }); return; }
             await ReprintQueue.findOneAndUpdate({ tenantId: req.tenantId.toString() }, { $set: { items: [] } });
             res.status(200).json({ message: 'Reprint queue cleared' });
         } catch (err: any) {
@@ -346,6 +355,7 @@ export class InventoryController {
 
     public deleteItemsBatch = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: 'SQL item deletion is unavailable in the existing Textilesoft schema' }); return; }
             const { ids } = req.body;
             if (!ids || !Array.isArray(ids) || ids.length === 0) {
                 res.status(400).json({ message: 'No IDs provided for deletion' });
@@ -376,7 +386,7 @@ export class InventoryController {
             const mongo = () => this.inventoryService.getStockByCity(tenantId);
             // SQL mode: single-store shops get the shared stock snapshot; multi-store tenants keep per-store levels.
             const report = isSqlItemSource()
-                ? await withMongoFallback<any>('city-wise stock', async () => (await sqlCityWiseStock(tenantId, this.stockReportQuery(req))) ?? (await mongo()), mongo)
+                ? (await sqlCityWiseStock(tenantId, this.stockReportQuery(req))) ?? []
                 : await mongo();
             res.status(200).json(report);
         } catch (err: any) {
@@ -390,7 +400,7 @@ export class InventoryController {
             const tenantId = req.tenantId.toString();
             const mongo = () => this.inventoryService.getStockByRack(tenantId);
             const report = isSqlItemSource()
-                ? await withMongoFallback<any>('rack-wise stock', () => sqlRackWiseStock(tenantId, this.stockReportQuery(req)), mongo)
+                ? await sqlRackWiseStock(tenantId, this.stockReportQuery(req))
                 : await mongo();
             res.status(200).json(report);
         } catch (err: any) {
@@ -419,6 +429,7 @@ export class InventoryController {
     // ADJUST/SALES stock movement so it shows up separately in stock history/reporting.
     public writeOffStock = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {
+            if (isSqlItemSource()) { res.status(409).json({ message: 'SQL stock write-off is unavailable in the existing Textilesoft schema' }); return; }
             const { itemId, quantity, cause, reason } = req.body;
             await this.inventoryService.writeOffStock(itemId, Number(quantity), cause, reason, req.tenantId.toString(), req.user);
             res.status(200).json({ message: 'Stock write-off recorded' });

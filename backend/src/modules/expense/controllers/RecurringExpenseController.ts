@@ -7,6 +7,7 @@ import Expense from '../models/Expense.js';
 import { info, error } from '../../../config/logger.js';
 import { AuthenticatedRequest } from '../../../middlewares/authMiddleware.js';
 import type { TenantRef } from '../../../interfaces/TenantRef.js';
+import { isSqlItemSource } from '../../../config/itemDataSource.js';
 
 interface BranchSummary {
     branch_name: string;
@@ -140,6 +141,10 @@ const calculateIntelligence = async (recurringExpenses: any[], tenantId: TenantR
  */
 export const getAllRecurringExpenses = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        if (isSqlItemSource()) {
+            res.status(200).json({ expenses: [], intelligence: { cashRequired30Days: 0, summaryByBranch: [], upcomingDues: [] } });
+            return;
+        }
         const recurringExpenses = await RecurringExpense.find({
             createdBy: req.tenantId,
             is_active: true
@@ -173,6 +178,7 @@ export const getAllRecurringExpenses = async (req: AuthenticatedRequest, res: Re
  */
 export const createRecurringExpense = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        if (isSqlItemSource()) { res.status(409).json({ message: 'Recurring expenses are not supported by the existing SQL tables' }); return; }
         const { category, amount, frequency, vendor, next_due, branch_id, branch_name, description } = req.body;
 
         if (!category || !amount || !next_due) {
@@ -217,6 +223,7 @@ export const createRecurringExpense = async (req: AuthenticatedRequest, res: Res
  */
 export const updateRecurringExpense = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        if (isSqlItemSource()) { res.status(409).json({ message: 'Recurring expenses are not supported by the existing SQL tables' }); return; }
         if (!mongoose.Types.ObjectId.isValid(req.params.id as string)) {
             res.status(400).json({ message: 'Invalid expense ID format' });
             return;
@@ -268,6 +275,7 @@ export const updateRecurringExpense = async (req: AuthenticatedRequest, res: Res
  */
 export const deleteRecurringExpense = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
+        if (isSqlItemSource()) { res.status(409).json({ message: 'Recurring expenses are not supported by the existing SQL tables' }); return; }
         if (!mongoose.Types.ObjectId.isValid(req.params.id as string)) {
             res.status(400).json({ message: 'Invalid expense ID format' });
             return;

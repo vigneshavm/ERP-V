@@ -113,3 +113,10 @@ describe('usePOSTotals', () => {
         expect(result.current.finalTotal).toBe(0); // clamped, not negative
     });
 });
+
+describe('unentered measured cut estimate', () => {
+    test.each([undefined, 0])('does not estimate one metre for cut length %s', cutLength => {
+        const { result } = renderHook(() => usePOSTotals({ cart: [cartItem({ unit: 'Meter', qty: 2, price: 100, cutLength })], activeSession: session(), tenants: [], isSqlBilling: true }));
+        expect(result.current.cartTotal).toBe(0);
+    });
+});

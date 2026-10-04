@@ -41,8 +41,18 @@ export const generateReceiptJSON = (
     const billNo = billNoParts.length > 1 ? billNoParts.slice(1).join('-') : sale.id;
     const cashNo = billNoParts.length > 1 ? billNoParts[0] : (sale.counterId || 'A1');
 
+    // Quantities on the receipt amount/tax lines must use the same measured base
+    // quantity as checkout. Keep the separate cut-count and metre columns intact.
+    const baseQuantities = sale.items.map(item => {
+        if (item.unit !== 'Meter') return item.qty;
+        if (typeof item.cutLength !== 'number' || !Number.isFinite(item.cutLength) || item.cutLength <= 0) {
+            throw new Error(`Receipt for ${item.name} is unavailable: a positive cut length is required.`);
+        }
+        return item.cutLength * item.qty;
+    });
+
     // 3. Items
-    const items: ReceiptItem[] = sale.items.map(item => {
+    const items: ReceiptItem[] = sale.items.map((item, index) => {
         const itemDiscount = item.discount || 0;
         return {
             name: item.name,
@@ -52,7 +62,7 @@ export const generateReceiptJSON = (
             rate: item.price,
             mtr: item.cutLength || 0,
             quantity: item.qty,
-            amount: item.price * item.qty,
+            amount: item.price * baseQuantities[index],
             discount: itemDiscount
         };
     });
@@ -73,9 +83,9 @@ export const generateReceiptJSON = (
     interface GSTSlab { rate: number; taxableValue: number; cgst: number; sgst: number; }
     const slabMap = new Map<number, GSTSlab>();
 
-    for (const cartItem of sale.items) {
+    for (const [index, cartItem] of sale.items.entries()) {
         const gstRate = cartItem.gstRate ?? (cartItem as any).gstPercentage ?? 5;
-        const lineTotal = (cartItem.price ?? 0) * (cartItem.qty ?? 1);
+        const lineTotal = (cartItem.price ?? 0) * baseQuantities[index];
 
         let taxableValue: number;
         let taxAmount: number;

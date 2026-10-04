@@ -112,8 +112,10 @@ describe('Detailed Analytics read the server in every mode', () => {
         } });
         render(<BrandWiseSalesReport />);
         await waitFor(() => expect(screen.getAllByText('Ramraj').length).toBeGreaterThan(0));
-        expect(get.mock.calls[0][0]).toBe('/api/reports/shop-sales');
-        expect((get.mock.calls[0][1] as { params: Record<string, string> }).params.dim).toBe('brand');
+        const brandCall = get.mock.calls.find(c => (c[1] as { params?: { dim?: string } })?.params?.dim === 'brand');
+        expect(brandCall).toBeTruthy();
+        expect(brandCall![0]).toBe('/api/reports/shop-sales');
+        expect((brandCall![1] as { params: Record<string, string> }).params.dim).toBe('brand');
         expect(screen.getByText(/Grouped from ERP invoices\./)).toBeTruthy();
     });
 

@@ -151,9 +151,8 @@ export class PurchaseReturnService {
         // 3. Debit note -- the supplier-ledger entry that reduces what we owe.
         const debitNote = await this.debitNoteRepository.create({
             noteId: await this.debitNoteRepository.nextNoteId(ctx.tenantId),
-            tenantId: ctx.tenantId,
             date: returnDate ? new Date(returnDate) : new Date(),
-            vendorId: new Types.ObjectId(supplierId),
+            vendorId: String(supplierId),
             vendorName: supplier.businessName || "Unknown",
             reason: "RETURN",
             items: items.map((i) => ({
@@ -163,7 +162,7 @@ export class PurchaseReturnService {
             })),
             totalAmount,
             status: "APPROVED",
-            createdBy: ctx.userId,
+            createdBy: String(ctx.userId),
             notes: `Auto-generated from Purchase Return ${returnId}`,
         });
 
@@ -174,7 +173,7 @@ export class PurchaseReturnService {
             bill: billId ? new Types.ObjectId(billId) : undefined,
             grnId: grnId ? new Types.ObjectId(grnId) : undefined,
             supplier: new Types.ObjectId(supplierId),
-            debitNoteId: debitNote._id as Types.ObjectId,
+            debitNoteId: String(debitNote._id),
             items: items as any,
             subtotal,
             taxAmount,

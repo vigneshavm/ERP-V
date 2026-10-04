@@ -9,7 +9,7 @@ import Item from '../../inventory/models/Item.js';
 
 import Customer from '../../crm/models/Customer.js';
 
-import Transaction from '../models/Transaction.js';
+import { createTransaction, deleteTransactionsByReturn } from '../../../integrations/textilesoft/erpTransaction.js';
 
 import CashbankTransaction from '../../finance/models/CashbankTransaction.js';
 import { info, error } from '../../../config/logger.js';
@@ -341,11 +341,11 @@ export const createReturn = async (req: AuthenticatedRequest, res: Response): Pr
         // Create transaction record (non-critical)
         if (invoice.customer) {
             try {
-                await Transaction.create({
+                await createTransaction({
                     type: 'return',
-                    customer: (invoice.customer as any)._id || invoice.customer,
+                    customer: String((invoice.customer as any)._id || invoice.customer),
                     invoice: invoiceId,
-                    return: returnRecord._id,
+                    return: returnRecord._id.toString(),
                     amount: totalReturnAmount,
                     paymentMethod: actualRefundMethod,
                     description: `Return processed for invoice ${invoice.invoiceNo} - Return ID: ${returnId}`,
@@ -654,9 +654,7 @@ export const deleteReturn = async (req: AuthenticatedRequest, res: Response): Pr
         }
 
         // Delete associated general transactions
-        //  - Dynamic import
-        const TransactionModel = (await import('../models/Transaction.js')).default;
-        await TransactionModel.deleteMany({ return: returnRecord._id });
+        await deleteTransactionsByReturn(String(returnRecord._id));
 
         // Delete return record
         await Return.findByIdAndDelete(req.params.id as string);

@@ -41,7 +41,7 @@ describe("RateRevisionService.approveRevision", () => {
     it("updates the batch cost and adds the difference to what we owe the supplier", async () => {
         const approved: any = await service.approveRevision(ctx, String(revisionId));
         expect(inventory.updateBatchCost).toHaveBeenCalledWith(String(itemId), "LOT-5", 120, tenantId.toString(), ctx.user);
-        expect(repo.decide).toHaveBeenCalledWith(tenantId.toString(), String(revisionId), "APPROVED", userId, session);
+        expect(repo.decide).toHaveBeenCalledWith(tenantId.toString(), String(revisionId), "APPROVED", String(userId));
         expect(payables.postSupplierCharge).toHaveBeenCalledWith(expect.objectContaining({
             tenantId, userId, amount: 200, supplier: expect.objectContaining({ _id: supplierId }), session,
         }));

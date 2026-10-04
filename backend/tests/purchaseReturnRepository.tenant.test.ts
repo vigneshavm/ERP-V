@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, afterEach } from "@jest/glob
 import { Types } from "mongoose";
 import { startMongo, clearMongo, stopMongo } from "./support/memoryMongo.js";
 import PurchaseReturn from "../src/modules/purchase/models/PurchaseReturn.js";
+import "../src/modules/purchase/models/Supplier.js";
 import { PurchaseReturnRepository } from "../src/modules/purchase/repositories/PurchaseReturnRepository.js";
 
 /**

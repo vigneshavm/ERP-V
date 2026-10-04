@@ -55,7 +55,8 @@ const SalesInvoiceDetail = () => {
     const [editError, setEditError] = useState('');
     const [isPrintingReceipt, setIsPrintingReceipt] = useState(false);
 
-    const canEditInvoice = !!(user?.role && INVOICE_EDIT_ROLES.includes(user.role));
+    const isSqlInvoice = String(invoice?._id || invoice?.id || '').startsWith('sql:');
+    const canEditInvoice = !isSqlInvoice && !!(user?.role && INVOICE_EDIT_ROLES.includes(user.role));
 
     useEffect(() => {
         if (id) {
@@ -81,10 +82,11 @@ const SalesInvoiceDetail = () => {
     // so an API refetch there would risk printing fallback/dummy data. Here the invoice is
     // already confirmed to exist server-side (it's on screen), so a fetch is safe.
     const handlePrintReceipt = async () => {
-        if (!invoice?.invoiceNo || isPrintingReceipt) return;
+        if (!invoice || isPrintingReceipt) return;
         setIsPrintingReceipt(true);
         try {
-            const { sale, tenant, branch } = await receiptDataService.fetchReceiptContext(invoice.invoiceNo);
+            const billKey = String(invoice._id || invoice.id || invoice.invoiceNo || '');
+            const { sale, tenant, branch } = await receiptDataService.fetchReceiptContext(billKey);
             printSaleReceipt(sale, tenant, branch);
         } catch (error) {
             console.error('Failed to print receipt', error);
@@ -405,11 +407,16 @@ const SalesInvoiceDetail = () => {
                                 <h2 className="text-xs font-bold text-muted uppercase tracking-wider">Quick Actions</h2>
                             </div>
                             <div className="p-4 space-y-2">
-                                {invoice.paymentStatus !== 'paid' && (
+                                {!isSqlInvoice && invoice.paymentStatus !== 'paid' && (
                                     <Button onClick={() => setShowPaymentModal(true)} className="w-full py-3 bg-success text-white rounded-xl font-bold hover:bg-success/90 transition-all flex items-center justify-center gap-2"><CreditCard className="w-4 h-4" /> Record Payment</Button>
                                 )}
                                 {canEditInvoice && (
                                     <Button onClick={openEditModal} className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"><Pencil className="w-4 h-4" /> Edit Invoice</Button>
+                                )}
+                                {isSqlInvoice && (
+                                    <p className="rounded-md border border-warning/30 bg-warning/10 p-3 text-xs text-secondary">
+                                        SQL shop bills are read-only here. Payment allocation and invoice edits are unavailable for this bill.
+                                    </p>
                                 )}
                                 <Button onClick={handlePrint} className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"><Printer className="w-4 h-4" /> Print Invoice</Button>
                                 <button

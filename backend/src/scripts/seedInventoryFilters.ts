@@ -1,9 +1,7 @@
 import dns from 'dns';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Brand from '../modules/inventory/models/Brand.js';
-import Size from '../modules/inventory/models/Size.js';
-import Color from '../modules/inventory/models/Color.js';
+import { brandRepo, colorRepo, sizeRepo } from '../integrations/textilesoft/erpCatalogs.js';
 import Shelf from '../modules/inventory/models/Shelf.js';
 import { info } from '../config/logger.js';
 
@@ -52,17 +50,20 @@ const seedInventoryFilters = async () => {
         info('Connected to MongoDB');
 
         for (const name of BRANDS) {
-            await Brand.findOneAndUpdate({ name }, { name, isActive: true }, { upsert: true, new: true });
+            const existing = await brandRepo.list(false);
+            if (!existing.some((b) => b.name === name)) await brandRepo.create({ name });
             info(`Seeded brand: ${name}`);
         }
 
         for (const size of SIZES) {
-            await Size.findOneAndUpdate({ name: size.name }, { ...size, isActive: true }, { upsert: true, new: true });
+            const existing = await sizeRepo.list(false);
+            if (!existing.some((s) => s.name === size.name)) await sizeRepo.create(size);
             info(`Seeded size: ${size.name}`);
         }
 
         for (const color of COLORS) {
-            await Color.findOneAndUpdate({ name: color.name }, { ...color, isActive: true }, { upsert: true, new: true });
+            const existing = await colorRepo.list(false);
+            if (!existing.some((c) => c.name === color.name)) await colorRepo.create(color);
             info(`Seeded color: ${color.name}`);
         }
 

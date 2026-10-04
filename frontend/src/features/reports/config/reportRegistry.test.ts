@@ -28,8 +28,8 @@ describe('reportRegistry', () => {
         }
     });
 
-    it('keeps the 35 catalog reports', () => {
-        expect(all).toHaveLength(35);
+    it('keeps the 36 catalog reports', () => {
+        expect(all).toHaveLength(36);
     });
 
     it('maps global viewModes to the same reports the old switch did', () => {

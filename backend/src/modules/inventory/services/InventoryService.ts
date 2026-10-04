@@ -5,14 +5,11 @@ import { IItem } from "../../../interfaces/IItem.js";
 import { info, warn } from "../../../config/logger.js";
 import StockLog from "../models/StockLog.js";
 import Item from "../models/Item.js";
-import Brand from "../models/Brand.js";
-import Size from "../models/Size.js";
-import Color from "../models/Color.js";
+import { brandRepo, colorRepo, sizeRepo } from "../../../integrations/textilesoft/erpCatalogs.js";
 import Shelf from "../models/Shelf.js";
 import mongoose from "mongoose";
 import { isSqlItemSource } from "../../../config/itemDataSource.js";
 import * as sqlItems from "../../../integrations/textilesoft/sqlItemSource.js";
-import { extractPaginationParams } from "../../../utils/paginationUtils.js";
 import type { TenantRef, IdRef } from '../../../interfaces/TenantRef.js';
 
 @injectable()
@@ -21,12 +18,8 @@ export class InventoryService {
         @inject(InventoryRepository) private inventoryRepository: InventoryRepository
     ) { }
 
-    /** SQL mode: make sure the shop catalogue has been (or is being) mirrored into MongoDB for screens that read Mongo directly. */
-    private mirrorIfSql(tenantId: string): void {
-        if (isSqlItemSource()) sqlItems.ensureMirror(tenantId);
-    }
-
     async addItem(itemData: any, tenantId: string, user: any): Promise<{ item: IItem, alerts: any[] }> {
+        if (isSqlItemSource()) throw new AppError("SQL item creation is unavailable for the current Textilesoft product/stock tables", 409);
         if (!itemData.name || !itemData.costPrice || !itemData.sellingPrice) {
             throw new AppError("Please fill all required fields", 400);
         }
@@ -62,138 +55,23 @@ export class InventoryService {
     }
 
     async getAllItemsWithPagination(tenantId: string, queryParams: any): Promise<any> {
-        // ITEM_DATA_SOURCE=sql: catalogue + stock come from the shop's SQL Server DB.
-        if (isSqlItemSource()) {
-            sqlItems.ensureMirror(tenantId);
-            return sqlItems.withMongoFallback(
-                "list items",
-                () => sqlItems.listItems(tenantId, queryParams),
-                () => this.getAllItemsFromMongo(tenantId, queryParams)
-            );
-        }
-        return this.getAllItemsFromMongo(tenantId, queryParams);
+        return sqlItems.listItems(tenantId, queryParams);
     }
 
-    private async getAllItemsFromMongo(tenantId: string, queryParams: any): Promise<any> {
-        const { page, limit, skip } = extractPaginationParams(queryParams, 20, 200);
-        const search = queryParams.search || '';
-
-        const query: any = {};
-        // Every filter below that needs its own `$or` (text search, shelf-code-or-bin-location)
-        // is pushed onto this array and combined with `$and` instead of writing directly to
-        // `query.$or`. A plain object can only hold one `$or` key, so when both a product search
-        // AND a shelf filter were active at once, the second `query.$or = [...]` assignment used
-        // to silently overwrite the first -- meaning "search=Shirt&shelf=A-03" actually ignored the
-        // "Shirt" text search entirely and returned every item on shelf A-03 regardless of name.
-        const andConditions: any[] = [];
-
-        if (search) {
-            andConditions.push({
-                $or: [
-                    { name: { $regex: search, $options: 'i' } },
-                    { sku: { $regex: search, $options: 'i' } }
-                ]
-            });
-        }
-
-        if (queryParams.category && queryParams.category !== 'ALL') {
-            query.category = { $regex: new RegExp(`^${queryParams.category}$`, 'i') };
-        }
-
-        if (queryParams.brand && queryParams.brand !== 'ALL') {
-            query.brand = { $regex: new RegExp(`^${queryParams.brand}$`, 'i') };
-        }
-
-        if (queryParams.size && queryParams.size !== 'ALL') {
-            query.size = queryParams.size;
-        }
-
-        if (queryParams.color && queryParams.color !== 'ALL') {
-            query.color = { $regex: new RegExp(`^${queryParams.color}$`, 'i') };
-        }
-
-        const shelfFilter = queryParams.shelfCode || queryParams.shelf || queryParams.binLocation;
-        if (shelfFilter && shelfFilter !== 'ALL') {
-            andConditions.push({
-                $or: [
-                    { shelfCode: shelfFilter },
-                    { binLocation: shelfFilter }
-                ]
-            });
-        }
-
-        if (queryParams.shelfType && queryParams.shelfType !== 'ALL') {
-            query.shelfType = queryParams.shelfType;
-        }
-
-        // Same "available stock <= limit" definition used by getInventoryStats and
-        // getLowStockItems, so the Items page's "Low Stock" filter, the metrics
-        // card count, and the aging/alerts logic all agree on what counts as low.
-        if (queryParams.lowStockOnly === 'true' || queryParams.lowStockOnly === true) {
-            query.$expr = {
-                $lte: [
-                    { $subtract: ["$stockQty", { $ifNull: ["$reservedStock", 0] }] },
-                    "$lowStockLimit"
-                ]
-            };
-        }
-
-        if (andConditions.length > 0) {
-            query.$and = andConditions;
-        }
-
-        const [items, total] = await this.inventoryRepository.findWithPagination(tenantId, query, skip, limit);
-
-        // findWithPagination reads via .lean() for performance, which means the
-        // schema's `availableStock` virtual (stockQty - reservedStock) never gets attached --
-        // virtuals are a Mongoose-document feature, lean() returns plain objects. Computing it
-        // explicitly here is what makes a completed sale (which raises reservedStock, or lowers
-        // stockQty once fulfilled) actually show up as reduced "available quantity" to a search
-        // like Inventory Variant Search, instead of the raw on-hand count.
-        const itemsWithAvailability = (items as any[]).map((item) => ({
-            ...item,
-            availableQuantity: Math.max((item.stockQty || 0) - (item.reservedStock || 0), 0)
-        }));
-
-        return {
-            items: itemsWithAvailability,
-            pagination: {
-                page,
-                limit,
-                total,
-                pages: Math.ceil(total / limit)
-            }
-        };
+    async getSingleItem(itemId: string, _tenantId: string): Promise<IItem> {
+        const fresh = await sqlItems.findByKeyDirect({ barcode: itemId }) ?? await sqlItems.findByKeyDirect({ sku: itemId });
+        if (!fresh) throw new AppError("Item not found in the SQL catalogue", 404);
+        return fresh as unknown as IItem;
     }
 
-    async getSingleItem(itemId: string, tenantId: string): Promise<IItem> {
-        if (isSqlItemSource()) {
-            sqlItems.ensureMirror(tenantId);
-            const fresh = await sqlItems.withMongoFallback("get item", () => sqlItems.refreshById(itemId, tenantId), async () => null);
-            if (fresh) return fresh as unknown as IItem;
-        }
-        const item = await this.inventoryRepository.findById(itemId, tenantId);
-        if (!item) {
-            throw new AppError("Item not found or unauthorized", 404);
-        }
-        return item;
-    }
-
-    async getItemByBarcode(barcode: string, tenantId: string): Promise<IItem> {
-        if (isSqlItemSource()) {
-            sqlItems.ensureMirror(tenantId);
-            const fromShop = await sqlItems.withMongoFallback("barcode lookup", () => sqlItems.findByKey(tenantId, { barcode }), async () => undefined);
-            if (fromShop) return fromShop as unknown as IItem;
-            // Not in the shop DB (or shop DB unreachable): fall through to ERP-only items in MongoDB.
-        }
-        const items = await this.inventoryRepository.findByQuery({ barcode, tenantId });
-        if (!items || items.length === 0) {
-            throw new AppError("Item not found for this barcode", 404);
-        }
-        return items[0];
+    async getItemByBarcode(barcode: string, _tenantId: string): Promise<IItem> {
+        const item = await sqlItems.findByKeyDirect({ barcode });
+        if (!item) throw new AppError("Item not found for this barcode in the SQL catalogue", 404);
+        return item as unknown as IItem;
     }
 
     async updateItem(itemId: string, tenantId: string, updateData: any, user: any): Promise<{ updated: IItem, alerts: any[] }> {
+        if (isSqlItemSource()) throw new AppError("SQL item updates are unavailable for the current Textilesoft product/stock tables", 409);
         const item = await this.inventoryRepository.findById(itemId, tenantId);
         if (!item) {
             throw new AppError("Item not found or unauthorized", 404);
@@ -233,6 +111,7 @@ export class InventoryService {
     }
 
     async deleteItem(itemId: string, tenantId: string, userName: string): Promise<IItem> {
+        if (isSqlItemSource()) throw new AppError("SQL item deletion is unavailable for the current Textilesoft product/stock tables", 409);
         const item = await this.inventoryRepository.delete(itemId, tenantId);
         if (!item) {
             throw new AppError("Item not found or unauthorized", 404);
@@ -243,20 +122,14 @@ export class InventoryService {
 
     async getLowStockItems(tenantId: string): Promise<IItem[]> {
         if (isSqlItemSource()) {
-            sqlItems.ensureMirror(tenantId);
-            return sqlItems.withMongoFallback(
-                "low stock",
-                async () => (await sqlItems.lowStockItems(tenantId)) as unknown as IItem[],
-                () => this.inventoryRepository.getLowStockItems(tenantId)
-            );
+            return (await sqlItems.lowStockItems(tenantId)) as unknown as IItem[];
         }
         return this.inventoryRepository.getLowStockItems(tenantId);
     }
 
     async getInventoryStats(tenantId: string): Promise<any> {
         if (isSqlItemSource()) {
-            sqlItems.ensureMirror(tenantId);
-            return sqlItems.withMongoFallback("inventory stats", () => sqlItems.inventoryStats(), () => this.getInventoryStatsFromMongo(tenantId));
+            return sqlItems.inventoryStats();
         }
         return this.getInventoryStatsFromMongo(tenantId);
     }
@@ -329,7 +202,7 @@ export class InventoryService {
     // Store.city). Store already has a city field (used for GST/address purposes), so this
     // reuses existing data rather than introducing a new location dimension.
     async getStockByCity(tenantId: string): Promise<any[]> {
-        this.mirrorIfSql(tenantId);
+        if (isSqlItemSource()) return [];
         return Item.aggregate([
             { $match: { tenantId } },
             { $unwind: { path: "$storeLevels", preserveNullAndEmptyArrays: false } },
@@ -368,7 +241,7 @@ export class InventoryService {
     // Groups current stock by physical shelf/rack location, using the item's own shelfCode
     // (falling back to binLocation) -- both already exist on Item for warehouse bin partitioning.
     async getStockByRack(tenantId: string): Promise<any[]> {
-        this.mirrorIfSql(tenantId);
+        if (isSqlItemSource()) return [];
         return Item.aggregate([
             { $match: { tenantId } },
             {
@@ -410,6 +283,7 @@ export class InventoryService {
     }
 
     async bulkAdjustStock(ids: string[], adjustment: number, type: 'ADD' | 'SUBTRACT' | 'SET', tenantId: string, user: any): Promise<number> {
+        if (isSqlItemSource()) throw new AppError("SQL stock adjustment is unavailable for the current Textilesoft stock tables", 409);
         if (!Array.isArray(ids) || ids.length === 0) return 0;
 
         // Snapshot "before" quantities purely for accurate audit logging below.
@@ -464,7 +338,7 @@ export class InventoryService {
     }
 
     async getDistinctCategories(tenantId: string): Promise<string[]> {
-        this.mirrorIfSql(tenantId);
+        if (isSqlItemSource()) return sqlItems.distinctItemCategories();
         try {
             const categories = await Item.distinct('category', { tenantId, category: { $exists: true, $nin: [null, ''] } });
             if (categories && Array.isArray(categories)) {
@@ -495,12 +369,25 @@ export class InventoryService {
         colors: string[];
         shelves: { shelfCode: string; shelfType: string }[];
     }> {
-        this.mirrorIfSql(tenantId);
+        if (isSqlItemSource()) {
+            const first = await sqlItems.listItems(tenantId, { page: 1, limit: 1000 });
+            const items = [...first.items];
+            for (let page = 2; page <= Number(first.pagination.pages ?? 1); page++) {
+                items.push(...(await sqlItems.listItems(tenantId, { page, limit: 1000 })).items);
+            }
+            const unique = (key: "brand" | "size" | "color") => [...new Set(items.map((item) => String(item[key] ?? "").trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+            return {
+                brands: unique("brand"),
+                sizes: unique("size"),
+                colors: unique("color"),
+                shelves: [...new Set(items.map((item) => String(item.shelfCode ?? item.binLocation ?? "").trim()).filter(Boolean))].map((shelfCode) => ({ shelfCode, shelfType: "FULL" })),
+            };
+        }
         try {
             const [catalogBrands, catalogSizes, catalogColors, catalogShelves, itemBrands, itemSizes, itemColors, itemShelfDocs] = await Promise.all([
-                Brand.find({ isActive: true }).select('name').lean(),
-                Size.find({ isActive: true }).select('name').lean(),
-                Color.find({ isActive: true }).select('name').lean(),
+                brandRepo.list(),
+                sizeRepo.list(),
+                colorRepo.list(),
                 Shelf.find({ isActive: true }).select('shelfCode shelfType').lean(),
                 Item.distinct('brand', { tenantId, brand: { $exists: true, $nin: [null, ''] } }),
                 Item.distinct('size', { tenantId, size: { $exists: true, $nin: [null, ''] } }),
@@ -515,15 +402,15 @@ export class InventoryService {
             ]);
 
             const brandSet = new Set<string>([
-                ...(catalogBrands as any[]).map((b) => b.name),
+                ...catalogBrands.map((b) => b.name),
                 ...(itemBrands as string[]).filter(Boolean)
             ]);
             const sizeSet = new Set<string>([
-                ...(catalogSizes as any[]).map((s) => s.name),
+                ...catalogSizes.map((s) => s.name),
                 ...(itemSizes as string[]).filter(Boolean)
             ]);
             const colorSet = new Set<string>([
-                ...(catalogColors as any[]).map((c) => c.name),
+                ...catalogColors.map((c) => c.name),
                 ...(itemColors as string[]).filter(Boolean)
             ]);
 
@@ -549,6 +436,7 @@ export class InventoryService {
     }
 
     async importItems(items: any[], tenantId: string, user: any): Promise<any> {
+        if (isSqlItemSource()) throw new AppError("SQL item import is unavailable for the current Textilesoft product/stock tables", 409);
         if (!items || !Array.isArray(items) || items.length === 0) {
             throw new AppError("No items provided for import", 400);
         }
@@ -692,6 +580,7 @@ export class InventoryService {
         user: any,
         session?: any
     ): Promise<void> {
+        if (isSqlItemSource()) throw new AppError("SQL stock receiving is unavailable for the existing Textilesoft stock tables", 409);
         const item = await this.inventoryRepository.findById(itemId, tenantId, session);
         if (!item) throw new AppError("Item not found", 404);
 
@@ -745,6 +634,7 @@ export class InventoryService {
         reason: string = 'SALES',
         session?: any
     ): Promise<void> {
+        if (isSqlItemSource()) throw new AppError("SQL stock issuing is unavailable for the existing Textilesoft stock tables", 409);
         const item: any = await this.inventoryRepository.findById(itemId, tenantId, session);
         if (!item) throw new AppError("Item not found", 404);
 
@@ -803,6 +693,7 @@ export class InventoryService {
         reason: string = 'PURCHASE_RETURN',
         session?: any
     ): Promise<void> {
+        if (isSqlItemSource()) throw new AppError("SQL batch stock issuing is unavailable for the existing Textilesoft stock tables", 409);
         const item: any = await this.inventoryRepository.findById(itemId, tenantId, session);
         if (!item) throw new AppError("Item not found", 404);
 
@@ -854,6 +745,7 @@ export class InventoryService {
         tenantId: string,
         user: any
     ): Promise<void> {
+        if (isSqlItemSource()) throw new AppError("SQL stock write-off is unavailable for the existing Textilesoft stock tables", 409);
         if (!quantity || quantity <= 0) {
             throw new AppError("Quantity must be greater than zero", 400);
         }
@@ -911,6 +803,7 @@ export class InventoryService {
         tenantId: string,
         user: any
     ): Promise<void> {
+        if (isSqlItemSource()) throw new AppError("SQL batch cost updates are unavailable for the existing Textilesoft stock tables", 409);
         const item: any = await this.inventoryRepository.findById(itemId, tenantId);
         if (!item) throw new AppError("Item not found", 404);
 
@@ -973,6 +866,7 @@ export class InventoryService {
      * stock-log line. (The unit's own status is set by SerializedUnitService.updateStatus.)
      */
     async removeReturnedUnit(itemId: string, tenantId: TenantRef, serialNumber: string, userId: IdRef): Promise<void> {
+        if (isSqlItemSource()) throw new AppError("SQL return stock adjustments are unavailable for the existing Textilesoft stock tables", 409);
         const currentItem: any = await Item.findOne({ _id: itemId, tenantId });
         await Item.updateOne({ _id: itemId, tenantId }, { $inc: { stockQty: -1 } });
         await StockLog.create({
@@ -988,6 +882,7 @@ export class InventoryService {
 
     /** Reverses removeReturnedUnit: the unit is back on the shelf (stockQty + 1, RETURN log line). */
     async restoreReturnedUnit(itemId: string, tenantId: TenantRef, serialNumber: string, userId: IdRef): Promise<void> {
+        if (isSqlItemSource()) throw new AppError("SQL return stock adjustments are unavailable for the existing Textilesoft stock tables", 409);
         const updated: any = await Item.findOneAndUpdate({ _id: itemId, tenantId }, { $inc: { stockQty: 1 } }, { new: true });
         if (!updated) throw new AppError("Item not found", 404, "ITEM_NOT_FOUND");
         await StockLog.create({
@@ -1014,6 +909,7 @@ export class InventoryService {
         tenantId: TenantRef,
         userId: IdRef,
     ): Promise<void> {
+        if (isSqlItemSource()) throw new AppError("SQL return stock adjustments are unavailable for the existing Textilesoft stock tables", 409);
         const item: any = await Item.findOne({ _id: itemId, tenantId });
         if (!item) throw new AppError("Item not found", 404, "ITEM_NOT_FOUND");
         const batches = [...(item.batches || [])].map((b: any) => (b.toObject ? b.toObject() : b));
@@ -1040,6 +936,15 @@ export class InventoryService {
      * (quantities for the same item are summed). Read-only: call it before any stock is moved.
      */
     async assertStockAvailable(lines: { itemId: string; quantity: number; label?: string }[], tenantId: TenantRef): Promise<void> {
+        if (isSqlItemSource()) {
+            for (const line of lines) {
+                const item = await sqlItems.findByKeyDirect({ barcode: line.itemId }) ?? await sqlItems.findByKeyDirect({ sku: line.itemId });
+                if (!item || Number(item.stockQty ?? 0) < line.quantity) {
+                    throw new AppError(`Insufficient SQL stock for ${line.label || line.itemId}`, 400);
+                }
+            }
+            return;
+        }
         const needed = new Map<string, { quantity: number; label?: string }>();
         for (const line of lines) {
             const prev = needed.get(line.itemId);
@@ -1068,6 +973,7 @@ export class InventoryService {
         userId: IdRef,
         session?: any,
     ): Promise<void> {
+        if (isSqlItemSource()) throw new AppError("SQL warehouse transfers are unavailable for the existing Textilesoft stock tables", 409);
         const item: any = await Item.findOne({ _id: itemId, tenantId }).session(session || null);
         if (!item) throw new AppError(`Item not found: ${itemId}`, 404, "ITEM_NOT_FOUND");
 

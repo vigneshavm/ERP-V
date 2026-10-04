@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Product } from "../../types/product";
 import { CartItem } from "../../types/sales";
 import { Sector } from "../../types/common";
+import { ReturnBillPicker } from './ReturnBillPicker';
 import { Barcode, ShoppingCart, Trash2, Folder } from 'lucide-react';
 // import { CameraScanner } from '../CameraScanner';
 // import { searchProductsByImage } from "../../../services/GeminiService";
@@ -19,12 +20,15 @@ interface POSCartGridProps {
     onRemoveFromCart: (id: string) => void;
     onUpdateCartQty: (id: string, qty: number) => void;
     onUpdateCartLength: (id: string, length: number) => void;
+    onSetCartLineDiscount: (id: string, discountPercent: number) => void;
+    maxProductDiscountPercent?: number;
     onOpenCategoryBrowser: () => void;
     allProductTypes: string[];
     // Name -> {gstRate, defaultUnit} lookup for the sector's Product Type
     // catalog, sourced from usePOSLogic (GET /api/product-categories) instead
     // of this component's previous direct import of a static, hardcoded list.
     productTypeDetails: Record<string, { gstRate?: number; defaultUnit?: string }>;
+    quickProducts?: { code?: string; name: string; unit?: string; price?: number; gstRate?: number }[];
 }
 
 import { useFuzzySearch } from "../../hooks/useFuzzySearch";
@@ -38,6 +42,8 @@ interface CartItemRowProps {
     idx: number;
     onUpdateCartQty: (id: string, qty: number) => void;
     onUpdateCartLength: (id: string, length: number) => void;
+    onSetCartLineDiscount: (id: string, discountPercent: number) => void;
+    maxProductDiscountPercent?: number;
     onRemoveFromCart: (id: string) => void;
     skuInputRef: React.RefObject<HTMLInputElement | null>;
     /** Records the row's quantity (or meter) input so the grid can focus it; owned by POSCartGrid. */
@@ -49,6 +55,8 @@ const CartItemRow = React.memo<CartItemRowProps>(({
     idx,
     onUpdateCartQty,
     onUpdateCartLength,
+    onSetCartLineDiscount,
+    maxProductDiscountPercent,
     onRemoveFromCart,
     skuInputRef,
     registerQtyInput
@@ -63,9 +71,14 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                     {item.name}
                     {item.qty < 0 && <span className="ml-2 text-[10px] uppercase font-black text-white bg-danger px-1 rounded-sm">RETURN</span>}
                 </p>
+                {item.qty < 0 && <ReturnBillPicker item={item} />}
                 <p className="text-[10px] text-slate-500 font-mono">
                     {item.sku} {item.unit === 'Meter' && <span className="bg-slate-100 dark:bg-slate-700 px-1 rounded ml-1 text-slate-900 dark:text-slate-100">Per Meter</span>}
                 </p>
+                {item.qty > 0 && <label className="mt-1 inline-flex items-center gap-1 text-[10px] text-slate-500">Discount %
+                    <input aria-label={`Product discount for ${item.name}`} type="number" min="0" max={maxProductDiscountPercent ?? 99.99} step="0.01" value={item.discountPercent || ''}
+                        onChange={(e) => onSetCartLineDiscount(item.id, Number(e.target.value) || 0)} className="w-16 rounded border px-1 py-0.5 text-right text-xs" />
+                </label>}
                 {(item.size || item.color) && (
                     <div className="flex gap-2 mt-0.5">
                         {item.size && <span className="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-300 font-bold">Size: {item.size}</span>}
@@ -84,12 +97,11 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                         <input
                             ref={(el) => registerQtyInput(item.id, el)}
                             type="number"
-                            value={item.cutLength || 1}
+                            value={item.cutLength ?? ''}
                             onChange={(e) => {
                                 const val = parseFloat(e.target.value);
-                                if (!isNaN(val) && val > 0) {
-                                    onUpdateCartLength(item.id, val);
-                                }
+                                // Clearing/zeroing the editor must not keep an old billable cut.
+                                onUpdateCartLength(item.id, Number.isFinite(val) ? val : 0);
                             }}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') skuInputRef.current?.focus();
@@ -135,11 +147,11 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                     >+</button>
                 </div>
             </td>
-            <td className={`py-1.5 px-2 text-right font-bold font-mono text-xs ${(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)) < 0
+            <td className={`py-1.5 px-2 text-right font-bold font-mono text-xs ${(item.price * (item.unit === 'Meter' ? (item.cutLength ?? 0) * item.qty : item.qty)) < 0
                 ? 'text-danger'
                 : 'text-success'
                 }`}>
-                ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength || 1) * item.qty : item.qty)).toFixed(2)}
+                ₹{(item.price * (item.unit === 'Meter' ? (item.cutLength ?? 0) * item.qty : item.qty)).toFixed(2)}
             </td>
             <td className="py-1.5 px-2 text-center">
                 <button
@@ -159,6 +171,8 @@ CartItemRow.displayName = 'CartItemRow';
 const CartItemCard = React.memo<CartItemRowProps>(({
     item,
     onUpdateCartQty,
+    onSetCartLineDiscount,
+    maxProductDiscountPercent,
     onRemoveFromCart
 }) => {
     return (
@@ -170,6 +184,10 @@ const CartItemCard = React.memo<CartItemRowProps>(({
                         {item.qty < 0 && <span className="ml-2 text-[10px] uppercase font-black text-white bg-danger px-1 rounded-sm">RET</span>}
                     </p>
                     <p className="text-xs text-slate-500 font-mono mt-0.5">{item.sku}</p>
+                    {item.qty > 0 && <label className="mt-1 inline-flex items-center gap-1 text-[10px] text-slate-500">Discount %
+                        <input aria-label={`Product discount for ${item.name}`} type="number" min="0" max={maxProductDiscountPercent ?? 99.99} step="0.01" value={item.discountPercent || ''}
+                            onChange={(e) => onSetCartLineDiscount(item.id, Number(e.target.value) || 0)} className="w-16 rounded border px-1 py-0.5 text-right text-xs" />
+                    </label>}
                     {(item.size || item.color) && (
                         <div className="flex gap-2 mt-1">
                             {item.size && <span className="text-[10px] bg-slate-50 dark:bg-slate-700/50 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-300">Sz: {item.size}</span>}
@@ -213,14 +231,19 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     onRemoveFromCart,
     onUpdateCartQty,
     onUpdateCartLength,
+    onSetCartLineDiscount,
+    maxProductDiscountPercent,
     onOpenCategoryBrowser: __onOpenCategoryBrowser,
     allProductTypes,
-    productTypeDetails
+    productTypeDetails,
+    quickProducts = []
 }) => {
     // Local State
     const [typeQuery, setTypeQuery] = useState('');
     const [selectedType, setSelectedType] = useState('');
     const [selectedTypeIndex, setSelectedTypeIndex] = useState(-1);
+    const [productCode, setProductCode] = useState('');
+    const [codeNotFound, setCodeNotFound] = useState(false);
 
     const [nameQuery, setNameQuery] = useState('');
     const [selectedNameIndex, setSelectedNameIndex] = useState(-1);
@@ -242,6 +265,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     const typeInputRef = useRef<HTMLInputElement>(null);
     const nameInputRef = useRef<HTMLInputElement>(null);
     const priceInputRef = useRef<HTMLInputElement>(null);
+    const codeInputRef = useRef<HTMLInputElement>(null);
     const cartQtyRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
     // Stable, so memoized CartItemRows don't re-render when the grid does.
     const registerQtyInput = useCallback((id: string, el: HTMLInputElement | null) => {
@@ -338,6 +362,17 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         setTimeout(() => priceInputRef.current?.focus(), 50);
     };
 
+    // Product Code -> fills the product name (and price when the product has one)
+    const handleCodeLookup = () => {
+        const c = productCode.trim().toLowerCase();
+        if (!c) return;
+        const hit = quickProducts.find(p => p.code && p.code.toLowerCase() === c);
+        if (!hit) { setCodeNotFound(true); return; }
+        setCodeNotFound(false);
+        handleSelectType(hit.name);
+        if (hit.price) setTimeout(() => setQuickEntryPrice(String(hit.price)), 60);
+    };
+
     // Quick Entry Handler: Add item with manually entered price
     const handleQuickEntryAdd = () => {
         if (!selectedType || !quickEntryPrice) return;
@@ -375,6 +410,8 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         // Reset for next entry - CLEAR type to allow selecting different type
         setSelectedType('');
         setTypeQuery('');
+        setProductCode('');
+        setCodeNotFound(false);
         setQuickEntryPrice('');
         setQuickEntryQty('1');
         setQuickEntryMeter('1');
@@ -569,9 +606,26 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
 
                 {/* Row 2: Quick Entry - Always Visible */}
                 <div className="flex flex-wrap gap-2 items-end">
+                    {/* Product Code */}
+                    <div className="w-28">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Product Code</label>
+                        <input
+                            ref={codeInputRef}
+                            type="text"
+                            placeholder="Code..."
+                            className={`w-full px-3 py-2 text-sm bg-white dark:bg-slate-800 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${codeNotFound ? 'border-red-400' : 'border-slate-300 dark:border-slate-700'}`}
+                            value={productCode}
+                            onChange={e => { setProductCode(e.target.value); setCodeNotFound(false); }}
+                            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleCodeLookup(); } }}
+                            onBlur={handleCodeLookup}
+                            autoComplete="off"
+                            title={codeNotFound ? 'No product with this code' : undefined}
+                        />
+                    </div>
+
                     {/* Type Select */}
                     <div className="relative flex-1 min-w-[180px]">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Product Type</label>
+                        <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Product / Type</label>
                         <div className="relative">
                             <div className="absolute left-3 top-2.5 text-slate-400 dark:text-slate-500">
                                 <Folder className="w-4 h-4" />
@@ -744,6 +798,8 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                         idx={idx}
                                         onUpdateCartQty={onUpdateCartQty}
                                         onUpdateCartLength={onUpdateCartLength}
+                                        onSetCartLineDiscount={onSetCartLineDiscount}
+                                        maxProductDiscountPercent={maxProductDiscountPercent}
                                         onRemoveFromCart={onRemoveFromCart}
                                         skuInputRef={skuInputRef}
                                         registerQtyInput={registerQtyInput}
@@ -761,6 +817,8 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                                     idx={-1}
                                     onUpdateCartQty={onUpdateCartQty}
                                     onUpdateCartLength={onUpdateCartLength}
+                                    onSetCartLineDiscount={onSetCartLineDiscount}
+                                    maxProductDiscountPercent={maxProductDiscountPercent}
                                     onRemoveFromCart={onRemoveFromCart}
                                     skuInputRef={skuInputRef}
                                     registerQtyInput={registerQtyInput}

@@ -14,7 +14,8 @@
     "size": "size",
     "color": "color",
     "design": "design",
-    "pattern": "patrn", "shelfCode": "rackno"
+    "pattern": "patrn",
+    "shelfCode": "rackno"
   },
   "lookups": [
     {
@@ -48,6 +49,12 @@
       },
       {
         "table": "dbo.purretrun",
+        "keyColumn": "barcode",
+        "qtyColumn": "qty",
+        "sign": -1
+      },
+      {
+        "table": "dbo.PurchaseReturnDetails",
         "keyColumn": "barcode",
         "qtyColumn": "qty",
         "sign": -1

@@ -1,18 +1,29 @@
 import { injectable, singleton } from "tsyringe";
-import Transaction from "../modules/sales/models/Transaction.js";
-import { ITransaction } from "../interfaces/ITransaction.js";
+import {
+    createTransaction,
+    listTransactionsByCustomer,
+    type TransactionEntry,
+    type TransactionType,
+} from "../integrations/textilesoft/erpTransaction.js";
 
 @injectable()
 @singleton()
 export class TransactionRepository {
-    async create(transactionData: Partial<ITransaction>): Promise<ITransaction> {
-        return Transaction.create(transactionData);
+    async create(transactionData: {
+        type: TransactionType;
+        customer?: string;
+        invoice?: string;
+        return?: string;
+        dueAdjustment?: string;
+        amount: number;
+        paymentMethod?: string;
+        description?: string;
+    }): Promise<TransactionEntry> {
+        return createTransaction(transactionData);
     }
 
-    async findByCustomer(customerId: string): Promise<ITransaction[]> {
-        return Transaction.find({ customer: customerId })
-            .sort({ createdAt: -1 })
-            .populate("invoice", "invoiceNo totalAmount paymentStatus");
+    async findByCustomer(customerId: string): Promise<TransactionEntry[]> {
+        return listTransactionsByCustomer(customerId);
     }
 
     // Add other queries as needed

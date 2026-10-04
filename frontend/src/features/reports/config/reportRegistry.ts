@@ -26,7 +26,7 @@ export type ReportCategoryId = 'transactions' | 'parties' | 'inventory' | 'gst' 
  * Where the report's figures come from, for the audit footer.
  * - 'item-data-source': follows the backend's ITEM_DATA_SOURCE flag (Textilesoft SQL when =sql,
  *   ERP MongoDB otherwise). The shell resolves the actual source at runtime.
- * - 'combined': Textilesoft SQL + ERP MongoDB (e.g. sales, where some counters bill in the ERP POS).
+ * - 'combined': Textilesoft SQL + ERP MongoDB (for reports explicitly built to combine both sources).
  * - null: not decided yet (report not built).
  */
 export type ReportDataSource = 'textilesoft-sql' | 'erp-mongo' | 'combined' | 'item-data-source';
@@ -83,11 +83,21 @@ export const REPORT_CATEGORIES: readonly ReportCategory[] = [
  */
 export const reportRegistry = {
     // --- Transactions ---
+    'missing-sales': {
+        id: 'missing-sales', title: 'Missing Sales — ESC / Delete', description: 'Saved escaped or deleted sale lines, filtered by dates, counter, login and status',
+        icon: History, category: 'transactions', hubView: 'REPORT_MISSING_SALES',
+        dataSource: 'textilesoft-sql', implementationStatus: 'validation',
+    },
     'sales': {
         id: 'sales', title: 'Sales Report', description: 'Detailed log of all sales transactions',
         icon: BarChart3, category: 'transactions', hubView: 'REPORT_SALES', viewModes: ['REPORT_SALES'],
-        // Shop SQL bills + ERP POS invoices via /api/reports/finance/sales; 'validation' until reconciled against Textilesoft.
-        dataSource: 'combined', implementationStatus: 'validation',
+        // This SQL-only build reads bills from Textilesoft SQL; keep 'validation' until reconciled against its reports.
+        dataSource: 'textilesoft-sql', implementationStatus: 'validation',
+    },
+    'sales-inventory-analysis': {
+        id: 'sales-inventory-analysis', title: 'Sales & Inventory Analysis', description: 'Review sales bills, category and product performance, and aged inventory',
+        icon: Layers, category: 'transactions', hubView: 'REPORT_SALES_INVENTORY_ANALYSIS', viewModes: ['REPORT_SALES_INVENTORY_ANALYSIS'],
+        dataSource: 'textilesoft-sql', implementationStatus: 'validation',
     },
     'expense-analysis': {
         id: 'expense-analysis', title: 'Expense Analysis', description: 'Expenses by category, budget and payment method, with checks',

@@ -92,16 +92,18 @@ const POSOrdersIntelligence: React.FC = () => {
                 anomalies.push('LONG_OVERDUE_DEBT');
             }
 
+            // Shop-database invoices name these fields differently; never let a missing one break the page.
+            const when = new Date(inv.createdAt ?? inv.date ?? inv.invoiceDate ?? 0);
             return {
-                id: inv.invoiceNo || inv._id,
-                date: new Date(inv.createdAt).toLocaleString(),
-                branch: inv.branch || 'Main Terminal',
-                total: inv.totalAmount,
+                id: String(inv.invoiceNo ?? inv.invoiceNumber ?? inv.billNo ?? inv._id ?? inv.id ?? ''),
+                date: Number.isNaN(when.getTime()) ? '' : when.toLocaleString(),
+                branch: String(inv.branch || inv.counterName || 'Main Terminal'),
+                total: Number(inv.totalAmount ?? inv.total ?? 0) || 0,
                 tax: inv.tax,
                 discount: inv.discount,
                 payment_method: inv.paymentMethod?.toUpperCase() || 'CASH',
                 status: inv.paymentStatus?.toUpperCase() || 'COMPLETED',
-                cashier: inv.createdBy?.name || 'System',
+                cashier: String(inv.createdBy?.name || inv.cashier || 'System'),
                 anomalies,
                 risk_level
             };
