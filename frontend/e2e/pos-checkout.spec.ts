@@ -35,8 +35,35 @@ const inventoryMock: ApiMock = {
         }),
 };
 
+// SQL-only billing (hooks/usePOSCheckout.ts): a bill needs a counter (GET /api/pos/counters; a single counter is
+// auto-selected), is previewed on the server first (POST /api/pos/invoice/preview -> preview.total, which must match
+// the till or the cashier is asked to confirm), and is saved only if the server confirms it with a bill number and
+// total. There is no offline queue any more: a rejected bill shows the server's message and stays in the cart.
+const countersMock: ApiMock = {
+    match: (url, method) => method === 'GET' && /\/api\/pos\/counters/.test(url),
+    respond: (route) =>
+        route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ source: 'sql', counters: [{ id: 'SERVER', name: 'SERVER' }] }),
+        }),
+};
+
+// The cash bill is paid in full, so the payload's paidAmount is the till total: preview echoes it (no confirm dialog).
+const previewMock: ApiMock = {
+    match: (url, method) => method === 'POST' && /\/api\/pos\/invoice\/preview/.test(url),
+    respond: (route) => {
+        const body = route.request().postDataJSON() ?? {};
+        return route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ success: true, preview: { total: Number(body.paidAmount) || 0 } }),
+        });
+    },
+};
+
 test.describe('POS checkout', () => {
-    test.use({ apiMocks: [inventoryMock] });
+    test.use({ apiMocks: [[inventoryMock, countersMock, previewMock], { scope: 'test' }] });
 
     async function addTestProductToCart(page: import('@playwright/test').Page) {
         // The POS opens in Scanner view (barcode + quick entry). The product browser, with its
@@ -76,7 +103,10 @@ test.describe('POS checkout', () => {
             await route.fulfill({
                 status: 201,
                 contentType: 'application/json',
-                body: JSON.stringify({ success: true, invoice: { _id: 'e2e-invoice-1' } }),
+                body: JSON.stringify({
+                    success: true,
+                    invoice: { _id: 'e2e-invoice-1', billNo: 'SERVER-0001', invoiceNo: 'SERVER-0001', totalAmount: Number(invoicePayload.paidAmount) || 0 },
+                }),
             });
         });
 
@@ -110,7 +140,7 @@ test.describe('POS checkout', () => {
         await expect(finalizeButton).toBeDisabled({ timeout: 15000 });
     });
 
-    test('shows an error and queues the sale when the server rejects the invoice', async ({ page }) => {
+    test('shows the server message and keeps the sale in the cart when the server rejects the invoice', async ({ page }) => {
         await page.route('**/api/pos/invoice', (route) =>
             route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ message: 'Server error' }) })
         );
@@ -119,6 +149,9 @@ test.describe('POS checkout', () => {
         await addTestProductToCart(page);
         await page.getByRole('button', { name: /Finalize Bill/i }).click();
 
-        await expect(page.getByText(/queued and will retry automatically/i)).toBeVisible({ timeout: 15000 });
+        // SQL billing does not queue: the cashier sees the server's message and the bill stays open to retry.
+        await expect(page.getByText(/Server error/i)).toBeVisible({ timeout: 15000 });
+        await expect(page.getByRole('region', { name: 'Cart' })).toContainText(TEST_PRODUCT.name);
+        await expect(page.getByRole('button', { name: /Finalize Bill/i })).toBeEnabled();
     });
 });

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { protect } from "../../../middlewares/authMiddleware.js";
+import { protect, authorize } from "../../../middlewares/authMiddleware.js";
 import { sqlRoute as sql } from "../../../integrations/textilesoft/sqlRoute.js";
 import { SqlWriteError } from "../../../integrations/textilesoft/sqlWrite.js";
 import {
@@ -8,6 +8,8 @@ import {
   sqlInvoiceTotals,
   isSqlId,
 } from "../../../integrations/textilesoft/sqlSales.js";
+import { cancelSqlBill } from "../../../integrations/textilesoft/sqlBillCancel.js";
+import { editSqlBill } from "../../../integrations/textilesoft/sqlBillEdit.js";
 
 /**
  * Read-only sales history from Textilesoft's own bills (dbo.sales2 header + dbo.salsntry lines). No MongoDB.
@@ -60,6 +62,47 @@ router.get(
     const doc = await sqlInvoiceById(id);
     if (!doc) throw new SqlWriteError("Invoice not found.", 404);
     res.json({ success: true, data: withAliases(doc) });
+  }),
+);
+
+/**
+ *   POST /invoice/:id/cancel   owner / co-owner / manager only. Same rule as Textilesoft's Pending Cancel Bill screen:
+ *   a live bill whose cash has not been collected is set to status '1' (bill + lines); points/payments are not changed.
+ */
+router.post(
+  "/invoice/:id/cancel",
+  authorize("owner", "co-owner", "manager"),
+  sql(async (req, res) => {
+    const id = String(req.params.id);
+    if (!isSqlId(id)) throw new SqlWriteError("Invoice not found.", 404);
+    const result = await cancelSqlBill(id);
+    res.json({ success: true, data: result, message: `Bill ${result.billNo} cancelled.` });
+  }),
+);
+
+/**
+ *   POST /invoice/:id/edit   owner / co-owner / manager only. Body: { removeLineNos?, add?: [{barcode, qty}], payment?, dryRun?, expectedTotal? }.
+ *   Edits today's live bill in place (see sqlBillEdit.ts); dryRun only returns the recalculated total.
+ */
+router.post(
+  "/invoice/:id/edit",
+  authorize("owner", "co-owner", "manager"),
+  sql(async (req, res) => {
+    const id = String(req.params.id);
+    if (!isSqlId(id)) throw new SqlWriteError("Invoice not found.", 404);
+    const b = (req.body ?? {}) as Record<string, any>;
+    const result = await editSqlBill(id, {
+      removeLineNos: Array.isArray(b.removeLineNos) ? b.removeLineNos : [],
+      add: Array.isArray(b.add) ? b.add : [],
+      payment: b.payment && typeof b.payment === "object" ? b.payment : undefined,
+      dryRun: b.dryRun === true,
+      expectedTotal: b.expectedTotal === undefined ? undefined : Number(b.expectedTotal),
+    });
+    res.json({
+      success: true,
+      data: result,
+      message: result.dryRun ? `New total ₹${result.total}.` : `Bill ${result.billNo} updated. New total ₹${result.total}.`,
+    });
   }),
 );
 

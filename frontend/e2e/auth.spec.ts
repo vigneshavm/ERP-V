@@ -15,7 +15,7 @@ import { DEMO_USER } from './helpers/mocks';
 const openLogin = async (page: Page) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.getByRole('button', { name: /Tenant Interface/i }).click({ timeout: 15000 });
-    await page.locator('#email').waitFor({ state: 'visible', timeout: 15000 });
+    await page.locator('#username').waitFor({ state: 'visible', timeout: 15000 });
 };
 
 test.describe('Authentication', () => {
@@ -28,18 +28,19 @@ test.describe('Authentication', () => {
         await expect(submit).toBeVisible({ timeout: 15000 });
         await submit.click();
 
-        await expect(page.getByText('Email is required')).toBeVisible();
+        await expect(page.getByText('User ID is required')).toBeVisible();
         await expect(page.getByText('Password is required')).toBeVisible();
     });
 
-    test('shows an "Invalid email address" error for a malformed email', async ({ page }) => {
+    test('treats a blank (spaces only) User ID as missing', async ({ page }) => {
+        // Login is by Textilesoft user ID now, not email: the only client-side rule is "not empty".
         await openLogin(page);
 
-        await page.locator('#email').fill('not-an-email');
+        await page.locator('#username').fill('   ');
         await page.locator('#password').fill('irrelevant');
         await page.getByRole('button', { name: /Authenticate Access/i }).click();
 
-        await expect(page.getByText('Invalid email address')).toBeVisible();
+        await expect(page.getByText('User ID is required')).toBeVisible();
     });
 
     test('shows an authentication-failed alert on rejected credentials', async ({ page }) => {
@@ -52,7 +53,7 @@ test.describe('Authentication', () => {
         );
 
         await openLogin(page);
-        await page.locator('#email').fill('wrong@vijayalaxmi.com');
+        await page.locator('#username').fill('wronguser');
         await page.locator('#password').fill('wrong-password');
         await page.getByRole('button', { name: /Authenticate Access/i }).click();
 
@@ -68,7 +69,7 @@ test.describe('Authentication', () => {
         );
 
         await openLogin(page);
-        await page.locator('#email').fill(DEMO_USER.email);
+        await page.locator('#username').fill('SPADMIN');
         await page.locator('#password').fill('CorrectHorseBatteryStaple1!');
         await page.getByRole('button', { name: /Authenticate Access/i }).click();
 

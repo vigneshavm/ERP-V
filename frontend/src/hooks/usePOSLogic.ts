@@ -39,6 +39,7 @@ import { usePOSCart } from './pos/usePOSCart';
 import { usePOSSession } from './pos/usePOSSession';
 import { useBarcodeScanner } from './useBarcodeScanner';
 import api from '../services/api';
+import { posBillEdit, POS_BILL_EDIT_SAVE_EVENT } from '../features/pos/posBillEditStore';
 
 // ProductCategoryModel stores defaultUnit as the same lowercase short code
 // used elsewhere on Item.unit ('pcs'/'kg'/'l'/'box'/'unit'/'mtr'/'set'),
@@ -195,7 +196,7 @@ export const usePOSLogic = () => {
         return { ...DEFAULT_MIS_CONFIG, ...(relevantTenant?.misConfig || {}) };
     }, [tenants, user?.tenantId]);
 
-    const { handleCheckout } = usePOSCheckout({
+    const { handleCheckout: handleNewBillCheckout } = usePOSCheckout({
         cart, isProcessing, setIsProcessing, activeSession, activeCounterId: activeCounterId || null,
         currentBranch: currentBranch || '', currentSector: currentSector || '', user: user as any, branches, tenants, getBranchName,
         isPreOrder, setIsPreOrder, finalTotal, redemptionAmount, cartSubtotal, defaultTaxMode, isSqlBilling,
@@ -203,6 +204,15 @@ export const usePOSLogic = () => {
             handleCheckoutSuccess(sale);
         }
     });
+
+    // While a saved bill is open for editing (POS "bill no." panel), Finalize saves that edit instead of a new bill.
+    const handleCheckout = useCallback(() => {
+        if (posBillEdit.get().active) {
+            window.dispatchEvent(new CustomEvent(POS_BILL_EDIT_SAVE_EVENT));
+            return;
+        }
+        return handleNewBillCheckout();
+    }, [handleNewBillCheckout]);
 
     // --- User Terminal Sync ---
     useEffect(() => {

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { protect, authorize } from "../../../middlewares/authMiddleware.js";
 import { sqlRoute as sql } from "../../../integrations/textilesoft/sqlRoute.js";
-import { assertBarcodeUnused } from "../../../integrations/textilesoft/sqlLegacyQueries.js";
+import { cancelUnsoldBarcode } from "../../../integrations/textilesoft/sqlLegacyQueries.js";
 import { duplicateBarcodes } from "../../../integrations/textilesoft/sqlParties.js";
 import * as c from "../controllers/InventorySqlController.js";
 
@@ -41,7 +41,7 @@ router.get("/stock-age", c.getStockAgeBuckets);
 router.get("/stock-analysis", c.getStockAnalysis);
 router.get("/barcode-audit", sql(async (_req, res) => { res.json({ success: true, data: await duplicateBarcodes() }); }));
 router.get("/barcode/:barcode", c.getItemByBarcode);
-router.post("/barcode/:barcode/cancel", authorize("owner", "co-owner", "manager"), sql(async (req, res) => { await assertBarcodeUnused(String(req.params.barcode)); unavailable(req, res); }));
+router.post("/barcode/:barcode/cancel", authorize("owner", "co-owner", "manager"), sql(async (req, res) => { res.json({ success: true, data: await cancelUnsoldBarcode(String(req.params.barcode)) }); }));
 // Keep unsupported static paths ahead of /:id so they cannot look like missing barcode lookups.
 router.all([
   "/categories",

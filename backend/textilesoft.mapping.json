@@ -48,6 +48,19 @@
         ]
       },
       {
+        "table": "dbo.superbill1",
+        "keyColumn": "barcode",
+        "qtyColumn": "qty",
+        "sign": -1,
+        "filters": [
+          {
+            "column": "status",
+            "op": "<>",
+            "value": "1"
+          }
+        ]
+      },
+      {
         "table": "dbo.purretrun",
         "keyColumn": "barcode",
         "qtyColumn": "qty",

@@ -29,6 +29,19 @@ function run(text: string, p: Record<string, unknown> = {}): Row[] {
         return { ...l, mode: h?.mode, bill_less: h?.bill_less, bill_disc: h?.bill_disc, billNet, billPaid };
       });
   }
+  // Schema guard in sqlPosWriter.erpTableExists: the ERP tables exist with every required column unless a
+  // test sets db.erpMissing (see "absent ERP storage" below).
+  if (/SELECT OBJECT_ID\(@n\) AS id/.test(text)) {
+    const name = String(p.n).replace(/^erp\./, "");
+    return [{ id: (db.erpMissing as unknown as string[] | undefined)?.includes(name) ? null : 1 }];
+  }
+  if (/SELECT TOP 1 1 AS ok FROM sys\.indexes/.test(text))
+    return (db as Record<string, unknown>).erpUniqueMissing ? [] : [{ ok: 1 }];
+  if (/SELECT name FROM sys\.columns WHERE object_id = OBJECT_ID\(@n\)/.test(text)) {
+    return String(p.n) === "erp.sales_idempotency"
+      ? ["scope", "idempotency_key", "request_hash", "sysidandbill", "billno", "mode", "counter_name", "total_amount", "bill_datetime"].map((name) => ({ name }))
+      : ["source_sysidandbill", "source_sale_line_no", "return_sysidandbill", "return_sale_line_no", "barcode", "quantity", "paid_amount", "gst_rate"].map((name) => ({ name }));
+  }
   if (/FROM erp\.sales_return_allocation WHERE barcode=@b/.test(text)) {
     return (db.sales_return_allocation ?? [])
       .filter((x) => eq(x.barcode, p.b))
@@ -218,7 +231,7 @@ jest.unstable_mockModule("../sqlDbAccess.js", () => ({
 
 jest.unstable_mockModule("../sqlWrite.js", () => ({
   SqlWriteError: class SqlWriteError extends Error {
-    constructor(msg: string, public statusCode: number) {
+    constructor(msg: string, public statusCode: number, public code?: string) {
       super(msg);
     }
   },
@@ -263,9 +276,21 @@ jest.unstable_mockModule("../sqlWrite.js", () => ({
 const posWriter = await import("../sqlPosWriter.js");
 const sqlSales = await import("../sqlSales.js");
 
+let testIdempotencySequence = 0;
+const writeBill = (input: Record<string, unknown>) => {
+  const idempotencyKey = String(input.idempotencyKey ?? "unit-" + ++testIdempotencySequence);
+  return posWriter.writePosBillToSql({
+    ...input,
+    idempotencyKey,
+    idempotencyScope: String(input.idempotencyScope ?? "unit-test"),
+    requestHash: String(input.requestHash ?? idempotencyKey),
+  } as never);
+};
+
 beforeEach(() => {
   delete process.env.TEXTILESOFT_SLAB_BASIS;
   writes.length = 0;
+  testIdempotencySequence = 0;
   db = {
     countername: [
       { sl_no: "1", counter_name: "SERVER", counter_mode: "A" },
@@ -324,7 +349,7 @@ describe("Textilesoft Sales Billing (08_sales_billing.md)", () => {
   });
 
   it("writes a complete sales bill atomically into sales2 and salsntry", async () => {
-    const result = await posWriter.writePosBillToSql({
+    const result = await writeBill({
       counter: "SERVER",
       userId: "ERP_USER",
       customerName: "KUMAR",
@@ -486,7 +511,7 @@ describe("Textilesoft Sales Billing (08_sales_billing.md)", () => {
 
 describe("POS bill checks inside the write (#5 stock, #7 counter)", () => {
   const bill = (over: Record<string, unknown> = {}) =>
-    posWriter.writePosBillToSql({
+    writeBill({
       counter: "SERVER",
       userId: "ERP",
       billDiscount: 0,
@@ -584,7 +609,7 @@ describe("GST from the product's group (#1) and bill discount in the taxable val
     ...extra,
   });
   const bill = (lines: unknown[], billDiscount = 0) =>
-    posWriter.writePosBillToSql({ counter: "SERVER", userId: "ERP", billDiscount, lines, payment: { cash: 0, card: 0, upi: 0, credit: 0 } } as never);
+    writeBill({ counter: "SERVER", userId: "ERP", billDiscount, lines, payment: { cash: 0, card: 0, upi: 0, credit: 0 } });
   const newLines = () => db.salsntry.slice(1);
 
   it("the product's group decides the rate, not the till (till said 18%, product is GST5)", async () => {
@@ -658,7 +683,7 @@ describe("exchange / return lines on a POS bill (POS Return mode)", () => {
   const ret = (barcode: string, qty = -1, extra: Record<string, unknown> = {}) => ({ barcode, name: "X", unitPriceIncl: 999, qty, gstRate: 18, ...extra });
   const sell = (barcode: string, price: number, qty = 1) => ({ barcode, name: `ITEM ${barcode}`, unitPriceIncl: price, qty, gstRate: 18 });
   const bill = (lines: unknown[], over: Record<string, unknown> = {}) =>
-    posWriter.writePosBillToSql({
+    writeBill({
       counter: "SERVER",
       userId: "ERP",
       billDiscount: 0,
@@ -735,7 +760,7 @@ describe("exchange / return lines on a POS bill (POS Return mode)", () => {
 
 describe("product discount, whole-rupee total, cancelled barcode, limits (08 sales billing)", () => {
   const bill = (lines: unknown[], over: Record<string, unknown> = {}) =>
-    posWriter.writePosBillToSql({
+    writeBill({
       counter: "SERVER",
       userId: "ERP",
       billDiscount: 0,
@@ -786,7 +811,7 @@ describe("returns refund what was actually paid for the specific sale line", () 
   const line = (id: string, barcode: string, o: Record<string, unknown>) => ({ systemidbill: id, barcode, p_name: "SHIRT", qty: "1", hdngst: "5", gst_group: "GST5", status: "0", ...o });
   const ret = (barcode: string, extra: Record<string, unknown> = {}) => ({ barcode, name: "X", unitPriceIncl: 999, qty: -1, gstRate: 18, ...extra });
   const bill = (lines: unknown[]) =>
-    posWriter.writePosBillToSql({ counter: "SERVER", userId: "ERP", billDiscount: 0, lines, tenders: { paymentMethod: "cash", paidInFull: true, hasCustomer: false } } as never);
+    writeBill({ counter: "SERVER", userId: "ERP", billDiscount: 0, lines, tenders: { paymentMethod: "cash", paidInFull: true, hasCustomer: false } });
   const mine = () => db.salsntry.filter((l) => l.systemidbill === db.sales2[db.sales2.length - 1].sysidandbill);
 
   it("uses the line's own paid value (taxable + GST): product discount and bill-discount share are both kept", async () => {
@@ -840,5 +865,54 @@ describe("returns refund what was actually paid for the specific sale line", () 
     db.sales2.push({ sysidandbill: "R1", mode: "A12", bill_less: "0", systemname: "SERVER", date: "2026-09-01", UserID: "ERP" });
     db.salsntry.push(line("R1", "8100005", { amount: "500.00", net_amount: "500.00", gstcrossamt: "476.19", tax: "23.81" }));
     await expect(bill([ret("8100005", { returnFromBill: "Z99" })])).rejects.toThrow(/was not sold on bill Z99/);
+  });
+});
+
+describe("absent ERP storage fails closed (review 2026-10-04)", () => {
+  it("return-source lookup is refused with 503 when erp.sales_return_allocation is missing", async () => {
+    // erpTableExists caches its answer for 60s; jump the clock so this test sees its own schema.
+    const real = Date.now;
+    const spy = jest.spyOn(Date, "now").mockImplementation(() => real() + 10 * 60_000);
+    try {
+      (db as Record<string, unknown>).erpMissing = ["sales_return_allocation"];
+      await expect(posWriter.listReturnSources("8100009")).rejects.toMatchObject({
+        statusCode: 503, // the mocked SqlWriteError here carries message + status only
+        message: expect.stringMatching(/return allocation is unavailable/i),
+      });
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it("refuses POS writes when durable idempotency storage is missing", async () => {
+    const real = Date.now;
+    const spy = jest.spyOn(Date, "now").mockImplementation(() => real() + 10 * 60_000);
+    try {
+      (db as Record<string, unknown>).erpMissing = ["sales_idempotency"];
+      await expect(writeBill({
+        counter: "SERVER", userId: "ERP", billDiscount: 0,
+        lines: [{ barcode: "6296211", name: "COTTON SHIRT", unitPriceIncl: 525, qty: 1, gstRate: 5 }],
+        payment: { cash: 525, card: 0, upi: 0, credit: 0 },
+      })).rejects.toMatchObject({ statusCode: 503, code: "SQL_IDEMPOTENCY_UNAVAILABLE" });
+      expect(writes).toHaveLength(0);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it("refuses POS writes when the idempotency key has no matching unique database index", async () => {
+    const real = Date.now;
+    const spy = jest.spyOn(Date, "now").mockImplementation(() => real() + 20 * 60_000);
+    try {
+      (db as Record<string, unknown>).erpUniqueMissing = true;
+      await expect(writeBill({
+        counter: "SERVER", userId: "ERP", billDiscount: 0,
+        lines: [{ barcode: "6296211", name: "COTTON SHIRT", unitPriceIncl: 525, qty: 1, gstRate: 5 }],
+        payment: { cash: 525, card: 0, upi: 0, credit: 0 },
+      })).rejects.toMatchObject({ statusCode: 503, code: "SQL_IDEMPOTENCY_UNAVAILABLE" });
+      expect(writes).toHaveLength(0);
+    } finally {
+      spy.mockRestore();
+    }
   });
 });

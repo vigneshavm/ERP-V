@@ -1,6 +1,7 @@
 import { describe, it, expect } from "@jest/globals";
 import {
   barcodePrefix,
+  barcodeOrder,
   prateCode,
   lineMath,
   gstForAmount,
@@ -15,6 +16,9 @@ describe("Textilesoft purchase formats", () => {
     expect(barcodePrefix(new Date(2026, 7, 31))).toBe("628131");
     expect(barcodePrefix(new Date(2025, 11, 31))).toBe("5221131"); // barLen 7
     expect(barcodePrefix(new Date(2025, 9, 1))).toBe("520111");
+    expect(barcodePrefix(new Date(2026, 9, 2), "1", barcodeOrder({ year_pos: "1", month_pos: "2", date_pos: "3", reverse_con: "Yes", date_con: "No", month_con: "No", year_con: "No", month_gen: "No" } as any))).toBe("620121"); // 02/10/2026
+    expect(barcodePrefix(new Date(2026, 9, 2), "1", ["day", "month", "year"])).toBe("201621");
+    expect(() => barcodeOrder({ date_con: "Yes" } as any)).toThrow(/not supported/);
   });
 
   it("pratecode enciphers the purchase rate with grndetail.pur_code", () => {

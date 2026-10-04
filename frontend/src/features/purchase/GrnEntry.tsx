@@ -302,22 +302,6 @@ const GrnEntry: React.FC = () => {
     }
   };
 
-  const remove = async (grnNo: string) => {
-    if (
-      !window.confirm(
-        `Delete purchase ${grnNo} from Textilesoft? Its barcodes and stock rows are removed too.`,
-      )
-    )
-      return;
-    try {
-      await api.delete(`/api/purchase-entry/${encodeURIComponent(grnNo)}`);
-      setViewing(null);
-      loadList();
-    } catch (err) {
-      setListError(errorText(err, "Could not delete the purchase."));
-    }
-  };
-
   const prefix = opts?.companies.find((c) => c.name === company)?.grnPrefix;
 
   return (
@@ -835,12 +819,9 @@ const GrnEntry: React.FC = () => {
               </tbody>
             </table>
             <div className="flex justify-between items-center px-6 py-4 border-t border-slate-100 dark:border-slate-800">
-              <Button
-                onClick={() => remove(viewing.grnNo)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300"
-              >
-                <Trash2 className="w-4 h-4" /> Delete purchase
-              </Button>
+              <span className="text-xs text-slate-500" data-testid="grn-delete-unavailable">
+                Deleting a GRN is unavailable: its stock and downstream reversal effects are not verified in SQL.
+              </span>
               <span className="text-sm tabular-nums">
                 Qty {viewing.totals.qty} · Taxable ₹
                 {money(viewing.totals.taxable)} · GST ₹

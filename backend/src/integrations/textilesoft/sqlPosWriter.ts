@@ -228,7 +228,6 @@ function saleCandidates(sales: Record<string, any>[], alreadyBack: number) {
  * unsupported submission/allocation is rejected rather than silently losing its protection.
  */
 const erpTableState = new Map<string, { at: number; exists: boolean }>();
-let warnedNoIdempotency = false;
 async function erpTableExists(q: Q, name: "sales_idempotency" | "sales_return_allocation"): Promise<boolean> {
   const hit = erpTableState.get(name);
   if (hit && Date.now() - hit.at < 60_000) return hit.exists;
@@ -240,7 +239,19 @@ async function erpTableExists(q: Q, name: "sales_idempotency" | "sales_return_al
     ? await q("SELECT name FROM sys.columns WHERE object_id = OBJECT_ID(@n)", { n: `erp.${name}` })
     : [];
   const verified = new Set(columns.map(column => String(column.name).toLowerCase()));
-  const exists = row?.id != null && required.every(column => verified.has(column));
+  const keyIndex = name === "sales_idempotency" && row?.id != null
+    ? await q(
+        "SELECT TOP 1 1 AS ok FROM sys.indexes i " +
+        "WHERE i.object_id = OBJECT_ID(@n) AND i.is_unique = 1 AND i.is_disabled = 0 " +
+        "AND (SELECT COUNT(*) FROM sys.index_columns ic WHERE ic.object_id=i.object_id AND ic.index_id=i.index_id AND ic.key_ordinal>0)=2 " +
+        "AND EXISTS (SELECT 1 FROM sys.index_columns ic JOIN sys.columns c ON c.object_id=ic.object_id AND c.column_id=ic.column_id " +
+        "WHERE ic.object_id=i.object_id AND ic.index_id=i.index_id AND ic.key_ordinal=1 AND c.name='scope') " +
+        "AND EXISTS (SELECT 1 FROM sys.index_columns ic JOIN sys.columns c ON c.object_id=ic.object_id AND c.column_id=ic.column_id " +
+        "WHERE ic.object_id=i.object_id AND ic.index_id=i.index_id AND ic.key_ordinal=2 AND c.name='idempotency_key')",
+        { n: `erp.${name}` },
+      )
+    : [{ ok: 1 }];
+  const exists = row?.id != null && required.every(column => verified.has(column)) && keyIndex.length > 0;
   if (!exists && (!hit || hit.exists))
     warn(`[sql-pos] erp.${name} compatible columns were not verified -- ${name === "sales_idempotency" ? "protected bill submission is unavailable" : "source-line return allocation is unavailable"}.`);
   erpTableState.set(name, { at: Date.now(), exists });
@@ -280,9 +291,11 @@ export interface ReturnSource {
 export async function listReturnSources(barcode: string): Promise<{ name: string; open: number; sources: ReturnSource[] }> {
   const b = barcode.trim();
   const pool = await getPool();
-  const run = async (text: string): Promise<Record<string, any>[]> => {
+  const run = async (text: string, params: Record<string, unknown> = {}): Promise<Record<string, any>[]> => {
     const req = pool.request();
     req.input("b", b);
+    // The schema guard (erpTableExists) passes its own @n; dropping it left the variable undeclared.
+    for (const [key, value] of Object.entries(params)) req.input(key, value);
     const res = await req.query(text);
     return (res as { recordset: Record<string, any>[] }).recordset ?? [];
   };
@@ -453,13 +466,15 @@ export async function writePosBillToSql(
   };
 
   try {
-    const useIdempotency = !!bill.idempotencyKey && !bill.previewOnly && (await erpTableExists(q, "sales_idempotency"));
-    if (!bill.previewOnly && !useIdempotency && !warnedNoIdempotency) {
-      // Owner's choice: bill without erp.sales_idempotency (that table does not exist in SSS_copy and may not be
-      // created). Consequence: a retried request can save the same bill twice -- the till must not auto-retry.
-      warnedNoIdempotency = true;
-      console.warn("[sql-pos] erp.sales_idempotency is missing: bills are saved without duplicate-request protection.");
-    }
+    if (!bill.previewOnly && !bill.idempotencyKey?.trim())
+      throw new SqlPosError("A valid Idempotency-Key is required to save a counter bill.", 400, "SQL_IDEMPOTENCY_KEY_REQUIRED");
+    const useIdempotency = !bill.previewOnly && (await erpTableExists(q, "sales_idempotency"));
+    if (!bill.previewOnly && !useIdempotency)
+      throw new SqlPosError(
+        "SQL billing is paused until durable idempotency storage with a unique scope/key constraint is available.",
+        503,
+        "SQL_IDEMPOTENCY_UNAVAILABLE",
+      );
     const [prior] = useIdempotency
       ? await q(
           `SELECT request_hash, sysidandbill, billno, mode, counter_name, total_amount, bill_datetime

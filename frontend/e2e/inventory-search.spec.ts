@@ -97,7 +97,7 @@ test.describe('Inventory Variant Search & Multi-Filter Suite (INV-SRCH-001 to IN
                         _id: '6990b7a1ae8ee1d38659a9e9',
                         name: 'Vignesh Admin',
                         email: 'vignesh@vijayalaxmi.com',
-                        role: 'SUPER_ADMIN',
+                        role: 'owner',
                         tenantId: 'demo-tenant'
                     })
                 });
@@ -127,7 +127,7 @@ test.describe('Inventory Variant Search & Multi-Filter Suite (INV-SRCH-001 to IN
                 _id: '6990b7a1ae8ee1d38659a9e9',
                 name: 'Vignesh Admin',
                 email: 'vignesh@vijayalaxmi.com',
-                role: 'SUPER_ADMIN',
+                role: 'owner',
                 token: 'e2e-mock-jwt-token',
                 tenantId: 'demo-tenant'
             };

@@ -6,7 +6,7 @@ let closes = 0;
 let rollbacks = 0;
 let commits = 0;
 const repair = jest.fn(async () => true);
-jest.unstable_mockModule("../shopDbReader.js", () => ({ loadDbConfig: () => ({ database: "mock", server: "mock", user: "mock", password: "mock" }) }));
+jest.unstable_mockModule("../shopDbReader.js", () => ({ loadDbConfig: () => ({ database: "mock", server: "mock", user: "mock", password: "mock" }), openPool: async () => ({}) }));
 jest.unstable_mockModule("../sqlDbAccess.js", () => ({ healDbAccess: repair }));
 jest.unstable_mockModule("../../../config/logger.js", () => ({ info: () => undefined }));
 jest.unstable_mockModule("mssql", () => ({ default: {

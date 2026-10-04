@@ -33,7 +33,9 @@ interface POSCartGridProps {
 
 import { useFuzzySearch } from "../../hooks/useFuzzySearch";
 import { Button } from '@/components/shared/Button';
+import api from '../../services/api';
 import { Input } from '@/components/shared/Input';
+import { usePosBillEdit } from './posBillEditStore';
 // import { POSVariantSelectionModal } from './POSVariantSelectionModal';
 // import { POSVariantSelectionModal } from './POSVariantSelectionModal';
 
@@ -66,6 +68,8 @@ const CartItemRow = React.memo<CartItemRowProps>(({
     return (
         <tr className="hover:bg-slate-200/50 dark:hover:bg-slate-700/30 transition-colors bg-white dark:bg-slate-800">
             <td className="py-1.5 px-2 text-center text-slate-400 font-mono hidden md:table-cell text-xs">{idx + 1}</td>
+            <td className="py-1.5 px-2 font-mono text-[11px] text-slate-600 dark:text-slate-300 break-all">{(item as any).barcode || (item as any).isQuickEntry ? ((item as any).barcode || '—') : (item.sku || '—')}</td>
+            <td className="py-1.5 px-2 font-mono text-[11px] text-slate-600 dark:text-slate-300 break-all">{(item as any).productCode || '—'}</td>
             <td className="py-1.5 px-2">
                 <p className="font-bold text-slate-800 dark:text-slate-200 text-xs">
                     {item.name}
@@ -73,7 +77,7 @@ const CartItemRow = React.memo<CartItemRowProps>(({
                 </p>
                 {item.qty < 0 && <ReturnBillPicker item={item} />}
                 <p className="text-[10px] text-slate-500 font-mono">
-                    {item.sku} {item.unit === 'Meter' && <span className="bg-slate-100 dark:bg-slate-700 px-1 rounded ml-1 text-slate-900 dark:text-slate-100">Per Meter</span>}
+                    {item.unit === 'Meter' && <span className="bg-slate-100 dark:bg-slate-700 px-1 rounded ml-1 text-slate-900 dark:text-slate-100">Per Meter</span>}
                 </p>
                 {item.qty > 0 && <label className="mt-1 inline-flex items-center gap-1 text-[10px] text-slate-500">Discount %
                     <input aria-label={`Product discount for ${item.name}`} type="number" min="0" max={maxProductDiscountPercent ?? 99.99} step="0.01" value={item.discountPercent || ''}
@@ -239,6 +243,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     quickProducts = []
 }) => {
     // Local State
+    const billEdit = usePosBillEdit();
     const [typeQuery, setTypeQuery] = useState('');
     const [selectedType, setSelectedType] = useState('');
     const [selectedTypeIndex, setSelectedTypeIndex] = useState(-1);
@@ -252,6 +257,9 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
     const [quickEntryPrice, setQuickEntryPrice] = useState('');
     const [quickEntryQty, setQuickEntryQty] = useState('1');
     const [quickEntryMeter, setQuickEntryMeter] = useState('1');
+    // Stock items found for the typed product + price, offered so the line goes out with a real barcode.
+    const [stockMatch, setStockMatch] = useState<{ items: any[]; error?: boolean } | null>(null);
+    const [matchBusy, setMatchBusy] = useState(false);
 
     // Compute the selected type's unit
     const selectedTypeUnit = useMemo(() => {
@@ -373,8 +381,59 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         if (hit.price) setTimeout(() => setQuickEntryPrice(String(hit.price)), 60);
     };
 
-    // Quick Entry Handler: Add item with manually entered price
-    const handleQuickEntryAdd = () => {
+    // Quick Entry Handler: before a barcode-less line is added, look the typed product up in stock and offer the
+    // matching barcodes (price matches first). Billing a stock item by barcode is what keeps inventory correct.
+    const handleQuickEntryAdd = async () => {
+        if (!selectedType || !quickEntryPrice || matchBusy) return;
+        const price = parseFloat(quickEntryPrice);
+        if (isNaN(price) || price <= 0) return;
+        setMatchBusy(true);
+        try {
+            const res = await api.get('/api/inventory', { params: { search: selectedType, limit: 100 } });
+            const list: any[] = Array.isArray(res?.data?.items) ? res.data.items : [];
+            const priceOf = (it: any) => Number(it.sellingPrice ?? it.price ?? 0) || 0;
+            const withCode = list.filter(it => String(it.barcode || '').trim());
+            if (withCode.length === 0) {
+                addQuickLine();
+                return;
+            }
+            // Only stock items at exactly this price are offered.
+            const exact = withCode.filter(it => Math.abs(priceOf(it) - price) < 0.01);
+            // Exactly one in-stock match: bill it straight away. Several: wait for the cashier to pick.
+            if (exact.length === 1 && (Number(exact[0].stockQty ?? 0) || 0) > 0) {
+                await handlePickStockMatch(exact[0]);
+                return;
+            }
+            setStockMatch({ items: exact.slice(0, 30) });
+        } catch {
+            // Search unavailable: show the warning panel instead of silently billing without a barcode.
+            setStockMatch({ items: [], error: true });
+        } finally {
+            setMatchBusy(false);
+        }
+    };
+
+    const resetQuickEntry = () => {
+        setStockMatch(null);
+        setSelectedType('');
+        setTypeQuery('');
+        setProductCode('');
+        setCodeNotFound(false);
+        setQuickEntryPrice('');
+        setQuickEntryQty('1');
+        setQuickEntryMeter('1');
+        setTimeout(() => skuInputRef.current?.focus(), 50); // back to the barcode box for the next item
+    };
+
+    // Picks a stock item: it is billed by its own barcode and price, so stock reduces for it.
+    const handlePickStockMatch = async (item: any) => {
+        const times = Number.isInteger(parseFloat(quickEntryQty)) ? Math.min(50, Math.max(1, parseFloat(quickEntryQty))) : 1;
+        resetQuickEntry();
+        for (let i = 0; i < times; i++) await onBarcodeLookup(String(item.barcode));
+    };
+
+    // Adds the typed product + price as a plain line (no barcode, stock is not reduced).
+    const addQuickLine = () => {
         if (!selectedType || !quickEntryPrice) return;
         const price = parseFloat(quickEntryPrice);
         const qty = parseFloat(quickEntryQty) || 1;
@@ -398,6 +457,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
             unit: defaultUnit,
             cutLength: meterValue, // For Meter-based products
             isQuickEntry: true, // Flag for reporting
+            productCode: productCode.trim() || undefined,
             // Fill required Product fields for type safety
             category: "Quick Entry",
             costPrice: 0,
@@ -415,7 +475,8 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
         setQuickEntryPrice('');
         setQuickEntryQty('1');
         setQuickEntryMeter('1');
-        setTimeout(() => typeInputRef.current?.focus(), 50);
+        setStockMatch(null);
+        setTimeout(() => skuInputRef.current?.focus(), 50); // back to the barcode box for the next item
     };
 
     // Fuzzy Search for Suggestions
@@ -578,36 +639,43 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
 
             {/* Search Bar Section */}
             <div className="p-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 shrink-0 relative z-30 rounded-t-xl space-y-3">
-                {/* Row 1: Barcode Scanner */}
+                {/* Header: entry-row hint + selected bill chip */}
                 <div className="flex items-center gap-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase whitespace-nowrap hidden sm:block">Barcode:</label>
-                    <div className="relative flex-1 max-w-md">
-                        <div className="absolute left-3 top-2.5 text-slate-400 dark:text-slate-500">
-                            <Barcode className="w-4 h-4" />
+                    <span className="text-xs font-bold uppercase text-slate-500">Billing</span>
+                    <span className="hidden sm:inline text-[11px] text-slate-400">{billEdit.active ? 'Add items in the bill grid below' : 'Scan or type in the entry row — Enter adds the line'}</span>
+                    {billEdit.selectedBill && (
+                        <div className="ml-auto flex items-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs">
+                            <span className="font-semibold text-slate-600 dark:text-slate-300">Selected Bill</span>
+                            <span className="text-sm font-bold text-primary">{billEdit.selectedBill}</span>
+                            {billEdit.active && <span className="rounded-full bg-warning/20 px-2 py-0.5 text-[10px] font-bold uppercase text-warning">Editing</span>}
                         </div>
-                        <input
-                            ref={skuInputRef}
-                            type="text"
-                            placeholder="Scan Barcode / SKU"
-                            className="w-full pl-9 pr-16 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-sm"
-                            onKeyDown={handleSkuKeyDown}
-                            autoFocus
-                        />
-                        <kbd className="absolute right-2 top-2 text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 font-mono">Ctrl+B</kbd>
-                    </div>
-                </div>
-
-                {/* Divider */}
-                <div className="flex items-center gap-2 text-xs text-slate-400">
-                    <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
-                    <span className="font-medium">OR Quick Entry</span>
-                    <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                    )}
                 </div>
 
                 {/* Row 2: Quick Entry - Always Visible */}
-                <div className="flex flex-wrap gap-2 items-end">
+                <div className={`flex-wrap md:flex-nowrap items-end ${billEdit.active ? 'hidden' : 'flex'}`}>
+                    <div className="hidden md:block w-10 shrink-0" />
+                    {/* Barcode */}
+                    <div className="w-full md:w-[190px] shrink-0 px-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Barcode</label>
+                        <div className="relative">
+                            <div className="absolute left-2.5 top-2.5 text-slate-400 dark:text-slate-500">
+                                <Barcode className="w-4 h-4" />
+                            </div>
+                            <input
+                                ref={skuInputRef}
+                                type="text"
+                                placeholder="Scan Barcode / SKU"
+                                title="Ctrl+B to focus"
+                                className="w-full pl-8 pr-2 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-sm"
+                                onKeyDown={handleSkuKeyDown}
+                                autoFocus
+                            />
+                        </div>
+                    </div>
+
                     {/* Product Code */}
-                    <div className="w-28">
+                    <div className="w-1/2 md:w-[130px] shrink-0 px-1">
                         <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Product Code</label>
                         <input
                             ref={codeInputRef}
@@ -624,7 +692,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                     </div>
 
                     {/* Type Select */}
-                    <div className="relative flex-1 min-w-[180px]">
+                    <div className="relative flex-1 min-w-[180px] px-1">
                         <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Product / Type</label>
                         <div className="relative">
                             <div className="absolute left-3 top-2.5 text-slate-400 dark:text-slate-500">
@@ -663,7 +731,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                     </div>
 
                     {/* Price Input */}
-                    <div className="w-24">
+                    <div className="w-1/3 md:w-[110px] shrink-0 px-1">
                         <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Price (₹)</label>
                         <input
                             ref={priceInputRef}
@@ -685,8 +753,9 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                     </div>
 
                     {/* Meter Input (only for Meter-based products) */}
+                    {selectedTypeUnit !== 'Meter' && <div className="hidden md:block w-[90px] shrink-0" />}
                     {selectedTypeUnit === 'Meter' && (
-                        <div className="w-20">
+                        <div className="w-20 md:w-[90px] shrink-0 px-1">
                             <label className="text-[10px] font-bold text-primary uppercase mb-1 block">Meter</label>
                             <input
                                 type="number"
@@ -708,7 +777,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                     )}
 
                     {/* Qty Input */}
-                    <div className="w-16">
+                    <div className="w-1/4 md:w-[110px] shrink-0 px-1">
                         <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Qty</label>
                         <input
                             type="number"
@@ -728,17 +797,18 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                     </div>
 
                     {/* Add to Cart Button */}
-                    <div>
+                    <div className="md:w-[180px] shrink-0 px-1">
                         <label className="text-[10px] font-bold text-transparent uppercase mb-1 block">Action</label>
-                        <Button onClick={handleQuickEntryAdd} disabled={!selectedType || !quickEntryPrice || parseFloat(quickEntryPrice) <= 0} className="px-4 py-2 bg-success hover:bg-success/90 text-white rounded-lg font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap">+ Add</Button>
+                        <Button onClick={handleQuickEntryAdd} disabled={matchBusy || !selectedType || !quickEntryPrice || parseFloat(quickEntryPrice) <= 0} className="w-full md:w-auto px-4 py-2 bg-success hover:bg-success/90 text-white rounded-lg font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap">+ Add</Button>
                     </div>
 
                     {/* Clear Button */}
                     {selectedType && (
-                        <div>
+                        <div className="px-1">
                             <label className="text-[10px] font-bold text-transparent uppercase mb-1 block">Clear</label>
                             <button
                                 onClick={() => {
+                                    setStockMatch(null);
                                     setSelectedType('');
                                     setTypeQuery('');
                                     setQuickEntryPrice('');
@@ -752,7 +822,73 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                         </div>
                     )}
                 </div>
+
+                {stockMatch && (
+                    <div className="mt-2 rounded-lg border border-warning/40 bg-warning/5 p-2">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                            <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                                {stockMatch.error
+                                    ? "Couldn't check stock for this product."
+                                    : stockMatch.items.length === 0
+                                        ? `No stock item of "${selectedType}" at ₹${quickEntryPrice}. Check the price, or add it without a barcode.`
+                                        : `Pick the stock item for "${selectedType}" at ₹${quickEntryPrice} so it bills with its barcode and stock reduces.`}
+                            </p>
+                            <button type="button" onClick={() => setStockMatch(null)} className="text-xs text-slate-500 hover:text-main">✕ Close</button>
+                        </div>
+                        {stockMatch.items.length > 0 && (
+                            <div className="max-h-56 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-800">
+                                <table className="w-full text-xs">
+                                    <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 sticky top-0">
+                                        <tr>
+                                            <th className="text-left px-2 py-1">Barcode</th>
+                                            <th className="text-left px-2 py-1">Item</th>
+                                            <th className="text-left px-2 py-1">Size / Colour</th>
+                                            <th className="text-right px-2 py-1">Price</th>
+                                            <th className="text-right px-2 py-1">Stock</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                                        {stockMatch.items.map((it, i) => {
+                                            const itemPrice = Number(it.sellingPrice ?? it.price ?? 0) || 0;
+                                            const stock = Number(it.stockQty ?? 0) || 0;
+                                            const samePrice = Math.abs(itemPrice - parseFloat(quickEntryPrice)) < 0.5;
+                                            return (
+                                                <tr
+                                                    key={`${it.barcode}-${i}`}
+                                                    onClick={() => stock > 0 && handlePickStockMatch(it)}
+                                                    className={`${stock > 0 ? 'cursor-pointer hover:bg-primary/5' : 'opacity-50 cursor-not-allowed'} ${samePrice ? 'bg-success/5' : ''}`}
+                                                    title={stock > 0 ? 'Bill this item' : 'Out of stock'}
+                                                >
+                                                    <td className="px-2 py-1 font-mono">{it.barcode}</td>
+                                                    <td className="px-2 py-1">{it.name}</td>
+                                                    <td className="px-2 py-1 text-slate-500">{[it.size, it.color].filter(Boolean).join(' / ') || '—'}</td>
+                                                    <td className="px-2 py-1 text-right font-bold">₹{itemPrice.toFixed(2)}{samePrice ? ' ✓' : ''}</td>
+                                                    <td className={`px-2 py-1 text-right ${stock > 0 ? '' : 'text-danger font-bold'}`}>{stock > 0 ? stock : 'Out'}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                        <div className="mt-1.5 flex items-center justify-between gap-2">
+                            <p className="text-[11px] text-slate-500">
+                                The stock item's own price is billed. Billing without a barcode does not reduce stock.
+                            </p>
+                            <button
+                                type="button"
+                                onClick={addQuickLine}
+                                className="px-3 py-1.5 text-xs font-bold border border-slate-300 dark:border-slate-600 rounded-md hover:bg-slate-50 dark:hover:bg-slate-700 whitespace-nowrap"
+                            >
+                                Add without barcode (₹{quickEntryPrice})
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
+
+            {/* The bill opened from the "Today's bill no." search appears here, under the quick-entry row (see POSBillReprint). */}
+            <div id="pos-bill-edit-slot" className={billEdit.active ? 'flex-1 min-h-0 overflow-hidden bg-card' : 'shrink-0 empty:hidden'} />
 
             {/* Visual Search Banner */}
             {/* Visual Search Banner - COMMENTED OUT
@@ -767,8 +903,8 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
             )}
             */}
 
-            {/* Cart Content */}
-            <div className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-800 relative transition-colors rounded-b-xl">
+            {/* Cart Content (while a bill is being edited, its one-grid view above replaces this) */}
+            {!billEdit.active && <div className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-800 relative transition-colors rounded-b-xl">
                 {cart.length === 0 ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 opacity-60">
                         <ShoppingCart className="w-16 h-16 mb-4" />
@@ -778,16 +914,19 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                 ) : (
                     <>
                         {/* Desktop Table View */}
-                        <table className="hidden md:table w-full text-left text-sm text-slate-700 dark:text-slate-300">
+                        <table className="hidden md:table w-full table-fixed text-left text-sm text-slate-700 dark:text-slate-300">
+                            <colgroup><col style={{ width: 40 }} /><col style={{ width: 190 }} /><col style={{ width: 130 }} /><col /><col style={{ width: 110 }} /><col style={{ width: 90 }} /><col style={{ width: 110 }} /><col style={{ width: 110 }} /><col style={{ width: 70 }} /></colgroup>
                             <thead className="bg-slate-100 dark:bg-slate-900 text-xs uppercase font-bold text-slate-500 sticky top-0 z-10 shadow-sm">
                                 <tr>
-                                    <th className="py-2 px-2 w-12 text-center hidden md:table-cell">#</th>
-                                    <th className="py-2 px-2">Item Details</th>
-                                    <th className="py-2 px-2 w-32 text-right hidden sm:table-cell">Unit Price</th>
-                                    <th className="py-2 px-2 w-28 text-center text-primary">Meters</th>
-                                    <th className="py-2 px-2 w-28 text-center">Quantity</th>
-                                    <th className="py-2 px-2 w-32 text-right">Total</th>
-                                    <th className="py-2 px-2 w-16 text-center">Action</th>
+                                    <th className="py-2 px-2 text-center hidden md:table-cell">#</th>
+                                    <th className="py-2 px-2">Barcode</th>
+                                    <th className="py-2 px-2">Product code</th>
+                                    <th className="py-2 px-2">Product / Type</th>
+                                    <th className="py-2 px-2 text-right hidden sm:table-cell">Price</th>
+                                    <th className="py-2 px-2 text-center text-primary">Meters</th>
+                                    <th className="py-2 px-2 text-center">Qty</th>
+                                    <th className="py-2 px-2 text-right">Total</th>
+                                    <th className="py-2 px-2 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-200 dark:divide-slate-700/50">
@@ -827,7 +966,7 @@ export const POSCartGrid: React.FC<POSCartGridProps> = ({
                         </div>
                     </>
                 )}
-            </div>
+            </div>}
         </div>
     );
 };

@@ -6,7 +6,7 @@ import { PRINTER_PROFILES, generateBatchCommands, printFileExtension } from '../
 export type Operation = 'agent' | 'customer' | 'mobile' | 'card' | 'name' | 'rc-grn' | 'ref-grn' | 'missing-sales' | 'salesmen' | 'customer-lookup' | 'barcode-cancel';
 type NativeRow = Record<string, unknown>;
 const operationDefinitions: { id: Operation; label: string }[] = [
-  { id: 'barcode-cancel', label: 'Barcode cancellation check' },
+  { id: 'barcode-cancel', label: 'Barcode cancel' },
   { id: 'agent', label: 'Register agent' },
   { id: 'customer', label: 'Different customer entry without points' },
   { id: 'mobile', label: 'Mobile number change' },
@@ -83,13 +83,22 @@ export default function SqlOperationPanel({ title, allowedOperations, onSaved }:
       let response;
       if (creating) response = await api.post(operation === 'agent' ? '/api/agents' : '/api/customers', data);
       else if (changing) response = await api.put(`/api/customers/${encodeURIComponent(data.id)}/${operation}`, { value: data.value });
-      else if (operation === 'barcode-cancel') response = await api.post(`/api/inventory/barcode/${encodeURIComponent(data.id)}/cancel`);
+      else if (operation === 'barcode-cancel') {
+        if (!window.confirm(`Cancel barcode ${data.id}? Billing will refuse it afterwards. Stock rows and GRN totals are not changed.`)) return;
+        response = await api.post(`/api/inventory/barcode/${encodeURIComponent(data.id)}/cancel`);
+      }
       else if (operation === 'customer-lookup') response = await api.get('/api/customers', { params: { search: data.search } });
       else if (operation === 'salesmen') response = await api.get('/api/reports/legacy/salesmen');
       else if (operation === 'missing-sales') { response = await api.get('/api/reports/legacy/missing-sales', { params: { ...data, page: 1, limit: pageLimit } }); setPaging(response.data?.pagination ?? null); }
       else response = await api.get(`/api/reports/legacy/${operation}/${encodeURIComponent(data.id)}`);
       if (response.data?.success === false) throw new Error(response.data?.message || "The SQL operation was refused.");
-      if (operation === "barcode-cancel") throw new Error("Financial cancellation is unavailable until its complete reversal contract is verified.");
+      if (operation === "barcode-cancel") {
+        const done = response.data?.data as { barcode?: string; cancelledLines?: number } | undefined;
+        if (!done || typeof done.cancelledLines !== 'number' || done.cancelledLines < 1) throw new Error('The server did not confirm the cancellation.');
+        setRows([done as NativeRow]);
+        setMessage(`Barcode ${done.barcode} cancelled: ${done.cancelledLines} purchase line(s) flagged. Stock rows and GRN totals are unchanged.`);
+        return;
+      }
       const result: unknown = response.data?.data;
       const records = Array.isArray(result) ? result : [result];
       if (records.some(row => !row || typeof row !== 'object' || Array.isArray(row))) throw new Error('The server returned no valid SQL result.');
@@ -139,7 +148,7 @@ export default function SqlOperationPanel({ title, allowedOperations, onSaved }:
     {changing && <p>Changes preserve the customer serial, points and balances, and update matching historical bill contact fields. Ambiguous or duplicate identities are refused.</p>}
     {operation === 'customer' && <p>This is the legacy Different Customer Entry without points. It stores native contact, religion and credit-day fields; it does not award points.</p>}
     {operation === 'agent' && <p>Bill discount belongs to the agent master. Purchase commission is a separate purchase field. Supplier-linked editing remains unavailable until its native identity checks are verified.</p>}
-    {operation === 'barcode-cancel' && <p>Any saved sale blocks cancellation. Unsold cancellation is unavailable until all stock and financial reversal effects are verified; no partial cancellation is performed.</p>}
+    {operation === 'barcode-cancel' && <p>Cancelling flags the barcode's purchase line so billing refuses it, as the legacy screen does. Any saved sale blocks cancellation. Stock rows and GRN quantity/net totals are not changed, and the legacy GST re-total is not reproduced.</p>}
     {operation === 'missing-sales' && <p>This report lists saved ESC/deleted lines. Bill-level values may repeat across lines and must not be summed as bill totals.</p>}
     {operation === 'customer-lookup' && <p>Points and credit balance are read from the native customer master. This lookup does not associate a customer with anonymous SQL checkout.</p>}
     {(creating || changing) && !writable && <p role="status">{capabilityError || (capabilities ? 'Unavailable: the configured writer does not have the required native-table write permission. No permissions will be changed.' : 'Checking native SQL write permissions…')}</p>}

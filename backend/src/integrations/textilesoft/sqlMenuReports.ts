@@ -1,7 +1,7 @@
 import { sqlDate } from './sqlDates.js';
 import { openPool, loadDbConfig, type ShopDbPool } from './shopDbReader.js';
 import { SqlWriteError } from './sqlWrite.js';
-interface Definition { table: string; columns: string[]; group: string[]; date: string | null }
+interface Definition { table: string; columns: string[]; group: string[]; date: string | null; supplier?: boolean }
 export const MENU_REPORTS: Record<string, Definition> = {
   "mrp-rate-change": {
     "table": "purentrydetails",
@@ -538,14 +538,16 @@ export const MENU_REPORTS: Record<string, Definition> = {
       "patrn",
       "size",
       "model",
-      "date"
+      "date",
+      "suplier_name"
     ],
     "group": [
       "patrn",
-      "model",
+      "suplier_name",
       "size"
     ],
-    "date": "date"
+    "date": "date",
+    "supplier": true
   },
   "pattern-supplier-sizewise-stock-report": {
     "table": "stockdetails",
@@ -570,14 +572,16 @@ export const MENU_REPORTS: Record<string, Definition> = {
       "patrn",
       "size",
       "model",
-      "date"
+      "date",
+      "suplier_name"
     ],
     "group": [
+      "suplier_name",
       "patrn",
-      "model",
       "size"
     ],
-    "date": "date"
+    "date": "date",
+    "supplier": true
   },
   "barcode-sales-report": {
     "table": "salsntry",
@@ -874,7 +878,20 @@ export async function nativeMenuReport(id: string, query: Record<string, unknown
   const metadataRequest = pool.request(); metadataRequest.input('table',definition.table);
   const metadata = await metadataRequest.query("SELECT COLUMN_NAME AS name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME=@table");
   const found = new Set(metadata?.recordset.map(row=>String(row.name).toLowerCase()));
-  if (definition.columns.some(column=>!found.has(column.toLowerCase()))) throw new SqlWriteError('Existing SQL columns required by this report are unavailable.',503,'SQL_REPORT_STORAGE_UNAVAILABLE');
+  const tableColumns = definition.supplier ? definition.columns.filter(column=>column!=='suplier_name') : definition.columns;
+  if (tableColumns.some(column=>!found.has(column.toLowerCase()))) throw new SqlWriteError('Existing SQL columns required by this report are unavailable.',503,'SQL_REPORT_STORAGE_UNAVAILABLE');
+  if (definition.table === 'stockdetails') {
+    const lineRequest = pool.request(); lineRequest.input('table','purentrydetails');
+    const lineMeta = await lineRequest.query("SELECT COLUMN_NAME AS name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME=@table");
+    const lineFound = new Set(lineMeta?.recordset.map(row=>String(row.name).toLowerCase()));
+    if (!['barcode','status'].every(column=>lineFound.has(column))) throw new SqlWriteError('Existing SQL columns required by this report are unavailable.',503,'SQL_REPORT_STORAGE_UNAVAILABLE');
+  }
+  if (definition.supplier) {
+    const headerRequest = pool.request(); headerRequest.input('table','purgrnentry');
+    const header = await headerRequest.query("SELECT COLUMN_NAME AS name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME=@table");
+    const headerFound = new Set(header?.recordset.map(row=>String(row.name).toLowerCase()));
+    if (!['id','grn_no','suplier_name'].every(column=>headerFound.has(column))) throw new SqlWriteError('Existing SQL columns required by this report are unavailable.',503,'SQL_REPORT_STORAGE_UNAVAILABLE');
+  }
   const request = pool.request();
   request.input('skip',(page-1)*500); request.input('take',501);
   const conditions: string[] = [];
@@ -885,9 +902,19 @@ export async function nativeMenuReport(id: string, query: Record<string, unknown
     if(!definition.columns.includes('barcode') || typeof query.barcode !== 'string' || query.barcode.length>128) throw new SqlWriteError('Invalid barcode filter.',400);
     request.input('barcode',query.barcode); conditions.push('[barcode]=@barcode');
   }
+  if(query.supplier !== undefined && query.supplier !== '') {
+    if(!definition.supplier || typeof query.supplier !== 'string' || query.supplier.length>200) throw new SqlWriteError('Invalid supplier filter.',400);
+    request.input('supplier',query.supplier.trim()); conditions.push("LTRIM(RTRIM(h.[suplier_name]))=@supplier");
+  }
+  // Legacy hides a barcode whose purchase line was cancelled (purentrydetails.STATUS = '1'); its stockdetails row stays.
+  if (definition.table === 'stockdetails') conditions.push("LTRIM(RTRIM(t.[barcode])) NOT IN (SELECT LTRIM(RTRIM(c.[barcode])) FROM dbo.[purentrydetails] AS c WHERE c.[STATUS] = '1' AND c.[barcode] IS NOT NULL)");
   if(id==='combo-detail') conditions.push("NULLIF(LTRIM(RTRIM([comboname])),'') IS NOT NULL");
   const order = Array.from(new Set([...definition.group,...definition.columns]));
-  const result = await request.query(`SELECT ${definition.columns.map(c=>`[${c}]`).join(',')} FROM dbo.[${definition.table}] ${conditions.length?'WHERE '+conditions.join(' AND '):''} ORDER BY ${order.map(c=>`[${c}]`).join(',')} OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY`);
+  const selectList = definition.columns.map(c=>definition.supplier && c==='suplier_name' ? 'h.[suplier_name]' : `t.[${c}]`).join(',');
+  const fromClause = definition.supplier
+    ? `dbo.[${definition.table}] AS t OUTER APPLY (SELECT TOP 1 [suplier_name] FROM dbo.[purgrnentry] AS g WHERE LTRIM(RTRIM(g.[grn_no])) = LTRIM(RTRIM(t.[grn_no])) ORDER BY g.[ID] DESC) AS h`
+    : `dbo.[${definition.table}] AS t`;
+  const result = await request.query(`SELECT ${selectList} FROM ${fromClause} ${conditions.length?'WHERE '+conditions.join(' AND '):''} ORDER BY ${order.map(c=>`[${c}]`).join(',')} OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY`);
   const rows = result?.recordset ?? [];
   return { rows:rows.slice(0,500), columns:definition.columns, page, hasMore:rows.length>500, group:definition.group, dateColumn:definition.date, source:'textilesoft-sql', scope:'Native SQL rows; grouping is sort order, not reconciled aggregate totals. Saved statuses are retained. Stock quantities are stored fields, not reconstructed historical balances. Dates filter the displayed native date column. No loyalty movement ledger is inferred from current points.' };
 }

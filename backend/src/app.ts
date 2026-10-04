@@ -118,6 +118,8 @@ if (isSqlOnlyMode()) {
       (method === "POST" && /^\/(customers|agents)$/.test(route)) ||
       (["GET", "POST", "PUT"].includes(method) && /^\/suppliers(\/[^/]+)?$/.test(route)) ||
       (method === "GET" && /^\/sales-invoice\/(invoices|summary|invoice\/[^/]+)$/.test(route)) ||
+      (method === "POST" && /^\/sales-invoice\/invoice\/[^/]+\/cancel$/.test(route)) ||
+      (method === "POST" && /^\/sales-invoice\/invoice\/[^/]+\/edit$/.test(route)) ||
       (method === "GET" && /^\/purchases(\/[^/]+|\/suppliers\/analytics)?$/.test(route)) ||
       (method === "GET" && /^\/expenses(\/[^/]+)?$/.test(route)) ||
       (method === "GET" && /^\/(cashbank(\/cheques)?|daily-finance)$/.test(route)) ||

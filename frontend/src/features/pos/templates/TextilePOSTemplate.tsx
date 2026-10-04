@@ -285,7 +285,7 @@ export const TextilePOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                         )}
 
                         <div className="px-2 pb-1">
-                            <POSBillReprint printSale={logic.printSale} />
+                            <POSBillReprint printSale={logic.printSale} cart={logic.cart} onBarcodeLookup={logic.onBarcodeLookup} onClearCart={logic.onClearCart} onUpdateCartQty={logic.onUpdateCartQty} onRemoveFromCart={logic.onRemoveFromCart} allProductTypes={logic.allProductTypes} quickProducts={logic.quickProducts} />
                             <POSFailedBills />
                         </div>
 

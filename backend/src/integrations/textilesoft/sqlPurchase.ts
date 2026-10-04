@@ -42,14 +42,42 @@ const whole = (n: number): string =>
   Number.isInteger(r2(n)) ? String(r2(n)) : f2(n);
 const reverse = (s: string): string => s.split("").reverse().join("");
 
-/** Barcode date prefix: "62"+"9"+"62"+"1" for 26/09/2026 with counter serial 1. */
-export function barcodePrefix(d: Date, serial = "1"): string {
-  return (
-    reverse(String(d.getFullYear())).slice(0, 2) +
-    reverse(String(d.getMonth() + 1)) +
-    reverse(String(d.getDate())) +
-    serial
-  );
+export type BarcodePart = "year" | "month" | "day";
+
+/**
+ * Order of the date parts in the barcode, from grndetail (year_pos / month_pos / date_pos). Default (and what the shop
+ * uses today): year, month, day. Only what the shop's data proves is supported: reverse_con = Yes and *_con / month_gen
+ * = No (decoded from SSS_copy, Oct 2026); any other setting is refused instead of guessed.
+ */
+export function barcodeOrder(row?: Row): BarcodePart[] {
+  if (!row) return ["year", "month", "day"];
+  const yes = (v: unknown) => /^yes$/i.test(txt(v));
+  const settingsKeys = ["date_con", "month_con", "year_con", "month_gen"] as const;
+  const odd = settingsKeys.filter((k) => yes(row[k]));
+  if (odd.length || (txt(row.reverse_con) && !yes(row.reverse_con)))
+    throw new SqlWriteError(
+      `This company's barcode setting in Textilesoft (${odd.length ? odd.join(", ") + " = Yes" : "reverse_con = No"}) is not supported by the ERP yet. Create the purchase in Textilesoft.`,
+      409,
+      "BARCODE_SETTING_UNSUPPORTED",
+    );
+  const pos: [BarcodePart, number][] = [
+    ["year", Number(txt(row.year_pos))],
+    ["month", Number(txt(row.month_pos))],
+    ["day", Number(txt(row.date_pos))],
+  ];
+  if (pos.some(([, n]) => !Number.isInteger(n)) || new Set(pos.map(([, n]) => n)).size !== 3 || pos.some(([, n]) => n < 1 || n > 3))
+    return ["year", "month", "day"];
+  return pos.sort((x, y) => x[1] - y[1]).map(([k]) => k);
+}
+
+/** Barcode date prefix: "62"+"9"+"62"+"1" for 26/09/2026 with counter serial 1 (parts reversed, in the configured order). */
+export function barcodePrefix(d: Date, serial = "1", order: BarcodePart[] = ["year", "month", "day"]): string {
+  const part: Record<BarcodePart, string> = {
+    year: reverse(String(d.getFullYear())).slice(0, 2),
+    month: reverse(String(d.getMonth() + 1)),
+    day: reverse(String(d.getDate())),
+  };
+  return order.map((k) => part[k]).join("") + serial;
 }
 
 /** Purchase-rate cipher: digits 1..9 -> key[0..8], 0 -> key[9], "." -> key[10]. */
@@ -376,7 +404,7 @@ export async function createPurchase(
       );
     const settings = await one(
       tx,
-      "SELECT TOP 1 LTRIM(RTRIM(grn)) AS grn, LTRIM(RTRIM(pur_code)) AS purCode, LTRIM(RTRIM(sys_name)) AS sysName FROM dbo.[grndetail] WHERE LTRIM(RTRIM(cmy_name)) = @c",
+      "SELECT TOP 1 LTRIM(RTRIM(grn)) AS grn, LTRIM(RTRIM(pur_code)) AS purCode, LTRIM(RTRIM(sys_name)) AS sysName, date_con, date_pos, month_con, month_pos, year_con, year_pos, reverse_con, month_gen FROM dbo.[grndetail] WHERE LTRIM(RTRIM(cmy_name)) = @c",
       { c: company },
       `No GRN numbering is set up for ${company} in Textilesoft (grndetail).`,
     );
@@ -421,7 +449,7 @@ export async function createPurchase(
       grnNo = `${grnPrefix}${++grnNumber}`;
 
     // Barcodes: prefix of the day + running number of the day (locked until commit).
-    const prefix = barcodePrefix(date, serial);
+    const prefix = barcodePrefix(date, serial, barcodeOrder(settings));
     const dayText = tsDate(date);
     const [b] = await tx.query(
       `SELECT MAX(TRY_CAST(SUBSTRING(barcode, LEN(@p) + 1, 20) AS bigint)) AS n FROM dbo.[purentrydetails] WITH (UPDLOCK, HOLDLOCK)

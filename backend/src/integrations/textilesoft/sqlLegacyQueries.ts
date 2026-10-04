@@ -1,4 +1,4 @@
-import { sqlRead, txt, SqlWriteError, sqlWriter, type Row } from "./sqlWrite.js";
+import { sqlRead, txt, SqlWriteError, sqlWriter, withSqlTransaction, type Row } from "./sqlWrite.js";
 
 const complete = (rows: Row[]) => {
   if (rows.length > 5000) throw new SqlWriteError("More than 5000 records match; narrow the filters. No partial report is presented.", 400);
@@ -57,13 +57,39 @@ export async function assertBarcodeUnused(barcode: string) {
   if (used.length) throw new SqlWriteError("Already this barcode sale: cancellation is prohibited; history is retained.", 409, "BARCODE_ALREADY_SOLD");
 }
 
+/**
+ * Legacy barcode cancel (17.07.2025 deployment review): the barcode's purchase line gets purentrydetails.STATUS = '1'
+ * and billing then refuses to scan it. The stockdetails row, stock quantities and the GRN header quantity/net
+ * totals are left unchanged. The legacy usp_BarcodeCancelUpdate_* procedure also rewrites the header GST split from
+ * the cancelled lines only; that behavior is not reproduced because its intent is unverified.
+ * A barcode with any saved sale is refused (assertBarcodeUnused); already-cancelled barcodes are refused with 409.
+ */
+export async function cancelUnsoldBarcode(barcode: string) {
+  const code = txt(barcode);
+  await assertBarcodeUnused(code);
+  return withSqlTransaction("Barcode cancel", async (tx) => {
+    const lines = await tx.query(
+      "SELECT ID, grn_no, STATUS FROM dbo.[purentrydetails] WHERE LTRIM(RTRIM(barcode)) = @b",
+      { b: code },
+    );
+    if (!lines.length) throw new SqlWriteError("This barcode has no purchase line, so there is nothing to cancel.", 404, "BARCODE_NOT_FOUND");
+    const live = lines.filter((line) => txt(line.STATUS) === "");
+    if (!live.length) throw new SqlWriteError("This barcode is already cancelled.", 409, "BARCODE_ALREADY_CANCELLED");
+    for (const line of live) {
+      const changed = await tx.update("purentrydetails", { STATUS: "1" }, { ID: line.ID });
+      if (changed !== 1) throw new SqlWriteError("The purchase line could not be flagged; nothing was cancelled.", 409, "BARCODE_CANCEL_NOT_APPLIED");
+    }
+    return { barcode: code, cancelledLines: live.length, grnNumbers: Array.from(new Set(live.map((line) => txt(line.grn_no)))) };
+  });
+}
+
 /** Permission metadata from the actual configured writer; no grant or business write. */
 export async function legacyNativeCapabilities() {
   const { pool } = await sqlWriter();
   const response = await pool.request().query(
-    "SELECT HAS_PERMS_BY_NAME('dbo.newcustomer','OBJECT','INSERT') AS customerRegister,HAS_PERMS_BY_NAME('dbo.agentdetail','OBJECT','INSERT') AS agentRegister,HAS_PERMS_BY_NAME('dbo.newcustomer','OBJECT','UPDATE') AS customerUpdate,HAS_PERMS_BY_NAME('dbo.sales2','OBJECT','UPDATE') AS historyUpdate",
+    "SELECT HAS_PERMS_BY_NAME('dbo.newcustomer','OBJECT','INSERT') AS customerRegister,HAS_PERMS_BY_NAME('dbo.agentdetail','OBJECT','INSERT') AS agentRegister,HAS_PERMS_BY_NAME('dbo.newcustomer','OBJECT','UPDATE') AS customerUpdate,HAS_PERMS_BY_NAME('dbo.sales2','OBJECT','UPDATE') AS historyUpdate,HAS_PERMS_BY_NAME('dbo.purentrydetails','OBJECT','UPDATE') AS purchaseLineUpdate",
   );
   const row = response.recordset?.[0];
   if (!row) throw new SqlWriteError("SQL writer capabilities could not be inspected.", 503);
-  return { customerRegister: Number(row.customerRegister) === 1, agentRegister: Number(row.agentRegister) === 1, customerChange: Number(row.customerUpdate) === 1 && Number(row.historyUpdate) === 1 };
+  return { customerRegister: Number(row.customerRegister) === 1, agentRegister: Number(row.agentRegister) === 1, customerChange: Number(row.customerUpdate) === 1 && Number(row.historyUpdate) === 1, barcodeCancel: Number(row.purchaseLineUpdate) === 1 };
 }

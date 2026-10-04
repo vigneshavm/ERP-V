@@ -94,7 +94,7 @@ const legacyCoverage = [
     "name": "Purchase Split Entry",
     "routes": ["/purchase/textilesoft/purchase-split-entry"],
     "status": "Reduced scope; legacy parity unavailable",
-    "reason": "Purchase Split Entry semantics are unknown; garment packs/lot trace are only related coverage."
+    "reason": "Legacy code review (17.07.2025 copy): Purchase Split Entry splits an existing purchase line into new barcoded lines through a staging table, and refuses to split beyond the original MTR or qty. The final posting step into purchase details was not isolated and no compatible existing SQL storage has been verified, so the operation stays unavailable. Garment packs/lot trace are only related coverage."
   },
   {
     "id": "B07",
@@ -122,8 +122,8 @@ const legacyCoverage = [
     "routes": [
       "/inventory"
     ],
-    "status": "Reduced scope; legacy parity unavailable",
-    "reason": "Barcode cancellation versus deactivation/write-off requires a dedicated legacy rule."
+    "status": "Implemented; acceptance pending",
+    "reason": "Cancel flags the barcode's purchase line (purentrydetails.STATUS = '1') and billing then refuses to scan it, matching the legacy 17.07.2025 behavior seen in the shop data (3 cancelled lines in one GRN, header quantity/net totals and stockdetails rows unchanged). Not reproduced: the legacy procedure also rewrote the GRN header GST split from the cancelled lines only, because its intent is unverified. Any saved sale refuses the cancel. The _IGST and _WB procedure variants have not been reviewed."
   },
   {
     "id": "B15",
@@ -131,8 +131,8 @@ const legacyCoverage = [
     "routes": [
       "/inventory/barcodes"
     ],
-    "status": "Native operation implemented; remaining scope reduced",
-    "reason": "Any saved salsntry barcode rejects cancellation with 409. Unsold cancellation remains unavailable pending verified reversal procedures."
+    "status": "Implemented; acceptance pending",
+    "reason": "Any saved salsntry barcode rejects cancellation with 409. Unsold barcodes can now be cancelled as described for B14; already-cancelled barcodes are refused with 409. Purchase-return and other references are not checked beyond the legacy sale rule."
   },
   {
     "id": "B16",
@@ -177,7 +177,7 @@ const legacyCoverage = [
       "/reports"
     ],
     "status": "Reduced scope; legacy parity unavailable",
-    "reason": "Mode meaning is unverified; do not equate it automatically with channel or payment."
+    "reason": "Legacy code review (17.07.2025 copy): sales2.mode holds the bill number (bill-series prefix plus serial), so Mode Wise means grouped by bill series, not payment type or channel. The ERP report already groups by sales2.mode; the legacy Summary/Detail type and counter, company, item, salesman and login filters are not yet matched, and the legacy report output has not been compared."
   },
   {
     "id": "REP08",
@@ -197,8 +197,8 @@ const legacyCoverage = [
       "/reports",
       "/inventory/aged-stock"
     ],
-    "status": "Reduced scope; legacy parity unavailable",
-    "reason": "Historical closing stock and purchase-date filtering are different report contracts."
+    "status": "Reduced scope; acceptance pending",
+    "reason": "Legacy contract (procedures datestockDETAIL/daterangestockDETAIL, 17.07.2025 review): the date window filters the PURCHASE entry date only (active lines), not a historical closing date. Each purchased barcode is netted against all sales to date (salsntry and superbill1), purchase returns, stock-take, and material transfers, giving remaining quantity, value at purchase and net rate, and age in days. The ERP's stock-age report (/inventory/aged-stock) already filters by purchase date and shows purchased, sold, returned and remaining quantity with age; its stock now also nets Super Bill sales (919 units on stock barcodes in the SSS_copy review). In SSS_copy the stock-take, transfer, salsntry1 and purretrun tables are empty, so nothing else is missing today. Still reduced: no company filter and no value columns at purchase/net rate, and the output has not been compared with the legacy report."
   },
   {
     "id": "REP15",
@@ -207,7 +207,7 @@ const legacyCoverage = [
       "/reports"
     ],
     "status": "Reduced scope; legacy parity unavailable",
-    "reason": "Grouping and joins need specific legacy report comparison."
+    "reason": "Legacy has two separate supplier/pattern/size stock pages. The ERP report now shows the supplier (read from the existing purgrnentry header by GRN number, latest header row) and supports a supplier filter, sorted pattern, supplier, size. It still lists stored stock fields without legacy color/size-band filters, and the legacy output has not been compared."
   },
   {
     "id": "REP16",
@@ -216,7 +216,7 @@ const legacyCoverage = [
       "/reports"
     ],
     "status": "Reduced scope; legacy parity unavailable",
-    "reason": "Distinct behavior from REP15 must be established before replacement."
+    "reason": "Legacy has a separate page, Supplier Pattern AND Size AND ColorWise stock, but which legacy page maps to REP15 versus REP16 is not confirmed. The ERP report now shows the supplier and supports a supplier filter, sorted supplier, pattern, size (the order follows the menu name and is unverified). Color grouping and legacy output comparison are still pending."
   },
   {
     "id": "BK05",
@@ -225,8 +225,8 @@ const legacyCoverage = [
       "/settings/restore",
       "/settings/sync"
     ],
-    "status": "Reduced scope; legacy parity unavailable",
-    "reason": "Exactly-once preservation across restore has no accepted existing SQL storage/checkpoint contract; restore is prohibited under the current rules."
+    "status": "Implemented in ERP; no legacy equivalent; acceptance pending",
+    "reason": "The legacy deployment contains no backup or restore code, so there is no legacy behavior to match. The ERP's owner-only SQL restore restores into a side copy, then carries over local bills that are at or after the backup's last bill time or written by the ERP, matched on sysidandbill so each bill is carried exactly once, saves them to a JSON file first, verifies, and only then swaps the databases. It has not been accepted against a real backup, and it has no automated test."
   },
   {
     "id": "BK06",
@@ -235,8 +235,8 @@ const legacyCoverage = [
       "/settings/restore",
       "/settings/sync"
     ],
-    "status": "Reduced scope; legacy parity unavailable",
-    "reason": "Timestamp ties require stable existing identifiers/checkpoints; no hidden ID crosswalk may be introduced."
+    "status": "Implemented in ERP; no legacy equivalent; acceptance pending",
+    "reason": "Ties are resolved by the bill key (sysidandbill), not by timestamp. A same-key bill with a different time is reported as a conflict and saved, never overwritten. The selection now uses at-or-after the backup's last bill time instead of strictly after, so a local bill that ties the backup's last timestamp is no longer skipped. This change is untested against SQL Server."
   }
 ];
 

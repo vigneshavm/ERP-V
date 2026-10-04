@@ -25,7 +25,9 @@ export default defineConfig({
     baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    // Video needs Playwright's bundled ffmpeg (npx playwright install chromium); without it, or when Windows blocks it,
+    // closing the context fails with `spawn EPERM` and hides the real error. Opt in with E2E_VIDEO=1.
+    video: process.env.E2E_VIDEO ? 'retain-on-failure' : 'off',
     viewport: { width: 1280, height: 720 },
     actionTimeout: 10 * 1000,
     navigationTimeout: 20 * 1000,

@@ -9,6 +9,7 @@ import SqlSalesDocumentsUnavailable from "../../../features/sales/SqlSalesDocume
 import SqlSalesReceivablesUnavailable from "../../../features/sales/SqlSalesReceivablesUnavailable";
 import SqlInventoryUnavailable from "../../../features/inventory/SqlInventoryUnavailable";
 import SqlPurchaseUnavailable from "../../../features/purchase/SqlPurchaseUnavailable";
+import GrnEntry from "../../../features/purchase/GrnEntry";
 import SqlPurchaseDetails from "../../../features/purchase/SqlPurchaseDetails";
 import SqlPartiesUnavailable from "../../../features/customers/SqlPartiesUnavailable";
 import SqlFinanceUnavailable from "../../../features/finance/SqlFinanceUnavailable";
@@ -218,7 +219,7 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({
       <Route path="/suppliers/*" element={<SqlPartiesUnavailable />} />
       <Route
         path="/purchase/grn/new"
-        element={<SqlPurchaseUnavailable />}
+        element={<GrnEntry />}
       />
       <Route
         path="/purchase/grn/new/:poId"
@@ -249,7 +250,7 @@ const RouteDefinitions: React.FC<RouteDefinitionsProps> = ({
       />
       <Route
         path="/purchase/new"
-        element={<SqlPurchaseUnavailable />}
+        element={<GrnEntry />}
       />
       <Route
         path="/purchase/express"

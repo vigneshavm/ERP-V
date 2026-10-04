@@ -4,8 +4,10 @@ import { CreditCard, Banknote, Smartphone, Check, Loader2 } from 'lucide-react';
 import { TaxMode, PaymentMethod } from "../../types/common";
 import { Customer } from "../../types/sales";
 import { LoyaltyConfig } from "../../types/tenant/index";
-import { useLanguage } from "../../contexts/LanguageContext";import { Button } from '@/components/shared/Button';
+import { useLanguage } from "../../contexts/LanguageContext";
+import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
+import { usePosBillEdit } from './posBillEditStore';
 
 
 interface POSFooterProps {
@@ -84,6 +86,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
     onCheckout
 }) => {
     const { t } = useLanguage();
+    const billEdit = usePosBillEdit();
     const discountPercent = (discountBase ?? cartSubtotal) > 0 ? (discountAmount / (discountBase ?? cartSubtotal)) * 100 : 0;
     const exceedsCap = typeof maxDiscountPercent === 'number' && discountAmount > 0 && discountPercent > maxDiscountPercent;
     return (
@@ -91,6 +94,14 @@ export const POSFooter: React.FC<POSFooterProps> = ({
             <h3 className="text-secondary font-bold uppercase text-[10px] tracking-wider mb-3 flex items-center gap-2">
                 <CreditCard className="w-3.5 h-4 text-secondary/70" /> {t('settlement')}
             </h3>
+
+            {billEdit.active && (
+                <div className="mb-3 p-2.5 rounded-lg border border-warning/40 bg-warning/10 text-xs text-slate-700 dark:text-slate-200">
+                    <div className="font-bold">Editing bill #{billEdit.invoiceNo}</div>
+                    Items you scan or add go onto this bill; remove lines in the bill card. Finalize saves the changes.
+                    Discount, loyalty and payment mode here are not used — the payment split is set in the bill card.
+                </div>
+            )}
 
             {/* Redemption Section */}
             {activeCustomer.id !== 'c1' && loyaltyConfig && (
@@ -243,16 +254,16 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                 )}
                 <div className="flex justify-between items-end pt-1">
                     <span className="text-slate-700 dark:text-slate-300 font-bold text-sm">
-                        {isRefund ? t('refundAmount') : t('totalPayable')}
+                        {billEdit.active ? 'New bill total' : isRefund ? t('refundAmount') : t('totalPayable')}
                     </span>
                     <span className={`font-bold text-2xl font-mono tracking-tight ${isRefund ? 'text-error' : 'text-success'}`}>
-                        ₹{Math.abs(finalTotal || 0).toFixed(2)}
+                        {billEdit.active ? (billEdit.newTotal === null ? '—' : `₹${billEdit.newTotal.toFixed(2)}`) : `₹${Math.abs(finalTotal || 0).toFixed(2)}`}
                     </span>
                 </div>
 
                 <button
                     onClick={onCheckout}
-                    disabled={isEmpty || isProcessing}
+                    disabled={billEdit.active ? (!billEdit.canSave || billEdit.saving) : (isEmpty || isProcessing)}
                     className="relative w-full py-3 bg-primary hover:bg-primary/90 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:border disabled:border-slate-300 dark:disabled:border-slate-700 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20 mt-2 text-base group"
                     title="Shortcut: Ctrl + Space"
                 >
@@ -264,7 +275,7 @@ export const POSFooter: React.FC<POSFooterProps> = ({
                     ) : (
                         <>
                             <Check className="w-6 h-6" />
-                            {t('finalizeBill')}
+                            {billEdit.active ? `Save changes to #${billEdit.invoiceNo}` : t('finalizeBill')}
                             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] opacity-0 group-hover:opacity-60 transition-opacity bg-black/20 px-2 py-1 rounded">Ctrl+Space</span>
                         </>
                     )}

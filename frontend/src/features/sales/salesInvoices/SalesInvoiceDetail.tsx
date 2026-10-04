@@ -2,13 +2,15 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import api from '@/services/api';
 import { getSalesInvoiceById, reset, clearSalesInvoice, markSalesInvoiceAsPaid, editSalesInvoice } from "@/redux/slices/salesInvoiceSlice";
 import Layout from "@/components/shared/Layout/Layout";
 import PaymentModal from "../../../components/shared/Modals/PaymentModal";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Customer, PopulatedInvoice } from "@/types/sales";
 import receiptDataService from "@/services/receiptDataService";
-import { printSaleReceipt } from "@/utils/printService";import { Button } from '@/components/shared/Button';
+import { printSaleReceipt } from "@/utils/printService";
+import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
 
 import {
@@ -56,6 +58,24 @@ const SalesInvoiceDetail = () => {
     const [isPrintingReceipt, setIsPrintingReceipt] = useState(false);
 
     const isSqlInvoice = String(invoice?._id || invoice?.id || '').startsWith('sql:');
+    const isCancelled = !!(invoice as any)?.cancelled;
+    const canCancelBill = isSqlInvoice && !isCancelled && !!(user?.role && INVOICE_EDIT_ROLES.includes(user.role));
+    const [cancelling, setCancelling] = useState(false);
+    const handleCancelBill = async () => {
+        if (!invoice || cancelling) return;
+        const sqlId = String(invoice._id || invoice.id);
+        if (!window.confirm(`Cancel bill ${(invoice as any).invoiceNo || ''}? This cannot be undone here.`)) return;
+        setCancelling(true);
+        try {
+            const res = await api.post(`/api/sales-invoice/invoice/${encodeURIComponent(sqlId)}/cancel`);
+            toast.success(res.data?.message || 'Bill cancelled.');
+            if (id) dispatch(getSalesInvoiceById(id));
+        } catch (e: any) {
+            toast.error(e?.response?.data?.message || 'Could not cancel the bill. Nothing was changed.');
+        } finally {
+            setCancelling(false);
+        }
+    };
     const canEditInvoice = !isSqlInvoice && !!(user?.role && INVOICE_EDIT_ROLES.includes(user.role));
 
     useEffect(() => {
@@ -413,9 +433,15 @@ const SalesInvoiceDetail = () => {
                                 {canEditInvoice && (
                                     <Button onClick={openEditModal} className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"><Pencil className="w-4 h-4" /> Edit Invoice</Button>
                                 )}
+                                {canCancelBill && (
+                                    <Button onClick={handleCancelBill} disabled={cancelling} className="w-full py-3 border border-danger/40 text-danger rounded-xl font-bold hover:bg-danger/10 transition-all flex items-center justify-center gap-2 disabled:opacity-50">{cancelling ? 'Cancelling...' : 'Cancel Bill'}</Button>
+                                )}
+                                {isCancelled && (
+                                    <p className="rounded-md border border-danger/30 bg-danger/10 p-3 text-xs font-bold text-danger">This bill is cancelled.</p>
+                                )}
                                 {isSqlInvoice && (
                                     <p className="rounded-md border border-warning/30 bg-warning/10 p-3 text-xs text-secondary">
-                                        SQL shop bills are read-only here. Payment allocation and invoice edits are unavailable for this bill.
+                                        SQL shop bills can be cancelled here (owner, co-owner or manager). Payment allocation and invoice edits are unavailable for this bill.
                                     </p>
                                 )}
                                 <Button onClick={handlePrint} className="w-full py-3 border border-default/40 text-main opacity-90 rounded-xl font-medium hover:bg-surface/40 transition-all flex items-center justify-center gap-2"><Printer className="w-4 h-4" /> Print Invoice</Button>

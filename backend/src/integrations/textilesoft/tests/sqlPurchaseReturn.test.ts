@@ -45,8 +45,17 @@ function run(text: string, p: Record<string, unknown> = {}): Row[] {
     return (db.PurchaseReturnDetails ?? []).filter((d) => eq(d.grn_no, p.r)).slice(0, 1);
   if (/FROM dbo\.\[PurchaseReturnHeader\] WHERE ID = @id/.test(text))
     return (db.PurchaseReturnHeader ?? []).filter((h) => n(h.ID) === n(p.id)).map((h) => ({ ...h, rgrno: txt(h.grn_no) }));
-  if (/COUNT\(\*\) AS n FROM dbo\.\[PurchaseReturnHeader\]/.test(text))
+  if (/COUNT(?:_BIG)?\(\*\) AS n FROM dbo\.\[PurchaseReturnHeader\]/.test(text))
     return [{ n: (db.PurchaseReturnHeader ?? []).filter((h) => eq(h.grn_no, p.r)).length }];
+  // Detail lines whose barcode has no purchase line (the read path refuses those returns).
+  if (/COUNT_BIG\(\*\) AS n FROM dbo\.\[PurchaseReturnDetails\] d/.test(text))
+    return [
+      {
+        n: (db.PurchaseReturnDetails ?? []).filter(
+          (d) => eq(d.grn_no, p.r) && !(db.purentrydetails ?? []).some((x) => eq(x.barcode, d.barcode)),
+        ).length,
+      },
+    ];
   if (/FROM dbo\.\[PurchaseReturnHeader\] WHERE LTRIM\(RTRIM\(grn_no\)\) = @r/.test(text))
     return [...(db.PurchaseReturnHeader ?? [])].reverse().filter((h) => eq(h.grn_no, p.r)).slice(0, 1);
   if (/FROM dbo\.\[PurchaseReturnDetails\] WHERE LTRIM\(RTRIM\(grn_no\)\) = @r/.test(text))

@@ -208,7 +208,9 @@ export async function restoreWithCarryover(
       );
       const hasUser = headCols.some((c) => c.name === "UserID");
 
-      // 4. Bills to keep: newer than the backup, or ERP-written; and not already in the backup.
+      // 4. Bills to keep: at or after the backup's last bill time, or ERP-written; and not already in the backup.
+      //    ">=" (not ">") so a local bill that ties the backup's last timestamp is still considered; the key match
+      //    below (sysidandbill) is what keeps each bill exactly once, never the timestamp.
       const pick = pool.request();
       pick.input("b", mssql.DateTime, B ?? new Date(0));
       pick.input("u", mssql.NVarChar, erpUser);
@@ -219,7 +221,7 @@ export async function restoreWithCarryover(
             `(SELECT COUNT(*) FROM ${q(target)}.dbo.[salsntry] l WHERE l.[systemidbill] = t.[sysidandbill]) AS lines ` +
             `FROM ${q(target)}.dbo.[sales2] AS t ` +
             `LEFT JOIN ${q(incoming)}.dbo.[sales2] AS x ON x.[sysidandbill] = t.[sysidandbill] ` +
-            `WHERE NULLIF(LTRIM(RTRIM(t.[sysidandbill])), '') IS NOT NULL AND (${BILL_TIME("t")} > @b${hasUser ? " OR LTRIM(RTRIM(t.[UserID])) = @u" : ""})`,
+            `WHERE NULLIF(LTRIM(RTRIM(t.[sysidandbill])), '') IS NOT NULL AND (${BILL_TIME("t")} >= @b${hasUser ? " OR LTRIM(RTRIM(t.[UserID])) = @u" : ""})`,
         )
       ).recordset as Any[];
 

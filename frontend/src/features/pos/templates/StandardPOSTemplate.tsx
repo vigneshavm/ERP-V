@@ -352,7 +352,7 @@ export const StandardPOSTemplate: React.FC<POSTemplateProps> = ({ logic }) => {
                             )}
 
                             <div className="shrink-0 px-2 pb-1 bg-surface/50">
-                                <POSBillReprint printSale={logic.printSale} />
+                                <POSBillReprint printSale={logic.printSale} cart={logic.cart} onBarcodeLookup={logic.onBarcodeLookup} onClearCart={logic.onClearCart} onUpdateCartQty={logic.onUpdateCartQty} onRemoveFromCart={logic.onRemoveFromCart} allProductTypes={logic.allProductTypes} quickProducts={logic.quickProducts} />
                                 <POSFailedBills />
                             </div>
 

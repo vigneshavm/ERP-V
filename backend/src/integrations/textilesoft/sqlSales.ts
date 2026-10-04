@@ -225,23 +225,25 @@ export async function sqlInvoiceById(id: string): Promise<Doc | undefined> {
   const key = isSqlId(id) ? keyOf(id) : undefined;
   if (!key) return undefined;
   const [head] = await run(
-    `SELECT TOP 1 ${HEADER_COLS} FROM dbo.[sales2] AS s WHERE s.[sysidandbill] = @k ORDER BY s.[No] DESC`,
+    `SELECT TOP 1 ${HEADER_COLS}, s.[status] AS status FROM dbo.[sales2] AS s WHERE s.[sysidandbill] = @k ORDER BY s.[No] DESC`,
     [{ name: "k", value: key }],
   );
   if (!head) return undefined;
   const lines = await run(
-    `SELECT l.[p_name] AS name, l.[barcode] AS barcode, l.[hsncode] AS hsn, l.[hdngst] AS gst, ISNULL(TRY_CAST(l.[qty] AS float), 0) AS qty, ` +
+    `SELECT l.[No] AS line_no, l.[p_name] AS name, l.[barcode] AS barcode, l.[hsncode] AS hsn, l.[hdngst] AS gst, ISNULL(TRY_CAST(l.[qty] AS float), 0) AS qty, ` +
       `ISNULL(TRY_CAST(l.[rate] AS float), 0) AS rate, ISNULL(TRY_CAST(l.[pdis_amount] AS float), 0) AS pdis, ISNULL(TRY_CAST(l.[less] AS float), 0) AS less, ` +
       `ISNULL(TRY_CAST(l.[tax] AS float), 0) AS tax, ISNULL(TRY_CAST(l.[cgst] AS float), 0) AS cgst, ISNULL(TRY_CAST(l.[sgst] AS float), 0) AS sgst, ` +
       // No status filter here: sqlInvoiceById is also used for cancelled bills (see sqlInvoiceListByDate),
       // whose lines in salsntry typically carry the same cancelled status as the header -- filtering them
       // out left cancelled bills showing a correct total but "no line items found".
-      `ISNULL(TRY_CAST(l.[net_amount] AS float), 0) AS net FROM dbo.[salsntry] AS l WHERE l.[systemidbill] = @k ORDER BY l.[No]`,
+      `ISNULL(TRY_CAST(l.[net_amount] AS float), 0) AS net FROM dbo.[salsntry] AS l WHERE l.[systemidbill] = @k${str(head.status) === "1" ? "" : " AND ISNULL(l.[status], '') <> '1'"} ORDER BY l.[No]`,
     [{ name: "k", value: key }],
   );
   const doc = invoiceHeader(head);
+  doc.cancelled = str(head.status) === "1";
   doc.items = lines.map((l) => ({
     _id: `sql-line-${str(l.barcode)}`,
+    lineNo: num(l.line_no),
     name: str(l.name) || "Item",
     sku: str(l.barcode),
     hsnCode: str(l.hsn),

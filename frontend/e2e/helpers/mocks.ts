@@ -30,7 +30,9 @@ export const DEMO_USER = {
     _id: '6990b7a1ae8ee1d38659a9e9',
     name: 'Vignesh Admin',
     email: 'vignesh@vijayalaxmi.com',
-    role: 'SUPER_ADMIN',
+    // Must be a role the app knows (owner / co-owner / manager ...): usePermissions looks the role up in
+    // rolePermissions, and an unknown role gets "Role Access Denied" on every screen.
+    role: 'owner',
     token: 'e2e-mock-jwt-token',
     tenantId: DEMO_TENANT_ID,
 };

@@ -314,7 +314,11 @@ function stockAgeLotQuery(
     `SUM(ISNULL(TRY_CAST(p.[qty] AS float), 0) + ISNULL(TRY_CAST(p.[fqty] AS float), 0)) AS pq ` +
     `FROM dbo.[purentrydetails] AS p LEFT JOIN (SELECT [grn_no] AS grn, MAX([suplier_name]) AS sup FROM dbo.[purgrnentry] GROUP BY [grn_no]) AS g ON g.grn = p.[grn_no] ` +
     `WHERE p.[STATUS] IS NULL GROUP BY p.[barcode]) AS pe ON pe.bc = it.[barcode] ` +
-    `LEFT JOIN (SELECT [barcode] AS bc, SUM(ISNULL(TRY_CAST([qty] AS float), 0)) AS sq, MAX([date]) AS ld FROM dbo.[salsntry] WHERE [status] <> '1' GROUP BY [barcode]) AS sa ON sa.bc = it.[barcode] ` +
+    // Sales: normal bills (salsntry) plus Super Bill lines (superbill1), which Textilesoft also nets off stock.
+    `LEFT JOIN (SELECT bc, SUM(q) AS sq, MAX(d) AS ld FROM (` +
+    `SELECT [barcode] AS bc, ISNULL(TRY_CAST([qty] AS float), 0) AS q, [date] AS d FROM dbo.[salsntry] WHERE [status] <> '1' ` +
+    `UNION ALL SELECT [barcode], ISNULL(TRY_CAST([qty] AS float), 0), [date] FROM dbo.[superbill1] WHERE [status] <> '1'` +
+    `) AS ss GROUP BY bc) AS sa ON sa.bc = it.[barcode] ` +
     // Purchase returns: PurchaseReturnDetails (this shop) + purretrun (other installations).
     `LEFT JOIN (SELECT bc, SUM(q) AS rq FROM (` +
     `SELECT [barcode] AS bc, ISNULL(TRY_CAST([qty] AS float), 0) AS q FROM dbo.[purretrun] ` +

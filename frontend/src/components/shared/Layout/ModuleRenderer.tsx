@@ -13,6 +13,7 @@ import SqlSalesDocumentsUnavailable from "../../../features/sales/SqlSalesDocume
 import SqlSalesReceivablesUnavailable from "../../../features/sales/SqlSalesReceivablesUnavailable";
 import SqlWholesaleUnavailable from "../../../features/wholesale/SqlWholesaleUnavailable";
 import SqlInventoryUnavailable from "../../../features/inventory/SqlInventoryUnavailable";
+import GrnEntry from "../../../features/purchase/GrnEntry";
 import SqlPurchaseUnavailable from "../../../features/purchase/SqlPurchaseUnavailable";
 import SqlPartiesUnavailable from "../../../features/customers/SqlPartiesUnavailable";
 import SqlFinanceUnavailable from "../../../features/finance/SqlFinanceUnavailable";
@@ -148,6 +149,7 @@ const ModuleRenderer: React.FC<ModuleRendererProps> = ({ activeTab }) => {
           case "PURCHASE_REGISTER":
             return <LazyModules.PurchaseRegister />;
           case "PURCHASE_ENTRY":
+            return <GrnEntry />;
           case "PURCHASE_EXPRESS":
           case "PURCHASE_ORDER":
           case "PURCHASE_ORDER_DETAILS":
