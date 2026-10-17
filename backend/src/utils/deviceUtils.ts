@@ -28,6 +28,13 @@ const isProductionEnvironment = (): boolean => {
 };
 
 /**
+ * Cookies are Secure in production unless ALLOW_PLAIN_HTTP=true (shop PC serving the ERP over http on the LAN,
+ * where browsers drop Secure cookies).
+ */
+const cookiesSecure = (): boolean =>
+    process.env.ALLOW_PLAIN_HTTP === "true" ? false : isProductionEnvironment();
+
+/**
  * Determine sameSite cookie setting based on environment
  */
 const getSameSiteSetting = (): "none" | "lax" | "strict" => {
@@ -58,7 +65,7 @@ export const setDeviceIdCookie = (res: Response, deviceId: string): void => {
 
     const cookieOptions = {
         httpOnly: true,
-        secure: isProduction,
+        secure: cookiesSecure(),
         sameSite,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         signed: true,
@@ -72,7 +79,7 @@ export const setDeviceIdCookie = (res: Response, deviceId: string): void => {
         info('🍪 [PRODUCTION] Set deviceId cookie', {
             deviceIdPrefix: deviceId.substring(0, 8) + '...',
             sameSite,
-            secure: isProduction,
+            secure: cookiesSecure(),
             httpOnly: true,
             maxAge: '7 days',
             hasCookieSecret: !!process.env.COOKIE_SECRET
@@ -82,7 +89,7 @@ export const setDeviceIdCookie = (res: Response, deviceId: string): void => {
         info('🍪 Set deviceId cookie', {
             deviceId: deviceId.substring(0, 8) + '...',
             sameSite,
-            secure: isProduction
+            secure: cookiesSecure()
         });
     }
 };
@@ -91,12 +98,11 @@ export const setDeviceIdCookie = (res: Response, deviceId: string): void => {
  * Clear deviceId cookie
  */
 export const clearDeviceIdCookie = (res: Response): void => {
-    const isProduction = isProductionEnvironment();
     const sameSite = getSameSiteSetting();
 
     res.clearCookie("deviceId", {
         httpOnly: true,
-        secure: isProduction,
+        secure: cookiesSecure(),
         sameSite,
         signed: true,
         path: '/',

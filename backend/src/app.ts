@@ -5,6 +5,8 @@ import express, { Express } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 import helmet from "helmet";
 import compression from "compression";
 import cookieParser from "cookie-parser";
@@ -49,6 +51,8 @@ if (process.env.SENTRY_DSN) {
 // =======================
 // Security Middleware
 // =======================
+// Shop PC serving the ERP over plain http on the LAN: no https upgrade of assets and no HSTS.
+const plainHttp = process.env.ALLOW_PLAIN_HTTP === "true";
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -57,13 +61,16 @@ app.use(
         styleSrc: ["'self'", "'unsafe-inline'"],
         scriptSrc: ["'self'"],
         imgSrc: ["'self'", "data:", "https:"],
+        ...(plainHttp ? { upgradeInsecureRequests: null } : {}),
       },
     },
-    hsts: {
-      maxAge: 31536000, // 1 year
-      includeSubDomains: true,
-      preload: true,
-    },
+    hsts: plainHttp
+      ? false
+      : {
+          maxAge: 31536000, // 1 year
+          includeSubDomains: true,
+          preload: true,
+        },
   }),
 );
 
@@ -150,10 +157,23 @@ if (isSqlOnlyMode()) {
 // =======================
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Root Route
-app.get("/", (_req, res) => {
-  res.send("🚀 SmartERPAI Backend is running (TypeScript)");
-});
+// Optional single-process deployment (shop PC): serve the built frontend (frontend/dist) from this server.
+// Off unless SERVE_FRONTEND_DIR is set, so API-only deployments are unchanged.
+const frontendDir = process.env.SERVE_FRONTEND_DIR?.trim();
+const frontendRoot = frontendDir ? path.resolve(frontendDir) : "";
+const serveFrontend = !!frontendRoot && fs.existsSync(path.join(frontendRoot, "index.html"));
+if (serveFrontend) {
+  app.use(express.static(frontendRoot, { index: false, maxAge: "1h" }));
+  // SPA fallback for every non-API GET (client-side routes).
+  app.get(/^\/(?!api(\/|-docs)).*/, (_req, res) => {
+    res.sendFile(path.join(frontendRoot, "index.html"));
+  });
+} else {
+  // Root Route
+  app.get("/", (_req, res) => {
+    res.send("🚀 SmartERPAI Backend is running (TypeScript)");
+  });
+}
 
 // =======================
 // Routes Integration
